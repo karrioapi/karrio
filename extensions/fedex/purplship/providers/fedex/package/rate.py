@@ -17,10 +17,10 @@ from fedex_lib.rate_service_v28 import (
     RequestedPackageLineItem,
     Dimensions,
 )
-from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
-from purplship.core.units import Packages, Options, Services, WeightUnit, CompleteAddress
+from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, DF
+from purplship.core.units import Packages, Options, Services, CompleteAddress
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
+from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets, MeasurementOptions
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
@@ -70,11 +70,10 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         )
         for s in shipment_rate.Surcharges + shipment_rate.Taxes
     ]
-    estimated_delivery = DF.date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
+    estimated_delivery = DF.date(rate.DeliveryTimestamp)
     transit = (
-        (estimated_delivery - datetime.now()).days
-        if estimated_delivery is not None
-        else None
+        ((estimated_delivery.date() - datetime.today().date()).days or None)
+        if estimated_delivery is not None else None
     )
 
     return RateDetails(
@@ -115,7 +114,7 @@ def rate_request(
             ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
-            PackagingType=PackagingType[packages.package_type].value,
+            PackagingType=PackagingType[packages.package_type or 'your_packaging'].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
                 Units=packages.weight.unit,
@@ -226,9 +225,9 @@ def rate_request(
                     ),
                     Dimensions=(
                         Dimensions(
-                            Length=package.length.value,
-                            Width=package.width.value,
-                            Height=package.height.value,
+                            Length=package.length.map(MeasurementOptions).value,
+                            Width=package.width.map(MeasurementOptions).value,
+                            Height=package.height.map(MeasurementOptions).value,
                             Units=package.dimension_unit.value,
                         )
                         if package.has_dimensions else None

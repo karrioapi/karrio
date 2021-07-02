@@ -1,9 +1,9 @@
-## Contribute to Purplship
+## Contribute to purplship
 
 ### **Did you find a bug?**
 
 * **Do not open up a GitHub issue if the bug is a security vulnerability
-  in Purplship**, and instead send us an email at hello@purplship.com.
+  in purplship**, and instead send us an email at hello@purplship.com.
 
 * **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/PurplShip/purplship/issues).
 
@@ -23,11 +23,11 @@
 
 ### **Do you have questions about the source code?**
 
-* Ask any question about how to use Purplship in the [purplship room](https://gitter.im/Purplship/Purplship).
+* Ask any question about how to use purplship in the [purplship room](https://gitter.im/purplship/purplship).
 
 * Check out the [architecture overview](/architecture)
 
 
 Thanks!
 
-Daniel K, Purplship
+Daniel K, purplship

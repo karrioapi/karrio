@@ -44,8 +44,6 @@ from purplship.mappers.canpar.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    """Request Mappers"""
-
     def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
         return address_validation_request(payload, self.settings)
 
@@ -81,8 +79,6 @@ class Mapper(BaseMapper):
 
     def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
         return shipment_cancel_request(payload, self.settings)
-
-    """Response Parsers"""
 
     def parse_address_validation_response(
         self, response: Deserializable

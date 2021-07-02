@@ -5,7 +5,7 @@
 ## Clone the repo
 
 ```bash
-git clone git@github.com:Purplship/purplship.git
+git clone git@github.com:purplship/purplship.git
 ```
 
 ## Source the `bash` script

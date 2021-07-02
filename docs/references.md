@@ -28,70 +28,35 @@
 
 ## Gateway
 
-#### USPS Settings
+
+#### Aramex Settings `[carrier_name = aramex]`
 
 | Name | Type | Description 
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
-| `id` | `str` | 
-| `test` | `bool` | 
-| `carrier_id` | `str` | 
-
-
-#### UPS Settings
-
-| Name | Type | Description 
-| --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
-| `access_license_number` | `str` | **required**
-| `account_number` | `str` | 
-| `id` | `str` | 
-| `test` | `bool` | 
-| `carrier_id` | `str` | 
-
-
-#### Purolator Courier Settings
-
-| Name | Type | Description 
-| --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
+| `account_pin` | `str` | **required**
+| `account_entity` | `str` | **required**
 | `account_number` | `str` | **required**
-| `user_token` | `str` | 
-| `language` | `str` | 
+| `account_country_code` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
 
 
-#### FedEx Settings
+#### Australia Post Settings `[carrier_name = australiapost]`
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `user_key` | `str` | **required**
+| `api_key` | `str` | **required**
 | `password` | `str` | **required**
-| `meter_number` | `str` | **required**
 | `account_number` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
 
 
-#### Dicom Settings
-
-| Name | Type | Description 
-| --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
-| `billing_account` | `str` | 
-| `id` | `str` | 
-| `test` | `bool` | 
-| `carrier_id` | `str` | 
-
-
-#### Canada Post Settings
+#### Canada Post Settings `[carrier_name = canadapost]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -105,7 +70,7 @@
 | `carrier_id` | `str` | 
 
 
-#### Canpar Settings
+#### Canpar Settings `[carrier_name = canpar]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -116,12 +81,172 @@
 | `carrier_id` | `str` | 
 
 
-#### BoxKnight Settings
+#### DHL Express Settings `[carrier_name = dhl_express]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `site_id` | `str` | **required**
+| `password` | `str` | **required**
+| `account_number` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### DHL Universal Settings `[carrier_name = dhl_universal]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `consumer_key` | `str` | **required**
+| `consumer_secret` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Dicom Settings `[carrier_name = dicom]`
 
 | Name | Type | Description 
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
+| `billing_account` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### FedEx Settings `[carrier_name = fedex]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `user_key` | `str` | **required**
+| `password` | `str` | **required**
+| `meter_number` | `str` | **required**
+| `account_number` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Purolator Settings `[carrier_name = purolator]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `account_number` | `str` | **required**
+| `language` | `str` | 
+| `user_token` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Royal Mail Settings `[carrier_name = royalmail]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `client_id` | `str` | **required**
+| `client_secret` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Sendle Settings `[carrier_name = sendle]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `sendle_id` | `str` | **required**
+| `api_key` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### SF-Express Settings `[carrier_name = sf_express]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `partner_id` | `str` | **required**
+| `check_word` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### TNT Settings `[carrier_name = tnt]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `account_number` | `str` | 
+| `account_country_code` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### UPS Settings `[carrier_name = ups]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `access_license_number` | `str` | **required**
+| `account_number` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### USPS Settings `[carrier_name = usps]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `mailer_id` | `str` | 
+| `customer_registration_id` | `str` | 
+| `logistics_manager_mailer_id` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### USPS International Settings `[carrier_name = usps_international]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `mailer_id` | `str` | 
+| `customer_registration_id` | `str` | 
+| `logistics_manager_mailer_id` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Yanwen Settings `[carrier_name = yanwen]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `customer_number` | `str` | **required**
+| `license_key` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Yunexpress Settings `[carrier_name = yunexpress]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `customer_number` | `str` | **required**
+| `api_secret` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
@@ -457,7 +582,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 #### Multi-carrier (purplship)
 
 | Code | Identifier
---- | ---
+| --- | ---
 | `envelope` | Small Envelope
 | `pak` | Pak
 | `tube` | Tube
@@ -467,10 +592,57 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `your_packaging` | Your Packaging
 
 
+#### DHL Express
+
+| Code | Identifier
+| --- | ---
+| `dhl_flyer_smalls` | FLY
+| `dhl_parcels_conveyables` | COY
+| `dhl_non_conveyables` | NCY
+| `dhl_pallets` | PAL
+| `dhl_double_pallets` | DBL
+| `dhl_box` | BOX
+
+
+#### FedEx
+
+| Code | Identifier
+| --- | ---
+| `fedex_envelope` | FEDEX_ENVELOPE
+| `fedex_pak` | FEDEX_PAK
+| `fedex_box` | FEDEX_BOX
+| `fedex_10_kg_box` | FEDEX_10KG_BOX
+| `fedex_25_kg_box` | FEDEX_25KG_BOX
+| `fedex_tube` | FEDEX_TUBE
+| `your_packaging` | YOUR_PACKAGING
+
+
+#### Purolator
+
+| Code | Identifier
+| --- | ---
+| `purolator_express_envelope` | Envelope
+| `purolator_express_pack` | Pack
+| `purolator_express_box` | Box
+| `purolator_customer_packaging` | Customer Packaging
+
+
+#### TNT
+
+| Code | Identifier
+| --- | ---
+| `tnt_envelope` | envelope
+| `tnt_satchel` | satchel
+| `tnt_box` | box
+| `tnt_cylinder` | cylinder
+| `tnt_pallet` | pallet
+| `your_packaging` | your_packaging
+
+
 #### UPS
 
 | Code | Identifier
---- | ---
+| --- | ---
 | `ups_unknown` | 00
 | `ups_letter` | 01
 | `ups_package` | 02
@@ -484,87 +656,33 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `ups_medium_express_box` | 2b
 | `ups_large_express_box` | 2c
 
-
-#### Purolator Courier
-
-| Code | Identifier
---- | ---
-| `purolator_express_envelope` | Envelope
-| `purolator_express_pack` | Pack
-| `purolator_express_box` | Box
-| `purolator_customer_packaging` | Customer Packaging
-
-
-#### FedEx
-
-| Code | Identifier
---- | ---
-| `fedex_envelope` | FEDEX_ENVELOPE
-| `fedex_pak` | FEDEX_PAK
-| `fedex_box` | FEDEX_BOX
-| `fedex_10_kg_box` | FEDEX_10KG_BOX
-| `fedex_25_kg_box` | FEDEX_25KG_BOX
-| `fedex_tube` | FEDEX_TUBE
-| `your_packaging` | YOUR_PACKAGING
-
-
-#### DHL Express
-
-| Code | Identifier
---- | ---
-| `dhl_flyer_smalls` | FLY
-| `dhl_parcels_conveyables` | COY
-| `dhl_non_conveyables` | NCY
-| `dhl_pallets` | PAL
-| `dhl_double_pallets` | DBL
-| `dhl_box` | BOX
-
 ---
 
 
 ## Package Presets
 
 
-#### UPS
+#### Canada Post
 
 | Code | Dimensions | Note
---- | --- | ---
-| `ups_small_express_box` | 11.0 x 2.0 x 30.0 x 13.0 | height x length x weight x width
-| `ups_medium_express_box` | 11.0 x 3.0 x 30.0 x 16.0 | height x length x weight x width
-| `ups_large_express_box` | 13.0 x 3.0 x 30.0 x 18.0 | height x length x weight x width
-| `ups_express_tube` | 6.0 x 6.0 x 38.0 | height x length x width
-| `ups_express_pak` | 11.75 x 1.5 x 16.0 | height x length x width
-| `ups_world_document_box` | 12.5 x 3.0 x 17.5 | height x length x width
-
-
-#### Purolator Courier
-
-| Code | Dimensions | Note
---- | --- | ---
-| `purolator_express_envelope` | 1.5 x 1.0 x 12.5 | length x weight x width
-| `purolator_express_pack` | 1.0 x 3.0 x 12.5 | length x weight x width
-| `purolator_express_box` | 3.5 x 7.0 | length x weight
-
-
-#### FedEx
-| Code | Dimensions | Note
---- | --- | ---
-| `fedex_envelope_legal_size` | 15.5 x 1.0 x 9.5 | height x weight x width
-| `fedex_padded_pak` | 14.75 x 2.2 x 11.75 | height x weight x width
-| `fedex_polyethylene_pak` | 15.5 x 2.2 x 12.0 | height x weight x width
-| `fedex_clinical_pak` | 18.0 x 2.2 x 13.5 | height x weight x width
-| `fedex_small_box` | 10.9 x 1.5 x 20.0 x 12.25 | height x length x weight x width
-| `fedex_medium_box` | 11.5 x 2.38 x 20.0 x 13.25 | height x length x weight x width
-| `fedex_large_box` | 12.38 x 3.0 x 20.0 x 17.88 | height x length x weight x width
-| `fedex_10_kg_box` | 12.94 x 10.19 x 10.0 x 15.81 | height x length x weight x width
-| `fedex_25_kg_box` | 16.56 x 13.19 x 25.0 x 21.56 | height x length x weight x width
-| `fedex_tube` | 6.0 x 6.0 x 20.0 x 38.0 | height x length x weight x width
+| --- | --- | ---
+| `canadapost_mailing_box` | 15.2 x 1.0 x 10.2 | height x length x width
+| `canadapost_extra_small_mailing_box` | 14.0 x 14.0 x 14.0 | height x length x width
+| `canadapost_small_mailing_box` | 22.9 x 6.4 x 28.6 | height x length x width
+| `canadapost_medium_mailing_box` | 23.5 x 13.3 x 31.0 | height x length x width
+| `canadapost_large_mailing_box` | 30.5 x 9.5 x 38.1 | height x length x width
+| `canadapost_extra_large_mailing_box` | 30.5 x 21.6 x 40.0 | height x length x width
+| `canadapost_corrugated_small_box` | 32.0 x 32.0 x 42.0 | height x length x width
+| `canadapost_corrugated_medium_box` | 38.0 x 32.0 x 46.0 | height x length x width
+| `canadapost_corrugated_large_box` | 46.0 x 40.6 x 46.0 | height x length x width
+| `canadapost_xexpresspost_certified_envelope` | 15.9 x 1.5 x 0.5 x 26.0 | height x length x weight x width
+| `canadapost_xexpresspost_national_large_envelope` | 29.2 x 1.5 x 1.36 x 40.0 | height x length x weight x width
 
 
 #### DHL Express
 
 | Code | Dimensions | Note
---- | --- | ---
+| --- | --- | ---
 | `dhl_express_envelope` | 27.5 x 1.0 x 0.5 x 35.0 | height x length x weight x width
 | `dhl_express_standard_flyer` | 30.0 x 1.5 x 2.0 x 40.0 | height x length x weight x width
 | `dhl_express_large_flyer` | 37.5 x 1.5 x 3.0 x 47.5 | height x length x weight x width
@@ -581,21 +699,56 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `dhl_jumbo_box_junior` | 34.0 x 24.1 x 20.0 x 39.9 | height x length x weight x width
 
 
-#### Canada Post
+#### FedEx
 
 | Code | Dimensions | Note
---- | --- | ---
-| `canadapost_mailing_box` | 15.2 x 1.0 x 10.2 | height x length x width
-| `canadapost_extra_small_mailing_box` | 14.0 x 14.0 x 14.0 | height x length x width
-| `canadapost_small_mailing_box` | 22.9 x 6.4 x 28.6 | height x length x width
-| `canadapost_medium_mailing_box` | 23.5 x 13.3 x 31.0 | height x length x width
-| `canadapost_large_mailing_box` | 30.5 x 9.5 x 38.1 | height x length x width
-| `canadapost_extra_large_mailing_box` | 30.5 x 21.6 x 40.0 | height x length x width
-| `canadapost_corrugated_small_box` | 32.0 x 32.0 x 42.0 | height x length x width
-| `canadapost_corrugated_medium_box` | 38.0 x 32.0 x 46.0 | height x length x width
-| `canadapost_corrugated_large_box` | 46.0 x 40.6 x 46.0 | height x length x width
-| `canadapost_xexpresspost_certified_envelope` | 15.9 x 1.5 x 0.5 x 26.0 | height x length x weight x width
-| `canadapost_xexpresspost_national_large_envelope` | 29.2 x 1.5 x 1.36 x 40.0 | height x length x weight x width
+| --- | --- | ---
+| `fedex_envelope_legal_size` | 15.5 x 1.0 x 9.5 | height x weight x width
+| `fedex_padded_pak` | 14.75 x 2.2 x 11.75 | height x weight x width
+| `fedex_polyethylene_pak` | 15.5 x 2.2 x 12.0 | height x weight x width
+| `fedex_clinical_pak` | 18.0 x 2.2 x 13.5 | height x weight x width
+| `fedex_small_box` | 10.9 x 1.5 x 20.0 x 12.25 | height x length x weight x width
+| `fedex_medium_box` | 11.5 x 2.38 x 20.0 x 13.25 | height x length x weight x width
+| `fedex_large_box` | 12.38 x 3.0 x 20.0 x 17.88 | height x length x weight x width
+| `fedex_10_kg_box` | 12.94 x 10.19 x 10.0 x 15.81 | height x length x weight x width
+| `fedex_25_kg_box` | 16.56 x 13.19 x 25.0 x 21.56 | height x length x weight x width
+| `fedex_tube` | 6.0 x 6.0 x 20.0 x 38.0 | height x length x weight x width
+
+
+#### Purolator
+
+| Code | Dimensions | Note
+| --- | --- | ---
+| `purolator_express_envelope` | 1.5 x 1.0 x 12.5 | length x weight x width
+| `purolator_express_pack` | 1.0 x 3.0 x 12.5 | length x weight x width
+| `purolator_express_box` | 3.5 x 7.0 | length x weight
+
+
+#### TNT
+
+| Code | Dimensions | Note
+| --- | --- | ---
+| `tnt_envelope_doc` | 1.0 x 27.5 x 35.0 | height x length x width
+| `tnt_satchel_bag1` | 1.0 x 30.0 x 2.0 x 40.0 | height x length x weight x width
+| `tnt_satchel_bag2` | 1.0 x 38.0 x 4.0 x 47.5 | height x length x weight x width
+| `tnt_box_B` | 19.0 x 40.0 x 4.0 x 29.5 | height x length x weight x width
+| `tnt_box_C` | 29.0 x 40.0 x 6.0 x 29.5 | height x length x weight x width
+| `tnt_box_D` | 29.0 x 50.0 x 10.0 x 39.5 | height x length x weight x width
+| `tnt_box_E` | 49.5 x 44.0 x 15.0 x 39.5 | height x length x weight x width
+| `tnt_medpack_ambient` | 12.0 x 23.0 x 18.0 | height x length x width
+| `tnt_medpack_fronzen_10` | 35.5 x 40.0 x 37.0 | height x length x width
+
+
+#### UPS
+
+| Code | Dimensions | Note
+| --- | --- | ---
+| `ups_small_express_box` | 11.0 x 2.0 x 30.0 x 13.0 | height x length x weight x width
+| `ups_medium_express_box` | 11.0 x 3.0 x 30.0 x 16.0 | height x length x weight x width
+| `ups_large_express_box` | 13.0 x 3.0 x 30.0 x 18.0 | height x length x weight x width
+| `ups_express_tube` | 6.0 x 6.0 x 38.0 | height x length x width
+| `ups_express_pak` | 11.75 x 1.5 x 16.0 | height x length x width
+| `ups_world_document_box` | 12.5 x 3.0 x 17.5 | height x length x width
 
 ---
 
@@ -603,39 +756,141 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 ## Shipping Services
 
 
-#### UPS
+#### Canada Post
 
 | Code | Identifier
---- | ---
-| `ups_standard` | 11
-| `ups_worldwide_expedited` | 08
-| `ups_worldwide_express` | 07
-| `ups_worldwide_express_plus` | 54
-| `ups_worldwide_saver` | 65
-| `ups_2nd_day_air` | 02
-| `ups_2nd_day_air_am` | 59
-| `ups_3_day_select` | 12
-| `ups_expedited_mail_innovations` | M4
-| `ups_first_class_mail` | M2
-| `ups_ground` | 03
-| `ups_next_day_air` | 01
-| `ups_next_day_air_early` | 14
-| `ups_next_day_air_saver` | 13
-| `ups_priority_mail` | M3
-| `ups_access_point_economy` | 70
-| `ups_today_dedicated_courier` | 83
-| `ups_today_express` | 85
-| `ups_today_express_saver` | 86
-| `ups_today_standard` | 82
-| `ups_worldwide_express_freight` | 96
-| `ups_priority_mail_innovations` | M5
-| `ups_economy_mail_innovations` | M6
+| --- | ---
+| `canadapost_regular_parcel` | DOM.RP
+| `canadapost_expedited_parcel` | DOM.EP
+| `canadapost_xpresspost` | DOM.XP
+| `canadapost_priority` | DOM.PC
+| `canadapost_library_books` | DOM.LIB
+| `canadapost_expedited_parcel_usa` | USA.EP
+| `canadapost_priority_worldwide_envelope_usa` | USA.PW.ENV
+| `canadapost_priority_worldwide_pak_usa` | USA.PW.PAK
+| `canadapost_priority_worldwide_parcel_usa` | USA.PW.PARCEL
+| `canadapost_small_packet_usa_air` | USA.SP.AIR
+| `canadapost_tracked_packet_usa` | USA.TP
+| `canadapost_tracked_packet_usa_lvm` | USA.TP.LVM
+| `canadapost_xpresspost_usa` | USA.XP
+| `canadapost_xpresspost_international` | INT.XP
+| `canadapost_international_parcel_air` | INT.IP.AIR
+| `canadapost_international_parcel_surface` | INT.IP.SURF
+| `canadapost_priority_worldwide_envelope_intl` | INT.PW.ENV
+| `canadapost_priority_worldwide_pak_intl` | INT.PW.PAK
+| `canadapost_priority_worldwide_parcel_intl` | INT.PW.PARCEL
+| `canadapost_small_packet_international_air` | INT.SP.AIR
+| `canadapost_small_packet_international_surface` | INT.SP.SURF
+| `canadapost_tracked_packet_international` | INT.TP
 
 
-#### Purolator Courier
+#### DHL Express
 
 | Code | Identifier
---- | ---
+| --- | ---
+| `dhl_logistics_services` | 0
+| `dhl_domestic_express_12_00_doc` | 1
+| `dhl_b2_c_doc` | 2
+| `dhl_b2_c_nondoc` | 3
+| `dhl_jetline` | 4
+| `dhl_sprintline` | 5
+| `dhl_express_easy_doc` | 7
+| `dhl_express_easy_nondoc` | 8
+| `dhl_europack_doc` | 9
+| `dhl_auto_reversals` | A
+| `dhl_breakbulk_express_doc` | B
+| `dhl_medical_express_doc` | C
+| `dhl_express_worldwide_doc` | D
+| `dhl_express_9_00_nondoc` | E
+| `dhl_freight_worldwide_nondoc` | F
+| `dhl_domestic_economy_select_doc` | G
+| `dhl_economy_select_nondoc` | H
+| `dhl_domestic_express_9_00_doc` | I
+| `dhl_jumbo_box_nondoc` | J
+| `dhl_express_9_00_doc` | K
+| `dhl_express_10_30_doc` | L
+| `dhl_express_10_30_nondoc` | M
+| `dhl_domestic_express_doc` | N
+| `dhl_domestic_express_10_30_doc` | O
+| `dhl_express_worldwide_nondoc` | P
+| `dhl_medical_express_nondoc` | Q
+| `dhl_globalmail_business_doc` | R
+| `dhl_same_day_doc` | S
+| `dhl_express_12_00_doc` | T
+| `dhl_express_worldwide_ecx_doc` | U
+| `dhl_europack_nondoc` | V
+| `dhl_economy_select_doc` | W
+| `dhl_express_envelope_doc` | X
+| `dhl_express_12_00_nondoc` | Y
+| `dhl_destination_charges` | Z
+
+
+#### FedEx
+
+| Code | Identifier
+| --- | ---
+| `fedex_europe_first_international_priority` | EUROPE_FIRST_INTERNATIONAL_PRIORITY
+| `fedex_1_day_freight` | FEDEX_1_DAY_FREIGHT
+| `fedex_2_day` | FEDEX_2_DAY
+| `fedex_2_day_am` | FEDEX_2_DAY_AM
+| `fedex_2_day_freight` | FEDEX_2_DAY_FREIGHT
+| `fedex_3_day_freight` | FEDEX_3_DAY_FREIGHT
+| `fedex_cargo_airport_to_airport` | FEDEX_CARGO_AIRPORT_TO_AIRPORT
+| `fedex_cargo_freight_forwarding` | FEDEX_CARGO_FREIGHT_FORWARDING
+| `fedex_cargo_international_express_freight` | FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT
+| `fedex_cargo_international_premium` | FEDEX_CARGO_INTERNATIONAL_PREMIUM
+| `fedex_cargo_mail` | FEDEX_CARGO_MAIL
+| `fedex_cargo_registered_mail` | FEDEX_CARGO_REGISTERED_MAIL
+| `fedex_cargo_surface_mail` | FEDEX_CARGO_SURFACE_MAIL
+| `fedex_custom_critical_air_expedite` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE
+| `fedex_custom_critical_air_expedite_exclusive_use` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE
+| `fedex_custom_critical_air_expedite_network` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK
+| `fedex_custom_critical_charter_air` | FEDEX_CUSTOM_CRITICAL_CHARTER_AIR
+| `fedex_custom_critical_point_to_point` | FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT
+| `fedex_custom_critical_surface_expedite` | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE
+| `fedex_custom_critical_surface_expedite_exclusive_use` | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE
+| `fedex_custom_critical_temp_assure_air` | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR
+| `fedex_custom_critical_temp_assure_validated_air` | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR
+| `fedex_custom_critical_white_glove_services` | FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES
+| `fedex_distance_deferred` | FEDEX_DISTANCE_DEFERRED
+| `fedex_express_saver` | FEDEX_EXPRESS_SAVER
+| `fedex_first_freight` | FEDEX_FIRST_FREIGHT
+| `fedex_freight_economy` | FEDEX_FREIGHT_ECONOMY
+| `fedex_freight_priority` | FEDEX_FREIGHT_PRIORITY
+| `fedex_ground` | FEDEX_GROUND
+| `fedex_international_priority_plus` | FEDEX_INTERNATIONAL_PRIORITY_PLUS
+| `fedex_next_day_afternoon` | FEDEX_NEXT_DAY_AFTERNOON
+| `fedex_next_day_early_morning` | FEDEX_NEXT_DAY_EARLY_MORNING
+| `fedex_next_day_end_of_day` | FEDEX_NEXT_DAY_END_OF_DAY
+| `fedex_next_day_freight` | FEDEX_NEXT_DAY_FREIGHT
+| `fedex_next_day_mid_morning` | FEDEX_NEXT_DAY_MID_MORNING
+| `fedex_first_overnight` | FIRST_OVERNIGHT
+| `fedex_ground_home_delivery` | GROUND_HOME_DELIVERY
+| `fedex_international_distribution_freight` | INTERNATIONAL_DISTRIBUTION_FREIGHT
+| `fedex_international_economy` | INTERNATIONAL_ECONOMY
+| `fedex_international_economy_distribution` | INTERNATIONAL_ECONOMY_DISTRIBUTION
+| `fedex_international_economy_freight` | INTERNATIONAL_ECONOMY_FREIGHT
+| `fedex_international_first` | INTERNATIONAL_FIRST
+| `fedex_international_ground` | INTERNATIONAL_GROUND
+| `fedex_international_priority` | INTERNATIONAL_PRIORITY
+| `fedex_international_priority_distribution` | INTERNATIONAL_PRIORITY_DISTRIBUTION
+| `fedex_international_priority_express` | INTERNATIONAL_PRIORITY_EXPRESS
+| `fedex_international_priority_freight` | INTERNATIONAL_PRIORITY_FREIGHT
+| `fedex_priority_overnight` | PRIORITY_OVERNIGHT
+| `fedex_same_day` | SAME_DAY
+| `fedex_same_day_city` | SAME_DAY_CITY
+| `fedex_same_day_metro_afternoon` | SAME_DAY_METRO_AFTERNOON
+| `fedex_same_day_metro_morning` | SAME_DAY_METRO_MORNING
+| `fedex_same_day_metro_rush` | SAME_DAY_METRO_RUSH
+| `fedex_smart_post` | SMART_POST
+| `fedex_standard_overnight` | STANDARD_OVERNIGHT
+| `fedex_transborder_distribution_consolidation` | TRANSBORDER_DISTRIBUTION_CONSOLIDATION
+
+
+#### Purolator
+
+| Code | Identifier
+| --- | ---
 | `purolator_express_9_am` | PurolatorExpress9AM
 | `purolator_express_us` | PurolatorExpressU.S.
 | `purolator_express_10_30_am` | PurolatorExpress10:30AM
@@ -699,134 +954,106 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `purolator_express_international_box_12_00` | PurolatorExpressInternationalBox12:00
 
 
-#### FedEx
+#### TNT
 
 | Code | Identifier
---- | ---
-| `fedex_europe_first_international_priority` | EUROPE_FIRST_INTERNATIONAL_PRIORITY
-| `fedex_1_day_freight` | FEDEX_1_DAY_FREIGHT
-| `fedex_2_day` | FEDEX_2_DAY
-| `fedex_2_day_am` | FEDEX_2_DAY_AM
-| `fedex_2_day_freight` | FEDEX_2_DAY_FREIGHT
-| `fedex_3_day_freight` | FEDEX_3_DAY_FREIGHT
-| `fedex_cargo_airport_to_airport` | FEDEX_CARGO_AIRPORT_TO_AIRPORT
-| `fedex_cargo_freight_forwarding` | FEDEX_CARGO_FREIGHT_FORWARDING
-| `fedex_cargo_international_express_freight` | FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT
-| `fedex_cargo_international_premium` | FEDEX_CARGO_INTERNATIONAL_PREMIUM
-| `fedex_cargo_mail` | FEDEX_CARGO_MAIL
-| `fedex_cargo_registered_mail` | FEDEX_CARGO_REGISTERED_MAIL
-| `fedex_cargo_surface_mail` | FEDEX_CARGO_SURFACE_MAIL
-| `fedex_custom_critical_air_expedite` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE
-| `fedex_custom_critical_air_expedite_exclusive_use` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE
-| `fedex_custom_critical_air_expedite_network` | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK
-| `fedex_custom_critical_charter_air` | FEDEX_CUSTOM_CRITICAL_CHARTER_AIR
-| `fedex_custom_critical_point_to_point` | FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT
-| `fedex_custom_critical_surface_expedite` | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE
-| `fedex_custom_critical_surface_expedite_exclusive_use` | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE
-| `fedex_custom_critical_temp_assure_air` | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR
-| `fedex_custom_critical_temp_assure_validated_air` | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR
-| `fedex_custom_critical_white_glove_services` | FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES
-| `fedex_distance_deferred` | FEDEX_DISTANCE_DEFERRED
-| `fedex_express_saver` | FEDEX_EXPRESS_SAVER
-| `fedex_first_freight` | FEDEX_FIRST_FREIGHT
-| `fedex_freight_economy` | FEDEX_FREIGHT_ECONOMY
-| `fedex_freight_priority` | FEDEX_FREIGHT_PRIORITY
-| `fedex_ground` | FEDEX_GROUND
-| `fedex_international_priority_plus` | FEDEX_INTERNATIONAL_PRIORITY_PLUS
-| `fedex_next_day_afternoon` | FEDEX_NEXT_DAY_AFTERNOON
-| `fedex_next_day_early_morning` | FEDEX_NEXT_DAY_EARLY_MORNING
-| `fedex_next_day_end_of_day` | FEDEX_NEXT_DAY_END_OF_DAY
-| `fedex_next_day_freight` | FEDEX_NEXT_DAY_FREIGHT
-| `fedex_next_day_mid_morning` | FEDEX_NEXT_DAY_MID_MORNING
-| `fedex_first_overnight` | FIRST_OVERNIGHT
-| `fedex_ground_home_delivery` | GROUND_HOME_DELIVERY
-| `fedex_international_distribution_freight` | INTERNATIONAL_DISTRIBUTION_FREIGHT
-| `fedex_international_economy` | INTERNATIONAL_ECONOMY
-| `fedex_international_economy_distribution` | INTERNATIONAL_ECONOMY_DISTRIBUTION
-| `fedex_international_economy_freight` | INTERNATIONAL_ECONOMY_FREIGHT
-| `fedex_international_first` | INTERNATIONAL_FIRST
-| `fedex_international_ground` | INTERNATIONAL_GROUND
-| `fedex_international_priority` | INTERNATIONAL_PRIORITY
-| `fedex_international_priority_distribution` | INTERNATIONAL_PRIORITY_DISTRIBUTION
-| `fedex_international_priority_express` | INTERNATIONAL_PRIORITY_EXPRESS
-| `fedex_international_priority_freight` | INTERNATIONAL_PRIORITY_FREIGHT
-| `fedex_priority_overnight` | PRIORITY_OVERNIGHT
-| `fedex_same_day` | SAME_DAY
-| `fedex_same_day_city` | SAME_DAY_CITY
-| `fedex_same_day_metro_afternoon` | SAME_DAY_METRO_AFTERNOON
-| `fedex_same_day_metro_morning` | SAME_DAY_METRO_MORNING
-| `fedex_same_day_metro_rush` | SAME_DAY_METRO_RUSH
-| `fedex_smart_post` | SMART_POST
-| `fedex_standard_overnight` | STANDARD_OVERNIGHT
-| `fedex_transborder_distribution_consolidation` | TRANSBORDER_DISTRIBUTION_CONSOLIDATION
+| --- | ---
+| `tnt_special_express` | 1N
+| `tnt_9_00_express` | 09N
+| `tnt_10_00_express` | 10N
+| `tnt_12_00_express` | 12N
+| `tnt_express` | EX
+| `tnt_economy_express` | 48N
+| `tnt_global_express` | 15N
 
 
-#### DHL Express
+#### UPS
 
 | Code | Identifier
---- | ---
-| `dhl_logistics_services` | LOGISTICS SERVICES
-| `dhl_domestic_express_12_00_doc` | DOMESTIC EXPRESS 12:00 DOC
-| `dhl_b2_c_doc` | B2C DOC
-| `dhl_b2_c_nondoc` | B2C NONDOC
-| `dhl_jetline` | JETLINE
-| `dhl_sprintline` | SPRINTLINE
-| `dhl_express_easy_doc` | EXPRESS EASY DOC
-| `dhl_express_easy_nondoc` | EXPRESS EASY NONDOC
-| `dhl_europack_doc` | EUROPACK DOC
-| `dhl_auto_reversals` | AUTO REVERSALS
-| `dhl_breakbulk_express_doc` | BREAKBULK EXPRESS DOC
-| `dhl_medical_express_doc` | MEDICAL EXPRESS DOC
-| `dhl_express_worldwide_doc` | EXPRESS WORLDWIDE DOC
-| `dhl_express_9_00_nondoc` | EXPRESS 9:00 NONDOC
-| `dhl_freight_worldwide_nondoc` | FREIGHT WORLDWIDE NONDOC
-| `dhl_domestic_economy_select_doc` | DOMESTIC ECONOMY SELECT DOC
-| `dhl_economy_select_nondoc` | ECONOMY SELECT NONDOC
-| `dhl_domestic_express_9_00_doc` | DOMESTIC EXPRESS 9:00 DOC
-| `dhl_jumbo_box_nondoc` | JUMBO BOX NONDOC
-| `dhl_express_9_00_doc` | EXPRESS 9:00 DOC
-| `dhl_express_10_30_doc` | EXPRESS 10:30 DOC
-| `dhl_express_10_30_nondoc` | EXPRESS 10:30 NONDOC
-| `dhl_domestic_express_doc` | DOMESTIC EXPRESS DOC
-| `dhl_domestic_express_10_30_doc` | DOMESTIC EXPRESS 10:30 DOC
-| `dhl_express_worldwide_nondoc` | EXPRESS WORLDWIDE NONDOC
-| `dhl_medical_express_nondoc` | MEDICAL EXPRESS NONDOC
-| `dhl_globalmail_business_doc` | GLOBALMAIL BUSINESS DOC
-| `dhl_same_day_doc` | SAME DAY DOC
-| `dhl_express_12_00_doc` | EXPRESS 12:00 DOC
-| `dhl_europack_nondoc` | EUROPACK NONDOC
-| `dhl_economy_select_doc` | ECONOMY SELECT DOC
-| `dhl_express_envelope_doc` | EXPRESS ENVELOPE DOC
-| `dhl_express_12_00_nondoc` | EXPRESS 12:00 NONDOC
-| `dhl_destination_charges` | Destination Charges
+| --- | ---
+| `ups_standard` | 11
+| `ups_worldwide_expedited` | 08
+| `ups_worldwide_express` | 07
+| `ups_worldwide_express_plus` | 54
+| `ups_worldwide_saver` | 65
+| `ups_2nd_day_air` | 02
+| `ups_2nd_day_air_am` | 59
+| `ups_3_day_select` | 12
+| `ups_expedited_mail_innovations` | M4
+| `ups_first_class_mail` | M2
+| `ups_ground` | 03
+| `ups_next_day_air` | 01
+| `ups_next_day_air_early` | 14
+| `ups_next_day_air_saver` | 13
+| `ups_priority_mail` | M3
+| `ups_access_point_economy` | 70
+| `ups_today_dedicated_courier` | 83
+| `ups_today_express` | 85
+| `ups_today_express_saver` | 86
+| `ups_today_standard` | 82
+| `ups_worldwide_express_freight` | 96
+| `ups_priority_mail_innovations` | M5
+| `ups_economy_mail_innovations` | M6
 
 
-#### Canada Post
+#### USPS
 
 | Code | Identifier
---- | ---
-| `canadapost_regular_parcel` | DOM.RP
-| `canadapost_expedited_parcel` | DOM.EP
-| `canadapost_xpresspost` | DOM.XP
-| `canadapost_priority` | DOM.PC
-| `canadapost_library_books` | DOM.LIB
-| `canadapost_expedited_parcel_usa` | USA.EP
-| `canadapost_priority_worldwide_envelope_usa` | USA.PW.ENV
-| `canadapost_priority_worldwide_pak_usa` | USA.PW.PAK
-| `canadapost_priority_worldwide_parcel_usa` | USA.PW.PARCEL
-| `canadapost_small_packet_usa_air` | USA.SP.AIR
-| `canadapost_tracked_packet_usa` | USA.TP
-| `canadapost_tracked_packet_usa_lvm` | USA.TP.LVM
-| `canadapost_xpresspost_usa` | USA.XP
-| `canadapost_xpresspost_international` | INT.XP
-| `canadapost_international_parcel_air` | INT.IP.AIR
-| `canadapost_international_parcel_surface` | INT.IP.SURF
-| `canadapost_priority_worldwide_envelope_intl` | INT.PW.ENV
-| `canadapost_priority_worldwide_pak_intl` | INT.PW.PAK
-| `canadapost_priority_worldwide_parcel_intl` | INT.PW.PARCEL
-| `canadapost_small_packet_international_air` | INT.SP.AIR
-| `canadapost_small_packet_international_surface` | INT.SP.SURF
-| `canadapost_tracked_packet_international` | INT.TP
+| --- | ---
+| `usps_first_class` | First Class
+| `usps_first_class_commercial` | First Class Commercial
+| `usps_first_class_hfp_commercial` | First Class HFPCommercial
+| `usps_priority` | Priority
+| `usps_priority_commercial` | Priority Commercial
+| `usps_priority_cpp` | Priority Cpp
+| `usps_priority_hfp_commercial` | Priority HFP Commercial
+| `usps_priority_hfp_cpp` | Priority HFP CPP
+| `usps_priority_mail_express` | Priority Mail Express
+| `usps_priority_mail_express_commercial` | Priority Mail Express Commercial
+| `usps_priority_mail_express_cpp` | Priority Mail Express CPP
+| `usps_priority_mail_express_sh` | Priority Mail Express Sh
+| `usps_priority_mail_express_sh_commercial` | Priority Mail Express ShCommercial
+| `usps_priority_mail_express_hfp` | Priority Mail Express HFP
+| `usps_priority_mail_express_hfp_commercial` | Priority Mail Express HFP Commercial
+| `usps_priority_mail_express_hfp_cpp` | Priority Mail Express HFP CPP
+| `usps_priority_mail_cubic` | Priority Mail Cubic
+| `usps_retail_ground` | Retail Ground
+| `usps_media` | Media
+| `usps_library` | Library
+| `usps_all` | All
+| `usps_online` | Online
+| `usps_plus` | Plus
+| `usps_bpm` | BPM
+
+
+#### USPS International
+
+| Code | Identifier
+| --- | ---
+| `usps_first_class` | First Class
+| `usps_first_class_commercial` | First Class Commercial
+| `usps_first_class_hfp_commercial` | First Class HFPCommercial
+| `usps_priority` | Priority
+| `usps_priority_commercial` | Priority Commercial
+| `usps_priority_cpp` | Priority Cpp
+| `usps_priority_hfp_commercial` | Priority HFP Commercial
+| `usps_priority_hfp_cpp` | Priority HFP CPP
+| `usps_priority_mail_express` | Priority Mail Express
+| `usps_priority_mail_express_commercial` | Priority Mail Express Commercial
+| `usps_priority_mail_express_cpp` | Priority Mail Express CPP
+| `usps_priority_mail_express_sh` | Priority Mail Express Sh
+| `usps_priority_mail_express_sh_commercial` | Priority Mail Express ShCommercial
+| `usps_priority_mail_express_hfp` | Priority Mail Express HFP
+| `usps_priority_mail_express_hfp_commercial` | Priority Mail Express HFP Commercial
+| `usps_priority_mail_express_hfp_cpp` | Priority Mail Express HFP CPP
+| `usps_priority_mail_cubic` | Priority Mail Cubic
+| `usps_retail_ground` | Retail Ground
+| `usps_media` | Media
+| `usps_library` | Library
+| `usps_all` | All
+| `usps_online` | Online
+| `usps_plus` | Plus
+| `usps_bpm` | BPM
 
 ---
 
@@ -1183,7 +1410,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `fedex_weighing` | WEIGHING | None
 
 
-#### Purolator Courier
+#### Purolator
 
 | Code | Identifier | Description
 | --- | --- | ---
@@ -1302,7 +1529,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `usps_option_abandon_non_delivery` | ABANDON | None
 | `usps_option_return_non_delivery` | RETURN | None
 | `usps_option_redirect_non_delivery` | REDIRECT | Address
-
 
 ---
 

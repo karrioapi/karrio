@@ -1,32 +1,32 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/PurplShip/purplship/raw/main/docs/images/icon.png" alt="Purplship" height="100">
+      <img src="https://github.com/purplship/purplship/raw/main/docs/images/icon.png" alt="purplship" height="100">
     </a>
   </p>
   <h2 align="center">
-    Purplship - The Open Source multi-carrier shipping SDK
+    purplship - The Open Source multi-carrier shipping SDK
   </h2>
   <p align="center">
-    <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/puprlship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
-    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
+    <a href="https://github.com/purplship/purplship/actions"><img src="https://github.com/purplship/purplship/workflows/purplship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" style="max-width:100%;"></a>
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
-    <a href="https://codecov.io/gh/PurplShip/purplship"><img src="https://codecov.io/gh/PurplShip/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
-    <a href="https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709" alt="Codacy Badge" style="max-width:100%;"></a>
+    <a href="https://codecov.io/gh/purplship/purplship"><img src="https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
+    <a href="https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41"></a>
   </p>
 </p>
 
-Puprlship is a modern development kit that simplifies the integration of shipping carriers services into an app.
+puprlship is a modern development kit that simplifies the integration of shipping carriers services into an app.
 
 The key features are:
 
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
-- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
-- **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
+- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Shipping`, `Tracking`...) 
+- **Multi-carrier**: Integrate purplship once and connect to multiple shipping carrier APIs
 - **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 
-*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
+*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/puprlship/purplship-server).*
 
 
 ## Requirements
@@ -56,12 +56,14 @@ Additional extensions:
 - `purplship.dhl-universal`
 - `purplship.dicom`
 - `purplship.fedex`
-- `purplship.purolator-courier`
+- `purplship.purolator`
 - `purplship.royalmail`
 - `purplship.sendle`
 - `purplship.sf-express`
+- `purplship.tnt`
 - `purplship.ups`
 - `purplship.usps`
+- `purplship.usps-international`
 - `purplship.yanwen`
 - `purplship.yunexpress`
 
@@ -156,16 +158,16 @@ print(rates)
 ## Resources
 
 - [**Documentation**](https://sdk.purplship.com)
-- [**Bug Tracker**](https://github.com/PurplShip/purplship/issues)
+- [**Bug Tracker**](https://github.com/puprlship/purplship/issues)
 - [**Community on Discord**](https://discord.gg/kXEa3UMRHd)
 
 ## Contributing
 
-We encourage you to contribute to Purplship! Please check out the
-[Contributing to Purplship guide](/docs/development/contributing.md) for guidelines about how to proceed.
-[Join us!](https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+We encourage you to contribute to puprlship! Please check out the
+[Contributing to purplship guide](/docs/development/contributing.md) for guidelines about how to proceed.
+[Join the purplship Community!](https://github.com/purplship/purplship/discussions)
 
-Do you want to extend Purplship and integrate a custom carrier, check out [Extending Purplship](https://sdk.purplship.com/development/extending/)
+Do you want to extend purplship and integrate a custom carrier, check out [Extending purplship](https://sdk.purplship.com/development/extending/)
 
 ## License
 
@@ -176,4 +178,4 @@ Please see [LICENSE.md](/LICENSE) for licensing details.
 ## Authors
 
 - **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
-- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)
+- **purplship** | hello@purplship.com | [purplship.com](https://purplship.com)

@@ -97,6 +97,8 @@ shipment_data = {
             "width": 3,
             "weight": 4.0,
             "packaging_type": "dhl_parcel",
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
             "is_document": False,
         }
     ],
@@ -253,11 +255,11 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             <CommodityCode>cc</CommodityCode>
             <Weight>
                 <Weight>4</Weight>
-                <WeightUnit>L</WeightUnit>
+                <WeightUnit>K</WeightUnit>
             </Weight>
             <GrossWeight>
                 <Weight>4</Weight>
-                <WeightUnit>L</WeightUnit>
+                <WeightUnit>K</WeightUnit>
             </GrossWeight>
         </ExportLineItem>
         <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
@@ -277,12 +279,12 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
                 </PieceReference>
             </Piece>
         </Pieces>
-        <WeightUnit>L</WeightUnit>
+        <WeightUnit>K</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
         
         <Contents>N/A</Contents>
-        <DimensionUnit>I</DimensionUnit>
+        <DimensionUnit>C</DimensionUnit>
         <PackageType>PA</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>

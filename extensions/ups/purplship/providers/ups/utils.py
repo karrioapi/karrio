@@ -6,7 +6,6 @@ from ups_lib.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTo
 
 class Settings(BaseSettings):
     """UPS connection settings."""
-
     username: str
     password: str
     access_license_number: str

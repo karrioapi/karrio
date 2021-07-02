@@ -43,18 +43,16 @@ def _extract_tracking(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
-        events=list(
-            map(
-                lambda e: TrackingEvent(
-                    date=DF.fdate(e.Date),
-                    time=DF.ftime(e.Time),
-                    code=e.ServiceEvent.EventCode,
-                    location=e.ServiceArea.Description,
-                    description=e.ServiceEvent.Description,
-                ),
-                reversed(events or []),
+        events=[
+            TrackingEvent(
+                date=DF.fdate(e.Date),
+                time=DF.ftime(e.Time),
+                code=e.ServiceEvent.EventCode,
+                location=e.ServiceArea.Description,
+                description=f'{e.ServiceEvent.Description} {e.Signatory}'.strip(),
             )
-        ),
+            for e in reversed(events)
+        ],
         delivered=delivered
     )
 

@@ -3,7 +3,7 @@
 from purplship.core.utils import Enum, Flag, Spec
 from purplship.core import units
 
-PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
+PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 
 class PackagePresets(Flag):

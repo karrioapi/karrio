@@ -1,7 +1,8 @@
-site_name: Purplship
-repo_url: https://github.com/PurplShip/purplship
-repo_name: Purplship/purplship
+site_name: purplship SDK
+repo_url: https://github.com/purplship/purplship
+repo_name: purplship/purplship
 edit_uri: edit/master/docs/
+site_url: https://sdk.purplship.com
 
 theme:
   name: material
@@ -24,7 +25,7 @@ nav:
   - Development:
     - development/architecture.md
     - development/developing.md
-    - Extending Purplship: development/extending.md
+    - Extending purplship: development/extending.md
   - contributing.md
   - roadmap.md
   - references.md
@@ -32,9 +33,13 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/PurplShip
+      link: https://github.com/purplship
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/PurplShip
+
+  analytics:
+    provider: google
+    property: UA-111378601-2
 
 markdown_extensions:
   - admonition
@@ -47,8 +52,4 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
-google_analytics:
-  - UA-111378601-2
-  - auto
-
-copyright: Copyright &copy; 2018 - 2020 Purplship Team
+copyright: Copyright &copy; 2021 purplship

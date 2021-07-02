@@ -24,7 +24,7 @@ from purplship.providers.canadapost.units import OptionCode, ServiceType, Packag
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
     price_quotes = response.xpath(".//*[local-name() = $name]", name="price-quote")
     quotes: List[RateDetails] = [
@@ -34,48 +34,42 @@ def parse_rate_response(
 
 
 def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails:
-    price_quote = price_quoteType()
-    price_quote.build(price_quote_node)
-    currency = Currency.CAD.name
-    discounts = [
-        ChargeDetails(
-            name=d.adjustment_name,
-            currency=currency,
-            amount=NF.decimal(d.adjustment_cost or 0),
-        )
-        for d in price_quote.price_details.adjustments.adjustment
-    ]
+    price_quote = XP.build(price_quoteType, price_quote_node)
+    adjustments = (
+        price_quote.price_details.adjustments.adjustment
+        if price_quote.price_details.adjustments is not None
+        else []
+    )
+    discount = sum(NF.decimal(d.adjustment_cost or 0) for d in adjustments)
+    transit_days = price_quote.service_standard.expected_transit_time
+
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency=currency,
-        transit_days=cast(
-            service_standardType, price_quote.service_standard
-        ).expected_transit_time,
+        currency=Currency.CAD.name,
+        transit_days=transit_days,
         service=ServiceType(price_quote.service_code).name,
         base_charge=NF.decimal(price_quote.price_details.base or 0),
         total_charge=NF.decimal(price_quote.price_details.due or 0),
-        discount=NF.decimal(reduce(lambda total, d: total + d.amount, discounts, 0.0)),
+        discount=NF.decimal(discount),
         duties_and_taxes=NF.decimal(
             float(price_quote.price_details.taxes.gst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.hst.valueOf_ or 0)
         ),
-        extra_charges=list(
-            map(
-                lambda a: ChargeDetails(
-                    name=a.adjustment_name,
-                    currency=currency,
-                    amount=NF.decimal(a.adjustment_cost or 0),
-                ),
-                price_quote.price_details.adjustments.adjustment,
+        extra_charges=[
+            ChargeDetails(
+                name=a.adjustment_name,
+                currency=Currency.CAD.name,
+                amount=NF.decimal(a.adjustment_cost or 0),
             )
-        ),
+            for a in adjustments
+        ],
     )
 
 
 def rate_request(
-    payload: RateRequest, settings: Settings
+        payload: RateRequest, settings: Settings
 ) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
@@ -95,7 +89,7 @@ def rate_request(
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
-        contract_id=None,
+        contract_id=settings.contract_id,
         promo_code=None,
         quote_type=None,
         expected_mailing_date=options.shipment_date,
@@ -143,8 +137,8 @@ def rate_request(
             international=(
                 internationalType(country_code=recipient_postal_code)
                 if (
-                    payload.recipient.country_code
-                    not in [Country.US.name, Country.CA.name]
+                        payload.recipient.country_code
+                        not in [Country.US.name, Country.CA.name]
                 )
                 else None
             ),

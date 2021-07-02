@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.2.2"
+"purplship" = "^2021.6"
 "carrier.yanwen" = "^2021.2"
 
 [tool.poetry.dev-dependencies]

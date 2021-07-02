@@ -1,6 +1,6 @@
 # purplship.usps
 
-This package is a USPS Express extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a USPS extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
 
 ## Requirements
 

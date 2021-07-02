@@ -1,19 +1,19 @@
 ## Overview
 
-Purplship proposes a set of unified APIs accepting all required data to send requests to the supported carrier services.
+purplship proposes a set of unified APIs accepting all required data to send requests to the supported carrier services.
 
-The typical data flows for all requests processed by Purplship is illustrated bellow.
+The typical data flows for all requests processed by purplship is illustrated bellow.
 
 <figure>
   <img src="/images/purplship-sequence-diagram.svg" height="300" />
-  <figcaption>Purplship - Sequence</figcaption>
+  <figcaption>purplship - Sequence</figcaption>
 </figure>
 
-To accomplish this, the overall abstraction proposed by Purplship come down to the implementation these abstract classes.
+To accomplish this, the overall abstraction proposed by purplship come down to the implementation these abstract classes.
 
 <figure>
   <img src="/images/purplship-class-diagram.svg" height="300" />
-  <figcaption>Purplship - Class Diagram</figcaption>
+  <figcaption>purplship - Class Diagram</figcaption>
 </figure>
 
 ### The `Settings`
@@ -30,7 +30,7 @@ To accomplish this, the overall abstraction proposed by Purplship come down to t
 ### The `Mapper`
 
 !!! abstract ""
-    The `Mapper` class translates the unified Purplship API data into carrier specific data to send requests
+    The `Mapper` class translates the unified purplship API data into carrier specific data to send requests
     and also takes care or parsing the response returned back into a unified data model 
     
     Learn more about the Mapper pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/dataMapper.html)
@@ -70,7 +70,7 @@ canadapost_proxy = Proxy(canadapost_settings)
 from purplship.core.models import PickupRequest, Address
 
 
-# A Purplship unified Pickup request type
+# A purplship unified Pickup request type
 pickup_request: PickupRequest = PickupRequest(
     pickup_date="2021-12-15",
     ready_time="10:00",
@@ -90,7 +90,7 @@ canadapost_pickup_request = canadapost_mapper.create_pickup_request(pickup_reque
 # Send the request the carrier
 canadapost_pickup_response = canadapost_proxy.schedule_pickup(canadapost_pickup_request)
 
-# Parse the response into a Purplship unified Pickup response type
+# Parse the response into a purplship unified Pickup response type
 pickup_response = canadapost_mapper.parse_pickup_response(canadapost_pickup_response)
 
 print(pickup_response)
@@ -112,20 +112,20 @@ print(pickup_response)
 ```
 
 !!! info
-    The example above illustrates a Pickup scheduling but the idea is that all requests made by Purplship follow the same lifecycle:
+    The example above illustrates a Pickup scheduling but the idea is that all requests made by purplship follow the same lifecycle:
     
-    - convert unified Purplship API data into a carrier specific request using the `Mapper`
+    - convert unified purplship API data into a carrier specific request using the `Mapper`
     - send the request to the carrier using the `Proxy`
-    - and parse back the response into a unified Purplship data using the `Mapper`
+    - and parse back the response into a unified purplship data using the `Mapper`
 
 !!! caution
-    Note that Purplship does not raise exceptions when there is a failure during requests but rather always return 
+    Note that purplship does not raise exceptions when there is a failure during requests but rather always return 
     a tuple of a `response` if `successful` with a list of `messages` if any **notes**, **messages** or **errors** 
     in case of `failures` are returned.
 
 ## Fluent API
 
-Once you understand the lifecycle above, you can send any requests supported by Purplship with the same mental model.
+Once you understand the lifecycle above, you can send any requests supported by purplship with the same mental model.
 However, this looks a little verbose. That's why we introduced a Fluent interface to handle this process with fewer lines.
 
 ```python
