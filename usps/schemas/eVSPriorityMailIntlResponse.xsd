@@ -22,7 +22,7 @@
                 <xs:element name="ExtraServices">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="ExtraService">
+                            <xs:element name="ExtraService" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element type="xs:byte" name="ServiceID"/>

@@ -3,7 +3,7 @@
     <xs:element name="eVSICancelResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:int" name="BarcodeNumber"/>
+                <xs:element type="xs:string" name="BarcodeNumber"/>
                 <xs:element type="xs:string" name="Status"/>
                 <xs:element type="xs:string" name="Reason"/>
             </xs:sequence>

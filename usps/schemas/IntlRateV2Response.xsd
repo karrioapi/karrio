@@ -52,11 +52,11 @@
                               <xs:sequence>
                                 <xs:element type="xs:string" name="ServiceID"/>
                                 <xs:element type="xs:string" name="ServiceName"/>
-                                <xs:element type="xs:boolean" name="Available"/>
-                                <xs:element type="xs:boolean" name="OnlineAvailable"/>
+                                <xs:element type="xs:string" name="Available"/>
+                                <xs:element type="xs:string" name="OnlineAvailable"/>
                                 <xs:element type="xs:float" name="Price"/>
                                 <xs:element type="xs:float" name="OnlinePrice"/>
-                                <xs:element type="xs:boolean" name="DeclaredValueRequired" minOccurs="0"/>
+                                <xs:element type="xs:string" name="DeclaredValueRequired" minOccurs="0"/>
                               </xs:sequence>
                             </xs:complexType>
                           </xs:element>

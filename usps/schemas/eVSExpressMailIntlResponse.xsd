@@ -18,9 +18,9 @@
                 <xs:element type="xs:string" name="Observations"/>
                 <xs:element type="xs:string" name="Regulations"/>
                 <xs:element type="xs:string" name="AdditionalRestrictions"/>
-                <xs:element type="xs:byte" name="InsuranceFee"/>
+                <xs:element type="xs:float" name="InsuranceFee"/>
                 <xs:element type="xs:string" name="GuaranteeAvailability"/>
-                <xs:element type="xs:byte" name="RemainingBarcodes"/>
+                <xs:element type="xs:string" name="RemainingBarcodes"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Feb 26 20:05:29 2021 by generateDS.py version 2.37.16.
+# Generated Sat May 29 15:46:58 2021 by generateDS.py version 2.38.6.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', 'usps_lib/intl_rate_v2_response.py')
+#   ('-o', './usps_lib/intl_rate_v2_response.py')
 #
 # Command line arguments:
-#   schemas/IntlRateV2Response.xsd
+#   ./schemas/IntlRateV2Response.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "usps_lib/intl_rate_v2_response.py" schemas/IntlRateV2Response.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/intl_rate_v2_response.py" ./schemas/IntlRateV2Response.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps
@@ -339,6 +339,7 @@ except ModulenotfoundExp_ as exp:
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -2254,11 +2255,11 @@ class ExtraServiceType(GeneratedsSuper):
         if self.Available is not None:
             namespaceprefix_ = self.Available_nsprefix_ + ':' if (UseCapturedNS_ and self.Available_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAvailable>%s</%sAvailable>%s' % (namespaceprefix_ , self.gds_format_boolean(self.Available, input_name='Available'), namespaceprefix_ , eol_))
+            outfile.write('<%sAvailable>%s</%sAvailable>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Available), input_name='Available')), namespaceprefix_ , eol_))
         if self.OnlineAvailable is not None:
             namespaceprefix_ = self.OnlineAvailable_nsprefix_ + ':' if (UseCapturedNS_ and self.OnlineAvailable_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOnlineAvailable>%s</%sOnlineAvailable>%s' % (namespaceprefix_ , self.gds_format_boolean(self.OnlineAvailable, input_name='OnlineAvailable'), namespaceprefix_ , eol_))
+            outfile.write('<%sOnlineAvailable>%s</%sOnlineAvailable>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OnlineAvailable), input_name='OnlineAvailable')), namespaceprefix_ , eol_))
         if self.Price is not None:
             namespaceprefix_ = self.Price_nsprefix_ + ':' if (UseCapturedNS_ and self.Price_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2270,7 +2271,7 @@ class ExtraServiceType(GeneratedsSuper):
         if self.DeclaredValueRequired is not None:
             namespaceprefix_ = self.DeclaredValueRequired_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredValueRequired_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDeclaredValueRequired>%s</%sDeclaredValueRequired>%s' % (namespaceprefix_ , self.gds_format_boolean(self.DeclaredValueRequired, input_name='DeclaredValueRequired'), namespaceprefix_ , eol_))
+            outfile.write('<%sDeclaredValueRequired>%s</%sDeclaredValueRequired>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DeclaredValueRequired), input_name='DeclaredValueRequired')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -2298,16 +2299,16 @@ class ExtraServiceType(GeneratedsSuper):
             self.ServiceName = value_
             self.ServiceName_nsprefix_ = child_.prefix
         elif nodeName_ == 'Available':
-            sval_ = child_.text
-            ival_ = self.gds_parse_boolean(sval_, node, 'Available')
-            ival_ = self.gds_validate_boolean(ival_, node, 'Available')
-            self.Available = ival_
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Available')
+            value_ = self.gds_validate_string(value_, node, 'Available')
+            self.Available = value_
             self.Available_nsprefix_ = child_.prefix
         elif nodeName_ == 'OnlineAvailable':
-            sval_ = child_.text
-            ival_ = self.gds_parse_boolean(sval_, node, 'OnlineAvailable')
-            ival_ = self.gds_validate_boolean(ival_, node, 'OnlineAvailable')
-            self.OnlineAvailable = ival_
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'OnlineAvailable')
+            value_ = self.gds_validate_string(value_, node, 'OnlineAvailable')
+            self.OnlineAvailable = value_
             self.OnlineAvailable_nsprefix_ = child_.prefix
         elif nodeName_ == 'Price' and child_.text:
             sval_ = child_.text
@@ -2322,10 +2323,10 @@ class ExtraServiceType(GeneratedsSuper):
             self.OnlinePrice = fval_
             self.OnlinePrice_nsprefix_ = child_.prefix
         elif nodeName_ == 'DeclaredValueRequired':
-            sval_ = child_.text
-            ival_ = self.gds_parse_boolean(sval_, node, 'DeclaredValueRequired')
-            ival_ = self.gds_validate_boolean(ival_, node, 'DeclaredValueRequired')
-            self.DeclaredValueRequired = ival_
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DeclaredValueRequired')
+            value_ = self.gds_validate_string(value_, node, 'DeclaredValueRequired')
+            self.DeclaredValueRequired = value_
             self.DeclaredValueRequired_nsprefix_ = child_.prefix
 # end class ExtraServiceType
 

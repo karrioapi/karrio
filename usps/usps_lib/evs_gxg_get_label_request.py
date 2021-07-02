@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Feb 26 09:55:19 2021 by generateDS.py version 2.37.16.
+# Generated Sat May 29 15:47:02 2021 by generateDS.py version 2.38.6.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', 'usps_lib/evs_gxg_get_label_request.py')
+#   ('-o', './usps_lib/evs_gxg_get_label_request.py')
 #
 # Command line arguments:
-#   schemas/eVSGXGGetLabelRequest.xsd
+#   ./schemas/eVSGXGGetLabelRequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "usps_lib/evs_gxg_get_label_request.py" schemas/eVSGXGGetLabelRequest.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/evs_gxg_get_label_request.py" ./schemas/eVSGXGGetLabelRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps
@@ -339,6 +339,7 @@ except ModulenotfoundExp_ as exp:
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -1803,27 +1804,27 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
         if self.GrossPounds is not None:
             namespaceprefix_ = self.GrossPounds_nsprefix_ + ':' if (UseCapturedNS_ and self.GrossPounds_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sGrossPounds>%s</%sGrossPounds>%s' % (namespaceprefix_ , self.gds_format_integer(self.GrossPounds, input_name='GrossPounds'), namespaceprefix_ , eol_))
+            outfile.write('<%sGrossPounds>%s</%sGrossPounds>%s' % (namespaceprefix_ , self.gds_format_decimal(self.GrossPounds, input_name='GrossPounds'), namespaceprefix_ , eol_))
         if self.GrossOunces is not None:
             namespaceprefix_ = self.GrossOunces_nsprefix_ + ':' if (UseCapturedNS_ and self.GrossOunces_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sGrossOunces>%s</%sGrossOunces>%s' % (namespaceprefix_ , self.gds_format_integer(self.GrossOunces, input_name='GrossOunces'), namespaceprefix_ , eol_))
+            outfile.write('<%sGrossOunces>%s</%sGrossOunces>%s' % (namespaceprefix_ , self.gds_format_decimal(self.GrossOunces, input_name='GrossOunces'), namespaceprefix_ , eol_))
         if self.Length is not None:
             namespaceprefix_ = self.Length_nsprefix_ + ':' if (UseCapturedNS_ and self.Length_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sLength>%s</%sLength>%s' % (namespaceprefix_ , self.gds_format_float(self.Length, input_name='Length'), namespaceprefix_ , eol_))
+            outfile.write('<%sLength>%s</%sLength>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Length, input_name='Length'), namespaceprefix_ , eol_))
         if self.Width is not None:
             namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_format_float(self.Width, input_name='Width'), namespaceprefix_ , eol_))
+            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Width, input_name='Width'), namespaceprefix_ , eol_))
         if self.Height is not None:
             namespaceprefix_ = self.Height_nsprefix_ + ':' if (UseCapturedNS_ and self.Height_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_format_float(self.Height, input_name='Height'), namespaceprefix_ , eol_))
+            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Height, input_name='Height'), namespaceprefix_ , eol_))
         if self.Girth is not None:
             namespaceprefix_ = self.Girth_nsprefix_ + ':' if (UseCapturedNS_ and self.Girth_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sGirth>%s</%sGirth>%s' % (namespaceprefix_ , self.gds_format_float(self.Girth, input_name='Girth'), namespaceprefix_ , eol_))
+            outfile.write('<%sGirth>%s</%sGirth>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Girth, input_name='Girth'), namespaceprefix_ , eol_))
         if self.Shape is not None:
             namespaceprefix_ = self.Shape_nsprefix_ + ':' if (UseCapturedNS_ and self.Shape_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -1831,7 +1832,7 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
         if self.CIRequired is not None:
             namespaceprefix_ = self.CIRequired_nsprefix_ + ':' if (UseCapturedNS_ and self.CIRequired_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCIRequired>%s</%sCIRequired>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CIRequired), input_name='CIRequired')), namespaceprefix_ , eol_))
+            outfile.write('<%sCIRequired>%s</%sCIRequired>%s' % (namespaceprefix_ , self.gds_format_boolean(self.CIRequired, input_name='CIRequired'), namespaceprefix_ , eol_))
         if self.InvoiceDate is not None:
             namespaceprefix_ = self.InvoiceDate_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceDate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -1867,7 +1868,7 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
         if self.CIAgreement is not None:
             namespaceprefix_ = self.CIAgreement_nsprefix_ + ':' if (UseCapturedNS_ and self.CIAgreement_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCIAgreement>%s</%sCIAgreement>%s' % (namespaceprefix_ , self.gds_format_boolean(self.CIAgreement, input_name='CIAgreement'), namespaceprefix_ , eol_))
+            outfile.write('<%sCIAgreement>%s</%sCIAgreement>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CIAgreement), input_name='CIAgreement')), namespaceprefix_ , eol_))
         if self.ImageType is not None:
             namespaceprefix_ = self.ImageType_nsprefix_ + ':' if (UseCapturedNS_ and self.ImageType_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -1943,7 +1944,7 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
         if self.BuyerRecipient is not None:
             namespaceprefix_ = self.BuyerRecipient_nsprefix_ + ':' if (UseCapturedNS_ and self.BuyerRecipient_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBuyerRecipient>%s</%sBuyerRecipient>%s' % (namespaceprefix_ , self.gds_format_boolean(self.BuyerRecipient, input_name='BuyerRecipient'), namespaceprefix_ , eol_))
+            outfile.write('<%sBuyerRecipient>%s</%sBuyerRecipient>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BuyerRecipient), input_name='BuyerRecipient')), namespaceprefix_ , eol_))
         if self.TermsPayment is not None:
             namespaceprefix_ = self.TermsPayment_nsprefix_ + ':' if (UseCapturedNS_ and self.TermsPayment_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -1955,7 +1956,7 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
         if self.OptOutOfSPE is not None:
             namespaceprefix_ = self.OptOutOfSPE_nsprefix_ + ':' if (UseCapturedNS_ and self.OptOutOfSPE_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOptOutOfSPE>%s</%sOptOutOfSPE>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OptOutOfSPE), input_name='OptOutOfSPE')), namespaceprefix_ , eol_))
+            outfile.write('<%sOptOutOfSPE>%s</%sOptOutOfSPE>%s' % (namespaceprefix_ , self.gds_format_boolean(self.OptOutOfSPE, input_name='OptOutOfSPE'), namespaceprefix_ , eol_))
         if self.PermitNumber is not None:
             namespaceprefix_ = self.PermitNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.PermitNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2243,38 +2244,38 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
             self.InsuredValue_nsprefix_ = child_.prefix
         elif nodeName_ == 'GrossPounds' and child_.text:
             sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'GrossPounds')
-            ival_ = self.gds_validate_integer(ival_, node, 'GrossPounds')
-            self.GrossPounds = ival_
+            fval_ = self.gds_parse_decimal(sval_, node, 'GrossPounds')
+            fval_ = self.gds_validate_decimal(fval_, node, 'GrossPounds')
+            self.GrossPounds = fval_
             self.GrossPounds_nsprefix_ = child_.prefix
         elif nodeName_ == 'GrossOunces' and child_.text:
             sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'GrossOunces')
-            ival_ = self.gds_validate_integer(ival_, node, 'GrossOunces')
-            self.GrossOunces = ival_
+            fval_ = self.gds_parse_decimal(sval_, node, 'GrossOunces')
+            fval_ = self.gds_validate_decimal(fval_, node, 'GrossOunces')
+            self.GrossOunces = fval_
             self.GrossOunces_nsprefix_ = child_.prefix
         elif nodeName_ == 'Length' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Length')
-            fval_ = self.gds_validate_float(fval_, node, 'Length')
+            fval_ = self.gds_parse_decimal(sval_, node, 'Length')
+            fval_ = self.gds_validate_decimal(fval_, node, 'Length')
             self.Length = fval_
             self.Length_nsprefix_ = child_.prefix
         elif nodeName_ == 'Width' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Width')
-            fval_ = self.gds_validate_float(fval_, node, 'Width')
+            fval_ = self.gds_parse_decimal(sval_, node, 'Width')
+            fval_ = self.gds_validate_decimal(fval_, node, 'Width')
             self.Width = fval_
             self.Width_nsprefix_ = child_.prefix
         elif nodeName_ == 'Height' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Height')
-            fval_ = self.gds_validate_float(fval_, node, 'Height')
+            fval_ = self.gds_parse_decimal(sval_, node, 'Height')
+            fval_ = self.gds_validate_decimal(fval_, node, 'Height')
             self.Height = fval_
             self.Height_nsprefix_ = child_.prefix
         elif nodeName_ == 'Girth' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Girth')
-            fval_ = self.gds_validate_float(fval_, node, 'Girth')
+            fval_ = self.gds_parse_decimal(sval_, node, 'Girth')
+            fval_ = self.gds_validate_decimal(fval_, node, 'Girth')
             self.Girth = fval_
             self.Girth_nsprefix_ = child_.prefix
         elif nodeName_ == 'Shape':
@@ -2284,10 +2285,10 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
             self.Shape = value_
             self.Shape_nsprefix_ = child_.prefix
         elif nodeName_ == 'CIRequired':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CIRequired')
-            value_ = self.gds_validate_string(value_, node, 'CIRequired')
-            self.CIRequired = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'CIRequired')
+            ival_ = self.gds_validate_boolean(ival_, node, 'CIRequired')
+            self.CIRequired = ival_
             self.CIRequired_nsprefix_ = child_.prefix
         elif nodeName_ == 'InvoiceDate':
             value_ = child_.text
@@ -2338,10 +2339,10 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
             self.CountryUltDest = value_
             self.CountryUltDest_nsprefix_ = child_.prefix
         elif nodeName_ == 'CIAgreement':
-            sval_ = child_.text
-            ival_ = self.gds_parse_boolean(sval_, node, 'CIAgreement')
-            ival_ = self.gds_validate_boolean(ival_, node, 'CIAgreement')
-            self.CIAgreement = ival_
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CIAgreement')
+            value_ = self.gds_validate_string(value_, node, 'CIAgreement')
+            self.CIAgreement = value_
             self.CIAgreement_nsprefix_ = child_.prefix
         elif nodeName_ == 'ImageType':
             value_ = child_.text
@@ -2452,10 +2453,10 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
             self.BuyerTaxID = value_
             self.BuyerTaxID_nsprefix_ = child_.prefix
         elif nodeName_ == 'BuyerRecipient':
-            sval_ = child_.text
-            ival_ = self.gds_parse_boolean(sval_, node, 'BuyerRecipient')
-            ival_ = self.gds_validate_boolean(ival_, node, 'BuyerRecipient')
-            self.BuyerRecipient = ival_
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BuyerRecipient')
+            value_ = self.gds_validate_string(value_, node, 'BuyerRecipient')
+            self.BuyerRecipient = value_
             self.BuyerRecipient_nsprefix_ = child_.prefix
         elif nodeName_ == 'TermsPayment':
             value_ = child_.text
@@ -2470,10 +2471,10 @@ class eVSGXGGetLabelRequest(GeneratedsSuper):
             self.ActionCode = value_
             self.ActionCode_nsprefix_ = child_.prefix
         elif nodeName_ == 'OptOutOfSPE':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'OptOutOfSPE')
-            value_ = self.gds_validate_string(value_, node, 'OptOutOfSPE')
-            self.OptOutOfSPE = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'OptOutOfSPE')
+            ival_ = self.gds_validate_boolean(ival_, node, 'OptOutOfSPE')
+            self.OptOutOfSPE = ival_
             self.OptOutOfSPE_nsprefix_ = child_.prefix
         elif nodeName_ == 'PermitNumber':
             value_ = child_.text
@@ -2890,23 +2891,23 @@ class ItemDetailType(GeneratedsSuper):
         if self.UnitValue is not None:
             namespaceprefix_ = self.UnitValue_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitValue_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sUnitValue>%s</%sUnitValue>%s' % (namespaceprefix_ , self.gds_format_float(self.UnitValue, input_name='UnitValue'), namespaceprefix_ , eol_))
+            outfile.write('<%sUnitValue>%s</%sUnitValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.UnitValue, input_name='UnitValue'), namespaceprefix_ , eol_))
         if self.NetPounds is not None:
             namespaceprefix_ = self.NetPounds_nsprefix_ + ':' if (UseCapturedNS_ and self.NetPounds_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNetPounds>%s</%sNetPounds>%s' % (namespaceprefix_ , self.gds_format_float(self.NetPounds, input_name='NetPounds'), namespaceprefix_ , eol_))
+            outfile.write('<%sNetPounds>%s</%sNetPounds>%s' % (namespaceprefix_ , self.gds_format_decimal(self.NetPounds, input_name='NetPounds'), namespaceprefix_ , eol_))
         if self.NetOunces is not None:
             namespaceprefix_ = self.NetOunces_nsprefix_ + ':' if (UseCapturedNS_ and self.NetOunces_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNetOunces>%s</%sNetOunces>%s' % (namespaceprefix_ , self.gds_format_float(self.NetOunces, input_name='NetOunces'), namespaceprefix_ , eol_))
+            outfile.write('<%sNetOunces>%s</%sNetOunces>%s' % (namespaceprefix_ , self.gds_format_decimal(self.NetOunces, input_name='NetOunces'), namespaceprefix_ , eol_))
         if self.UnitOfMeasure is not None:
             namespaceprefix_ = self.UnitOfMeasure_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasure_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sUnitOfMeasure>%s</%sUnitOfMeasure>%s' % (namespaceprefix_ , self.gds_format_float(self.UnitOfMeasure, input_name='UnitOfMeasure'), namespaceprefix_ , eol_))
+            outfile.write('<%sUnitOfMeasure>%s</%sUnitOfMeasure>%s' % (namespaceprefix_ , self.gds_format_decimal(self.UnitOfMeasure, input_name='UnitOfMeasure'), namespaceprefix_ , eol_))
         if self.HSTariffNumber is not None:
             namespaceprefix_ = self.HSTariffNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.HSTariffNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sHSTariffNumber>%s</%sHSTariffNumber>%s' % (namespaceprefix_ , self.gds_format_integer(self.HSTariffNumber, input_name='HSTariffNumber'), namespaceprefix_ , eol_))
+            outfile.write('<%sHSTariffNumber>%s</%sHSTariffNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HSTariffNumber), input_name='HSTariffNumber')), namespaceprefix_ , eol_))
         if self.CountryofManufacture is not None:
             namespaceprefix_ = self.CountryofManufacture_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryofManufacture_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2950,33 +2951,33 @@ class ItemDetailType(GeneratedsSuper):
             self.Quantity_nsprefix_ = child_.prefix
         elif nodeName_ == 'UnitValue' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'UnitValue')
-            fval_ = self.gds_validate_float(fval_, node, 'UnitValue')
+            fval_ = self.gds_parse_decimal(sval_, node, 'UnitValue')
+            fval_ = self.gds_validate_decimal(fval_, node, 'UnitValue')
             self.UnitValue = fval_
             self.UnitValue_nsprefix_ = child_.prefix
         elif nodeName_ == 'NetPounds' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'NetPounds')
-            fval_ = self.gds_validate_float(fval_, node, 'NetPounds')
+            fval_ = self.gds_parse_decimal(sval_, node, 'NetPounds')
+            fval_ = self.gds_validate_decimal(fval_, node, 'NetPounds')
             self.NetPounds = fval_
             self.NetPounds_nsprefix_ = child_.prefix
         elif nodeName_ == 'NetOunces' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'NetOunces')
-            fval_ = self.gds_validate_float(fval_, node, 'NetOunces')
+            fval_ = self.gds_parse_decimal(sval_, node, 'NetOunces')
+            fval_ = self.gds_validate_decimal(fval_, node, 'NetOunces')
             self.NetOunces = fval_
             self.NetOunces_nsprefix_ = child_.prefix
         elif nodeName_ == 'UnitOfMeasure' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'UnitOfMeasure')
-            fval_ = self.gds_validate_float(fval_, node, 'UnitOfMeasure')
+            fval_ = self.gds_parse_decimal(sval_, node, 'UnitOfMeasure')
+            fval_ = self.gds_validate_decimal(fval_, node, 'UnitOfMeasure')
             self.UnitOfMeasure = fval_
             self.UnitOfMeasure_nsprefix_ = child_.prefix
-        elif nodeName_ == 'HSTariffNumber' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'HSTariffNumber')
-            ival_ = self.gds_validate_integer(ival_, node, 'HSTariffNumber')
-            self.HSTariffNumber = ival_
+        elif nodeName_ == 'HSTariffNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'HSTariffNumber')
+            value_ = self.gds_validate_string(value_, node, 'HSTariffNumber')
+            self.HSTariffNumber = value_
             self.HSTariffNumber_nsprefix_ = child_.prefix
         elif nodeName_ == 'CountryofManufacture':
             value_ = child_.text
