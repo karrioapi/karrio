@@ -45,13 +45,17 @@ class TestCanadaPostRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
+            )
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteParsingError))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteParsingError)
+            )
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mock:
@@ -82,8 +86,8 @@ RatePayload = {
     "options": {
         "signature_confirmation": True,
         "shipment_date": "2020-12-18",
-        "insurance": 1000
-    }
+        "insurance": 1000,
+    },
 }
 
 RateWithPresetPayload = {
@@ -154,63 +158,67 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 9.59,
-            "carrier_name": "canadapost",
             "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
-            "transit_days": 2,
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
+            "meta": {"service_name": "canadapost_expedited_parcel"},
             "service": "canadapost_expedited_parcel",
             "total_charge": 10.21,
+            "transit_days": 2,
         },
         {
             "base_charge": 22.64,
-            "carrier_name": "canadapost",
             "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": 2.56,
             "duties_and_taxes": 0.0,
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
             ],
+            "meta": {"service_name": "canadapost_priority"},
             "service": "canadapost_priority",
             "total_charge": 25.2,
+            "transit_days": 1,
         },
         {
             "base_charge": 9.59,
-            "carrier_name": "canadapost",
             "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
-            "transit_days": 4,
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
+            "meta": {"service_name": "canadapost_regular_parcel"},
             "service": "canadapost_regular_parcel",
             "total_charge": 10.21,
+            "transit_days": 4,
         },
         {
             "base_charge": 12.26,
-            "carrier_name": "canadapost",
             "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": 1.38,
             "duties_and_taxes": 0.0,
-            "transit_days": 2,
             "extra_charges": [
                 {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
             ],
+            "meta": {"service_name": "canadapost_xpresspost"},
             "service": "canadapost_xpresspost",
             "total_charge": 13.64,
+            "transit_days": 2,
         },
     ],
     [],
