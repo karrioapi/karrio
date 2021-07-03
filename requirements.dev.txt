@@ -47,25 +47,25 @@ wheel
 
 
 # Installed versions
-eshipper.extension==2021.6rc1
-freightcom.extension==2021.6rc1
-purplship==2021.6rc0
+eshipper.extension
+freightcom.extension
+purplship
 purplship.aramex
 purplship.australiapost
-purplship.canadapost==2021.6rc1
+purplship.canadapost
 purplship.canpar
-purplship.dhl-express==2021.6rc1
+purplship.dhl-express
 purplship.dhl-universal
 purplship.dicom
-purplship.fedex==2021.6rc3
-purplship.purolator==2021.6rc3
+purplship.fedex
+purplship.purolator
 purplship.royalmail
 purplship.sendle
 purplship.sf-express
 purplship.tnt
 purplship.ups
-purplship.usps==2021.6rc0
-purplship.usps_international==2021.6rc0
+purplship.usps
+purplship.usps_international
 purplship.yanwen
 purplship.yunexpress
 
