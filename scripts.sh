@@ -392,7 +392,7 @@ alias run:mail=run_mail_server
 alias ks=kill_server
 
 
-alias gen:js=generate_node_client
+alias gen:node=generate_node_client
 alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client

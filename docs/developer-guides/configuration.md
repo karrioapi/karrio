@@ -1,11 +1,13 @@
 # Configuration
 
-The Purplship server instance is configurable using the environment variables. 
-Purplship server is build with [Django](https://www.djangoproject.com/) 
+The purplship server instance is configurable using the environment variables. 
+purplship server is build with [Django](https://www.djangoproject.com/) 
 and most of [deployment settings](https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/) 
 are relevant to configure this project to few contextual naming differences.
 
 ## DEPLOYMENT MODE
+
+- `SECRET_KEY`
 
 - `DEBUG_MODE`
 
@@ -19,7 +21,7 @@ It is important to set `DEBUG_MODE` to `False` in production for security and pe
 
 Set a list of authorized host in text separated by commas.
 
-**e.g: "test.com,domain.com"**
+**e.g: "test.com,example.com"**
 
 - `SECRET_KEY`
 
@@ -33,6 +35,20 @@ The secret key must be a unique large value for security reason.
 
 You should set `USE_HTTPS` to `True` when you configure your system in production with SSL.
 
+- `PURPLSHIP_WORKERS`
+
+- `BACKGROUND_WORKERS`
+
+- `DETACHED_WORKER`
+
+---
+
+## PROVISIONING
+
+- `ADMIN_EMAIL`
+
+- `ADMIN_PASSWORD`
+
 ---
 
 ## LOGGING
@@ -45,9 +61,11 @@ You should set `USE_HTTPS` to `True` when you configure your system in productio
 
 The default value is **DEBUG** when **DEBUG_MODE** is **True** else **INFO**
 
-- `LOG_PATH`
+- `LOG_DIR`
 
 Is the log file location.
+
+- `WORKER_DB_DIR`
 
 ---
 

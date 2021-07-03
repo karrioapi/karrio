@@ -18,7 +18,7 @@
 
 purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
 processes and fulfilment automation.
-The server is in Python, but you can use any programming language to send API requests to our growing network of 
+The server is in Python, but you can use any programming language to send API requests to our growing network of
 shipping carriers from your app.
 
 - [Join us on Discord](https://discord.gg/gS88uE7sEx)
@@ -171,7 +171,7 @@ To get the quotation of our Enterprise Edition, please visit [purplship.com](htt
 - [PHP](https://github.com/purplship/purplship-php-client)
 - [Python](https://github.com/purplship/purplship-python-client)
 
-Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with 
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
 our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/shemas)
 
 
@@ -181,7 +181,7 @@ our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main
 - [**Community**](https://github.com/purplship/purplship-server/discussions)
 - [**Bug Tracker**](https://github.com/purplship/purplship/issues)
 - [**Blog**](https://blog.purplship.com)
-- [**@PurplShip on Twitter**](https://twitter.com/PurplShip)
+- [**@purplship on Twitter**](https://twitter.com/purplship)
 
 ## License
 

@@ -1,13 +1,13 @@
 # Heroku
 
-## Purplship Deployment
+## purplship Deployment
 
-To deploy Purplship to Heroku, create a new Heroku app and configure your 
-[purplship-heroku](https://github.com/Purplship/purplship-heroku) git repository with
+To deploy purplship to Heroku, create a new Heroku app and configure your 
+[purplship-heroku](https://github.com/purplship/purplship-heroku) git repository with
 Heroku app using:
 
 ```terminal
-git clone https://github.com/Purplship/purplship-heroku.git
+git clone https://github.com/purplship/purplship-heroku.git
 cd purplship-heroku
 heroku git:remote -a '<purplship-app name>'
 heroku buildpacks:add heroku/python
@@ -28,7 +28,7 @@ You can now deploy using
 git push heroku main
 ```
 
-Heroku will install and deploy Purplship automatically.
+Heroku will install and deploy purplship automatically.
 
 ## Setting up the database with initial data
 
@@ -36,7 +36,7 @@ Heroku will install and deploy Purplship automatically.
 heroku run -a '<purplship-app name>' purplship createsuperuser
 ```
 
-## How to log in to Purplship Dashboard
+## How to log in to purplship Dashboard
 
-Once the Purplship Server app has been created on Heroku, you can log in via the URL 
+Once the purplship Server app has been created on Heroku, you can log in via the URL 
 <purplship-app name>.herokuapp.com using the admin account.
