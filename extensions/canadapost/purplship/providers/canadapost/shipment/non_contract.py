@@ -67,7 +67,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
 def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShipmentType]:
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
-    service = ServiceType[payload.service].value
+    service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, OptionCode)
 
     is_intl = (

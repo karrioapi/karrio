@@ -75,17 +75,14 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ShipmentType]:
     package = Packages(payload.parcels, PackagePresets, required=['weight']).single
-    service = ServiceType[payload.service].value
+    service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, OptionCode)
 
     is_intl = (
         payload.recipient.country_code is not None and
         payload.recipient.country_code != 'CA'
     )
-    payment_type = (
-        PaymentType[payload.payment.paid_by].value
-        if payload.payment is not None else None
-    )
+    payment_type = PaymentType.map(getattr(payload.payment, 'paid_by', None)).value
     all_options = (
         [*options, (OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
         if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION) else [*options]

@@ -26,36 +26,33 @@ from purplship.providers.canadapost.units import OptionCode, ServiceType, Packag
 def parse_rate_response(
         response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
-    price_quotes = response.xpath(".//*[local-name() = $name]", name="price-quote")
+    price_quotes = XP.find("price-quote", response)
     quotes: List[RateDetails] = [
         _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes
     ]
     return quotes, parse_error_response(response, settings)
 
 
-def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails:
-    price_quote = XP.build(price_quoteType, price_quote_node)
-    adjustments = (
-        price_quote.price_details.adjustments.adjustment
-        if price_quote.price_details.adjustments is not None
-        else []
-    )
+def _extract_quote(node: Element, settings: Settings) -> RateDetails:
+    quote = XP.build(price_quoteType, node)
+    service = ServiceType.map(quote.service_code)
+    adjustments = getattr(quote.price_details.adjustments, 'adjustment', [])
     discount = sum(NF.decimal(d.adjustment_cost or 0) for d in adjustments)
-    transit_days = price_quote.service_standard.expected_transit_time
+    transit_days = quote.service_standard.expected_transit_time
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=Currency.CAD.name,
         transit_days=transit_days,
-        service=ServiceType(price_quote.service_code).name,
-        base_charge=NF.decimal(price_quote.price_details.base or 0),
-        total_charge=NF.decimal(price_quote.price_details.due or 0),
+        service=service.name_or_key,
+        base_charge=NF.decimal(quote.price_details.base or 0),
+        total_charge=NF.decimal(quote.price_details.due or 0),
         discount=NF.decimal(discount),
         duties_and_taxes=NF.decimal(
-            float(price_quote.price_details.taxes.gst.valueOf_ or 0)
-            + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
-            + float(price_quote.price_details.taxes.hst.valueOf_ or 0)
+            float(quote.price_details.taxes.gst.valueOf_ or 0)
+            + float(quote.price_details.taxes.pst.valueOf_ or 0)
+            + float(quote.price_details.taxes.hst.valueOf_ or 0)
         ),
         extra_charges=[
             ChargeDetails(
@@ -65,6 +62,9 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
             )
             for a in adjustments
         ],
+        meta=dict(
+            service_name=(service.name or quote.service_name)
+        )
     )
 
 
@@ -152,10 +152,3 @@ def _request_serializer(request: mailing_scenario) -> str:
     return XP.export(
         request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
     )
-
-
-def _amount(value):
-    if isinstance(value, (bool)):
-        return None
-
-    return float(value)

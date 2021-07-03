@@ -91,6 +91,7 @@ class ServiceType(Enum):
     canadapost_regular_parcel = "DOM.RP"
     canadapost_expedited_parcel = "DOM.EP"
     canadapost_xpresspost = "DOM.XP"
+    canadapost_xpresspost_certified = "DOM.XP.CERT"
     canadapost_priority = "DOM.PC"
     canadapost_library_books = "DOM.LIB"
     canadapost_expedited_parcel_usa = "USA.EP"

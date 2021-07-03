@@ -1,10 +1,9 @@
 import attr
-from typing import Optional, Type, Any, Callable
+from typing import Optional, Type, Any, Callable, Union, cast
 from enum import Enum as BaseEnum, Flag as BaseFlag, EnumMeta
 
 
 class MetaEnum(EnumMeta):
-
     def __contains__(cls, item):
         if item is None:
             return False
@@ -13,6 +12,14 @@ class MetaEnum(EnumMeta):
 
         return super().__contains__(item)
 
+    def map(cls, key: Any):
+        if key in cls:
+            return EnumWrapper(key, cls[key])
+        elif key in cast(BaseEnum, cls)._value2member_map_:
+            return EnumWrapper(key, cls(key))
+
+        return EnumWrapper(key)
+
 
 class Enum(BaseEnum, metaclass=MetaEnum):
     pass
@@ -20,6 +27,32 @@ class Enum(BaseEnum, metaclass=MetaEnum):
 
 class Flag(BaseFlag, metaclass=MetaEnum):
     pass
+
+
+@attr.s(auto_attribs=True)
+class EnumWrapper:
+    key: Any
+    enum: Optional[Enum] = None
+
+    @property
+    def name(self):
+        return getattr(self.enum, 'name', None)
+
+    @property
+    def value(self):
+        return getattr(self.enum, 'value', None)
+
+    @property
+    def name_or_key(self):
+        return getattr(self.enum, 'name', self.key)
+
+    @property
+    def value_or_key(self):
+        return getattr(self.enum, 'value', self.key)
+
+    @property
+    def object(self):
+        self.enum
 
 
 @attr.s(auto_attribs=True)
