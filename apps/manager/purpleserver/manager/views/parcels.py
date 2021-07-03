@@ -21,7 +21,6 @@ Parcels = PaginatedResult('ParcelList', Parcel)
 
 
 class ParcelList(GenericAPIView):
-    serializer_class = Parcel
     queryset = models.Parcel.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
@@ -45,7 +44,7 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.access_by(request).all()
+        parcels = models.Parcel.access_by(request).filter(shipment_parcels=None)
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)

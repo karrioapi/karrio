@@ -20,7 +20,7 @@ class TestPricing(APITestCase):
             "freight_range": (None, 130.0)
         })
 
-    def test_apply_charge_to_shipment_rates(self):
+    def test_apply_surcharge_amount_to_shipment_rates(self):
         url = reverse('purpleserver.proxy:shipment-rates')
         data = RATING_DATA
 
@@ -31,6 +31,21 @@ class TestPricing(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, RATING_RESPONSE)
+
+    def test_apply_surcharge_percentage_to_shipment_rates(self):
+        self.charge.amount = 2.0
+        self.charge.surcharge_type = "PERCENTAGE"
+        self.charge.save()
+        url = reverse('purpleserver.proxy:shipment-rates')
+        data = RATING_DATA
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertDictEqual(response_data, RATING_WITH_PERCENTAGE_RESPONSE)
 
 
 RATING_DATA = {
@@ -158,7 +173,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST EXPEDITED PARCEL"},
       "service": "canadapost_expedited_parcel",
       "total_charge": 32.99,
       "transit_days": 7,
@@ -185,14 +200,14 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST XPRESSPOST"},
       "service": "canadapost_xpresspost",
       "total_charge": 85.65,
       "transit_days": 2,
       "test_mode": True
     },
     {
-      "base_charge": 101.83,
+      "base_charge": 102.83,
       "carrier_id": "canadapost",
       "carrier_name": "canadapost",
       "carrier_ref": ANY,
@@ -217,9 +232,101 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
       "service": "canadapost_priority",
       "total_charge": 114.93,
+      "transit_days": 2,
+      "test_mode": True
+    }
+  ]
+}
+
+RATING_WITH_PERCENTAGE_RESPONSE = {
+  "messages": [],
+  "rates": [
+    {
+      "base_charge": 29.64,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
+      "currency": "CAD",
+      "discount": -0.95,
+      "duties_and_taxes": 4.3,
+      "extra_charges": [
+        {
+          "amount": 1.24,
+          "currency": "CAD",
+          "name": "Fuel surcharge"
+        },
+        {
+          "amount": -2.19,
+          "currency": "CAD",
+          "name": "SMB Savings"
+        }
+      ],
+      "id": ANY,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST EXPEDITED PARCEL"},
+      "service": "canadapost_expedited_parcel",
+      "total_charge": 32.99,
+      "transit_days": 7,
+      "test_mode": True
+    },
+    {
+      "base_charge": 75.82,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
+      "currency": "CAD",
+      "discount": -1.34,
+      "duties_and_taxes": 11.17,
+      "extra_charges": [
+        {
+          "amount": 3.21,
+          "currency": "CAD",
+          "name": "Fuel surcharge"
+        },
+        {
+          "amount": -4.55,
+          "currency": "CAD",
+          "name": "SMB Savings"
+        }
+      ],
+      "id": ANY,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST XPRESSPOST"},
+      "service": "canadapost_xpresspost",
+      "total_charge": 85.65,
+      "transit_days": 2,
+      "test_mode": True
+    },
+    {
+      "base_charge": 104.11,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
+      "currency": "CAD",
+      "discount": -2.76,
+      "duties_and_taxes": 14.86,
+      "extra_charges": [
+        {
+          "amount": 4.27,
+          "currency": "CAD",
+          "name": "Fuel surcharge"
+        },
+        {
+          "amount": -7.03,
+          "currency": "CAD",
+          "name": "SMB Savings"
+        },
+        {
+          "amount": 2.28,
+          "currency": "CAD",
+          "name": "brokerage"
+        }
+      ],
+      "id": ANY,
+      "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+      "service": "canadapost_priority",
+      "total_charge": 116.21,
       "transit_days": 2,
       "test_mode": True
     }

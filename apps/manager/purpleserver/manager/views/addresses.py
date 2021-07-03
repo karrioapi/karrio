@@ -10,7 +10,7 @@ from django.urls import path
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address
+from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address, Operation
 from purpleserver.manager.serializers import AddressSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
 from purpleserver.manager import models
@@ -22,7 +22,6 @@ Addresses = PaginatedResult('AddressList', Address)
 
 
 class AddressList(GenericAPIView):
-    serializer_class = Address
     queryset = models.Address.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
@@ -46,7 +45,7 @@ class AddressList(GenericAPIView):
         """
         Retrieve all addresses.
         """
-        addresses = models.Address.access_by(request).all()
+        addresses = models.Address.access_by(request).filter(shipper=None, recipient=None)
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
@@ -149,6 +148,39 @@ class AddressDetail(APIView):
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
         reset_related_shipment_rates(shipment)
         return Response(Address(address).data)
+
+    @swagger_auto_schema(
+        tags=['Addresses'],
+        operation_id=f"{ENDPOINT_ID}discard",
+        operation_summary="Discard an address",
+        responses={200: Operation(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request DELETE \\
+                  --url /v1/addresses/<ADDRESS_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
+    )
+    def delete(self, request: Request, pk: str):
+        """
+        Discard an address.
+        """
+        address = models.Address.access_by(request).get(pk=pk)
+        shipment = address.shipper.first() or address.recipient.first()
+        if shipment is not None:
+            raise PurplShipApiException(
+                "This address is linked to a shipment and cannot be removed",
+                status_code=status.HTTP_409_CONFLICT,
+                code='state_error'
+            )
+
+        address.delete(keep_parents=True)
+        serializer = Operation(dict(operation="Discard address", success=True))
+        return Response(serializer.data)
 
 
 router.urls.append(path('addresses', AddressList.as_view(), name="address-list"))

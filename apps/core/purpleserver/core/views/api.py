@@ -41,7 +41,11 @@ class BaseView:
 
 
 class BaseGenericAPIView(generics.GenericAPIView, BaseView):
-    pass
+    def get_queryset(self):
+        if hasattr(self, 'model') and hasattr(self.model, 'access_by'):
+            return self.model.access_by(self.request)
+
+        return getattr(self, 'queryset', None)
 
 
 class GenericAPIView(PurplshipLoggingMixin, BaseGenericAPIView):

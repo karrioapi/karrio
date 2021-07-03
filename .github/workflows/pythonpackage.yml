@@ -15,4 +15,5 @@ jobs:
     - name: Install and Run tests
       run: |
         source ./scripts.sh
+        sudo chown -R 1000 ./
         test_services

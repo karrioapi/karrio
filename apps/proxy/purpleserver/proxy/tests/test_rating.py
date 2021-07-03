@@ -7,9 +7,8 @@ from purpleserver.core.tests import APITestCase
 
 
 class TestRating(APITestCase):
-
     def test_fetch_shipment_rates(self):
-        url = reverse('purpleserver.proxy:shipment-rates')
+        url = reverse("purpleserver.proxy:shipment-rates")
         data = RATING_DATA
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -28,7 +27,7 @@ RATING_DATA = {
         "country_code": "CA",
         "state_code": "BC",
         "residential": True,
-        "address_line1": "5840 Oak St"
+        "address_line1": "5840 Oak St",
     },
     "recipient": {
         "postal_code": "E1C4Z8",
@@ -36,15 +35,17 @@ RATING_DATA = {
         "country_code": "CA",
         "state_code": "NB",
         "residential": False,
-        "address_line1": "125 Church St"
+        "address_line1": "125 Church St",
     },
-    "parcels": [{
-        "weight": 1,
-        "weight_unit": "KG",
-        "package_preset": "canadapost_corrugated_small_box"
-    }],
+    "parcels": [
+        {
+            "weight": 1,
+            "weight_unit": "KG",
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
     "services": ["canadapost_priority"],
-    "carrier_ids": ["canadapost"]
+    "carrier_ids": ["canadapost"],
 }
 
 RETURNED_VALUE = (
@@ -60,17 +61,9 @@ RETURNED_VALUE = (
             total_charge=106.71,
             duties_and_taxes=13.92,
             extra_charges=[
-                ChargeDetails(
-                    amount=2.7,
-                    currency="CAD",
-                    name="Fuel surcharge"
-                ),
-                ChargeDetails(
-                    amount=-11.74,
-                    currency="CAD",
-                    name="SMB Savings"
-                )
-            ]
+                ChargeDetails(amount=2.7, currency="CAD", name="Fuel surcharge"),
+                ChargeDetails(amount=-11.74, currency="CAD", name="SMB Savings"),
+            ],
         )
     ],
     [],
@@ -90,21 +83,17 @@ RATING_RESPONSE = {
             "discount": -9.04,
             "duties_and_taxes": 13.92,
             "extra_charges": [
-                {
-                    "amount": 2.7,
-                    "currency": "CAD",
-                    "name": "Fuel surcharge"
-                },
-                {
-                    "amount": -11.74,
-                    "currency": "CAD",
-                    "name": "SMB Savings"
-                }
+                {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
             ],
             "test_mode": True,
             "service": "canadapost_priority",
             "total_charge": 106.71,
-            "transit_days": 2
+            "transit_days": 2,
+            "meta": {
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
+            },
         }
-    ]
+    ],
 }

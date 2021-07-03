@@ -1,12 +1,13 @@
 import graphene
 
 import purpleserver.graph.extension.orgs.types as types
+import purpleserver.graph.extension.orgs.mutations as mutations
 import purpleserver.orgs.models as models
 
 
 class Query:
-    organization = graphene.Field(types.OrganizationType, id=graphene.Int(required=True))
-    organizations = graphene.List(types.OrganizationType)
+    organizations = graphene.List(types.OrganizationType, is_active=graphene.Boolean(required=False))
+    organization = graphene.Field(types.OrganizationType, id=graphene.String(required=True))
 
     def resolve_organization(self, info, **kwargs):
         return models.Organization.objects.get(users__id=info.context.user.id, **kwargs)
@@ -16,4 +17,5 @@ class Query:
 
 
 class Mutation:
-    pass
+    create_organization = mutations.CreateOrganization.Field()
+    update_organization = mutations.UpdateOrganization.Field()

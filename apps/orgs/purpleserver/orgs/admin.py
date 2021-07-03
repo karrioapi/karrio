@@ -4,7 +4,9 @@ from organizations.base_admin import BaseOrganizationOwnerAdmin
 from organizations.base_admin import BaseOrganizationUserAdmin
 from organizations.base_admin import BaseOwnerInline
 
-from purpleserver.orgs.models import Organization, OrganizationUser, OrganizationOwner
+from purpleserver.orgs.models import (
+    Organization, OrganizationUser, OrganizationOwner, OrganizationInvitation
+)
 
 
 class OrganizationAdmin(BaseOrganizationAdmin):
@@ -14,3 +16,4 @@ class OrganizationAdmin(BaseOrganizationAdmin):
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(OrganizationUser)
 admin.site.register(OrganizationOwner)
+admin.site.register(OrganizationInvitation)

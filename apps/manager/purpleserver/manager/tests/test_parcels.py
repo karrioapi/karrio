@@ -7,9 +7,8 @@ from purpleserver.manager.models import Parcel
 
 
 class TestParcels(APITestCase):
-
     def test_create_parcel(self):
-        url = reverse('purpleserver.manager:parcel-list')
+        url = reverse("purpleserver.manager:parcel-list")
         data = PARCEL_DATA
 
         response = self.client.post(url, data)
@@ -22,18 +21,22 @@ class TestParcels(APITestCase):
 class TestParcelDetails(APITestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.parcel: Parcel = Parcel.objects.create(**{
-            "weight": 1,
-            "width": 20,
-            "height": 10,
-            "length": 29,
-            "weight_unit": "KG",
-            "dimension_unit": "CM",
-            "created_by": self.user
-        })
+        self.parcel: Parcel = Parcel.objects.create(
+            **{
+                "weight": 1,
+                "width": 20,
+                "height": 10,
+                "length": 29,
+                "weight_unit": "KG",
+                "dimension_unit": "CM",
+                "created_by": self.user,
+            }
+        )
 
     def test_update_parcel(self):
-        url = reverse('purpleserver.manager:parcel-details', kwargs=dict(pk=self.parcel.pk))
+        url = reverse(
+            "purpleserver.manager:parcel-details", kwargs=dict(pk=self.parcel.pk)
+        )
         data = PARCEL_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -49,7 +52,7 @@ PARCEL_DATA = {
     "height": 10,
     "length": 29,
     "weight_unit": "KG",
-    "dimension_unit": "CM"
+    "dimension_unit": "CM",
 }
 
 PARCEL_RESPONSE = {
@@ -64,7 +67,7 @@ PARCEL_RESPONSE = {
     "content": None,
     "is_document": False,
     "weight_unit": "KG",
-    "dimension_unit": "CM"
+    "dimension_unit": "CM",
 }
 
 PARCEL_UPDATE_DATA = {
@@ -72,7 +75,7 @@ PARCEL_UPDATE_DATA = {
     "height": 4.5,
     "length": 10.0,
     "weight_unit": "LB",
-    "dimension_unit": "IN"
+    "dimension_unit": "IN",
 }
 
 PARCEL_UPDATE_RESPONSE = {
@@ -87,5 +90,5 @@ PARCEL_UPDATE_RESPONSE = {
     "content": None,
     "is_document": False,
     "weight_unit": "LB",
-    "dimension_unit": "IN"
+    "dimension_unit": "IN",
 }

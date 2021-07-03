@@ -30,6 +30,8 @@ def shipment_updated(sender, instance, created, raw, using, update_fields, *args
         event = EventTypes.shipment_purchased.value
     elif instance.status == serializers.ShipmentStatus.transit.value:
         event = EventTypes.shipment_fulfilled.value
+    elif instance.status == serializers.ShipmentStatus.cancelled.value:
+        event = EventTypes.shipment_cancelled.value
     else:
         return
 

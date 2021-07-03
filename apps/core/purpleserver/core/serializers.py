@@ -12,7 +12,7 @@ from purplship.core.units import (
     LabelType
 )
 from purpleserver.providers.models import MODELS
-from purpleserver.serializers import Serializer
+from purpleserver.serializers import Serializer, allow_model_id
 from purpleserver.core.validators import (
     AugmentedAddressSerializer,
     PresetSerializer,
@@ -20,7 +20,7 @@ from purpleserver.core.validators import (
     valid_date_format,
 )
 
-CARRIERS = [(k, k) for k in MODELS.keys()]
+CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
 COUNTRIES = [(c.name, c.name) for c in list(Country)]
 CURRENCIES = [(c.name, c.name) for c in list(Currency)]
 WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
@@ -33,6 +33,7 @@ LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 class ShipmentStatus(Enum):
     created = 'created'
     purchased = 'purchased'
+    cancelled = 'cancelled'
     shipped = 'shipped'
     transit = 'in-transit'
     delivered = 'delivered'
@@ -208,7 +209,7 @@ class Parcel(EntitySerializer, ParcelData):
 class Payment(Serializer):
 
     paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, default=PAYMENT_TYPES[0][0], help_text="The payor type")
-    currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
+    currency = ChoiceField(required=False, choices=CURRENCIES, help_text="The payment amount currency")
     account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The payor account number")
 
 
@@ -221,6 +222,9 @@ class Duty(Serializer):
     bill_to = Address(required=False, allow_null=True, help_text="The duty billing address")
 
 
+@allow_model_id([
+    ('commodities', 'purpleserver.manager.models.Commodity'),
+])
 class CustomsData(Serializer):
 
     aes = CharField(required=False, allow_blank=True, allow_null=True)
@@ -273,20 +277,25 @@ class Charge(Serializer):
     currency = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge amount currency")
 
 
+@allow_model_id([
+    ('shipper', 'purpleserver.manager.models.Address'),
+    ('recipient', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class RateRequest(Serializer):
-    shipper = Address(required=True, help_text="""
+    shipper = AddressData(required=True, help_text="""
     The address of the party
     
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    recipient = Address(required=True, help_text="""
+    recipient = AddressData(required=True, help_text="""
     The address of the party
     
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcels = Parcel(many=True, required=True, help_text="The shipment's parcels")
+    parcels = ParcelData(many=True, required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
@@ -311,7 +320,10 @@ class TrackingRequest(Serializer):
     language_code = CharField(required=False, allow_blank=True, allow_null=True, default="en", help_text="The tracking details language code")
     level_of_details = CharField(required=False, allow_blank=True, allow_null=True, help_text="The level of event details.")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class PickupRequest(Serializer):
 
     pickup_date = CharField(required=True, validators=[valid_date_format], help_text="""
@@ -343,9 +355,11 @@ class PickupRequest(Serializer):
     """)
     options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific pickup options")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class PickupUpdateRequest(Serializer):
-
     pickup_date = CharField(required=True, help_text="""
     The expected pickup date
     
@@ -394,7 +408,9 @@ class Pickup(PickupDetails, PickupRequest):
     parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+])
 class PickupCancelRequest(Serializer):
     confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
     address = AddressData(required=False, help_text="The pickup address")
@@ -447,12 +463,19 @@ class TrackingDetails(Serializer):
     events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
     delivered = BooleanField(required=False, help_text="Specified whether the related shipment was delivered")
     test_mode = BooleanField(required=True, help_text="Specified whether the object was created with a carrier in test mode")
+    pending = BooleanField(required=False, help_text="Specified whether the shipment hasn't been picked up or is in an unknown state")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
     pass
 
 
+@allow_model_id([
+    ('shipper', 'purpleserver.manager.models.Address'),
+    ('recipient', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel'),
+    ('customs', 'purpleserver.manager.models.Customs')
+])
 class ShippingData(Serializer):
     shipper = AddressData(required=True, help_text="""
     The address of the party
@@ -566,6 +589,7 @@ class ShipmentContent(Serializer):
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
     messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
+    tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
 
 class Shipment(EntitySerializer, ShipmentContent):

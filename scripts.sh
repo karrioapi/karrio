@@ -6,16 +6,22 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export DEBUG_MODE=True
+
 export DATABASE_PORT=5432
 export DATABASE_NAME=db
 export DATABASE_ENGINE=postgresql_psycopg2
 export DATABASE_USERNAME=postgres
 export DATABASE_PASSWORD=postgres
+export LOG_DIR="${ROOT:?}/.pship"
+export WORKER_DB_DIR="${ROOT:?}/.pship"
 
 export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
+
+mkdir -p $LOG_DIR
 
 deactivate_env() {
   if command -v deactivate &> /dev/null
@@ -72,10 +78,10 @@ from django.contrib.auth import get_user_model
 from purpleserver.tenants.models import Client
 with tenant_context(Client.objects.get(schema_name='public')):
   if not any(get_user_model().objects.all()):
-     get_user_model().objects.create_superuser('root@domain.com', 'demo')
+     get_user_model().objects.create_superuser('root@example.com', 'demo')
 with tenant_context(Client.objects.get(schema_name='purplship')):
   if not any(get_user_model().objects.all()):
-     get_user_model().objects.create_superuser('admin@domain.com', 'demo')
+     get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
   else
@@ -83,7 +89,7 @@ with tenant_context(Client.objects.get(schema_name='purplship')):
     (echo "
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   get_user_model().objects.create_superuser('admin@domain.com', 'demo')
+   get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
     (echo "from django.contrib.auth import get_user_model; from purpleserver.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
@@ -163,8 +169,9 @@ runserver() {
 		migrate
 	fi
 
+# 	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purpleserver.asgi -k uvicorn.workers.UvicornWorker &
 	purplship runserver &
-	sleep 3
+	sleep 1
 	purplship run_huey -w 2
 
 	kill_server
@@ -210,9 +217,9 @@ _build() {
 }
 
 build() {
-  build_theme &&
+  build_theme -i &&
   build_dashboard &&
-  build_js &&
+  build_js -i &&
   clean_builds
   sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
@@ -224,46 +231,58 @@ build() {
 }
 
 build_theme() {
-  cd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules; yarn && yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
-  cd - || true
-  purplship collectstatic --noinput
+  	cd "${ROOT:?}/webapp" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
+	cd - || true
+	purplship collectstatic --noinput
 }
 
 build_dashboard() {
-  pushd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules; yarn && yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
-  popd
-  purplship collectstatic --noinput
+  cd "${ROOT:?}/webapp" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+	cd -
+	purplship collectstatic --noinput
 }
 
 build_js() {
-  cd "${ROOT:?}/webapp/api" || false &&
-  rm -rf node_modules;
-  yarn && npx gulp build \
-  	--output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
-  cd -
-  purplship collectstatic --noinput
+	cd "${ROOT:?}/webapp/api" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	npx gulp build --output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
+	cd -
+	purplship collectstatic --noinput
 }
 
 dev_webapp() {
   cd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules;
-  yarn && yarn build -w \
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+  yarn build -w \
     --env postbuild="purplship collectstatic --noinput" \
     --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
   cd -
 }
 
 build_image() {
-  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" --no-cache
+	tag=$1
+	shift
+	args=$@
+  	docker build -t "purplship/purplship-server:$tag" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" $args
 }
 
 generate_node_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g javascript \
 		-o /local/codegen/node \
 		-c /local/artifacts/config.json
@@ -274,7 +293,7 @@ generate_node_client() {
 generate_typescript_client() {
 	cd "${ROOT:?}"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g typescript-fetch \
 		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
@@ -293,7 +312,7 @@ generate_php_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g php \
 		-o /local/codegen/php
 
@@ -304,7 +323,7 @@ generate_python_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g python \
 		-o /local/codegen/python
 
@@ -313,17 +332,23 @@ generate_python_client() {
 
 generate_graphql_schema() {
 	cd "${ROOT:?}"
-	purplship graphql_schema --out "${ROOT:?}/graphql/schema.json"
+	purplship graphql_schema --out "${ROOT:?}/schemas/graphql.json"
 	apollo-codegen generate "${ROOT:?}/webapp/graphql/queries.ts" \
-		--schema "${ROOT:?}/graphql/schema.json" \
+		--schema "${ROOT:?}/schemas/graphql.json" \
 		--target typescript \
 		--output "${ROOT:?}/webapp/graphql/types.ts"
 	cd -
 }
 
-generate_swagger_schema() {
+generate_api_schema() {
 	cd "${ROOT:?}"
-	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/openapi/latest.json"
+	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/schemas/swagger.json"
+	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
+	sleep 5 &&
+	curl -X POST -H "Content-Type: application/json" \
+		-d @./schemas/swagger.json http://localhost:8085/api/convert \
+		| python -m json.tool >| ./schemas/openapi.json
+	docker rm -f swagger
 	cd -
 }
 
@@ -341,7 +366,7 @@ class S(BaseHTTPRequestHandler):
     	self.end_headers()
     	self.wfile.write('good'.encode('utf8'))
 addr = 'localhost'
-port = 8080
+port = 5050
 server_address = (addr, port)
 httpd = HTTPServer(server_address, S)
 print(f'Starting httpd server on {addr}:{port}')
@@ -372,7 +397,7 @@ alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client
 alias gen:graph=generate_graphql_schema
-alias gen:api=generate_swagger_schema
+alias gen:api=generate_api_schema
 
 
 alias dev:webapp=dev_webapp

@@ -1,8 +1,8 @@
 from functools import partial
-from typing import List, cast
+from typing import List, cast, Optional
 from django.db import models
-from jsonfield import JSONField
 
+from purpleserver.core.utils import identity
 from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
@@ -37,7 +37,7 @@ class Address(OwnedEntity):
     address_line2 = models.CharField(max_length=100, null=True, blank=True)
 
     validate_location = models.BooleanField(null=True)
-    validation = JSONField(blank=True, null=True)
+    validation = models.JSONField(blank=True, null=True)
 
 
 class Parcel(OwnedEntity):
@@ -109,8 +109,8 @@ class Customs(OwnedEntity):
     invoice_date = models.DateField(null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
-    duty = JSONField(blank=True, null=True, default=None)
-    options = JSONField(blank=True, null=True, default={})
+    duty = models.JSONField(blank=True, null=True, default=partial(identity, value=None))
+    options = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
 
     # System Reference fields
 
@@ -142,8 +142,8 @@ class Pickup(OwnedEntity):
     instruction = models.CharField(max_length=200, null=True, blank=True)
     package_location = models.CharField(max_length=200, null=True, blank=True)
 
-    options = JSONField(blank=True, null=True, default={})
-    pickup_charge = JSONField(blank=True, null=True)
+    options = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    pickup_charge = models.JSONField(blank=True, null=True)
     address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
 
     # System Reference fields
@@ -183,7 +183,7 @@ class Tracking(OwnedEntity):
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50)
-    events = JSONField(blank=True, null=True, default=[])
+    events = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
     delivered = models.BooleanField(blank=True, null=True, default=False)
     test_mode = models.BooleanField(null=False)
 
@@ -202,6 +202,13 @@ class Tracking(OwnedEntity):
     @property
     def carrier_name(self) -> str:
         return cast(Carrier, self.tracking_carrier).data.carrier_name
+
+    @property
+    def pending(self) -> bool:
+        return (
+            len(self.events) == 0 or
+            (len(self.events) == 1 and self.events[0].get('code') == 'CREATED')
+        )
 
 
 class Shipment(OwnedEntity):
@@ -233,17 +240,17 @@ class Shipment(OwnedEntity):
 
     customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 
-    selected_rate = JSONField(blank=True, null=True)
+    selected_rate = models.JSONField(blank=True, null=True)
 
-    payment = JSONField(blank=True, null=True, default=None)
-    options = JSONField(blank=True, null=True, default={})
-    services = JSONField(blank=True, null=True, default=[])
-    messages = JSONField(blank=True, null=True, default=[])
-    meta = JSONField(blank=True, null=True, default={})
+    payment = models.JSONField(blank=True, null=True, default=partial(identity, value=None))
+    options = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    services = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
+    messages = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
+    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
 
     # System Reference fields
 
-    rates = JSONField(blank=True, null=True, default=[])
+    rates = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
     parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
     carriers = models.ManyToManyField(Carrier, blank=True, related_name='rating_carriers')
     selected_rate_carrier = models.ForeignKey(
@@ -262,7 +269,11 @@ class Shipment(OwnedEntity):
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.selected_rate_carrier).data.carrier_name
+        return cast(Carrier, self.selected_rate_carrier).carrier_name
+
+    @property
+    def tracker_id(self) -> Optional[str]:
+        return getattr(self.tracker.first(), 'id', None)
 
     @property
     def carrier_ids(self) -> List[str]:

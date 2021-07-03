@@ -2,7 +2,12 @@ import json
 from unittest.mock import ANY, patch
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import RateDetails, ChargeDetails, ShipmentDetails, ConfirmationDetails
+from purplship.core.models import (
+    RateDetails,
+    ChargeDetails,
+    ShipmentDetails,
+    ConfirmationDetails,
+)
 from purpleserver.core.tests import APITestCase
 import purpleserver.manager.models as models
 
@@ -11,67 +16,69 @@ class TestShipmentFixture(APITestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.shipper: models.Address = models.Address.objects.create(**{
-            "postal_code": "E1C4Z8",
-            "city": "Moncton",
-            "federal_tax_id": None,
-            "state_tax_id": None,
-            "person_name": "John Poop",
-            "company_name": "A corp.",
-            "country_code": "CA",
-            "email": None,
-            "phone_number": "514 000 0000",
-            "state_code": "NB",
-            "suburb": None,
-            "residential": False,
-            "address_line1": "125 Church St",
-            "address_line2": None,
-            "validate_location": False,
-            "validation": None,
-            "created_by": self.user
-        })
-        self.recipient: models.Address = models.Address.objects.create(**{
-            "postal_code": "V6M2V9",
-            "city": "Vancouver",
-            "federal_tax_id": None,
-            "state_tax_id": None,
-            "person_name": "Jane Doe",
-            "company_name": "B corp.",
-            "country_code": "CA",
-            "email": None,
-            "phone_number": "514 000 9999",
-            "state_code": "BC",
-            "suburb": None,
-            "residential": False,
-            "address_line1": "5840 Oak St",
-            "address_line2": None,
-            "validate_location": False,
-            "validation": None,
-            "created_by": self.user
-        })
-        self.parcel: models.Parcel = models.Parcel.objects.create(**{
-            "weight": 1.0,
-            "weight_unit": "KG",
-            "package_preset": "canadapost_corrugated_small_box",
-            "created_by": self.user
-        })
+        self.shipper: models.Address = models.Address.objects.create(
+            **{
+                "postal_code": "E1C4Z8",
+                "city": "Moncton",
+                "federal_tax_id": None,
+                "state_tax_id": None,
+                "person_name": "John Poop",
+                "company_name": "A corp.",
+                "country_code": "CA",
+                "email": None,
+                "phone_number": "514 000 0000",
+                "state_code": "NB",
+                "suburb": None,
+                "residential": False,
+                "address_line1": "125 Church St",
+                "address_line2": None,
+                "validate_location": False,
+                "validation": None,
+                "created_by": self.user,
+            }
+        )
+        self.recipient: models.Address = models.Address.objects.create(
+            **{
+                "postal_code": "V6M2V9",
+                "city": "Vancouver",
+                "federal_tax_id": None,
+                "state_tax_id": None,
+                "person_name": "Jane Doe",
+                "company_name": "B corp.",
+                "country_code": "CA",
+                "email": None,
+                "phone_number": "514 000 9999",
+                "state_code": "BC",
+                "suburb": None,
+                "residential": False,
+                "address_line1": "5840 Oak St",
+                "address_line2": None,
+                "validate_location": False,
+                "validation": None,
+                "created_by": self.user,
+            }
+        )
+        self.parcel: models.Parcel = models.Parcel.objects.create(
+            **{
+                "weight": 1.0,
+                "weight_unit": "KG",
+                "package_preset": "canadapost_corrugated_small_box",
+                "created_by": self.user,
+            }
+        )
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
             created_by=self.user,
             test_mode=True,
-            payment={
-                "currency": "CAD",
-                "paid_by": "sender"
-            },
+            payment={"currency": "CAD", "paid_by": "sender"},
         )
         self.shipment.parcels.set([self.parcel])
 
 
 class TestShipments(APITestCase):
-
     def test_create_shipment(self):
-        url = reverse('purpleserver.manager:shipment-list')
+        url = reverse("purpleserver.manager:shipment-list")
         data = SHIPMENT_DATA
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -85,17 +92,21 @@ class TestShipments(APITestCase):
 
 class TestShipmentDetails(TestShipmentFixture):
     def test_add_shipment_option(self):
-        url = reverse('purpleserver.manager:shipment-options', kwargs=dict(pk=self.shipment.pk))
+        url = reverse(
+            "purpleserver.manager:shipment-options", kwargs=dict(pk=self.shipment.pk)
+        )
         data = SHIPMENT_OPTIONS
 
         response = self.client.post(url, data)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data.get('options'), SHIPMENT_OPTIONS)
+        self.assertDictEqual(response_data.get("options"), SHIPMENT_OPTIONS)
 
     def test_shipment_rates(self):
-        url = reverse('purpleserver.manager:shipment-rates', kwargs=dict(pk=self.shipment.pk))
+        url = reverse(
+            "purpleserver.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk)
+        )
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
@@ -103,7 +114,7 @@ class TestShipmentDetails(TestShipmentFixture):
             response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(dict(rates=response_data['rates']), SHIPMENT_RATES)
+        self.assertDictEqual(dict(rates=response_data["rates"]), SHIPMENT_RATES)
 
 
 class TestShipmentPurchase(TestShipmentFixture):
@@ -121,27 +132,25 @@ class TestShipmentPurchase(TestShipmentFixture):
                 "discount": -9.04,
                 "duties_and_taxes": 13.92,
                 "extra_charges": [
-                    {
-                        "amount": 2.7,
-                        "currency": "CAD",
-                        "name": "Fuel surcharge"
-                    },
-                    {
-                        "amount": -11.74,
-                        "currency": "CAD",
-                        "name": "SMB Savings"
-                    }
+                    {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
+                    {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
                 ],
                 "service": "canadapost_priority",
                 "total_charge": 106.71,
                 "transit_days": 2,
-                "test_mode": True
+                "test_mode": True,
+                "meta": {
+                    "rate_provider": "canadapost",
+                    "service_name": "CANADAPOST PRIORITY",
+                },
             }
         ]
         self.shipment.save()
 
     def test_purchase_shipment(self):
-        url = reverse('purpleserver.manager:shipment-purchase', kwargs=dict(pk=self.shipment.pk))
+        url = reverse(
+            "purpleserver.manager:shipment-purchase", kwargs=dict(pk=self.shipment.pk)
+        )
         data = SHIPMENT_PURCHASE_DATA
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -153,10 +162,16 @@ class TestShipmentPurchase(TestShipmentFixture):
             self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
         # Assert a tracker is created for the newly purchased shipment
-        self.assertTrue(models.Tracking.objects.filter(tracking_number=PURCHASED_SHIPMENT['tracking_number']).exists())
+        self.assertTrue(
+            models.Tracking.objects.filter(
+                tracking_number=PURCHASED_SHIPMENT["tracking_number"]
+            ).exists()
+        )
 
     def test_cancel_shipment(self):
-        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
+        url = reverse(
+            "purpleserver.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+        )
 
         with patch("purpleserver.core.gateway.identity") as mock:
             response = self.client.delete(url)
@@ -167,7 +182,9 @@ class TestShipmentPurchase(TestShipmentFixture):
             self.assertDictEqual(response_data, CANCEL_RESPONSE)
 
     def test_cancel_purchased_shipment(self):
-        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
+        url = reverse(
+            "purpleserver.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+        )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
         self.shipment.selected_rate_carrier = self.carrier
@@ -181,7 +198,11 @@ class TestShipmentPurchase(TestShipmentFixture):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, CANCEL_PURCHASED_RESPONSE)
 
-        self.assertFalse(models.Tracking.objects.filter(tracking_number=self.shipment.tracking_number).exists())
+        self.assertFalse(
+            models.Tracking.objects.filter(
+                tracking_number=self.shipment.tracking_number,
+            ).exists()
+        )
 
 
 SHIPMENT_DATA = {
@@ -194,7 +215,7 @@ SHIPMENT_DATA = {
         "country_code": "CA",
         "postal_code": "E1C4Z8",
         "residential": False,
-        "state_code": "NB"
+        "state_code": "NB",
     },
     "shipper": {
         "address_line1": "5840 Oak St",
@@ -205,18 +226,17 @@ SHIPMENT_DATA = {
         "country_code": "CA",
         "postal_code": "V6M2V9",
         "residential": False,
-        "state_code": "BC"
+        "state_code": "BC",
     },
-    "parcels": [{
-        "weight": 1,
-        "weight_unit": "KG",
-        "package_preset": "canadapost_corrugated_small_box"
-    }],
-    "payment": {
-        "currency": "CAD",
-        "paid_by": "sender"
-    },
-    "carrier_ids": ["canadapost"]
+    "parcels": [
+        {
+            "weight": 1,
+            "weight_unit": "KG",
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
+    "payment": {"currency": "CAD", "paid_by": "sender"},
+    "carrier_ids": ["canadapost"],
 }
 
 SHIPMENT_RATES = {
@@ -231,22 +251,17 @@ SHIPMENT_RATES = {
             "discount": -9.04,
             "duties_and_taxes": 13.92,
             "extra_charges": [
-                {
-                    "amount": 2.7,
-                    "currency": "CAD",
-                    "name": "Fuel surcharge"
-                },
-                {
-                    "amount": -11.74,
-                    "currency": "CAD",
-                    "name": "SMB Savings"
-                }
+                {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
             ],
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
-            "meta": None,
-            "test_mode": True
+            "meta": {
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
+            },
+            "test_mode": True,
         }
     ]
 }
@@ -265,6 +280,7 @@ SHIPMENT_RESPONSE = {
     "selected_rate_id": None,
     **SHIPMENT_RATES,
     "tracking_url": None,
+    "tracker_id": None,
     "shipper": {
         "id": ANY,
         "postal_code": "V6M2V9",
@@ -282,7 +298,7 @@ SHIPMENT_RESPONSE = {
         "address_line1": "5840 Oak St",
         "address_line2": None,
         "validate_location": False,
-        "validation": None
+        "validation": None,
     },
     "recipient": {
         "id": ANY,
@@ -301,42 +317,37 @@ SHIPMENT_RESPONSE = {
         "address_line1": "125 Church St",
         "address_line2": None,
         "validate_location": False,
-        "validation": None
+        "validation": None,
     },
-    "parcels": [{
-        "id": ANY,
-        "weight": 1.0,
-        "width": 42.0,
-        "height": 32.0,
-        "length": 32.0,
-        "packaging_type": None,
-        "package_preset": "canadapost_corrugated_small_box",
-        "description": None,
-        "content": None,
-        "is_document": False,
-        "weight_unit": "KG",
-        "dimension_unit": "CM"
-    }],
-    "payment": {'account_number': None, 'currency': 'CAD', 'paid_by': 'sender'},
+    "parcels": [
+        {
+            "id": ANY,
+            "weight": 1.0,
+            "width": 42.0,
+            "height": 32.0,
+            "length": 32.0,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
+    "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
     "services": [],
     "options": {},
     "customs": None,
     "reference": None,
-    "carrier_ids": [
-        "canadapost"
-    ],
+    "carrier_ids": ["canadapost"],
     "service": None,
     "created_at": ANY,
     "test_mode": True,
-    "messages": []
+    "messages": [],
 }
 
-
-SHIPMENT_OPTIONS = {
-    "insurance": 54,
-    "currency": "CAD"
-}
-
+SHIPMENT_OPTIONS = {"insurance": 54, "currency": "CAD"}
 
 RETURNED_RATES_VALUE = (
     [
@@ -351,26 +362,15 @@ RETURNED_RATES_VALUE = (
             total_charge=106.71,
             duties_and_taxes=13.92,
             extra_charges=[
-                ChargeDetails(
-                    amount=2.7,
-                    currency="CAD",
-                    name="Fuel surcharge"
-                ),
-                ChargeDetails(
-                    amount=-11.74,
-                    currency="CAD",
-                    name="SMB Savings"
-                )
-            ]
+                ChargeDetails(amount=2.7, currency="CAD", name="Fuel surcharge"),
+                ChargeDetails(amount=-11.74, currency="CAD", name="SMB Savings"),
+            ],
         )
     ],
     [],
 )
 
-
-SHIPMENT_PURCHASE_DATA = {
-    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"
-}
+SHIPMENT_PURCHASE_DATA = {"selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"}
 
 SELECTED_RATE = {
     "id": ANY,
@@ -382,22 +382,17 @@ SELECTED_RATE = {
     "discount": -9.04,
     "duties_and_taxes": 13.92,
     "extra_charges": [
-        {
-            "amount": 2.7,
-            "currency": "CAD",
-            "name": "Fuel surcharge"
-        },
-        {
-            "amount": -11.74,
-            "currency": "CAD",
-            "name": "SMB Savings"
-        }
+        {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
+        {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
     ],
     "service": "canadapost_priority",
     "total_charge": 106.71,
     "transit_days": 2,
-    "meta": None,
-    "test_mode": True
+    "meta": {
+        "rate_provider": "canadapost",
+        "service_name": "CANADAPOST PRIORITY",
+    },
+    "test_mode": True,
 }
 
 CREATED_SHIPMENT_RESPONSE = (
@@ -406,9 +401,9 @@ CREATED_SHIPMENT_RESPONSE = (
         carrier_name="canadapost",
         label="==apodifjoefr",
         tracking_number="123456789012",
-        shipment_identifier="123456789012"
+        shipment_identifier="123456789012",
     ),
-    []
+    [],
 )
 
 RETURNED_CANCEL_VALUE = (
@@ -416,7 +411,7 @@ RETURNED_CANCEL_VALUE = (
         carrier_name="canadapost",
         carrier_id="canadapost",
         success=True,
-        operation="Cancel Shipment"
+        operation="Cancel Shipment",
     ),
     [],
 )
@@ -428,7 +423,7 @@ PURCHASED_SHIPMENT = {
     "carrier_id": "canadapost",
     "label": ANY,
     "label_type": "PDF",
-    "meta": {},
+    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
     "selected_rate": SELECTED_RATE,
@@ -436,6 +431,7 @@ PURCHASED_SHIPMENT = {
     "service": "canadapost_priority",
     "rates": [SELECTED_RATE],
     "tracking_url": "/v1/trackers/canadapost/123456789012?test",
+    "tracker_id": ANY,
     "shipper": {
         "id": ANY,
         "postal_code": "E1C4Z8",
@@ -453,7 +449,7 @@ PURCHASED_SHIPMENT = {
         "address_line1": "125 Church St",
         "address_line2": None,
         "validate_location": False,
-        "validation": None
+        "validation": None,
     },
     "recipient": {
         "id": ANY,
@@ -472,49 +468,51 @@ PURCHASED_SHIPMENT = {
         "address_line1": "5840 Oak St",
         "address_line2": None,
         "validate_location": False,
-        "validation": None
+        "validation": None,
     },
-    "parcels": [{
-        "id": ANY,
-        "weight": 1.0,
-        "width": None,
-        "height": None,
-        "length": None,
-        "packaging_type": None,
-        "package_preset": "canadapost_corrugated_small_box",
-        "description": None,
-        "content": None,
-        "is_document": False,
-        "weight_unit": "KG",
-        "dimension_unit": None
-    }],
+    "parcels": [
+        {
+            "id": ANY,
+            "weight": 1.0,
+            "width": None,
+            "height": None,
+            "length": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "weight_unit": "KG",
+            "dimension_unit": None,
+        }
+    ],
     "services": [],
     "options": {},
-    "payment": {'account_number': None, 'currency': 'CAD', 'paid_by': 'sender'},
+    "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
     "customs": None,
     "reference": None,
     "carrier_ids": [],
     "created_at": ANY,
     "test_mode": True,
-    "messages": []
+    "messages": [],
 }
 
 CANCEL_RESPONSE = {
-  "messages": [],
-  "confirmation": {
-    "carrier_name": "None Selected",
-    "carrier_id": "None Selected",
-    "operation": "Cancel Shipment",
-    "success": True
-  }
+    "messages": [],
+    "confirmation": {
+        "carrier_name": "None Selected",
+        "carrier_id": "None Selected",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
 }
 
 CANCEL_PURCHASED_RESPONSE = {
-  "messages": [],
-  "confirmation": {
-    "carrier_name": "canadapost",
-    "carrier_id": "canadapost",
-    "operation": "Cancel Shipment",
-    "success": True
-  }
+    "messages": [],
+    "confirmation": {
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
 }

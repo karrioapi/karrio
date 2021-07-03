@@ -7,11 +7,10 @@ from purpleserver.core.tests import APITestCase
 
 
 class TestTracking(APITestCase):
-
     def test_tracking_shipment(self):
         url = reverse(
-            'purpleserver.proxy:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups")
+            "purpleserver.proxy:shipment-tracking",
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -35,31 +34,32 @@ RETURNED_VALUE = (
                     date="2010-08-30",
                     description="UPS INTERNAL ACTIVITY CODE",
                     location="BONN",
-                    time="10:39"
+                    time="10:39",
                 )
-            ]
+            ],
         )
     ],
     [],
 )
 
 TRACKING_RESPONSE = {
-  "messages": [],
-  "tracking": {
-    "id": ANY,
-    "carrier_id": "ups_package",
-    "carrier_name": "ups",
-    'delivered': None,
-    "events": [
-      {
-        "code": "KB",
-        "date": "2010-08-30",
-        "description": "UPS INTERNAL ACTIVITY CODE",
-        "location": "BONN",
-        "time": "10:39"
-      }
-    ],
-    "test_mode": True,
-    "tracking_number": "1Z12345E6205277936"
-  }
+    "messages": [],
+    "tracking": {
+        "id": ANY,
+        "carrier_id": "ups_package",
+        "carrier_name": "ups",
+        "delivered": None,
+        "events": [
+            {
+                "code": "KB",
+                "date": "2010-08-30",
+                "description": "UPS INTERNAL ACTIVITY CODE",
+                "location": "BONN",
+                "time": "10:39",
+            }
+        ],
+        "pending": False,
+        "test_mode": True,
+        "tracking_number": "1Z12345E6205277936",
+    },
 }

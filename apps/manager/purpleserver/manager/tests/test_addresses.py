@@ -7,9 +7,8 @@ from purpleserver.manager.models import Address
 
 
 class TestAddresses(APITestCase):
-
     def test_create_address(self):
-        url = reverse('purpleserver.manager:address-list')
+        url = reverse("purpleserver.manager:address-list")
         data = ADDRESS_DATA
 
         response = self.client.post(url, data)
@@ -22,23 +21,27 @@ class TestAddresses(APITestCase):
 class TestAddressDetails(APITestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.address: Address = Address.objects.create(**{
-            "address_line1": "5205 rue riviera",
-            "person_name": "Old town Daniel",
-            "phone_number": "438 222 2222",
-            "city": "Montreal",
-            "country_code": "CA",
-            "postal_code": "H8Z2Z3",
-            "residential": True,
-            "state_code": "QC",
-            "suburb": "Hamilton",
-            "validate_location": False,
-            "validation": None,
-            "created_by": self.user
-        })
+        self.address: Address = Address.objects.create(
+            **{
+                "address_line1": "5205 rue riviera",
+                "person_name": "Old town Daniel",
+                "phone_number": "438 222 2222",
+                "city": "Montreal",
+                "country_code": "CA",
+                "postal_code": "H8Z2Z3",
+                "residential": True,
+                "state_code": "QC",
+                "suburb": "Hamilton",
+                "validate_location": False,
+                "validation": None,
+                "created_by": self.user,
+            }
+        )
 
     def test_update_address(self):
-        url = reverse('purpleserver.manager:address-details', kwargs=dict(pk=self.address.pk))
+        url = reverse(
+            "purpleserver.manager:address-details", kwargs=dict(pk=self.address.pk)
+        )
         data = ADDRESS_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -56,7 +59,7 @@ ADDRESS_DATA = {
     "country_code": "CA",
     "postal_code": "H8Z2Z3",
     "residential": True,
-    "state_code": "QC"
+    "state_code": "QC",
 }
 
 ADDRESS_RESPONSE = {
@@ -76,14 +79,14 @@ ADDRESS_RESPONSE = {
     "address_line1": "5205 rue riviera",
     "address_line2": None,
     "validate_location": False,
-    "validation": None
+    "validation": None,
 }
 
 ADDRESS_UPDATE_DATA = {
     "person_name": "John Doe",
     "company_name": "Doe corp",
     "residential": False,
-    "suburb": None
+    "suburb": None,
 }
 
 ADDRESS_UPDATE_RESPONSE = {
@@ -103,5 +106,5 @@ ADDRESS_UPDATE_RESPONSE = {
     "address_line1": "5205 rue riviera",
     "address_line2": None,
     "validate_location": False,
-    "validation": None
+    "validation": None,
 }

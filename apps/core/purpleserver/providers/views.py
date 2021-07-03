@@ -46,7 +46,7 @@ class CarrierList(GenericAPIView):
             {
                 'lang': 'bash',
                 'source': '''
-                curl --request GET \
+                curl --request GET \\
                   --url '/v1/carriers' \\
                   --header 'Authorization: Token <API_KEY>'
                 '''

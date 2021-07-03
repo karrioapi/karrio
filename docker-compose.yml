@@ -9,42 +9,64 @@ services:
     container_name: pship
     env_file: .env
     volumes:
-      - .:/temp/dev
-      - purplship-statics:/static
+      - .:/pship/dev
+      - pshipstatics:/pship/static
     ports:
       - "5002:5002"
     depends_on:
       - db
+      - redis
     networks:
       - db_network
       - web_network
     entrypoint: |
       bash -c "bash -s <<EOF
-      cd /temp/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
-      cd /app &&
+      cd /pship/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade &&
       if [[ "${TEST:-False}" == "True" ]];
       then
-        source /temp/dev/scripts.sh && \
+        source /pship/dev/scripts.sh && \
         test --no-insider && \
-        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
+        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
         test
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
-        export RELOAD=${RELOAD:-False}
-        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
-        source /temp/dev/scripts.sh && \
-        add_data
-        ./entrypoint.sh
+        export DEBUG_MODE=${DEBUG_MODE:-False}
+        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
+        cd /pship/app && /bin/bash ./entrypoint.sh
       fi
       EOF"
 
+  worker:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile
+    image: purplship/purplship-server:latest
+    container_name: worker
+    env_file: .env
+    volumes:
+      - .:/pship/dev
+      - pshipdata:/pship/data
+    depends_on:
+      - db
+    networks:
+      - db_network
+    entrypoint: |
+      bash -c "bash -s <<EOF
+      cd /pship/dev &&
+      pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade &&
+      pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade &&
+      cd /pship/app &&
+      /bin/bash ./worker.sh
+      EOF"
+
   nginx:
+    container_name: nginx
     image: "nginx:latest"
     ports:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - purplship-statics:/static
+      - pshipstatics:/static
     networks:
       - web_network
     depends_on:
@@ -52,6 +74,7 @@ services:
 
   db:
     image: postgres
+    container_name: db
     environment:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
@@ -62,8 +85,18 @@ services:
     networks:
       - db_network
 
+  redis:
+    restart: always
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     depends_on:
       - db
@@ -72,8 +105,11 @@ services:
     networks:
       - db_network
 
+
 volumes:
-  purplship-statics:
+  redisdata:
+  pshipdata:
+  pshipstatics:
     driver: local
 
 networks:

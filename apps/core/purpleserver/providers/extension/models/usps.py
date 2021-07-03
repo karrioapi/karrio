@@ -12,6 +12,9 @@ class USPSSettings(Carrier):
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
+    mailer_id = models.CharField(max_length=200, null=True)
+    customer_registration_id = models.CharField(max_length=200, null=True)
+    logistics_manager_mailer_id = models.CharField(max_length=200, null=True)
 
     @property
     def carrier_name(self) -> str:

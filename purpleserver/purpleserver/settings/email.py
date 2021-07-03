@@ -16,9 +16,17 @@ EMAIL_ADDRESS = EMAIL_HOST_USER
 EMAIL_PASSWORD = EMAIL_HOST_PASSWORD
 
 EMAIL_ACTIVE_FIELD = 'is_active'
-EMAIL_MAIL_SUBJECT = 'Purplship - Verify Your New Account Email'
+EMAIL_MAIL_SUBJECT = 'Verify Your New Account Email'
 EMAIL_MAIL_HTML = 'registration/registration_confirm_email.html'
+EMAIL_MAIL_PLAIN = 'registration/registration_confirm_email.txt'
 EMAIL_PAGE_TEMPLATE = 'registration/registration_confirm_done.html'
 
-
+EMAIL_TOKEN_LIFE = 60 * 60
 EMAIL_ENABLED = False
+
+
+def user_verified_callback(user):
+    user.is_active = True
+    user.save()
+
+EMAIL_VERIFIED_CALLBACK = user_verified_callback

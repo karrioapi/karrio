@@ -1,13 +1,25 @@
 import graphene
 import graphene_django
+from django.db.models import ObjectDoesNotExist
+from django.forms.models import model_to_dict
+from django.contrib.auth import get_user_model
 
 from purpleserver.serializers import SerializerDecorator, Context
 from purpleserver.user.serializers import TokenSerializer
 import purpleserver.orgs.models as models
 
 
+class OrganizationUserType(graphene_django.DjangoObjectType):
+    is_admin = graphene.Boolean(required=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'full_name', 'is_staff', 'last_login', 'date_joined')
+
+
 class OrganizationType(graphene_django.DjangoObjectType):
     token = graphene.String(required=True)
+    user = graphene.Field(OrganizationUserType, required=True)
 
     class Meta:
         model = models.Organization
@@ -17,3 +29,25 @@ class OrganizationType(graphene_django.DjangoObjectType):
         return SerializerDecorator[TokenSerializer](
             data=dict(user=info.context.user),
             context=Context(user=info.context.user, org=self)).save().instance
+
+    def resolve_user(self, info):
+        user = info.context.user
+        return OrganizationUserType(
+            **{
+                k: v for k, v in model_to_dict(user).items()
+                if k in OrganizationUserType._meta.fields.keys()
+            },
+            is_admin=self.organization_users.get(user=user).is_admin
+        )
+
+    def resolve_users(self, info):
+        return [
+            OrganizationUserType(
+                **{
+                    k: v for k,v in model_to_dict(user).items()
+                    if k in OrganizationUserType._meta.fields.keys()
+                },
+                is_admin=self.organization_users.get(user=user)
+            )
+            for user in self.users.all()
+        ]

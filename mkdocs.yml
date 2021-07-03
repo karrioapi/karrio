@@ -1,9 +1,9 @@
-site_name: Purplship
+site_name: purplship server
 site_description: >-
-  Purplship Shipping API Docs for integration with UPS API, FedEx API, DHL API, Canada Post API, and more.
+  purplship Shipping API Docs for integration with UPS API, FedEx API, DHL API, Canada Post API, and more.
 
-repo_url: https://github.com/Purplship/purplship-server
-repo_name: Purplship/purplship-server
+repo_url: https://github.com/purplship/purplship-server
+repo_name: purplship/purplship-server
 edit_uri: edit/main/docs/
 
 theme:
@@ -33,7 +33,7 @@ nav:
     - developer-guides/rest-api.md
     - developer-guides/graphql.md
     - developer-guides/extensibility.md
-    - Running Purplship:
+    - Running purplship:
       - developer-guides/configuration.md
       - developer-guides/docker.md
       - developer-guides/heroku.md
@@ -45,7 +45,7 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Purplship
+      link: https://github.com/purplship
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/PurplShip
     - icon: fontawesome/brands/docker
@@ -54,6 +54,10 @@ extra:
       link: https://www.linkedin.com/company/purplship
     - icon: fontawesome/brands/discord
       link: https://discord.gg/kXEa3UMRHd
+
+  analytics:
+    provider: google
+    property: UA-111378601-2
 
 markdown_extensions:
   - admonition
@@ -66,8 +70,4 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
-google_analytics:
-  - UA-111378601-2
-  - auto
-
-copyright: Copyright &copy; 2018 - 2021 Purplship Team
+copyright: Copyright &copy; 2021 purplship

@@ -38,7 +38,7 @@ class ShippingRequestValidation(ShippingRequest):
     recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
-class ShippingList(APIView):
+class ShippingDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Proxy'],
@@ -57,9 +57,9 @@ class ShippingList(APIView):
         response = Shipments.create(
             payload,
             resolve_tracking_url=(
-                lambda shipment: reverse(
+                lambda tracking_number, carrier_name: reverse(
                     "purpleserver.proxy:shipment-tracking",
-                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
+                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name)
                 )
             )
         )
@@ -89,5 +89,5 @@ class ShippingCancel(APIView):
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
-router.urls.append(path('proxy/shipping', ShippingList.as_view(), name="shipping-request"))
+router.urls.append(path('proxy/shipping', ShippingDetails.as_view(), name="shipping-request"))
 router.urls.append(path('proxy/shipping/<carrier_name>/cancel', ShippingCancel.as_view(), name="shipping-cancel"))

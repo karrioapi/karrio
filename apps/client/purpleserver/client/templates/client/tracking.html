@@ -3,7 +3,7 @@
 {% block title %} | Tracking - {{ tracker.tracking_number }}{% endblock %}
 
 {% block root %}
-  <section class="hero is-fullheight">
+  <section class="hero is-fullheight p-2">
 
     <!-- Main content -->
     <div class="container">
@@ -16,7 +16,7 @@
         <div class="card-content">
 
           <p class="has-text-centered pb-4">
-            <strong class="tag is-{{carrier_name}} is-medium">{{ carrier_label }}</strong>
+            <img src="{% static 'carriers/' %}{{ carrier_name }}_icon.svg" width="60" alt="{{ carrier_label }}" />
           </p>
 
           <p class="subtitle has-text-centered is-6">
@@ -29,7 +29,7 @@
 
           {% if tracker.delivered %}
             <p class="card-footer-item has-background-success has-text-white is-size-4">{% trans 'Delivered' %}</p>
-          {% elif tracker.events|length == 0 %}
+          {% elif tracker.pending %}
             <p class="card-footer-item has-background-grey-dark has-text-white is-size-4">{% trans 'Pending' %}</p>
           {% else %}
             <p class="card-footer-item has-background-info has-text-white is-size-4">{% trans 'In-Transit' %}</p>

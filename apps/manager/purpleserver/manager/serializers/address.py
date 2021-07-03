@@ -7,13 +7,6 @@ from purpleserver.manager import models
 
 @owned_model_serializer
 class AddressSerializer(AddressData):
-
-    def __init__(self, *args, **kwargs):
-        if 'data' in kwargs and isinstance(kwargs['data'], str):
-            kwargs.update(data=AddressData(models.Address.objects.get(pk=kwargs['data'])).data)
-
-        super().__init__(*args, **kwargs)
-
     def validate(self, data):
         validated_data = super().validate(data)
         should_validate = (

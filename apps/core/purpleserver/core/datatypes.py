@@ -195,6 +195,7 @@ class Shipment:
     reference: str = ""
     label_type: str = None
     tracking_url: str = None
+    tracker_id: str = None
     status: str = ""
     meta: dict = None
     id: str = None
@@ -233,6 +234,7 @@ class Tracking:
     delivered: bool = None
     id: str = None
     test_mode: bool = None
+    pending: bool = None
 
 
 @attr.s(auto_attribs=True)

@@ -1,37 +1,37 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/Purplship/purplship-server/raw/main/purpleserver/purpleserver/static/extra/branding/icon.png" alt="Purplship" height="100">
+      <img src="https://github.com/purplship/purplship-server/raw/main/purpleserver/purpleserver/static/extra/branding/icon.png" alt="purplship" height="100">
     </a>
   </p>
   <h2 align="center">
     The Open Source Multi-carrier Shipping API
   </h2>
   <p align="center">
-    <a href="https://github.com/Purplship/purplship-server/actions"><img src="https://github.com/Purplship/purplship-server/workflows/puprlship-server/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://github.com/purplship/purplship-server/actions"><img src="https://github.com/purplship/purplship-server/workflows/puprlship-server/badge.svg" alt="CI" style="max-width:100%;"></a>
     <a href="https://www.gnu.org/licenses/agpl-3.0" rel="nofollow"><img src="https://camo.githubusercontent.com/cb1d26ec555a33e9f09fe279b5edc49996a3bb3b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d4147504c25323076332d626c75652e737667" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
   </p>
 </p>
 
 
-## What's Purplship?
+## What's purplship server?
 
-Purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
+purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
 processes and fulfilment automation.
-The server is in Python, but you can use any programming language to send API requests to the growing network of 
+The server is in Python, but you can use any programming language to send API requests to our growing network of 
 shipping carriers from your app.
 
 - [Join us on Discord](https://discord.gg/kXEa3UMRHd)
-- [Want to partner? Reach Out](https://purplship.com/#contact)
+- [Want to partner up? Reach Out](https://purplship.com/#contact)
 
-Purplship makes shipping service simple and accessible.
+purplship makes shipping services simple and accessible.
 Help us out… If you love Open standard and great software, give us a star! 🌟
 
 
 ## Features
 
 - **Headless shipping API**: Power up your application with access to a network of carrier services
-- **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
+- **Multi-carrier**: Integrate purplship once and connect to multiple shipping carrier APIs
 - **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page
 - **Address Validation**: Validate shipping addresses using the Google Geocoding API
@@ -39,8 +39,8 @@ Help us out… If you love Open standard and great software, give us a star! �
 - **Cloud**: Optimized for deployments using Docker
 
 
-<img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/shipping-dashboard.jpeg">
-<img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/tracking-dashboard.jpeg">
+<img src="https://github.com/purplship/purplship-server/raw/main/artifacts/shipping-dashboard.jpeg">
+<img src="https://github.com/purplship/purplship-server/raw/main/artifacts/tracking-dashboard.jpeg">
 
 
 ## Deployment
@@ -76,6 +76,8 @@ services:
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
+      - ADMIN_EMAIL=admin@domain.com
+      - ADMIN_PASSWORD=demo
       - DATABASE_NAME=db
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -85,25 +87,11 @@ services:
       - db
 ```
 
-- Setup the database
-
-```terminal
-docker-compose run --rm --entrypoint="purplship migrate" pship
-```
-
-- Create an admin user
-
-```terminal
-docker-compose run --rm --entrypoint="purplship createsuperuser" pship
-```
-
 - Run the application
 
 ```terminal
 docker-compose up
 ```
-
-Access the application at http://0.0.0.0:5002
 
 </details>
 
@@ -127,33 +115,40 @@ docker run -d \
 docker run -d \
   --name pship --rm \
   -e DEBUG_MODE=True \
+  -e ADMIN_EMAIL=admin@domain.com \
+  -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
   danh91.docker.scarf.sh/purplship/purplship-server:[version]
 ```
 
-- Create an admin user
-
-```terminal
-docker exec -it pship bash -c "purplship createsuperuser"
-```
+</details>
 
 Access the application at http://0.0.0.0:5002
 
-</details>
+**Default Login**
+
+| email            | Password |
+| ---------------- | -------- |
+| admin@domain.com | demo     |
+
 
 ### `Heroku`
 
-Host your own Purplship server for FREE with One-Click Deploy.
+Host your own purplship server for FREE with One-Click Deploy.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Purplship/purplship-heroku/tree/main/)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/purplship/purplship-heroku/tree/main/)
 
 
 ## Editions
 
-Purplship is available in two editions - **OSS**, and **Enterprise**.
-Here you can find the Open Source Edition released under the `Apache 2`.
+purplship is available in two editions - **OSS**, and **Enterprise**.
+Here you can find the Open Source Edition released under the `Apache 2` License.
 
-To get the quotation of our Enterprise Edition, please visit www.purplship.com and contact us.
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
+
+To get the quotation of our Enterprise Edition, please visit [purplship.com](https://purplship.com) and contact us.
+
+- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
 
 
 |                                          | OSS         | Bronze Sponsor | Enterprise   |
@@ -168,26 +163,23 @@ To get the quotation of our Enterprise Edition, please visit www.purplship.com a
 | Shipping billing data (soon)             | No          | No             | Yes          |
 
 
-- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
-- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
-
-
 ## Official Client Libraries
 
-- [Node](https://github.com/Purplship/purplship-node)
-- [PHP](https://github.com/Purplship/purplship-php-client)
-- [Python](https://github.com/Purplship/purplship-python-client)
+- [Node](https://github.com/purplship/purplship-node)
+- [PHP](https://github.com/purplship/purplship-php-client)
+- [Python](https://github.com/purplship/purplship-python-client)
 
-Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/Purplship/purplship-server/tree/main/openapi)
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with 
+our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/shemas)
 
 
 ## Resources
 
 - [**Documentation**](https://docs.purplship.com)
-- [**Community on Discord**](https://discord.gg/kXEa3UMRHd)
-- [**Bug Tracker**](https://github.com/PurplShip/purplship/issues)
+- [**Community**](https://github.com/purplship/purplship-server/discussions)
+- [**Bug Tracker**](https://github.com/purplship/purplship/issues)
 - [**Blog**](https://blog.purplship.com)
-- [**@Purplship on Twitter**](https://twitter.com/purplship)
+- [**@PurplShip on Twitter**](https://twitter.com/PurplShip)
 
 ## License
 

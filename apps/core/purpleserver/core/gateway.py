@@ -10,10 +10,11 @@ from rest_framework.exceptions import NotFound, ValidationError
 import purplship
 from purplship.core.utils import DP
 
+from purpleserver.serializers import Context
 from purpleserver.providers import models
 from purpleserver.core.models import get_access_filter
 from purpleserver.core import datatypes, serializers, exceptions, validators
-from purpleserver.core.utils import identity, post_processing
+from purpleserver.core.utils import identity, post_processing, upper
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +30,7 @@ class Carriers:
             access = get_access_filter(list_filter.get('context'))
             if len(access) > 0:
                 query += (Q(created_by__isnull=True) | access,)
-
-        if list_filter.get('system_only') is True:
+        elif list_filter.get('system_only') is True:
             query += (Q(created_by__isnull=True),)
 
         # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
@@ -98,19 +98,36 @@ class Shipments:
         shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(gateway).parse())
 
         if shipment is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        shipment_rate = (
-            {**DP.to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}'}
-            if shipment.selected_rate is not None else
-            DP.to_dict(selected_rate)
-        )
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                'rate_provider': ((parent.meta or {}).get('rate_provider') or carrier.carrier_name).lower(),
+                'service_name': upper((parent.meta or {}).get('service_name') or selected_rate.service)
+            }
 
-        def generate_tracking_url():
-            if resolve_tracking_url is None:
-                return ''
+        def process_selected_rate() -> dict:
+            rate = (
+                {**DP.to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}', 'test_mode': carrier.test}
+                if shipment.selected_rate is not None else
+                DP.to_dict(selected_rate)
+            )
+            return {**rate, 'meta': process_meta(shipment.selected_rate or selected_rate)}
 
-            return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
+        def process_tracking_url(rate: datatypes.Rate) -> str:
+            rate_provider = (rate.get('meta') or {}).get('rate_provider')
+            if (rate_provider not in models.MODELS) and ((shipment.meta or {}).get('tracking_url') is not None):
+                return shipment.meta['tracking_url']
+
+            if resolve_tracking_url is not None:
+                url = resolve_tracking_url(shipment.tracking_number, rate_provider or rate.carrier_name)
+                return f"{url}{'?test' if carrier.test else ''}"
+
+            return ''
+
+        shipment_rate = process_selected_rate()
 
         return datatypes.Shipment(**{
             **payload,
@@ -120,10 +137,11 @@ class Shipments:
             "selected_rate": shipment_rate,
             "service": shipment_rate["service"],
             "selected_rate_id": shipment_rate["id"],
-            "tracking_url": generate_tracking_url(),
+            "tracking_url": process_tracking_url(shipment_rate),
             "status": serializers.ShipmentStatus.purchased.value,
             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
-            "messages": messages
+            "messages": messages,
+            "meta": process_meta(shipment)
         })
 
     @staticmethod
@@ -175,11 +193,18 @@ class Shipments:
         if not any(results or []):
             raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
+        def process_pending_state(details: datatypes.Tracking):
+            return (
+                len(details.events) == 0 or
+                (len(details.events) == 1 and details.events[0].code == 'CREATED')
+            )
+
         return datatypes.TrackingResponse(
             tracking=(datatypes.Tracking(**{
                 **DP.to_dict(results[0]),
                 'id': f'trk_{uuid.uuid4().hex}',
                 'test_mode': carrier.test,
+                'pending': process_pending_state(results[0])
             }) if any(results) else None),
             messages=messages
         )
@@ -276,12 +301,12 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, user=None, test: bool = None) -> datatypes.RateResponse:
+    def fetch(payload: dict, context: Context = None, test: bool = None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
             carrier.data for carrier in
-            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user, test=test)
+            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, context=context, test=test)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
@@ -295,21 +320,25 @@ class Rates:
         rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())
 
         if not any(rates) and any(messages):
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        def consolidate_rate(rate: datatypes.Rate) -> datatypes.Rate:
+        def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
             carrier = next((c for c in carrier_settings_list if c.carrier_id == rate.carrier_id))
+            meta = {
+                **(rate.meta or {}),
+                'rate_provider': ((rate.meta or {}).get('rate_provider') or rate.carrier_name).lower(),
+                'service_name': upper((rate.meta or {}).get('service_name') or rate.service)
+            }
 
             return datatypes.Rate(**{
+                **DP.to_dict(rate),
                 'id': f'rat_{uuid.uuid4().hex}',
                 'carrier_ref': carrier.id,
                 'test_mode': carrier.test,
-                **DP.to_dict(rate)
+                'meta': meta
             })
 
-        rates: List[datatypes.Rate] = sorted(map(consolidate_rate, rates), key=lambda rate: rate.total_charge)
+        rates: List[datatypes.Rate] = sorted(map(process_rate, rates), key=lambda rate: rate.total_charge)
 
-        return datatypes.RateResponse(
-            rates=sorted(rates, key=lambda rate: rate.total_charge),
-            messages=messages
-        )
+        return datatypes.RateResponse(rates=rates, messages=messages)

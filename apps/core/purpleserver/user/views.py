@@ -1,6 +1,7 @@
 from django import forms
 from django.views import generic
 from django.conf import settings
+from django.db import transaction
 from django.urls import reverse_lazy, path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import get_user_model
@@ -16,12 +17,34 @@ class SignUpForm(UserCreationForm):
         model = get_user_model()
         fields = ("email", "full_name")
 
+    @transaction.atomic
     def save(self, commit=True):
-        user = super().save(commit)
+        user = super().save(commit=commit)
+
         if commit and settings.EMAIL_ENABLED:
+            user.is_active = False
             send_email(user)
 
+        if commit and settings.MULTI_ORGANIZATIONS:
+            from purpleserver.orgs.models import Organization
+            org = Organization.objects.create(
+                name=user.full_name,
+                slug=user.full_name.replace(" ", ""),
+                is_active=not settings.EMAIL_ENABLED
+            )
+            # Set as organization user
+            owner = org.add_user(user, is_admin=True)
+            # Set as organization owner
+            org.change_owner(owner)
+            org.save()
+
         return user
+
+
+class SignUp(generic.CreateView):
+    form_class = SignUpForm
+    success_url = reverse_lazy('registration_done')
+    template_name = 'registration/signup.html'
 
 
 class LoginForm(AuthenticationForm):
@@ -40,12 +63,6 @@ class LoginForm(AuthenticationForm):
 
 class LogIn(LoginView):
     form_class = LoginForm
-
-
-class SignUp(generic.CreateView):
-    form_class = SignUpForm
-    success_url = reverse_lazy('registration_done')
-    template_name = 'registration/signup.html'
 
 
 class RegistrationDoneView(TemplateView):
