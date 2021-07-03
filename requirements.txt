@@ -59,7 +59,7 @@ phonenumbers==8.12.26
 Pillow==8.3.0
 promise==2.3
 psycopg2-binary==2.9.1
-purplship==2021.6
+purplship==2021.6.1
 purplship-server==2021.6
 purplship-server.client==2021.6
 purplship-server.core==2021.6
@@ -70,7 +70,7 @@ purplship-server.pricing==2021.6
 purplship-server.proxy==2021.6
 purplship.aramex==2021.3
 purplship.australiapost==2021.3
-purplship.canadapost==2021.6
+purplship.canadapost==2021.6.1
 purplship.canpar==2021.3
 purplship.dhl-express==2021.6
 purplship.dhl-universal==2021.3.1
