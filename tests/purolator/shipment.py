@@ -1,8 +1,7 @@
 import re
 import unittest
-import logging
 from unittest.mock import patch
-from purplship.core.utils import DP, LABEL_NOT_SUPPORTED_PRINT
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.purolator.fixture import gateway
@@ -20,17 +19,11 @@ class TestPurolatorShipment(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         pipeline = request.serialize()
-        validate_request = pipeline["validate"]()
-        create_request = pipeline["create"](VALIDATE_SHIPMENT_RESPONSE_XML)
+        create_request = pipeline["create"]()
         document_request = pipeline["document"](SHIPMENT_RESPONSE_XML)
 
-        self.assertEqual(
-            validate_request.data.serialize(), VALIDATE_SHIPMENT_REQUEST_XML
-        )
         self.assertEqual(create_request.data.serialize(), SHIPMENT_REQUEST_XML)
-        self.assertEqual(
-            document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML
-        )
+        self.assertEqual(document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML)
 
     def test_cancel_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
@@ -42,18 +35,13 @@ class TestPurolatorShipment(unittest.TestCase):
     def test_request_shipment(self):
         with patch("purplship.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = [
-                VALIDATE_SHIPMENT_RESPONSE_XML,
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
             Shipment.create(self.ShipmentRequest).from_(gateway)
 
-            validate_call, create_call, document_call = mocks.call_args_list
+            create_call, document_call = mocks.call_args_list
 
-            self.assertEqual(
-                validate_call[1]["url"],
-                f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx",
-            )
             self.assertEqual(
                 create_call[1]["url"],
                 f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx",
@@ -77,7 +65,6 @@ class TestPurolatorShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("purplship.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = [
-                VALIDATE_SHIPMENT_RESPONSE_XML,
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
@@ -87,16 +74,6 @@ class TestPurolatorShipment(unittest.TestCase):
 
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(PARSED_SHIPMENT_RESPONSE)
-            )
-
-    def test_parse_invalid_shipment_response(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mocks:
-            mocks.side_effect = [VALIDATE_SHIPMENT_ERROR_RESPONSE_XML]
-            parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
             )
 
     def test_parse_cancel_shipment_response(self):
@@ -155,23 +132,6 @@ PARSED_SHIPMENT_RESPONSE = [
         "shipment_identifier": "329014521622",
     },
     [],
-]
-
-PARSED_INVALID_SHIPMENT_RESPONSE = [
-    {
-        "carrier_name": "purolator",
-        "carrier_id": "purolator",
-        "label": LABEL_NOT_SUPPORTED_PRINT,
-    },
-    [
-        {
-            "carrier_name": "purolator",
-            "carrier_id": "purolator",
-            "code": "3001116",
-            "details": {},
-            "message": "Service Failed",
-        }
-    ],
 ]
 
 PARSED_CANCEL_SHIPMENT_RESPONSE = [
@@ -261,12 +221,6 @@ SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org
 </soap:Envelope>
 """
 
-VALIDATE_SHIPMENT_REQUEST_XML = re.sub(
-    "<v2:PrinterType>[^>]+</v2:PrinterType>",
-    "<removal-anchor>",
-    SHIPMENT_REQUEST_XML.replace("CreateShipmentRequest", "ValidateShipmentRequest"),
-).replace("            <removal-anchor>\n", "")
-
 SHIPMENT_DOCUMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
     <soap:Header>
         <v1:RequestContext>
@@ -286,58 +240,14 @@ SHIPMENT_DOCUMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xml
                     <v1:PIN>
                         <v1:Value>329014521622</v1:Value>
                     </v1:PIN>
+                    <v1:DocumentTypes>
+                        <v1:DocumentType>DomesticBillOfLading</v1:DocumentType>
+                    </v1:DocumentTypes>
                 </v1:DocumentCriteria>
             </v1:DocumentCriterium>
         </v1:GetDocumentsRequest>
     </soap:Body>
 </soap:Envelope>
-"""
-
-VALIDATE_SHIPMENT_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-   <s:Header>
-      <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-         <h:ResponseReference>232d3da7-921d-4247-baec-1c7683be86b0</h:ResponseReference>
-      </h:ResponseContext>
-   </s:Header>
-   <s:Body>
-      <ValidateShipmentResponse xmlns="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-         <ResponseInformation>
-            <Errors />
-            <InformationalMessages i:nil="true" />
-         </ResponseInformation>
-         <ValidShipment>true</ValidShipment>
-      </ValidateShipmentResponse>
-   </s:Body>
-</s:Envelope>
-"""
-
-VALIDATE_SHIPMENT_ERROR_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-   <s:Header>
-      <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-         <h:ResponseReference>fe4d8845-160b-4b77-9b00-a49ab295fea9</h:ResponseReference>
-      </h:ResponseContext>
-   </s:Header>
-   <s:Body>
-      <CreateShipmentResponse xmlns="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-         <ResponseInformation>
-            <Errors>
-               <Error>
-                  <Code>3001116</Code>
-                  <Description>Service Failed</Description>
-                  <AdditionalInformation i:nil="true" />
-               </Error>
-            </Errors>
-            <InformationalMessages i:nil="true" />
-         </ResponseInformation>
-         <ShipmentPIN i:nil="true" />
-         <PiecePINs i:nil="true" />
-         <ReturnShipmentPINs i:nil="true" />
-         <ExpressChequePIN i:nil="true" />
-      </CreateShipmentResponse>
-   </s:Body>
-</s:Envelope>
 """
 
 SHIPMENT_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">

@@ -5,7 +5,6 @@ from purolator_lib.shipping_service_2_1_3 import (
     CreateShipmentRequest,
     CreateShipmentResponse,
     PIN,
-    ValidateShipmentRequest,
     Shipment,
     SenderInformation,
     ReceiverInformation,
@@ -36,8 +35,7 @@ from purolator_lib.shipping_service_2_1_3 import (
 )
 from purplship.core.units import Options, Packages, Phone
 from purplship.core.utils import (
-    Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF,
-    LABEL_NOT_SUPPORTED_PRINT
+    Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
@@ -51,15 +49,13 @@ from purplship.providers.purolator.units import (
     PaymentType,
     DutyPaymentType,
     MeasurementOptions,
-    LabelType,
+    PrintType,
     NON_OFFICIAL_SERVICES,
 )
 
-ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
-
 
 def parse_shipment_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     details = XP.find("CreateShipmentResponse", response, first=True)
     shipment = _extract_shipment(response, settings) if details is not None else None
@@ -73,7 +69,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     pin = cast(PIN, shipment.ShipmentPIN).Value
     label = next(
         (content for content in [document.Data, document.URL] if content is not None),
-        LABEL_NOT_SUPPORTED_PRINT,
+        None,
     )
 
     return ShipmentDetails(
@@ -86,25 +82,16 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
+        payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Pipeline]:
     requests: Pipeline = Pipeline(
-        validate=lambda *_: partial(
-            _validate_shipment, payload=payload, settings=settings
-        )(),
-        create=partial(_create_shipment, payload=payload, settings=settings),
+        create=lambda *_: partial(_create_shipment, payload=payload, settings=settings)(),
         document=partial(_get_shipment_label, payload=payload, settings=settings),
     )
     return Serializable(requests)
 
 
-def _shipment_request(
-    payload: ShipmentRequest, settings: Settings, validate: bool = None
-) -> Serializable[Envelope]:
-    RequestType: ShipmentRequestType = (
-        ValidateShipmentRequest if validate else CreateShipmentRequest
-    )
-
+def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Product[payload.service].value
     options = Options(payload.options, Service)
@@ -114,7 +101,7 @@ def _shipment_request(
     is_international = (payload.shipper.country_code != payload.recipient.country_code)
     shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
     recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
-    printing = LabelType[options.label_printing or "PDF"].value
+    printing = PrintType[options.label_printing or "PDF"].value
     option_ids = [
         (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
     ]
@@ -127,7 +114,7 @@ def _shipment_request(
             RequestReference="",
             UserToken=settings.user_token,
         ),
-        body_content=RequestType(
+        body_content=CreateShipmentRequest(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
                     Address=Address(
@@ -158,7 +145,7 @@ def _shipment_request(
                         FaxNumber=None,
                     ),
                     TaxNumber=payload.shipper.federal_tax_id
-                    or payload.shipper.state_tax_id,
+                              or payload.shipper.state_tax_id,
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
@@ -191,7 +178,7 @@ def _shipment_request(
                         FaxNumber=None,
                     ),
                     TaxNumber=(
-                        payload.recipient.federal_tax_id or payload.recipient.state_tax_id
+                            payload.recipient.federal_tax_id or payload.recipient.state_tax_id
                     ),
                 ),
                 FromOnLabelIndicator=None,
@@ -200,12 +187,12 @@ def _shipment_request(
                 PackageInformation=PackageInformation(
                     ServiceID=service,
                     Description=package_description,
-                    TotalWeight=TotalWeight(
-                        Value=packages.weight.map(MeasurementOptions).LB,
-                        WeightUnit=PurolatorWeightUnit.LB.value,
-                    )
-                    if packages.weight.value
-                    else None,
+                    TotalWeight=(
+                        TotalWeight(
+                            Value=packages.weight.map(MeasurementOptions).LB,
+                            WeightUnit=PurolatorWeightUnit.LB.value,
+                        ) if packages.weight.value else None
+                    ),
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
                         Piece=[
@@ -262,60 +249,63 @@ def _shipment_request(
                         if any(option_ids) else None
                     ),
                 ),
-                InternationalInformation=InternationalInformation(
-                    DocumentsOnlyIndicator=is_document,
-                    ContentDetails=ArrayOfContentDetail(
-                        ContentDetail=[
-                            ContentDetail(
-                                Description=c.description,
-                                HarmonizedCode=None,
-                                CountryOfManufacture=c.origin_country,
-                                ProductCode=c.sku,
-                                UnitValue=c.value_amount,
-                                Quantity=c.quantity,
-                                NAFTADocumentIndicator=None,
-                                FDADocumentIndicator=None,
-                                FCCDocumentIndicator=None,
-                                SenderIsProducerIndicator=None,
-                                TextileIndicator=None,
-                                TextileManufacturer=None,
-                            )
-                            for c in payload.customs.commodities
-                        ]
+                InternationalInformation=(
+                    InternationalInformation(
+                        DocumentsOnlyIndicator=is_document,
+                        ContentDetails=(
+                            ArrayOfContentDetail(
+                                ContentDetail=[
+                                    ContentDetail(
+                                        Description=c.description,
+                                        HarmonizedCode=None,
+                                        CountryOfManufacture=c.origin_country,
+                                        ProductCode=c.sku,
+                                        UnitValue=c.value_amount,
+                                        Quantity=c.quantity,
+                                        NAFTADocumentIndicator=None,
+                                        FDADocumentIndicator=None,
+                                        FCCDocumentIndicator=None,
+                                        SenderIsProducerIndicator=None,
+                                        TextileIndicator=None,
+                                        TextileManufacturer=None,
+                                    )
+                                    for c in payload.customs.commodities
+                                ]
+                            ) if not is_document else None
+                        ),
+                        BuyerInformation=None,
+                        PreferredCustomsBroker=None,
+                        DutyInformation=(
+                            DutyInformation(
+                                BillDutiesToParty=DutyPaymentType[
+                                    payload.customs.duty.paid_by
+                                ].value,
+                                BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
+                                Currency=payload.customs.duty.currency,
+                            ) if payload.customs is not None else None
+                        ),
+                        ImportExportType=None,
+                        CustomsInvoiceDocumentIndicator=None,
                     )
-                    if not is_document
-                    else None,
-                    BuyerInformation=None,
-                    PreferredCustomsBroker=None,
-                    DutyInformation=DutyInformation(
-                        BillDutiesToParty=DutyPaymentType[
-                            payload.customs.duty.paid_by
-                        ].value,
-                        BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                        Currency=payload.customs.duty.currency,
-                    )
-                    if payload.customs is not None
-                    else None,
-                    ImportExportType=None,
-                    CustomsInvoiceDocumentIndicator=None,
-                )
-                if is_international
-                else None,
+                    if is_international else None
+                ),
                 ReturnShipmentInformation=None,
-                PaymentInformation=PaymentInformation(
-                    PaymentType=PaymentType[payload.payment.paid_by].value,
-                    RegisteredAccountNumber=payload.payment.account_number
-                    or settings.account_number,
-                    BillingAccountNumber=payload.payment.account_number
-                    or settings.account_number,
-                    CreditCardInformation=None,
-                )
-                if payload.payment is not None else None,
+                PaymentInformation=(
+                    PaymentInformation(
+                        PaymentType=PaymentType[payload.payment.paid_by].value,
+                        RegisteredAccountNumber=(payload.payment.account_number or settings.account_number),
+                        BillingAccountNumber=(payload.payment.account_number or settings.account_number),
+                        CreditCardInformation=None,
+                    )
+                    if payload.payment is not None else None
+                ),
                 PickupInformation=PickupInformation(
                     PickupType=PickupType.DROP_OFF.value
                 ),
                 NotificationInformation=(
-                    NotificationInformation(ConfirmationEmailAddress=options.notification_email or payload.recipient.email)
+                    NotificationInformation(
+                        ConfirmationEmailAddress=options.notification_email or payload.recipient.email
+                    )
                     if options.notification_email is None else None
                 ),
                 TrackingReferenceInformation=TrackingReferenceInformation(
@@ -330,45 +320,22 @@ def _shipment_request(
     return Serializable(request, standard_request_serializer)
 
 
-def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
-    return Job(
-        id="validate",
-        data=_shipment_request(payload=payload, settings=settings, validate=True),
-    )
-
-
-def _create_shipment(
-    validate_response: str, payload: ShipmentRequest, settings: Settings
-) -> Job:
-    errors = parse_error_response(XP.to_xml(validate_response), settings)
-    valid = len(errors) == 0
+def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     return Job(
         id="create",
-        data=_shipment_request(payload, settings) if valid else None,
-        fallback=(validate_response if not valid else None),
+        data=_shipment_request(payload, settings),
     )
 
 
 def _get_shipment_label(
-    create_response: str, payload: ShipmentRequest, settings: Settings
+        create_response: str, payload: ShipmentRequest, settings: Settings
 ) -> Job:
     errors = parse_error_response(XP.to_xml(create_response), settings)
     valid = len(errors) == 0
-    shipment_pin = None
-
-    if valid:
-        node = next(
-            iter(
-                XP.to_xml(create_response).xpath(
-                    ".//*[local-name() = $name]", name="ShipmentPIN"
-                )
-            ),
-            None,
-        )
-        pin = PIN()
-        pin.build(node)
-        shipment_pin = pin.Value
-
+    shipment_pin = (
+        getattr(XP.find("ShipmentPIN", XP.to_xml(create_response), PIN, first=True), 'Value', None)
+        if valid else None
+    )
     return Job(
         id="document",
         data=(
@@ -378,5 +345,3 @@ def _get_shipment_label(
         ),
         fallback="",
     )
-
-

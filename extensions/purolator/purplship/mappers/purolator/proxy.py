@@ -62,18 +62,16 @@ class Proxy(BaseProxy):
                 request=job.data,
                 path=dict(
                     create="/EWS/V2/Shipping/ShippingService.asmx",
-                    validate="/EWS/V2/Shipping/ShippingService.asmx",
                     document="/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
                 )[job.id],
                 soapaction=dict(
                     create="http://purolator.com/pws/service/v2/CreateShipment",
-                    validate="http://purolator.com/pws/service/v2/ValidateShipment",
                     document="http://purolator.com/pws/service/v1/GetDocuments",
                 )[job.id],
             )
 
         pipeline: Pipeline = request.serialize()
-        _, *response = pipeline.apply(process)
+        response = pipeline.apply(process)
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable:

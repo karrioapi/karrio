@@ -49,6 +49,11 @@ class LabelType(Flag):
     ZPL = "Thermal"
 
 
+class PrintType(Enum):
+    PDF = "Regular"
+    ZPL = "Thermal"
+
+
 class PaymentType(Flag):
     sender = "Sender"
     recipient = "Receiver"
