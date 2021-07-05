@@ -152,7 +152,7 @@ Host your own purplship server for FREE with One-Click Deploy.
 ## Editions
 
 purplship is available in two editions - **OSS** and **Enterprise**.
-Here you can find the Open Source Edition released under the `Apache 2` License.
+The Open Source Edition is under the `Apache 2` License.
 
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
 
@@ -192,7 +192,9 @@ our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main
 
 ## License
 
-This project codebase is licensed under the terms of the `AGPL v3` license.
+**This project `codebase` license is under the terms of the `AGPL v3` license.**
+
+An OSS `build` is released under the `Apache 2` License.
 
 See the [LICENSE file](/LICENSE) for license rights and limitations.
 
