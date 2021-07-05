@@ -54,7 +54,7 @@ lxml==4.6.3
 lxml-stubs==0.1.1
 MarkupSafe==2.0.1
 more-itertools==8.8.0
-packaging==20.9
+packaging==21.0
 phonenumbers==8.12.26
 Pillow==8.3.0
 promise==2.3
@@ -62,10 +62,10 @@ psycopg2-binary==2.9.1
 purplship==2021.6.1
 purplship-server==2021.6
 purplship-server.client==2021.6
-purplship-server.core==2021.6
+purplship-server.core==2021.6.1
 purplship-server.events==2021.6
 purplship-server.graph==2021.6
-purplship-server.manager==2021.6
+purplship-server.manager==2021.6.1
 purplship-server.pricing==2021.6
 purplship-server.proxy==2021.6
 purplship.aramex==2021.3
@@ -94,7 +94,7 @@ pytz==2021.1
 redis==3.5.3
 requests==2.25.1
 ruamel.yaml==0.17.10
-ruamel.yaml.clib==0.2.4
+ruamel.yaml.clib==0.2.6
 Rx==1.6.1
 singledispatch==3.6.2
 six==1.16.0
