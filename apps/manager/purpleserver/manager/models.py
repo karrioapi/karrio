@@ -215,7 +215,7 @@ class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         'label', 'options', 'services', 'status', 'service', 'meta', 'label_type',
         'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode',
-        'messages', 'rates', 'payment', 'created_by',
+        'messages', 'rates', 'payment', 'created_by', 'reference'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'customs', 'selected_rate']
 
@@ -230,18 +230,18 @@ class Shipment(OwnedEntity):
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
-    label_type = models.TextField(max_length=25, null=True, blank=True)
+    label_type = models.CharField(max_length=25, null=True, blank=True)
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
+    reference = models.CharField(max_length=100, null=True, blank=True)
 
     customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 
     selected_rate = models.JSONField(blank=True, null=True)
-
     payment = models.JSONField(blank=True, null=True, default=partial(identity, value=None))
     options = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
     services = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
