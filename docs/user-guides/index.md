@@ -2,7 +2,6 @@
 
 Once purplship is up and running, the first thing to do is to register your carrier accounts.
 
-
 ## Carrier connections
 
 Adding carrier connection can be done from the purplship Web App.

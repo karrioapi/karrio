@@ -21,6 +21,42 @@ shipping carriers from your app.
 - **Shipping Web App**: Use a single dashboard to orchestrate your logistics operation.
 - **Cloud**: Optimized for deployments using Docker
 
+## Quick Start
+
+It takes less than 5 minutes to run and install purplship using Docker:
+
+- Start a Postgres database
+
+```bash
+docker run -d \
+  --name db --rm \
+  -e POSTGRES_DB=db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  postgres
+```
+
+- Run your shipping server
+
+```bash
+docker run -d \
+  --name pship --rm \
+  -e DEBUG_MODE=True \
+  -e ADMIN_EMAIL=admin@example.com \
+  -e ADMIN_PASSWORD=demo \
+  --link=db:db -p 5002:5002 \
+  danh91.docker.scarf.sh/purplship/purplship-server:[version]
+```
+
+!!! info
+    If you get stuck or need help, [file an issue](https://github.com/purplship/purplship-server/issues/new/choose), 
+    [post on the community board](https://github.com/purplship/purplship-server/discussions) or 
+    [email](mailto:hello@purplship.com?subject=Purplship Quick Start).
+
+
+!!! hint ""
+    **Check the [install](developer-guides/installing/) for more details**
+
 ## Guides
 
   - [User Guides](user-guides/index.md)
