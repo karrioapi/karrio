@@ -59,10 +59,10 @@ phonenumbers==8.12.26
 Pillow==8.3.0
 promise==2.3
 psycopg2-binary==2.9.1
-purplship==2021.6.1
-purplship-server==2021.6
-purplship-server.client==2021.6
-purplship-server.core==2021.6.1
+purplship==2021.6.2
+purplship-server==2021.6.2
+purplship-server.client==2021.6.2
+purplship-server.core==2021.6.2
 purplship-server.events==2021.6
 purplship-server.graph==2021.6
 purplship-server.manager==2021.6.1
@@ -76,7 +76,7 @@ purplship.dhl-express==2021.6
 purplship.dhl-universal==2021.3.1
 purplship.dicom==2021.3
 purplship.fedex==2021.6
-purplship.purolator==2021.6
+purplship.purolator==2021.6.2
 purplship.royalmail==2021.3
 purplship.sendle==2021.3
 purplship.sf-express==2021.3
