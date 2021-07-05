@@ -27,6 +27,6 @@ class OrganizationModelSerializer(ModelSerializer):
             raise Exception("User Not Authorized")
 
         if 'name' in data and 'slug' not in data:
-            data.update(slug=data['name'].replace(" ", ""),)
+            data.update(slug=data['name'].lower().replace(" ", ""),)
 
         return super().update(instance, data)
