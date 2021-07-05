@@ -448,7 +448,7 @@ class Rate(EntitySerializer):
     """)
     duties_and_taxes = FloatField(required=False, allow_null=True, help_text="The monetary amount of the duties and taxes if applied")
     transit_days = IntegerField(required=False, allow_null=True, help_text="The estimated delivery transit days")
-    extra_charges = Charge(many=True, required=False, allow_null=True, help_text="list of the rate's additional charges")
+    extra_charges = Charge(many=True, required=False, default=[], help_text="list of the rate's additional charges")
     meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
@@ -538,7 +538,7 @@ class ShipmentContent(Serializer):
     selected_rate = Rate(required=False, allow_null=True, help_text="The shipment selected rate")
 
     selected_rate_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment selected rate.")
-    rates = Rate(many=True, required=False, allow_null=True, help_text="The list for shipment rates fetched previously")
+    rates = Rate(many=True, required=False, default=[], help_text="The list for shipment rates fetched previously")
     tracking_url = URLField(required=False, allow_blank=True, allow_null=True, help_text="The shipment tracking url")
     service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
