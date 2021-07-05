@@ -79,19 +79,21 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         )
         for charge in estimate.OptionPrices.OptionPrice
     ]
-    service = next(
-        (p.name for p in Product if p.value in estimate.ServiceID), estimate.ServiceID
-    )
+    service = Product.map(estimate.ServiceID)
+
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        service=service,
+        service=service.name_or_key,
         currency=currency,
         base_charge=NF.decimal(estimate.BasePrice),
         transit_days=estimate.EstimatedTransitDays,
         total_charge=NF.decimal(estimate.TotalPrice),
         duties_and_taxes=NF.decimal(sum(c.amount for c in duties_and_taxes)),
         extra_charges=(duties_and_taxes + surcharges + option_charges),
+        meta=dict(
+            service_name=(service.name or quote.service_name)
+        )
     )
 
 

@@ -17,7 +17,9 @@ class TestPurolatorQuote(unittest.TestCase):
         self.assertEqual(request.serialize(), RATE_REQUEST_XML)
 
     def test_create_rate_request_with_package_preset(self):
-        request = gateway.mapper.create_rate_request(RateRequest(**RATE_REQUEST_WITH_PRESET_PAYLOAD))
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**RATE_REQUEST_WITH_PRESET_PAYLOAD)
+        )
 
         self.assertEqual(request.serialize(), RATE_REQUEST_WITH_PRESET_XML)
 
@@ -36,7 +38,9 @@ class TestPurolatorQuote(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE)
+            )
 
 
 if __name__ == "__main__":
@@ -98,18 +102,20 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
     ],
     "services": ["purolator_ground"],
     "reference": "Reference For Shipment",
-    "options": {"shipment_date": "2020-01-15", "purolator_show_alternative_services": True}
+    "options": {
+        "shipment_date": "2020-01-15",
+        "purolator_show_alternative_services": True,
+    },
 }
 
 PARSED_RATE_RESPONSE = [
     [
         {
             "base_charge": 62.35,
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
             "currency": "CAD",
             "duties_and_taxes": 5.15,
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -122,16 +128,17 @@ PARSED_RATE_RESPONSE = [
                     "name": "Dangerous Goods Classification",
                 },
             ],
+            "meta": {"service_name": "purolator_express_9_am"},
             "service": "purolator_express_9_am",
             "total_charge": 108.16,
+            "transit_days": 1,
         },
         {
             "base_charge": 55.0,
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
             "currency": "CAD",
             "duties_and_taxes": 4.77,
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -144,16 +151,17 @@ PARSED_RATE_RESPONSE = [
                     "name": "Dangerous Goods Classification",
                 },
             ],
+            "meta": {"service_name": "purolator_express_10_30_am"},
             "service": "purolator_express_10_30_am",
             "total_charge": 100.1,
+            "transit_days": 1,
         },
         {
             "base_charge": 46.15,
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
             "currency": "CAD",
             "duties_and_taxes": 4.3,
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -166,16 +174,17 @@ PARSED_RATE_RESPONSE = [
                     "name": "Dangerous Goods Classification",
                 },
             ],
+            "meta": {"service_name": "purolator_express"},
             "service": "purolator_express",
             "total_charge": 90.38,
+            "transit_days": 1,
         },
         {
             "base_charge": 29.6,
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
             "currency": "CAD",
             "duties_and_taxes": 3.44,
-            "transit_days": 4,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -188,16 +197,17 @@ PARSED_RATE_RESPONSE = [
                     "name": "Dangerous Goods Classification",
                 },
             ],
+            "meta": {"service_name": "purolator_ground"},
             "service": "purolator_ground",
             "total_charge": 72.22,
+            "transit_days": 4,
         },
         {
             "base_charge": 87.69,
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
             "currency": "CAD",
             "duties_and_taxes": 6.47,
-            "transit_days": 4,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -210,8 +220,10 @@ PARSED_RATE_RESPONSE = [
                     "name": "Dangerous Goods Classification",
                 },
             ],
+            "meta": {"service_name": "purolator_ground"},
             "service": "purolator_ground",
             "total_charge": 135.96,
+            "transit_days": 4,
         },
     ],
     [],

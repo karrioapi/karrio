@@ -26,7 +26,7 @@ The key features are:
 - **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 
-*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/puprlship/purplship-server).*
+*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/purplship/purplship-server).*
 
 
 ## Requirements
