@@ -89,4 +89,4 @@ networks:
 docker-compose up
 ```
 
-Access the application at http://0.0.0.0:5002
+Access the application at http://0.0.0.0:80

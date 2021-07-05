@@ -34,7 +34,8 @@ nav:
     - developer-guides/rest-api.md
     - developer-guides/graphql.md
     - developer-guides/extensibility.md
-    - Running purplship:
+    - developer-guides/developing.md
+    - Deploy purplship:
       - developer-guides/configuration.md
       - developer-guides/docker.md
       - developer-guides/heroku.md

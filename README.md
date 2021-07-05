@@ -89,8 +89,6 @@ services:
   db:
     image: postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
     volumes:
       - purplship-db:/var/lib/postgresql/data
     environment:
@@ -101,8 +99,6 @@ services:
   pship:
     image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
     restart: unless-stopped
-    ports:
-      - "5002:5002"
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
@@ -115,6 +111,18 @@ services:
       - DATABASE_PASSWORD=postgres
     depends_on:
       - db
+    networks:
+      - db_network
+
+volumes:
+  redisdata:
+  pshipdata:
+  pshipstatics:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
 ```
 
 - Run the application
@@ -181,7 +189,6 @@ our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main
 - [**Community**](https://github.com/purplship/purplship-server/discussions)
 - [**Bug Tracker**](https://github.com/purplship/purplship/issues)
 - [**Blog**](https://blog.purplship.com)
-- [**@purplship on Twitter**](https://twitter.com/purplship)
 
 ## License
 
