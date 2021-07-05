@@ -1,8 +1,7 @@
 import re
 import unittest
-import logging
 from unittest.mock import patch
-from purplship.core.utils import DP, LABEL_NOT_SUPPORTED_PRINT
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.purolator.fixture import gateway
@@ -161,7 +160,7 @@ PARSED_INVALID_SHIPMENT_RESPONSE = [
     {
         "carrier_name": "purolator",
         "carrier_id": "purolator",
-        "label": LABEL_NOT_SUPPORTED_PRINT,
+        "label": "",
     },
     [
         {
@@ -286,6 +285,9 @@ SHIPMENT_DOCUMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xml
                     <v1:PIN>
                         <v1:Value>329014521622</v1:Value>
                     </v1:PIN>
+                    <v1:DocumentTypes>
+                        <v1:DocumentType>DomesticBillOfLading</v1:DocumentType>
+                    </v1:DocumentTypes>
                 </v1:DocumentCriteria>
             </v1:DocumentCriterium>
         </v1:GetDocumentsRequest>

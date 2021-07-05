@@ -36,8 +36,7 @@ from purolator_lib.shipping_service_2_1_3 import (
 )
 from purplship.core.units import Options, Packages, Phone
 from purplship.core.utils import (
-    Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF,
-    LABEL_NOT_SUPPORTED_PRINT
+    Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
@@ -51,7 +50,7 @@ from purplship.providers.purolator.units import (
     PaymentType,
     DutyPaymentType,
     MeasurementOptions,
-    LabelType,
+    PrintType,
     NON_OFFICIAL_SERVICES,
 )
 
@@ -73,7 +72,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     pin = cast(PIN, shipment.ShipmentPIN).Value
     label = next(
         (content for content in [document.Data, document.URL] if content is not None),
-        LABEL_NOT_SUPPORTED_PRINT,
+        None,
     )
 
     return ShipmentDetails(
@@ -114,7 +113,7 @@ def _shipment_request(
     is_international = (payload.shipper.country_code != payload.recipient.country_code)
     shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
     recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
-    printing = LabelType[options.label_printing or "PDF"].value
+    printing = PrintType[options.label_printing or "PDF"].value
     option_ids = [
         (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
     ]

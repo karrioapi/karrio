@@ -4,18 +4,26 @@ from purolator_lib.shipping_documents_service_1_3_0 import (
     DocumentCriteria,
     ArrayOfDocumentCriteria,
     PIN,
+    DocumentTypes,
 )
 from purplship.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
 from purplship.core.models import ShipmentRequest
-from purplship.core.utils import Serializable, XP
-from purplship.providers.purolator.units import LabelType
+from purplship.core.utils import Serializable, XP, SF
+from purplship.providers.purolator.units import PrintType
 from purplship.providers.purolator.utils import Settings
 
 
 def get_shipping_documents_request(
     pin: str, payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    label_format = LabelType[payload.label_type or 'PDF'].name
+    is_international = payload.shipper.country_code != payload.recipient.country_code
+    print_type = PrintType[payload.label_type or 'PDF'].name
+    document_type = SF.concat_str(
+        ("International" if is_international else "Domestic"),
+        "BillOfLading",
+        ("Thermal" if print_type == "ZPL" else ""),
+        separator="", join=True
+    )
 
     request = create_envelope(
         header_content=RequestContext(
@@ -26,11 +34,14 @@ def get_shipping_documents_request(
             UserToken=settings.user_token,
         ),
         body_content=GetDocumentsRequest(
-            OutputType=label_format,
+            OutputType=print_type,
             Synchronous=True,
             DocumentCriterium=ArrayOfDocumentCriteria(
                 DocumentCriteria=[
-                    DocumentCriteria(PIN=PIN(Value=pin), DocumentTypes=None)
+                    DocumentCriteria(
+                        PIN=PIN(Value=pin),
+                        DocumentTypes=DocumentTypes(DocumentType=[document_type])
+                    )
                 ]
             ),
         ),
