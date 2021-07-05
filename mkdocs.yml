@@ -23,7 +23,7 @@ nav:
     - user-guides/index.md
     - user-guides/shipping.md
     - user-guides/tracking.md
-    - user-guides/admin.md
+    - Admin: user-guides/admin.md
   - API Guides:
     - api-guides/index.md
     - api-guides/references.md

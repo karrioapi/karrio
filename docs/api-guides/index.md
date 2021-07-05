@@ -42,10 +42,10 @@ For any other programming language use our API [OpenAPI specification](https://g
     yarn add purplship
     ```
 
-=== "**Browser**"
+=== "**Javascript**"
 
     ```html
-    <script src="https://instance.purplship.api/static/js/purplship.js"></script>
+    <script src="https://<server_address>/static/js/purplship.js"></script>
     ```
 
 ---
@@ -65,7 +65,7 @@ API requests without authentication will also fail.
 
     ```python
     import purplship
-    purplship.host = 'https://<server_address>/v1'
+    purplship.host = 'https://<server_address>'
     purplship.api_key = '<api_key>'
     ```
 
@@ -74,15 +74,25 @@ API requests without authentication will also fail.
     ```php
     require_once(__DIR__ . '/vendor/autoload.php');
     
-    $purplship = new \purplship\purplship('<api_key>', 'https://<server_address>/v1');
+    $purplship = new \purplship\purplship('<api_key>', 'https://<server_address>');
     ```
 
-=== "**Node/js**"
+=== "**Node**"
 
     ```javascript
     import purplship from 'purplship';
     
-    const purplship = new purplship('API_KEY', 'https://<server_address>/v1');
+    const purplship = new purplship('API_KEY', 'https://<server_address>');
+    ```
+    ```
+
+=== "**Javascript**"
+
+    ```javascript
+    const purplship = new purplship.Purplship({
+        apiKey: 'API_KEY',
+        host: 'https://<server_address>'
+    });
     ```
 
 ---

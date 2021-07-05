@@ -6,7 +6,7 @@ Once purplship is up and running, the first thing to do is to register your carr
 
 Adding carrier connection can be done from the purplship Web App.
 
-!!! note "Connection a carrier account"
+!!! note "Connect a carrier account"
 
     - navigate to the `> Carriers` section
     - press on the `Connect Carrier`
