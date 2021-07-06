@@ -45,7 +45,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/purplship-server:[version]
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.1
 ```
 
 !!! info

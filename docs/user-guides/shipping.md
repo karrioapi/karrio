@@ -4,6 +4,7 @@ With purplship carrier connections, you can get live quotes and purchase shippin
 The web app uses purplship' API to streamline manual shipping processes.
 
 The typical shipping process flow is
+
 - Get live rates
 - Choose a preferred rate
 - Buy a label
@@ -20,9 +21,10 @@ Getting shipping rates from the purplship Web App.
     - Fill in the shipping details (shipper address, recipient address, parcel measurements...)
     - click on the `Fetch Rates` button when everything is ready
 
-<figure>
-  <img src="/tutos/shipping-live-rates.gif" height="200" />
-</figure>
+!!! quote ""
+    <figure>
+      <img src="/tutos/shipping-live-rates.gif" height="200" />
+    </figure>
 
 
 !!! note ""
@@ -39,9 +41,10 @@ Buying a shipping label from the purplship Web App.
     - Select you prefered rate
     - Click the `Buy` button
 
-<figure>
-  <img src="/tutos/shipping-label-purchase.gif" height="200" />
-</figure>
+!!! quote ""
+    <figure>
+      <img src="/tutos/shipping-label-purchase.gif" height="200" />
+    </figure>
 
 
 ## Print a label
@@ -53,13 +56,37 @@ Printing a shipping label from the purplship Web App.
     - from the `> Shipments` panel
     - Click the `Print Label` action of your shipment
 
-<figure>
-  <img src="/tutos/printing-label.gif" height="200" />
-</figure>
+!!! quote ""
+    <figure>
+      <img src="/tutos/printing-label.gif" height="200" />
+    </figure>
 
 
 ## International shipments
 
+Shipping customs declaration from the purplship Web App.
+
+!!! info "Shipping customs declaration"
+
+    - from the `> Shipments / Create Label / Customs Info` panel
+
+!!! quote ""
+    <figure>
+      <img src="/tutos/shipping-international-config.gif" height="200" />
+    </figure>
+
 
 ## Void labels
+
+Void shipping labels from the purplship Web App.
+
+!!! info "Shipping customs declaration"
+
+    - from the `> Shipments` panel
+    - Click `Cancel Shipment` option on the shipment action dropdown 
+
+!!! quote ""
+    <figure>
+      <img src="/tutos/void-shipping-label.gif" height="200" />
+    </figure>
 

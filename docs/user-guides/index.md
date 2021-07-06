@@ -14,9 +14,10 @@ Adding carrier connection can be done from the purplship Web App.
     - fill in the connection / authorization API credentials
     - Submit
 
-<figure>
-  <img src="/tutos/carrier-connection.gif" height="200" />
-</figure>
+!!! quote ""
+    <figure>
+      <img src="/tutos/carrier-connection.gif" height="200" />
+    </figure>
 
 ## `test mode` vs `live mode`
 
