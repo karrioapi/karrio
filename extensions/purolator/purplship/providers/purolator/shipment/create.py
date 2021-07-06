@@ -101,7 +101,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
     is_international = (payload.shipper.country_code != payload.recipient.country_code)
     shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
     recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
-    printing = PrintType[options.label_printing or "PDF"].value
+    printing = PrintType.map(payload.label_type or "PDF").value
     option_ids = [
         (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
     ]
@@ -111,7 +111,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
             Version="2.1",
             Language=settings.language,
             GroupID="",
-            RequestReference="",
+            RequestReference=payload.reference,
             UserToken=settings.user_token,
         ),
         body_content=CreateShipmentRequest(
@@ -128,9 +128,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
-                            payload.shipper.address_line2, join=True
-                        ),
+                        StreetAddress2=SF.concat_str(payload.shipper.address_line2, join=True),
                         StreetAddress3=None,
                         City=payload.shipper.city or "",
                         Province=payload.shipper.state_code or "",
@@ -144,8 +142,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=payload.shipper.federal_tax_id
-                              or payload.shipper.state_tax_id,
+                    TaxNumber=(payload.shipper.federal_tax_id or payload.shipper.state_tax_id),
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
@@ -154,16 +151,12 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(
-                            payload.recipient.address_line1, join=True
-                        ),
+                        StreetName=SF.concat_str(payload.recipient.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
-                            payload.recipient.address_line2, join=True
-                        ),
+                        StreetAddress2=SF.concat_str(payload.recipient.address_line2, join=True),
                         StreetAddress3=None,
                         City=payload.recipient.city or "",
                         Province=payload.recipient.state_code or "",
@@ -177,9 +170,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=(
-                            payload.recipient.federal_tax_id or payload.recipient.state_tax_id
-                    ),
+                    TaxNumber=(payload.recipient.federal_tax_id or payload.recipient.state_tax_id),
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
@@ -304,7 +295,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                 ),
                 NotificationInformation=(
                     NotificationInformation(
-                        ConfirmationEmailAddress=options.notification_email or payload.recipient.email
+                        ConfirmationEmailAddress=(options.notification_email or payload.recipient.email)
                     )
                     if options.notification_email is None else None
                 ),
@@ -327,21 +318,16 @@ def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     )
 
 
-def _get_shipment_label(
-        create_response: str, payload: ShipmentRequest, settings: Settings
-) -> Job:
-    errors = parse_error_response(XP.to_xml(create_response), settings)
-    valid = len(errors) == 0
+def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings: Settings) -> Job:
+    response = XP.to_xml(create_response)
+    valid = len(parse_error_response(response, settings)) == 0
     shipment_pin = (
-        getattr(XP.find("ShipmentPIN", XP.to_xml(create_response), PIN, first=True), 'Value', None)
+        getattr(XP.find("ShipmentPIN", response, PIN, first=True), 'Value', None)
         if valid else None
     )
-    return Job(
-        id="document",
-        data=(
-            get_shipping_documents_request(shipment_pin, payload, settings)
-            if valid
-            else None
-        ),
-        fallback="",
+    data = (
+        get_shipping_documents_request(shipment_pin, payload, settings)
+        if valid else None
     )
+
+    return Job(id="document", data=data, fallback="")
