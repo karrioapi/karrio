@@ -83,6 +83,8 @@ networks:
     driver: bridge
 ```
 
+- Add the nginx service configuration
+
 - Run the application
 
 ```terminal

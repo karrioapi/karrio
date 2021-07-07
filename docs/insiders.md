@@ -1,3 +1,1 @@
-# Sponsoring purplship OSS
-
-
+# Insiders

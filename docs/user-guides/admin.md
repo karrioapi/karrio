@@ -1,6 +1,6 @@
 # Administration
 
-When your shipping API is deployed and fully functional, you can handle administration related tasks
+When your shipping API is up and fully functional, you can handle administration related tasks
 from the `Admin Console`.
 
 

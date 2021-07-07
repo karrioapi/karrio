@@ -33,7 +33,6 @@ nav:
     - developer-guides/rest-api.md
     - developer-guides/graphql.md
     - developer-guides/extensibility.md
-    - developer-guides/developing.md
     - Deploy purplship:
       - developer-guides/configuration.md
       - developer-guides/docker.md
@@ -41,6 +40,7 @@ nav:
     - Community:
       - FAQ: developer-guides/FAQ.md
       - developer-guides/support.md
+      - developer-guides/developing.md
   - Insiders: insiders.md
 
 extra:
