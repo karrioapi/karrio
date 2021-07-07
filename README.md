@@ -21,7 +21,7 @@ processes and fulfilment automation.
 The server is in Python, but you can use any programming language to send API requests to our growing network of 
 shipping carriers from your app.
 
-- [Join us on Discord](https://discord.gg/kXEa3UMRHd)
+- [Join us on Discord](https://discord.gg/gS88uE7sEx)
 - [Want to partner up? Reach Out](https://purplship.com/#contact)
 
 purplship makes shipping services simple and accessible.
@@ -46,9 +46,39 @@ Help us outâ€¦ If you love Open standard and great software, give us a star! ðŸŒ
 ## Deployment
 
 ### `Docker`
+  
+> [check the latest version tags of the purplship/purplship-server](https://hub.docker.com/r/purplship/purplship-server/tags)
 
 <details>
-<summary>Deploy with docker compose</summary>
+<summary>Use our image</summary>
+
+- Start a Postgres database
+
+```bash
+docker run -d \
+  --name db --rm \
+  -e POSTGRES_DB=db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  postgres
+```
+
+- Run your shipping API
+
+```bash
+docker run -d \
+  --name pship --rm \
+  -e DEBUG_MODE=True \
+  -e ADMIN_EMAIL=admin@example.com \
+  -e ADMIN_PASSWORD=demo \
+  --link=db:db -p 5002:5002 \
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
+```
+
+</details>
+
+<details>
+<summary>Or use docker-compose</summary>
 
 - Create a `docker-compose.yml` file
 
@@ -69,14 +99,14 @@ services:
       POSTGRES_PASSWORD: "postgres"
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/purplship-server:[version]
+    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
     restart: unless-stopped
     ports:
       - "5002:5002"
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
-      - ADMIN_EMAIL=admin@domain.com
+      - ADMIN_EMAIL=admin@example.com
       - ADMIN_PASSWORD=demo
       - DATABASE_NAME=db
       - DATABASE_HOST=db
@@ -95,41 +125,13 @@ docker-compose up
 
 </details>
 
-<details>
-<summary>OR use our image</summary>
-
-- Start a Postgres database
-
-```bash
-docker run -d \
-  --name db --rm \
-  -e POSTGRES_DB=db \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  postgres
-```
-
-- Run your shipping API
-
-```bash
-docker run -d \
-  --name pship --rm \
-  -e DEBUG_MODE=True \
-  -e ADMIN_EMAIL=admin@domain.com \
-  -e ADMIN_PASSWORD=demo \
-  --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/purplship-server:[version]
-```
-
-</details>
-
 Access the application at http://0.0.0.0:5002
 
 **Default Login**
 
-| email            | Password |
-| ---------------- | -------- |
-| admin@domain.com | demo     |
+| email             | Password |
+| ----------------- | -------- |
+| admin@example.com | demo     |
 
 
 ### `Heroku`
@@ -141,7 +143,7 @@ Host your own purplship server for FREE with One-Click Deploy.
 
 ## Editions
 
-purplship is available in two editions - **OSS**, and **Enterprise**.
+purplship is available in two editions - **OSS** and **Enterprise**.
 Here you can find the Open Source Edition released under the `Apache 2` License.
 
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
