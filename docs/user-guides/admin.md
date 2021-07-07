@@ -9,6 +9,10 @@ from the `Admin Console`.
       <img src="/tutos/admin-console-access.png" height="200" />
     </figure>
 
+!!! info
+    The admin console is only accessible to staff users of the system.
+    Therefore, the link will only appear on staff users web app sessions.
+
 ## Email config
 
 From the purplship server admin console, you can configure your email server.
