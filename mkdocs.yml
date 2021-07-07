@@ -26,7 +26,6 @@ nav:
     - Admin: user-guides/admin.md
   - API Guides:
     - api-guides/index.md
-    - api-guides/references.md
   - Developer Guides:
     - developer-guides/index.md
     - Architecture: developer-guides/architecture.md
