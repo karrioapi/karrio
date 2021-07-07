@@ -38,15 +38,22 @@ docker run -d \
 
 - Run your shipping server
 
+!!! hint ""
+    **Find a specific version of [purplship/purplship-server](https://hub.docker.com/r/purplship/purplship-server/tags?page=1&ordering=last_updated)**
+
 ```bash
-docker run -d \
+docker run \
   --name pship --rm \
   -e DEBUG_MODE=True \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.1
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
 ```
+
+Once the server is ready access your shipping dashboard at [http://0.0.0.0:5002](http://0.0.0.0:5002),
+log in with the default admin account `admin@example.com` | `demo`
+
 
 !!! info
     If you get stuck or need help, [file an issue](https://github.com/purplship/purplship-server/issues/new/choose), 
@@ -54,8 +61,8 @@ docker run -d \
     [email](mailto:hello@purplship.com?subject=Purplship Quick Start).
 
 
-!!! hint ""
-    **Check the [install](developer-guides/installing/) for more details**
+!!! warning ""
+    **Check [install](developer-guides/installing/) for more details**
 
 ## Guides
 
