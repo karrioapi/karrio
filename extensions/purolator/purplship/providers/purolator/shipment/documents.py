@@ -17,11 +17,11 @@ def get_shipping_documents_request(
     pin: str, payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Envelope]:
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    print_type = PrintType[payload.label_type or 'PDF'].name
+    label_type = PrintType.map(payload.label_type or 'PDF').name
     document_type = SF.concat_str(
         ("International" if is_international else "Domestic"),
         "BillOfLading",
-        ("Thermal" if print_type == "ZPL" else ""),
+        ("Thermal" if label_type == "ZPL" else ""),
         separator="", join=True
     )
 
@@ -30,17 +30,19 @@ def get_shipping_documents_request(
             Version="1.3",
             Language=settings.language,
             GroupID="",
-            RequestReference="",
+            RequestReference=payload.reference,
             UserToken=settings.user_token,
         ),
         body_content=GetDocumentsRequest(
-            OutputType=print_type,
+            OutputType=label_type,
             Synchronous=True,
             DocumentCriterium=ArrayOfDocumentCriteria(
                 DocumentCriteria=[
                     DocumentCriteria(
                         PIN=PIN(Value=pin),
-                        DocumentTypes=DocumentTypes(DocumentType=[document_type])
+                        DocumentTypes=DocumentTypes(
+                            DocumentType=[document_type]
+                        )
                     )
                 ]
             ),
