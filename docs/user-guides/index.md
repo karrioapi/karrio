@@ -19,7 +19,7 @@ Adding carrier connection can be done from the purplship Web App.
       <img src="/tutos/carrier-connection.gif" height="200" />
     </figure>
 
-## `test mode` vs `live mode`
+## Test vs Live Mode 
 
 purplship' first goal is to make shipping services integration and automation easy. 
 
@@ -34,3 +34,12 @@ you are instructing purplship to connect to the carrier sandbox server.
 
 !!! note
     Leave it unchecked for `live mode` (in production)
+
+
+From the purplship Web App, you can change the mode to visualize and operate the API in test mode
+by enabling the `View test data` toggle.
+
+!!! quote ""
+    <figure>
+      <img src="/tutos/view-test-data.gif" height="200" />
+    </figure>
