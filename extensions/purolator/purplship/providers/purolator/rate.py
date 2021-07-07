@@ -92,7 +92,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         duties_and_taxes=NF.decimal(sum(c.amount for c in duties_and_taxes)),
         extra_charges=(duties_and_taxes + surcharges + option_charges),
         meta=dict(
-            service_name=(service.name or quote.service_name)
+            service_name=service.name_or_key
         )
     )
 
