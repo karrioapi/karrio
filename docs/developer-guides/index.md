@@ -10,7 +10,7 @@ the following guide will help you achieve your goals.
 - [Installation](/developer-guides/installing): get purplship up and running on your machine.
 
 
-## Running purplship Server
+## Running purplship server
 
 - [Configuration](/developer-guides/configuration): use environment variables to control purplship.
 - [Docker](/developer-guides/docker): deploy purplship to your own servers.

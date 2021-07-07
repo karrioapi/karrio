@@ -1,4 +1,4 @@
-# Introduction
+# Reference
 
 The purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts form-encoded request bodies,
 returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
@@ -90,8 +90,7 @@ API requests without authentication will also fail.
 
     ```javascript
     const purplship = new purplship.Purplship({
-        apiKey: 'API_KEY',
-        host: 'https://<server_address>'
+        apiKey: 'API_KEY', host: 'https://<server_address>'
     });
     ```
 
@@ -101,13 +100,12 @@ API requests without authentication will also fail.
 
 purplship uses conventional HTTP response codes to indicate the success or failure of an API request.
 
-In general:
+!!! info "In general:"
 
-Codes in the 2xx range indicate success.
+    Codes in the `2xx` range indicate success. <br/>
+    Codes in the `4xx` range indicate an error that failed given the information provided *(e.g., a required parameter was omitted)*.<br/>
+    Codes in the `5xx` range indicate an error with purplship' servers.
 
-Codes in the 4xx range indicate an error that failed given the information provided (e.g., a required parameter was omitted).
-
-Codes in the 5xx range indicate an error with purplship's servers.
 
 | HTTP STATUS CODE SUMMARY     |                                                                                                  |
 | ---------------------------: |:------------------------------------------------------------------------------------------------ |
@@ -118,4 +116,4 @@ Codes in the 5xx range indicate an error with purplship's servers.
 |              404 - Not Found | The requested resource doesn't exist.                                                            |
 |      429 - Too Many Requests | Too many requests hit the API too quickly. We recommend an exponential backoff of your requests. |
 |               409 - Conflict | The API indicates a request conflict with current state of the target resource.                  |
-|500, 502, 504 - Server Errors | Something went wrong on purplship's end. (These are rare.)                                       |
+|500, 502, 504 - Server Errors | Something went wrong on purplship' end. (These are rare.)                                        |

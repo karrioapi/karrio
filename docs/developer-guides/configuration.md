@@ -7,47 +7,71 @@ are relevant to configure this project to few contextual naming differences.
 
 ## DEPLOYMENT MODE
 
-- `SECRET_KEY`
+- `PURPLSHIP_HOST` | **default:** `0.0.0.0`
+
+The purplship server hostname
+
+- `PURPLSHIP_PORT` | **default:** `5002`
+
+The purplship server port
+
+- `PURPLSHIP_WORKERS` | **default:** `2`
+
+The number of parallel subprocesses for the purplship server
+
+- `DETACHED_WORKER` | [`True`, `False`] | **default:** `False`
+
+Indicate whether the purplship server process should be detached from the background worker process.
+
+!!! warning
+    Setting this option to `True` means that you intend to run the background worker process in another container
+    or another runtime resource.
+
+- `BACKGROUND_WORKERS` | **default:** `2`
+
+The number of parallel subprocesses for the purplship server background worker
 
 - `DEBUG_MODE`
 
-**values:** [`True`, `False`] | **default:** `False`
-
-**Is the equivalent of django's `DEBUG` flag**.
+**values:** | [`True`, `False`] | **default:** `False`
 
 It is important to set `DEBUG_MODE` to `False` in production for security and performance.
+
+!!! abstract ""
+    **Is the equivalent of django's `DEBUG` flag**.
 
 - `ALLOWED_HOSTS`
 
 Set a list of authorized host in text separated by commas.
 
-**e.g: "test.com,example.com"**
+!!! quote ""
+    **e.g: "test.com,example.com"**
 
 - `SECRET_KEY`
 
-**Is the equivalent of django's `SECRET_KEY` flag**.
-
 The secret key must be a unique large value for security reason.
 
-- `USE_HTTPS`
+!!! abstract ""
+    **Is the equivalent of django's `SECRET_KEY` flag**.
 
-**values:** [`True`, `False`] | **default:** `False`
+- `USE_HTTPS` | [`True`, `False`] | **default:** `False`
 
 You should set `USE_HTTPS` to `True` when you configure your system in production with SSL.
-
-- `PURPLSHIP_WORKERS`
-
-- `BACKGROUND_WORKERS`
-
-- `DETACHED_WORKER`
 
 ---
 
 ## PROVISIONING
 
-- `ADMIN_EMAIL`
+- `ADMIN_EMAIL` | **default:** `admin@example.com`
 
-- `ADMIN_PASSWORD`
+The default super user admin account email to add when the system start for the first time
+
+- `ADMIN_PASSWORD` | **default:** `demo`
+
+The default super user password
+
+!!! warning
+    Make sure to change the password later
 
 ---
 
@@ -55,9 +79,7 @@ You should set `USE_HTTPS` to `True` when you configure your system in productio
 
 [`Learn more`](https://docs.djangoproject.com/en/3.1/topics/logging/)
 
-- `LOG_LEVEL`
-
-**values:** [`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`]
+- `LOG_LEVEL` | [`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`]
 
 The default value is **DEBUG** when **DEBUG_MODE** is **True** else **INFO**
 
