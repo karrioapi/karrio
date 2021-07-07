@@ -159,7 +159,7 @@ print(rates)
 
 - [**Documentation**](https://sdk.purplship.com)
 - [**Bug Tracker**](https://github.com/puprlship/purplship/issues)
-- [**Community on Discord**](https://discord.gg/kXEa3UMRHd)
+- [**Community on Discord**](https://discord.gg/gS88uE7sEx)
 
 ## Contributing
 
