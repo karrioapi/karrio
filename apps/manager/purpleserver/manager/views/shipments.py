@@ -24,7 +24,6 @@ from purpleserver.core.serializers import (
     Shipment,
     ShipmentData,
     RateResponse,
-    Message,
     Rate,
     OperationResponse,
     CustomsData,
@@ -197,7 +196,7 @@ class ShipmentRates(APIView):
 
         payload: dict = dict(
             rates=Rate(rate_response.rates, many=True).data,
-            messages=Message(rate_response.messages, many=True).data,
+            messages=DP.to_dict(rate_response.messages),
         )
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()

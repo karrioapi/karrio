@@ -49,7 +49,7 @@ class ShipmentSerializer(ShipmentData):
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
     test_mode = BooleanField(required=False)
     meta = PlainDictField(required=False, allow_null=True)
-    messages = Message(many=True, required=False)
+    messages = Message(many=True, required=False, default=[])
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
