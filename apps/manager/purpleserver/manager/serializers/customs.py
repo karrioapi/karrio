@@ -11,20 +11,20 @@ import purpleserver.manager.models as models
 class CustomsSerializer(CustomsData):
 
     def __init__(self, instance: models.Customs = None, **kwargs):
-        data = kwargs.get('data')
+        data = kwargs.get('data') or {}
 
-        if data is not None:
-            if 'commodities' in data and instance is not None:
-                extra = {'partial': True, 'context': self.context}
-                save_many_to_many_data('commodities', CommoditySerializer, instance, payload=data, **extra)
+        if ('commodities' in data) and (instance is not None):
+            save_many_to_many_data(
+                'commodities', CommoditySerializer, instance, payload=data, context=context)
 
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Customs:
-        data = {key: value for key, value in validated_data.items() if key in models.Customs.DIRECT_PROPS}
-
-        instance = models.Customs.objects.create(**data)
+        instance = models.Customs.objects.create(**{
+            key: value for key, value in validated_data.items()
+            if key in models.Customs.DIRECT_PROPS
+        })
 
         save_many_to_many_data(
             'commodities', CommoditySerializer, instance, payload=validated_data, context=context)
