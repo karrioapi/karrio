@@ -47,7 +47,7 @@ Help us outâ€¦ If you love Open standard and great software, give us a star! ðŸŒ
 
 ### `Docker`
   
-> [check the latest version tags of the purplship/purplship-server](https://hub.docker.com/r/purplship/purplship-server/tags)
+> check the latest version tags of the purplship/purplship-server image on [Docker Hub](https://hub.docker.com/r/purplship/purplship-server/tags)
 
 <details>
 <summary>Use our image</summary>
@@ -180,7 +180,7 @@ To get the quotation of our Enterprise Edition, please visit [purplship.com](htt
 - [Python](https://github.com/purplship/purplship-python-client)
 
 Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
-our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/shemas)
+our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/schemas)
 
 
 ## Resources
