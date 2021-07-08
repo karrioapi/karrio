@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/purplship-server:[version]
+    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
     restart: unless-stopped
     volumes:
       - pshipstatics:/pship/statics
