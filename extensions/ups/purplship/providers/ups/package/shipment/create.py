@@ -56,7 +56,7 @@ from purplship.providers.ups.utils import Settings
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     details = next(
         iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None
@@ -87,13 +87,13 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
+        payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     options = Options(payload.options)
-    service = ShippingServiceCode[payload.service].value
+    service = ShippingServiceCode.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
@@ -166,39 +166,45 @@ def shipment_request(
                     CountryCode=payload.recipient.country_code,
                 ),
             ),
-            PaymentInformation=PaymentInfoType(
-                ShipmentCharge=[
-                    ShipmentChargeType(
-                        Type=charge_type,
-                        BillShipper=BillShipperType(
-                            AccountNumber=settings.account_number,
-                            CreditCard=None,
-                            AlternatePaymentMethod=None,
-                        )
-                        if payment.paid_by == PaymentType.sender.name
-                        else None,
-                        BillReceiver=BillReceiverType(
-                            AccountNumber=payment.account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.recipient.postal_code
+            PaymentInformation=(
+                PaymentInfoType(
+                    ShipmentCharge=[
+                        ShipmentChargeType(
+                            Type=charge_type,
+                            BillShipper=(
+                                BillShipperType(
+                                    AccountNumber=settings.account_number,
+                                    CreditCard=None,
+                                    AlternatePaymentMethod=None,
+                                )
+                                if payment.paid_by == PaymentType.sender.name
+                                else None
                             ),
+                            BillReceiver=(
+                                BillReceiverType(
+                                    AccountNumber=payment.account_number,
+                                    Address=BillReceiverAddressType(
+                                        PostalCode=payload.recipient.postal_code
+                                    ),
+                                )
+                                if payment.paid_by == PaymentType.recipient.name
+                                else None
+                            ),
+                            BillThirdParty=(
+                                BillThirdPartyChargeType(
+                                    AccountNumber=payment.account_number,
+                                )
+                                if payment.paid_by == PaymentType.third_party.name
+                                else None
+                            ),
+                            ConsigneeBilledIndicator=None,
                         )
-                        if payment.paid_by == PaymentType.recipient.name
-                        else None,
-                        BillThirdParty=BillThirdPartyChargeType(
-                            AccountNumber=payment.account_number,
-                        )
-                        if payment.paid_by == PaymentType.third_party.name
-                        else None,
-                        ConsigneeBilledIndicator=None,
-                    )
-                    for charge_type, payment in charges.items()
-                    if payment is not None
-                ],
-                SplitDutyVATIndicator=None,
-            )
-            if any(charges.values())
-            else None,
+                        for charge_type, payment in charges.items()
+                        if payment is not None
+                    ],
+                    SplitDutyVATIndicator=None,
+                ) if any(charges.values()) else None
+            ),
             Service=(ServiceType(Code=service) if service is not None else None),
             ShipmentServiceOptions=(
                 ShipmentServiceOptionsType(
@@ -234,10 +240,10 @@ def shipment_request(
                 PackageType(
                     Description=package.parcel.description,
                     Packaging=PackagingType(
-                        Code=mps_packaging
-                        or ShippingPackagingType[
-                            package.packaging_type or "your_packaging"
-                        ].value
+                        Code=(
+                                mps_packaging
+                                or ShippingPackagingType[package.packaging_type or "your_packaging"].value
+                        )
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(

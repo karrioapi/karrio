@@ -93,7 +93,7 @@ def shipment_request(
 
 def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = Product[payload.service].value
+    service = Product.map(payload.service).value_or_key
     options = Options(payload.options, Service)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])

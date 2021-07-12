@@ -108,7 +108,7 @@ def shipment_request(
     # Only the master package is selected here because even for MPS only one package is accepted for a master tracking.
     master_package = packages[0]
 
-    service = ServiceType[payload.service].value
+    service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, SpecialServiceType)
     special_services = [getattr(v, 'value', v) for k, v in options if k in SpecialServiceType]
     label_type, label_format = LabelType[payload.label_type or 'PDF_4x6'].value

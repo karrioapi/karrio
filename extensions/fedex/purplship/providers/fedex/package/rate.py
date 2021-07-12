@@ -28,21 +28,16 @@ from purplship.providers.fedex.utils import Settings
 def parse_rate_response(
     response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
-    rate_reply = response.xpath(".//*[local-name() = $name]", name="RateReplyDetails")
-    rate_details: List[RateDetails] = [
-        _extract_rate(detail_node, settings) for detail_node in rate_reply
+    replys = XP.find("RateReplyDetails", response)
+    rates: List[RateDetails] = [
+        _extract_rate(detail_node, settings) for detail_node in replys
     ]
-    return (
-        [details for details in rate_details if details is not None],
-        parse_error_response(response, settings),
-    )
+    return rates, parse_error_response(response, settings)
 
 
 def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDetails]:
-    rate: RateReplyDetail = RateReplyDetail()
-    rate.build(detail_node)
-
-    service = ServiceType(rate.ServiceType).name
+    rate: RateReplyDetail = XP.build(RateReplyDetail, detail_node)
+    service = ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
     shipment_rate, shipment_discount = cast(
         Tuple[ShipmentRateDetail, Money],
@@ -79,7 +74,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        service=service,
+        service=service.name_or_key,
         currency=currency,
         base_charge=NF.decimal(shipment_rate.TotalBaseCharge.Amount),
         total_charge=NF.decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
@@ -87,6 +82,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         discount=discount,
         transit_days=transit,
         extra_charges=surcharges,
+        meta=dict(service_name=service.name_or_key)
     )
 
 
