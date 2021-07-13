@@ -43,7 +43,7 @@ The limit parameter take a limit on the number of objects to be returned from 1 
 
 ```json
 {{
-    "next": "/v1/shipments?limit=25&offset=50",
+    "next": "/v1/shipments?limit=25&offset=25",
     "previous": "/v1/shipments?limit=25&offset=25",
     "results": [
     ]

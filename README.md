@@ -18,11 +18,11 @@
 
 purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
 processes and fulfilment automation.
-The server is in Python, but you can use any programming language to send API requests to our growing network of 
+The server is in Python, but you can use any programming language to send API requests to our growing network of
 shipping carriers from your app.
 
 - [Join us on Discord](https://discord.gg/gS88uE7sEx)
-- [Want to partner up? Reach Out](https://purplship.com/#contact)
+- [Want to partner with us? Reach Out](https://purplship.com/#contact)
 
 purplship makes shipping services simple and accessible.
 Help us out… If you love Open standard and great software, give us a star! 🌟
@@ -47,7 +47,7 @@ Help us out… If you love Open standard and great software, give us a star! �
 
 ### `Docker`
   
-> [check the latest version tags of the purplship/purplship-server](https://hub.docker.com/r/purplship/purplship-server/tags)
+> check the latest version tags of the purplship/purplship-server image on [Docker Hub](https://hub.docker.com/r/purplship/purplship-server/tags)
 
 <details>
 <summary>Use our image</summary>
@@ -89,8 +89,6 @@ services:
   db:
     image: postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
     volumes:
       - purplship-db:/var/lib/postgresql/data
     environment:
@@ -101,8 +99,6 @@ services:
   pship:
     image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
     restart: unless-stopped
-    ports:
-      - "5002:5002"
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
@@ -115,6 +111,18 @@ services:
       - DATABASE_PASSWORD=postgres
     depends_on:
       - db
+    networks:
+      - db_network
+
+volumes:
+  redisdata:
+  pshipdata:
+  pshipstatics:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
 ```
 
 - Run the application
@@ -144,7 +152,8 @@ Host your own purplship server for FREE with One-Click Deploy.
 ## Editions
 
 purplship is available in two editions - **OSS** and **Enterprise**.
-Here you can find the Open Source Edition released under the `Apache 2` License.
+
+The Open Source Edition is under the `Apache 2` License.
 
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
 
@@ -171,21 +180,22 @@ To get the quotation of our Enterprise Edition, please visit [purplship.com](htt
 - [PHP](https://github.com/purplship/purplship-php-client)
 - [Python](https://github.com/purplship/purplship-python-client)
 
-Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with 
-our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/shemas)
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
+our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main/schemas)
 
 
 ## Resources
 
 - [**Documentation**](https://docs.purplship.com)
-- [**Community**](https://github.com/purplship/purplship-server/discussions)
-- [**Bug Tracker**](https://github.com/purplship/purplship/issues)
+- [**Github Community**](https://github.com/purplship/purplship-server/discussions)
+- [**Issue Tracker**](https://github.com/purplship/purplship/issues)
 - [**Blog**](https://blog.purplship.com)
-- [**@PurplShip on Twitter**](https://twitter.com/PurplShip)
 
 ## License
 
-This project codebase is licensed under the terms of the `AGPL v3` license.
+**This project `codebase` license is under the terms of the `AGPL v3` license.**
+
+An OSS `build` is released under the `Apache 2` License.
 
 See the [LICENSE file](/LICENSE) for license rights and limitations.
 

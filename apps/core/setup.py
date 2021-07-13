@@ -5,11 +5,11 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.core',
-      version='2021.6',
+      version='2021.6.3',
       description='Multi-carrier shipping API Core module',
       long_description=long_description,
       long_description_content_type="text/markdown",
-      url='https://github.com/Purplship/purplship-server',
+      url='https://github.com/purplship/purplship-server',
       author='purplship',
       author_email='danielk.developer@gmail.com',
       license='Apache License Version 2.0',

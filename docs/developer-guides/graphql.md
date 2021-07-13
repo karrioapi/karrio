@@ -3,7 +3,7 @@
 
 ## The Shipping App API
 
-Purplship leverage a GraphQL API to expose access to shipping related objects data available in the system.
+purplship leverage a GraphQL API to expose access to shipping related objects data available in the system.
 GraphQL is a query language that allows clients to talk to an API server. Unlike REST, it gives the client 
 control over how much or how little data they want to request about each object and allows relations within 
 the object graph to be traversed easily.
@@ -16,7 +16,7 @@ The API endpoint is available at `/graphql/` and requires queries to be submitte
 
 ## GraphQL Playground
 
-Purplship exposes an interactive GraphQL editor under `/graphql/`, allowing access to the GraphQL API from your browser.
+purplship exposes an interactive GraphQL editor under `/graphql/`, allowing access to the GraphQL API from your browser.
 
 GraphQL Playground is an external interactive editor for your GraphQL queries. It is based on Graphiql and accessible 
 through the web browser.

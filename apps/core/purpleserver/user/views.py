@@ -29,7 +29,7 @@ class SignUpForm(UserCreationForm):
             from purpleserver.orgs.models import Organization
             org = Organization.objects.create(
                 name=user.full_name,
-                slug=user.full_name.replace(" ", ""),
+                slug=user.full_name.replace(" ", "").lower(),
                 is_active=not settings.EMAIL_ENABLED
             )
             # Set as organization user
