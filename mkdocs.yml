@@ -41,7 +41,7 @@ nav:
       - FAQ: developer-guides/FAQ.md
       - developer-guides/support.md
       - developer-guides/developing.md
-  - Insiders: insiders.md
+#  - Insiders: insiders.md
 
 extra:
   social:

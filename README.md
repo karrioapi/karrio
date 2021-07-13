@@ -22,7 +22,7 @@ The server is in Python, but you can use any programming language to send API re
 shipping carriers from your app.
 
 - [Join us on Discord](https://discord.gg/gS88uE7sEx)
-- [Want to partner up? Reach Out](https://purplship.com/#contact)
+- [Want to partner with us? Reach Out](https://purplship.com/#contact)
 
 purplship makes shipping services simple and accessible.
 Help us out… If you love Open standard and great software, give us a star! 🌟
@@ -152,6 +152,7 @@ Host your own purplship server for FREE with One-Click Deploy.
 ## Editions
 
 purplship is available in two editions - **OSS** and **Enterprise**.
+
 The Open Source Edition is under the `Apache 2` License.
 
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
