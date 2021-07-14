@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from datetime import datetime, date
+from datetime import datetime
 from usps_lib.rate_v4_response import PostageType, SpecialServiceType
 from usps_lib.rate_v4_request import (
     RateV4Request,

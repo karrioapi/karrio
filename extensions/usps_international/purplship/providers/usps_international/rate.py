@@ -29,7 +29,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     service = ServiceClassID.map(str(postage.ID))
     charges: List[ExtraServiceType] = postage.ExtraServices.ExtraService
     delivery_date = DF.date(postage.GuaranteeAvailability, "%m/%d/%Y")
-    transit = ((delivery_date - datetime.now()).days if delivery_date is not None else None)
+    transit = ((delivery_date.date() - datetime.now().date()).days if delivery_date is not None else None)
 
     return RateDetails(
         carrier_name=settings.carrier_name,
