@@ -270,7 +270,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             </option>
         </options>
         <parcel-characteristics>
-            <weight>20.</weight>
+            <weight>20</weight>
             <dimensions>
                 <length>6.0</length>
                 <width>12.0</width>
@@ -399,7 +399,7 @@ NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.cana
             </option>
         </options>
         <parcel-characteristics>
-            <weight>20.</weight>
+            <weight>20</weight>
             <dimensions>
                 <length>6.0</length>
                 <width>12.0</width>
