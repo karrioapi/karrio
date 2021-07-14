@@ -185,11 +185,11 @@ class Service(Enum):
     @staticmethod
     def info(serviceId, carrierId, serviceName, carrierName):
         carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
-        service_key = next((s.name for s in Service if str(serviceId) == s.value), None)
+        service_key = Service.map(str(serviceId)).name_or_key
         formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
-        service_name = (service_key or formatted_name)
+        service_name = (service_key.replace('eshipper_', '') or formatted_name)
 
-        return carrier_name, (service_key or serviceId), service_name
+        return carrier_name, service_key, service_name
 
 
 CARRIER_IDS = {

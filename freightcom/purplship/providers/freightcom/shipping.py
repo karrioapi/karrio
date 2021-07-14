@@ -18,7 +18,6 @@ from pyfreightcom.shipping_request import (
 from pyfreightcom.shipping_reply import (
     ShippingReplyType,
     QuoteType,
-    PackageType as ReplyPackageType,
     SurchargeType,
 )
 from purplship.core.utils import Element, Serializable, XP, SF, NF
@@ -118,9 +117,9 @@ def shipping_request(
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
     options = Options(payload.options, Option)
 
+    service = Service.map(payload.service).value_or_key
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
     packaging = ("Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package")
-    service = (Service[payload.service].value if payload.service in Service else payload.service)
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
         None,

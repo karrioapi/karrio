@@ -109,7 +109,7 @@ ParsedShipmentResponse = [
         "label": "[base-64 encoded String]",
         "meta": {
             "rate_provider": "Freightcom",
-            "service_name": "freightcom_central_transport",
+            "service_name": "central_transport",
         },
         "selected_rate": {
             "base_charge": 30.74,
@@ -122,7 +122,7 @@ ParsedShipmentResponse = [
             ],
             "meta": {
                 "rate_provider": "Freightcom",
-                "service_name": "freightcom_central_transport",
+                "service_name": "central_transport",
             },
             "service": "freightcom_central_transport",
             "total_charge": 31.82,

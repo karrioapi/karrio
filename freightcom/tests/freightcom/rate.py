@@ -84,7 +84,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "Freightcom",
-                "service_name": "freightcom_central_transport",
+                "service_name": "central_transport",
             },
             "service": "freightcom_central_transport",
             "total_charge": 177.0,
@@ -98,8 +98,8 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "meta": {"rate_provider": "Freightcom", "service_name": "freigthcom_estes"},
-            "service": "freigthcom_estes",
+            "meta": {"rate_provider": "Freightcom", "service_name": "estes"},
+            "service": "freightcom_estes",
             "total_charge": 28.65,
             "transit_days": 1,
         },
@@ -113,9 +113,9 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "Freightcom",
-                "service_name": "freigthcom_usf_holland",
+                "service_name": "usf_holland",
             },
-            "service": "freigthcom_usf_holland",
+            "service": "freightcom_usf_holland",
             "total_charge": 52.52,
             "transit_days": 0,
         },
