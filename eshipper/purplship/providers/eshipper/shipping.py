@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyeshipper.shipping_request import (
+from eshipper_lib.shipping_request import (
     EShipper,
     ShippingRequestType,
     FromType,
@@ -15,7 +15,7 @@ from pyeshipper.shipping_request import (
     ItemType,
     BillToType,
 )
-from pyeshipper.shipping_reply import (
+from eshipper_lib.shipping_reply import (
     ShippingReplyType,
     QuoteType,
     SurchargeType,
@@ -235,7 +235,7 @@ def shipping_request(
                 if payload.payment is not None else None
             ),
             Reference=(
-                [ReferenceType(name="", code=payload.reference)]
+                [ReferenceType(name="REF", code=payload.reference)]
                 if payload.reference != "" else None
             ),
             CustomsInvoice=(

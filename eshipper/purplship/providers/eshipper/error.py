@@ -1,5 +1,5 @@
 from typing import List
-from pyeshipper.error import ErrorType
+from eshipper_lib.error import ErrorType
 from purplship.core.models import Message
 from purplship.core.utils import Element, XP
 from purplship.providers.eshipper.utils import Settings
