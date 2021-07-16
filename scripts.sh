@@ -128,7 +128,7 @@ runservices() {
 rundb() {
   cd "${ROOT:?}"
   docker-compose down &&
-  docker-compose up -d db adminer
+  docker-compose up -d db
 
   if command -v docker-machine &> /dev/null
   then
