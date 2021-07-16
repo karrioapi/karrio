@@ -1,6 +1,6 @@
 from typing import List
-from pyfreightcom.error import ErrorType
-from pyfreightcom.quote_reply import CarrierErrorMessageType
+from freightcom_lib.error import ErrorType
+from freightcom_lib.quote_reply import CarrierErrorMessageType
 from purplship.core.models import Message
 from purplship.core.utils import Element, XP
 from purplship.providers.freightcom.utils import Settings

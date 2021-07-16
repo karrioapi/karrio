@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyfreightcom.shipping_request import (
+from freightcom_lib.shipping_request import (
     Freightcom,
     ShippingRequestType,
     FromType,
@@ -15,7 +15,7 @@ from pyfreightcom.shipping_request import (
     ItemType,
     BillToType,
 )
-from pyfreightcom.shipping_reply import (
+from freightcom_lib.shipping_reply import (
     ShippingReplyType,
     QuoteType,
     SurchargeType,
@@ -232,7 +232,7 @@ def shipping_request(
                 if payload.payment is not None else None
             ),
             Reference=(
-                [ReferenceType(name=payload.reference, code="parcelRef")]
+                [ReferenceType(name="REF", code=payload.reference)]
                 if payload.reference != "" else None
             ),
             CustomsInvoice=(

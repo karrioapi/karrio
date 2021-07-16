@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pyfreightcom.shipment_cancel_request import ShipmentCancelRequestType, Freightcom, OrderType
+from freightcom_lib.shipment_cancel_request import ShipmentCancelRequestType, Freightcom, OrderType
 from purplship.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,

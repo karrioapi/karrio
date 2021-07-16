@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyfreightcom.quote_request import (
+from freightcom_lib.quote_request import (
     Freightcom,
     QuoteRequestType,
     FromType,
@@ -7,7 +7,7 @@ from pyfreightcom.quote_request import (
     PackagesType,
     PackageType,
 )
-from pyfreightcom.quote_reply import QuoteType, SurchargeType
+from freightcom_lib.quote_reply import QuoteType, SurchargeType
 from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Packages, Options, Services

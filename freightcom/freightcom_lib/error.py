@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Jun 11 21:29:25 2021 by generateDS.py version 2.38.6.
+# Generated Thu Jul 15 10:03:41 2021 by generateDS.py version 2.39.2.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './pyfreightcom/shipment_cancel_request.py')
+#   ('-o', './freightcom_lib/error.py')
 #
 # Command line arguments:
-#   ./vendor/schemas/shipment_cancel_request.xsd
+#   ./vendor/schemas/error.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./pyfreightcom/shipment_cancel_request.py" ./vendor/schemas/shipment_cancel_request.xsd
+#   /Users/danielkobina/Workspace/project/purplship-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/error.py" ./vendor/schemas/error.xsd
 #
 # Current working directory (os.getcwd()):
 #   freightcom
@@ -96,7 +96,7 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 # Additionally, the generatedsnamespaces module can contain a python
 # dictionary named GenerateDSNamespaceTypePrefixes that associates element
 # types with the namespace prefixes that are to be added to the
-# "xsi:type" attribute value.  See the exportAttributes method of
+# "xsi:type" attribute value.  See the _exportAttributes method of
 # any generated element type and the generation of "xsi:type" for an
 # example of the use of this table.
 # An example table:
@@ -173,8 +173,13 @@ except ModulenotfoundExp_ :
 try:
     from generatedssuper import GeneratedsSuper
 except ModulenotfoundExp_ as exp:
+    try:
+        from generatedssupersuper import GeneratedsSuperSuper
+    except ModulenotfoundExp_ as exp:
+        class GeneratedsSuperSuper(object):
+            pass
     
-    class GeneratedsSuper(object):
+    class GeneratedsSuper(GeneratedsSuperSuper):
         __hash__ = object.__hash__
         tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
         class _FixedOffsetTZ(datetime_.tzinfo):
@@ -972,20 +977,16 @@ class Freightcom(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, username=None, password=None, version=None, ShipmentCancelRequest=None, gds_collector_=None, **kwargs_):
+    def __init__(self, version=None, ErrorReply=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.username = _cast(None, username)
-        self.username_nsprefix_ = None
-        self.password = _cast(None, password)
-        self.password_nsprefix_ = None
         self.version = _cast(None, version)
         self.version_nsprefix_ = None
-        self.ShipmentCancelRequest = ShipmentCancelRequest
-        self.ShipmentCancelRequest_nsprefix_ = None
+        self.ErrorReply = ErrorReply
+        self.ErrorReply_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -1001,25 +1002,17 @@ class Freightcom(GeneratedsSuper):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_ShipmentCancelRequest(self):
-        return self.ShipmentCancelRequest
-    def set_ShipmentCancelRequest(self, ShipmentCancelRequest):
-        self.ShipmentCancelRequest = ShipmentCancelRequest
-    def get_username(self):
-        return self.username
-    def set_username(self, username):
-        self.username = username
-    def get_password(self):
-        return self.password
-    def set_password(self, password):
-        self.password = password
+    def get_ErrorReply(self):
+        return self.ErrorReply
+    def set_ErrorReply(self, ErrorReply):
+        self.ErrorReply = ErrorReply
     def get_version(self):
         return self.version
     def set_version(self, version):
         self.version = version
-    def hasContent_(self):
+    def _hasContent(self):
         if (
-            self.ShipmentCancelRequest is not None
+            self.ErrorReply is not None
         ):
             return True
         else:
@@ -1039,227 +1032,213 @@ class Freightcom(GeneratedsSuper):
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Freightcom')
-        if self.hasContent_():
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Freightcom')
+        if self._hasContent():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Freightcom', pretty_print=pretty_print)
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Freightcom', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Freightcom'):
-        if self.username is not None and 'username' not in already_processed:
-            already_processed.add('username')
-            outfile.write(' username=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.username), input_name='username')), ))
-        if self.password is not None and 'password' not in already_processed:
-            already_processed.add('password')
-            outfile.write(' password=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.password), input_name='password')), ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Freightcom'):
         if self.version is not None and 'version' not in already_processed:
             already_processed.add('version')
             outfile.write(' version=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.version), input_name='version')), ))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Freightcom', fromsubclass_=False, pretty_print=True):
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Freightcom', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.ShipmentCancelRequest is not None:
-            namespaceprefix_ = self.ShipmentCancelRequest_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentCancelRequest_nsprefix_) else ''
-            self.ShipmentCancelRequest.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentCancelRequest', pretty_print=pretty_print)
+        if self.ErrorReply is not None:
+            namespaceprefix_ = self.ErrorReply_nsprefix_ + ':' if (UseCapturedNS_ and self.ErrorReply_nsprefix_) else ''
+            self.ErrorReply.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ErrorReply', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
             self.gds_elementtree_node_ = node
         already_processed = set()
         self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
+        self._buildAttributes(node, node.attrib, already_processed)
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('username', node)
-        if value is not None and 'username' not in already_processed:
-            already_processed.add('username')
-            self.username = value
-        value = find_attr_value_('password', node)
-        if value is not None and 'password' not in already_processed:
-            already_processed.add('password')
-            self.password = value
+    def _buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('version', node)
         if value is not None and 'version' not in already_processed:
             already_processed.add('version')
             self.version = value
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'ShipmentCancelRequest':
-            obj_ = ShipmentCancelRequestType.factory(parent_object_=self)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ErrorReply':
+            obj_ = ErrorReplyType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.ShipmentCancelRequest = obj_
-            obj_.original_tagname_ = 'ShipmentCancelRequest'
+            self.ErrorReply = obj_
+            obj_.original_tagname_ = 'ErrorReply'
 # end class Freightcom
 
 
-class ShipmentCancelRequestType(GeneratedsSuper):
+class ErrorReplyType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Order=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Error=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.Order = Order
-        self.Order_nsprefix_ = None
+        self.Error = Error
+        self.Error_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ShipmentCancelRequestType)
+                CurrentSubclassModule_, ErrorReplyType)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ShipmentCancelRequestType.subclass:
-            return ShipmentCancelRequestType.subclass(*args_, **kwargs_)
+        if ErrorReplyType.subclass:
+            return ErrorReplyType.subclass(*args_, **kwargs_)
         else:
-            return ShipmentCancelRequestType(*args_, **kwargs_)
+            return ErrorReplyType(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_Order(self):
-        return self.Order
-    def set_Order(self, Order):
-        self.Order = Order
-    def hasContent_(self):
+    def get_Error(self):
+        return self.Error
+    def set_Error(self, Error):
+        self.Error = Error
+    def _hasContent(self):
         if (
-            self.Order is not None
+            self.Error is not None
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentCancelRequestType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentCancelRequestType')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorReplyType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ErrorReplyType')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ShipmentCancelRequestType':
+        if self.original_tagname_ is not None and name_ == 'ErrorReplyType':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentCancelRequestType')
-        if self.hasContent_():
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ErrorReplyType')
+        if self._hasContent():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentCancelRequestType', pretty_print=pretty_print)
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ErrorReplyType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentCancelRequestType'):
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ErrorReplyType'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentCancelRequestType', fromsubclass_=False, pretty_print=True):
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorReplyType', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.Order is not None:
-            namespaceprefix_ = self.Order_nsprefix_ + ':' if (UseCapturedNS_ and self.Order_nsprefix_) else ''
-            self.Order.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Order', pretty_print=pretty_print)
+        if self.Error is not None:
+            namespaceprefix_ = self.Error_nsprefix_ + ':' if (UseCapturedNS_ and self.Error_nsprefix_) else ''
+            self.Error.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Error', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
             self.gds_elementtree_node_ = node
         already_processed = set()
         self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
+        self._buildAttributes(node, node.attrib, already_processed)
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
-    def buildAttributes(self, node, attrs, already_processed):
+    def _buildAttributes(self, node, attrs, already_processed):
         pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Order':
-            obj_ = OrderType.factory(parent_object_=self)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Error':
+            obj_ = ErrorType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Order = obj_
-            obj_.original_tagname_ = 'Order'
-# end class ShipmentCancelRequestType
+            self.Error = obj_
+            obj_.original_tagname_ = 'Error'
+# end class ErrorReplyType
 
 
-class OrderType(GeneratedsSuper):
+class ErrorType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, orderId=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Message=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.orderId = _cast(int, orderId)
-        self.orderId_nsprefix_ = None
+        self.Message = _cast(None, Message)
+        self.Message_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, OrderType)
+                CurrentSubclassModule_, ErrorType)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if OrderType.subclass:
-            return OrderType.subclass(*args_, **kwargs_)
+        if ErrorType.subclass:
+            return ErrorType.subclass(*args_, **kwargs_)
         else:
-            return OrderType(*args_, **kwargs_)
+            return ErrorType(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_orderId(self):
-        return self.orderId
-    def set_orderId(self, orderId):
-        self.orderId = orderId
+    def get_Message(self):
+        return self.Message
+    def set_Message(self, Message):
+        self.Message = Message
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
-    def hasContent_(self):
+    def _hasContent(self):
         if (
             (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='OrderType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('OrderType')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ErrorType')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'OrderType':
+        if self.original_tagname_ is not None and name_ == 'ErrorType':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='OrderType')
-        if self.hasContent_():
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ErrorType')
+        if self._hasContent():
             outfile.write('>')
             outfile.write(self.convert_unicode(self.valueOf_))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='OrderType', pretty_print=pretty_print)
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ErrorType', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='OrderType'):
-        if self.orderId is not None and 'orderId' not in already_processed:
-            already_processed.add('orderId')
-            outfile.write(' orderId="%s"' % self.gds_format_integer(self.orderId, input_name='orderId'))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='OrderType', fromsubclass_=False, pretty_print=True):
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ErrorType'):
+        if self.Message is not None and 'Message' not in already_processed:
+            already_processed.add('Message')
+            outfile.write(' Message=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Message), input_name='Message')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1267,20 +1246,20 @@ class OrderType(GeneratedsSuper):
             self.gds_elementtree_node_ = node
         already_processed = set()
         self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
+        self._buildAttributes(node, node.attrib, already_processed)
         self.valueOf_ = get_all_text_(node)
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('orderId', node)
-        if value is not None and 'orderId' not in already_processed:
-            already_processed.add('orderId')
-            self.orderId = self.gds_parse_integer(value, node, 'orderId')
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Message', node)
+        if value is not None and 'Message' not in already_processed:
+            already_processed.add('Message')
+            self.Message = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class OrderType
+# end class ErrorType
 
 
 GDSClassesMapping = {
@@ -1442,8 +1421,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from shipment_cancel_request import *\n\n')
-        sys.stdout.write('import shipment_cancel_request as model_\n\n')
+        sys.stdout.write('#from error import *\n\n')
+        sys.stdout.write('import error as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
@@ -1476,10 +1455,10 @@ RenameMappings_ = {
 # Mapping of namespaces to types defined in them
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
-NamespaceToDefMappings_ = {'http://www.freightcom.net/XMLSchema': []}
+NamespaceToDefMappings_ = {'http://www.freightcom.net/xml/XMLSchema': []}
 
 __all__ = [
-    "Freightcom",
-    "OrderType",
-    "ShipmentCancelRequestType"
+    "ErrorReplyType",
+    "ErrorType",
+    "Freightcom"
 ]
