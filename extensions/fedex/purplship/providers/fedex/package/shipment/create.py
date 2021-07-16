@@ -36,6 +36,8 @@ from fedex_lib.ship_service_v26 import (
     CustomsClearanceDetail,
     Commodity,
     CommercialInvoice,
+    CustomerReference,
+    CustomerReferenceType,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages, CompleteAddress, Weight
@@ -395,7 +397,15 @@ def shipment_request(
                     PhysicalPackaging=None,
                     ItemDescription=master_package.parcel.description,
                     ItemDescriptionForClearance=None,
-                    CustomerReferences=None,
+                    CustomerReferences=(
+                        [
+                            CustomerReference(
+                                CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
+                                Value=payload.reference
+                            )
+                        ]
+                        if any(payload.reference or "") else None
+                    ),
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )

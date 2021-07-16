@@ -16,6 +16,8 @@ from fedex_lib.rate_service_v28 import (
     Surcharge,
     RequestedPackageLineItem,
     Dimensions,
+    CustomerReference,
+    CustomerReferenceType,
 )
 from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, DF
 from purplship.core.units import Packages, Options, Services, CompleteAddress
@@ -231,7 +233,15 @@ def rate_request(
                     PhysicalPackaging=None,
                     ItemDescription=package.parcel.description,
                     ItemDescriptionForClearance=None,
-                    CustomerReferences=None,
+                    CustomerReferences=(
+                        [
+                            CustomerReference(
+                                CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
+                                Value=payload.reference
+                            )
+                        ]
+                        if any(payload.reference or "") else None
+                    ),
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
