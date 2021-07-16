@@ -31,6 +31,7 @@ from ups_lib.ship_web_service_schema import (
     LabelImageFormatType,
     LabelStockSizeType,
     ImageFormatType,
+    ReferenceNumberType,
 )
 from purplship.core.utils import (
     gif_to_pdf,
@@ -98,6 +99,7 @@ def shipment_request(
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
 
+    country_pair = f'{payload.shipper.country_code}/{payload.recipient.country_code}'
     charges: Dict[str, Payment] = {
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
@@ -112,7 +114,8 @@ def shipment_request(
             RequestOption=["validate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=payload.reference, TransactionIdentifier=None
+                CustomerContext=payload.reference,
+                TransactionIdentifier=getattr(payload, 'id', None)
             ),
         ),
         Shipment=ShipmentType(
@@ -204,6 +207,18 @@ def shipment_request(
                     ],
                     SplitDutyVATIndicator=None,
                 ) if any(charges.values()) else None
+            ),
+            MovementReferenceNumber=None,
+            ReferenceNumber=(
+                [
+                    ReferenceNumberType(
+                        BarCodeIndicator=None,
+                        Code=payload.shipper.country_code,
+                        Value=payload.reference
+                    )
+                ]
+                if (country_pair not in ["US/US", "PR/PR"])
+                else None
             ),
             Service=(ServiceType(Code=service) if service is not None else None),
             ShipmentServiceOptions=(

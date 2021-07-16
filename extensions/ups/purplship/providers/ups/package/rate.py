@@ -135,7 +135,8 @@ def rate_request(
             RequestOption=["Shop", "Rate"],
             SubVersion=None,
             TransactionReference=TransactionReferenceType(
-                CustomerContext=payload.reference, TransactionIdentifier=None
+                CustomerContext=payload.reference,
+                TransactionIdentifier=getattr(payload, 'id', None)
             ),
         ),
         PickupType=None,
