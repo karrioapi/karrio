@@ -53,6 +53,7 @@ class ShipmentFilters(filters.FilterSet):
     created_end = filters.DateFilter(field_name="created_at", lookup_expr='lte')
     carrier_id = filters.CharFilter(field_name="selected_rate_carrier__carrier_id")
     service = filters.CharFilter(field_name="selected_rate__service")
+    reference = filters.CharFilter(field_name='reference', lookup_expr='iregex')
 
     parameters = [
         openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
@@ -60,6 +61,7 @@ class ShipmentFilters(filters.FilterSet):
         openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('service', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('reference', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('created_end', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
         openapi.Parameter('created_start', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
     ]
