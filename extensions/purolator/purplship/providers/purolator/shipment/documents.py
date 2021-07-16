@@ -30,7 +30,7 @@ def get_shipping_documents_request(
             Version="1.3",
             Language=settings.language,
             GroupID="",
-            RequestReference=payload.reference,
+            RequestReference=getattr(payload, 'id', ""),
             UserToken=settings.user_token,
         ),
         body_content=GetDocumentsRequest(

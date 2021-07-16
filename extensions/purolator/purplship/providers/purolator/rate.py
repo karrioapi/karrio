@@ -122,7 +122,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
             Version="2.1",
             Language=settings.language,
             GroupID="",
-            RequestReference="",
+            RequestReference=getattr(payload, 'id', ""),
             UserToken=settings.user_token,
         ),
         body_content=GetFullEstimateRequest(

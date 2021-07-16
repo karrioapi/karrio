@@ -111,7 +111,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
             Version="2.1",
             Language=settings.language,
             GroupID="",
-            RequestReference=payload.reference,
+            RequestReference=getattr(payload, 'id', ""),
             UserToken=settings.user_token,
         ),
         body_content=CreateShipmentRequest(
@@ -297,10 +297,11 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                     NotificationInformation(
                         ConfirmationEmailAddress=(options.notification_email or payload.recipient.email)
                     )
-                    if options.notification_email is None else None
+                    if any([options.notification_email or payload.recipient.email]) else None
                 ),
-                TrackingReferenceInformation=TrackingReferenceInformation(
-                    Reference1=payload.reference
+                TrackingReferenceInformation=(
+                    TrackingReferenceInformation(Reference1=payload.reference)
+                    if payload.reference != "" else None
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,
