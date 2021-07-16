@@ -67,17 +67,13 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     document = XP.find("DocumentDetail", response, DocumentDetail, first=True) or DocumentDetail()
 
     pin = cast(PIN, shipment.ShipmentPIN).Value
-    label = next(
-        (content for content in [document.Data, document.URL] if content is not None),
-        None,
-    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=pin,
         shipment_identifier=pin,
-        label=label,
+        label=document.Data,
     )
 
 
@@ -111,7 +107,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
             Version="2.1",
             Language=settings.language,
             GroupID="",
-            RequestReference=getattr(payload, 'id', ""),
+            RequestReference=(getattr(payload, 'id', None) or ""),
             UserToken=settings.user_token,
         ),
         body_content=CreateShipmentRequest(
