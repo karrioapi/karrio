@@ -27,6 +27,7 @@ from purpleserver.core.serializers import (
     LabelType,
     Message,
     PlainDictField,
+    StringListField,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
@@ -120,10 +121,7 @@ class ShipmentSerializer(ShipmentData):
 
         if 'carrier_ids' in validated_data:
             carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = (
-                Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by)
-                if any(carrier_ids) else instance.carriers
-            )
+            carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
             instance.carriers.set(carriers)
 
         return instance
@@ -132,14 +130,33 @@ class ShipmentSerializer(ShipmentData):
 @owned_model_serializer
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
+    label_type = ChoiceField(
+        required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
     payment = Payment(required=False, help_text="The payment details")
+    reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+
+
+@owned_model_serializer
+class ShipmentRateData(Serializer):
+    services = StringListField(required=False, allow_null=True, help_text="""
+    The requested carrier service for the shipment.
+
+    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+    """)
+    carrier_ids = StringListField(required=False, allow_null=True, help_text="""
+    The list of configured carriers you wish to get rates from.
+    
+    *Note that the request will be sent to all carriers in nothing is specified*
+    """)
+    reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
 
 
 @owned_model_serializer
 class ShipmentValidationData(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
+    reference = CharField(required=False, allow_blank=True, allow_null=True)
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(

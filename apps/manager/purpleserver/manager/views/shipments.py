@@ -34,6 +34,7 @@ from purpleserver.manager.serializers import (
     reset_related_shipment_rates,
     create_shipment_tracker,
     ShipmentSerializer,
+    ShipmentRateData,
     ShipmentPurchaseData,
     ShipmentValidationData,
     ShipmentCancelSerializer,
@@ -181,9 +182,10 @@ class ShipmentRates(APIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new shipment rates",
-        responses={200: Shipment(), 400: ErrorResponse()}
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ShipmentRateData()
     )
-    def get(self, request: Request, pk: str):
+    def post(self, request: Request, pk: str):
         """
         Refresh the list of the shipment rates
         """
@@ -191,15 +193,18 @@ class ShipmentRates(APIView):
             .exclude(status=ShipmentStatus.cancelled.value)\
             .get(pk=pk)
 
-        rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data, context=request).save(test=shipment.test_mode).instance
+        payload = SerializerDecorator[ShipmentRateData](data=request.data).data
 
-        payload: dict = dict(
-            rates=Rate(rate_response.rates, many=True).data,
-            messages=DP.to_dict(rate_response.messages),
-        )
+        rate_response: RateResponse = SerializerDecorator[RateSerializer](context=request, data={
+            **ShipmentData(shipment).data,
+            **payload
+        }).save(test=shipment.test_mode).instance
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data={
+            "rates": Rate(rate_response.rates, many=True).data,
+            "messages": DP.to_dict(rate_response.messages),
+            **payload
+        }).save()
 
         return Response(Shipment(shipment).data)
 
@@ -342,14 +347,13 @@ class ShipmentPurchase(APIView):
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload = {
-            **Shipment(shipment).data,
-            **SerializerDecorator[ShipmentPurchaseData](data=request.data).data
-        }
+        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
 
         # Submit shipment to carriers
-        response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload, context=request).save().instance
+        response: Shipment = SerializerDecorator[ShipmentValidationData](context=request, data={
+            **Shipment(shipment).data,
+            **payload
+        }).save().instance
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context=request).save()

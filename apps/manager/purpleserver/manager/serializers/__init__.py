@@ -5,6 +5,7 @@ from purpleserver.manager.serializers.commodity import CommodityData, CommodityS
 from purpleserver.manager.serializers.rate import RateSerializer
 from purpleserver.manager.serializers.tracking import TrackingSerializer, update_shipment_tracker
 from purpleserver.manager.serializers.shipment import (
+    ShipmentRateData,
     ShipmentSerializer,
     ShipmentPurchaseData,
     ShipmentValidationData,
