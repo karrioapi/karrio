@@ -2,7 +2,7 @@
 
 ## GitHub Discussions
 
-Join our [GitHub Discussions](https://github.com/purplship/purplship-server/discussions) to ask questions and propose 
+Join our [GitHub Discussions](https://github.com/purplship/purplship/discussions) to ask questions and propose 
 features.
 
 ## GitHub
