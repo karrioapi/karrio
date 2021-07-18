@@ -187,7 +187,7 @@ our [OpenAPI References](https://github.com/purplship/purplship-server/tree/main
 ## Resources
 
 - [**Documentation**](https://docs.purplship.com)
-- [**Github Community**](https://github.com/purplship/purplship-server/discussions)
+- [**Github Community**](https://github.com/purplship/purplship/discussions)
 - [**Issue Tracker**](https://github.com/purplship/purplship/issues)
 - [**Blog**](https://blog.purplship.com)
 
