@@ -67,8 +67,7 @@ class Carriers:
 class Address:
     @staticmethod
     def validate(payload: dict) -> datatypes.AddressValidation:
-        # Currently only support GoogleGeocode validation. Refactor this for other methods
-        validation = validators.GoogleGeocode.validate(datatypes.Address(**payload))
+        validation = validators.Address.validate(datatypes.Address(**payload))
 
         if validation.success is False:
             raise ValidationError(detail="Invalid Address")

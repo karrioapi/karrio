@@ -29,4 +29,5 @@ def update_settings(current):
         cfg is not None and cfg != '' for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER, current.EMAIL_HOST_PASSWORD]
     )
 
-
+    settings.GOOGLE_CLOUD_API_KEY = current.GOOGLE_CLOUD_API_KEY
+    settings.CANADAPOST_ADDRESS_COMPLETE_API_KEY = current.CANADAPOST_ADDRESS_COMPLETE_API_KEY
