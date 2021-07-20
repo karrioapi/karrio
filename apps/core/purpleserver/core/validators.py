@@ -190,7 +190,6 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
     def get_info() -> dict:
         return dict(
             provider="canadapost",
-            url=CanadaPostAddressComplete.get_url(),
             key=CanadaPostAddressComplete.get_api_key()
         )
 
