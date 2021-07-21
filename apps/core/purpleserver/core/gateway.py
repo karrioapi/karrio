@@ -70,7 +70,7 @@ class Address:
         validation = validators.Address.validate(datatypes.Address(**payload))
 
         if validation.success is False:
-            raise ValidationError(detail="Invalid Address")
+            raise exceptions.PurplShipApiException(detail=validation, code="invalid_address")
 
         return validation
 

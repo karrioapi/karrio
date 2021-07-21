@@ -174,15 +174,23 @@ class GoogleGeocode(AddressValidatorAbstract):
 
         logger.debug(f'sending address validation request to Google Geocode API: {formatted_address}')
         response = requests.request(
-            "GET",
-            GoogleGeocode.get_url(),
-            params=dict(address=formatted_address, key=GoogleGeocode.get_api_key(), location_type="ROOFTOP")
+            "GET", GoogleGeocode.get_url(),
+            params=dict(
+                address=formatted_address,
+                key=GoogleGeocode.get_api_key(),
+                location_type="ROOFTOP")
         )
         response_data = response.json()
-        success = response_data.get("status") == "OK"
-        meta = dict(results=response_data.get("results"))
 
-        return datatypes.AddressValidation(success=success, meta=meta)
+        is_ok = response_data.get("status") == "OK"
+        results = response_data.get("results") or []
+        meta = next(
+            (r for r in results if r.get("geometry", {}).get("location_type") == "ROOFTOP"),
+            None
+        )
+        success = is_ok and (meta is not None)
+
+        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
 
 
 class CanadaPostAddressComplete(AddressValidatorAbstract):
@@ -211,15 +219,16 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
         address_string = utils.SF.concat_str(
             address.address_line1 or "",
             address.address_line2 or "",
-            address.postal_code or "",
             address.city or "",
-            join=True
+            address.postal_code or "",
+            join=True,
+            separator=", "
         )
 
         if address_string is None:
             raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
 
-        return address_string.replace(" ", "+")
+        return address_string
 
     @staticmethod
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:
@@ -233,16 +242,23 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
                 key=CanadaPostAddressComplete.get_api_key(),
                 SearchTerm=formatted_address,
                 Country=address.country_code,
-                MaxResults=7,
-                MaxSuggestions=7,
-                SearchFor="Everything",
+                MaxResults=5,
+                MaxSuggestions=5,
+                SearchFor="Places",
                 LanguagePreference="EN")
         )
-        response_data = response.json()
-        success = (response.status_code == 200 and len(response_data) > 0)
-        meta = dict(results=response_data)
+        results = response.json()
+        is_ok = response.status_code == 200
+        meta = next(
+            (r for r in results if (
+                r.get('Text').replace(",", "").lower() == address.address_line1.replace(",", "").lower()
+                and r.get('Next') == "Retrieve"  # means it is a permanent address
+            )),
+            None
+        )
+        success = is_ok and (meta is not None)
 
-        return datatypes.AddressValidation(success=success, meta=meta)
+        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
 
 
 class Address:

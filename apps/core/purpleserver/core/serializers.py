@@ -581,15 +581,15 @@ class ShipmentContent(Serializer):
 
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
-    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
+    tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The attached tracker id")
     created_at = CharField(required=True, help_text="""
-    The shipment creation date
+    The shipment creation datetime
     
-    Date Format: `YYYY-MM-DD`
+    Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
-    tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
 
 class Shipment(EntitySerializer, ShipmentContent):

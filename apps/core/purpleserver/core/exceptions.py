@@ -31,7 +31,7 @@ class PurplShipApiException(APIException):
         if code is None:
             code = self.default_code
         if status_code is None:
-            code = self.default_status_code
+            status_code = self.default_status_code
 
         self.status_code = status_code
         self.code = code
