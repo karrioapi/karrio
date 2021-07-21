@@ -8,7 +8,7 @@ from django.urls import path
 from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (
-    RateRequest, RateResponse, ErrorResponse
+    RateRequest, RateResponse, ErrorResponse, TestFilters
 )
 from purpleserver.core.gateway import Rates
 from purpleserver.proxy.router import router
@@ -31,10 +31,13 @@ class RateViewAPI(APIView):
         operation_description=DESCRIPTIONS,
         responses={200: RateResponse(), 400: ErrorResponse()},
         request_body=RateRequest(),
+        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         payload = SerializerDecorator[RateRequest](data=request.data).data
-        response = Rates.fetch(payload, context=request)
+        query = SerializerDecorator[TestFilters](data=request.query_params).data
+
+        response = Rates.fetch(payload, context=request, **query)
 
         return Response(
             RateResponse(response).data,
