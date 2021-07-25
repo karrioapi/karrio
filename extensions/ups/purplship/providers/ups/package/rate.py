@@ -104,7 +104,7 @@ def _extract_package_rate(
                             )
                         ]
                     ),
-                    [charge for charge in extra_charges if charge is not None],
+                    [charge for charge in extra_charges if charge is not None and charge.Code is not None],
                     [],
                 ),
                 transit_days=NF.integer(transit_days),

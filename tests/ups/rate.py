@@ -156,7 +156,6 @@ ParsedRateResponse = [
             "carrier_id": "ups",
             "currency": "USD",
             "duties_and_taxes": 0.0,
-            "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
             "service": "ups_ground",
             "total_charge": 9.86,
             "meta": {"service_name": "ups_ground"},
