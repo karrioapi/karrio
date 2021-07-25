@@ -28,6 +28,7 @@ from purpleserver.core.serializers import (
     Message,
     PlainDictField,
     StringListField,
+    TrackerStatus,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
@@ -230,6 +231,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                     time=DF.ftime(shipment.updated_at)
                 ))],
                 delivered=False,
+                status=TrackerStatus.pending.value,
                 test_mode=shipment.test_mode,
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,

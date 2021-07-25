@@ -57,9 +57,9 @@ class ShipmentFilters(filters.FilterSet):
 
     parameters = [
         openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=list(MODELS.keys())),
         openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=[c.value for c in list(ShipmentStatus)]),
         openapi.Parameter('service', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('reference', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('created_end', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),

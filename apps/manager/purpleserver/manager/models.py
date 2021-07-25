@@ -6,7 +6,7 @@ from purpleserver.core.utils import identity
 from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
-    WEIGHT_UNIT, DIMENSION_UNIT, CURRENCIES, SHIPMENT_STATUS, COUNTRIES, INCOTERMS
+    WEIGHT_UNIT, DIMENSION_UNIT, CURRENCIES, SHIPMENT_STATUS, TRACKER_STATUS, COUNTRIES, INCOTERMS
 )
 
 
@@ -182,6 +182,8 @@ class Tracking(OwnedEntity):
         ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
+
+    status = models.CharField(max_length=25, choices=TRACKER_STATUS, default=TRACKER_STATUS[0][0])
     tracking_number = models.CharField(max_length=50)
     events = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
     delivered = models.BooleanField(blank=True, null=True, default=False)

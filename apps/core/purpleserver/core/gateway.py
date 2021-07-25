@@ -14,7 +14,7 @@ from purpleserver.serializers import Context
 from purpleserver.providers import models
 from purpleserver.core.models import get_access_filter
 from purpleserver.core import datatypes, serializers, exceptions, validators
-from purpleserver.core.utils import identity, post_processing, upper
+from purpleserver.core.utils import identity, post_processing, upper, compute_tracking_status
 
 logger = logging.getLogger(__name__)
 
@@ -192,19 +192,16 @@ class Shipments:
         if not any(results or []):
             raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
-        def process_pending_state(details: datatypes.Tracking):
-            return (
-                len(details.events) == 0 or
-                (len(details.events) == 1 and details.events[0].code == 'CREATED')
-            )
-
         return datatypes.TrackingResponse(
-            tracking=(datatypes.Tracking(**{
-                **DP.to_dict(results[0]),
-                'id': f'trk_{uuid.uuid4().hex}',
-                'test_mode': carrier.test,
-                'pending': process_pending_state(results[0])
-            }) if any(results) else None),
+            tracking=(
+                datatypes.Tracking(**{
+                    **DP.to_dict(results[0]),
+                    'id': f'trk_{uuid.uuid4().hex}',
+                    'test_mode': carrier.test,
+                    'status': compute_tracking_status(results[0]).value
+                })
+                if any(results) else None
+            ),
             messages=messages
         )
 

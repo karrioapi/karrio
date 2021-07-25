@@ -68,7 +68,7 @@ TRACKING_RESPONSE = {
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
     "delivered": False,
-    "pending": False,
+    "status": "in-transit",
     "events": [
         {
             "code": "KB",

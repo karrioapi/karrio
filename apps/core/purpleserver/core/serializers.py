@@ -39,7 +39,15 @@ class ShipmentStatus(Enum):
     delivered = 'delivered'
 
 
-SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
+class TrackerStatus(Enum):
+    pending = 'pending'
+    in_transit = 'in-transit'
+    incident = 'incident'
+    delivered = 'delivered'
+
+
+SHIPMENT_STATUS = [(c.value, c.value) for c in list(ShipmentStatus)]
+TRACKER_STATUS = [(c.value, c.value) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(Incoterm)]
 
@@ -463,7 +471,8 @@ class TrackingDetails(Serializer):
     events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
     delivered = BooleanField(required=False, help_text="Specified whether the related shipment was delivered")
     test_mode = BooleanField(required=True, help_text="Specified whether the object was created with a carrier in test mode")
-    pending = BooleanField(required=False, help_text="Specified whether the shipment hasn't been picked up or is in an unknown state")
+    status = ChoiceField(
+        required=False, default=SHIPMENT_STATUS[0][0], choices=SHIPMENT_STATUS, help_text="The current tracking status")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):

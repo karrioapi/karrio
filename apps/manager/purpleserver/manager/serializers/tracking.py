@@ -4,7 +4,7 @@ from purpleserver.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.core.serializers import TrackingDetails, TrackingRequest, ShipmentStatus
+from purpleserver.core.serializers import TrackingDetails, TrackingRequest, ShipmentStatus, TrackerStatus
 
 import purpleserver.manager.models as models
 
@@ -18,7 +18,7 @@ class TrackingSerializer(TrackingDetails):
     test_mode = BooleanField(required=False)
     pending = BooleanField(required=False)
 
-    def create(self, validated_data: dict, **kwargs) -> models.Tracking:
+    def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         carrier_filter = validated_data['carrier_filter']
         tracking_number = validated_data['tracking_number']
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
@@ -29,11 +29,12 @@ class TrackingSerializer(TrackingDetails):
         )
 
         return models.Tracking.objects.create(
-            created_by=validated_data['created_by'],
+            created_by=context.user,
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
+            status=response.tracking.status,
             tracking_carrier=carrier,
         )
 
@@ -59,6 +60,10 @@ class TrackingSerializer(TrackingDetails):
                 instance.delivered = response.tracking.delivered
                 changes.append('delivered')
 
+            if response.tracking.status != instance.status:
+                instance.status = response.tracking.status
+                changes.append('status')
+
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier
                 changes.append('tracking_carrier')
@@ -72,10 +77,10 @@ class TrackingSerializer(TrackingDetails):
 
 def update_shipment_tracker(tracker: models.Tracking):
     try:
-        if tracker.delivered:
+        if tracker.status == TrackerStatus.delivered.value:
             status = ShipmentStatus.delivered.value
-        elif tracker.pending:
-            status = ShipmentStatus.created.value
+        elif tracker == TrackerStatus.pending.value:
+            status = tracker.shipment.status
         else:
             status = ShipmentStatus.transit.value
 

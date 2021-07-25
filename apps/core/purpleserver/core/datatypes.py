@@ -231,10 +231,10 @@ class Tracking:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
 
+    status: str = ""
     delivered: bool = None
     id: str = None
     test_mode: bool = None
-    pending: bool = None
 
 
 @attr.s(auto_attribs=True)
