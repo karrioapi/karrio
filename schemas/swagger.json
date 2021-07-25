@@ -1278,6 +1278,15 @@
                         "schema": {
                             "$ref": "#/definitions/RateRequest"
                         }
+                    },
+                    {
+                        "name": "test",
+                        "in": "query",
+                        "description": "The test flag indicates whether to use a carrier configured for test.",
+                        "required": false,
+                        "type": "boolean",
+                        "default": false,
+                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -1469,7 +1478,15 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                            "created",
+                            "purchased",
+                            "cancelled",
+                            "shipped",
+                            "in-transit",
+                            "delivered"
+                        ]
                     },
                     {
                         "name": "created_start",
@@ -1515,7 +1532,29 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ]
                     }
                 ],
                 "responses": {
@@ -1858,6 +1897,22 @@
                         "type": "boolean"
                     },
                     {
+                        "name": "status",
+                        "in": "query",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "in-transit",
+                            "incident",
+                            "delivered"
+                        ]
+                    },
+                    {
+                        "name": "carrier_id",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1870,6 +1925,33 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "query",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ]
                     }
                 ],
                 "responses": {
@@ -4871,7 +4953,7 @@
                         "purchased",
                         "cancelled",
                         "shipped",
-                        "transit",
+                        "in-transit",
                         "delivered"
                     ],
                     "default": "created"
@@ -4998,16 +5080,15 @@
                     "default": [],
                     "x-nullable": true
                 },
-                "meta": {
-                    "title": "Meta",
-                    "description": "provider specific metadata",
-                    "type": "object",
-                    "additionalProperties": true,
+                "tracker_id": {
+                    "title": "Tracker id",
+                    "description": "The attached tracker id",
+                    "type": "string",
                     "x-nullable": true
                 },
                 "created_at": {
                     "title": "Created at",
-                    "description": "\nThe shipment creation date\n\nDate Format: `YYYY-MM-DD`\n",
+                    "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n",
                     "type": "string",
                     "minLength": 1
                 },
@@ -5016,6 +5097,13 @@
                     "description": "Specified whether it was created with a carrier in test mode",
                     "type": "boolean"
                 },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
                 "messages": {
                     "description": "The list of note or warning messages",
                     "type": "array",
@@ -5023,12 +5111,6 @@
                         "$ref": "#/definitions/Message"
                     },
                     "default": []
-                },
-                "tracker_id": {
-                    "title": "Tracker id",
-                    "description": "The selected service",
-                    "type": "string",
-                    "x-nullable": true
                 }
             }
         },
@@ -5148,10 +5230,19 @@
                     "description": "Specified whether the object was created with a carrier in test mode",
                     "type": "boolean"
                 },
-                "pending": {
-                    "title": "Pending",
-                    "description": "Specified whether the shipment hasn't been picked up or is in an unknown state",
-                    "type": "boolean"
+                "status": {
+                    "title": "Status",
+                    "description": "The current tracking status",
+                    "type": "string",
+                    "enum": [
+                        "created",
+                        "purchased",
+                        "cancelled",
+                        "shipped",
+                        "in-transit",
+                        "delivered"
+                    ],
+                    "default": "created"
                 }
             }
         },
@@ -5408,7 +5499,6 @@
                         "type": "string",
                         "minLength": 1
                     },
-                    "default": [],
                     "x-nullable": true
                 },
                 "carrier_ids": {
@@ -5418,7 +5508,6 @@
                         "type": "string",
                         "minLength": 1
                     },
-                    "default": [],
                     "x-nullable": true
                 },
                 "reference": {

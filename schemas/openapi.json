@@ -1603,6 +1603,18 @@
                 "summary": "Fetch shipment rates",
                 "description": "\nThe Shipping process begins by fetching rates for your shipment.\nUse this service to fetch a shipping rates available.\n",
                 "operationId": "@@fetch_rates",
+                "parameters": [
+                    {
+                        "name": "test",
+                        "in": "query",
+                        "description": "The test flag indicates whether to use a carrier configured for test.",
+                        "schema": {
+                            "type": "boolean",
+                            "nullable": true,
+                            "default": false
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1845,7 +1857,15 @@
                         "name": "status",
                         "in": "query",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "created",
+                                "purchased",
+                                "cancelled",
+                                "shipped",
+                                "in-transit",
+                                "delivered"
+                            ]
                         }
                     },
                     {
@@ -1905,7 +1925,29 @@
                         "name": "carrier_name",
                         "in": "query",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -2350,6 +2392,26 @@
                         }
                     },
                     {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "in-transit",
+                                "incident",
+                                "delivered"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "carrier_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -2363,6 +2425,35 @@
                         "description": "The initial index from which to return the results.",
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -5484,7 +5575,7 @@
                             "purchased",
                             "cancelled",
                             "shipped",
-                            "transit",
+                            "in-transit",
                             "delivered"
                         ]
                     },
@@ -5607,6 +5698,23 @@
                             "type": "string"
                         }
                     },
+                    "tracker_id": {
+                        "title": "Tracker id",
+                        "type": "string",
+                        "description": "The attached tracker id",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "title": "Created at",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n"
+                    },
+                    "test_mode": {
+                        "title": "Test mode",
+                        "type": "boolean",
+                        "description": "Specified whether it was created with a carrier in test mode"
+                    },
                     "meta": {
                         "title": "Meta",
                         "type": "object",
@@ -5614,29 +5722,12 @@
                         "description": "provider specific metadata",
                         "nullable": true
                     },
-                    "created_at": {
-                        "title": "Created at",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "\nThe shipment creation date\n\nDate Format: `YYYY-MM-DD`\n"
-                    },
-                    "test_mode": {
-                        "title": "Test mode",
-                        "type": "boolean",
-                        "description": "Specified whether it was created with a carrier in test mode"
-                    },
                     "messages": {
                         "type": "array",
                         "description": "The list of note or warning messages",
                         "items": {
                             "$ref": "#/components/schemas/Message"
                         }
-                    },
-                    "tracker_id": {
-                        "title": "Tracker id",
-                        "type": "string",
-                        "description": "The selected service",
-                        "nullable": true
                     }
                 }
             },
@@ -5756,10 +5847,19 @@
                         "type": "boolean",
                         "description": "Specified whether the object was created with a carrier in test mode"
                     },
-                    "pending": {
-                        "title": "Pending",
-                        "type": "boolean",
-                        "description": "Specified whether the shipment hasn't been picked up or is in an unknown state"
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "The current tracking status",
+                        "default": "created",
+                        "enum": [
+                            "created",
+                            "purchased",
+                            "cancelled",
+                            "shipped",
+                            "in-transit",
+                            "delivered"
+                        ]
                     }
                 },
                 "description": "The tracking details retrieved"
