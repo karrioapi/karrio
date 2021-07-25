@@ -20,7 +20,7 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
     ExportLineItem,
     AdditionalInformation,
 )
-from dhl_express_lib.ship_val_global_res_10_0 import LabelImage
+from dhl_express_lib.ship_val_global_res_10_0 import LabelImage, MultiLabelType
 from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
 from purplship.core.utils import Serializable, XP, SF, Location, Element
 from purplship.core.models import (
@@ -67,7 +67,14 @@ def parse_shipment_response(
 def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDetails]:
     tracking_number = XP.find("AirwayBillNumber", shipment_node, first=True).text
     label_image = XP.find("LabelImage", shipment_node, LabelImage, first=True)
+    multilabels: List[MultiLabelType] = XP.find("MultiLabel", shipment_node, MultiLabelType)
+    invoice = next((item for item in multilabels if item.DocName == "CustomInvoiceImage"), None)
+
     label = encodebytes(label_image.OutputImage).decode("utf-8")
+    meta = (
+        dict(custom_invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
+        if invoice is not None else None
+    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -75,6 +82,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
         label=label,
+        meta=meta
     )
 
 
