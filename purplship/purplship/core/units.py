@@ -461,9 +461,7 @@ class Option(Enum):
     currency = Spec.asValue("currency")
     insurance = Spec.asValue("insurance", float)
     cash_on_delivery = Spec.asValue("COD", float)
-    label_format = Spec.asValue("label_format")
     shipment_date = Spec.asValue("shipment_date")
-    label_printing = Spec.asValue("label_printing")
     declared_value = Spec.asValue("declared_value", float)
     email_notification = Spec.asFlag("email_notification")
     email_notification_to = Spec.asValue("email_notification_to")
@@ -512,14 +510,6 @@ class Options:
     @property
     def insurance(self) -> float:
         return self[Option.insurance.name]
-
-    @property
-    def label_format(self) -> str:
-        return self[Option.label_format.name]
-
-    @property
-    def label_printing(self) -> str:
-        return self[Option.label_printing.name]
 
     @property
     def declared_value(self) -> float:

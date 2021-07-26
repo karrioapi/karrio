@@ -1068,11 +1068,10 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `currency` | currency | `str`
 | `insurance` | insurance | `float`
 | `cash_on_delivery` | COD | `float`
-| `label_format` | label_format | `str`
 | `shipment_date` | shipment_date | `str`
-| `label_printing` | label_printing | `str`
 | `declared_value` | declared_value | `float`
-| `notification_emails` | notification_emails | `str`
+| `email_notification` | email_notification | `bool`
+| `email_notification_to` | email_notification_to | `str`
 | `signature_confirmation` | signature_confirmation | `bool`
 
 
