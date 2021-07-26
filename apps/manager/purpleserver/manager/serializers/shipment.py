@@ -232,7 +232,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                 ))],
                 delivered=False,
                 status=TrackerStatus.pending.value,
-                test_mode=shipment.test_mode,
+                test_mode=carrier.test,
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,
                 shipment=shipment,
