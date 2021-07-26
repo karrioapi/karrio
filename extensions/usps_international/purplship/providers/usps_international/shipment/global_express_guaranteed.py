@@ -48,7 +48,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
 
     customs = payload.customs or Customs(commodities=[])
     incoterm = Incoterm[customs.incoterm or 'OTHER'].value
-    insurance = getattr((options['usps_insurance_global_express_guaranteed']), 'value', options.insurance)
+    insurance = getattr((options.usps_insurance_global_express_guaranteed), 'value', options.insurance)
 
     request = eVSGXGGetLabelRequest(
         USERID=settings.username,

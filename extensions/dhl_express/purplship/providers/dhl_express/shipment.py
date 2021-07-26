@@ -332,8 +332,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             )
         ),
         Notification=(
-            Notification(EmailAddress=options.notification_email or recipient.email)
-            if options.notification_email is None else None
+            Notification(EmailAddress=options.email_notification_to or recipient.email)
+            if options.email_notification and any([options.email_notification_to, recipient.email])
+            else None
         ),
         Place=None,
         EProcShip=None,

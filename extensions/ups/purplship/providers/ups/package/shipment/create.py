@@ -59,16 +59,13 @@ from purplship.providers.ups.utils import Settings
 def parse_shipment_response(
         response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    details = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None
-    )
+    details = XP.find("ShipmentResults", response, first=True)
     shipment = _extract_shipment(details, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipment = ShipmentResultsType()
-    shipment.build(node)
+    shipment = XP.build(ShipmentResultsType, node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
     shipping_label = cast(LabelType, package.ShippingLabel)
 
@@ -238,7 +235,7 @@ def shipment_request(
                             NotificationType(
                                 NotificationCode=event,
                                 EMail=EmailDetailsType(EMailAddress=[
-                                    options.notification_email or payload.recipient.email
+                                    options.email_notification_to or payload.recipient.email
                                 ]),
                                 VoiceMessage=None,
                                 TextMessage=None,
@@ -246,10 +243,11 @@ def shipment_request(
                             )
                             for event in [8]
                         ]
-                        if options.notification_email is not None else None
+                        if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                        else None
                     ),
                 )
-                if any([options.cash_on_delivery, options.notification_email]) else None
+                if any([options.cash_on_delivery, options.email_notification]) else None
             ),
             Package=[
                 PackageType(

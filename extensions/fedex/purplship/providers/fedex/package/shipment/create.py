@@ -246,7 +246,7 @@ def shipment_request(
                                     NotificationDetail=NotificationDetail(
                                         NotificationType="EMAIL",
                                         EmailDetail=EMailDetail(
-                                            EmailAddress=options.notification_email or recipient.email,
+                                            EmailAddress=(options.email_notification_to or recipient.email),
                                             Name=recipient.person_name or recipient.company_name,
                                         ),
                                         Localization=Localization(LanguageCode="EN"),
@@ -257,7 +257,8 @@ def shipment_request(
                                 )
                             ],
                         )
-                        if options.notification_email is None else None
+                        if options.email_notification and any([options.email_notification_to, recipient.email])
+                        else None
                     ),
                     ReturnShipmentDetail=None,
                     PendingShipmentDetail=None,

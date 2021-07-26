@@ -291,13 +291,14 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializa
                 ),
                 NotificationInformation=(
                     NotificationInformation(
-                        ConfirmationEmailAddress=(options.notification_email or payload.recipient.email)
+                        ConfirmationEmailAddress=(options.email_notification_to or payload.recipient.email)
                     )
-                    if any([options.notification_email or payload.recipient.email]) else None
+                    if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                    else None
                 ),
                 TrackingReferenceInformation=(
                     TrackingReferenceInformation(Reference1=payload.reference)
-                    if payload.reference != "" else None
+                    if any(payload.reference or "") else None
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,

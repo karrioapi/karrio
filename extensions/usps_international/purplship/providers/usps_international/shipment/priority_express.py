@@ -125,7 +125,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CustomerRefNo=None,
         CustomerRefNo2=None,
         POZipCode=None,
-        LabelDate=DF.fdatetime((options.shipment_date or time.strftime('%Y-%m-%d')), current_format="%Y-%m-%d", output_format="%m/%d/%Y"),
+        LabelDate=DF.fdatetime(
+            (options.shipment_date or time.strftime('%Y-%m-%d')),
+            current_format="%Y-%m-%d",
+            output_format="%m/%d/%Y"
+        ),
         EMCAAccount=None,
         HoldForManifest=None,
         EELPFC=customs.eel_pfc,

@@ -155,12 +155,13 @@ def shipment_request(
             ),
             notification=(
                 NotificationType(
-                    email=options.notification_email or payload.recipient.email,
+                    email=options.email_notification_to or payload.recipient.email,
                     on_shipment=True,
                     on_exception=True,
                     on_delivery=True,
                 )
-                if any([options.notification_email, payload.recipient.email]) else None
+                if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                else None
             ),
             print_preferences=PrintPreferencesType(
                 output_format=label_format,
