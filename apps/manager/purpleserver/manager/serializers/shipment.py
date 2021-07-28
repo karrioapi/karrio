@@ -10,7 +10,8 @@ from purpleserver.serializers import (
     SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
-    save_many_to_many_data
+    save_many_to_many_data,
+    link_org,
 )
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier, MODELS
@@ -210,8 +211,6 @@ def remove_shipment_tracker(shipment: models.Shipment):
         shipment.tracker.all().delete()
 
 
-
-
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     rate_provider = ((shipment.meta or {}).get('rate_provider') or shipment.carrier_name)
     carrier = shipment.selected_rate_carrier
@@ -221,15 +220,17 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
 
     if carrier is not None:
         try:
-            models.Tracking.objects.create(
+            tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
-                events=[DP.to_dict(datatypes.TrackingEvent(
-                    date=DF.fdate(shipment.updated_at),
-                    description="Label created and ready for shipment",
-                    location="",
-                    code="CREATED",
-                    time=DF.ftime(shipment.updated_at)
-                ))],
+                events=[DP.to_dict(
+                    datatypes.TrackingEvent(
+                        date=DF.fdate(shipment.updated_at),
+                        description="Label created and ready for shipment",
+                        location="",
+                        code="CREATED",
+                        time=DF.ftime(shipment.updated_at)
+                    )
+                )],
                 delivered=False,
                 status=TrackerStatus.pending.value,
                 test_mode=carrier.test,
@@ -237,6 +238,8 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                 created_by=shipment.created_by,
                 shipment=shipment,
             )
+            tracker.save()
+            link_org(tracker, context)
             logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
         except Exception as e:
             logger.exception("Failed to create new label tracker", e)

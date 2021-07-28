@@ -104,7 +104,7 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
                     # update values only if changed; This is important for webhooks notification
                     changes = []
                     status = compute_tracking_status(details).value
-                    events = DP.to_dict(details.events)
+                    events = (DP.to_dict(details.events) if any(details.events) else instance.events)
 
                     if events != tracker.events:
                         tracker.events = events

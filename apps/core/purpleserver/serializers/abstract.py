@@ -117,13 +117,7 @@ def owned_model_serializer(serializer: Type[Serializer]):
 
             try:
                 instance = super().create(payload, context=self.__context)
-
-                # Link to organization if supported
-                if hasattr(instance, 'org') and self.__context.org is not None and not instance.org.exists():
-                    instance.link = instance.__class__.link.related.related_model.objects.create(
-                        org=self.__context.org, item=instance
-                    )
-                    instance.save()
+                link_org(instance, self.__context)  # Link to organization if supported
             except Exception as e:
                 logger.exception(e)
                 raise e
@@ -138,9 +132,18 @@ def owned_model_serializer(serializer: Type[Serializer]):
     return type(serializer.__name__, (MetaSerializer,), {})
 
 
+def link_org(entity: ModelSerializer, context: Context):
+    if hasattr(entity, 'org') and context.org is not None and not entity.org.exists():
+        entity.link = entity.__class__.link.related.related_model.objects.create(
+            org=context.org,
+            item=entity
+        )
+        entity.save()
+
+
 def save_many_to_many_data(
         name: str,
-        serializer: Type[ModelSerializer],
+        serializer: ModelSerializer,
         parent: models.Model,
         payload: dict = None,
         **kwargs):
@@ -172,7 +175,7 @@ def save_many_to_many_data(
 
 def save_one_to_one_data(
         name: str,
-        serializer: Type[ModelSerializer],
+        serializer: ModelSerializer,
         parent: models.Model = None,
         payload: dict = None,
         **kwargs):

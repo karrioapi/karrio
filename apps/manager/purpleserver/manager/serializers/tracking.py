@@ -50,7 +50,11 @@ class TrackingSerializer(TrackingDetails):
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
-            events = DP.to_dict(response.tracking.events)
+            events = (
+                DP.to_dict(response.tracking.events)
+                if any(response.tracking.events)
+                else instance.events
+            )
 
             if events != instance.events:
                 instance.events = events
