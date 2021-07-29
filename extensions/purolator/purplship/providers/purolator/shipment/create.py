@@ -3,7 +3,6 @@ from typing import List, Tuple, cast, Union, Type
 from purolator_lib.shipping_documents_service_1_3_0 import DocumentDetail
 from purolator_lib.shipping_service_2_1_3 import (
     CreateShipmentRequest,
-    CreateShipmentResponse,
     PIN,
     Shipment,
     SenderInformation,
@@ -57,22 +56,25 @@ from purplship.providers.purolator.units import (
 def parse_shipment_response(
         response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    details = XP.find("CreateShipmentResponse", response, first=True)
-    shipment = _extract_shipment(response, settings) if details is not None else None
+    pin = XP.find("ShipmentPIN", response, PIN, first=True)
+    shipment = (
+        _extract_shipment(response, settings)
+        if (getattr(pin, 'Value', None) is not None)
+        else None
+    )
+
     return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.find("CreateShipmentResponse", response, CreateShipmentResponse, first=True)
+    pin: PIN = XP.find("ShipmentPIN", response, PIN, first=True)
     document = XP.find("DocumentDetail", response, DocumentDetail, first=True) or DocumentDetail()
-
-    pin = cast(PIN, shipment.ShipmentPIN).Value
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=pin,
-        shipment_identifier=pin,
+        tracking_number=pin.Value,
+        shipment_identifier=pin.Value,
         label=document.Data,
     )
 
