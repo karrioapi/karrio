@@ -17,7 +17,7 @@ purplship.dhl-express==2021.7rc2
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex==2021.7rc2
-purplship.purolator==2021.7rc2
+purplship.purolator==2021.7rc3
 purplship.royalmail
 purplship.sendle
 purplship.sf-express
