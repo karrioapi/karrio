@@ -217,6 +217,7 @@ _build() {
 }
 
 build() {
+  cd "${ROOT:?}" || false &&
   build_theme -i &&
   build_dashboard &&
   build_js -i &&

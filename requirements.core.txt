@@ -2,11 +2,11 @@ eshipper.extension==2021.7rc0
 freightcom.extension==2021.7rc0
 purplship==2021.7rc2
 purplship-server==2021.7rc0
-purplship-server.client==2021.7rc0
-purplship-server.core==2021.7rc0
-purplship-server.events==2021.7rc0
-purplship-server.graph
-purplship-server.manager==2021.7rc0
+purplship-server.client==2021.7rc2
+purplship-server.core==2021.7rc1
+purplship-server.events==2021.7rc1
+purplship-server.graph==2021.6.3
+purplship-server.manager==2021.7rc1
 purplship-server.pricing==2021.7rc0
 purplship-server.proxy==2021.7rc0
 purplship.aramex
