@@ -63,7 +63,7 @@ purplship.royalmail
 purplship.sendle
 purplship.sf-express
 purplship.tnt==2021.7rc2
-purplship.ups==2021.7rc2
+purplship.ups==2021.7rc3
 purplship.usps==2021.7rc2
 purplship.usps_international==2021.7rc2
 purplship.yanwen

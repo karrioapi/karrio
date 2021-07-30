@@ -81,7 +81,7 @@ purplship.royalmail==2021.3
 purplship.sendle==2021.3
 purplship.sf-express==2021.3
 purplship.tnt==2021.7rc2
-purplship.ups==2021.7rc2
+purplship.ups==2021.7rc3
 purplship.usps==2021.7rc2
 purplship.usps-international==2021.7rc2
 purplship.yanwen==2021.3
