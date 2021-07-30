@@ -214,7 +214,7 @@ def shipment_request(
                         Value=payload.reference
                     )
                 ]
-                if (country_pair not in ["US/US", "PR/PR"])
+                if (country_pair not in ["US/US", "PR/PR"]) and any(payload.reference or "")
                 else None
             ),
             Service=(ServiceType(Code=service) if service is not None else None),
