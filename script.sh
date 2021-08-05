@@ -15,14 +15,14 @@ export wheels=~/Wheels
 
 activate_env() {
   echo "Activate $BASE_DIR"
-  deactivate || true
+  deactivate >/dev/null 2>&1
   # shellcheck source=src/script.sh
   source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
 }
 
 create_env() {
   echo "create $BASE_DIR Python3 env"
-  deactivate || true
+  deactivate >/dev/null 2>&1
   rm -rf "${ROOT:?}/$ENV_DIR" || true
   mkdir -p "${ROOT:?}/$ENV_DIR"
   python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
@@ -66,6 +66,7 @@ backup_wheels() {
 
 build() {
   echo "Building..."
+  cd "${ROOT}"
   clean_builds
   rm -rf "${DIST}"
   mkdir -p "${DIST}"
