@@ -1,7 +1,7 @@
 import graphene
 import graphene_django
 from graphene.types import generic
-
+import django_filters
 from django.contrib.auth import get_user_model
 
 import purpleserver.core.models as core
@@ -37,17 +37,39 @@ class ConnectionType:
 
 
 class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
+    enabled = graphene.Boolean(required=True)
 
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name', 'test')
+        fields = ('created_at', 'updated_at', 'id', 'test', 'carrier_id', 'carrier_name', 'active', 'test', 'capabilities')
+
+    def resolve_enabled(self, info):
+        if hasattr(self, 'org'):
+            return self.active_orgs.filter(id=info.context.org.id).exists()
+
+        return self.active_users.filter(id=info.context.user.id).exists()
 
 
-class LogType(graphene_django.DjangoObjectType):
+class LogFilter(django_filters.FilterSet):
+    status = django_filters.ChoiceFilter(
+        method='status_filter', choices=[('succeeded', 'succeeded'), ('failed', 'failed')])
 
     class Meta:
         model = core.APILog
-        filter_fields = {'path': ['icontains']}
+        fields = {'path': ['contains']}
+
+    def status_filter(self, queryset, name, value):
+        if value == 'succeeded':
+            return queryset.filter(status_code__range=[200, 399])
+        elif value == 'failed':
+            return queryset.filter(status_code__range=[400, 599])
+
+        return queryset
+
+
+class LogType(graphene_django.DjangoObjectType):
+    class Meta:
+        model = core.APILog
         interfaces = (CustomNode,)
 
 
@@ -242,11 +264,19 @@ class WebhookType(graphene_django.DjangoObjectType):
 
 
 def setup_carrier_model(model_type):
+    _extra_fields = {}
+
+    if hasattr(model_type, 'account_country_code'):
+        _extra_fields.update(account_country_code=graphene.String(required=True))
+
     class Meta:
         model = model_type
         exclude = ('carrier_ptr', )
 
-    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), dict(Meta=Meta))
+    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), {
+        'Meta': Meta,
+        **_extra_fields
+    })
 
 
 class ConnectionType(graphene.Union):

@@ -11,7 +11,7 @@ from purpleserver.serializers import (
     save_many_to_many_data,
     owned_model_serializer,
     make_fields_optional,
-    Context
+    Context,
 )
 import purpleserver.core.serializers as serializers
 import purpleserver.core.validators as validators
@@ -179,15 +179,20 @@ class DefaultTemplateSerializer(serializers.EntitySerializer):
 def create_carrier_model_serializers(partial: bool = False):
     def _create_model_serializer(carrier_model):
         _name = f'{carrier_model.__name__}'
+        _extra_fields = {}
+
+        if hasattr(carrier_model, 'account_country_code'):
+            _extra_fields.update(account_country_code=serializers.CharField(required=not partial))
 
         class Meta:
             model = carrier_model
-            exclude = ['created_at', 'updated_at', 'created_by']
+            exclude = ['created_at', 'updated_at', 'created_by', 'capabilities', 'active_users']
 
-        return owned_model_serializer(type(_name, (ModelSerializer,), dict(
-            Meta=Meta,
-            carrier_id=serializers.CharField(required=not partial)
-        )))
+        return owned_model_serializer(type(_name, (ModelSerializer,), {
+            'Meta': Meta,
+            'carrier_id': serializers.CharField(required=not partial),
+            **_extra_fields
+        }))
 
     return {
         carrier.__name__.lower(): _create_model_serializer(carrier)
@@ -200,12 +205,16 @@ CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
 
 @owned_model_serializer
 class ConnectionModelSerializerBase(ModelSerializer):
+
     class Meta:
         model = providers.Carrier
-        exclude = ['created_at', 'updated_at', 'created_by', 'carrier_id', 'test', 'active']
+        exclude = [
+            'created_at', 'updated_at', 'created_by', 'carrier_id',
+            'test', 'active', 'capabilities', 'active_users'
+        ]
 
     @transaction.atomic
-    def create(self, validated_data: dict, context: dict, **kwargs):
+    def create(self, validated_data: dict, context: Context, **kwargs):
         name = next((k for k in validated_data.keys() if 'settings' in k), '')
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings = save_one_to_one_data(name, serializer, payload=validated_data, context=context)

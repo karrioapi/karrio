@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class YanwenSettings(Carrier):
-    CARRIER_NAME = 'yanwen'
-
     class Meta:
         db_table = "yanwen-settings"
         verbose_name = 'Yanwen Settings'
@@ -15,7 +13,7 @@ class YanwenSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'yanwen'
 
 
 SETTINGS = YanwenSettings

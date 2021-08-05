@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class YunExpressSettings(Carrier):
-    CARRIER_NAME = 'yunexpress'
-
     class Meta:
         db_table = "yunexpress-settings"
         verbose_name = 'Yunexpress Settings'
@@ -15,7 +13,7 @@ class YunExpressSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'yunexpress'
 
 
 SETTINGS = YunExpressSettings

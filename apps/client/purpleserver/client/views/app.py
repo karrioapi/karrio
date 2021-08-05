@@ -9,13 +9,10 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.request import Request
 
 from purpleserver.user.serializers import TokenSerializer
+from purpleserver.core import validators
 import purpleserver.core.models as core
 import purpleserver.manager.models as manager
 
-FEATURE_FLAGS = dict(
-    ADDRESS_AUTO_COMPLETE=any(config.GOOGLE_CLOUD_API_KEY or ""),
-    MULTI_ORGANIZATIONS=settings.MULTI_ORGANIZATIONS
-)
 ENTITY_ACCESS_VIEWS = {
     '/api_logs/': core.APILog,
     '/shipments/': manager.Shipment,
@@ -24,6 +21,10 @@ ENTITY_ACCESS_VIEWS = {
 
 @login_required(login_url='/login')
 def index(request: Request, *args, **kwargs):
+    FEATURE_FLAGS = dict(
+        MULTI_ORGANIZATIONS=settings.MULTI_ORGANIZATIONS,
+        ADDRESS_AUTO_COMPLETE=validators.Address.get_info(),
+    )
 
     if settings.MULTI_ORGANIZATIONS and any(k in request.path for k, _ in ENTITY_ACCESS_VIEWS.items()):
         model = next((m for k, m in ENTITY_ACCESS_VIEWS.items() if k in request.path))

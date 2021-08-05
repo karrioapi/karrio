@@ -118,10 +118,24 @@ class AugmentedAddressSerializer:
         super().__init__(*args, **kwargs)
 
 
-class GoogleGeocode:
+class AddressValidatorAbstract:
+    @staticmethod
+    def get_info() -> dict:
+        raise Exception("get_info method is not implemented")
+
+    @staticmethod
+    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
+        raise Exception("validate method is not implemented")
+
+
+class GoogleGeocode(AddressValidatorAbstract):
     @staticmethod
     def get_url() -> str:
         return "https://maps.googleapis.com/maps/api/geocode/json"
+
+    @staticmethod
+    def get_info() -> dict:
+        return dict(provider="google")
 
     @staticmethod
     def get_api_key() -> str:
@@ -160,13 +174,115 @@ class GoogleGeocode:
 
         logger.debug(f'sending address validation request to Google Geocode API: {formatted_address}')
         response = requests.request(
-            "GET",
-            GoogleGeocode.get_url(),
-            params=dict(address=formatted_address, key=GoogleGeocode.get_api_key(), location_type="ROOFTOP")
+            "GET", GoogleGeocode.get_url(),
+            params=dict(
+                address=formatted_address,
+                key=GoogleGeocode.get_api_key(),
+                location_type="ROOFTOP")
         )
         response_data = response.json()
-        success = response_data.get("status") == "OK"
-        meta = dict(results=response_data.get("results"))
 
-        return datatypes.AddressValidation(success=success, meta=meta)
+        is_ok = response_data.get("status") == "OK"
+        results = response_data.get("results") or []
+        meta = next(
+            (r for r in results if r.get("geometry", {}).get("location_type") == "ROOFTOP"),
+            None
+        )
+        success = is_ok and (meta is not None)
 
+        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
+
+
+class CanadaPostAddressComplete(AddressValidatorAbstract):
+    @staticmethod
+    def get_info() -> dict:
+        return dict(
+            provider="canadapost",
+            key=CanadaPostAddressComplete.get_api_key()
+        )
+
+    @staticmethod
+    def get_url() -> str:
+        return "https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/2.1/json.ws"
+
+    @staticmethod
+    def get_api_key() -> str:
+        key = config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
+
+        if key is None or len(key) == 0:
+            raise Exception("No CANADAPOST_ADDRESS_COMPLETE_API_KEY provided for address validation")
+
+        return key
+
+    @staticmethod
+    def format_address(address: datatypes.Address) -> str:
+        address_string = utils.SF.concat_str(
+            address.address_line1 or "",
+            address.address_line2 or "",
+            address.city or "",
+            address.postal_code or "",
+            join=True,
+            separator=", "
+        )
+
+        if address_string is None:
+            raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
+
+        return address_string
+
+    @staticmethod
+    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
+        formatted_address = CanadaPostAddressComplete.format_address(address)
+
+        logger.debug(f'sending address validation request to Canada Post Address Complete API: {formatted_address}')
+        response = requests.request(
+            "GET",
+            CanadaPostAddressComplete.get_url(),
+            params=dict(
+                key=CanadaPostAddressComplete.get_api_key(),
+                SearchTerm=formatted_address,
+                Country=address.country_code,
+                MaxResults=5,
+                MaxSuggestions=5,
+                SearchFor="Places",
+                LanguagePreference="EN")
+        )
+        results = response.json()
+        is_ok = response.status_code == 200
+        meta = next(
+            (r for r in results if (
+                r.get('Text').replace(",", "").lower() == address.address_line1.replace(",", "").lower()
+                and r.get('Next') == "Retrieve"  # means it is a permanent address
+            )),
+            None
+        )
+        success = is_ok and (meta is not None)
+
+        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
+
+
+class Address:
+    @staticmethod
+    def get_info() -> dict:
+        is_enabled = any([
+            config.GOOGLE_CLOUD_API_KEY,
+            config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
+        ])
+
+        if is_enabled:
+            return {'is_enabled': is_enabled, **Address.get_validator().get_info()}
+
+        return dict(is_enabled=is_enabled)
+
+    @staticmethod
+    def get_validator() -> AddressValidatorAbstract:
+        if any(config.GOOGLE_CLOUD_API_KEY or ""):
+            return GoogleGeocode
+        elif any(config.CANADAPOST_ADDRESS_COMPLETE_API_KEY or ""):
+            return CanadaPostAddressComplete
+
+        raise Exception("No address validation service provider configured")
+
+    @staticmethod
+    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
+        return Address.get_validator().validate(address)

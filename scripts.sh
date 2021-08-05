@@ -128,7 +128,7 @@ runservices() {
 rundb() {
   cd "${ROOT:?}"
   docker-compose down &&
-  docker-compose up -d db adminer
+  docker-compose up -d db
 
   if command -v docker-machine &> /dev/null
   then
@@ -217,6 +217,7 @@ _build() {
 }
 
 build() {
+  cd "${ROOT:?}" || false &&
   build_theme -i &&
   build_dashboard &&
   build_js -i &&

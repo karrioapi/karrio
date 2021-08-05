@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class DicomSettings(Carrier):
-    CARRIER_NAME = 'dicom'
-
     class Meta:
         db_table = "dicom-settings"
         verbose_name = 'Dicom Settings'
@@ -16,7 +14,7 @@ class DicomSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'dicom'
 
 
 SETTINGS = DicomSettings

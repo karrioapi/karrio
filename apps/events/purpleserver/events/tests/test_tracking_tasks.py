@@ -27,6 +27,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
                         "time": "13:58",
                     }
                 ],
+                "status": "in-transit",
                 "created_by": self.user,
                 "tracking_carrier": self.ups_carrier,
             },
@@ -43,6 +44,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
                         "time": "20:34",
                     }
                 ],
+                "status": "in-transit",
                 "created_by": self.user,
                 "tracking_carrier": self.dhl_carrier,
             },
@@ -132,7 +134,7 @@ TRACKERS_LIST = {
                 }
             ],
             "delivered": False,
-            "pending": False,
+            "status": "in-transit",
             "test_mode": True,
         },
         {
@@ -150,7 +152,7 @@ TRACKERS_LIST = {
                 }
             ],
             "delivered": False,
-            "pending": False,
+            "status": "in-transit",
             "test_mode": True,
         },
     ],
@@ -212,7 +214,7 @@ UPDATED_TRACKERS_LIST = {
             ],
             "delivered": False,
             "test_mode": True,
-            "pending": False,
+            "status": "in-transit",
         },
         {
             "id": ANY,
@@ -230,7 +232,7 @@ UPDATED_TRACKERS_LIST = {
             ],
             "delivered": False,
             "test_mode": True,
-            "pending": False,
+            "status": "in-transit",
         },
     ],
 }

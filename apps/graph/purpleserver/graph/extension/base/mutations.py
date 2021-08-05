@@ -5,6 +5,7 @@ from django.conf import settings
 
 from purpleserver.serializers import save_many_to_many_data, SerializerDecorator
 from purpleserver.user.serializers import TokenSerializer, Token
+from purpleserver.providers import models as providers
 import purpleserver.graph.serializers as serializers
 import purpleserver.graph.extension.base.types as types
 
@@ -70,6 +71,31 @@ class UpdateTemplate(SerializerMutation):
                 'commodities', serializers.CommodityModelSerializer, customs, payload=customs_data, **extra)
 
         return kwargs
+
+
+class SystemCarrierMutation(graphene.relay.ClientIDMutation):
+    class Input:
+        id = graphene.String(required=True)
+        enable = graphene.Boolean(required=True)
+
+    carrier = graphene.Field(types.SystemConnectionType)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
+        carrier = providers.Carrier.objects.get(id=id, created_by=None)
+
+        if enable:
+            if hasattr(carrier, 'active_orgs'):
+                carrier.active_orgs.add(info.context.org)
+            else:
+                carrier.active_users.add(info.context.user)
+        else:
+            if hasattr(carrier, 'active_orgs'):
+                carrier.active_orgs.remove(info.context.org)
+            else:
+                carrier.active_users.remove(info.context.user)
+
+        return SystemCarrierMutation(carrier=carrier)
 
 
 class TokenMutation(graphene.relay.ClientIDMutation):

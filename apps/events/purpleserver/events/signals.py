@@ -56,12 +56,12 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
 
 def tracker_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """Tracking related events:
-        - tracker created (in-transit)
-        - tracker status changed (delivered or blocked)
+        - tracker created (pending)
+        - tracker status changed (in-transit, delivered or blocked)
     """
     if created:
         event = EventTypes.tracker_created.value
-    elif any(field in (update_fields or []) for field in ['delivered', 'events']):
+    elif any(field in (update_fields or []) for field in ['status']):
         event = EventTypes.tracker_updated.value
     else:
         return

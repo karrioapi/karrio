@@ -27,12 +27,12 @@
 
         <footer class="card-footer">
 
-          {% if tracker.delivered %}
+          {% if tracker.status == 'delivered' %}
             <p class="card-footer-item has-background-success has-text-white is-size-4">{% trans 'Delivered' %}</p>
-          {% elif tracker.pending %}
-            <p class="card-footer-item has-background-grey-dark has-text-white is-size-4">{% trans 'Pending' %}</p>
-          {% else %}
+          {% elif tracker == 'in-transit' %}
             <p class="card-footer-item has-background-info has-text-white is-size-4">{% trans 'In-Transit' %}</p>
+          {% else %}
+            <p class="card-footer-item has-background-grey-dark has-text-white is-size-4">{% trans 'Pending' %}</p>
           {% endif %}
 
         </footer>

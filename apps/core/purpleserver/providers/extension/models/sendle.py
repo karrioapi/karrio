@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class SendleSettings(Carrier):
-    CARRIER_NAME = 'sendle'
-
     class Meta:
         db_table = "sendle-settings"
         verbose_name = 'Sendle Settings'
@@ -15,7 +13,7 @@ class SendleSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'sendle'
 
 
 SETTINGS = SendleSettings

@@ -1,10 +1,8 @@
 from django.db import models
-from purpleserver.providers.models.carrier import Carrier
+from purpleserver.providers.models.carrier import Carrier, COUNTRIES
 
 
 class FedexSettings(Carrier):
-    CARRIER_NAME = 'fedex'
-
     class Meta:
         db_table = "fedex-settings"
         verbose_name = 'FedEx Settings'
@@ -14,10 +12,11 @@ class FedexSettings(Carrier):
     password = models.CharField(max_length=200)
     meter_number = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
+    account_country_code = models.CharField(max_length=3, blank=True, choices=COUNTRIES)
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'fedex'
 
 
 SETTINGS = FedexSettings

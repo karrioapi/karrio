@@ -110,7 +110,7 @@ class TestShipmentDetails(TestShipmentFixture):
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
-            response = self.client.get(url)
+            response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

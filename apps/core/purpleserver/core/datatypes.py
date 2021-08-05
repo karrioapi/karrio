@@ -46,7 +46,7 @@ class CarrierSettings:
     def dict(self):
         return {
             name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'created_by', 'active']
+            if name not in ['carrier_name', 'created_by', 'active', 'capabilities']
         }
 
     @classmethod
@@ -231,10 +231,10 @@ class Tracking:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
 
+    status: str = ""
     delivered: bool = None
     id: str = None
     test_mode: bool = None
-    pending: bool = None
 
 
 @attr.s(auto_attribs=True)

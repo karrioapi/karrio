@@ -2,11 +2,11 @@
     "openapi": "3.0.1",
     "info": {
         "title": "Purplship API",
-        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.6.2`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.7`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": "hello@purplship.com"
         },
-        "version": "2021.6.2"
+        "version": "2021.7"
     },
     "servers": [
         {
@@ -1603,6 +1603,18 @@
                 "summary": "Fetch shipment rates",
                 "description": "\nThe Shipping process begins by fetching rates for your shipment.\nUse this service to fetch a shipping rates available.\n",
                 "operationId": "@@fetch_rates",
+                "parameters": [
+                    {
+                        "name": "test",
+                        "in": "query",
+                        "description": "The test flag indicates whether to use a carrier configured for test.",
+                        "schema": {
+                            "type": "boolean",
+                            "nullable": true,
+                            "default": false
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1845,7 +1857,15 @@
                         "name": "status",
                         "in": "query",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "created",
+                                "purchased",
+                                "cancelled",
+                                "shipped",
+                                "in-transit",
+                                "delivered"
+                            ]
                         }
                     },
                     {
@@ -1879,6 +1899,13 @@
                         }
                     },
                     {
+                        "name": "reference",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1898,7 +1925,29 @@
                         "name": "carrier_name",
                         "in": "query",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -2274,7 +2323,7 @@
             }
         },
         "/v1/shipments/{id}/rates": {
-            "get": {
+            "post": {
                 "tags": [
                     "Shipments"
                 ],
@@ -2291,6 +2340,16 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ShipmentRateData"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "",
@@ -2312,7 +2371,8 @@
                             }
                         }
                     }
-                }
+                },
+                "x-codegen-request-body-name": "data"
             }
         },
         "/v1/trackers": {
@@ -2332,6 +2392,26 @@
                         }
                     },
                     {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "in-transit",
+                                "incident",
+                                "delivered"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "carrier_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -2345,6 +2425,35 @@
                         "description": "The initial index from which to return the results.",
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -2857,6 +2966,11 @@
                         "title": "Refresh",
                         "minLength": 1,
                         "type": "string"
+                    },
+                    "access": {
+                        "title": "Access",
+                        "type": "string",
+                        "readOnly": true
                     }
                 }
             },
@@ -5461,7 +5575,7 @@
                             "purchased",
                             "cancelled",
                             "shipped",
-                            "transit",
+                            "in-transit",
                             "delivered"
                         ]
                     },
@@ -5584,6 +5698,23 @@
                             "type": "string"
                         }
                     },
+                    "tracker_id": {
+                        "title": "Tracker id",
+                        "type": "string",
+                        "description": "The attached tracker id",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "title": "Created at",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n"
+                    },
+                    "test_mode": {
+                        "title": "Test mode",
+                        "type": "boolean",
+                        "description": "Specified whether it was created with a carrier in test mode"
+                    },
                     "meta": {
                         "title": "Meta",
                         "type": "object",
@@ -5591,29 +5722,12 @@
                         "description": "provider specific metadata",
                         "nullable": true
                     },
-                    "created_at": {
-                        "title": "Created at",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "\nThe shipment creation date\n\nDate Format: `YYYY-MM-DD`\n"
-                    },
-                    "test_mode": {
-                        "title": "Test mode",
-                        "type": "boolean",
-                        "description": "Specified whether it was created with a carrier in test mode"
-                    },
                     "messages": {
                         "type": "array",
                         "description": "The list of note or warning messages",
                         "items": {
                             "$ref": "#/components/schemas/Message"
                         }
-                    },
-                    "tracker_id": {
-                        "title": "Tracker id",
-                        "type": "string",
-                        "description": "The selected service",
-                        "nullable": true
                     }
                 }
             },
@@ -5733,10 +5847,19 @@
                         "type": "boolean",
                         "description": "Specified whether the object was created with a carrier in test mode"
                     },
-                    "pending": {
-                        "title": "Pending",
-                        "type": "boolean",
-                        "description": "Specified whether the shipment hasn't been picked up or is in an unknown state"
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "The current tracking status",
+                        "default": "created",
+                        "enum": [
+                            "created",
+                            "purchased",
+                            "cancelled",
+                            "shipped",
+                            "in-transit",
+                            "delivered"
+                        ]
                     }
                 },
                 "description": "The tracking details retrieved"
@@ -5760,6 +5883,7 @@
                 "required": [
                     "APP_NAME",
                     "APP_VERSION",
+                    "carrier_capabilities",
                     "carriers",
                     "countries",
                     "currencies",
@@ -5848,6 +5972,11 @@
                     },
                     "payment_types": {
                         "title": "Payment types",
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "carrier_capabilities": {
+                        "title": "Carrier capabilities",
                         "type": "object",
                         "properties": {}
                     }
@@ -5973,6 +6102,41 @@
                     },
                     "payment": {
                         "$ref": "#/components/schemas/Payment"
+                    },
+                    "reference": {
+                        "title": "Reference",
+                        "type": "string",
+                        "description": "The shipment reference",
+                        "nullable": true
+                    }
+                }
+            },
+            "ShipmentRateData": {
+                "type": "object",
+                "properties": {
+                    "services": {
+                        "type": "array",
+                        "description": "\nThe requested carrier service for the shipment.\n\nPlease consult [the reference](#operation/references) for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                        "nullable": true,
+                        "items": {
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    },
+                    "carrier_ids": {
+                        "type": "array",
+                        "description": "\nThe list of configured carriers you wish to get rates from.\n\n*Note that the request will be sent to all carriers in nothing is specified*\n",
+                        "nullable": true,
+                        "items": {
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    },
+                    "reference": {
+                        "title": "Reference",
+                        "type": "string",
+                        "description": "The shipment reference",
+                        "nullable": true
                     }
                 }
             },

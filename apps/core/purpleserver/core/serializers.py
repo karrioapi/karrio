@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
+
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
@@ -20,15 +21,6 @@ from purpleserver.core.validators import (
     valid_date_format,
 )
 
-CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
-COUNTRIES = [(c.name, c.name) for c in list(Country)]
-CURRENCIES = [(c.name, c.name) for c in list(Currency)]
-WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
-DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
-PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
-PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
-LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
-
 
 class ShipmentStatus(Enum):
     created = 'created'
@@ -39,9 +31,25 @@ class ShipmentStatus(Enum):
     delivered = 'delivered'
 
 
-SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
+class TrackerStatus(Enum):
+    pending = 'pending'
+    in_transit = 'in-transit'
+    incident = 'incident'
+    delivered = 'delivered'
+
+
+SHIPMENT_STATUS = [(c.value, c.value) for c in list(ShipmentStatus)]
+TRACKER_STATUS = [(c.value, c.value) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(Incoterm)]
+CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
+COUNTRIES = [(c.name, c.name) for c in list(Country)]
+CURRENCIES = [(c.name, c.name) for c in list(Currency)]
+WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
+DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
+PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
+PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
+LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
 class StringListField(ListField):
@@ -463,7 +471,8 @@ class TrackingDetails(Serializer):
     events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
     delivered = BooleanField(required=False, help_text="Specified whether the related shipment was delivered")
     test_mode = BooleanField(required=True, help_text="Specified whether the object was created with a carrier in test mode")
-    pending = BooleanField(required=False, help_text="Specified whether the shipment hasn't been picked up or is in an unknown state")
+    status = ChoiceField(
+        required=False, default=SHIPMENT_STATUS[0][0], choices=SHIPMENT_STATUS, help_text="The current tracking status")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
@@ -581,15 +590,15 @@ class ShipmentContent(Serializer):
 
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
-    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
+    tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The attached tracker id")
     created_at = CharField(required=True, help_text="""
-    The shipment creation date
+    The shipment creation datetime
     
-    Date Format: `YYYY-MM-DD`
+    Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
-    tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
 
 class Shipment(EntitySerializer, ShipmentContent):

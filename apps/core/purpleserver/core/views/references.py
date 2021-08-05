@@ -30,6 +30,7 @@ class References(Serializer):
     package_presets = PlainDictField()
     packaging_types = PlainDictField()
     payment_types = PlainDictField()
+    carrier_capabilities = PlainDictField()
 
 
 @swagger_auto_schema(

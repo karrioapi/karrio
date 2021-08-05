@@ -10,8 +10,10 @@ from django.utils import timezone
 import purplship
 from purplship.core.utils import exec_parrallel, DP
 from purplship.api.interface import Gateway, IRequestFrom
+
 from purpleserver.core import datatypes
-from purpleserver.core.utils import identity
+from purpleserver.core.utils import identity, compute_tracking_status
+from purpleserver.core.serializers import TrackerStatus
 from purpleserver.manager import models, serializers
 
 logger = logging.getLogger(__name__)
@@ -101,7 +103,8 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
                 for tracker in related_trackers:
                     # update values only if changed; This is important for webhooks notification
                     changes = []
-                    events = DP.to_dict(details.events)
+                    status = compute_tracking_status(details).value
+                    events = (DP.to_dict(details.events) if any(details.events) else instance.events)
 
                     if events != tracker.events:
                         tracker.events = events
@@ -110,6 +113,10 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
                     if details.delivered != tracker.delivered:
                         tracker.delivered = details.delivered
                         changes.append('delivered')
+
+                    if status != tracker.status:
+                        tracker.status = status
+                        changes.append('status')
 
                     if any(changes):
                         tracker.save(update_fields=changes)

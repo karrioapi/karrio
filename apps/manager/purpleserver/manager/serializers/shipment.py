@@ -10,7 +10,8 @@ from purpleserver.serializers import (
     SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
-    save_many_to_many_data
+    save_many_to_many_data,
+    link_org,
 )
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier, MODELS
@@ -27,6 +28,8 @@ from purpleserver.core.serializers import (
     LabelType,
     Message,
     PlainDictField,
+    StringListField,
+    TrackerStatus,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
@@ -53,13 +56,16 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
-        test = validated_data.get('test')
-        carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
+        carrier_filters = (validated_data.get('carrier_filters') or {})
+        carrier_ids = (validated_data.get('carrier_ids') or [])
+        carriers = Carriers.list(
+            context=context, active=True, capability='shipping', carrier_ids=carrier_ids, **carrier_filters)
 
         # Get live rates
-        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
-            data=validated_data, context=context).save(test=test).instance
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer]\
+            (data=validated_data, context=context)\
+            .save(carriers=carriers)\
+            .instance
 
         shipment_data = {
             **{
@@ -77,7 +83,8 @@ class ShipmentSerializer(ShipmentData):
             'messages': DP.to_dict(rate_response.messages),
             'test_mode': all([r.test_mode for r in rate_response.rates]),
         })
-        shipment.carriers.set(carriers)
+
+        shipment.carriers.set(carriers if any(carrier_ids) else [])
 
         save_many_to_many_data('parcels', ParcelSerializer, shipment, payload=validated_data, context=context)
 
@@ -87,6 +94,7 @@ class ShipmentSerializer(ShipmentData):
     def update(self, instance: models.Shipment, validated_data: dict, context: dict) -> models.Shipment:
         changes = []
         data = validated_data.copy()
+        carriers = validated_data.get('carriers') or []
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -119,11 +127,6 @@ class ShipmentSerializer(ShipmentData):
         instance.save(update_fields=changes)
 
         if 'carrier_ids' in validated_data:
-            carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = (
-                Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by)
-                if any(carrier_ids) else instance.carriers
-            )
             instance.carriers.set(carriers)
 
         return instance
@@ -132,14 +135,33 @@ class ShipmentSerializer(ShipmentData):
 @owned_model_serializer
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
+    label_type = ChoiceField(
+        required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
     payment = Payment(required=False, help_text="The payment details")
+    reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
 
 
 @owned_model_serializer
-class ShipmentValidationData(Shipment):
+class ShipmentRateData(Serializer):
+    services = StringListField(required=False, allow_null=True, help_text="""
+    The requested carrier service for the shipment.
+
+    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+    """)
+    carrier_ids = StringListField(required=False, allow_null=True, help_text="""
+    The list of configured carriers you wish to get rates from.
+    
+    *Note that the request will be sent to all carriers in nothing is specified*
+    """)
+    reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+
+
+@owned_model_serializer
+class ShipmentPurchaseSerializer(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
+    reference = CharField(required=False, allow_blank=True, allow_null=True)
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(
@@ -192,8 +214,6 @@ def remove_shipment_tracker(shipment: models.Shipment):
         shipment.tracker.all().delete()
 
 
-
-
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     rate_provider = ((shipment.meta or {}).get('rate_provider') or shipment.carrier_name)
     carrier = shipment.selected_rate_carrier
@@ -203,21 +223,26 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
 
     if carrier is not None:
         try:
-            models.Tracking.objects.create(
+            tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
-                events=[DP.to_dict(datatypes.TrackingEvent(
-                    date=DF.fdate(shipment.updated_at),
-                    description="Label created and ready for shipment",
-                    location="",
-                    code="CREATED",
-                    time=DF.ftime(shipment.updated_at)
-                ))],
+                events=[DP.to_dict(
+                    datatypes.TrackingEvent(
+                        date=DF.fdate(shipment.updated_at),
+                        description="Label created and ready for shipment",
+                        location="",
+                        code="CREATED",
+                        time=DF.ftime(shipment.updated_at)
+                    )
+                )],
                 delivered=False,
-                test_mode=shipment.test_mode,
+                status=TrackerStatus.pending.value,
+                test_mode=carrier.test,
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,
                 shipment=shipment,
             )
+            tracker.save()
+            link_org(tracker, context)
             logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
         except Exception as e:
             logger.exception("Failed to create new label tracker", e)

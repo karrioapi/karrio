@@ -26,7 +26,7 @@ class TestPricing(APITestCase):
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(url, data)
+            response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -41,7 +41,7 @@ class TestPricing(APITestCase):
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(url, data)
+            response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)

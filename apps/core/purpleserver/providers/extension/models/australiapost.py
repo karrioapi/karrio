@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class AustraliaPostSettings(Carrier):
-    CARRIER_NAME = 'australiapost'
-
     class Meta:
         db_table = "australia-post-settings"
         verbose_name = 'Australia Post Settings'
@@ -16,7 +14,7 @@ class AustraliaPostSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'australiapost'
 
 
 SETTINGS = AustraliaPostSettings

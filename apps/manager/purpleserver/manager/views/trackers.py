@@ -12,7 +12,7 @@ from django_filters import rest_framework as filters
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
-    FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation
+    MODELS, FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation, TrackerStatus
 )
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
@@ -25,13 +25,18 @@ Trackers = PaginatedResult('TrackerList', TrackingStatus)
 
 
 class TrackerFilters(filters.FilterSet):
+    carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
+
     parameters = [
+        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=list(MODELS.keys())),
+        openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=[k.value for k in list(TrackerStatus)]),
         openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
     ]
 
     class Meta:
         model = models.Tracking
-        fields = ['test_mode']
+        fields = ['test_mode', 'status']
 
 
 class TrackerList(GenericAPIView):
@@ -39,6 +44,17 @@ class TrackerList(GenericAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TrackerFilters
     model = models.Tracking
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        _filters = tuple()
+        query_params = getattr(self.request, 'query_params', {})
+        carrier_name = query_params.get('carrier_name')
+
+        if carrier_name is not None:
+            _filters += (Q(**{f'tracking_carrier__{carrier_name}settings__isnull': False}),)
+
+        return queryset.filter(*_filters)
 
     @swagger_auto_schema(
         tags=['Trackers'],
@@ -72,15 +88,17 @@ class TrackersCreate(APIView):
         details and events of a shipping in progress.
         """
         data = dict(tracking_number=tracking_number)
-        carrier_filter = {
+        carrier_filters = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name,
-            "user": request.user
+            "carrier_name": carrier_name
         }
         tracking = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
 
-        instance = SerializerDecorator[TrackingSerializer](
-            tracking, data=data, context=request).save(carrier_filter=carrier_filter).instance
+        instance = SerializerDecorator[TrackingSerializer]\
+            (tracking, data=dict(tracking_number=tracking_number), context=request)\
+            .save(carrier_filters=carrier_filters)\
+            .instance
+
         return Response(TrackingStatus(instance).data)
 
 

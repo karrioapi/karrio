@@ -4,7 +4,7 @@ from purpleserver.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.core.serializers import TrackingDetails, TrackingRequest, ShipmentStatus
+from purpleserver.core.serializers import TrackingDetails, TrackingRequest, ShipmentStatus, TrackerStatus
 
 import purpleserver.manager.models as models
 
@@ -18,38 +18,44 @@ class TrackingSerializer(TrackingDetails):
     test_mode = BooleanField(required=False)
     pending = BooleanField(required=False)
 
-    def create(self, validated_data: dict, **kwargs) -> models.Tracking:
-        carrier_filter = validated_data['carrier_filter']
+    def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
+        carrier_filters = validated_data['carrier_filters']
         tracking_number = validated_data['tracking_number']
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+        carrier = Carriers.first(context=context, **carrier_filters)
 
         response = Shipments.track(
             TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
-            carrier_filter=carrier_filter
+            carrier=carrier
         )
 
         return models.Tracking.objects.create(
-            created_by=validated_data['created_by'],
+            created_by=context.user,
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
+            status=response.tracking.status,
             tracking_carrier=carrier,
         )
 
-    def update(self, instance: models.Tracking, validated_data: dict, **kwargs) -> models.Tracking:
+    def update(self, instance: models.Tracking, validated_data: dict, context, **kwargs) -> models.Tracking:
         last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 30 and instance.delivered is not True:
-            carrier_filter = validated_data['carrier_filter']
-            carrier = next(iter(Carriers.list(**carrier_filter)), instance.tracking_carrier)
+            carrier_filters = validated_data['carrier_filters']
+            carrier = (Carriers.first(context=context, **carrier_filters) or instance.tracking_carrier)
+
             response = Shipments.track(
-                carrier=carrier,
-                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data
+                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data,
+                carrier=carrier
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
-            events = DP.to_dict(response.tracking.events)
+            events = (
+                DP.to_dict(response.tracking.events)
+                if any(response.tracking.events)
+                else instance.events
+            )
 
             if events != instance.events:
                 instance.events = events
@@ -58,6 +64,10 @@ class TrackingSerializer(TrackingDetails):
             if response.tracking.delivered != instance.delivered:
                 instance.delivered = response.tracking.delivered
                 changes.append('delivered')
+
+            if response.tracking.status != instance.status:
+                instance.status = response.tracking.status
+                changes.append('status')
 
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier
@@ -72,10 +82,10 @@ class TrackingSerializer(TrackingDetails):
 
 def update_shipment_tracker(tracker: models.Tracking):
     try:
-        if tracker.delivered:
+        if tracker.status == TrackerStatus.delivered.value:
             status = ShipmentStatus.delivered.value
-        elif tracker.pending:
-            status = ShipmentStatus.created.value
+        elif tracker == TrackerStatus.pending.value:
+            status = tracker.shipment.status
         else:
             status = ShipmentStatus.transit.value
 

@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class DHLUniversalSettings(Carrier):
-    CARRIER_NAME = 'dhl_universal'
-
     class Meta:
         db_table = "dhl_universal-settings"
         verbose_name = 'DHL Universal Tracking Settings'
@@ -15,7 +13,7 @@ class DHLUniversalSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'dhl_universal'
 
 
 SETTINGS = DHLUniversalSettings

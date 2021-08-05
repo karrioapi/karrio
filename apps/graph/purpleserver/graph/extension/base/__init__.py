@@ -29,7 +29,7 @@ class Query:
     parcel_templates = django_filter.DjangoFilterConnectionField(types.ParcelTemplateType)
 
     log = graphene.Field(types.LogType, id=graphene.Int(required=True))
-    logs = django_filter.DjangoFilterConnectionField(types.LogType)
+    logs = django_filter.DjangoFilterConnectionField(types.LogType, filterset_class=types.LogFilter)
     shipments = django_filter.DjangoFilterConnectionField(types.ShipmentType)
     trackers = django_filter.DjangoFilterConnectionField(types.TrackerType)
     webhooks = django_filter.DjangoFilterConnectionField(types.WebhookType)
@@ -44,12 +44,11 @@ class Query:
         connections = providers.Carrier.access_by(info.context).filter(created_by__isnull=False, **kwargs)
         return [connection.settings for connection in connections]
 
-    def resolve_system_connections(self, _, **kwargs):
-        return gateway.Carriers.list(system_only=True, **kwargs)
+    def resolve_system_connections(self, info, **kwargs):
+        return gateway.Carriers.list(context=info.context, system_only=True, **kwargs)
 
     def resolve_default_templates(self, info, **kwargs):
         templates = graph.Template.access_by(info.context).filter(is_default=True)
-
         return [serializers.DefaultTemplateSerializer(template).data for template in templates]
 
     def resolve_address_templates(self, info, **kwargs):
@@ -91,3 +90,4 @@ class Mutation:
     create_connection = mutations.CreateConnection.Field()
     update_connection = mutations.UpdateConnection.Field()
     delete_connection = mutations.create_delete_mutation('DeleteConnection', providers.Carrier).Field()
+    mutate_system_connection = mutations.SystemCarrierMutation.Field()

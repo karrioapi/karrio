@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
 
 from purplship.core.utils import DP
+from purpleserver.core.gateway import Carriers
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
@@ -34,8 +35,9 @@ from purpleserver.manager.serializers import (
     reset_related_shipment_rates,
     create_shipment_tracker,
     ShipmentSerializer,
+    ShipmentRateData,
     ShipmentPurchaseData,
-    ShipmentValidationData,
+    ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     RateSerializer,
     ParcelSerializer,
@@ -52,13 +54,15 @@ class ShipmentFilters(filters.FilterSet):
     created_end = filters.DateFilter(field_name="created_at", lookup_expr='lte')
     carrier_id = filters.CharFilter(field_name="selected_rate_carrier__carrier_id")
     service = filters.CharFilter(field_name="selected_rate__service")
+    reference = filters.CharFilter(field_name='reference', lookup_expr='iregex')
 
     parameters = [
         openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=list(MODELS.keys())),
         openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=[c.value for c in list(ShipmentStatus)]),
         openapi.Parameter('service', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('reference', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('created_end', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
         openapi.Parameter('created_start', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
     ]
@@ -121,8 +125,11 @@ class ShipmentList(GenericAPIView):
         """
         Create a new shipment instance.
         """
-        query = SerializerDecorator[ShipmentMode](data=request.query_params).data
-        shipment = SerializerDecorator[ShipmentSerializer](data=request.data, context=request).save(**query).instance
+        carrier_filters = {
+            **SerializerDecorator[ShipmentMode](data=request.query_params).data
+        }
+        shipment = SerializerDecorator[ShipmentSerializer](
+            data=request.data, context=request).save(carrier_filters=carrier_filters).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -170,7 +177,7 @@ class ShipmentDetail(APIView):
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        confirmation = SerializerDecorator[ShipmentCancelSerializer](shipment, data={}).save()
+        confirmation = SerializerDecorator[ShipmentCancelSerializer](shipment, data={}, context=request).save()
         return Response(OperationResponse(confirmation.instance).data)
 
 
@@ -181,9 +188,10 @@ class ShipmentRates(APIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new shipment rates",
-        responses={200: Shipment(), 400: ErrorResponse()}
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ShipmentRateData()
     )
-    def get(self, request: Request, pk: str):
+    def post(self, request: Request, pk: str):
         """
         Refresh the list of the shipment rates
         """
@@ -191,15 +199,26 @@ class ShipmentRates(APIView):
             .exclude(status=ShipmentStatus.cancelled.value)\
             .get(pk=pk)
 
-        rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data, context=request).save(test=shipment.test_mode).instance
+        rate_payload = SerializerDecorator[ShipmentRateData](data=request.data).data
+        carrier_ids = (rate_payload['carrier_ids'] if 'carrier_ids' in rate_payload else shipment.carrier_ids)
 
-        payload: dict = dict(
-            rates=Rate(rate_response.rates, many=True).data,
-            messages=DP.to_dict(rate_response.messages),
-        )
+        carriers = Carriers.list(
+            active=True,
+            capability='shipping',
+            context=request,
+            test=shipment.test_mode,
+            carrier_ids=carrier_ids)
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
+        rate_response: RateResponse = SerializerDecorator[RateSerializer](context=request, data={
+            **ShipmentData(shipment).data,
+            **rate_payload
+        }).save(carriers=carriers).instance
+
+        SerializerDecorator[ShipmentSerializer](shipment, context=request, data={
+            "rates": Rate(rate_response.rates, many=True).data,
+            "messages": DP.to_dict(rate_response.messages),
+            **rate_payload
+        }).save(carriers=carriers)
 
         return Response(Shipment(shipment).data)
 
@@ -342,14 +361,11 @@ class ShipmentPurchase(APIView):
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload = {
+        # Submit shipment to carriers
+        response: Shipment = SerializerDecorator[ShipmentPurchaseSerializer](context=request, data={
             **Shipment(shipment).data,
             **SerializerDecorator[ShipmentPurchaseData](data=request.data).data
-        }
-
-        # Submit shipment to carriers
-        response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload, context=request).save().instance
+        }).save().instance
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context=request).save()

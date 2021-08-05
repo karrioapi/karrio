@@ -15,7 +15,7 @@ class CustomsSerializer(CustomsData):
 
         if ('commodities' in data) and (instance is not None):
             save_many_to_many_data(
-                'commodities', CommoditySerializer, instance, payload=data, context=context)
+                'commodities', CommoditySerializer, instance, payload=data, context=getattr(self, '__context', None))
 
         super().__init__(instance, **kwargs)
 

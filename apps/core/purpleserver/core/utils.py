@@ -1,5 +1,7 @@
 import functools
 from typing import TypeVar, Union, Callable, Any, List, Optional
+from purpleserver.core import datatypes
+from purpleserver.core import serializers
 
 T = TypeVar('T')
 
@@ -41,3 +43,12 @@ def upper(value_str: Optional[str]) -> Optional[str]:
         return None
 
     return value_str.upper().replace('_', ' ')
+
+
+def compute_tracking_status(details: datatypes.Tracking) -> serializers.TrackerStatus:
+    if details.delivered:
+        return serializers.TrackerStatus.delivered
+    elif (len(details.events) == 0) or (len(details.events) == 1 and details.events[0].code == 'CREATED'):
+        return serializers.TrackerStatus.pending
+
+    return serializers.TrackerStatus.in_transit
