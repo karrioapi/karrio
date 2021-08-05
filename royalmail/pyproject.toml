@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.royalmail"
-version = "2021.2"
+version = "2021.2.1"
 description = "Australia Post API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.royalmail"
@@ -19,7 +19,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-jstruct = "^2020.4.0"
+jstruct = ""
 
 [tool.poetry.dev-dependencies]
 

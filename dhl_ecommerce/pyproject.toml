@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.dhl_ecommerce"
-version = "2021.2-alpha"
+version = "2021.2.1"
 description = "DHL eCommerce API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.dhl_ecommerce"
@@ -17,7 +17,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-jstruct = "^2020.4.0"
+jstruct = ""
 
 [tool.poetry.dev-dependencies]
 
