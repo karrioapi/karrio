@@ -83,7 +83,7 @@ def check_operation(gateway: Gateway, request: str, **kwargs):
     errors = gateway.check(request, **kwargs)
 
     if any(errors):
-        return False, IDeserialize(lambda: (None, errors))
+        return False, IDeserialize(lambda: (None, errors))  # type: ignore
 
     return True, None
 

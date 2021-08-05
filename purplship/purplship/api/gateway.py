@@ -22,11 +22,6 @@ class Gateway:
     proxy: Proxy
     settings: Settings
 
-    def features(self) -> List[str]:
-        warnings.warn("The features property is deprecated, use capabilities instead",
-                      category=DeprecationWarning)
-        return self.capabilities
-
     @property
     def capabilities(self) -> List[str]:
         return detect_capabilities(self.proxy.__class__)

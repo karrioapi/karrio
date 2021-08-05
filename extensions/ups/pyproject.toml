@@ -18,7 +18,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 "purplship" = "^2021.6"
-"carrier.ups" = "^2020.3.1"
+"carrier.ups" = ""
 
 [tool.poetry.dev-dependencies]
 

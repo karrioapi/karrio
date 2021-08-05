@@ -27,5 +27,7 @@ class Metadata:
     package_presets: Optional[Type[Enum]] = None
     packaging_types: Optional[Type[Enum]] = None
 
+    id: Optional[str] = None
+
     def __getitem__(self, item):
         return getattr(self, item)

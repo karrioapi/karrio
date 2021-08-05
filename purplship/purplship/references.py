@@ -3,7 +3,7 @@
 """
 import attr
 import pkgutil
-from typing import Dict, Type, List
+from typing import Dict, List
 
 import purplship.mappers as mappers
 import purplship.core.units as units
@@ -47,7 +47,7 @@ def collect_providers_data() -> Dict[str, dict]:
     return PROVIDERS_DATA
 
 
-def detect_capabilities(proxy_type: Type) -> List[str]:
+def detect_capabilities(proxy_type: object) -> List[str]:
     return [
         prop for prop in proxy_type.__dict__.keys()
         if '_' not in prop[0]
