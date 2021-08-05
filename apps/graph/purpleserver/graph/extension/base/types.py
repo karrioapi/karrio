@@ -37,11 +37,15 @@ class ConnectionType:
 
 
 class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
+    enabled = graphene.Boolean(required=True)
 
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name', 'test')
+        fields = ('created_at', 'updated_at', 'id', 'test', 'carrier_id', 'carrier_name', 'active', 'test', 'capabilities')
 
+    def resolve_enabled(self, info):
+        if hasattr(self, 'org'):
+            return self.active_orgs.filter(id=info.context.org.id).exists()
 
         return self.active_users.filter(id=info.context.user.id).exists()
 
@@ -260,11 +264,19 @@ class WebhookType(graphene_django.DjangoObjectType):
 
 
 def setup_carrier_model(model_type):
+    _extra_fields = {}
+
+    if hasattr(model_type, 'account_country_code'):
+        _extra_fields.update(account_country_code=graphene.String(required=True))
+
     class Meta:
         model = model_type
         exclude = ('carrier_ptr', )
 
-    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), dict(Meta=Meta))
+    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), {
+        'Meta': Meta,
+        **_extra_fields
+    })
 
 
 class ConnectionType(graphene.Union):
