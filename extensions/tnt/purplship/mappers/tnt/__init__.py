@@ -7,6 +7,7 @@ import purplship.providers.tnt.units as units
 
 
 METADATA = Metadata(
+    id="tnt",
     label="TNT",
 
     # Integrations

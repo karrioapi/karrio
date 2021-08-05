@@ -7,6 +7,7 @@ from purplship.mappers.australiapost.settings import Settings
 
 
 METADATA = Metadata(
+    id="australiapost",
     label="Australia Post",
 
     # Integrations

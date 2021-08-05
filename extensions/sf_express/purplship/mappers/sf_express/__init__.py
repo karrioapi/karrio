@@ -7,6 +7,7 @@ from purplship.mappers.sf_express.settings import Settings
 
 
 METADATA = Metadata(
+    id="sf_express",
     label="SF-Express",
 
     # Integrations

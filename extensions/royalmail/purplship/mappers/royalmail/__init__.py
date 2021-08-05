@@ -7,6 +7,7 @@ from purplship.mappers.royalmail.settings import Settings
 
 
 METADATA = Metadata(
+    id="royalmail",
     label="Royal Mail",
 
     # Integrations

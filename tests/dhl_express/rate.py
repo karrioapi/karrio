@@ -1,6 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
+import purplship
 from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating

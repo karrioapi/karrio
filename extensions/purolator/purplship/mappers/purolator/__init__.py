@@ -7,6 +7,7 @@ import purplship.providers.purolator.units as units
 
 
 METADATA = Metadata(
+    id="purolator",
     label="Purolator",
 
     # Integrations

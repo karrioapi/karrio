@@ -6,6 +6,7 @@ from purplship.mappers.dicom.settings import Settings
 
 
 METADATA = Metadata(
+    id="dicom",
     label="Dicom",
 
     # Integrations

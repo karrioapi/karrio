@@ -7,6 +7,7 @@ from purplship.mappers.sendle.settings import Settings
 
 
 METADATA = Metadata(
+    id="sendle",
     label="Sendle",
 
     # Integrations

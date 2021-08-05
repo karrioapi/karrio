@@ -7,6 +7,7 @@ from purplship.mappers.yunexpress.settings import Settings
 
 
 METADATA = Metadata(
+    id="yunexpress",
     label="Yunexpress",
 
     # Integrations

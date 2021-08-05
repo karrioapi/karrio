@@ -7,6 +7,7 @@ import purplship.providers.canadapost.units as units
 
 
 METADATA = Metadata(
+    id="canadapost",
     label="Canada Post",
 
     # Integrations
