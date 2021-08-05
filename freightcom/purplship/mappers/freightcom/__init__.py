@@ -7,6 +7,7 @@ import purplship.providers.freightcom.units as units
 
 
 METADATA = Metadata(
+    id="freightcom",
     label="Freightcom",
 
     # Integrations

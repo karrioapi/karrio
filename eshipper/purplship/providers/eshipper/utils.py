@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     username: str
     password: str
 
+    account_country_code: str = None
+
     @property
     def server_url(self):
         return (
