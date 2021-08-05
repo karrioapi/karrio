@@ -29,7 +29,7 @@ class Query:
     parcel_templates = django_filter.DjangoFilterConnectionField(types.ParcelTemplateType)
 
     log = graphene.Field(types.LogType, id=graphene.Int(required=True))
-    logs = django_filter.DjangoFilterConnectionField(types.LogType)
+    logs = django_filter.DjangoFilterConnectionField(types.LogType, filterset_class=types.LogFilter)
     shipments = django_filter.DjangoFilterConnectionField(types.ShipmentType)
     trackers = django_filter.DjangoFilterConnectionField(types.TrackerType)
     webhooks = django_filter.DjangoFilterConnectionField(types.WebhookType)

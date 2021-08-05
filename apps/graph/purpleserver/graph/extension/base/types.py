@@ -1,7 +1,7 @@
 import graphene
 import graphene_django
 from graphene.types import generic
-
+import django_filters
 from django.contrib.auth import get_user_model
 
 import purpleserver.core.models as core
@@ -43,11 +43,29 @@ class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
         fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name', 'test')
 
 
-class LogType(graphene_django.DjangoObjectType):
+        return self.active_users.filter(id=info.context.user.id).exists()
+
+
+class LogFilter(django_filters.FilterSet):
+    status = django_filters.ChoiceFilter(
+        method='status_filter', choices=[('succeeded', 'succeeded'), ('failed', 'failed')])
 
     class Meta:
         model = core.APILog
-        filter_fields = {'path': ['icontains']}
+        fields = {'path': ['contains']}
+
+    def status_filter(self, queryset, name, value):
+        if value == 'succeeded':
+            return queryset.filter(status_code__range=[200, 399])
+        elif value == 'failed':
+            return queryset.filter(status_code__range=[400, 599])
+
+        return queryset
+
+
+class LogType(graphene_django.DjangoObjectType):
+    class Meta:
+        model = core.APILog
         interfaces = (CustomNode,)
 
 
