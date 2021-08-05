@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "carrier.canadapost"
-version = "2021.7rc2"
+version = "2021.7"
 description = "Canada Post API Schemas Python Data Types library"
-repository="https://github.com/PurplShip/purplship-carriers"
-homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.canadapost"
+repository="https://github.com/purplship/purplship-carriers"
+homepage="https://github.com/purplship/purplship-carriers/tree/master/canadapost"
 authors = ["Dan Kobina <danielkobina@gmail.com>"]
 license = "MIT"
 readme = "README.md"
