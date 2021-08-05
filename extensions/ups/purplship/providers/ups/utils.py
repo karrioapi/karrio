@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     password: str
     access_license_number: str
     account_number: str = None
+    account_country_code: str = None
+
     id: str = None
 
     @property

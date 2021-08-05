@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     billing_account: str = None
 
     id: str = None
+    account_country_code: str = None
 
     @property
     def carrier_name(self):

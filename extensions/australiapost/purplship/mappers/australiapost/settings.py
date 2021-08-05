@@ -17,3 +17,4 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "australiapost"
+    account_country_code: str = "AU"

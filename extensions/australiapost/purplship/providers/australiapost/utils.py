@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     account_number: str
 
     id: str = None
+    account_country_code: str = "AU"
 
     @property
     def carrier_name(self):

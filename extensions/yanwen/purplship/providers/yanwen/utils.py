@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     license_key: str
 
     id: str = None
+    account_country_code: str = None
 
     @property
     def carrier_name(self):

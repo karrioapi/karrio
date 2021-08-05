@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     check_word: str
 
     id: str = None
+    account_country_code: str = None
 
     @property
     def carrier_name(self):

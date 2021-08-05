@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     logistics_manager_mailer_id: str = None
 
     id: str = None
+    account_country_code: str = "US"
 
     @property
     def carrier_name(self):

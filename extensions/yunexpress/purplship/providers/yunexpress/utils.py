@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     api_secret: str
 
     id: str = None
+    account_country_code: str = None
 
     @property
     def carrier_name(self):

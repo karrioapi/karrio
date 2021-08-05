@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     site_id: str
     password: str
     account_number: str = None
+    account_country_code: str = None
+
     id: str = None
 
     @property

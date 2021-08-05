@@ -16,3 +16,4 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "yanwen"
+    account_country_code: str = None

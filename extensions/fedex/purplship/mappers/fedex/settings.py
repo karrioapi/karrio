@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     password: str
     meter_number: str
     account_number: str
+    account_country_code: str = None
+
     id: str = None
     test: bool = False
     carrier_id: str = "fedex"
