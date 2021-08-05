@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.boxknight"
-version = "2020.11.1-beta"
+version = "2020.11.2"
 description = "Boxknight API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.boxknight"
@@ -19,7 +19,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-jstruct = "^2020.4.0"
+jstruct = ""
 
 [tool.poetry.dev-dependencies]
 
