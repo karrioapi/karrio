@@ -9,7 +9,9 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+
     id: str = None
+    account_country_code: str = "CA"
 
     @property
     def carrier_name(self):

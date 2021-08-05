@@ -7,6 +7,7 @@ from purplship.mappers.aramex.settings import Settings
 
 
 METADATA = Metadata(
+    id="aramex",
     label="Aramex",
 
     # Integrations

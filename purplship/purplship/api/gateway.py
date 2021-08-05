@@ -2,19 +2,17 @@
 
 import attr
 import logging
+import warnings
 from typing import Callable, Union, List
 
-from purplship.core import Settings
 from purplship.api.proxy import Proxy
 from purplship.api.mapper import Mapper
+from purplship.core import Settings
+from purplship.core.models import Message
 from purplship.core.errors import ShippingSDKError
-from purplship.references import import_extensions
+from purplship.references import import_extensions, detect_capabilities
 
 logger = logging.getLogger(__name__)
-FEATURE_SETS = [
-    feature for feature in Proxy.__dict__.keys()
-    if '_' not in feature[0]
-]
 
 
 @attr.s(auto_attribs=True)
@@ -25,11 +23,38 @@ class Gateway:
     settings: Settings
 
     @property
+    def capabilities(self) -> List[str]:
+        return detect_capabilities(self.proxy.__class__)
+
+    def check(self, request: str, origin_country_code: str = None):
+        messages = []
+
+        if request not in self.capabilities:
+            messages.append(Message(
+                carrier_id=self.settings.carrier_id,
+                carrier_name=self.settings.carrier_name,
+                code="SHIPPING_SDK_NON_SUPPORTED_ERROR",
+                message="this operation is not supported."
+            ))
+
+        if (
+                any(origin_country_code or "")
+                and any(self.settings.account_country_code or "")
+                and (origin_country_code != self.settings.account_country_code)
+        ):
+            messages.append(Message(
+                carrier_id=self.settings.carrier_id,
+                carrier_name=self.settings.carrier_name,
+                code="SHIPPING_SDK_ORIGIN_NOT_SERVICED_ERROR",
+                message="this account cannot ship from origin {}".format(origin_country_code)
+            ))
+
+        return messages
+
+    @property
     def features(self) -> List[str]:
-        return [
-            feature for feature in FEATURE_SETS
-            if feature in self.proxy.__class__.__dict__
-        ]
+        warnings.warn("features is deprecated. User capabilities instead", category=DeprecationWarning)
+        return self.capabilities
 
 
 @attr.s(auto_attribs=True)

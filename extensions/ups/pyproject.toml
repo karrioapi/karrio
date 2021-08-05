@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.ups"
-version = "2021.3"
+version = "2021.7"
 homepage="https://sdk.purplship.com"
 repository="https://github.com/Purplship/purplship"
 description = "Purplship - UPS Shipping Extension"
@@ -18,7 +18,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 "purplship" = "^2021.6"
-"carrier.ups" = "^2020.3.1"
+"carrier.ups" = ""
 
 [tool.poetry.dev-dependencies]
 

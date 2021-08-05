@@ -79,6 +79,15 @@ def fail_safe(gateway: Gateway):
     return catcher
 
 
+def check_operation(gateway: Gateway, request: str, **kwargs):
+    errors = gateway.check(request, **kwargs)
+
+    if any(errors):
+        return False, IDeserialize(lambda: (None, errors))  # type: ignore
+
+    return True, None
+
+
 @attr.s(auto_attribs=True)
 class IDeserialize:
     """A lazy deserializer type class"""
@@ -131,6 +140,10 @@ class Address:
         )
 
         def action(gateway: Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, 'validate_address')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_address_validation_request(payload)
             response: Deserializable = gateway.proxy.validate_address(request)
 
@@ -160,6 +173,10 @@ class Pickup:
         payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
 
         def action(gateway: Gateway):
+            is_valid, abortion = check_operation(gateway, 'schedule_pickup')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_pickup_request(payload)
             response: Deserializable = gateway.proxy.schedule_pickup(request)
 
@@ -189,6 +206,10 @@ class Pickup:
         )
 
         def action(gateway: Gateway):
+            is_valid, abortion = check_operation(gateway, 'cancel_pickup')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_cancel_pickup_request(payload)
             response: Deserializable = gateway.proxy.cancel_pickup(request)
 
@@ -218,6 +239,10 @@ class Pickup:
         )
 
         def action(gateway: Gateway):
+            is_valid, abortion = check_operation(gateway, 'modify_pickup')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_pickup_update_request(payload)
             response: Deserializable = gateway.proxy.modify_pickup(request)
 
@@ -248,6 +273,11 @@ class Rating:
 
         def action(gateways: List[Gateway]):
             def process(gateway: Gateway):
+                is_valid, abortion = check_operation(
+                    gateway, 'get_rates', origin_country_code=payload.shipper.country_code)
+                if not is_valid:
+                    return abortion
+
                 request: Serializable = gateway.mapper.create_rate_request(payload)
                 response: Deserializable = gateway.proxy.get_rates(request)
 
@@ -288,6 +318,11 @@ class Shipment:
         payload = args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
 
         def action(gateway: Gateway):
+            is_valid, abortion = check_operation(
+                gateway, 'create_shipment', origin_country_code=payload.shipper.country_code)
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_shipment_request(payload)
             response: Deserializable = gateway.proxy.create_shipment(request)
 
@@ -313,6 +348,10 @@ class Shipment:
         payload = args if isinstance(args, ShipmentCancelRequest) else ShipmentCancelRequest(**args)
 
         def action(gateway: Gateway):
+            is_valid, abortion = check_operation(gateway, 'cancel_shipment')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_cancel_shipment_request(payload)
             response: Deserializable = gateway.proxy.cancel_shipment(request)
 
@@ -342,6 +381,10 @@ class Tracking:
         payload = args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
 
         def action(gateway: Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, 'get_tracking')
+            if not is_valid:
+                return abortion
+
             request: Serializable = gateway.mapper.create_tracking_request(payload)
             response: Deserializable = gateway.proxy.get_tracking(request)
 

@@ -16,3 +16,4 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "royalmail"
+    account_country_code: str = "UK"

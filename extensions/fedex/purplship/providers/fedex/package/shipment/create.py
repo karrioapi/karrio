@@ -36,6 +36,8 @@ from fedex_lib.ship_service_v26 import (
     CustomsClearanceDetail,
     Commodity,
     CommercialInvoice,
+    CustomerReference,
+    CustomerReferenceType,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages, CompleteAddress, Weight
@@ -108,7 +110,7 @@ def shipment_request(
     # Only the master package is selected here because even for MPS only one package is accepted for a master tracking.
     master_package = packages[0]
 
-    service = ServiceType[payload.service].value
+    service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, SpecialServiceType)
     special_services = [getattr(v, 'value', v) for k, v in options if k in SpecialServiceType]
     label_type, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
@@ -244,7 +246,7 @@ def shipment_request(
                                     NotificationDetail=NotificationDetail(
                                         NotificationType="EMAIL",
                                         EmailDetail=EMailDetail(
-                                            EmailAddress=options.notification_email or recipient.email,
+                                            EmailAddress=(options.email_notification_to or recipient.email),
                                             Name=recipient.person_name or recipient.company_name,
                                         ),
                                         Localization=Localization(LanguageCode="EN"),
@@ -255,7 +257,8 @@ def shipment_request(
                                 )
                             ],
                         )
-                        if options.notification_email is None else None
+                        if options.email_notification and any([options.email_notification_to, recipient.email])
+                        else None
                     ),
                     ReturnShipmentDetail=None,
                     PendingShipmentDetail=None,
@@ -395,7 +398,15 @@ def shipment_request(
                     PhysicalPackaging=None,
                     ItemDescription=master_package.parcel.description,
                     ItemDescriptionForClearance=None,
-                    CustomerReferences=None,
+                    CustomerReferences=(
+                        [
+                            CustomerReference(
+                                CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
+                                Value=payload.reference
+                            )
+                        ]
+                        if any(payload.reference or "") else None
+                    ),
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )

@@ -3,12 +3,13 @@
 """
 import attr
 import pkgutil
-from typing import Dict
+from typing import Dict, List
 
 import purplship.mappers as mappers
 import purplship.core.units as units
 from purplship.core.utils import DP
 from purplship.core.metadata import Metadata
+
 
 PROVIDERS = None
 PROVIDERS_DATA = None
@@ -46,6 +47,13 @@ def collect_providers_data() -> Dict[str, dict]:
     return PROVIDERS_DATA
 
 
+def detect_capabilities(proxy_type: object) -> List[str]:
+    return [
+        prop for prop in proxy_type.__dict__.keys()
+        if '_' not in prop[0]
+    ]
+
+
 def collect_references() -> dict:
     global REFERENCES
     if PROVIDERS_DATA is None:
@@ -74,6 +82,11 @@ def collect_references() -> dict:
         "carriers": {carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()},
         "services": services,
         "options": options,
+        "carrier_capabilities": {
+            key: detect_capabilities(mapper['Proxy'])
+            for key, mapper in PROVIDERS_DATA.items()
+            if mapper.get('Proxy') is not None
+        },
         "packaging_types": {
             key: {c.name: c.value for c in list(mapper['packaging_types'])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()

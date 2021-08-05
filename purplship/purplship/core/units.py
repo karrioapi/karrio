@@ -461,11 +461,10 @@ class Option(Enum):
     currency = Spec.asValue("currency")
     insurance = Spec.asValue("insurance", float)
     cash_on_delivery = Spec.asValue("COD", float)
-    label_format = Spec.asValue("label_format")
     shipment_date = Spec.asValue("shipment_date")
-    label_printing = Spec.asValue("label_printing")
     declared_value = Spec.asValue("declared_value", float)
-    notification_emails = Spec.asValue("notification_emails")
+    email_notification = Spec.asFlag("email_notification")
+    email_notification_to = Spec.asValue("email_notification_to")
     signature_confirmation = Spec.asFlag("signature_confirmation")
 
 
@@ -513,25 +512,19 @@ class Options:
         return self[Option.insurance.name]
 
     @property
-    def label_format(self) -> str:
-        return self[Option.label_format.name]
-
-    @property
-    def label_printing(self) -> str:
-        return self[Option.label_printing.name]
-
-    @property
     def declared_value(self) -> float:
         return self[Option.declared_value.name]
 
     @property
-    def notification_emails(self) -> str:
-        return self[Option.notification_emails.name]
+    def email_notification(self) -> bool:
+        if Option.email_notification.name in self:
+            return self[Option.email_notification.name]
+
+        return True
 
     @property
-    def notification_email(self) -> str:
-        emails = str.split(self.notification_emails or '', ',', maxsplit=1)
-        return next((email for email in emails if email != ''), None)
+    def email_notification_to(self) -> str:
+        return self[Option.email_notification_to.name]
 
     @property
     def shipment_date(self) -> str:

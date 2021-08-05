@@ -7,6 +7,7 @@ from purplship.mappers.yanwen.settings import Settings
 
 
 METADATA = Metadata(
+    id="yanwen",
     label="Yanwen",
 
     # Integrations

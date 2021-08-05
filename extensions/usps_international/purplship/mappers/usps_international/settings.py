@@ -19,3 +19,4 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "usps_international"
+    account_country_code: str = "US"

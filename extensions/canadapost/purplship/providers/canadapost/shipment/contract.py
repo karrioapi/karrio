@@ -47,27 +47,22 @@ def parse_shipment_response(
 ) -> Tuple[ShipmentDetails, List[Message]]:
     shipment = (
         _extract_shipment(response, settings)
-        if len(response.xpath(".//*[local-name() = $name]", name="shipment-id")) > 0
+        if len(XP.find("shipment-id", response)) > 0
         else None
     )
     return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    info_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="shipment-info"))
-    )
-    label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
-    errors = parse_error_response(label, settings)
-    info: ShipmentInfoType = ShipmentInfoType()
-    info.build(info_node)
+    info = XP.find("shipment-info", response, ShipmentInfoType, first=True)
+    label = XP.find("label", response, first=True)
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=str(label.text) if len(errors) == 0 else None
+        label=getattr(label, "text", None)
     )
 
 
@@ -160,12 +155,13 @@ def shipment_request(
             ),
             notification=(
                 NotificationType(
-                    email=options.notification_email or payload.recipient.email,
+                    email=options.email_notification_to or payload.recipient.email,
                     on_shipment=True,
                     on_exception=True,
                     on_delivery=True,
                 )
-                if options.notification_email else None
+                if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                else None
             ),
             print_preferences=PrintPreferencesType(
                 output_format=label_format,
@@ -209,9 +205,9 @@ def shipment_request(
                 if customs is not None else None
             ),
             references=ReferencesType(
-                cost_centre=None,
+                cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=None,
+                customer_ref_2=getattr(payload, 'id', None),
             ),
             settlement_info=SettlementInfoType(
                 paid_by_customer=(

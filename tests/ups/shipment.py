@@ -108,7 +108,7 @@ package_shipment_data = {
         }
     ],
     "service": "ups_express",
-    "options": {"notification_emails": "test@mail.com"},
+    "options": {"email_notification_to": "test@mail.com"},
     "payment": {"paid_by": "sender"},
     "reference": "Your Customer Context",
 }
@@ -144,7 +144,7 @@ package_shipment_with_package_preset_data = {
     ],
     "service": "ups_express",
     "payment": {"paid_by": "sender"},
-    "options": {"notification_emails": "test@mail.com"},
+    "options": {"email_notification_to": "test@mail.com"},
     "reference": "Your Customer Context",
     "label_type": "ZPL"
 }
@@ -368,6 +368,10 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                         </ship:BillShipper>
                     </ship:ShipmentCharge>
                 </ship:PaymentInformation>
+                <ship:ReferenceNumber>
+                    <ship:Code>CountryCode</ship:Code>
+                    <ship:Value>Your Customer Context</ship:Value>
+                </ship:ReferenceNumber>
                 <ship:Service>
                     <ship:Code>01</ship:Code>
                 </ship:Service>
@@ -474,6 +478,10 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
                         </ship:BillShipper>
                     </ship:ShipmentCharge>
                 </ship:PaymentInformation>
+                <ship:ReferenceNumber>
+                    <ship:Code>CountryCode</ship:Code>
+                    <ship:Value>Your Customer Context</ship:Value>
+                </ship:ReferenceNumber>
                 <ship:Service>
                     <ship:Code>01</ship:Code>
                 </ship:Service>

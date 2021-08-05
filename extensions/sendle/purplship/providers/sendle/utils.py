@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     api_key: str
 
     id: str = None
+    account_country_code: str = "AU"
 
     @property
     def carrier_name(self):

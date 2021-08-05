@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.yanwen"
-version = "2021.3"
+version = "2021.7"
 homepage="https://sdk.purplship.com"
 repository="https://github.com/Purplship/purplship"
 description = "Purplship - Yanwen Shipping Extension"
@@ -18,7 +18,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 "purplship" = "^2021.6"
-"carrier.yanwen" = "^2021.2"
+"carrier.yanwen" = ""
 
 [tool.poetry.dev-dependencies]
 

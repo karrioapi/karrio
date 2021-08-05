@@ -31,6 +31,7 @@ from ups_lib.ship_web_service_schema import (
     LabelImageFormatType,
     LabelStockSizeType,
     ImageFormatType,
+    ReferenceNumberType,
 )
 from purplship.core.utils import (
     gif_to_pdf,
@@ -56,18 +57,15 @@ from purplship.providers.ups.utils import Settings
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    details = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None
-    )
+    details = XP.find("ShipmentResults", response, first=True)
     shipment = _extract_shipment(details, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipment = ShipmentResultsType()
-    shipment.build(node)
+    shipment = XP.build(ShipmentResultsType, node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
     shipping_label = cast(LabelType, package.ShippingLabel)
 
@@ -87,17 +85,18 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
+        payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     options = Options(payload.options)
-    service = ShippingServiceCode[payload.service].value
+    service = ShippingServiceCode.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
 
+    country_pair = f'{payload.shipper.country_code}/{payload.recipient.country_code}'
     charges: Dict[str, Payment] = {
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
@@ -112,7 +111,8 @@ def shipment_request(
             RequestOption=["validate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=payload.reference, TransactionIdentifier=None
+                CustomerContext=payload.reference,
+                TransactionIdentifier=getattr(payload, 'id', None)
             ),
         ),
         Shipment=ShipmentType(
@@ -166,39 +166,57 @@ def shipment_request(
                     CountryCode=payload.recipient.country_code,
                 ),
             ),
-            PaymentInformation=PaymentInfoType(
-                ShipmentCharge=[
-                    ShipmentChargeType(
-                        Type=charge_type,
-                        BillShipper=BillShipperType(
-                            AccountNumber=settings.account_number,
-                            CreditCard=None,
-                            AlternatePaymentMethod=None,
-                        )
-                        if payment.paid_by == PaymentType.sender.name
-                        else None,
-                        BillReceiver=BillReceiverType(
-                            AccountNumber=payment.account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.recipient.postal_code
+            PaymentInformation=(
+                PaymentInfoType(
+                    ShipmentCharge=[
+                        ShipmentChargeType(
+                            Type=charge_type,
+                            BillShipper=(
+                                BillShipperType(
+                                    AccountNumber=settings.account_number,
+                                    CreditCard=None,
+                                    AlternatePaymentMethod=None,
+                                )
+                                if payment.paid_by == PaymentType.sender.name
+                                else None
                             ),
+                            BillReceiver=(
+                                BillReceiverType(
+                                    AccountNumber=payment.account_number,
+                                    Address=BillReceiverAddressType(
+                                        PostalCode=payload.recipient.postal_code
+                                    ),
+                                )
+                                if payment.paid_by == PaymentType.recipient.name
+                                else None
+                            ),
+                            BillThirdParty=(
+                                BillThirdPartyChargeType(
+                                    AccountNumber=payment.account_number,
+                                )
+                                if payment.paid_by == PaymentType.third_party.name
+                                else None
+                            ),
+                            ConsigneeBilledIndicator=None,
                         )
-                        if payment.paid_by == PaymentType.recipient.name
-                        else None,
-                        BillThirdParty=BillThirdPartyChargeType(
-                            AccountNumber=payment.account_number,
-                        )
-                        if payment.paid_by == PaymentType.third_party.name
-                        else None,
-                        ConsigneeBilledIndicator=None,
+                        for charge_type, payment in charges.items()
+                        if payment is not None
+                    ],
+                    SplitDutyVATIndicator=None,
+                ) if any(charges.values()) else None
+            ),
+            MovementReferenceNumber=None,
+            ReferenceNumber=(
+                [
+                    ReferenceNumberType(
+                        BarCodeIndicator=None,
+                        Code=payload.shipper.country_code,
+                        Value=payload.reference
                     )
-                    for charge_type, payment in charges.items()
-                    if payment is not None
-                ],
-                SplitDutyVATIndicator=None,
-            )
-            if any(charges.values())
-            else None,
+                ]
+                if (country_pair not in ["US/US", "PR/PR"]) and any(payload.reference or "")
+                else None
+            ),
             Service=(ServiceType(Code=service) if service is not None else None),
             ShipmentServiceOptions=(
                 ShipmentServiceOptionsType(
@@ -217,7 +235,7 @@ def shipment_request(
                             NotificationType(
                                 NotificationCode=event,
                                 EMail=EmailDetailsType(EMailAddress=[
-                                    options.notification_email or payload.recipient.email
+                                    options.email_notification_to or payload.recipient.email
                                 ]),
                                 VoiceMessage=None,
                                 TextMessage=None,
@@ -225,19 +243,20 @@ def shipment_request(
                             )
                             for event in [8]
                         ]
-                        if options.notification_email is not None else None
+                        if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                        else None
                     ),
                 )
-                if any([options.cash_on_delivery, options.notification_email]) else None
+                if any([options.cash_on_delivery, options.email_notification]) else None
             ),
             Package=[
                 PackageType(
                     Description=package.parcel.description,
                     Packaging=PackagingType(
-                        Code=mps_packaging
-                        or ShippingPackagingType[
-                            package.packaging_type or "your_packaging"
-                        ].value
+                        Code=(
+                                mps_packaging
+                                or ShippingPackagingType[package.packaging_type or "your_packaging"].value
+                        )
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(

@@ -7,6 +7,7 @@ import purplship.providers.ups.units as units
 
 
 METADATA = Metadata(
+    id="ups",
     label="UPS",
 
     # Integrations

@@ -7,6 +7,7 @@ import purplship.providers.fedex.units as units
 
 
 METADATA = Metadata(
+    id="fedex",
     label="FedEx",
 
     # Integrations

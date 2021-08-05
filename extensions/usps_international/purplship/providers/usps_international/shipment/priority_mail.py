@@ -52,10 +52,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         if key in ShipmentOption and 'usps_option' not in key
     ]
     customs = payload.customs or Customs(commodities=[])
-    insurance = getattr((options['usps_insurance_priority_mail_international']), 'value', options.insurance)
+    insurance = getattr((options.usps_insurance_priority_mail_international), 'value', options.insurance)
     # Gets the first provided non delivery option or default to "RETURN"
     non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
-    redirect_address = CompleteAddress.map(Address(**(options['usps_option_redirect_non_delivery'] or {})))
+    redirect_address = CompleteAddress.map(Address(**(options.usps_option_redirect_non_delivery or {})))
 
     request = eVSPriorityMailIntlRequest(
         USERID=settings.username,
@@ -131,7 +131,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CustomerRefNo=None,
         CustomerRefNo2=None,
         POZipCode=None,
-        LabelDate=DF.fdatetime((options.shipment_date or time.strftime('%Y-%m-%d')), current_format="%Y-%m-%d", output_format="%m/%d/%Y"),
+        LabelDate=DF.fdatetime(
+            (options.shipment_date or time.strftime('%Y-%m-%d')),
+            current_format="%Y-%m-%d",
+            output_format="%m/%d/%Y"
+        ),
         EMCAAccount=None,
         HoldForManifest=None,
         EELPFC=customs.eel_pfc,

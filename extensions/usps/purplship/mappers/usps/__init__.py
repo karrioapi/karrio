@@ -7,6 +7,7 @@ import purplship.providers.usps.units as units
 
 
 METADATA = Metadata(
+    id="usps",
     label="USPS",
 
     # Integrations

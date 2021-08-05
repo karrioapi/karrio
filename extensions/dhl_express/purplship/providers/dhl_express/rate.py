@@ -16,7 +16,7 @@ from dhl_express_lib.dct_req_global_2_0 import (
 from dhl_express_lib.dct_requestdatatypes_global import DCTDutiable
 from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 
-from purplship.core.errors import DestinationNotServicedError
+from purplship.core.errors import DestinationNotServicedError, OriginNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services, CountryCurrency
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
@@ -33,73 +33,59 @@ from purplship.providers.dhl_express.error import parse_error_response
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
-    qtdshp_list = response.xpath(".//*[local-name() = $name]", name="QtdShp")
-    quotes: List[RateDetails] = [
-        _extract_quote(qtdshp_node, settings) for qtdshp_node in qtdshp_list
+    quotes = XP.find("QtdShp", response, ResponseQtdShpType)
+    rates: List[RateDetails] = [
+        _extract_quote(quote, settings) for quote in quotes
+        if (quote.ShippingCharge is not None) or (quote.ShippingCharge is not None)
     ]
-    return (
-        [quote for quote in quotes if quote is not None],
-        parse_error_response(response, settings),
-    )
+
+    return rates, parse_error_response(response, settings)
 
 
-def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
-    qtdshp = ResponseQtdShpType()
-    qtdshp.build(qtdshp_node)
-    if qtdshp.ShippingCharge is None or qtdshp.ShippingCharge == 0:
-        return None
-
-    ExtraCharges = list(
-        map(
-            lambda s: ChargeDetails(
-                name=s.LocalServiceTypeName, amount=NF.decimal(s.ChargeValue or 0)
-            ),
-            qtdshp.QtdShpExChrg,
+def _extract_quote(quote: ResponseQtdShpType, settings: Settings) -> RateDetails:
+    service = ProductCode.map(quote.GlobalProductCode)
+    ExtraCharges = [
+        ChargeDetails(
+            name=s.LocalServiceTypeName,
+            amount=NF.decimal(s.ChargeValue or 0)
         )
-    )
-    Discount_ = reduce(
+        for s in quote.QtdShpExChrg
+    ]
+    discount = reduce(
         lambda d, ec: d + ec.amount if "Discount" in ec.name else d, ExtraCharges, 0.0
     )
-    DutiesAndTaxes_ = reduce(
+    duties_and_taxes = reduce(
         lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0
     )
-    delivery_date = DF.date(qtdshp.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
-    pricing_date = DF.date(qtdshp.PricingDate)
+    delivery_date = DF.date(quote.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
+    pricing_date = DF.date(quote.PricingDate)
     transit = (
-        (delivery_date - pricing_date).days
+        (delivery_date.date() - pricing_date.date()).days
         if all([delivery_date, pricing_date])
         else None
     )
-    service_name = next(
-        (p.name for p in ProductCode if p.value == qtdshp.GlobalProductCode),
-        None,
-    )
+
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency=qtdshp.CurrencyCode,
+        currency=quote.CurrencyCode,
         transit_days=transit,
-        service=(service_name or qtdshp.GlobalProductCode),
-        base_charge=NF.decimal(qtdshp.WeightCharge),
-        total_charge=NF.decimal(qtdshp.ShippingCharge),
-        duties_and_taxes=NF.decimal(DutiesAndTaxes_),
-        discount=NF.decimal(Discount_),
-        extra_charges=list(
-            map(
-                lambda s: ChargeDetails(
-                    name=s.LocalServiceTypeName,
-                    amount=NF.decimal(s.ChargeValue),
-                    currency=qtdshp.CurrencyCode,
-                ),
-                qtdshp.QtdShpExChrg,
+        service=service.name_or_key,
+        base_charge=NF.decimal(quote.WeightCharge),
+        total_charge=NF.decimal(quote.ShippingCharge),
+        duties_and_taxes=NF.decimal(duties_and_taxes),
+        discount=NF.decimal(discount),
+        extra_charges=[
+            ChargeDetails(
+                name=s.LocalServiceTypeName,
+                amount=NF.decimal(s.ChargeValue),
+                currency=quote.CurrencyCode,
             )
-        ),
-        meta=(dict(
-            service=qtdshp.GlobalProductCode,
-            service_name=qtdshp.ProductShortName
-        ) if service_name is None else None)
+            for s in quote.QtdShpExChrg
+        ],
+        meta=dict(service_name=(service.name or quote.ProductShortName))
     )
 
 
@@ -110,6 +96,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
+    if any(settings.account_country_code or "") and (payload.shipper.country_code != settings.account_country_code):
+        raise OriginNotServicedError(payload.shipper.country_code)
     if not is_international and payload.shipper.country_code in ["CA"]:
         raise DestinationNotServicedError(payload.shipper.country_code)
 
@@ -165,7 +153,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                             PieceID=package.parcel.id or f"{index}",
                             PackageTypeCode=DCTPackageType[
                                 package.packaging_type or "your_packaging"
-                            ].value,
+                                ].value,
                             Depth=package.length[dim_unit.name],
                             Width=package.width[dim_unit.name],
                             Height=package.height[dim_unit.name],

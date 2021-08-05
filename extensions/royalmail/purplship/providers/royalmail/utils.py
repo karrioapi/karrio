@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     client_secret: str
 
     id: str = None
+    account_country_code: str = "UK"
 
     @property
     def carrier_name(self):

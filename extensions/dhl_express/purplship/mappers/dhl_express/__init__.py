@@ -7,6 +7,7 @@ import purplship.providers.dhl_express.units as units
 
 
 METADATA = Metadata(
+    id="dhl_express",
     label="DHL Express",
 
     # Integrations

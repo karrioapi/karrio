@@ -6,6 +6,7 @@ from purplship.mappers.canpar.settings import Settings
 
 
 METADATA = Metadata(
+    id="canpar",
     label="Canpar",
 
     # Integrations

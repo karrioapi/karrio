@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     customer_number: str
     contract_id: str = None
     language: str = "en"
+
     id: str = None
+    account_country_code: str = "CA"
 
     @property
     def carrier_name(self):

@@ -14,6 +14,7 @@ class Settings(ABC):
     carrier_id: str
     id: str = None
     test: bool = False
+    account_country_code: str = None
 
     @property
     def server_url(self) -> Optional[str]:

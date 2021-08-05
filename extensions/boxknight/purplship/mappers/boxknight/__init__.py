@@ -6,6 +6,7 @@ from purplship.mappers.boxknight.settings import Settings
 
 
 METADATA = Metadata(
+    id="boxknight",
     label="BoxKnight",
 
     # Integrations

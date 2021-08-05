@@ -84,6 +84,7 @@ import purplship.providers.[carrier_name].units as units
 
 
 METADATA = Metadata(
+    id="[carrier_name]",
     label="[Carrier Name]",
 
     # Integrations

@@ -82,9 +82,10 @@ from purplship.mappers.canadapost.settings import Settings
 # Initialize a carrier gateway
 canadapost = purplship.gateway["canadapost"].create(
     Settings(
-        username="username",
-        password="password",
-        customer_number="123456789",
+        username="6e93d53968881714",
+        password="0bfa9fcb9853d1f51ee57a",
+        customer_number="2004381",
+        contract_id="42708517",
         test=True
     )
 )
@@ -125,6 +126,7 @@ rate_request = RateRequest(
     shipper=shipper,
     recipient=recipient,
     parcels=[parcel],
+    services=["canadapost_xpresspost"],
 )
 
 # Send a rate request using a carrier gateway
@@ -159,15 +161,16 @@ print(rates)
 
 - [**Documentation**](https://sdk.purplship.com)
 - [**Bug Tracker**](https://github.com/puprlship/purplship/issues)
-- [**Community on Discord**](https://discord.gg/gS88uE7sEx)
+- [**Github Community**](https://github.com/purplship/purplship-server/discussions)
 
 ## Contributing
 
 We encourage you to contribute to puprlship! Please check out the
 [Contributing to purplship guide](/docs/development/contributing.md) for guidelines about how to proceed.
-[Join the purplship Community!](https://github.com/purplship/purplship/discussions)
+[Join the purplship discord channel!](https://discord.gg/gS88uE7sEx)
 
-Do you want to extend purplship and integrate a custom carrier, check out [Extending purplship](https://sdk.purplship.com/development/extending/)
+Do you want to extend purplship and integrate a custom carrier, check out 
+[Extending purplship](https://sdk.purplship.com/development/extending/)
 
 ## License
 
