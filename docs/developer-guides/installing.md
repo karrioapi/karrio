@@ -3,9 +3,9 @@
 We recommend using Docker because it takes care of all of the necessary dependencies.
 
 
-## Prerequisites 
+## Prerequisites
 
-You will need to install [Docker Desktop](https://www.docker.com/products/docker-desktop) and 
+You will need to install [Docker Desktop](https://www.docker.com/products/docker-desktop) and
 [Docker Compose](https://docs.docker.com/compose/install/) before following the instructions below.
 
 
@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
+    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.7
     restart: unless-stopped
     volumes:
       - pshipstatics:/pship/statics
@@ -44,7 +44,7 @@ services:
       - DATABASE_PASSWORD=postgres
     depends_on:
       - db
-  
+
   worker:
     image: danh91.docker.scarf.sh/purplship/purplship-server:[version]
     restart: unless-stopped

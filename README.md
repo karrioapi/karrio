@@ -46,7 +46,7 @@ Help us outâ€¦ If you love Open standard and great software, give us a star! ðŸŒ
 ## Deployment
 
 ### `Docker`
-  
+
 > check the latest version tags of the purplship/purplship-server image on [Docker Hub](https://hub.docker.com/r/purplship/purplship-server/tags)
 
 <details>
@@ -72,7 +72,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.3
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.7
 ```
 
 </details>
@@ -99,7 +99,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.6.3
+    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.7
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -154,8 +154,6 @@ Host your own purplship server for FREE with One-Click Deploy.
 purplship is available in two editions - **OSS** and **Enterprise**.
 
 The Open Source Edition is under the `Apache 2` License.
-
-- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
 
 To get the quotation of our Enterprise Edition, please visit [purplship.com](https://purplship.com) and contact us.
 

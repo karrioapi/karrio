@@ -48,7 +48,7 @@ docker run \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/purplship-server:2021.6.2
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.7
 ```
 
 Once the server is ready access your shipping dashboard at [http://0.0.0.0:5002](http://0.0.0.0:5002),
@@ -56,8 +56,8 @@ log in with the default admin account `admin@example.com` | `demo`
 
 
 !!! info
-    If you get stuck or need help, [file an issue](https://github.com/purplship/purplship-server/issues/new/choose), 
-    [post on the community board](https://github.com/purplship/purplship-server/discussions) or 
+    If you get stuck or need help, [file an issue](https://github.com/purplship/purplship-server/issues/new/choose),
+    [post on the community board](https://github.com/purplship/purplship-server/discussions) or
     [email](mailto:hello@purplship.com?subject=Purplship Quick Start).
 
 

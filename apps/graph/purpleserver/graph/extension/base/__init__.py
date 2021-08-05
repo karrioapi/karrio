@@ -41,7 +41,7 @@ class Query:
         return TokenSerializer.retrieve_token(info.context, **kwargs)
 
     def resolve_user_connections(self, info, **kwargs):
-        connections = providers.Carrier.access_by(info.context).filter(**kwargs)
+        connections = providers.Carrier.access_by(info.context).filter(created_by__isnull=False, **kwargs)
         return [connection.settings for connection in connections]
 
     def resolve_system_connections(self, info, **kwargs):
