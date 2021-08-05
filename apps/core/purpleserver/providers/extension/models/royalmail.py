@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class RoyalMailSettings(Carrier):
-    CARRIER_NAME = 'royalmail'
-
     class Meta:
         db_table = "royalmail-settings"
         verbose_name = 'Royal Mail Settings'
@@ -15,7 +13,7 @@ class RoyalMailSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'royalmail'
 
 
 SETTINGS = RoyalMailSettings

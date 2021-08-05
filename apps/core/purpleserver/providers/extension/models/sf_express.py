@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class SFExpressSettings(Carrier):
-    CARRIER_NAME = 'sf_express'
-
     class Meta:
         db_table = "sf_express-settings"
         verbose_name = 'SF-Express Settings'
@@ -15,7 +13,7 @@ class SFExpressSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'sf_express'
 
 
 SETTINGS = SFExpressSettings

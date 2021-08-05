@@ -1,11 +1,33 @@
+import typing
 from functools import partial
 
 from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
 
+from purplship import gateway
+from purplship.core.utils import Enum
+from purplship.core.units import Country
+from purplship.api.gateway import Gateway
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.datatypes import CarrierSettings
+from purpleserver.core.fields import MultiChoiceField
+
+
+class CarrierCapabilities(Enum):
+    pickup = 'pickup'
+    rating = 'rating'
+    shipping = 'shipping'
+    tracking = 'tracking'
+
+    @classmethod
+    def get_capabilities(cls):
+        return [c.name for c in list(cls)]
+
+
+CAPABILITIES_CHOICES = [(c, c) for c in CarrierCapabilities.get_capabilities()]
+COUNTRIES = [(c.name, c.name) for c in Country]
+
 
 
 class CarrierManager(models.Manager):
@@ -20,12 +42,15 @@ class Carrier(OwnedEntity):
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
-        max_length=200, unique=True,
-        help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups..."
-    )
+        max_length=200, help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...")
     test = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
+    active_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='active_users')
+    capabilities = MultiChoiceField(
+        models.CharField(max_length=50, choices=CAPABILITIES_CHOICES),
+        default=CarrierCapabilities.get_capabilities,
+        size=len(CAPABILITIES_CHOICES))
 
     objects = CarrierManager()
 
@@ -51,9 +76,13 @@ class Carrier(OwnedEntity):
 
     @property
     def data(self) -> CarrierSettings:
-        settings = self.settings
         return CarrierSettings.create({
-            'id': settings.id,
-            'carrier_name': settings.carrier_name,
-            **model_to_dict(settings)
+            'id': self.settings.id,
+            'carrier_name': self.settings.carrier_name,
+            **model_to_dict(self.settings)
         })
+
+    @property
+    def gateway(self) -> Gateway:
+        return gateway[self.settings.carrier_name].create({**self.data.dict()})
+

@@ -46,7 +46,7 @@ class CarrierSettings:
     def dict(self):
         return {
             name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'created_by', 'active']
+            if name not in ['carrier_name', 'created_by', 'active', 'capabilities']
         }
 
     @classmethod

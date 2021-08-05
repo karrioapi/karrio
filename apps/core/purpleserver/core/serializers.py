@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
+
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
@@ -19,15 +20,6 @@ from purpleserver.core.validators import (
     valid_time_format,
     valid_date_format,
 )
-
-CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
-COUNTRIES = [(c.name, c.name) for c in list(Country)]
-CURRENCIES = [(c.name, c.name) for c in list(Currency)]
-WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
-DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
-PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
-PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
-LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
 class ShipmentStatus(Enum):
@@ -50,6 +42,14 @@ SHIPMENT_STATUS = [(c.value, c.value) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.value, c.value) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(Incoterm)]
+CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
+COUNTRIES = [(c.name, c.name) for c in list(Country)]
+CURRENCIES = [(c.name, c.name) for c in list(Currency)]
+WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
+DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
+PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
+PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
+LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
 class StringListField(ListField):

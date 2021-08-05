@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class CanparSettings(Carrier):
-    CARRIER_NAME = 'canpar'
-
     class Meta:
         db_table = "canpar-settings"
         verbose_name = 'Canpar Settings'
@@ -15,7 +13,7 @@ class CanparSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'canpar'
 
 
 SETTINGS = CanparSettings

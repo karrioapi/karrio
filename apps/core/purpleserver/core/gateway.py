@@ -21,17 +21,30 @@ logger = logging.getLogger(__name__)
 
 class Carriers:
     @staticmethod
-    def list(**kwargs) -> List[models.Carrier]:
-        list_filter: Dict[str: Any] = kwargs
+    def list(context = None, **kwargs) -> List[models.Carrier]:
         query = tuple()
+        list_filter: Dict[str: Any] = kwargs
+        user_filter = (get_access_filter(context) if context is not None else [])
+        active_key = ('active_orgs__id' if hasattr(models.Carrier, 'org') else 'active_users__id')
+        access_id = getattr(context.org if hasattr(models.Carrier, 'org') else context.user, 'id', None)
+        system_carrier_user = (
+            Q(**{'active': True, 'created_by__isnull': True, active_key: access_id})
+            if access_id is not None else
+            Q(**{'active': True, 'created_by__isnull': True})
+        )
+        creator_filter = (
+            Q(created_by__id=context.user.id, **(
+                dict(org=None) if hasattr(models.Carrier, 'org') else {}
+            ))
+            if getattr(context, 'user', None) is not None
+            else Q()
+        )
 
         # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if not list_filter.get('system_only') and 'context' in list_filter:
-            access = get_access_filter(list_filter.get('context'))
-            if len(access) > 0:
-                query += (Q(created_by__isnull=True) | access,)
+        if (not list_filter.get('system_only')) and (len(user_filter) > 0):
+            query += (user_filter | system_carrier_user | creator_filter, )
         elif list_filter.get('system_only') is True:
-            query += (Q(created_by__isnull=True),)
+            query += (Q(created_by__isnull=True, active=True), )
 
         # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
         if list_filter.get('test') is not None:
@@ -40,11 +53,17 @@ class Carriers:
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get('active') is not None:
             active = False if list_filter['active'] is False else True
-            query += (Q(active=active), )
+            carrier_is_active = Q(active=active, created_by__isnull=False)
+            system_carrier_is_active = (system_carrier_user if active else Q(active=active, created_by__isnull=True))
+            query += (carrier_is_active | system_carrier_is_active, )
 
         # Check if a specific carrier_id is provide, to add it to the query
         if 'carrier_id' in list_filter:
             query += (Q(carrier_id=list_filter['carrier_id']), )
+
+        # Check if a specific carrier_id is provide, to add it to the query
+        if 'capability' in list_filter:
+            query += (Q(capabilities__contains=[list_filter['capability']]), )
 
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get('carrier_ids', [])):
@@ -53,7 +72,7 @@ class Carriers:
         if 'carrier_name' in list_filter:
             carrier_name = list_filter['carrier_name']
             if carrier_name not in models.MODELS.keys():
-                raise NotFound(f"No configurations for the following carrier: '{carrier_name}'")
+                raise NotFound(f"No extension installed for the carrier: '{carrier_name}'")
 
             carriers = [
                 setting.carrier_ptr for setting in models.MODELS[carrier_name].objects.filter(*query)
@@ -62,6 +81,10 @@ class Carriers:
             carriers = models.Carrier.objects.filter(*query)
 
         return carriers
+
+    @staticmethod
+    def first(**kwargs) -> models.Carrier:
+        return next(iter(Carriers.list(**kwargs)), None)
 
 
 class Address:
@@ -77,7 +100,10 @@ class Address:
 
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[datatypes.Shipment], str] = None, carrier: models.Carrier = None) -> datatypes.Shipment:
+    def create(
+            payload: dict, carrier: models.Carrier = None,
+            resolve_tracking_url: Callable[[datatypes.Shipment], str] = None
+    ) -> datatypes.Shipment:
         selected_rate = next(
             (datatypes.Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -89,12 +115,11 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier = carrier or models.Carrier.objects.get(carrier_id=selected_rate.carrier_id).data
+        carrier = carrier or models.Carrier.objects.get(carrier_id=selected_rate.carrier_id)
         request = datatypes.ShipmentRequest(**{**DP.to_dict(payload), 'service': selected_rate.service})
-        gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
-        shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(gateway).parse())
+        shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(carrier.gateway).parse())
 
         if shipment is None:
             raise exceptions.PurplShipApiException(
@@ -144,19 +169,18 @@ class Shipments:
         })
 
     @staticmethod
-    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.ConfirmationResponse:
-        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+    def cancel(payload: dict, carrier: models.Carrier = None, **carrier_filters) -> datatypes.ConfirmationResponse:
+        carrier = carrier or Carriers.first(active=True, capability='shipping', **carrier_filters)
 
         if carrier is None:
             raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
-        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
         confirmation, messages = (
             identity(lambda: request.from_(gateway).parse())
-            if 'cancel_shipment' in gateway.features else
+            if 'cancel_shipment' in carrier.gateway.capabilities else
             (
                 datatypes.Confirmation(
                     carrier_name=gateway.settings.carrier_name,
@@ -169,28 +193,26 @@ class Shipments:
         )
 
         if confirmation is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        return datatypes.ConfirmationResponse(
-            confirmation=confirmation,
-            messages=messages
-        )
+        return datatypes.ConfirmationResponse(confirmation=confirmation, messages=messages)
 
     @staticmethod
-    def track(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.TrackingResponse:
-        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+    def track(payload: dict, carrier: models.Carrier = None, **carrier_filters) -> datatypes.TrackingResponse:
+        carrier = carrier or Carriers.first(active=True, capability='tracking', **carrier_filters)
 
         if carrier is None:
             raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Tracking.fetch(datatypes.TrackingRequest(**DP.to_dict(payload)))
-        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        results, messages = identity(lambda: request.from_(gateway).parse())
+        results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if not any(results or []):
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return datatypes.TrackingResponse(
             tracking=(
@@ -208,20 +230,20 @@ class Shipments:
 
 class Pickups:
     @staticmethod
-    def schedule(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.PickupResponse:
-        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+    def schedule(payload: dict, carrier: models.Carrier = None, **carrier_filters) -> datatypes.PickupResponse:
+        carrier = carrier or Carriers.first(active=True, capability='pickup', **carrier_filters)
 
         if carrier is None:
             raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.schedule(datatypes.PickupRequest(**DP.to_dict(payload)))
-        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        pickup, messages = identity(lambda: request.from_(gateway).parse())
+        pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(**{
@@ -234,20 +256,20 @@ class Pickups:
         )
 
     @staticmethod
-    def update(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.PickupResponse:
-        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+    def update(payload: dict, carrier: models.Carrier = None, **carrier_filters) -> datatypes.PickupResponse:
+        carrier = carrier or Carriers.first(active=True, capability='pickup', **carrier_filters)
 
         if carrier is None:
             raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.update(datatypes.PickupUpdateRequest(**DP.to_dict(payload)))
-        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        pickup, messages = identity(lambda: request.from_(gateway).parse())
+        pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(**{
@@ -259,19 +281,18 @@ class Pickups:
         )
 
     @staticmethod
-    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.ConfirmationResponse:
-        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+    def cancel(payload: dict, carrier: models.Carrier = None, **carrier_filters) -> datatypes.ConfirmationResponse:
+        carrier = carrier or Carriers.first(active=True, capability='pickup', **carrier_filters)
 
         if carrier is None:
             raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.cancel(datatypes.PickupCancelRequest(**DP.to_dict(payload)))
-        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
         confirmation, messages = (
             identity(lambda: request.from_(gateway).parse())
-            if 'cancel_shipment' in gateway.features else
+            if 'cancel_shipment' in carrier.gateway.features else
             (
                 datatypes.Confirmation(
                     carrier_name=gateway.settings.carrier_name,
@@ -284,12 +305,10 @@ class Pickups:
         )
 
         if confirmation is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        return datatypes.ConfirmationResponse(
-            confirmation=confirmation,
-            messages=messages
-        )
+        return datatypes.ConfirmationResponse(confirmation=confirmation, messages=messages)
 
 
 @post_processing(methods=['fetch'])
@@ -297,30 +316,26 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, context: Context = None, test: bool = None) -> datatypes.RateResponse:
-        request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
+    def fetch(payload: dict, carriers: List[models.Carrier] = None, **carrier_filters) -> datatypes.RateResponse:
+        carrier_ids = payload.get('carrier_ids', [])
+        carriers = carriers or Carriers.list(active=True, carrier_ids=carrier_ids, capability='rating', **carrier_filters)
 
-        carrier_settings_list = [
-            carrier.data for carrier in
-            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, context=context, test=test)
-        ]
-        gateways = [
-            purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
-        ]
-        compatible_gateways = [g for g in gateways if 'get_rates' in g.features]
+        gateways = [c.gateway for c in carriers if 'get_rates' in c.gateway.capabilities]
 
-        if len(compatible_gateways) == 0:
+        if len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
+        request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
+
         # The request call is wrapped in identity to simplify mocking in tests
-        rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())
+        rates, messages = identity(lambda: request.from_(*gateways).parse())
 
         if not any(rates) and any(messages):
             raise exceptions.PurplShipApiException(
                 detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
-            carrier = next((c for c in carrier_settings_list if c.carrier_id == rate.carrier_id))
+            carrier = next((c for c in carriers if c.carrier_id == rate.carrier_id))
             meta = {
                 **(rate.meta or {}),
                 'rate_provider': ((rate.meta or {}).get('rate_provider') or rate.carrier_name).lower(),

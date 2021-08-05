@@ -20,6 +20,7 @@ class Organization(AbstractOrganization):
     id = models.CharField(max_length=50, primary_key=True, default=partial(core.uuid, prefix='org_'), editable=False)
 
     carriers = models.ManyToManyField(providers.Carrier, related_name="org", through='CarrierLink')
+    system_carriers = models.ManyToManyField(providers.Carrier, related_name="active_orgs")
 
     parcels = models.ManyToManyField(manager.Parcel, related_name="org", through='ParcelLink')
     pickups = models.ManyToManyField(manager.Pickup, related_name="org", through='PickupLink')

@@ -1,10 +1,8 @@
 from django.db import models
-from purpleserver.providers.models.carrier import Carrier
+from purpleserver.providers.models.carrier import Carrier, COUNTRIES
 
 
 class UPSSettings(Carrier):
-    CARRIER_NAME = 'ups'
-
     class Meta:
         db_table = "ups-settings"
         verbose_name = 'UPS Settings'
@@ -14,10 +12,11 @@ class UPSSettings(Carrier):
     password = models.CharField(max_length=200)
     access_license_number = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
+    account_country_code = models.CharField(max_length=3, blank=True, choices=COUNTRIES)
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'ups'
 
 
 SETTINGS = UPSSettings

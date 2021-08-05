@@ -3,8 +3,6 @@ from purpleserver.providers.models.carrier import Carrier
 
 
 class PurolatorSettings(Carrier):
-    CARRIER_NAME = 'purolator'
-
     class Meta:
         db_table = "purolator-settings"
         verbose_name = 'Purolator Settings'
@@ -17,7 +15,7 @@ class PurolatorSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return self.CARRIER_NAME
+        return 'purolator'
 
 
 SETTINGS = PurolatorSettings
