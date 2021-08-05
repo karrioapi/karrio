@@ -106,7 +106,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "purolator",
-                "service_name": "eshipper_purolator_air",
+                "service_name": "purolator_air",
             },
             "service": "eshipper_purolator_air",
             "total_charge": 177.0,
@@ -122,7 +122,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "purolator",
-                "service_name": "eshipper_purolator_ground",
+                "service_name": "purolator_ground",
             },
             "service": "eshipper_purolator_ground",
             "total_charge": 28.65,
@@ -138,7 +138,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "fedex",
-                "service_name": "eshipper_fedex_priority",
+                "service_name": "fedex_priority",
             },
             "service": "eshipper_fedex_priority",
             "total_charge": 52.52,
@@ -153,7 +153,7 @@ ParsedQuoteResponse = [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
-            "meta": {"rate_provider": "fedex", "service_name": "eshipper_fedex_ground"},
+            "meta": {"rate_provider": "fedex", "service_name": "fedex_ground"},
             "service": "eshipper_fedex_ground",
             "total_charge": 31.82,
             "transit_days": 0,
@@ -168,7 +168,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "canada_worldwide",
-                "service_name": "eshipper_canada_worldwide_air_freight",
+                "service_name": "canada_worldwide_air_freight",
             },
             "service": "eshipper_canada_worldwide_air_freight",
             "total_charge": 336.0,
@@ -184,7 +184,7 @@ ParsedQuoteResponse = [
             ],
             "meta": {
                 "rate_provider": "canada_worldwide",
-                "service_name": "eshipper_canada_worldwide_next_flight_out",
+                "service_name": "canada_worldwide_next_flight_out",
             },
             "service": "eshipper_canada_worldwide_next_flight_out",
             "total_charge": 184.8,

@@ -181,15 +181,16 @@ class Service(Enum):
     eshipper_canpar_ground = "4500"
     eshipper_canpar_select_parcel = "4504"
     eshipper_canpar_express_parcel = "4507"
+    eshipper_fleet_optics_ground = "5601"
 
     @staticmethod
     def info(serviceId, carrierId, serviceName, carrierName):
         carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
-        service_key = next((s.name for s in Service if str(serviceId) == s.value), None)
+        service = Service.map(str(serviceId))
         formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
-        service_name = (service_key or formatted_name)
+        service_name = (service.name or formatted_name).replace('eshipper_', '')
 
-        return carrier_name, (service_key or serviceId), service_name
+        return carrier_name, service.name_or_key, service_name
 
 
 CARRIER_IDS = {
@@ -203,6 +204,7 @@ CARRIER_IDS = {
     "18": "eshipper",
     "35": "global_mail",
     "45": "canpar",
+    "56": "fleet_optics"
 }
 
 

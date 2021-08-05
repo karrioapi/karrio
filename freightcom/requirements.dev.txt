@@ -1,5 +1,12 @@
+-f https://git.io/purplship
+black
+coverage
+generateDS
+certifi
+mypy
+wheel
 
 # -e git+https://github.com/Purplship/purplship.git@carrier-tracking-integration-spree#egg=purplship&subdirectory=purplship
 # -e git+https://github.com/Purplship/purplship-server.git@purplship-2020.12#egg=purplship_server.core&subdirectory=src/apps/core
 
--e .[dev]
+-e .

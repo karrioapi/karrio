@@ -135,7 +135,7 @@ ParsedShipmentResponse = [
         "label": "[base-64 encoded String]",
         "meta": {
             "rate_provider": "fedex",
-            "service_name": "eshipper_fedex_ground",
+            "service_name": "fedex_ground",
             "tracking_url": "http://www.fedex.com/Tracking?tracknumbers=052800410000484",
         },
         "selected_rate": {
@@ -147,7 +147,7 @@ ParsedShipmentResponse = [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
-            "meta": {"rate_provider": "fedex", "service_name": "eshipper_fedex_ground"},
+            "meta": {"rate_provider": "fedex", "service_name": "fedex_ground"},
             "service": "eshipper_fedex_ground",
             "total_charge": 31.82,
             "transit_days": 0,

@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyfreightcom.shipping_request import (
+from freightcom_lib.shipping_request import (
     Freightcom,
     ShippingRequestType,
     FromType,
@@ -15,10 +15,9 @@ from pyfreightcom.shipping_request import (
     ItemType,
     BillToType,
 )
-from pyfreightcom.shipping_reply import (
+from freightcom_lib.shipping_reply import (
     ShippingReplyType,
     QuoteType,
-    PackageType as ReplyPackageType,
     SurchargeType,
 )
 from purplship.core.utils import Element, Serializable, XP, SF, NF
@@ -118,9 +117,9 @@ def shipping_request(
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
     options = Options(payload.options, Option)
 
+    service = Service.map(payload.service).value_or_key
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
     packaging = ("Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package")
-    service = (Service[payload.service].value if payload.service in Service else payload.service)
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
         None,
@@ -233,7 +232,7 @@ def shipping_request(
                 if payload.payment is not None else None
             ),
             Reference=(
-                [ReferenceType(name=payload.reference, code="parcelRef")]
+                [ReferenceType(name="REF", code=payload.reference)]
                 if payload.reference != "" else None
             ),
             CustomsInvoice=(

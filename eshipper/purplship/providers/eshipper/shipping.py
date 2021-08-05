@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyeshipper.shipping_request import (
+from eshipper_lib.shipping_request import (
     EShipper,
     ShippingRequestType,
     FromType,
@@ -15,10 +15,9 @@ from pyeshipper.shipping_request import (
     ItemType,
     BillToType,
 )
-from pyeshipper.shipping_reply import (
+from eshipper_lib.shipping_reply import (
     ShippingReplyType,
     QuoteType,
-    PackageType as ReplyPackageType,
     SurchargeType,
 )
 from purplship.core.utils import Element, Serializable, SF, NF, XP
@@ -118,9 +117,9 @@ def shipping_request(
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
     options = Options(payload.options, Option)
 
+    service = Service.map(payload.service).value_or_key
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
     packaging = ("Pallet" if packaging_type in [PackagingType.pallet.value] else "Package")
-    service = (Service[payload.service].value if payload.service in Service else payload.service)
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
         if payload.options.get("freight_class") in FreightClass
@@ -236,7 +235,7 @@ def shipping_request(
                 if payload.payment is not None else None
             ),
             Reference=(
-                [ReferenceType(name="", code=payload.reference)]
+                [ReferenceType(name="REF", code=payload.reference)]
                 if payload.reference != "" else None
             ),
             CustomsInvoice=(

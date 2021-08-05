@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+
     id: str = None
     test: bool = False
     carrier_id: str = "eshipper"
+    account_country_code: str = None

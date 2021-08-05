@@ -41,9 +41,9 @@ class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
 
 class Service(Enum):
     freightcom_all = "0"
-    freigthcom_usf_holland = "1911"
+    freightcom_usf_holland = "1911"
     freightcom_central_transport = "2029"
-    freigthcom_estes = "2107"
+    freightcom_estes = "2107"
     freightcom_canpar_ground = "3400"
     freightcom_canpar_select = "3404"
     freightcom_canpar_overnight = "3407"
@@ -89,11 +89,11 @@ class Service(Enum):
     @staticmethod
     def info(serviceId, carrierId, serviceName, carrierName):
         carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
-        service_key = next((s.name for s in Service if str(serviceId) == s.value), None)
+        service = Service.map(str(serviceId))
         formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
-        service_name = (service_key or formatted_name)
+        service_name = (service.name or formatted_name).replace('freightcom_', '')
 
-        return carrier_name, (service_key or serviceId), service_name
+        return carrier_name, service.name_or_key, service_name
 
 
 CARRIER_IDS = {

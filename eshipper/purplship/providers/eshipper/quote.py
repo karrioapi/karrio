@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pyeshipper.quote_request import (
+from eshipper_lib.quote_request import (
     EShipper,
     QuoteRequestType,
     FromType,
@@ -7,7 +7,7 @@ from pyeshipper.quote_request import (
     PackagesType,
     PackageType,
 )
-from pyeshipper.quote_reply import QuoteType, SurchargeType
+from eshipper_lib.quote_reply import QuoteType, SurchargeType
 from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Packages, Options, Services

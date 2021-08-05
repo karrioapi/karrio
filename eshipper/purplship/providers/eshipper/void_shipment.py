@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pyeshipper.shipment_cancel_request import ShipmentCancelRequestType, EShipper, OrderType
+from eshipper_lib.shipment_cancel_request import ShipmentCancelRequestType, EShipper, OrderType
 from purplship.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
