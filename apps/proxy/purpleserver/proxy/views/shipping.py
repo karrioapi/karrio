@@ -81,10 +81,10 @@ class ShippingCancel(APIView):
         """
         Cancel a shipment and the label previously created
         """
-        filters = SerializerDecorator[TestFilters](data=request.query_params).data
+        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
+        response = Shipments.cancel(payload, context=request, carrier_name=carrier_name, **test_filter)
 
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 

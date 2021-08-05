@@ -35,9 +35,9 @@ class RateViewAPI(APIView):
     )
     def post(self, request: Request):
         payload = SerializerDecorator[RateRequest](data=request.data).data
-        query = SerializerDecorator[TestFilters](data=request.query_params).data
+        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
 
-        response = Rates.fetch(payload, context=request, **query)
+        response = Rates.fetch(payload, context=request, **test_filter)
 
         return Response(
             RateResponse(response).data,

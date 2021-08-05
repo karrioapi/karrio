@@ -37,12 +37,10 @@ class PickupDetails(APIView):
         """
         Schedule one or many parcels pickup
         """
-        filters = SerializerDecorator[TestFilters](data=request.query_params).data
+        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupRequest](data=request.data).data
 
-        response = Pickups.schedule(payload, carrier_filter={
-            **filters, 'carrier_name': carrier_name, 'context': request
-        })
+        response = Pickups.schedule(payload, context=request, carrier_name=carrier_name, **test_filter)
 
         return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
 
@@ -58,10 +56,10 @@ class PickupDetails(APIView):
         """
         Modify a scheduled pickup
         """
-        filters = SerializerDecorator[TestFilters](data=request.query_params).data
+        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupUpdateRequest](data=request.data).data
 
-        response = Pickups.update(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
+        response = Pickups.update(payload, context=request, carrier_name=carrier_name, **test_filter)
 
         return Response(PickupResponse(response).data, status=status.HTTP_200_OK)
 
@@ -80,10 +78,10 @@ class PickupCancel(APIView):
         """
         Cancel a pickup previously scheduled
         """
-        filters = SerializerDecorator[TestFilters](data=request.query_params).data
+        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupCancelRequest](data=request.data).data
 
-        response = Pickups.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
+        response = Pickups.cancel(payload, context=request, carrier_name=carrier_name, **test_filter)
 
         return Response(OperationResponse(response).data, status=status.HTTP_200_OK)
 
