@@ -22,6 +22,7 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
 )
 from dhl_express_lib.ship_val_global_res_10_0 import LabelImage, MultiLabelType
 from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
+from purplship.core.errors import OriginNotServicedError
 from purplship.core.utils import Serializable, XP, SF, Location, Element
 from purplship.core.models import (
     ShipmentRequest,
@@ -87,6 +88,9 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[DHLShipmentRequest]:
+    if any(settings.account_country_code or "") and (payload.shipper.country_code != settings.account_country_code):
+        raise OriginNotServicedError(payload.shipper.country_code)
+
     packages = Packages.map(payload.parcels, PackagePresets, required=["weight"])
     options = Options(payload.options, SpecialServiceCode)
     product = ProductCode.map(payload.service).value_or_key

@@ -16,7 +16,7 @@ from dhl_express_lib.dct_req_global_2_0 import (
 from dhl_express_lib.dct_requestdatatypes_global import DCTDutiable
 from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 
-from purplship.core.errors import DestinationNotServicedError
+from purplship.core.errors import DestinationNotServicedError, OriginNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services, CountryCurrency
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
@@ -96,6 +96,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
+    if any(settings.account_country_code or "") and (payload.shipper.country_code != settings.account_country_code):
+        raise OriginNotServicedError(payload.shipper.country_code)
     if not is_international and payload.shipper.country_code in ["CA"]:
         raise DestinationNotServicedError(payload.shipper.country_code)
 

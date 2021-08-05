@@ -2,7 +2,7 @@ import re
 import unittest
 from unittest.mock import patch
 from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.dhl_express.fixture import gateway
 
@@ -61,6 +61,14 @@ class TestDHLShipment(unittest.TestCase):
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
             )
+
+    def test_not_supported_cancel_shipment(self):
+        cancel_request = ShipmentCancelRequest(shipment_identifier="IDENTIFIER")
+        response = Shipment.cancel(cancel_request).from_(gateway).parse()
+
+        self.assertEqual(
+            DP.to_dict(response), DP.to_dict(ParsedNotSupportedShipmentCancelResponse)
+        )
 
 
 if __name__ == "__main__":
@@ -154,6 +162,18 @@ ParsedShipmentResponse = [
         "tracking_number": "0057714403",
     },
     [],
+]
+
+ParsedNotSupportedShipmentCancelResponse = [
+    None,
+    [
+        {
+            "carrier_id": "carrier_id",
+            "carrier_name": "dhl_express",
+            "code": "SHIPPING_SDK_NON_SUPPORTED_ERROR",
+            "message": "this operation is not supported.",
+        }
+    ],
 ]
 
 
