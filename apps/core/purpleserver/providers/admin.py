@@ -10,7 +10,14 @@ def model_admin(model):
         exclude = ['active_users']
         formfield_overrides = {
             models.CharField: {
-                'widget': forms.TextInput(attrs={'autocomplete': 'off', 'class':'vTextField', 'type': 'text'})
+                'widget': forms.TextInput(attrs={
+                    'type': 'text',
+                    'readonly': 'true',
+                    'class': 'vTextField',
+                    'data - lpignore': 'true',
+                    'autocomplete': 'keep-off',
+                    'onfocus': "this.removeAttribute('readonly');"
+                })
             }
         }
 
