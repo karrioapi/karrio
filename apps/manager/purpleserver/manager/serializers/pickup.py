@@ -81,15 +81,16 @@ class PickupSerializer(PickupRequest):
 @owned_model_serializer
 class PickupData(PickupSerializer):
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Pickup:
-        carrier_filter = validated_data["carrier_filter"]
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+        carrier = Carriers.first(context=context, **validated_data["carrier_filter"])
         request_data = PickupRequest({
-            **validated_data, "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
+            **validated_data,
+            "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
         }).data
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)
         payload = {
-            key: value for key, value in Pickup(response.pickup).data.items() if key in models.Pickup.DIRECT_PROPS
+            key: value for key, value in Pickup(response.pickup).data.items()
+            if key in models.Pickup.DIRECT_PROPS
         }
         address = save_one_to_one_data('address', AddressSerializer, payload=validated_data, context=context)
 
@@ -97,7 +98,7 @@ class PickupData(PickupSerializer):
             **payload,
             "address": address,
             "pickup_carrier": carrier,
-            "created_by": validated_data['created_by'],
+            "created_by": context.user,
             "test_mode": response.pickup.test_mode,
             "confirmation_number": response.pickup.confirmation_number,
         })

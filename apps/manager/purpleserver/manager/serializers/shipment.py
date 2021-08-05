@@ -56,13 +56,16 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
-        test = validated_data.get('test')
-        carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
+        carrier_filters = (validated_data.get('carrier_filters') or {})
+        carrier_ids = (validated_data.get('carrier_ids') or [])
+        carriers = Carriers.list(
+            context=context, active=True, capability='shipping', carrier_ids=carrier_ids, **carrier_filters)
 
         # Get live rates
-        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
-            data=validated_data, context=context).save(test=test).instance
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer]\
+            (data=validated_data, context=context)\
+            .save(carriers=carriers)\
+            .instance
 
         shipment_data = {
             **{
@@ -80,7 +83,8 @@ class ShipmentSerializer(ShipmentData):
             'messages': DP.to_dict(rate_response.messages),
             'test_mode': all([r.test_mode for r in rate_response.rates]),
         })
-        shipment.carriers.set(carriers)
+
+        shipment.carriers.set(carriers if any(carrier_ids) else [])
 
         save_many_to_many_data('parcels', ParcelSerializer, shipment, payload=validated_data, context=context)
 
@@ -90,6 +94,7 @@ class ShipmentSerializer(ShipmentData):
     def update(self, instance: models.Shipment, validated_data: dict, context: dict) -> models.Shipment:
         changes = []
         data = validated_data.copy()
+        carriers = validated_data.get('carriers') or []
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -122,8 +127,6 @@ class ShipmentSerializer(ShipmentData):
         instance.save(update_fields=changes)
 
         if 'carrier_ids' in validated_data:
-            carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
             instance.carriers.set(carriers)
 
         return instance
@@ -155,7 +158,7 @@ class ShipmentRateData(Serializer):
 
 
 @owned_model_serializer
-class ShipmentValidationData(Shipment):
+class ShipmentPurchaseSerializer(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
     reference = CharField(required=False, allow_blank=True, allow_null=True)

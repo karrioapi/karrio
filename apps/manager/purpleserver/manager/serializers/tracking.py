@@ -19,13 +19,13 @@ class TrackingSerializer(TrackingDetails):
     pending = BooleanField(required=False)
 
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
-        carrier_filter = validated_data['carrier_filter']
+        carrier_filters = validated_data['carrier_filters']
         tracking_number = validated_data['tracking_number']
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+        carrier = Carriers.first(context=context, **carrier_filters)
 
         response = Shipments.track(
             TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
-            carrier_filter=carrier_filter
+            carrier=carrier
         )
 
         return models.Tracking.objects.create(
@@ -38,15 +38,16 @@ class TrackingSerializer(TrackingDetails):
             tracking_carrier=carrier,
         )
 
-    def update(self, instance: models.Tracking, validated_data: dict, **kwargs) -> models.Tracking:
+    def update(self, instance: models.Tracking, validated_data: dict, context, **kwargs) -> models.Tracking:
         last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 30 and instance.delivered is not True:
-            carrier_filter = validated_data['carrier_filter']
-            carrier = next(iter(Carriers.list(**carrier_filter)), instance.tracking_carrier)
+            carrier_filters = validated_data['carrier_filters']
+            carrier = (Carriers.first(context=context, **carrier_filters) or instance.tracking_carrier)
+
             response = Shipments.track(
-                carrier=carrier,
-                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data
+                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data,
+                carrier=carrier
             )
             # update values only if changed; This is important for webhooks notification
             changes = []

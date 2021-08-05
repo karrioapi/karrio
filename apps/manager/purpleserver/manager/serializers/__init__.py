@@ -8,7 +8,7 @@ from purpleserver.manager.serializers.shipment import (
     ShipmentRateData,
     ShipmentSerializer,
     ShipmentPurchaseData,
-    ShipmentValidationData,
+    ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     reset_related_shipment_rates,
     create_shipment_tracker,

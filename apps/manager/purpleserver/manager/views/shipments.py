@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
 
 from purplship.core.utils import DP
+from purpleserver.core.gateway import Carriers
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
@@ -36,7 +37,7 @@ from purpleserver.manager.serializers import (
     ShipmentSerializer,
     ShipmentRateData,
     ShipmentPurchaseData,
-    ShipmentValidationData,
+    ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     RateSerializer,
     ParcelSerializer,
@@ -124,8 +125,11 @@ class ShipmentList(GenericAPIView):
         """
         Create a new shipment instance.
         """
-        query = SerializerDecorator[ShipmentMode](data=request.query_params).data
-        shipment = SerializerDecorator[ShipmentSerializer](data=request.data, context=request).save(**query).instance
+        carrier_filters = {
+            **SerializerDecorator[ShipmentMode](data=request.query_params).data
+        }
+        shipment = SerializerDecorator[ShipmentSerializer](
+            data=request.data, context=request).save(carrier_filters=carrier_filters).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -173,7 +177,7 @@ class ShipmentDetail(APIView):
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        confirmation = SerializerDecorator[ShipmentCancelSerializer](shipment, data={}).save()
+        confirmation = SerializerDecorator[ShipmentCancelSerializer](shipment, data={}, context=request).save()
         return Response(OperationResponse(confirmation.instance).data)
 
 
@@ -195,18 +199,26 @@ class ShipmentRates(APIView):
             .exclude(status=ShipmentStatus.cancelled.value)\
             .get(pk=pk)
 
-        payload = SerializerDecorator[ShipmentRateData](data=request.data).data
+        rate_payload = SerializerDecorator[ShipmentRateData](data=request.data).data
+        carrier_ids = (rate_payload['carrier_ids'] if 'carrier_ids' in rate_payload else shipment.carrier_ids)
+
+        carriers = Carriers.list(
+            active=True,
+            capability='shipping',
+            context=request,
+            test=shipment.test_mode,
+            carrier_ids=carrier_ids)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](context=request, data={
             **ShipmentData(shipment).data,
-            **payload
-        }).save(test=shipment.test_mode).instance
+            **rate_payload
+        }).save(carriers=carriers).instance
 
-        SerializerDecorator[ShipmentSerializer](shipment, data={
+        SerializerDecorator[ShipmentSerializer](shipment, context=request, data={
             "rates": Rate(rate_response.rates, many=True).data,
             "messages": DP.to_dict(rate_response.messages),
-            **payload
-        }).save()
+            **rate_payload
+        }).save(carriers=carriers)
 
         return Response(Shipment(shipment).data)
 
@@ -349,12 +361,10 @@ class ShipmentPurchase(APIView):
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
-
         # Submit shipment to carriers
-        response: Shipment = SerializerDecorator[ShipmentValidationData](context=request, data={
+        response: Shipment = SerializerDecorator[ShipmentPurchaseSerializer](context=request, data={
             **Shipment(shipment).data,
-            **payload
+            **SerializerDecorator[ShipmentPurchaseData](data=request.data).data
         }).save().instance
 
         # Update shipment state

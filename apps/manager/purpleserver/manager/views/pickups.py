@@ -115,7 +115,6 @@ class PickupRequest(APIView):
         carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
             "carrier_name": carrier_name,
-            "user": request.user
         }
 
         pickup = SerializerDecorator[PickupData](

@@ -88,15 +88,17 @@ class TrackersCreate(APIView):
         details and events of a shipping in progress.
         """
         data = dict(tracking_number=tracking_number)
-        carrier_filter = {
+        carrier_filters = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name,
-            "user": request.user
+            "carrier_name": carrier_name
         }
         tracking = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
 
-        instance = SerializerDecorator[TrackingSerializer](
-            tracking, data=data, context=request).save(carrier_filter=carrier_filter).instance
+        instance = SerializerDecorator[TrackingSerializer]\
+            (tracking, data=dict(tracking_number=tracking_number), context=request)\
+            .save(carrier_filters=carrier_filters)\
+            .instance
+
         return Response(TrackingStatus(instance).data)
 
 
