@@ -21,7 +21,7 @@ from purplship.providers.dicom.utils import Settings
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     pickup = next(
-        (Pickup(**pickup) for pickup in response.get('pickups', [])),
+        (DP.to_object(Pickup, pickup) for pickup in response.get('pickups', [])),
         None
     )
     details = (_extract_details(pickup, settings) if pickup is not None else None)

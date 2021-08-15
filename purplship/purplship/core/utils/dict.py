@@ -1,7 +1,8 @@
 import attr
 import json
 import types
-from typing import Union, Any, TypeVar, Callable
+import jstruct.utils as jstruct
+from typing import Union, Any, TypeVar, Callable, Type, Optional
 
 T = TypeVar("T")
 
@@ -49,3 +50,10 @@ class DICTPARSE:
             object_hook=lambda d: {k: v for k, v in d.items() if v not in (None, [], "")},
         )
 
+    @staticmethod
+    def to_object(object_type: Type[T], data: dict = None) -> Optional[T]:
+        if data is None or object_type is None:
+            return None
+
+        entity: object_type = jstruct.instantiate(object_type, data)  # type: ignore
+        return entity

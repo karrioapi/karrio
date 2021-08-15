@@ -35,6 +35,10 @@ class XMLPARSER:
         return instance
 
     @staticmethod
+    def to_object(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
+        return XMLPARSER.build(element_type, xml_node)
+
+    @staticmethod
     def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = None, first: bool = None):
         children = [
             (child if element_type is None else XMLPARSER.build(element_type, child))

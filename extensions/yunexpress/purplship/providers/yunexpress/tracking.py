@@ -4,6 +4,7 @@ from yunexpress_lib.tracking import OrderInfo
 from purplship.core.utils import (
     Serializable,
     SF,
+    DP,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -22,7 +23,7 @@ def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[Tr
 
 
 def _extract_detail(detail: dict, settings: Settings) -> TrackingDetails:
-    order_info = OrderInfo(**detail)
+    order_info = DP.to_object(OrderInfo, detail)
 
     return TrackingDetails(
         # context info

@@ -3,6 +3,7 @@ from sendle_lib.tracking import Tracking
 from purplship.core.utils import (
     Serializable,
     DF,
+    DP,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -17,7 +18,7 @@ from purplship.providers.sendle.error import parse_error_response
 def parse_tracking_response(response: List[Tuple[str, dict]], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     errors = [e for ref, e in response if 'error' in e]
     tracking_details = [
-        _extract_detail((ref, Tracking(**d)), settings)
+        _extract_detail((ref, DP.to_object(Tracking, d)), settings)
         for ref, d in response if 'tracking_events' in d
     ]
 
