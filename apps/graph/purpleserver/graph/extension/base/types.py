@@ -33,7 +33,7 @@ class ConnectionType:
     carrier_name = graphene.String(required=True)
 
     def resolve_carrier_name(self, info):
-        return getattr(self, 'data', self).carrier_name
+        return getattr(self, 'settings', self).carrier_name
 
 
 class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
