@@ -7,6 +7,7 @@ import purpleserver.providers.models as carriers
 
 def model_admin(model):
     class _Admin(admin.ModelAdmin):
+        list_display = ('__str__', 'test', 'active')
         exclude = ['active_users']
         formfield_overrides = {
             models.CharField: {

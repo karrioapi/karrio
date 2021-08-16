@@ -55,7 +55,7 @@ class Carrier(OwnedEntity):
     objects = CarrierManager()
 
     def __str__(self):
-        return f"{self.carrier_id} - {self.created_by or 'system'}"
+        return self.carrier_id
 
     def _linked_settings(self):
         from purpleserver.providers.models import MODELS
