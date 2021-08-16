@@ -48,7 +48,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         return Job(id='create', data=create_shipment_request(payload, settings))
 
     def _create_label_request(shipment_response: str) -> Job:
-        activity = XP.build(document, XP.to_xml(shipment_response))
+        activity = XP.to_object(document, XP.to_xml(shipment_response))
         fallback = shipment_response if activity is None else None
         data = (create_label_request(activity, payload, settings) if activity is None else None)
 

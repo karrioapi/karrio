@@ -34,7 +34,7 @@ def parse_rate_response(
 
 
 def _extract_quote(node: Element, settings: Settings) -> RateDetails:
-    quote = XP.build(price_quoteType, node)
+    quote = XP.to_object(price_quoteType, node)
     service = ServiceType.map(quote.service_code)
     adjustments = getattr(quote.price_details.adjustments, 'adjustment', [])
     discount = sum(NF.decimal(d.adjustment_cost or 0) for d in adjustments)

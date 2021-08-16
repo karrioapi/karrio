@@ -85,7 +85,7 @@ def apply_namespaceprefix(item, prefix: str, special_prefixes: dict = None, item
 
 def extract_fault(response: Element, settings: Settings) -> List[Message]:
     faults = [
-        XMLPARSER.build(Fault, node)
+        XMLPARSER.to_object(Fault, node)
         for node in response.xpath(".//*[local-name() = $name]", name="Fault")
     ]
     return [

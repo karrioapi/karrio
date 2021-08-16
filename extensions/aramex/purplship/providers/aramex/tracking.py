@@ -26,7 +26,7 @@ from purplship.providers.aramex.error import parse_error_response
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     non_existents = next(
-        (XP.build(ArrayOfstring, n) for n in response.xpath(".//*[local-name() = $name]", name="NonExistingWaybills")),
+        (XP.to_object(ArrayOfstring, n) for n in response.xpath(".//*[local-name() = $name]", name="NonExistingWaybills")),
         ArrayOfstring()
     )
     results = response.xpath(".//*[local-name() = $name]", name="TrackingResult")
@@ -49,7 +49,7 @@ def _extract_errors(non_existents: ArrayOfstring, settings: Settings) -> List[Me
 
 
 def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
-    detail = XP.build(TrackingResult, node)
+    detail = XP.to_object(TrackingResult, node)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,

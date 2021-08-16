@@ -14,7 +14,7 @@ from purplship.providers.purolator.error import parse_error_response
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
-    reply = XP.build(
+    reply = XP.to_object(
         ValidateCityPostalCodeZipResponse,
         next(iter(response.xpath(".//*[local-name() = $name]", name="ValidateCityPostalCodeZipResponse")), None)
     )

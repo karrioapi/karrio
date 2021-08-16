@@ -15,7 +15,7 @@ from purplship.providers.dhl_express.error import parse_error_response
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     notes = response.xpath(".//*[local-name() = $name]", name="Note")
-    success = next((True for note in notes if XP.build(Note, note).ActionNote == "Success"), False)
+    success = next((True for note in notes if XP.to_object(Note, note).ActionNote == "Success"), False)
     validation_details = AddressValidationDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,

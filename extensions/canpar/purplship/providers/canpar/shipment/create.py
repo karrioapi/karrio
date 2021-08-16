@@ -31,7 +31,7 @@ from purplship.providers.canpar.rate import _extract_rate_details
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    shipment = XP.build(
+    shipment = XP.to_object(
         Shipment, next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
     )
     success = (shipment is not None and shipment.id is not None)
@@ -43,7 +43,7 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     shipment_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
     label = next(iter(response.xpath(".//*[local-name() = $name]", name="labels")), None)
-    shipment = XP.build(Shipment, shipment_node)
+    shipment = XP.to_object(Shipment, shipment_node)
     tracking_number = next(iter(shipment.packages), Package()).barcode
 
     return ShipmentDetails(
@@ -171,7 +171,7 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 
 def _get_label(shipment_response: str, settings: Settings) -> Job:
     response = XP.to_xml(shipment_response)
-    shipment = XP.build(
+    shipment = XP.to_object(
         Shipment, next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
     )
     success = (shipment is not None and shipment.id is not None)

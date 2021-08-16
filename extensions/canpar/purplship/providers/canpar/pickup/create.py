@@ -27,7 +27,7 @@ from purplship.providers.canpar.units import WeightUnit
 
 def parse_pickup_response(response: Element, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
     pickup_node = next(iter(response.xpath(".//*[local-name() = $name]", name="pickup")), None)
-    pickup = XP.build(PickupV2, pickup_node)
+    pickup = XP.to_object(PickupV2, pickup_node)
     details: PickupDetails = PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,

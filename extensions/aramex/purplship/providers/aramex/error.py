@@ -11,7 +11,7 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
 
 
 def _extract_error(node: Element, settings: Settings) -> Message:
-    notification = XP.build(Notification, node)
+    notification = XP.to_object(Notification, node)
 
     return Message(
         # context info

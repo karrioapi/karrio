@@ -16,7 +16,7 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
 
 
 def _extract_error(node: Element, settings: Settings) -> Optional[Message]:
-    notification = XP.build(Notification, node)
+    notification = XP.to_object(Notification, node)
     if notification.Severity not in ("SUCCESS", "NOTE"):
         return Message(
             code=notification.Code,

@@ -17,7 +17,7 @@ from purplship.providers.ups.error import parse_error_response
 def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    status = XP.build(
+    status = XP.to_object(
         CodeDescriptionType,
         next(
             iter(response.xpath(".//*[local-name() = $name]", name="ResponseStatus")),

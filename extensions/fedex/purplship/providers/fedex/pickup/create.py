@@ -42,7 +42,7 @@ from purplship.providers.fedex.error import parse_error_response
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.build(
+    reply = XP.to_object(
         CreatePickupReply,
         next(
             iter(
@@ -177,7 +177,7 @@ def _get_availability(payload: PickupRequest, settings: Settings):
 def _create_pickup(
     availability_response: str, payload: PickupRequest, settings: Settings
 ):
-    availability = XP.build(PickupAvailabilityReply, XP.to_xml(availability_response))
+    availability = XP.to_object(PickupAvailabilityReply, XP.to_xml(availability_response))
     data = _pickup_request(payload, settings) if availability else None
 
     return Job(id="create_pickup", data=data, fallback="")

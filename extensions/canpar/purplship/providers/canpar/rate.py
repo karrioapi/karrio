@@ -30,7 +30,7 @@ def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[Rat
 
 
 def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
-    shipment = XP.build(Shipment, node)
+    shipment = XP.to_object(Shipment, node)
     service = Service.map(shipment.service_type)
     surcharges = [
         ChargeDetails(

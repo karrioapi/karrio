@@ -53,7 +53,7 @@ def _extract_package_rate(
     settings: Settings,
 ) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
-        rate = XP.build(RatedShipmentType, detail_node)
+        rate = XP.to_object(RatedShipmentType, detail_node)
 
         if rate.NegotiatedRateCharges is not None:
             total_charges = (

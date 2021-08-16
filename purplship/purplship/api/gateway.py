@@ -53,7 +53,7 @@ class Gateway:
 
     @property
     def features(self) -> List[str]:
-        warnings.warn("features is deprecated. User capabilities instead", category=DeprecationWarning)
+        warnings.warn("features is deprecated. Use capabilities instead", category=DeprecationWarning)
         return self.capabilities
 
 

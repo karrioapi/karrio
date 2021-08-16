@@ -23,9 +23,9 @@ def parse_tracking_response(
 
 
 def _extract_details(shipment_node: Element, settings: Settings) -> TrackingDetails:
-    track_detail = XP.build(ShipmentType, shipment_node)
+    track_detail = XP.to_object(ShipmentType, shipment_node)
     activities = [
-        XP.build(ActivityType, node)
+        XP.to_object(ActivityType, node)
         for node in
         shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
     ]

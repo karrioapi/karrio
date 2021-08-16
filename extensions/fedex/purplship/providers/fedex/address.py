@@ -16,7 +16,7 @@ from purplship.providers.fedex.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
-    reply = XP.build(
+    reply = XP.to_object(
         AddressValidationReply,
         next(iter(response.xpath(".//*[local-name() = $name]", name="AddressValidationReply")), None)
     )

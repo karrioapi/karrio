@@ -38,7 +38,7 @@ def parse_rate_response(
 
 
 def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDetails]:
-    rate: RateReplyDetail = XP.build(RateReplyDetail, detail_node)
+    rate: RateReplyDetail = XP.to_object(RateReplyDetail, detail_node)
     service = ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
     shipment_rate, shipment_discount = cast(

@@ -48,7 +48,7 @@ def _cancel_pickup_request(
         ),
         None,
     )
-    new_pickup = XP.build(PickupCreationResponse, reply)
+    new_pickup = XP.to_object(PickupCreationResponse, reply)
     data = (
         pickup_cancel_request(
             PickupCancelRequest(confirmation_number=payload.confirmation_number),

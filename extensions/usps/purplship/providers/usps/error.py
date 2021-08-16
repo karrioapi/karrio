@@ -10,7 +10,7 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
         [response] if response.tag == 'Error' else
         response.xpath(".//*[local-name() = $name]", name="Error")
     )
-    errors = [XP.build(Error, node) for node in error_nodes]
+    errors = [XP.to_object(Error, node) for node in error_nodes]
 
     return [
         Message(

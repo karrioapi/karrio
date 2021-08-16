@@ -65,7 +65,7 @@ def parse_shipment_response(
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.build(ShipmentResultsType, node)
+    shipment = XP.to_object(ShipmentResultsType, node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
     shipping_label = cast(LabelType, package.ShippingLabel)
 

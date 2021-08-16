@@ -25,7 +25,7 @@ from purplship.providers.canpar.utils import Settings
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     address_node = next(iter(response.xpath(".//*[local-name() = $name]", name="address")), None)
-    address = XP.build(CanparAddress, address_node)
+    address = XP.to_object(CanparAddress, address_node)
     success = len(errors) == 0
     validation_details = AddressValidationDetails(
         carrier_id=settings.carrier_id,

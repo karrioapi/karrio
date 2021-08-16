@@ -24,7 +24,7 @@ def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[Rat
 
 
 def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
-    postage: ServiceType = XP.build(ServiceType, postage_node)
+    postage: ServiceType = XP.to_object(ServiceType, postage_node)
 
     service = ServiceClassID.map(str(postage.ID))
     charges: List[ExtraServiceType] = postage.ExtraServices.ExtraService

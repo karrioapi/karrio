@@ -26,7 +26,7 @@ def parse_tracking_response(
 
 
 def _extract_details(node: Element, settings) -> TrackingDetails:
-    info = XP.build(TrackInfoType, node)
+    info = XP.to_object(TrackInfoType, node)
     details: List[TrackDetailType] = [*([info.TrackSummary] or []), *info.TrackDetail]
     delivered = info.StatusCategory.lower() == "delivered"
 
