@@ -1,0 +1,29 @@
+{
+    "response": {
+        "data": [
+            {
+                "trackingNumberVendor": "string",
+                "customerReferenceNumber": "string",
+                "trackingDetailEvents": [
+                    {
+                        "eventCode": "string",
+                        "eventDescription": "string",
+                        "eventLocationDetails": {
+                            "addressLine1": "string",
+                            "city": "string",
+                            "province": "string",
+                            "postalCode": "string",
+                            "countryIso2": "string",
+                            "countryName": "string"
+                        },
+                        "eventOn": "2019-08-24T14:15:22Z"
+                    }
+                ]
+            }
+        ],
+        "responseStatus": {
+            "responseStatusCode": 0,
+            "responseStatusMessage": "string"
+        }
+    }
+}

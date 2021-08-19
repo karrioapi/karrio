@@ -1,0 +1,14 @@
+{
+    "accountNumber": "string",
+    "subAccountNumber": "string",
+    "processingLocation": "string",
+    "recipientPostalCode": "string",
+    "recipientCountryCode": "string",
+    "totalPackageWeight": 0.0,
+    "weightUnit": "string",
+    "dimLength": 0.0,
+    "dimWidth": 0.0,
+    "dimHeight": 0.0,
+    "dimUnit": "string",
+    "productCode": "string"
+}

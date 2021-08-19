@@ -1,0 +1,15 @@
+{
+    "report": {
+        "reports": [
+            {
+                "name": "string",
+                "type": "string",
+                "content": "string"
+            }
+        ]
+    },
+    "responseStatus": {
+        "responseStatusCode": "Continue",
+        "responseStatusMessage": "string"
+    }
+}

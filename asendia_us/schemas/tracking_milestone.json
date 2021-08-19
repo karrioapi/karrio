@@ -1,0 +1,22 @@
+{
+    "response": {
+        "data": [
+            {
+                "trackingNumberVendor": "string",
+                "customerReferenceNumber": "string",
+                "trackingMilestoneEvents": [
+                    {
+                        "eventCode": "string",
+                        "eventDescription": "string",
+                        "eventLocation": "string",
+                        "eventOn": "2019-08-24T14:15:22Z"
+                    }
+                ]
+            }
+        ],
+        "responseStatus": {
+            "responseStatusCode": 0,
+            "responseStatusMessage": "string"
+        }
+    }
+}
