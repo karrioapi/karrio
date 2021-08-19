@@ -40,17 +40,8 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.to_object(
-        PickupCreationResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="PickupCreationResponse"
-                )
-            ),
-            None,
-        ),
-    )
+    reply = XP.find(response, "PickupCreationResponse", PickupCreationResponse, first=True)
+
     pickup = (
         _extract_pickup_details(response, settings)
         if reply is not None and reply.PRN is not None
@@ -61,25 +52,10 @@ def parse_pickup_response(
 
 
 def _extract_pickup_details(
-    response: PickupCreationResponse, settings: Settings
+    response: Element, settings: Settings
 ) -> PickupDetails:
-    pickup = XP.to_object(
-        PickupCreationResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="PickupCreationResponse"
-                )
-            ),
-            None,
-        ),
-    )
-    rate = XP.to_object(
-        RateResultType,
-        next(
-            iter(response.xpath(".//*[local-name() = $name]", name="RateResult")), None
-        ),
-    )
+    pickup = XP.find(response, "PickupCreationResponse", PickupCreationResponse, first=True)
+    rate = XP.find(response, "RateResult", RateResultType, first=True)
 
     return PickupDetails(
         carrier_id=settings.carrier_id,

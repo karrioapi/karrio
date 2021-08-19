@@ -18,6 +18,6 @@ METADATA = Metadata(
     # Data Units
     options=units.ServiceOption,
     package_presets=units.PackagePresets,
-    packaging_types=units.RatingPackagingType,
-    services=units.ShippingServiceCode,
+    packaging_types=units.PackagingType,
+    services=units.ServiceCode,
 )

@@ -46,8 +46,8 @@ from purplship.core.utils import (
 from purplship.core.units import Options, Packages, PaymentType
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.providers.ups.units import (
-    ShippingPackagingType,
-    ShippingServiceCode,
+    PackagingType,
+    ServiceCode,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
     LabelType,
@@ -91,7 +91,7 @@ def shipment_request(
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     options = Options(payload.options)
-    service = ShippingServiceCode.map(payload.service).value_or_key
+    service = ServiceCode.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
@@ -102,7 +102,7 @@ def shipment_request(
         "02": payload.customs.duty if payload.customs is not None else None,
     }
     mps_packaging = (
-        ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
+        PackagingType.your_packaging.value if len(packages) > 1 else None
     )
     label_format, label_height, label_width = LabelType[payload.label_type or 'PDF_6x4'].value
 
@@ -255,7 +255,7 @@ def shipment_request(
                     Packaging=PackagingType(
                         Code=(
                                 mps_packaging
-                                or ShippingPackagingType[package.packaging_type or "your_packaging"].value
+                                or PackagingType[package.packaging_type or "your_packaging"].value
                         )
                     ),
                     Dimensions=DimensionsType(

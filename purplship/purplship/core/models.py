@@ -78,12 +78,13 @@ class Payment:
     paid_by: str = "sender"
     currency: str = None
     account_number: str = None
+    address: Address = JStruct[Address]
     id: str = None
 
 
 @attr.s(auto_attribs=True)
 class Duty:
-    """payment details unified data type."""
+    """duty payment details unified data type."""
 
     paid_by: str = "sender"
     currency: str = None
