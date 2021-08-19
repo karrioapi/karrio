@@ -25,11 +25,6 @@ class ResponseStatus:
 
 
 @s(auto_attribs=True)
-class Response:
+class TrackingMilestoneResponse:
     data: List[Datum] = JList[Datum]
     responseStatus: Optional[ResponseStatus] = JStruct[ResponseStatus]
-
-
-@s(auto_attribs=True)
-class TrackingMilestone:
-    response: Optional[Response] = JStruct[Response]
