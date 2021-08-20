@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     username: str
     password: str
     x_asendia_one_api_key: str
+    account_number: str = None
 
     id: str = None
     account_country_code: str = "US"

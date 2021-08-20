@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     username: str
     password: str
     x_asendia_one_api_key: str
+    account_number: str = None
 
     # Base properties
     id: str = None
