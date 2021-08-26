@@ -7,6 +7,8 @@ from ics_courier_lib.services import (
     PackageInfo,
     PieceInfo,
     ArrayOfString,
+    CreateShipmentResponse
+    
 )
 from purplship.core.models import (
     Message,
@@ -27,25 +29,25 @@ from purplship.providers.ics_courier.units import Service, Option
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    package = XP.find("PackageID", response, first=True)
+    package = XP.find("PackageID", response, ArrayOfString, first=True)
     label = XP.find("label", response, first=True)
     details = (
-        _extract_details((package, label), settings)
+        _extract_details((package.string[0], str(label.text)), settings)
         if getattr(package, 'string', [None])[0] is not None else None
     )
 
     return details, parse_error_response(response, settings)
 
 
-def _extract_details(response: Tuple[str, Element], settings: Settings) -> ShipmentDetails:
-    package, label = response
+def _extract_details(response: Tuple[str, str], settings: Settings) -> ShipmentDetails:
+    package_id, label = response
 
     return ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        label=str(label.text),
-        tracking_number=package.string[0],
-        shipment_identifier=package.string[0],
+        label=label,
+        tracking_number=package_id,
+        shipment_identifier=package_id,
     )
 
 

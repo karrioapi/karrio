@@ -96,4 +96,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
         )
     )
 
-    return Serializable(request, lambda _: product, Settings.serialize(_))
+    return Serializable(request, lambda _: (product, Settings.serialize(_)))
