@@ -54,7 +54,7 @@ MarkupSafe==2.0.1
 more-itertools==8.8.0
 packaging==21.0
 phonenumbers==8.12.28
-Pillow==8.3.1
+Pillow==8.3.2
 promise==2.3
 psycopg2-binary==2.9.1
 purplship==2021.7
