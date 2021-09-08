@@ -160,16 +160,16 @@ To get the quotation of our Enterprise Edition, please visit [purplship.com](htt
 - [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
 
 
-|                                          | OSS         | Bronze Sponsor | Enterprise   |
-| ---------------------------------------- | ----------- | -------------- | ------------ |
-| Multi-carrier shipping APIs              | Yes         | Yes            | Yes          |
-| Carrier accounts                         | Unlimited   | Unlimited      | Unlimited    |
-| Hosting                                  | Self-hosted | Self-hosted    | Self-hosted  |
-| Maintenance & support                    | Community   | Priority Ticket| Dedicated    |
-| Whitelabel                               | No          | Yes            | Yes          |
-| Multi-tenant & Multi-org                 | No          | No             | Yes          |
-| Reporting & Analytics (soon)             | No          | No             | Yes          |
-| Shipping billing data (soon)             | No          | No             | Yes          |
+|                                          | OSS         | Enterprise   |
+| ---------------------------------------- | ----------- | ------------ |
+| Multi-carrier shipping APIs              | Yes         | Yes          |
+| Carrier accounts                         | Unlimited   | Unlimited    |
+| Hosting                                  | Self-hosted | Self-hosted  |
+| Maintenance & support                    | Community   | Dedicated    |
+| Whitelabel                               | No          | Yes          |
+| Multi-tenant & Multi-org                 | No          | Yes          |
+| Reporting & Analytics (soon)             | No          | Yes          |
+| Shipping billing data (soon)             | No          | Yes          |
 
 
 ## Official Client Libraries
