@@ -267,6 +267,8 @@ dev_webapp() {
 		rm -rf node_modules; yarn
 	fi
   yarn build -w \
+    --mode development \
+    --progress \
     --env postbuild="purplship collectstatic --noinput" \
     --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
   cd -
