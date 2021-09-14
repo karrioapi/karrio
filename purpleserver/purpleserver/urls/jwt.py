@@ -1,6 +1,4 @@
-import importlib
 from django.urls import path
-from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from drf_yasg import openapi
@@ -23,15 +21,14 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['org_id'] = serializers.CharField(
-            required=False, help_text="""
-            **should be specified only in a multi-org deployment.**
-            
-            Note the first org related to the user is selected by default.
-            """)
+        self.fields['org_id'] = serializers.CharField(required=False, help_text="""
+        **should be specified only in a multi-org deployment.**
+
+        Note the first org related to the user is selected by default.
+        """)
 
     @classmethod
-    def get_token(cls, user, org = None):
+    def get_token(cls, user, org: str = None):
         token = super().get_token(user)
 
         if hasattr(org, 'id'):
@@ -40,13 +37,12 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-
-        if importlib.util.find_spec('purpleserver.orgs') is None:
+        if not settings.MULTI_ORGANIZATIONS:
             return super().validate(attrs)
 
         from purpleserver.orgs.models import Organization
 
-        data = super(jwt.TokenObtainPairSerializer, self).validate(attrs)
+        data = super().validate(attrs)
         org_id = attrs.get('org_id')
 
         orgs = Organization.objects.filter(users__id=self.user.id)
@@ -70,6 +66,54 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         return data
 
 
+class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['org_id'] = serializers.CharField(required=False, help_text="""
+        **should be specified only in a multi-org deployment.**
+        """)
+
+    def validate(self, attrs: dict):
+        refresh = jwt.RefreshToken(attrs['refresh'])
+
+        if settings.MULTI_ORGANIZATIONS and attrs.get('org_id') is not None:
+            from purpleserver.orgs.models import Organization
+            org = Organization.objects.filter(id=attrs.get('org_id'), users__id=refresh.payload['user_id']).first()
+
+            if org is not None and not org.is_active:
+                raise exceptions.AuthenticationFailed(_('Organization is inactive'), code='organization_inactive')
+
+            if org is None:
+                raise exceptions.AuthenticationFailed(
+                    _('No active organization found with the given credentials'), code='organization_invalid')
+
+            refresh.payload['org_id'] = attrs.get('org_id')
+
+        data = {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }
+
+        if jwt.api_settings.ROTATE_REFRESH_TOKENS:
+            if jwt.api_settings.BLACKLIST_AFTER_ROTATION:
+                try:
+                    # Attempt to blacklist the given refresh token
+                    refresh.blacklist()
+                except AttributeError:
+                    # If blacklist app not installed, `blacklist` method will
+                    # not be present
+                    pass
+
+            refresh.set_jti()
+            refresh.set_exp()
+
+            data['refresh'] = str(refresh)
+
+        return data
+
+
 class TokenObtainPair(jwt_views.TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
@@ -85,13 +129,14 @@ class TokenObtainPair(jwt_views.TokenObtainPairView):
 
 
 class TokenRefresh(jwt_views.TokenRefreshView):
+    serializer_class = TokenRefreshSerializer
 
     @swagger_auto_schema(
         tags=['API'],
         operation_id=f"{ENDPOINT_ID}refresh_token",
         operation_summary="Refresh auth token",
         operation_description="Authenticate the user and return a token pair",
-        responses={200: AccessToken()}
+        responses={201: TokenPair()}
     )
     def post(self, *args, **kwargs):
         return super().post(*args, **kwargs)

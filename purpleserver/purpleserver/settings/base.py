@@ -305,14 +305,14 @@ SWAGGER_SETTINGS = {
             'in': 'header',
             'description': """
                 API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
-    
-                Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret 
+
+                Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
                 API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
-                
+
                 Authentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.
-                To authenticate via bearer auth (e.g., for a cross-origin request), 
+                To authenticate via bearer auth (e.g., for a cross-origin request),
                 use `-H "Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660"`.
-                
+
                 API requests without authentication will also fail.
             """
         }
