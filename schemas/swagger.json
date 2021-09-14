@@ -24,7 +24,7 @@
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
-            "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret \nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request), \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n"
+            "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n"
         }
     },
     "security": [
@@ -78,10 +78,10 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/AccessToken"
+                            "$ref": "#/definitions/TokenPair"
                         }
                     }
                 },
@@ -2351,17 +2351,10 @@
                     "title": "Access",
                     "type": "string",
                     "readOnly": true
-                }
-            }
-        },
-        "AccessToken": {
-            "required": [
-                "access"
-            ],
-            "type": "object",
-            "properties": {
-                "access": {
-                    "title": "Access",
+                },
+                "org_id": {
+                    "title": "Org id",
+                    "description": "\n**should be specified only in a multi-org deployment.**\n",
                     "type": "string",
                     "minLength": 1
                 }
@@ -5265,6 +5258,9 @@
             "required": [
                 "APP_NAME",
                 "APP_VERSION",
+                "APP_WEBSITE",
+                "MULTI_ORGANIZATIONS",
+                "ADDRESS_AUTO_COMPLETE",
                 "countries",
                 "currencies",
                 "carriers",
@@ -5291,6 +5287,20 @@
                     "title": "App version",
                     "type": "string",
                     "minLength": 1
+                },
+                "APP_WEBSITE": {
+                    "title": "App website",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "MULTI_ORGANIZATIONS": {
+                    "title": "Multi organizations",
+                    "type": "boolean"
+                },
+                "ADDRESS_AUTO_COMPLETE": {
+                    "title": "Address auto complete",
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "countries": {
                     "title": "Countries",

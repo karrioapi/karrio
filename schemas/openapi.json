@@ -71,12 +71,12 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AccessToken"
+                                    "$ref": "#/components/schemas/TokenPair"
                                 }
                             }
                         }
@@ -2971,19 +2971,12 @@
                         "title": "Access",
                         "type": "string",
                         "readOnly": true
-                    }
-                }
-            },
-            "AccessToken": {
-                "required": [
-                    "access"
-                ],
-                "type": "object",
-                "properties": {
-                    "access": {
-                        "title": "Access",
+                    },
+                    "org_id": {
+                        "title": "Org id",
                         "minLength": 1,
-                        "type": "string"
+                        "type": "string",
+                        "description": "\n**should be specified only in a multi-org deployment.**\n"
                     }
                 }
             },
@@ -5881,8 +5874,11 @@
             },
             "References": {
                 "required": [
+                    "ADDRESS_AUTO_COMPLETE",
                     "APP_NAME",
                     "APP_VERSION",
+                    "APP_WEBSITE",
+                    "MULTI_ORGANIZATIONS",
                     "carrier_capabilities",
                     "carriers",
                     "countries",
@@ -5909,6 +5905,20 @@
                         "title": "App version",
                         "minLength": 1,
                         "type": "string"
+                    },
+                    "APP_WEBSITE": {
+                        "title": "App website",
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "MULTI_ORGANIZATIONS": {
+                        "title": "Multi organizations",
+                        "type": "boolean"
+                    },
+                    "ADDRESS_AUTO_COMPLETE": {
+                        "title": "Address auto complete",
+                        "type": "object",
+                        "properties": {}
                     },
                     "countries": {
                         "title": "Countries",
@@ -6320,7 +6330,7 @@
         "securitySchemes": {
             "Token": {
                 "type": "apiKey",
-                "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret \nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request), \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
+                "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
                 "name": "Authorization",
                 "in": "header"
             }
