@@ -11,7 +11,7 @@ from purplship.core.models import ChargeDetails
 from purplship.core.utils import DP, NF
 from purpleserver.core.fields import MultiChoiceField
 from purpleserver.core.models import Entity, uuid
-from purpleserver.core.views.references import REFERENCE_MODELS
+from purpleserver.core.dataunits import REFERENCE_MODELS
 from purpleserver.core.datatypes import RateResponse, Rate
 from purpleserver.core.serializers import CARRIERS
 from purpleserver.providers.models import Carrier
@@ -72,14 +72,14 @@ class Surcharge(Entity):
     )
     discount_range = DecimalRangeField(
         blank=True, null=True, help_text="""
-        Add the surcharge, if the rate discount is within this discount rate range. 
+        Add the surcharge, if the rate discount is within this discount rate range.
         <br/>
         By default, the surcharge is applied to all quotes no matter the discount amount.
         """
     )
     freight_range = DecimalRangeField(
         blank=True, null=True, help_text="""
-        Add the surcharge, if the rate charge is within this freight (quote) price range. 
+        Add the surcharge, if the rate charge is within this freight (quote) price range.
         <br/>
         By default, the surcharge is applied to all quotes no matter the amount.
         """

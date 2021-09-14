@@ -258,7 +258,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
-
 # JWT config
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),

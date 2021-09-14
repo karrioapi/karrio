@@ -7,8 +7,8 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.router import router
-from purpleserver.core.serializers import PlainDictField, CharField
-from purpleserver.core.dataunits import REFERENCE_MODELS
+from purpleserver.core.serializers import PlainDictField, CharField, BooleanField
+from purpleserver.core import dataunits, validators
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
@@ -16,6 +16,9 @@ ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make
 class References(Serializer):
     APP_NAME = CharField()
     APP_VERSION = CharField()
+    APP_WEBSITE = CharField()
+    MULTI_ORGANIZATIONS = BooleanField()
+    ADDRESS_AUTO_COMPLETE = PlainDictField()
 
     countries = PlainDictField()
     currencies = PlainDictField()
@@ -43,7 +46,12 @@ class References(Serializer):
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
 def references(_):
-    return Response(REFERENCE_MODELS, status=status.HTTP_200_OK)
+    references = {
+        **dataunits.REFERENCE_MODELS,
+        "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(),
+    }
+
+    return Response(references, status=status.HTTP_200_OK)
 
 
 router.urls.append(path('references', references))
