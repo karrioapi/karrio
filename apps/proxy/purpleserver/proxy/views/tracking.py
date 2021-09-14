@@ -4,17 +4,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (
-    TrackingRequest, TrackingResponse, TestFilters, ErrorResponse
+    TrackingRequest, TrackingResponse, TestFilters, ErrorResponse, MODELS
 )
 from purpleserver.core.gateway import Shipments
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+CARRIER_NAMES = list(MODELS.keys())
 
 
 class TrackingAPIView(APIView):
@@ -25,7 +27,10 @@ class TrackingAPIView(APIView):
         operation_id=f"{ENDPOINT_ID}track_shipment",
         operation_summary="Track a shipment",
         query_serializer=TestFilters(),
-        responses={200: TrackingResponse(), 400: ErrorResponse()}
+        responses={200: TrackingResponse(), 400: ErrorResponse()},
+        manual_parameters=[
+            openapi.Parameter('carrier_name', in_=openapi.IN_PATH, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
+        ],
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
         """

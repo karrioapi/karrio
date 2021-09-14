@@ -12,7 +12,7 @@ from django_filters import rest_framework as filters
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
-    MODELS, FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation, TrackerStatus
+    MODELS, TrackingStatus, ErrorResponse, TestFilters, Operation, TrackerStatus
 )
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
@@ -22,13 +22,14 @@ import purpleserver.manager.models as models
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Trackers = PaginatedResult('TrackerList', TrackingStatus)
+CARRIER_NAMES = list(MODELS.keys())
 
 
 class TrackerFilters(filters.FilterSet):
     carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
 
     parameters = [
-        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=list(MODELS.keys())),
+        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
         openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=[k.value for k in list(TrackerStatus)]),
         openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
@@ -80,14 +81,16 @@ class TrackersCreate(APIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment tracker",
         query_serializer=TestFilters(),
-        responses={200: TrackingStatus(), 404: ErrorResponse()}
+        responses={200: TrackingStatus(), 404: ErrorResponse()},
+        manual_parameters=[
+            openapi.Parameter('carrier_name', in_=openapi.IN_PATH, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
+        ]
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
         """
-        data = dict(tracking_number=tracking_number)
         carrier_filters = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
             "carrier_name": carrier_name

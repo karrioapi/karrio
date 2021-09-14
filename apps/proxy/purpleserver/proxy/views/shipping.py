@@ -5,13 +5,14 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from purpleserver.core.views.api import APIView
 from purpleserver.proxy.router import router
 from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
-    CharField, ChoiceField, COUNTRIES,
+    CharField, ChoiceField, COUNTRIES, MODELS,
 
     ShippingRequest,
     ShipmentCancelRequest,
@@ -24,6 +25,7 @@ from purpleserver.core.serializers import (
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+CARRIER_NAMES = list(MODELS.keys())
 
 
 class Address(BaseAddress):
@@ -76,6 +78,9 @@ class ShippingCancel(APIView):
         query_serializer=TestFilters(),
         request_body=ShipmentCancelRequest(),
         responses={200: OperationResponse(), 400: ErrorResponse()},
+        manual_parameters=[
+            openapi.Parameter('carrier_name', in_=openapi.IN_PATH, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
+        ],
     )
     def post(self, request: Request, carrier_name: str):
         """
