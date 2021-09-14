@@ -135,7 +135,10 @@ class GoogleGeocode(AddressValidatorAbstract):
 
     @staticmethod
     def get_info() -> dict:
-        return dict(provider="google")
+        return dict(
+            provider="google",
+            key=GoogleGeocode.get_api_key()
+        )
 
     @staticmethod
     def get_api_key() -> str:

@@ -1,4 +1,3 @@
-import importlib
 from constance import config
 from django.urls import path
 from django.http import HttpResponse
