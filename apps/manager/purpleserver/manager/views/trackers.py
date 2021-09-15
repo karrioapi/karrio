@@ -1,5 +1,6 @@
 import logging
 
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -106,6 +107,7 @@ class TrackersCreate(APIView):
 
 
 class TrackersDetails(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         tags=['Trackers'],
@@ -117,10 +119,13 @@ class TrackersDetails(APIView):
         """
         Retrieve a shipment tracker
         """
-        tracker = models.Tracking.access_by(request).get(
-            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
+        __filter = Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
+        trackers = models.Tracking.objects.filter(__filter)
 
-        return Response(TrackingStatus(tracker).data)
+        if len(trackers) == 0:
+            models.Tracking.objects.get(__filter)
+
+        return Response(TrackingStatus(trackers.first()).data)
 
     @swagger_auto_schema(
         tags=['Trackers'],
