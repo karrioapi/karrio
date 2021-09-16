@@ -303,7 +303,7 @@ generate_typescript_client() {
 		--additional-properties=typescriptThreePlus=true
 
 	cd -
-  
+
 	rm -f "${ROOT:?}/webapp/api/apis/index.ts"
 	rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
 	rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
@@ -317,7 +317,10 @@ generate_php_client() {
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/schemas/openapi.json \
 		-g php \
-		-o /local/codegen/php
+		-o /local/codegen/php \
+        --additional-properties=invokerPackage=Purplship \
+        --additional-properties=packageName=Purplship \
+        --additional-properties=prependFormOrBodyParameters=true
 
 	cd -
 }
@@ -328,7 +331,9 @@ generate_python_client() {
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/schemas/openapi.json \
 		-g python \
-		-o /local/codegen/python
+		-o /local/codegen/python \
+        --additional-properties=projectName=purplship-python \
+        --additional-properties=packageName=purplship
 
 	cd -
 }
