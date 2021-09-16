@@ -134,10 +134,13 @@ class GoogleGeocode(AddressValidatorAbstract):
         return "https://maps.googleapis.com/maps/api/geocode/json"
 
     @staticmethod
-    def get_info() -> dict:
+    def get_info(is_authenticated: bool = True) -> dict:
         return dict(
             provider="google",
-            key=GoogleGeocode.get_api_key()
+            key=(
+                GoogleGeocode.get_api_key()
+                if is_authenticated else None
+            )
         )
 
     @staticmethod
@@ -198,10 +201,13 @@ class GoogleGeocode(AddressValidatorAbstract):
 
 class CanadaPostAddressComplete(AddressValidatorAbstract):
     @staticmethod
-    def get_info() -> dict:
+    def get_info(is_authenticated: bool = True) -> dict:
         return dict(
             provider="canadapost",
-            key=CanadaPostAddressComplete.get_api_key()
+            key=(
+                CanadaPostAddressComplete.get_api_key()
+                if is_authenticated else None
+            )
         )
 
     @staticmethod
@@ -266,14 +272,14 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
 
 class Address:
     @staticmethod
-    def get_info() -> dict:
+    def get_info(is_authenticated: bool = True) -> dict:
         is_enabled = any([
             config.GOOGLE_CLOUD_API_KEY,
             config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
         ])
 
         if is_enabled:
-            return {'is_enabled': is_enabled, **Address.get_validator().get_info()}
+            return {'is_enabled': is_enabled, **Address.get_validator().get_info(is_authenticated)}
 
         return dict(is_enabled=is_enabled)
 

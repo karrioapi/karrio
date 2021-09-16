@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
@@ -47,10 +48,11 @@ class References(Serializer):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
-def references(_):
+def references(request: Request):
+    is_authenticated = request.auth is not None
     references = {
         **dataunits.REFERENCE_MODELS,
-        "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(),
+        "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
     }
 
     return Response(references, status=status.HTTP_200_OK)
