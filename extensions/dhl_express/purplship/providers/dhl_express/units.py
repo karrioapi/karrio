@@ -67,7 +67,7 @@ class PackagePresets(Flag):
 
 class MeasurementOptions(Enum):
     min_in = 1
-    min_cm = 1
+    min_cm = 1.1  # TODO:: refactor MeasurementOptions to use dict instead of enum
 
 
 class LabelType(Flag):

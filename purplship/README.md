@@ -166,7 +166,7 @@ print(rates)
 ## Contributing
 
 We encourage you to contribute to puprlship! Please check out the
-[Contributing to purplship guide](/docs/development/contributing.md) for guidelines about how to proceed.
+[Contributing to purplship guide](/docs/contributing.md) for guidelines about how to proceed.
 [Join the purplship discord channel!](https://discord.gg/gS88uE7sEx)
 
 Do you want to extend purplship and integrate a custom carrier, check out 
