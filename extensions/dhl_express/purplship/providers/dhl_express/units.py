@@ -65,6 +65,11 @@ class PackagePresets(Flag):
     )
 
 
+class MeasurementOptions(Enum):
+    min_in = 1
+    min_cm = 1.1  # TODO:: refactor MeasurementOptions to use dict instead of enum
+
+
 class LabelType(Flag):
     PDF_6x4 = ('PDF', '6X4_PDF')
     PDF_8x4 = ('PDF', '8X4_PDF')
