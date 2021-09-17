@@ -18,7 +18,7 @@ from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShp
 
 from purplship.core.errors import DestinationNotServicedError, OriginNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF
-from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services, CountryCurrency
+from purplship.core.units import Packages, Options, Package, Services, CountryCurrency
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.dhl_express.units import (
     ProductCode,
@@ -27,6 +27,7 @@ from purplship.providers.dhl_express.units import (
     SpecialServiceCode,
     NetworkType,
     COUNTRY_PREFERED_UNITS,
+    MeasurementOptions,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -154,9 +155,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                             PackageTypeCode=DCTPackageType[
                                 package.packaging_type or "your_packaging"
                                 ].value,
-                            Depth=package.length[dim_unit.name],
-                            Width=package.width[dim_unit.name],
-                            Height=package.height[dim_unit.name],
+                            Depth=package.length.map(MeasurementOptions)[dim_unit.name],
+                            Width=package.width.map(MeasurementOptions)[dim_unit.name],
+                            Height=package.height.map(MeasurementOptions)[dim_unit.name],
                             Weight=package.weight[weight_unit.name],
                         )
                         for index, package in enumerate(

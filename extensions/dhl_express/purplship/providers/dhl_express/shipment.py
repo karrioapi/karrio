@@ -39,13 +39,13 @@ from purplship.providers.dhl_express.units import (
     PaymentType,
     CountryRegion,
     SpecialServiceCode,
-    DeliveryType,
     PackagePresets,
     LabelType,
     ExportReasonCode,
     WeightUnit as DHLWeightUnit,
     DimensionUnit,
     COUNTRY_PREFERED_UNITS,
+    MeasurementOptions,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -261,9 +261,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         PackageType=(
                             package_type or PackageType[package.packaging_type or "your_packaging"].value
                         ),
-                        Depth=package.length[dim_unit.name],
-                        Width=package.width[dim_unit.name],
-                        Height=package.height[dim_unit.name],
+                        Depth=package.length.map(MeasurementOptions)[dim_unit.name],
+                        Width=package.width.map(MeasurementOptions)[dim_unit.name],
+                        Height=package.height.map(MeasurementOptions)[dim_unit.name],
                         Weight=package.weight[weight_unit.name],
                         PieceContents=(package.parcel.content or package.parcel.description),
                         PieceReference=(
