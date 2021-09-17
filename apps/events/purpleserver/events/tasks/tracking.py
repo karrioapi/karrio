@@ -13,7 +13,6 @@ from purplship.api.interface import Gateway, IRequestFrom
 
 from purpleserver.core import datatypes
 from purpleserver.core.utils import identity, compute_tracking_status
-from purpleserver.core.serializers import TrackerStatus
 from purpleserver.manager import models, serializers
 
 logger = logging.getLogger(__name__)
@@ -104,7 +103,7 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
                     # update values only if changed; This is important for webhooks notification
                     changes = []
                     status = compute_tracking_status(details).value
-                    events = (DP.to_dict(details.events) if any(details.events) else instance.events)
+                    events = (DP.to_dict(details.events) if any(details.events) else tracker.events)
 
                     if events != tracker.events:
                         tracker.events = events
