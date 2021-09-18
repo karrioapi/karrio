@@ -2,20 +2,20 @@ import json
 from purpleserver.graph.tests.base import GraphTestCase
 
 
-class TestUserMutation(GraphTestCase):
+class TestUserUpdate(GraphTestCase):
 
     def test_update_user_info(self):
         response = self.query(
             '''
-            mutation mutate_user($data: UserMutationInput!) {
-              mutate_user(input: $data) {
+            mutation update_user($data: UpdateUserInput!) {
+              update_user(input: $data) {
                 email
                 full_name
                 is_active
               }
             }
             ''',
-            op_name='mutate_user',
+            op_name='update_user',
             variables=USER_UPDATE_DATA
         )
         response_data = json.loads(response.content)
@@ -57,7 +57,7 @@ USER_UPDATE_DATA = {
 
 USER_UPDATE_RESPONSE = {
   "data": {
-    "mutate_user": {
+    "update_user": {
       "email": "admin@example.com",
       "full_name": "Marco",
       "is_active": True
