@@ -1,6 +1,5 @@
 import graphene
 import graphene_django
-from django.db.models import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 

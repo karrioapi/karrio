@@ -1,8 +1,11 @@
+import functools
 import graphene
 import graphene_django
 from graphene.types import generic
 import django_filters
+from rest_framework import exceptions
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 import purpleserver.core.models as core
 import purpleserver.providers.models as providers
@@ -12,6 +15,17 @@ import purpleserver.graph.models as graph
 import purpleserver.user.models as auth
 
 User = get_user_model()
+
+
+def login_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        *a, info = args
+        if info.context.user.is_anonymous:
+            raise exceptions.AuthenticationFailed(_('You are not authenticated'), code='login_required')
+
+        return func(*args, **kwargs)
+    return wrapper
 
 
 class CustomNode(graphene.Node):

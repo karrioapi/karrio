@@ -1,6 +1,4 @@
 import logging
-import importlib
-from django.db.models import Q
 from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.contrib.auth import mixins, get_user_model
@@ -68,7 +66,7 @@ class JWTAuthentication(BaseJWTAuthentication):
         return None
 
 
-class LoginRequiredMixin(mixins.LoginRequiredMixin):
+class AllAuthentication(mixins.AccessMixin):
     """Verify that the current user is authenticated."""
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -77,7 +75,6 @@ class LoginRequiredMixin(mixins.LoginRequiredMixin):
             if auth is not None:
                 user, *_ = auth
                 request.user = user
-                return super(mixins.AccessMixin, self).dispatch(request, *args, **kwargs)
 
         finally:
             return super().dispatch(request, *args, **kwargs)

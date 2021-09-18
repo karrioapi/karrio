@@ -1,4 +1,3 @@
-import pydoc
 import graphene
 from graphene_django.rest_framework import mutation
 from django.conf import settings
@@ -15,6 +14,7 @@ class SerializerMutation(mutation.SerializerMutation):
         abstract = True
 
     @classmethod
+    @types.login_required
     def get_serializer_kwargs(cls, root, info, **input):
         data = input.copy()
 
@@ -81,6 +81,7 @@ class SystemCarrierMutation(graphene.relay.ClientIDMutation):
     carrier = graphene.Field(types.SystemConnectionType)
 
     @classmethod
+    @types.login_required
     def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
@@ -105,6 +106,7 @@ class TokenMutation(graphene.relay.ClientIDMutation):
     token = graphene.Field(types.TokenType)
 
     @classmethod
+    @types.login_required
     def mutate_and_get_payload(cls, root, info, refresh: bool = None):
         tokens = Token.access_by(info.context)
 
@@ -137,7 +139,8 @@ def create_delete_mutation(name: str, model, **filter):
         id = graphene.String()
 
         @classmethod
-        def mutate_and_get_payload(cls, root, info, id):
+        @types.login_required
+        def mutate_and_get_payload(cls, root, info, id: str = None):
             instance = model.access_by(info.context).get(id=id, **filter)
             instance.delete()
 
