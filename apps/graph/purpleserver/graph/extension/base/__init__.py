@@ -88,7 +88,8 @@ class Query:
 
 
 class Mutation:
-    mutate_user = mutations.UserMutation.Field()
+    update_user = mutations.UpdateUser.Field()
+    register_user = mutations.RegisterUser.Field()
     mutate_token = mutations.TokenMutation.Field()
 
     create_template = mutations.CreateTemplate.Field()

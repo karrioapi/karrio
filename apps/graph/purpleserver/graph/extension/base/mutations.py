@@ -1,8 +1,9 @@
 import graphene
 from graphene_django.rest_framework import mutation
-from django.conf import settings
+from graphene_django.forms.mutation import DjangoFormMutation
 
 from purpleserver.serializers import save_many_to_many_data, SerializerDecorator
+from purpleserver.user.views import SignUpForm
 from purpleserver.user.serializers import TokenSerializer, Token
 from purpleserver.providers import models as providers
 import purpleserver.graph.serializers as serializers
@@ -118,7 +119,7 @@ class TokenMutation(graphene.relay.ClientIDMutation):
         return TokenMutation(token=token)
 
 
-class UserMutation(SerializerMutation):
+class UpdateUser(SerializerMutation):
 
     class Meta:
         model_operations = ("update",)
@@ -129,6 +130,18 @@ class UserMutation(SerializerMutation):
         instance = cls._meta.model_class.objects.get(id=info.context.user.id)
 
         return {'instance': instance, 'data': data, 'partial': True}
+
+
+class RegisterUser(DjangoFormMutation):
+    user = graphene.Field(types.UserType)
+
+    class Meta:
+        form_class = SignUpForm
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        user = form.save()
+        return cls(errors=[], user=user, **form.cleaned_data)
 
 
 def create_delete_mutation(name: str, model, **filter):
