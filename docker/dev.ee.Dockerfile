@@ -4,8 +4,7 @@ RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
 COPY . /pship/app/
 RUN cd /pship/app && \
-#     pip install --upgrade pip && \
-    pip install -r requirements.dev.txt && \
+     pip install --upgrade pip && \
     pip install -r requirements.ee.dev.txt
 
 

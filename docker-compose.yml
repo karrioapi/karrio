@@ -19,7 +19,7 @@ services:
     networks:
       - db_network
       - web_network
-    command: purplship runserver 0.0.0.0:500
+    command: purplship runserver 0.0.0.0:5002
 
   worker:
     image: purplship/dev
@@ -36,7 +36,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: "nginx:latest"
+    image: nginx:latest
     ports:
       - "80:80"
     volumes:
@@ -54,7 +54,7 @@ services:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      PGDATA: /var/lib/postgresql/data/pship
+      PGDATA: /var/lib/postgresql/data/pship-dev
     ports:
       - "5432:5432"
     networks:

@@ -3,7 +3,8 @@ FROM python:3.8-slim AS compile-image
 RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
 COPY requirements.txt /temp/
-RUN pip install --upgrade pip && pip install -r /temp/requirements.txt
+RUN pip install --upgrade pip && \
+  pip install -r /temp/requirements.txt
 
 
 # The runtime image
@@ -36,7 +37,7 @@ RUN useradd -m pship -d /pship
 USER pship
 COPY --chown=pship:pship --from=compile-image /pship/ /pship/
 RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
-COPY gunicorn-cfg.py .docker/entrypoint.sh .docker/worker.sh $WORK_DIR/
+COPY gunicorn-cfg.py docker/entrypoint.sh docker/worker.sh $WORK_DIR/
 
 WORKDIR $WORK_DIR
 

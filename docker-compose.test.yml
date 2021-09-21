@@ -5,7 +5,7 @@ services:
     image: purplship/test
     build:
       context: ./
-      dockerfile: docker/test.Dockerfile
+      dockerfile: docker/dev.test.Dockerfile
     container_name: pship
     env_file: .env
     volumes:

@@ -3,14 +3,14 @@ import logging
 from datetime import datetime
 from typing import List, Callable, Dict, Any
 
+from django.conf import settings
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound
 
 import purplship
 from purplship.core.utils import DP
 
-from purplship.server.serializers import Context
 from purplship.server.providers import models
 from purplship.server.core.models import get_access_filter
 from purplship.server.core import datatypes, serializers, exceptions, validators
@@ -25,8 +25,8 @@ class Carriers:
         query = tuple()
         list_filter: Dict[str: Any] = kwargs
         user_filter = (get_access_filter(context) if context is not None else [])
-        active_key = ('active_orgs__id' if hasattr(models.Carrier, 'org') else 'active_users__id')
-        access_id = getattr(context.org if hasattr(models.Carrier, 'org') else context.user, 'id', None)
+        active_key = ('active_orgs__id' if settings.MULTI_ORGANIZATIONS else 'active_users__id')
+        access_id = getattr(context.org if settings.MULTI_ORGANIZATIONS else context.user, 'id', None)
         system_carrier_user = (
             Q(**{'active': True, 'created_by__isnull': True, active_key: access_id})
             if access_id is not None else
@@ -34,7 +34,7 @@ class Carriers:
         )
         creator_filter = (
             Q(created_by__id=context.user.id, **(
-                dict(org=None) if hasattr(models.Carrier, 'org') else {}
+                dict(org=None) if settings.MULTI_ORGANIZATIONS else {}
             ))
             if getattr(context, 'user', None) is not None
             else Q()
