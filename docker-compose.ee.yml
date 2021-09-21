@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  pship:
+    image: purplship/ee
+    extends:
+      file: docker-compose.yml
+      service: pship
+    build:
+      context: ./
+      dockerfile: docker/dev.ee.Dockerfile
+
+  worker:
+    image: purplship/ee
+    extends:
+      file: docker-compose.yml
+      service: worker
+
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+  nginx:
+    extends:
+      file: docker-compose.yml
+      service: nginx
+
+
+volumes:
+  redisdata:
+  pshipdata:
+  pshipstatics:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+

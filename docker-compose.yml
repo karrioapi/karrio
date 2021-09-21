@@ -2,10 +2,10 @@ version: '3'
 
 services:
   pship:
+    image: purplship/dev
     build:
       context: ./
-      dockerfile: ./dev.ee.Dockerfile
-    image: purplship/dev
+      dockerfile: docker/dev.Dockerfile
     container_name: pship
     env_file: .env
     volumes:
@@ -19,7 +19,7 @@ services:
     networks:
       - db_network
       - web_network
-    command: purplship runserver 0.0.0.0:5002
+    command: purplship runserver 0.0.0.0:500
 
   worker:
     image: purplship/dev

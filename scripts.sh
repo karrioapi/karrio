@@ -50,12 +50,14 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r "${ROOT:?}/requirements.dev.txt" &&
 
     if [[ "$*" != *--no-insider* ]];
 	then
     	pip install -r "${ROOT:?}/requirements.ee.dev.txt"
 	fi
+	else
+        pip install -r "${ROOT:?}/requirements.dev.txt"
+    fi
 }
 
 
@@ -192,18 +194,6 @@ test() {
 	purplship test --failfast purplship.server.manager.tests &&
 	purplship test --failfast purplship.server.events.tests &&
 	purplship test --failfast purplship.server.graph.tests
-}
-
-test_services() {
-    docker ps
-    docker-compose run pship bash -c "
-    purplship migrate &&
-    purplship test --failfast purplship.server.proxy.tests &&
-    purplship test --failfast purplship.server.pricing.tests &&
-    purplship test --failfast purplship.server.manager.tests &&
-    purplship test --failfast purplship.server.events.tests &&
-    purplship test --failfast purplship.server.graph.tests
-    "
 }
 
 clean_builds() {

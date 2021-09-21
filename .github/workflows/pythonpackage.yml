@@ -6,16 +6,41 @@ name: puprlship-server
 on: [push]
 
 jobs:
-  build:
+  tests:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install and Run tests
+    - name: Run Tests
       run: |
-        source ./scripts.sh
         sudo chown -R 1000 ./
-        docker-compose build &&
-        docker-compose up -d db &&
-        test_services
+        docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+          cd app && pip install -r requirements.dev.txt && cd -
+          purplship migrate &&
+          purplship test --failfast purplship.server.proxy.tests &&
+          purplship test --failfast purplship.server.pricing.tests &&
+          purplship test --failfast purplship.server.manager.tests &&
+          purplship test --failfast purplship.server.events.tests &&
+          purplship test --failfast purplship.server.graph.tests
+        '
+
+  tests-ee:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run ee Tests
+      run: |
+        sudo chown -R 1000 ./
+        docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+          cd app && pip install -r requirements.ee.dev.txt && cd -
+          purplship migrate &&
+          purplship test --failfast purplship.server.proxy.tests &&
+          purplship test --failfast purplship.server.pricing.tests &&
+          purplship test --failfast purplship.server.manager.tests &&
+          purplship test --failfast purplship.server.events.tests &&
+          purplship test --failfast purplship.server.graph.tests &&
+          purplship test --failfast purplship.server.orgs.tests
+        '
