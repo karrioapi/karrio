@@ -16,4 +16,6 @@ jobs:
       run: |
         source ./scripts.sh
         sudo chown -R 1000 ./
+        docker-compose build &&
+        docker-compose up -d db &&
         test_services
