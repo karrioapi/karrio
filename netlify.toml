@@ -1,6 +1,6 @@
 [build]
 ignore = "/bin/false"
-base = "purpleserver/"
+base = "purplship/"
 publish = "site/"
 environment = { PYTHON_VERSION = "3.7" }
 command = """

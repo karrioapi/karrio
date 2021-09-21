@@ -195,8 +195,7 @@ test() {
 }
 
 test_services() {
-#   docker-compose up --build --exit-code-from=pship pship
-
+    docker ps
     docker-compose run pship bash -c "
     purplship migrate &&
     purplship test --failfast purplship.server.proxy.tests &&
