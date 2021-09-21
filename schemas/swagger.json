@@ -1144,6 +1144,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1185,6 +1213,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1236,6 +1292,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1366,6 +1450,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1409,6 +1521,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1988,6 +2128,34 @@
                         "type": "boolean",
                         "default": false,
                         "x-nullable": true
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_universal",
+                            "dicom",
+                            "fedex",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress",
+                            "eshipper",
+                            "freightcom"
+                        ],
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3222,12 +3390,12 @@
                 },
                 "test": {
                     "title": "Test",
-                    "description": "\nThe test flag indicates whether to use a carrier configured for test. \n",
+                    "description": "\nThe test flag indicates whether to use a carrier configured for test.\n",
                     "type": "boolean"
                 },
                 "active": {
                     "title": "Active",
-                    "description": "\nThe active flag indicates whether the carrier account is active or not. \n",
+                    "description": "\nThe active flag indicates whether the carrier account is active or not.\n",
                     "type": "boolean"
                 }
             }

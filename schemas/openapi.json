@@ -1418,14 +1418,6 @@
                 "operationId": "@update_pickup",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "test",
                         "in": "query",
                         "description": "The test flag indicates whether to use a carrier configured for test.",
@@ -1433,6 +1425,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -1479,14 +1501,6 @@
                 "operationId": "@schedule_pickup",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "test",
                         "in": "query",
                         "description": "The test flag indicates whether to use a carrier configured for test.",
@@ -1494,6 +1508,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -1542,14 +1586,6 @@
                 "operationId": "@cancel_pickup",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "test",
                         "in": "query",
                         "description": "The test flag indicates whether to use a carrier configured for test.",
@@ -1557,6 +1593,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -1703,14 +1769,6 @@
                 "operationId": "@@@void_label",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "test",
                         "in": "query",
                         "description": "The test flag indicates whether to use a carrier configured for test.",
@@ -1718,6 +1776,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -1766,14 +1854,6 @@
                 "operationId": "@@@@track_shipment",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "tracking_number",
                         "in": "path",
                         "required": true,
@@ -1789,6 +1869,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -2491,14 +2601,6 @@
                 "operationId": "$$$$$$create",
                 "parameters": [
                     {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "tracking_number",
                         "in": "path",
                         "required": true,
@@ -2514,6 +2616,36 @@
                             "type": "boolean",
                             "nullable": true,
                             "default": false
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_universal",
+                                "dicom",
+                                "fedex",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress",
+                                "eshipper",
+                                "freightcom"
+                            ]
                         }
                     }
                 ],
@@ -3844,12 +3976,12 @@
                     "test": {
                         "title": "Test",
                         "type": "boolean",
-                        "description": "\nThe test flag indicates whether to use a carrier configured for test. \n"
+                        "description": "\nThe test flag indicates whether to use a carrier configured for test.\n"
                     },
                     "active": {
                         "title": "Active",
                         "type": "boolean",
-                        "description": "\nThe active flag indicates whether the carrier account is active or not. \n"
+                        "description": "\nThe active flag indicates whether the carrier account is active or not.\n"
                     }
                 }
             },

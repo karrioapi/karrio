@@ -44,8 +44,8 @@ create_env() {
     rm -rf "${ROOT:?}/$ENV_DIR" || true
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
-    activate_env &&
-    pip install --upgrade pip wheel
+    activate_env #&&
+#     pip install --upgrade pip wheel
 }
 
 init() {
@@ -54,7 +54,7 @@ init() {
 
     if [[ "$*" != *--no-insider* ]];
 	then
-    	pip install -r "${ROOT:?}/requirements.insider.dev.txt"
+    	pip install -r "${ROOT:?}/requirements.ee.dev.txt"
 	fi
 }
 
@@ -66,7 +66,7 @@ add_data () {
   then
 
     (echo "
-from purpleserver.tenants.models import Client, Domain
+from purplship.server.tenants.models import Client, Domain
 if not any(Client.objects.all()):
   Domain.objects.create(domain='localhost', tenant=Client.objects.create(name='public', schema_name='public'))
   Domain.objects.create(domain='127.0.0.1', tenant=Client.objects.create(name='purplship', schema_name='purplship'))
@@ -75,7 +75,7 @@ if not any(Client.objects.all()):
     (echo "
 from django_tenants.utils import tenant_context
 from django.contrib.auth import get_user_model
-from purpleserver.tenants.models import Client
+from purplship.server.tenants.models import Client
 with tenant_context(Client.objects.get(schema_name='public')):
   if not any(get_user_model().objects.all()):
      get_user_model().objects.create_superuser('root@example.com', 'demo')
@@ -92,9 +92,9 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
-    (echo "from django.contrib.auth import get_user_model; from purpleserver.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth import get_user_model; from purplship.server.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
 
-    (echo "from purpleserver.providers.extension.models.canadapost import SETTINGS;
+    (echo "from purplship.server.providers.extension.models.canadapost import SETTINGS;
 SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
   fi
 }
@@ -169,7 +169,7 @@ runserver() {
 		migrate
 	fi
 
-# 	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+# 	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purplship.server.asgi -k uvicorn.workers.UvicornWorker &
 	purplship runserver &
 	sleep 1
 	purplship run_huey -w 2
@@ -187,15 +187,15 @@ test() {
 		rundb
 	fi
 
-	purplship test --failfast purpleserver.proxy.tests &&
-	purplship test --failfast purpleserver.pricing.tests &&
-	purplship test --failfast purpleserver.manager.tests &&
-	purplship test --failfast purpleserver.events.tests &&
-	purplship test --failfast purpleserver.graph.tests
+	purplship test --failfast purplship.server.proxy.tests &&
+	purplship test --failfast purplship.server.pricing.tests &&
+	purplship test --failfast purplship.server.manager.tests &&
+	purplship test --failfast purplship.server.events.tests &&
+	purplship test --failfast purplship.server.graph.tests
 }
 
 test_services() {
-  TEST=True docker-compose up --build --exit-code-from=pship pship
+  docker-compose up --build --exit-code-from=pship pship
 }
 
 clean_builds() {
@@ -236,7 +236,7 @@ build_theme() {
 	if [[ "$*" == *-i* ]]; then
 		rm -rf node_modules; yarn
 	fi
-	yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
+	yarn build:theme "${ROOT:?}/purplship/server/static/purplship/css/purplship.theme.min.css"
 	cd - || true
 	purplship collectstatic --noinput
 }
@@ -246,7 +246,7 @@ build_dashboard() {
 	if [[ "$*" == *-i* ]]; then
 		rm -rf node_modules; yarn
 	fi
-	yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+	yarn build --output-path "${ROOT:?}/packages/client/purplship/server/client/static/client/"
 	cd -
 	purplship collectstatic --noinput
 }
@@ -256,7 +256,7 @@ build_js() {
 	if [[ "$*" == *-i* ]]; then
 		rm -rf node_modules; yarn
 	fi
-	npx gulp build --output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
+	npx gulp build --output "${ROOT:?}/purplship/server/static/purplship/js/purplship.js"
 	cd -
 	purplship collectstatic --noinput
 }
@@ -270,7 +270,7 @@ dev_webapp() {
     --mode development \
     --progress \
     --env postbuild="purplship collectstatic --noinput" \
-    --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+    --output-path "${ROOT:?}/packages/client/purplship/server/client/static/client/"
   cd -
 }
 

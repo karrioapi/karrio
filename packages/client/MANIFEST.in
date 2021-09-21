@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include purplship/server/client/static *
+recursive-include purplship/server/client/templates *

@@ -1,4 +1,0 @@
-
-# Purplship server insider packages
--e ./apps/tenants
--e ./apps/orgs

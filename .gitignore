@@ -107,10 +107,11 @@ venv.bak/
 node_modules/
 
 # purplship stuff:
+.bash_history
 *.DS_Store
 .idea/
 staticfiles/*
-purpleserver/purpleserver/staticfiles/*
-!purpleserver/purpleserver/staticfiles/.gitkeep
+purplship/purplship/server/staticfiles/*
+!purplship/purplship/server/staticfiles/.gitkeep
 codegen/
 .pship/

@@ -4,12 +4,12 @@ services:
   pship:
     build:
       context: ./
-      dockerfile: ./.docker/Dockerfile
-    image: purplship/purplship-server:latest
+      dockerfile: ./dev.ee.Dockerfile
+    image: purplship/dev
     container_name: pship
     env_file: .env
     volumes:
-      - .:/pship/dev
+      - .:/pship/app/
       - pshipstatics:/pship/static
     ports:
       - "5002:5002"
@@ -19,45 +19,20 @@ services:
     networks:
       - db_network
       - web_network
-    entrypoint: |
-      bash -c "bash -s <<EOF
-      cd /pship/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade &&
-      if [[ "${TEST:-False}" == "True" ]];
-      then
-        source /pship/dev/scripts.sh && \
-        test --no-insider && \
-        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
-        test
-      else
-        export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
-        export DEBUG_MODE=${DEBUG_MODE:-False}
-        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
-        cd /pship/app && /bin/bash ./entrypoint.sh
-      fi
-      EOF"
+    command: purplship runserver 0.0.0.0:5002
 
   worker:
-    build:
-      context: ./
-      dockerfile: ./.docker/Dockerfile
-    image: purplship/purplship-server:latest
+    image: purplship/dev
     container_name: worker
     env_file: .env
     volumes:
-      - .:/pship/dev
+      - .:/pship/app/
       - pshipdata:/pship/data
     depends_on:
       - db
     networks:
       - db_network
-    entrypoint: |
-      bash -c "bash -s <<EOF
-      cd /pship/dev &&
-      pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade &&
-      pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade &&
-      cd /pship/app &&
-      /bin/bash ./worker.sh
-      EOF"
+    command: purplship run_huey -w 2
 
   nginx:
     container_name: nginx
@@ -93,17 +68,6 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
-
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - 8080:8080
-    networks:
-      - db_network
 
 
 volumes:
