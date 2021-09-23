@@ -51,11 +51,11 @@ create_env() {
 init() {
     create_env &&
 
-    if [[ "$*" != *--no-insider* ]];
+    if [[ "$*" != *--ee* ]];
 	then
-    	pip install -r "${ROOT:?}/requirements.ee.dev.txt"
-	else
         pip install -r "${ROOT:?}/requirements.dev.txt"
+	else
+    	pip install -r "${ROOT:?}/requirements.ee.dev.txt"
     fi
 }
 
@@ -93,10 +93,16 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
-    (echo "from django.contrib.auth import get_user_model; from purplship.server.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
+    (echo "
+from django.contrib.auth import get_user_model;
+from purplship.server.user.models import Token;
+Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
 
-    (echo "from purplship.server.providers.extension.models.canadapost import SETTINGS;
-SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+    (echo "
+from purplship.server.providers.extension.models.canadapost import SETTINGS;
+SETTINGS.objects.create(
+    carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381',
+    contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
   fi
 }
 
