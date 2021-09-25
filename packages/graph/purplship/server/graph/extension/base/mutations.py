@@ -1,13 +1,19 @@
+import logging
 import graphene
 from graphene_django.rest_framework import mutation
 from graphene_django.forms.mutation import DjangoFormMutation
+from django_email_verification import confirm as email_verification
+from django.utils.http import urlsafe_base64_decode
+from django.core.exceptions import ValidationError
 
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
-from purplship.server.user.views import SignUpForm
 from purplship.server.user.serializers import TokenSerializer, Token
 from purplship.server.providers import models as providers
+import purplship.server.graph.forms as forms
 import purplship.server.graph.serializers as serializers
 import purplship.server.graph.extension.base.types as types
+
+logger = logging.getLogger(__name__)
 
 
 class SerializerMutation(mutation.SerializerMutation):
@@ -136,12 +142,76 @@ class RegisterUser(DjangoFormMutation):
     user = graphene.Field(types.UserType)
 
     class Meta:
-        form_class = SignUpForm
+        form_class = forms.UserRegistrationForm
 
     @classmethod
     def perform_mutate(cls, form, info):
         user = form.save()
         return cls(errors=[], user=user, **form.cleaned_data)
+
+
+class ConfirmEmail(graphene.relay.ClientIDMutation):
+    class Input:
+        token = graphene.String(required=True)
+
+    success = graphene.Boolean(required=True)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, token: str = None):
+        try:
+            success, _ = email_verification.verify_token(token)
+            return cls(success=success)
+        except Exception as e:
+            logger.exception(e)
+            raise e
+
+
+class ChangePassword(DjangoFormMutation):
+    class Meta:
+        form_class = forms.PasswordChangeForm
+
+    @classmethod
+    @types.login_required
+    def perform_mutate(cls, form, info):
+        return super().perform_mutate(form, info)
+
+    @classmethod
+    def get_form_kwargs(cls, root, info, **input):
+        kwargs = super().get_form_kwargs(root, info, **input)
+        kwargs.update(user=info.context.user)
+        return kwargs
+
+
+class RequestPasswordReset(DjangoFormMutation):
+    class Meta:
+        form_class = forms.ResetPasswordRequestForm
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        form.save(request=info.context)
+        return cls(errors=[], **form.cleaned_data)
+
+
+class ConfirmPasswordReset(DjangoFormMutation):
+    class Meta:
+        form_class = forms.ConfirmPasswordResetForm
+
+    @classmethod
+    def get_form_kwargs(cls, root, info, **input):
+        kwargs = super().get_form_kwargs(root, info, **input)
+        user = cls.get_user(input.get('uid'))
+        kwargs.update(user=user)
+
+        return kwargs
+
+    @classmethod
+    def get_user(cls, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = types.User._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, types.User.DoesNotExist, ValidationError):
+            user = None
+        return user
 
 
 def create_delete_mutation(name: str, model, **filter):

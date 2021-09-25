@@ -46,7 +46,11 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         org_id = attrs.get('org_id')
 
         orgs = Organization.objects.filter(users__id=self.user.id)
-        self.org = orgs.filter(id=org_id).first() if any(org_id or '') else orgs.first()
+        self.org = (
+            orgs.filter(id=org_id).first()
+            if (any(org_id or '') and orgs.filter(id=org_id).exists()) else
+            orgs.first()
+        )
 
         if self.org is not None and not self.org.is_active:
             raise exceptions.AuthenticationFailed(_('Organization is inactive'), code='organization_inactive')

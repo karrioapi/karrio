@@ -96,7 +96,8 @@ if not any(get_user_model().objects.all()):
     (echo "
 from django.contrib.auth import get_user_model;
 from purplship.server.user.models import Token;
-Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
+Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')
+" | purplship shell) > /dev/null 2>&1;
 
     (echo "
 from purplship.server.providers.extension.models.canadapost import SETTINGS;

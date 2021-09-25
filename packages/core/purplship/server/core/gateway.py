@@ -26,7 +26,8 @@ class Carriers:
         list_filter: Dict[str: Any] = kwargs
         user_filter = (get_access_filter(context) if context is not None else [])
         active_key = ('active_orgs__id' if settings.MULTI_ORGANIZATIONS else 'active_users__id')
-        access_id = getattr(context.org if settings.MULTI_ORGANIZATIONS else context.user, 'id', None)
+        access_entity = getattr(context, 'org' if settings.MULTI_ORGANIZATIONS else 'user', None)
+        access_id = getattr(access_entity, 'id', None)
         system_carrier_user = (
             Q(**{'active': True, 'created_by__isnull': True, active_key: access_id})
             if access_id is not None else

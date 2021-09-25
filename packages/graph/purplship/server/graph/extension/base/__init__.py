@@ -90,7 +90,11 @@ class Query:
 class Mutation:
     update_user = mutations.UpdateUser.Field()
     register_user = mutations.RegisterUser.Field()
+    confirm_email = mutations.ConfirmEmail.Field()
     mutate_token = mutations.TokenMutation.Field()
+    change_password = mutations.ChangePassword.Field()
+    request_password_reset = mutations.RequestPasswordReset.Field()
+    confirm_password_reset = mutations.ConfirmPasswordReset.Field()
 
     create_template = mutations.CreateTemplate.Field()
     update_template = mutations.UpdateTemplate.Field()
