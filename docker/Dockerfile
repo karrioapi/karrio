@@ -11,12 +11,12 @@ RUN pip install --upgrade pip && \
 FROM python:3.8-slim AS build-image
 
 LABEL maintainer=hello@purplship.com
-LABEL org.opencontainers.image.title="purplship Server"
-LABEL org.opencontainers.image.description="purplship Server runtime image"
+LABEL org.opencontainers.image.title="purplship server"
+LABEL org.opencontainers.image.description="purplship server runtime image"
 LABEL org.opencontainers.image.url="https://purplship.com"
 LABEL org.opencontainers.image.documentation="https://docs.purplship.com"
 LABEL org.opencontainers.image.source="https://github.com/purplship/purplship-server"
-LABEL org.opencontainers.image.vendor="purplship Team."
+LABEL org.opencontainers.image.vendor="team purplship"
 LABEL org.opencontainers.image.authors="hello@purplship.com"
 
 ENV DEBUG_MODE False
