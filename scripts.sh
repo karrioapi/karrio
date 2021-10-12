@@ -21,6 +21,13 @@ export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
 
+if command -v docker-machine &> /dev/null
+then
+    export DATABASE_HOST=$(docker-machine ip)
+else
+    export DATABASE_HOST="0.0.0.0"
+fi
+
 mkdir -p $LOG_DIR
 
 deactivate_env() {
@@ -45,7 +52,7 @@ create_env() {
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
-     pip install --upgrade pip wheel
+    pip install --upgrade pip wheel
 }
 
 init() {
@@ -137,13 +144,6 @@ rundb() {
   cd "${ROOT:?}"
   docker-compose down &&
   docker-compose up -d db
-
-  if command -v docker-machine &> /dev/null
-  then
-    export DATABASE_HOST=$(docker-machine ip)
-  else
-    export DATABASE_HOST="0.0.0.0"
-  fi
 
   sleep 5
   cd -

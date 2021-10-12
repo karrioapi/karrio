@@ -83,3 +83,5 @@ purplship.freightcom==2021.8rc0
 # Dev dependencies
 mkdocs-material
 black
+mypy
+bandit
