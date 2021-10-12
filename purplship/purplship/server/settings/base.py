@@ -62,7 +62,7 @@ if USE_HTTPS is True:
     SECURE_HSTS_PRELOAD = True
 
 
-# Application definition
+# purplship packages settings
 PURPLSHIP_CONF = [
     app
     for app in [
@@ -108,7 +108,9 @@ PURPLSHIP_CONF = [
 
 PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
+
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
+HAS_EMBEDDED_CLIENT = importlib.util.find_spec("purplship.server.client") is not None
 
 
 BASE_APPS = [

@@ -77,7 +77,7 @@ purplship.freightcom==2021.8rc0
 -e ./packages/manager
 -e ./packages/pricing
 -e ./packages/events
--e ./packages/client
+# -e ./packages/client
 
 
 # Dev dependencies

@@ -5,6 +5,6 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('', include('django.contrib.auth.urls')),
-    path('', include('purplship.server.user.views')),
+    path("", include("django.contrib.auth.urls")),
+    path("", include("purplship.server.user.views")),
 ]
