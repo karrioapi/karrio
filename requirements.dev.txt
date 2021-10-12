@@ -1,4 +1,4 @@
-wheel
+PyJWT==2.1.0
 
 # carrier datatype libraries
 
@@ -85,3 +85,4 @@ mkdocs-material
 black
 mypy
 bandit
+wheel
