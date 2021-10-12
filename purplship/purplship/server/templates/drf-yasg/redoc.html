@@ -2,59 +2,60 @@
 {% load static %}
 
 {% block favicon %}
-    <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
-    <meta name="theme-color" content="#ffffff">
+<link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
+<meta name="theme-color" content="#ffffff">
 {% endblock %}
 
 {% block extra_styles %}
-    <style>
-        body {
-            background: #eeeeee;
-        }
-        .dashboard-link {
-            position: fixed;
-            bottom: 90px;
-            right: 30px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(149, 4, 175, 70%);
-            border-radius: 50%;
-            z-index: 2;
-            box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
-        }
-        .admin-link {
-            position: fixed;
-            bottom: 44px;
-            right: 30px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(50, 50, 159, 70%);
-            border-radius: 50%;
-            z-index: 2;
-            box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
-        }
-        @media screen and (max-width: 50rem) {
-            .dashboard-link {
-                bottom: 158px;
-            }
-            .admin-link {
-                bottom: 112px;
-            }
-        }
-    </style>
+<style>
+  body {
+    background: #eeeeee;
+  }
+
+  .dashboard-link {
+    position: fixed;
+    bottom: 90px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(149, 4, 175, 70%);
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+  }
+
+  .admin-link {
+    position: fixed;
+    bottom: 44px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(50, 50, 159, 70%);
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+  }
+
+  @media screen and (max-width: 50rem) {
+    .dashboard-link {
+      bottom: 158px;
+    }
+
+    .admin-link {
+      bottom: 112px;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block extra_body %}
-<a class="dashboard-link" href="/" title="Dashboard">
-    <img src="{% static 'img/dashboard.svg' %}" width="26" style="margin: 7px;">
-</a>
-<a class="admin-link" href="/admin" title="Admin Console">
-    <img src="{% static 'img/settings.svg' %}" width="26" style="margin: 7px;">
+<a class="admin-link" href="/" title="Admin Console">
+  <img src="{% static 'img/settings.svg' %}" width="26" style="margin: 7px;">
 </a>
 {% endblock %}
 {% block main_scripts %}
-    <script src="{% static 'drf-yasg/insQ.min.js' %}"></script>
-    <script src="{% static 'drf-yasg/url-polyfill.min.js' %}"></script>
-    <script src="{% static 'drf-yasg/redoc-init.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+<script src="{% static 'drf-yasg/insQ.min.js' %}"></script>
+<script src="{% static 'drf-yasg/url-polyfill.min.js' %}"></script>
+<script src="{% static 'drf-yasg/redoc-init.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
 {% endblock %}
