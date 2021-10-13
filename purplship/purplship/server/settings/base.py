@@ -22,7 +22,7 @@ from django.core.management.utils import get_random_secret_key
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 with open(BASE_DIR / "server" / "VERSION", "r") as v:
-    VERSION = v.read()
+    VERSION = v.read().strip()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

@@ -222,8 +222,8 @@ _build() {
 
 build() {
   cd "${ROOT:?}" || false &&
-  build_theme -i &&
-  build_dashboard &&
+#   build_theme -i &&
+#   build_dashboard &&
   build_js -i &&
   clean_builds
   sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
@@ -260,7 +260,7 @@ build_js() {
 	if [[ "$*" == *-i* ]]; then
 		rm -rf node_modules; yarn
 	fi
-	npx gulp build --output "${ROOT:?}/purplship/server/static/purplship/js/purplship.js"
+	npx gulp build --output "${ROOT:?}/purplship/purplship/server/static/purplship/js/purplship.js"
 	cd -
 	purplship collectstatic --noinput
 }
@@ -282,7 +282,7 @@ build_image() {
 	tag=$1
 	shift
 	args=$@
-  	docker build -t "purplship/purplship-server:$tag" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" $args
+  	docker build -t "purplship/server:$tag" -f "${ROOT:?}/docker/Dockerfile" "${ROOT:?}" $args
 }
 
 generate_node_client() {

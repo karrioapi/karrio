@@ -1,14 +1,13 @@
 PyJWT==2.1.0
 
 purplship
-purplship-server
-purplship-server.client
-purplship-server.core
-purplship-server.events
-purplship-server.graph
-purplship-server.manager
-purplship-server.pricing
-purplship-server.proxy
+purplship-server==2021.10rc0
+purplship-server.core==2021.10rc0
+purplship-server.events==2021.10rc0
+purplship-server.graph==2021.10rc0
+purplship-server.manager==2021.10rc0
+purplship-server.pricing==2021.10rc0
+purplship-server.proxy==2021.10rc0
 purplship.aramex
 purplship.australiapost
 purplship.canadapost
@@ -27,5 +26,5 @@ purplship.usps
 purplship.usps_international
 purplship.yanwen
 purplship.yunexpress
-purplship.eshipper
-purplship.freightcom
+purplship.eshipper==2021.8rc0
+purplship.freightcom==2021.8rc0
