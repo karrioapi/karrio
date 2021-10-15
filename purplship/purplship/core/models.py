@@ -97,6 +97,7 @@ class Duty:
 class Customs:
     """customs info unified data type."""
 
+    commodities: List[Commodity] = JList[Commodity, REQUIRED]
     aes: str = None
     eel_pfc: str = None
     certify: bool = None
@@ -108,7 +109,6 @@ class Customs:
     invoice_date: str = None
     license_number: str = None
     certificate_number: str = None
-    commodities: List[Commodity] = JList[Commodity]
     duty: Duty = JStruct[Duty]
     commercial_invoice: bool = False
     options: Dict = {}

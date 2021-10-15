@@ -102,7 +102,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     package_type = PackageType[packages.package_type].value
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
     payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
-    customs = (payload.customs or Customs())
+    customs = (payload.customs or Customs(commodities=[]))
     is_dutiable = (is_document is False and customs.duty is not None)
     paperless_supported = (is_dutiable and payload.shipper.country_code not in UNSUPPORTED_PAPERLESS_COUNTRIES)
     duty = (customs.duty or Duty(paid_by="sender"))

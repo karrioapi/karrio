@@ -1,3 +1,5 @@
 -e git+https://github.com/purplship/purplship-carriers.git@carrier-lib-2021.8-updates#egg=carrier.ics_courier&subdirectory=ics_courier
+-e git+https://github.com/purplship/purplship-carriers.git@carrier-lib-2021.8-updates#egg=carrier.asendia_us&subdirectory=asendia_us
 
 -e extensions/ics_courier
+-e extensions/asendia_us
