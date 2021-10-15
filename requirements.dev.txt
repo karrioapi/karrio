@@ -1,5 +1,3 @@
+-e git+https://github.com/purplship/purplship-carriers.git@carrier-lib-2021.8-updates#egg=carrier.ics_courier&subdirectory=ics_courier
 
-# -e git+https://github.com/Purplship/purplship-carriers.git@consolidate-usps-services-w-live-tests#egg=carrier.usps&subdirectory=usps
-carrier.canadapost==2021.7rc2
-
-# -e extensions/tnt
+-e extensions/ics_courier
