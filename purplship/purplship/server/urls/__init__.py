@@ -22,7 +22,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 APP_VERSION = getattr(settings, "VERSION", "")
 APP_NAME = getattr(settings, "APP_NAME", "Purplship")
-ADMIN_PATH = "admin/" if settings.HAS_EMBEDDED_CLIENT else ""
 
 admin.site.site_header = APP_NAME
 admin.site.site_title = f"{APP_NAME} shipping API"
@@ -34,7 +33,7 @@ urlpatterns = [
     path("api/", include("rest_framework.urls", namespace="rest_framework")),
     path("", include("purplship.server.urls.jwt")),
     *[path("", include(urls)) for urls in settings.PURPLSHIP_URLS],
-    path(ADMIN_PATH, admin.site.urls, name="app_admin"),
+    path("admin/", admin.site.urls, name="app_admin"),
 ]
 
 if settings.HAS_EMBEDDED_CLIENT:

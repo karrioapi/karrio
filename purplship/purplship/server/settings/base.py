@@ -149,10 +149,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "purplship.server.urls"
-LOGOUT_REDIRECT_URL = "/login/"
-LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "/login/"
-OPEN_API_PATH = "openapi/"
+LOGOUT_REDIRECT_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/"
+LOGIN_REDIRECT_URL = "/" if HAS_EMBEDDED_CLIENT else "/admin/"
+LOGIN_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/admin/login/"
+OPEN_API_PATH = "openapi/" if HAS_EMBEDDED_CLIENT else ""
 
 
 TEMPLATES = [

@@ -19,6 +19,22 @@ add "&raw" to the end of the URL within a browser.
       overflow: hidden;
       width: 100%;
     }
+    .admin-link {
+      position: fixed;
+      bottom: 44px;
+      right: 30px;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(50, 50, 159, 70%);
+      border-radius: 50%;
+      z-index: 2;
+      box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+    }
+    @media screen and (max-width: 50rem) {
+      .admin-link {
+        bottom: 112px;
+      }
+    }
   </style>
   <link href="https://cdn.jsdelivr.net/npm/graphiql@{{graphiql_version}}/graphiql.min.css"
         integrity="{{graphiql_css_sri}}"
@@ -52,5 +68,9 @@ add "&raw" to the end of the URL within a browser.
     };
   </script>
   <script src="{% static 'graphene_django/graphiql.js' %}"></script>
+
+  <a class="admin-link" href="/admin" title="Admin Console">
+    <img src="{% static 'img/dashboard.svg' %}" width="26" style="margin: 7px;">
+  </a>
 </body>
 </html>
