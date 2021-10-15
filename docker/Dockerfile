@@ -4,7 +4,8 @@ RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
 COPY requirements.txt /temp/
 RUN pip install --upgrade pip && \
-  pip install -r /temp/requirements.txt
+    pip install dumb-init && \
+    pip install -r /temp/requirements.txt
 
 
 # The runtime image
@@ -44,4 +45,5 @@ WORKDIR $WORK_DIR
 # Make sure we use the virtualenv:
 ENV PATH="/pship/venv/bin:$PATH"
 
-ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
+ENTRYPOINT ["/pship/venv/bin/dumb-init", "--"]
+CMD ["./entrypoint.sh"]
