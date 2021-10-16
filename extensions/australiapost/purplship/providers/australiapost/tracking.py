@@ -21,12 +21,12 @@ from purplship.providers.australiapost.error import parse_error_response
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     tracking_results = response.get('tracking_results', [])
     errors = sum([
-        _extract_error(TrackingResult(**result), settings)
+        _extract_error(DP.to_object(TrackingResult, result), settings)
         for result in tracking_results
         if "errors" in result
     ], parse_error_response(response, settings))
     tracking_details = [
-        _extract_detail(TrackingResult(**d), settings)
+        _extract_detail(DP.to_object(TrackingResult, d), settings)
         for d in response.get('tracking_results', [])
         if "trackable_items" in d
     ]

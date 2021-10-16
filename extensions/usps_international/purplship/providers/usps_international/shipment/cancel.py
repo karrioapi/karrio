@@ -14,7 +14,7 @@ from purplship.providers.usps_international.utils import Settings
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
     errors: List[Message] = parse_error_response(response, settings)
-    cancel_response = XP.build(eVSICancelResponse, response)
+    cancel_response = XP.to_object(eVSICancelResponse, response)
 
     if cancel_response.Status != "Cancelled":
         errors.append(Message(

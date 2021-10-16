@@ -52,7 +52,7 @@ def parse_rate_response(
 
 
 def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
-    estimate = XP.build(ShipmentEstimate, estimate_node)
+    estimate = XP.to_object(ShipmentEstimate, estimate_node)
     currency = Currency.CAD.name
     service = Product.map(estimate.ServiceID)
     duties_and_taxes = [

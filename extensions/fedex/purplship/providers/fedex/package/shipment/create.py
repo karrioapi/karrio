@@ -79,7 +79,7 @@ def parse_shipment_response(
 def _extract_shipment(
     shipment_detail_node: Element, settings: Settings
 ) -> ShipmentDetails:
-    detail = XP.build(CompletedShipmentDetail, shipment_detail_node)
+    detail = XP.to_object(CompletedShipmentDetail, shipment_detail_node)
 
     tracking_number = cast(TrackingId, detail.MasterTrackingId).TrackingNumber
     package: CompletedPackageDetail = next(iter(detail.CompletedPackageDetails), None)

@@ -35,7 +35,7 @@ def parse_tracking_response(
 
 
 def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
-    track = XP.build(TrackingInformation, node)
+    track = XP.to_object(TrackingInformation, node)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,

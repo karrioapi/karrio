@@ -48,10 +48,10 @@ def parse_pickup_response(
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
     header = next(
-        (XP.build(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
+        (XP.to_object(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
     )
     price = next(
-        (XP.build(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
+        (XP.to_object(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
         None
     )
 
@@ -167,7 +167,7 @@ def _get_pickup_availability(payload: PickupRequest):
 
 
 def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):
-    availability = XP.build(pickup_availability, XP.to_xml(availability_response))
+    availability = XP.to_object(pickup_availability, XP.to_xml(availability_response))
     data = _create_pickup_request(payload, settings) if availability.on_demand_tour else None
 
     return Job(id="create_pickup", data=data, fallback="" if data is None else "")

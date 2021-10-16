@@ -31,7 +31,7 @@ def parse_tracking_response(response, settings: Settings) -> Tuple[List[Tracking
 
 
 def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
-    detail = XP.build(ConsignmentType, node)
+    detail = XP.to_object(ConsignmentType, node)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,

@@ -45,7 +45,7 @@ def _extract_structure_error(node: Element, settings: Settings) -> Message:
 
 
 def _extract_broken_rules(node: Element, settings: Settings) -> Message:
-    error = XP.build(brokenRules, node)
+    error = XP.to_object(brokenRules, node)
 
     return Message(
         # context info
@@ -59,7 +59,7 @@ def _extract_broken_rules(node: Element, settings: Settings) -> Message:
 
 
 def _extract_broken_rule(node: Element, settings: Settings) -> Message:
-    error = XP.build(brokenRule, node)
+    error = XP.to_object(brokenRule, node)
 
     return Message(
         # context info
@@ -74,7 +74,7 @@ def _extract_broken_rule(node: Element, settings: Settings) -> Message:
 
 
 def _extract_runtime_error(node: Element, settings: Settings) -> Message:
-    error = XP.build(runtimeError, node)
+    error = XP.to_object(runtimeError, node)
 
     return Message(
         # context info
@@ -89,7 +89,7 @@ def _extract_runtime_error(node: Element, settings: Settings) -> Message:
 
 
 def _extract_parse_error(node: Element, settings: Settings) -> Message:
-    error = XP.build(parseError, node)
+    error = XP.to_object(parseError, node)
 
     return Message(
         # context info
@@ -104,7 +104,7 @@ def _extract_parse_error(node: Element, settings: Settings) -> Message:
 
 
 def _extract_error(node: Element, settings: Settings) -> Message:
-    error = XP.build(ERROR, node)
+    error = XP.to_object(ERROR, node)
 
     return Message(
         # context info
@@ -118,7 +118,7 @@ def _extract_error(node: Element, settings: Settings) -> Message:
 
 
 def _extract_faut(node: Element, settings: Settings) -> Message:
-    error = XP.build(fault, node)
+    error = XP.to_object(fault, node)
 
     return Message(
         # context info

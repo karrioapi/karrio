@@ -12,7 +12,7 @@ from purplship.providers.ups.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
-    status = XP.build(
+    status = XP.to_object(
         Response,
         next(
             iter(response.xpath(".//*[local-name() = $name]", name="Response")),

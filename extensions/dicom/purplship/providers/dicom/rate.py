@@ -29,7 +29,7 @@ from purplship.providers.dicom.utils import Settings
 
 def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     errors = parse_error_response(response, settings)
-    rate_response = (RateResponse(**response) if 'rates' in response else RateResponse())
+    rate_response = (DP.to_object(RateResponse, response) if 'rates' in response else RateResponse())
     details = [
         _extract_details(rate, rate_response, settings)
         for rate in (rate_response.rates or [])

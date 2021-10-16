@@ -30,7 +30,7 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.build(eVSPriorityMailIntlResponse, response)
+    shipment = XP.to_object(eVSPriorityMailIntlResponse, response)
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,

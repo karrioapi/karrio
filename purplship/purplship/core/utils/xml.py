@@ -1,6 +1,7 @@
 """Purplship lxml typing and utilities wrappers"""
 
 import io
+import warnings
 from lxml import etree
 from xmltodict import parse
 from typing import List, TypeVar, Type, Optional, cast, Union
@@ -21,6 +22,11 @@ class GenerateDSAbstract(Envelope):
 class XMLPARSER:
     @staticmethod
     def build(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
+        warnings.warn("build is deprecated. Use to_object instead", category=DeprecationWarning)
+        return XMLPARSER.to_object(element_type, xml_node)
+
+    @staticmethod
+    def to_object(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
         """Build xml element node into type class
 
         :param element_type: The xml node corresponding type (class)
@@ -37,7 +43,7 @@ class XMLPARSER:
     @staticmethod
     def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = None, first: bool = None):
         children = [
-            (child if element_type is None else XMLPARSER.build(element_type, child))
+            (child if element_type is None else XMLPARSER.to_object(element_type, child))
             for child in in_element.xpath(".//*[local-name() = $name]", name=tag)
         ]
 

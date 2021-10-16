@@ -11,7 +11,7 @@ from dicom_lib.shipments import (
     ShipmentResponse,
 )
 from purplship.core.units import Packages
-from purplship.core.utils import Serializable
+from purplship.core.utils import Serializable, DP
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -44,7 +44,7 @@ def parse_shipment_response(response: dict, settings: Settings) -> Tuple[Shipmen
 
 def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
     label: str = response['label']
-    shipment: ShipmentResponse = ShipmentResponse(**response['shipment'])
+    shipment = DP.to_object(ShipmentResponse, response['shipment'])
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,

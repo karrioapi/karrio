@@ -109,7 +109,10 @@ shipment_data = {
     "service": "fedex_international_priority",
     "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
-    "customs": {"duty": {"paid_by": "sender", "declared_value": "100."}},
+    "customs": {
+       "duty": {"paid_by": "sender", "declared_value": "100."}, 
+       "commodities": [{"weight": "10", "description": "test"}]
+   },
     "reference": "#Order 11111"
 }
 
@@ -249,6 +252,18 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
+                    <v26:Commodities>
+                        <v26:NumberOfPieces>1</v26:NumberOfPieces>
+                        <v26:Description>test</v26:Description>
+                        <v26:Weight>
+                            <v26:Units>LB</v26:Units>
+                        </v26:Weight>
+                        <v26:Quantity>1</v26:Quantity>
+                        <v26:QuantityUnits>EA</v26:QuantityUnits>
+                        <v26:UnitPrice>
+                            <v26:Currency>USD</v26:Currency>
+                        </v26:UnitPrice>
+                    </v26:Commodities>
                 </v26:CustomsClearanceDetail>
                 <v26:LabelSpecification>
                     <v26:LabelFormatType>COMMON2D</v26:LabelFormatType>

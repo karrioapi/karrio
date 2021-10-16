@@ -27,7 +27,7 @@ from purplship.providers.fedex.utils import Settings
 def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    reply = XP.build(
+    reply = XP.to_object(
         CancelPickupReply,
         next(
             iter(

@@ -29,7 +29,7 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.build(eVSGXGGetLabelResponse, response)
+    shipment = XP.to_object(eVSGXGGetLabelResponse, response)
     tracking_number = (shipment.USPSBarcodeNumber or shipment.FedExBarcodeNumber)
 
     return ShipmentDetails(

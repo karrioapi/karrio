@@ -25,7 +25,7 @@ def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[Tr
 
 
 def _extract_detail(detail: dict, settings: Settings) -> TrackingDetails:
-    result = Result(**detail)
+    result = DP.to_object(Result, detail)
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -46,7 +46,7 @@ def _extract_detail(detail: dict, settings: Settings) -> TrackingDetails:
 
 
 def _extract_error(detail: dict, settings: Settings) -> Message:
-    result = Result(**detail)
+    result = DP.to_object(Result, detail)
     return Message(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,

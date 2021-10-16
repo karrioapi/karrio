@@ -78,12 +78,13 @@ class Payment:
     paid_by: str = "sender"
     currency: str = None
     account_number: str = None
+    address: Address = JStruct[Address]
     id: str = None
 
 
 @attr.s(auto_attribs=True)
 class Duty:
-    """payment details unified data type."""
+    """duty payment details unified data type."""
 
     paid_by: str = "sender"
     currency: str = None
@@ -97,6 +98,7 @@ class Duty:
 class Customs:
     """customs info unified data type."""
 
+    commodities: List[Commodity] = JList[Commodity, REQUIRED]
     aes: str = None
     eel_pfc: str = None
     certify: bool = None
@@ -108,7 +110,6 @@ class Customs:
     invoice_date: str = None
     license_number: str = None
     certificate_number: str = None
-    commodities: List[Commodity] = JList[Commodity]
     duty: Duty = JStruct[Duty]
     commercial_invoice: bool = False
     options: Dict = {}

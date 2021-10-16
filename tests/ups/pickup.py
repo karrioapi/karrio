@@ -94,7 +94,9 @@ class TestUPSPickup(unittest.TestCase):
                 purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupCancelResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedPickupCancelResponse
+            )
 
 
 if __name__ == "__main__":
@@ -425,61 +427,58 @@ PickupRateResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
 </soapenv:Envelope>
 """
 
-PickupResponseXML = f"""<wrapper>
-    {PickupRateResponseXML}
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-        <soapenv:Header />
-        <soapenv:Body>
-            <pkup:PickupCreationResponse xmlns:pkup="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
-                <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
-                    <common:ResponseStatus>
-                        <common:Code>1</common:Code>
-                        <common:Description>Success</common:Description>
-                    </common:ResponseStatus>
-                    <common:TransactionReference>
-                        <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                    </common:TransactionReference>
-                </common:Response>
-                <pkup:PRN>2923843QRO0</pkup:PRN>
-                <pkup:RateStatus>
-                    <pkup:Code>01</pkup:Code>
-                    <pkup:Description>Rate available</pkup:Description>
-                </pkup:RateStatus>
-                <pkup:RateResult>
-                    <pkup:Disclaimer>
-                        <pkup:Code>05</pkup:Code>
-                        <pkup:Description>Rate excludes VAT. Rate includes a fuel surcharge, but excludes taxes, duties and other charges that may apply to the shipment.</pkup:Description>
-                    </pkup:Disclaimer>
-                    <pkup:RateType>FD</pkup:RateType>
-                    <pkup:CurrencyCode>USD</pkup:CurrencyCode>
-                    <pkup:ChargeDetail>
-                        <pkup:ChargeCode>B</pkup:ChargeCode>
-                        <pkup:ChargeDescription>BASE CHARGE</pkup:ChargeDescription>
-                        <pkup:ChargeAmount>5.65</pkup:ChargeAmount>
-                        <pkup:TaxAmount>0.00</pkup:TaxAmount>
-                    </pkup:ChargeDetail>
-                    <pkup:ChargeDetail>
-                        <pkup:ChargeCode>S</pkup:ChargeCode>
-                        <pkup:ChargeDescription>REMOTE AREA SURCHARGE</pkup:ChargeDescription>
-                        <pkup:ChargeAmount>0.00</pkup:ChargeAmount>
-                        <pkup:TaxAmount>0.00</pkup:TaxAmount>
-                    </pkup:ChargeDetail>
-                    <pkup:ChargeDetail>
-                        <pkup:ChargeCode>S</pkup:ChargeCode>
-                        <pkup:ChargeDescription>RESIDENTIAL SURCHARGE</pkup:ChargeDescription>
-                        <pkup:ChargeAmount>3.25</pkup:ChargeAmount>
-                        <pkup:TaxAmount>0.00</pkup:TaxAmount>
-                    </pkup:ChargeDetail>
-                    <pkup:ChargeDetail>
-                        <pkup:ChargeCode>S</pkup:ChargeCode>
-                        <pkup:ChargeDescription>FUEL SURCHARGE</pkup:ChargeDescription>
-                        <pkup:ChargeAmount>0.38</pkup:ChargeAmount>
-                        <pkup:TaxAmount>0.00</pkup:TaxAmount>
-                    </pkup:ChargeDetail>
-                    <pkup:GrandTotalOfAllCharge>9.28</pkup:GrandTotalOfAllCharge>
-                </pkup:RateResult>
-            </pkup:PickupCreationResponse>
-        </soapenv:Body>
-    </soapenv:Envelope>
-</wrapper>
+PickupResponseXML = f"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Header />
+    <soapenv:Body>
+        <pkup:PickupCreationResponse xmlns:pkup="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+            <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+                <common:ResponseStatus>
+                    <common:Code>1</common:Code>
+                    <common:Description>Success</common:Description>
+                </common:ResponseStatus>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Response>
+            <pkup:PRN>2923843QRO0</pkup:PRN>
+            <pkup:RateStatus>
+                <pkup:Code>01</pkup:Code>
+                <pkup:Description>Rate available</pkup:Description>
+            </pkup:RateStatus>
+            <pkup:RateResult>
+                <pkup:Disclaimer>
+                    <pkup:Code>05</pkup:Code>
+                    <pkup:Description>Rate excludes VAT. Rate includes a fuel surcharge, but excludes taxes, duties and other charges that may apply to the shipment.</pkup:Description>
+                </pkup:Disclaimer>
+                <pkup:RateType>FD</pkup:RateType>
+                <pkup:CurrencyCode>USD</pkup:CurrencyCode>
+                <pkup:ChargeDetail>
+                    <pkup:ChargeCode>B</pkup:ChargeCode>
+                    <pkup:ChargeDescription>BASE CHARGE</pkup:ChargeDescription>
+                    <pkup:ChargeAmount>5.65</pkup:ChargeAmount>
+                    <pkup:TaxAmount>0.00</pkup:TaxAmount>
+                </pkup:ChargeDetail>
+                <pkup:ChargeDetail>
+                    <pkup:ChargeCode>S</pkup:ChargeCode>
+                    <pkup:ChargeDescription>REMOTE AREA SURCHARGE</pkup:ChargeDescription>
+                    <pkup:ChargeAmount>0.00</pkup:ChargeAmount>
+                    <pkup:TaxAmount>0.00</pkup:TaxAmount>
+                </pkup:ChargeDetail>
+                <pkup:ChargeDetail>
+                    <pkup:ChargeCode>S</pkup:ChargeCode>
+                    <pkup:ChargeDescription>RESIDENTIAL SURCHARGE</pkup:ChargeDescription>
+                    <pkup:ChargeAmount>3.25</pkup:ChargeAmount>
+                    <pkup:TaxAmount>0.00</pkup:TaxAmount>
+                </pkup:ChargeDetail>
+                <pkup:ChargeDetail>
+                    <pkup:ChargeCode>S</pkup:ChargeCode>
+                    <pkup:ChargeDescription>FUEL SURCHARGE</pkup:ChargeDescription>
+                    <pkup:ChargeAmount>0.38</pkup:ChargeAmount>
+                    <pkup:TaxAmount>0.00</pkup:TaxAmount>
+                </pkup:ChargeDetail>
+                <pkup:GrandTotalOfAllCharge>9.28</pkup:GrandTotalOfAllCharge>
+            </pkup:RateResult>
+        </pkup:PickupCreationResponse>
+    </soapenv:Body>
+</soapenv:Envelope>
 """

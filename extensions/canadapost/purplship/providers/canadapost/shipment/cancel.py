@@ -33,7 +33,7 @@ def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable[P
     identifier = Serializable(payload.shipment_identifier)
 
     def _refund_if_submitted(shipment_details: str):
-        shipment = XP.build(ShipmentInfoType, XP.to_xml(shipment_details))
+        shipment = XP.to_object(ShipmentInfoType, XP.to_xml(shipment_details))
         transmitted = shipment.shipment_status == 'transmitted'
         data = dict(
             id=payload.shipment_identifier,

@@ -21,7 +21,7 @@ from purplship.providers.sf_express.error import parse_error_response
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     tracking_details = [
-        _extract_detail(RouteResp(**d), settings)
+        _extract_detail(DP.to_object(RouteResp, d), settings)
         for d in response.get('msgData', {}).get('routeResps', [])
     ]
 

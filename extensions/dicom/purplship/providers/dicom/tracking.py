@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from dicom_lib.tracking import Tracking
-from purplship.core.utils import Serializable, DF
+from purplship.core.utils import Serializable, DF, DP
 from purplship.core.models import (
     TrackingRequest,
     TrackingDetails,
@@ -14,7 +14,7 @@ from purplship.providers.dicom.utils import Settings
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     errors = [e for e in response if 'activities' not in e]
-    details = [_extract_detail(Tracking(**d), settings) for d in response if 'activities' in d]
+    details = [_extract_detail(DP.to_object(Tracking, d), settings) for d in response if 'activities' in d]
 
     return details, parse_error_response(errors, settings)
 

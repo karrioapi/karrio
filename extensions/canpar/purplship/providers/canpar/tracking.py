@@ -34,7 +34,7 @@ def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List
 
 
 def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDetails:
-    result = XP.build(TrackingResult, node)
+    result = XP.to_object(TrackingResult, node)
     is_en = settings.language == "en"
     events = [
         TrackingEvent(

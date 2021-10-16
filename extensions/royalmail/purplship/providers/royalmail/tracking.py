@@ -3,6 +3,7 @@ from royalmail_lib.tracking import MailPieces
 from purplship.core.utils import (
     Serializable,
     DF,
+    DP,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -17,7 +18,7 @@ from purplship.providers.royalmail.error import parse_error_response
 def parse_tracking_response(response: List[dict], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     errors = [e for e in response if 'mailPieces' not in e]
     details = [
-        _extract_detail(MailPieces(**d['mailPieces']), settings)
+        _extract_detail(DP.to_object(MailPieces, d['mailPieces']), settings)
         for d in response if 'mailPieces' in d
     ]
 

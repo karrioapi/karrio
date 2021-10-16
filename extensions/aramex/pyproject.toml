@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "purplship.aramex"
-version = "2021.7"
+version = "2021.8"
 homepage="https://sdk.purplship.com"
-repository="https://github.com/Purplship/purplship"
+repository="https://github.com/purplship/purplship"
 description = "Purplship - Aramex Shipping Extension"
 authors = ["Dan Kobina <danielkobina@gmail.com>"]
 license = "LGPLv3"

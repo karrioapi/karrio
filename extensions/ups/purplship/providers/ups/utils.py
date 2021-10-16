@@ -6,6 +6,7 @@ from ups_lib.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTo
 
 class Settings(BaseSettings):
     """UPS connection settings."""
+
     username: str
     password: str
     access_license_number: str
@@ -13,6 +14,10 @@ class Settings(BaseSettings):
     account_country_code: str = None
 
     id: str = None
+
+    @property
+    def carrier_name(self):
+        return "ups"
 
     @property
     def server_url(self):
