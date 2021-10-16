@@ -8,7 +8,9 @@ PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 class PackagePresets(Flag):
     dhl_express_envelope = units.PackagePreset(
-        **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
+        **dict(
+            weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_standard_flyer = units.PackagePreset(
@@ -20,31 +22,69 @@ class PackagePresets(Flag):
         **PRESET_DEFAULTS
     )
     dhl_express_box_2 = units.PackagePreset(
-        **dict(weight=1.0, width=33.7, height=18.2, length=10.0, packaging_type="medium_box"),
+        **dict(
+            weight=1.0,
+            width=33.7,
+            height=18.2,
+            length=10.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_3 = units.PackagePreset(
-        **dict(weight=2.0, width=33.6, height=32.0, length=5.2, packaging_type="medium_box"),
+        **dict(
+            weight=2.0, width=33.6, height=32.0, length=5.2, packaging_type="medium_box"
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_4 = units.PackagePreset(
-        **dict(weight=5.0, width=33.7, height=32.2, length=18.0, packaging_type="medium_box"),
+        **dict(
+            weight=5.0,
+            width=33.7,
+            height=32.2,
+            length=18.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_5 = units.PackagePreset(
-        **dict(weight=10.0, width=33.7, height=32.2, length=34.5, packaging_type="medium_box"),
+        **dict(
+            weight=10.0,
+            width=33.7,
+            height=32.2,
+            length=34.5,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_6 = units.PackagePreset(
-        **dict(weight=15.0, width=41.7, height=35.9, length=36.9, packaging_type="large_box"),
+        **dict(
+            weight=15.0,
+            width=41.7,
+            height=35.9,
+            length=36.9,
+            packaging_type="large_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_7 = units.PackagePreset(
-        **dict(weight=20.0, width=48.1, height=40.4, length=38.9, packaging_type="large_box"),
+        **dict(
+            weight=20.0,
+            width=48.1,
+            height=40.4,
+            length=38.9,
+            packaging_type="large_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_box_8 = units.PackagePreset(
-        **dict(weight=25.0, width=54.2, height=44.4, length=40.9, packaging_type="large_box"),
+        **dict(
+            weight=25.0,
+            width=54.2,
+            height=44.4,
+            length=40.9,
+            packaging_type="large_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_express_tube = units.PackagePreset(
@@ -52,34 +92,50 @@ class PackagePresets(Flag):
         **PRESET_DEFAULTS
     )
     dhl_didgeridoo_box = units.PackagePreset(
-        **dict(weight=10.0, width=13.0, height=13.0, length=162.0, packaging_type="medium_box"),
+        **dict(
+            weight=10.0,
+            width=13.0,
+            height=13.0,
+            length=162.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_jumbo_box = units.PackagePreset(
-        **dict(weight=30.0, width=45.0, height=42.7, length=33.0, packaging_type="medium_box"),
+        **dict(
+            weight=30.0,
+            width=45.0,
+            height=42.7,
+            length=33.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     dhl_jumbo_box_junior = units.PackagePreset(
-        **dict(weight=20.0, width=39.9, height=34.0, length=24.1, packaging_type="medium_box"),
+        **dict(
+            weight=20.0,
+            width=39.9,
+            height=34.0,
+            length=24.1,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
 
 
-class MeasurementOptions(Enum):
-    min_in = 1
-    min_cm = 1.1  # TODO:: refactor MeasurementOptions to use dict instead of enum
+MeasurementOptions = units.MeasurementOptionsType(min_in=1, min_cm=1)
 
 
 class LabelType(Flag):
-    PDF_6x4 = ('PDF', '6X4_PDF')
-    PDF_8x4 = ('PDF', '8X4_PDF')
-    PDF_8x4_A4 = ('PDF', '8X4_A4_PDF')
-    PDF_6x4_A4 = ('PDF', '6X4_A4_PDF')
-    PDF_8x4_CI = ('PDF', '8X4_CI_PDF')
-    PDF_8x4_RU_A4 = ('PDF', '8X4_RU_A4_PDF')
-    ZPL_8x4 = ('ZPL2', '8X4_thermal')
-    ZPL_6x4 = ('ZPL2', '6X4_thermal')
-    ZPL_8x4_CI = ('ZPL2', '8X4_CI_thermal')
+    PDF_6x4 = ("PDF", "6X4_PDF")
+    PDF_8x4 = ("PDF", "8X4_PDF")
+    PDF_8x4_A4 = ("PDF", "8X4_A4_PDF")
+    PDF_6x4_A4 = ("PDF", "6X4_A4_PDF")
+    PDF_8x4_CI = ("PDF", "8X4_CI_PDF")
+    PDF_8x4_RU_A4 = ("PDF", "8X4_RU_A4_PDF")
+    ZPL_8x4 = ("ZPL2", "8X4_thermal")
+    ZPL_6x4 = ("ZPL2", "6X4_thermal")
+    ZPL_8x4_CI = ("ZPL2", "8X4_CI_thermal")
 
     """ Unified Label type mapping """
     PDF = PDF_6x4
@@ -101,19 +157,19 @@ class Incoterm(Enum):
 
 
 class ExportReasonCode(Enum):
-    permanent = 'P'
-    temporary = 'T'
-    return_for_repair = 'R'
-    used_exhibition_goods_to_origin = 'M'
-    intercompany_use = 'I'
-    commercial_purpose_or_sale = 'C'
-    personal_belongings_or_personal_use = 'E'
-    sample = 'S'
-    gift = 'G'
-    return_to_origin = 'U'
-    warranty_replacement = 'W'
-    diplmatic_goods = 'D'
-    defenece_material = 'F'
+    permanent = "P"
+    temporary = "T"
+    return_for_repair = "R"
+    used_exhibition_goods_to_origin = "M"
+    intercompany_use = "I"
+    commercial_purpose_or_sale = "C"
+    personal_belongings_or_personal_use = "E"
+    sample = "S"
+    gift = "G"
+    return_to_origin = "U"
+    warranty_replacement = "W"
+    diplmatic_goods = "D"
+    defenece_material = "F"
 
     """ Unified Customs Content type mapping """
     other = None

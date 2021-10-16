@@ -1,7 +1,18 @@
 """Purplship universal data types and units definitions"""
 import attr
 import phonenumbers
-from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any, Union, cast
+from typing import (
+    List,
+    Type,
+    Optional,
+    Iterator,
+    Iterable,
+    Tuple,
+    Any,
+    Union,
+    cast,
+    NamedTuple,
+)
 from purplship.core.utils import NF, Enum, Spec, SF
 from purplship.core.models import Parcel, Address, AddressExtra
 from purplship.core.errors import (
@@ -58,16 +69,17 @@ class CreditCardType(Enum):
 
 
 class CustomsContentType(Enum):
-    documents = 'DOCUMENTS'
-    gift = 'GIFT'
-    sample = 'SAMPLE'
-    merchandise = 'MERCHANDISE'
-    return_merchandise = 'RETURN_MERCHANDISE'
-    other = 'OTHER'
+    documents = "DOCUMENTS"
+    gift = "GIFT"
+    sample = "SAMPLE"
+    merchandise = "MERCHANDISE"
+    return_merchandise = "RETURN_MERCHANDISE"
+    other = "OTHER"
 
 
 class Incoterm(Enum):
     """universal international shipment incoterm (term of trades)"""
+
     CFR = "Cost and Freight"
     CIF = "Cost Insurance and Freight"
     CIP = "Carriage and Insurance Paid"
@@ -85,37 +97,50 @@ class Incoterm(Enum):
 
 class WeightUnit(Enum):
     """universal weight units"""
+
     KG = "KG"
     LB = "LB"
 
 
 class DimensionUnit(Enum):
     """universal dimension units"""
+
     CM = "CM"
     IN = "IN"
 
 
+class MeasurementOptionsType(NamedTuple):
+    min_in: Optional[float] = None
+    min_cm: Optional[float] = None
+    min_lb: Optional[float] = None
+    min_kg: Optional[float] = None
+    min_oz: Optional[float] = None
+    quant: Optional[float] = None
+
+
 class Dimension:
     """The dimension common processing helper"""
-    def __init__(self, value: float, unit: Union[DimensionUnit, str] = DimensionUnit.CM, options: Type[Enum] = Enum):
+
+    def __init__(
+        self,
+        value: float,
+        unit: Union[DimensionUnit, str] = DimensionUnit.CM,
+        options: MeasurementOptionsType = MeasurementOptionsType(),
+    ):
         self._value = value
         self._unit = DimensionUnit[unit] if isinstance(unit, str) else unit
 
         # Options mapping
-        measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
-        self._min_in = measurement_options.get('min_in')
-        self._min_cm = measurement_options.get('min_cm')
-        self._quant = measurement_options.get('quant')
+        self._min_in = options.min_in
+        self._min_cm = options.min_cm
+        self._quant = options.quant
 
     def __getitem__(self, item):
         return getattr(self, item)
 
     def _compute(self, value: float, min_value: float = None):
         below_min = min_value is not None and value < min_value
-        return NF.decimal(
-            value=(min_value if below_min else value),
-            quant=self._quant
-        )
+        return NF.decimal(value=(min_value if below_min else value), quant=self._quant)
 
     @property
     def unit(self) -> str:
@@ -156,16 +181,13 @@ class Dimension:
         else:
             return self._compute(self.CM / 100)
 
-    def map(self, options: Type[Enum]):
-        return Dimension(
-            value=self._value,
-            unit=self._unit,
-            options=options
-        )
+    def map(self, options: MeasurementOptionsType):
+        return Dimension(value=self._value, unit=self._unit, options=options)
 
 
 class Volume:
     """The volume common processing helper"""
+
     def __init__(
         self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
     ):
@@ -189,6 +211,7 @@ class Volume:
 
 class Girth:
     """The girth common processing helper"""
+
     def __init__(
         self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
     ):
@@ -209,26 +232,28 @@ class Girth:
 
 class Weight:
     """The weight common processing helper"""
-    def __init__(self, value: float, unit: Union[WeightUnit, str] = WeightUnit.KG, options: Type[Enum] = Enum):
+
+    def __init__(
+        self,
+        value: float,
+        unit: Union[WeightUnit, str] = WeightUnit.KG,
+        options: MeasurementOptionsType = MeasurementOptionsType(),
+    ):
         self._value = value
         self._unit = WeightUnit[unit] if isinstance(unit, str) else unit
 
         # Options mapping
-        measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
-        self._min_lb = measurement_options.get('min_lb')
-        self._min_kg = measurement_options.get('min_kg')
-        self._min_oz = measurement_options.get('min_oz')
-        self._quant = measurement_options.get('quant')
+        self._min_lb = options.min_lb
+        self._min_kg = options.min_kg
+        self._min_oz = options.min_oz
+        self._quant = options.quant
 
     def __getitem__(self, item):
         return getattr(self, item)
 
     def _compute(self, value: float, min_value: float = None) -> Optional[float]:
         below_min = min_value is not None and value < min_value
-        return NF.decimal(
-            value=(min_value if below_min else value),
-            quant=self._quant
-        )
+        return NF.decimal(value=(min_value if below_min else value), quant=self._quant)
 
     @property
     def unit(self) -> str:
@@ -277,16 +302,13 @@ class Weight:
 
         return None
 
-    def map(self, options: Type[Enum]):
-        return Weight(
-            value=self._value,
-            unit=self._unit,
-            options=options
-        )
+    def map(self, options: MeasurementOptionsType):
+        return Weight(value=self._value, unit=self._unit, options=options)
 
 
 class Package:
     """The parcel common processing helper"""
+
     def __init__(self, parcel: Parcel, template: PackagePreset = None):
         self.parcel: Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
@@ -365,6 +387,7 @@ class Package:
 
 class Packages(Iterable[Package]):
     """The parcel collection common processing helper"""
+
     def __init__(
         self,
         parcels: List[Parcel],
@@ -403,7 +426,11 @@ class Packages(Iterable[Package]):
     @property
     def weight(self) -> Weight:
         unit, _ = self.compatible_units
-        value = sum(pkg.weight[unit.name] for pkg in self._items if pkg.weight[unit.name] is not None)
+        value = sum(
+            pkg.weight[unit.name]
+            for pkg in self._items
+            if pkg.weight[unit.name] is not None
+        )
 
         if value is None or not any(self._items):
             return Weight(None, None)
@@ -413,8 +440,9 @@ class Packages(Iterable[Package]):
     @property
     def package_type(self) -> str:
         return (
-            (self._items[0].packaging_type or 'your_packaging')
-            if len(self._items) == 1 else None
+            (self._items[0].packaging_type or "your_packaging")
+            if len(self._items) == 1
+            else None
         )
 
     @property
@@ -435,12 +463,17 @@ class Packages(Iterable[Package]):
                     for field in required:
                         prop = getattr(package, field)
 
-                        if prop is None or (hasattr(prop, "value") and prop.value is None):
+                        if prop is None or (
+                            hasattr(prop, "value") and prop.value is None
+                        ):
                             errors.update(
                                 {f"parcel[{index}].{field}": FieldErrorCode.required}
                             )
 
-                if max_weight is not None and (package.weight.LB or 0.0) > max_weight.LB:
+                if (
+                    max_weight is not None
+                    and (package.weight.LB or 0.0) > max_weight.LB
+                ):
                     errors.update({f"parcel[{index}].weight": FieldErrorCode.exceeds})
 
             if any(errors.items()):
@@ -448,16 +481,21 @@ class Packages(Iterable[Package]):
 
     @staticmethod
     def map(
-            parcels: List[Parcel],
-            presets: Type[Enum] = None,
-            required: List[str] = None,
-            max_weight: Weight = None) -> Union[List[Package], 'Packages']:
+        parcels: List[Parcel],
+        presets: Type[Enum] = None,
+        required: List[str] = None,
+        max_weight: Weight = None,
+    ) -> Union[List[Package], "Packages"]:
 
-        return cast(Union[List[Package], Packages], Packages(parcels, presets, required, max_weight))
+        return cast(
+            Union[List[Package], Packages],
+            Packages(parcels, presets, required, max_weight),
+        )
 
 
 class Option(Enum):
     """universal shipment options (special services)"""
+
     currency = Spec.asValue("currency")
     insurance = Spec.asValue("insurance", float)
     cash_on_delivery = Spec.asValue("COD", float)
@@ -471,6 +509,7 @@ class Option(Enum):
 
 class Options:
     """The options common processing helper"""
+
     def __init__(self, options: dict, option_type: Type[Enum] = Enum):
         option_values = {}
         for key, val in options.items():
@@ -542,10 +581,9 @@ class Options:
 
 class Services:
     """The services common processing helper"""
+
     def __init__(self, services: Iterable, service_type: Type[Enum]):
-        self._services = [
-            service_type[s] for s in services if s in service_type
-        ]
+        self._services = [service_type[s] for s in services if s in service_type]
 
     def __len__(self) -> int:
         return len(self._services)
@@ -598,7 +636,7 @@ class CompleteAddress:
         if hasattr(self._address, item):
             return getattr(self._address, item)
 
-        return getattr(getattr(self._address, 'extra', None), item, None)
+        return getattr(getattr(self._address, "extra", None), item, None)
 
     @property
     def country_name(self):
@@ -618,17 +656,18 @@ class CompleteAddress:
 
     @property
     def taxes(self) -> List[str]:
-        return SF.concat_str(
-            self._address.federal_tax_id, self._address.state_tax_id)
+        return SF.concat_str(self._address.federal_tax_id, self._address.state_tax_id)
 
     @property
     def has_contact_info(self) -> bool:
-        return any([
-            self._address.company_name,
-            self._address.phone_number,
-            self._address.person_name,
-            self._address.email,
-        ])
+        return any(
+            [
+                self._address.company_name,
+                self._address.phone_number,
+                self._address.person_name,
+                self._address.email,
+            ]
+        )
 
     @property
     def has_tax_info(self) -> bool:
@@ -637,9 +676,7 @@ class CompleteAddress:
     def _compute_address_line(self, join: bool = True) -> Optional[str]:
         if any([self._address.address_line1, self._address.address_line2]):
             return SF.concat_str(
-                self._address.address_line1,
-                self._address.address_line2,
-                join=join
+                self._address.address_line1, self._address.address_line2, join=join
             )
 
         if self._address.extra is not None:
@@ -648,14 +685,18 @@ class CompleteAddress:
                 self._address.extra.street_number,
                 self._address.extra.street_name,
                 self._address.extra.street_type,
-                join=True
+                join=True,
             )
 
         return None
 
     @staticmethod
-    def map(address: Optional[Address]) -> Union[Address, AddressExtra, 'CompleteAddress']:
-        return cast(Union[Address, AddressExtra, CompleteAddress], CompleteAddress(address))
+    def map(
+        address: Optional[Address],
+    ) -> Union[Address, AddressExtra, "CompleteAddress"]:
+        return cast(
+            Union[Address, AddressExtra, CompleteAddress], CompleteAddress(address)
+        )
 
 
 class Currency(Enum):

@@ -1,5 +1,5 @@
 from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import PackagePreset
+from purplship.core.units import MeasurementOptionsType, PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -30,23 +30,53 @@ class PackagePresets(Flag):
         **PRESET_DEFAULTS
     )
     fedex_small_box = PackagePreset(
-        **dict(weight=20.0, width=12.25, height=10.9, length=1.5, packaging_type="small_box"),
+        **dict(
+            weight=20.0,
+            width=12.25,
+            height=10.9,
+            length=1.5,
+            packaging_type="small_box",
+        ),
         **PRESET_DEFAULTS
     )
     fedex_medium_box = PackagePreset(
-        **dict(weight=20.0, width=13.25, height=11.5, length=2.38, packaging_type="medium_box"),
+        **dict(
+            weight=20.0,
+            width=13.25,
+            height=11.5,
+            length=2.38,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     fedex_large_box = PackagePreset(
-        **dict(weight=20.0, width=17.88, height=12.38, length=3.0, packaging_type="large_box"),
+        **dict(
+            weight=20.0,
+            width=17.88,
+            height=12.38,
+            length=3.0,
+            packaging_type="large_box",
+        ),
         **PRESET_DEFAULTS
     )
     fedex_10_kg_box = PackagePreset(
-        **dict(weight=10.0, width=15.81, height=12.94, length=10.19, packaging_type="medium_box"),
+        **dict(
+            weight=10.0,
+            width=15.81,
+            height=12.94,
+            length=10.19,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     fedex_25_kg_box = PackagePreset(
-        **dict(weight=25.0, width=21.56, height=16.56, length=13.19, packaging_type="medium_box"),
+        **dict(
+            weight=25.0,
+            width=21.56,
+            height=16.56,
+            length=13.19,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     fedex_tube = PackagePreset(
@@ -57,20 +87,18 @@ class PackagePresets(Flag):
     fedex_pak = fedex_padded_pak
 
 
-class MeasurementOptions(Enum):
-    min_in = 1
-    min_cm = 1
+MeasurementOptions = MeasurementOptionsType(min_in=1, min_cm=1)
 
 
 class LabelType(Flag):
-    PDF_4x6 = ('PDF', 'STOCK_4X6')
-    PDF_4x6_75 = ('PDF', 'STOCK_4X6.75')
-    PDF_4x8 = ('PDF', 'STOCK_4X8')
-    PDF_4x9 = ('PDF', 'STOCK_4X9')
-    ZPL_4x6 = ('ZPLII', 'STOCK_4X6')
-    ZPL_4x6_75 = ('ZPLII', 'STOCK_4X6.75')
-    ZPL_4x8 = ('ZPLII', 'STOCK_4X8')
-    ZPL_4x9 = ('ZPLII', 'STOCK_4X9')
+    PDF_4x6 = ("PDF", "STOCK_4X6")
+    PDF_4x6_75 = ("PDF", "STOCK_4X6.75")
+    PDF_4x8 = ("PDF", "STOCK_4X8")
+    PDF_4x9 = ("PDF", "STOCK_4X9")
+    ZPL_4x6 = ("ZPLII", "STOCK_4X6")
+    ZPL_4x6_75 = ("ZPLII", "STOCK_4X6.75")
+    ZPL_4x8 = ("ZPLII", "STOCK_4X8")
+    ZPL_4x9 = ("ZPLII", "STOCK_4X9")
 
     """ Unified Label type mapping """
     PDF = PDF_4x6
@@ -89,6 +117,7 @@ class Incoterm(Enum):
     CIF = "CIF"
     FCA = "FCA"
     FOB = "FOB"
+
 
 class PurposeType(Enum):
     gift = "GIFT"
@@ -254,7 +283,9 @@ class ServiceType(Enum):
     fedex_same_day_metro_rush = "SAME_DAY_METRO_RUSH"
     fedex_smart_post = "SMART_POST"
     fedex_standard_overnight = "STANDARD_OVERNIGHT"
-    fedex_transborder_distribution_consolidation = "TRANSBORDER_DISTRIBUTION_CONSOLIDATION"
+    fedex_transborder_distribution_consolidation = (
+        "TRANSBORDER_DISTRIBUTION_CONSOLIDATION"
+    )
 
 
 class SpecialServiceType(Enum):
@@ -278,10 +309,16 @@ class SpecialServiceType(Enum):
     fedex_exclusive_use = Spec.asKey("EXCLUSIVE_USE")
     fedex_exhibition_delivery = Spec.asKey("EXHIBITION_DELIVERY")
     fedex_exhibition_pickup = Spec.asKey("EXHIBITION_PICKUP")
-    fedex_expedited_alternate_delivery_route = Spec.asKey("EXPEDITED_ALTERNATE_DELIVERY_ROUTE")
+    fedex_expedited_alternate_delivery_route = Spec.asKey(
+        "EXPEDITED_ALTERNATE_DELIVERY_ROUTE"
+    )
     fedex_expedited_one_day_earlier = Spec.asKey("EXPEDITED_ONE_DAY_EARLIER")
-    fedex_expedited_service_monitoring_and_delivery = Spec.asKey("EXPEDITED_SERVICE_MONITORING_AND_DELIVERY")
-    fedex_expedited_standard_day_early_delivery = Spec.asKey("EXPEDITED_STANDARD_DAY_EARLY_DELIVERY")
+    fedex_expedited_service_monitoring_and_delivery = Spec.asKey(
+        "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY"
+    )
+    fedex_expedited_standard_day_early_delivery = Spec.asKey(
+        "EXPEDITED_STANDARD_DAY_EARLY_DELIVERY"
+    )
     fedex_extra_labor = Spec.asKey("EXTRA_LABOR")
     fedex_extreme_length = Spec.asKey("EXTREME_LENGTH")
     fedex_one_rate = Spec.asKey("FEDEX_ONE_RATE")
@@ -296,9 +333,13 @@ class SpecialServiceType(Enum):
     fedex_home_delivery_premium = Spec.asKey("HOME_DELIVERY_PREMIUM")
     fedex_inside_delivery = Spec.asKey("INSIDE_DELIVERY")
     fedex_inside_pickup = Spec.asKey("INSIDE_PICKUP")
-    fedex_international_controlled_export_service = Spec.asKey("INTERNATIONAL_CONTROLLED_EXPORT_SERVICE")
+    fedex_international_controlled_export_service = Spec.asKey(
+        "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE"
+    )
     fedex_international_mail_service = Spec.asKey("INTERNATIONAL_MAIL_SERVICE")
-    fedex_international_traffic_in_arms_regulations = Spec.asKey("INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS")
+    fedex_international_traffic_in_arms_regulations = Spec.asKey(
+        "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"
+    )
     fedex_liftgate_delivery = Spec.asKey("LIFTGATE_DELIVERY")
     fedex_liftgate_pickup = Spec.asKey("LIFTGATE_PICKUP")
     fedex_limited_access_delivery = Spec.asKey("LIMITED_ACCESS_DELIVERY")
@@ -323,7 +364,9 @@ class SpecialServiceType(Enum):
     fedex_regional_mall_pickup = Spec.asKey("REGIONAL_MALL_PICKUP")
     fedex_return_shipment = Spec.asKey("RETURN_SHIPMENT")
     fedex_returns_clearance = Spec.asKey("RETURNS_CLEARANCE")
-    fedex_returns_clearance_special_routing_required = Spec.asKey("RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED")
+    fedex_returns_clearance_special_routing_required = Spec.asKey(
+        "RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED"
+    )
     fedex_saturday_delivery = Spec.asKey("SATURDAY_DELIVERY")
     fedex_saturday_pickup = Spec.asKey("SATURDAY_PICKUP")
     fedex_shipment_assembly = Spec.asKey("SHIPMENT_ASSEMBLY")

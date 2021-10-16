@@ -1,5 +1,5 @@
 from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import PackagePreset
+from purplship.core.units import MeasurementOptionsType, PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
@@ -8,62 +8,49 @@ class PackagePresets(Flag):
     """
     Note that dimensions are in CM and weight in KG
     """
+
     canadapost_mailing_box = PackagePreset(
-        **dict(width=10.2, height=15.2, length=1.0),
-        **PRESET_DEFAULTS
+        **dict(width=10.2, height=15.2, length=1.0), **PRESET_DEFAULTS
     )
     canadapost_extra_small_mailing_box = PackagePreset(
-        **dict(width=14.0, height=14.0, length=14.0),
-        **PRESET_DEFAULTS
+        **dict(width=14.0, height=14.0, length=14.0), **PRESET_DEFAULTS
     )
     canadapost_small_mailing_box = PackagePreset(
-        **dict(width=28.6, height=22.9, length=6.4),
-        **PRESET_DEFAULTS
+        **dict(width=28.6, height=22.9, length=6.4), **PRESET_DEFAULTS
     )
     canadapost_medium_mailing_box = PackagePreset(
-        **dict(width=31.0, height=23.5, length=13.3),
-        **PRESET_DEFAULTS
+        **dict(width=31.0, height=23.5, length=13.3), **PRESET_DEFAULTS
     )
     canadapost_large_mailing_box = PackagePreset(
-        **dict(width=38.1, height=30.5, length=9.5),
-        **PRESET_DEFAULTS
+        **dict(width=38.1, height=30.5, length=9.5), **PRESET_DEFAULTS
     )
     canadapost_extra_large_mailing_box = PackagePreset(
-        **dict(width=40.0, height=30.5, length=21.6),
-        **PRESET_DEFAULTS
+        **dict(width=40.0, height=30.5, length=21.6), **PRESET_DEFAULTS
     )
     canadapost_corrugated_small_box = PackagePreset(
-        **dict(width=42.0, height=32.0, length=32.0),
-        **PRESET_DEFAULTS
+        **dict(width=42.0, height=32.0, length=32.0), **PRESET_DEFAULTS
     )
     canadapost_corrugated_medium_box = PackagePreset(
-        **dict(width=46.0, height=38.0, length=32.0),
-        **PRESET_DEFAULTS
+        **dict(width=46.0, height=38.0, length=32.0), **PRESET_DEFAULTS
     )
     canadapost_corrugated_large_box = PackagePreset(
-        **dict(width=46.0, height=46.0, length=40.6),
-        **PRESET_DEFAULTS
+        **dict(width=46.0, height=46.0, length=40.6), **PRESET_DEFAULTS
     )
     canadapost_xexpresspost_certified_envelope = PackagePreset(
-        **dict(width=26.0, height=15.9, weight=0.5, length=1.5),
-        **PRESET_DEFAULTS
+        **dict(width=26.0, height=15.9, weight=0.5, length=1.5), **PRESET_DEFAULTS
     )
     canadapost_xexpresspost_national_large_envelope = PackagePreset(
-        **dict(width=40.0, height=29.2, weight=1.36, length=1.5),
-        **PRESET_DEFAULTS
+        **dict(width=40.0, height=29.2, weight=1.36, length=1.5), **PRESET_DEFAULTS
     )
     canadapost_xexpresspost_regional_small_envelope = PackagePreset(
-        **dict(width=26.0, height=15.9, weight=0.5, length=1.5),
-        **PRESET_DEFAULTS
+        **dict(width=26.0, height=15.9, weight=0.5, length=1.5), **PRESET_DEFAULTS
     )
     canadapost_xexpresspost_regional_large_envelope = PackagePreset(
-        **dict(width=40.0, height=29.2, weight=1.36, length=1.5),
-        **PRESET_DEFAULTS
+        **dict(width=40.0, height=29.2, weight=1.36, length=1.5), **PRESET_DEFAULTS
     )
 
 
-class MeasurementOptions(Enum):
-    quant = 0.1
+MeasurementOptions = MeasurementOptionsType(quant=0.1)
 
 
 class LabelType(Enum):
@@ -141,7 +128,7 @@ INTERNATIONAL_NON_DELIVERY_OPTION = [
 
 
 TRACKING_DELIVERED_EVENT_CODES = [
-    "1421", 
+    "1421",
     "1422",
     "1423",
     "1424",
@@ -162,4 +149,3 @@ TRACKING_DELIVERED_EVENT_CODES = [
     "1498",
     "1499",
 ]
-

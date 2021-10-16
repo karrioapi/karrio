@@ -1,5 +1,5 @@
 from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import PackagePreset
+from purplship.core.units import MeasurementOptionsType, PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -8,17 +8,15 @@ class PackagePresets(Flag):
     """Purolator package presets
     Note that dimensions are in IN and weight in LB
     """
+
     purolator_express_envelope = PackagePreset(
-        **dict(width=12.5, height=16, length=1.5, weight=1.0),
-        **PRESET_DEFAULTS
+        **dict(width=12.5, height=16, length=1.5, weight=1.0), **PRESET_DEFAULTS
     )
     purolator_express_pack = PackagePreset(
-        **dict(width=12.5, height=16, length=1.0, weight=3.0),
-        **PRESET_DEFAULTS
+        **dict(width=12.5, height=16, length=1.0, weight=3.0), **PRESET_DEFAULTS
     )
     purolator_express_box = PackagePreset(
-        **dict(width=18, height=12, length=3.5, weight=7.0),
-        **PRESET_DEFAULTS
+        **dict(width=18, height=12, length=3.5, weight=7.0), **PRESET_DEFAULTS
     )
 
 
@@ -39,9 +37,7 @@ class PackagingType(Flag):
     your_packaging = purolator_customer_packaging
 
 
-class MeasurementOptions(Enum):
-    min_kg = 0.45
-    min_lb = 1
+MeasurementOptions = MeasurementOptionsType(min_kg=0.45, min_lb=1)
 
 
 class LabelType(Flag):
@@ -80,7 +76,9 @@ class Service(Enum):
     purolator_hold_for_pickup = Spec.asKey("Hold For Pickup")
     purolator_return_services = Spec.asKey("Return Services")
     purolator_saturday_service = Spec.asKey("Saturday Service")
-    purolator_origin_signature_not_required = Spec.asKey("Origin Signature Not Required (OSNR)")
+    purolator_origin_signature_not_required = Spec.asKey(
+        "Origin Signature Not Required (OSNR)"
+    )
     purolator_adult_signature_required = Spec.asKey("Adult Signature Required (ASR)")
     purolator_special_handling = Spec.asKey("Special Handling")
 
@@ -88,9 +86,7 @@ class Service(Enum):
     purolator_show_alternative_services = Spec.asFlag("Show Alternate Services")
 
 
-NON_OFFICIAL_SERVICES = [
-    Service.purolator_show_alternative_services.name
-]
+NON_OFFICIAL_SERVICES = [Service.purolator_show_alternative_services.name]
 
 
 class Product(Enum):
