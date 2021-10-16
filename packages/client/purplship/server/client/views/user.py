@@ -3,7 +3,6 @@ from django.urls import reverse_lazy, path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth.views import LoginView
 from django.utils.translation import gettext_lazy as _
-from django_email_verification import urls as mail_urls
 
 from purplship.server.user.forms import SignUpForm, LoginForm
 
@@ -40,5 +39,4 @@ urlpatterns = [
         AccountDeactivateView.as_view(),
         name="account_deactivated",
     ),
-    path("email/", include(mail_urls)),
 ]

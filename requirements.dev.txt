@@ -65,8 +65,8 @@ purplship.usps
 purplship.usps_international
 purplship.yanwen
 purplship.yunexpress
-purplship.eshipper==2021.8rc0
-purplship.freightcom==2021.8rc0
+purplship.eshipper
+purplship.freightcom
 
 
 # purplship server core packages
@@ -77,7 +77,6 @@ purplship.freightcom==2021.8rc0
 -e ./packages/manager
 -e ./packages/pricing
 -e ./packages/events
-# -e ./packages/client
 
 
 # Dev dependencies

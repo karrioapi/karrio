@@ -32,6 +32,7 @@ urlpatterns = [
     path("", include("purplship.server.urls.schema")),
     path("api/", include("rest_framework.urls", namespace="rest_framework")),
     path("", include("purplship.server.urls.jwt")),
+    path("", include("purplship.server.user.urls")),
     *[path("", include(urls)) for urls in settings.PURPLSHIP_URLS],
     path("admin/", admin.site.urls, name="app_admin"),
 ]
