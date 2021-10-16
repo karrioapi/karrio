@@ -27,9 +27,10 @@ class SignUpForm(UserCreationForm):
         if commit and settings.MULTI_ORGANIZATIONS:
             from purplship.server.orgs.models import Organization
 
+            org_name = user.full_name.split(" ")[0]
             org = Organization.objects.create(
-                name=user.full_name,
-                slug=user.full_name.replace(" ", "").lower(),
+                name=f"{org_name.capitalize()}'s Org",
+                slug=f"{org_name.lower()}_org".replace(" ", "").lower(),
                 is_active=not settings.EMAIL_ENABLED,
             )
             # Set as organization user
