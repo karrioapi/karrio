@@ -1,5 +1,5 @@
 from django.db import models
-from purpleserver.providers.models.carrier import Carrier
+from purplship.server.providers.models.carrier import Carrier
 
 
 class FreightcomSettings(Carrier):
