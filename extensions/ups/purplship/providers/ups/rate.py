@@ -31,10 +31,9 @@ from purplship.core.utils import (
 from purplship.core.units import Packages, Services
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.ups.units import (
-    RatingServiceCode,
-    RatingPackagingType,
+    ServiceCode,
+    PackagingType,
     WeightUnit as UPSWeightUnit,
-    ShippingServiceCode,
     PackagePresets,
 )
 from purplship.providers.ups.error import parse_error_response
@@ -78,7 +77,7 @@ def _extract_package_rate(
             else estimated_arrival.BusinessDaysInTransit
         )
         currency = XP.find("CurrencyCode", detail_node, first=True).text
-        service = ShippingServiceCode.map(rate.Service.Code)
+        service = ServiceCode.map(rate.Service.Code)
 
         return rates + [
             RateDetails(
@@ -120,15 +119,8 @@ def rate_request(
 ) -> Serializable[UPSRateRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    service = Services(payload.services, RatingServiceCode).first
-
-    if (
-        (service is not None)
-        and (("freight" in service.value) or ("ground" in service.value))
-    ):
-        packages.validate(required=["weight"])
-
-    mps_packaging = RatingPackagingType.ups_unknown.value if len(packages) > 1 else None
+    service = Services(payload.services, ServiceCode).first
+    mps_packaging = PackagingType.ups_unknown.value if len(packages) > 1 else None
 
     request = UPSRateRequest(
         Request=RequestType(
@@ -184,33 +176,34 @@ def rate_request(
             ),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
-            DocumentsOnlyIndicator="" if is_document else None,
+            DocumentsOnlyIndicator=("" if is_document else None),
             Package=[
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=(
-                            mps_packaging or RatingPackagingType[
-                                package.packaging_type or "small_box"
+                            mps_packaging or PackagingType[
+                                package.packaging_type or "your_packaging"
                             ].value
                         ),
                         Description=None,
                     ),
-                    Dimensions=DimensionsType(
-                        UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=package.dimension_unit.value, Description=None
-                        ),
-                        Length=package.length.value,
-                        Width=package.width.value,
-                        Height=package.height.value,
-                    )
-                    if any(
-                        [
-                            package.length.value,
-                            package.height.value,
-                            package.width.value,
-                        ]
-                    )
-                    else None,
+                    Dimensions=(
+                        DimensionsType(
+                            UnitOfMeasurement=UOMCodeDescriptionType(
+                                Code=package.dimension_unit.value, Description=None
+                            ),
+                            Length=package.length.value,
+                            Width=package.width.value,
+                            Height=package.height.value,
+                        )
+                        if any(
+                            [
+                                package.length.value,
+                                package.height.value,
+                                package.width.value,
+                            ]
+                        ) else None
+                    ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(

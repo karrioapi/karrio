@@ -356,9 +356,9 @@ class Package:
     def has_dimensions(self):
         return any(
             [
-                self.length,
-                self.width,
-                self.height,
+                self.length.value,
+                self.width.value,
+                self.height.value,
             ]
         )
 
@@ -462,6 +462,7 @@ class Option(Enum):
     insurance = Spec.asValue("insurance", float)
     cash_on_delivery = Spec.asValue("COD", float)
     shipment_date = Spec.asValue("shipment_date")
+    dangerous_good = Spec.asFlag("dangerous_good")
     declared_value = Spec.asValue("declared_value", float)
     email_notification = Spec.asFlag("email_notification")
     email_notification_to = Spec.asValue("email_notification_to")
@@ -514,6 +515,10 @@ class Options:
     @property
     def declared_value(self) -> float:
         return self[Option.declared_value.name]
+
+    @property
+    def dangerous_good(self) -> float:
+        return self[Option.dangerous_good.name]
 
     @property
     def email_notification(self) -> bool:

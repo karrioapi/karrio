@@ -8,8 +8,12 @@ from purplship.core.models import (
     PickupCancelRequest,
 )
 from purplship.providers.ups.utils import Settings
-from purplship.providers.ups.package.pickup.create import _rate_pickup, _create_pickup, parse_pickup_response
-from purplship.providers.ups.package.pickup.cancel import pickup_cancel_request
+from purplship.providers.ups.pickup.create import (
+    _rate_pickup,
+    _create_pickup,
+    parse_pickup_response,
+)
+from purplship.providers.ups.pickup.cancel import pickup_cancel_request
 
 parse_pickup_update_response = parse_pickup_response
 

@@ -31,7 +31,7 @@ from purplship.core.models import (
     Message,
     ChargeDetails,
 )
-from purplship.providers.ups.package.pickup.rate import pickup_rate_request
+from purplship.providers.ups.pickup.rate import pickup_rate_request
 from purplship.providers.ups.error import parse_error_response
 from purplship.providers.ups.units import PackagePresets, WeightUnit
 from purplship.providers.ups.utils import Settings, default_request_serializer
@@ -40,17 +40,10 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.to_object(
-        PickupCreationResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="PickupCreationResponse"
-                )
-            ),
-            None,
-        ),
+    reply = XP.find(
+        "PickupCreationResponse", response, PickupCreationResponse, first=True
     )
+
     pickup = (
         _extract_pickup_details(response, settings)
         if reply is not None and reply.PRN is not None
@@ -60,26 +53,11 @@ def parse_pickup_response(
     return pickup, parse_error_response(response, settings)
 
 
-def _extract_pickup_details(
-    response: PickupCreationResponse, settings: Settings
-) -> PickupDetails:
-    pickup = XP.to_object(
-        PickupCreationResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="PickupCreationResponse"
-                )
-            ),
-            None,
-        ),
+def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
+    pickup = XP.find(
+        "PickupCreationResponse", response, PickupCreationResponse, first=True
     )
-    rate = XP.to_object(
-        RateResultType,
-        next(
-            iter(response.xpath(".//*[local-name() = $name]", name="RateResult")), None
-        ),
-    )
+    rate = XP.find("RateResult", response, RateResultType, first=True)
 
     return PickupDetails(
         carrier_id=settings.carrier_id,

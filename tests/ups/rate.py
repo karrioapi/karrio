@@ -79,7 +79,7 @@ rate_req_data = {
             "length": 10,
             "width": 3,
             "weight": 4.0,
-            "packaging_type": "ups_package",
+            "packaging_type": "ups_small_express_box",
             "description": "TV",
         }
     ],
@@ -108,7 +108,6 @@ rate_req_with_package_preset_data = {
     "parcels": [
         {
             "package_preset": "ups_express_pak",
-            "packaging_type": "ups_package",
             "description": "TV",
         }
     ],
@@ -272,7 +271,7 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 </rate:Service>
                 <rate:Package>
                     <rate:PackagingType>
-                        <rate:Code>02</rate:Code>
+                        <rate:Code>2a</rate:Code>
                     </rate:PackagingType>
                     <rate:Dimensions>
                         <rate:UnitOfMeasurement>

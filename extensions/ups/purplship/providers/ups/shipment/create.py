@@ -9,7 +9,7 @@ from ups_lib.ship_web_service_schema import (
     ShipAddressType,
     ServiceType,
     PackageType,
-    PackagingType,
+    PackagingType as UPSPackagingType,
     DimensionsType,
     PackageWeightType,
     ShipUnitOfMeasurementType,
@@ -41,13 +41,13 @@ from purplship.core.utils import (
     Element,
     Envelope,
     XP,
-    SF
+    SF,
 )
 from purplship.core.units import Options, Packages, PaymentType
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.providers.ups.units import (
-    ShippingPackagingType,
-    ShippingServiceCode,
+    PackagingType,
+    ServiceCode,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
     LabelType,
@@ -57,7 +57,7 @@ from purplship.providers.ups.utils import Settings
 
 
 def parse_shipment_response(
-        response: Element, settings: Settings
+    response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     details = XP.find("ShipmentResults", response, first=True)
     shipment = _extract_shipment(details, settings) if details is not None else None
@@ -71,8 +71,8 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
     label = (
         gif_to_pdf(shipping_label.GraphicImage)
-        if cast(ImageFormatType, shipping_label.ImageFormat).Code == 'GIF' else
-        shipping_label.GraphicImage
+        if cast(ImageFormatType, shipping_label.ImageFormat).Code == "GIF"
+        else shipping_label.GraphicImage
     )
 
     return ShipmentDetails(
@@ -85,26 +85,26 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(
-        payload: ShipmentRequest, settings: Settings
+    payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     options = Options(payload.options)
-    service = ShippingServiceCode.map(payload.service).value_or_key
+    service = ServiceCode.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
 
-    country_pair = f'{payload.shipper.country_code}/{payload.recipient.country_code}'
+    country_pair = f"{payload.shipper.country_code}/{payload.recipient.country_code}"
     charges: Dict[str, Payment] = {
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
     }
-    mps_packaging = (
-        ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
-    )
-    label_format, label_height, label_width = LabelType[payload.label_type or 'PDF_6x4'].value
+    mps_packaging = PackagingType.your_packaging.value if len(packages) > 1 else None
+    label_format, label_height, label_width = LabelType[
+        payload.label_type or "PDF_6x4"
+    ].value
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -112,7 +112,7 @@ def shipment_request(
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
                 CustomerContext=payload.reference,
-                TransactionIdentifier=getattr(payload, 'id', None)
+                TransactionIdentifier=getattr(payload, "id", None),
             ),
         ),
         Shipment=ShipmentType(
@@ -203,7 +203,9 @@ def shipment_request(
                         if payment is not None
                     ],
                     SplitDutyVATIndicator=None,
-                ) if any(charges.values()) else None
+                )
+                if any(charges.values())
+                else None
             ),
             MovementReferenceNumber=None,
             ReferenceNumber=(
@@ -211,10 +213,11 @@ def shipment_request(
                     ReferenceNumberType(
                         BarCodeIndicator=None,
                         Code=payload.shipper.country_code,
-                        Value=payload.reference
+                        Value=payload.reference,
                     )
                 ]
-                if (country_pair not in ["US/US", "PR/PR"]) and any(payload.reference or "")
+                if (country_pair not in ["US/US", "PR/PR"])
+                and any(payload.reference or "")
                 else None
             ),
             Service=(ServiceType(Code=service) if service is not None else None),
@@ -228,34 +231,44 @@ def shipment_request(
                                 MonetaryValue=options.cash_on_delivery,
                             ),
                         )
-                        if options.cash_on_delivery else None
+                        if options.cash_on_delivery
+                        else None
                     ),
                     Notification=(
                         [
                             NotificationType(
                                 NotificationCode=event,
-                                EMail=EmailDetailsType(EMailAddress=[
-                                    options.email_notification_to or payload.recipient.email
-                                ]),
+                                EMail=EmailDetailsType(
+                                    EMailAddress=[
+                                        options.email_notification_to
+                                        or payload.recipient.email
+                                    ]
+                                ),
                                 VoiceMessage=None,
                                 TextMessage=None,
                                 Locale=None,
                             )
                             for event in [8]
                         ]
-                        if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                        if options.email_notification
+                        and any(
+                            [options.email_notification_to, payload.recipient.email]
+                        )
                         else None
                     ),
                 )
-                if any([options.cash_on_delivery, options.email_notification]) else None
+                if any([options.cash_on_delivery, options.email_notification])
+                else None
             ),
             Package=[
                 PackageType(
                     Description=package.parcel.description,
-                    Packaging=PackagingType(
+                    Packaging=UPSPackagingType(
                         Code=(
-                                mps_packaging
-                                or ShippingPackagingType[package.packaging_type or "your_packaging"].value
+                            mps_packaging
+                            or PackagingType[
+                                package.packaging_type or "your_packaging"
+                            ].value
                         )
                     ),
                     Dimensions=DimensionsType(
