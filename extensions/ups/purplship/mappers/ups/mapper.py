@@ -10,7 +10,6 @@ from purplship.core.models import (
     TrackingRequest,
     PickupRequest,
     RateRequest,
-
     AddressValidationDetails,
     ConfirmationDetails,
     TrackingDetails,
@@ -19,14 +18,13 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.providers.ups.package import (
+from purplship.providers.ups import (
     parse_shipment_cancel_response,
     parse_pickup_update_response,
     parse_pickup_cancel_response,
     parse_shipment_response,
     parse_pickup_response,
     parse_rate_response,
-
     shipment_cancel_request,
     pickup_update_request,
     pickup_cancel_request,
@@ -37,7 +35,6 @@ from purplship.providers.ups.package import (
 from purplship.providers.ups import (
     parse_address_validation_response,
     parse_tracking_response,
-
     address_validation_request,
     tracking_request,
 )
@@ -47,27 +44,21 @@ from purplship.mappers.ups.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
+    def create_address_validation_request(
+        self, payload: AddressValidationRequest
+    ) -> Serializable:
         return address_validation_request(payload, self.settings)
 
-    def create_rate_request(
-        self, payload: RateRequest
-    ) -> Serializable:
+    def create_rate_request(self, payload: RateRequest) -> Serializable:
         return rate_request(payload, self.settings)
 
-    def create_tracking_request(
-        self, payload: TrackingRequest
-    ) -> Serializable:
+    def create_tracking_request(self, payload: TrackingRequest) -> Serializable:
         return tracking_request(payload, self.settings)
 
-    def create_shipment_request(
-        self, payload: ShipmentRequest
-    ) -> Serializable:
+    def create_shipment_request(self, payload: ShipmentRequest) -> Serializable:
         return shipment_request(payload, self.settings)
 
-    def create_pickup_request(
-        self, payload: PickupRequest
-    ) -> Serializable:
+    def create_pickup_request(self, payload: PickupRequest) -> Serializable:
         return pickup_request(payload, self.settings)
 
     def create_pickup_update_request(
@@ -80,11 +71,10 @@ class Mapper(BaseMapper):
     ) -> Serializable:
         return pickup_cancel_request(payload, self.settings)
 
-    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
+    def create_cancel_shipment_request(
+        self, payload: ShipmentCancelRequest
+    ) -> Serializable[str]:
         return shipment_cancel_request(payload, self.settings)
-
-    
-
 
     def parse_address_validation_response(
         self, response: Deserializable

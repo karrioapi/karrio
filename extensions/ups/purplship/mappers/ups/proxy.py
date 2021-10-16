@@ -8,7 +8,7 @@ from purplship.core.utils import (
     Deserializable,
     Envelope,
     Pipeline,
-    Job
+    Job,
 )
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.ups.settings import Settings
@@ -25,7 +25,9 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
-    def validate_address(self, request: Serializable[AddressValidationRequest]) -> Deserializable[str]:
+    def validate_address(
+        self, request: Serializable[AddressValidationRequest]
+    ) -> Deserializable[str]:
         response = self._send_request("/AV", request)
 
         return Deserializable(response, XP.to_xml)
@@ -68,7 +70,6 @@ class Proxy(BaseProxy):
 
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
-
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def modify_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:

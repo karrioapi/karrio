@@ -3,3 +3,4 @@
 
 -e extensions/ics_courier
 -e extensions/asendia_us
+-e extensions/ups_ground
