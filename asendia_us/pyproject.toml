@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.asendia_us"
-version = "2021.2.1"
+version = "2021.2.2"
 description = "Asendia US API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.asendia_us"
