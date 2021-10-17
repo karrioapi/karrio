@@ -4,6 +4,7 @@ This repository is the host to multiple carrier web services generated Python da
 
 - [Australia Post - carrier.australiapost](/australiapost)
 - [Andreani - carrier.andreani](/andreani)
+- [Asendia US - carrier.asendia_us](/asendia_us)
 - [BoxKnight - carrier.boxknight](/boxknight)
 - [Canada Post - carrier.canadapost](/canadapost)
 - [Canpar - carrier.canpar](/canpar)
@@ -12,6 +13,8 @@ This repository is the host to multiple carrier web services generated Python da
 - [DHL Universal Tracking - carrier.dhl_universal](/dhl_universal)
 - [Dicom - carrier.dicom](/dicom)
 - [FedEx - carrier.fedex](/fedex)
+- [ICS Courier - carrier.ics_courier](/ics_courier)
+- [Nationex - carrier.nationex](/nationex)
 - [OCA - carrier.oca](/oca)
 - [Purolator - carrier.purolator](/purolator)
 - [Sendle - carrier.sendle](/sendle)
@@ -21,7 +24,7 @@ This repository is the host to multiple carrier web services generated Python da
 - [Yanwen - carrier.yanwen](/yanwen)
 - [Yunexpress - carrier.yunexpress](/yunexpress)
 
-*These packages are used by the [Purplship Multi-carrier Shipping SDK](https://github.com/PurplShip/purplship)*
+*These packages are used by the [Purplship Multi-carrier Shipping SDK](https://github.com/purplship/purplship)*
 
 ## License
 

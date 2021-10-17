@@ -1,0 +1,51 @@
+{
+    "ShipmentId": 501883938,
+    "ConsolId": 501883122,
+    "BillingAccount": 165556,
+    "ParcelIds": [
+        50188393801,
+        50188393802
+    ],
+    "Barcodes": [
+        501883938010,
+        501883938027
+    ],
+    "RatesDetail": {
+        "BasePrice": 47.22,
+        "SurchargeCharges": [
+            {
+                "Id": "519",
+                "Charge": 21.211,
+                "BeyondId": 102,
+                "NameFr": "Surcharge région éloignée",
+                "NameEn": "Beyond surcharge"
+            }
+        ],
+        "TaxCharges": [
+            {
+                "Id": "GST",
+                "Charge": 12.905,
+                "Rate": 0.0,
+                "NameFr": "TPS",
+                "NameEn": "GST"
+            }
+        ],
+        "AccessoryCharges": [
+            {
+                "Id": "3",
+                "Charge": 36.545,
+                "NameFr": "Matières dangereuses",
+                "NameEn": "Dangerous goods"
+            }
+        ],
+        "NCVCharge": 4.0,
+        "FuelRate": 0.1425,
+        "FuelCharge": 2.51,
+        "SubTotal": 55.89,
+        "Total": 61.12,
+        "TotalBillableWeight": 0.0,
+        "BillingZone": "NL",
+        "DelayTransitDays": 2,
+        "EstimatedDeliveryDate": "2021-05-05"
+    }
+}

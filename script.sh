@@ -45,8 +45,12 @@ alias env:reset=init
 
 generate () {
   pushd "$1"
-  . ./generate.sh "$2"
+  ./generate.sh "$2"
   popd
+}
+
+build_tools() {
+  docker build -t purplship/tools . $@
 }
 
 clean_builds() {
