@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.dhl_ecom_de"
-version = "2021.10"
+version = "2021.10rc0"
 description = "DHL eCommerce Germany Web API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship-carriers"
 homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.dhl_ecom_de"

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.ics_courier"
-version = "2021.2-alpha"
+version = "2021.10rc0"
 description = "ICS courier Web API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship-carriers"
 homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.ics_courier"
