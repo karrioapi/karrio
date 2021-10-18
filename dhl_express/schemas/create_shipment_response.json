@@ -1,0 +1,91 @@
+{
+  "url": "https://express.api.dhl.com/mydhlapi/shipments",
+  "shipmentTrackingNumber": "123456790",
+  "cancelPickupUrl": "https://express.api.dhl.com/mydhlapi/shipment-pickups/PRG200227000256",
+  "trackingUrl": "https://express.api.dhl.com/mydhlapi/shipments/1234567890/tracking",
+  "dispatchConfirmationNumber": "PRG200227000256",
+  "packages": [
+    {
+      "referenceNumber": 1,
+      "trackingNumber": "JD914600003889482921",
+      "trackingUrl": "https://express.api.dhl.com/mydhlapi/shipments/1234567890/tracking?PieceID=JD014600003889482921",
+      "volumetricWeight": 2.5,
+      "documents": [
+        {
+          "imageFormat": "PNG",
+          "content": "base64 encoded document",
+          "typeCode": "qr-code"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "imageFormat": "PDF",
+      "content": "base64 encoded document",
+      "typeCode": "label"
+    }
+  ],
+  "onDemandDeliveryURL": "https://odd-test.dhl.com/odd-online/US/wH24aaaaa1",
+  "shipmentDetails": [
+    {
+      "serviceHandlingFeatureCodes": [
+        "C"
+      ],
+      "volumetricWeight": 245.56,
+      "billingCode": "IMP",
+      "serviceContentCode": "WPX",
+      "customerDetails": {
+        "shipperDetails": {
+          "postalAddress": {
+            "postalCode": "27801",
+            "cityName": "Kralupy nad Vltavou",
+            "countryCode": "CZ",
+            "provinceCode": "CZ",
+            "addressLine1": "Na Cukrovaru 1063",
+            "addressLine2": "addres 2",
+            "addressLine3": "address 3",
+            "cityDistrictName": "Kralupy"
+          },
+          "contactInformation": {
+            "companyName": "Better One s.r.o",
+            "fullName": "Huahom Peral"
+          }
+        },
+        "receiverDetails": {
+          "postalAddress": {
+            "postalCode": "27801",
+            "cityName": "Kralupy nad Vltavou",
+            "countryCode": "CZ",
+            "provinceCode": "CZ",
+            "addressLine1": "Na Cukrovaru 1063",
+            "addressLine2": "addres 2",
+            "addressLine3": "address 3",
+            "cityDistrictName": "Kralupy"
+          },
+          "contactInformation": {
+            "companyName": "Better One s.r.o",
+            "fullName": "Huahom Peral"
+          }
+        }
+      }
+    }
+  ],
+  "shipmentCharges": [
+    {
+      "currencyType": "BILLC",
+      "priceCurrency": "USD",
+      "price": 147,
+      "serviceBreakdown": [
+        {
+          "name": "EXPRESS WORLDWIDE",
+          "price": 147,
+          "typeCode": "FF"
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "can't return prices"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "products": [
+    {
+      "productName": "EXPRESS DOMESTIC",
+      "productCode": "N",
+      "localProductCode": "N",
+      "localProductCountryCode": "CZ",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "weight": {
+        "volumetric": 0,
+        "provided": 1.5,
+        "unitOfMeasurement": "metric"
+      },
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "GBP",
+          "price": 141.51
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "GBP",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 114.92
+            }
+          ]
+        }
+      ],
+      "detailedPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "GBP",
+          "breakdown": [
+            {
+              "name": "12:00 PREMIUM",
+              "serviceCode": "YK",
+              "localServiceCode": "YK",
+              "typeCode": "string",
+              "serviceTypeCode": "SCH",
+              "price": 5,
+              "priceCurrency": "GBP",
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "isBillingServiceIndicator": false,
+              "priceBreakdown": [
+                {
+                  "priceType": "TAX",
+                  "typeCode": "All Bu",
+                  "price": 0,
+                  "rate": 0,
+                  "basePrice": 5
+                }
+              ],
+              "tariffRateFormula": [
+                "((0.3464 % COST) MAX (528.33))"
+              ]
+            }
+          ]
+        }
+      ],
+      "pickupCapabilities": {
+        "nextBusinessDay": false,
+        "localCutoffDateAndTime": "2019-09-18T15:00:00",
+        "GMTCutoffTime": "16:00:00",
+        "pickupEarliest": "09:30:00",
+        "pickupLatest": "16:00:00",
+        "originServiceAreaCode": "ELA",
+        "originFacilityAreaCode": "HHR",
+        "pickupAdditionalDays": 0,
+        "pickupDayOfWeek": 3
+      },
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDC",
+        "estimatedDeliveryDateAndTime": "2019-09-20T12:00:00",
+        "destinationServiceAreaCode": "PRG",
+        "destinationFacilityAreaCode": "PR3",
+        "deliveryAdditionalDays": 0,
+        "deliveryDayOfWeek": 5,
+        "totalTransitDays": 2
+      },
+      "items": [
+        {
+          "number": 1,
+          "breakdown": [
+            {
+              "name": "DUTY",
+              "serviceCode": "II",
+              "localServiceCode": "II",
+              "typeCode": "DUTY",
+              "serviceTypeCode": "FEE",
+              "price": 20,
+              "priceCurrency": "CZK",
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "isBillingServiceIndicator": false,
+              "priceBreakdown": [
+                {
+                  "priceType": "P",
+                  "typeCode": "TAX",
+                  "price": 110,
+                  "rate": 10,
+                  "basePrice": 100
+                }
+              ],
+              "tariffRateFormula": [
+                "((0.3464 % COST) MAX (528.33))"
+              ]
+            }
+          ]
+        }
+      ],
+      "pricingDate": "2020-02-25"
+    }
+  ],
+  "exchangeRates": [
+    {
+      "currentExchangeRate": 1.188411,
+      "currency": "GBP",
+      "baseCurrency": "EUR"
+    }
+  ],
+  "warnings": [
+    "Price can't be calculated"
+  ]
+}

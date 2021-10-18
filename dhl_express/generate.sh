@@ -1,35 +1,25 @@
-SCHEMAS=$1
-LIB_MODULES=./dhl_express_lib
+SCHEMAS=./schemas
+LIB_MODULES=./dhl_express
+mkdir -p $LIB_MODULES
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 
+quicktype () {
+    echo "Generating $1..."
+    docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/dhl_express \
+    purplship/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
+    --no-nice-property-names --all-properties-optional $@
+}
 
-generateDS --no-namespace-defs -o "${LIB_MODULES}/dct_response_global_2_0.py" $SCHEMAS/DCT-Response_global-2.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/dct_req_global_2_0.py" $SCHEMAS/DCT-req_global-2.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/dct_requestdatatypes.py" $SCHEMAS/DCTRequestdatatypes.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/dct_requestdatatypes_global.py" $SCHEMAS/DCTRequestdatatypes_global.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/dct_responsedatatypes_global.py" $SCHEMAS/DCTResponsedatatypes_global.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_request_known_1_0.py" $SCHEMAS/TrackingRequestKnown-1.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_request_unknown_1_0.py" $SCHEMAS/TrackingRequestUnknown-1.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_response.py" $SCHEMAS/TrackingResponse.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/book_pickup_global_req_3_0.py" $SCHEMAS/book-pickup-global-req-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/book_pickup_global_res_3_0.py" $SCHEMAS/book-pickup-global-res-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/cancel_pickup_global_req_3_0.py" $SCHEMAS/cancel-pickup-global-req-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/cancel_pickup_global_res.py" $SCHEMAS/cancel-pickup-global-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/datatypes.py" $SCHEMAS/datatypes.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/datatypes_global.py" $SCHEMAS/datatypes_global.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/datatypes_global_v10.py" $SCHEMAS/datatypes_global_v10.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/datatypes_global_v62.py" $SCHEMAS/datatypes_global_v62.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/err_res.py" $SCHEMAS/err-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/modify_pickup_global_req_3_0.py" $SCHEMAS/modify-pickup-global-req-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/modify_pickup_global_res_3_0.py" $SCHEMAS/modify-pickup-global-res-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/pickup_err_res.py" $SCHEMAS/pickup-err-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/pickup_res.py" $SCHEMAS/pickup-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/pickupdatatypes_global_3_0.py" $SCHEMAS/pickupdatatypes_global-3.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/pickupdatatypes_global.py" $SCHEMAS/pickupdatatypes_global.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/routing_global_req_2_0.py" $SCHEMAS/routing-global-req-2.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/routing_global_res.py" $SCHEMAS/routing-global-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/ship_val_err_res.py" $SCHEMAS/ship-val-err-res.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/ship_val_global_req_10_0.py" $SCHEMAS/ship-val-global-req-10.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/ship_val_global_res_10_0.py" $SCHEMAS/ship-val-global-res-10.0.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/track_err_res.py" $SCHEMAS/track-err-res.xsd
+quicktype --src="${SCHEMAS}/create_pickup_request.json" --out="${LIB_MODULES}/create_pickup_request.py"
+quicktype --src="${SCHEMAS}/create_shipment_request.json" --out="${LIB_MODULES}/create_shipment_request.py"
+quicktype --src="${SCHEMAS}/create_shipment_response.json" --out="${LIB_MODULES}/create_shipment_response.py"
+quicktype --src="${SCHEMAS}/error.json" --out="${LIB_MODULES}/error.py"
+quicktype --src="${SCHEMAS}/pickup_response.json" --out="${LIB_MODULES}/pickup_response.py"
+quicktype --src="${SCHEMAS}/rating_request.json" --out="${LIB_MODULES}/rating_request.py"
+quicktype --src="${SCHEMAS}/rating_response.json" --out="${LIB_MODULES}/rating_response.py"
+quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/tracking_request.py"
+quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"
+quicktype --src="${SCHEMAS}/update_pickup_request.json" --out="${LIB_MODULES}/update_pickup_request.py"
+quicktype --src="${SCHEMAS}/validate_address_request.json" --out="${LIB_MODULES}/validate_address_request.py"
+quicktype --src="${SCHEMAS}/validate_address_response.json" --out="${LIB_MODULES}/validate_address_response.py"
