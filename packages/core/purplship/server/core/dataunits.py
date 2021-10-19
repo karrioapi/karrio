@@ -8,12 +8,11 @@ PACKAGE_MAPPERS = collect_providers_data()
 
 
 REFERENCE_MODELS = {
+    "APP_NAME": getattr(settings, "APP_NAME", "purplship"),
+    "APP_WEBSITE": getattr(settings, "APP_WEBSITE", "https://purplship.com"),
+    "APP_VERSION": getattr(settings, "VERSION"),
+    "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
     **collect_references(),
     "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
     "incoterms": {c.name: c.value for c in list(Incoterm)},
-
-    "APP_NAME": getattr(settings, 'APP_NAME', 'purplship'),
-    "APP_WEBSITE": getattr(settings, 'APP_WEBSITE', 'https://purplship.com'),
-    "APP_VERSION": getattr(settings, 'VERSION'),
-    "MULTI_ORGANIZATIONS": getattr(settings, 'MULTI_ORGANIZATIONS', False),
 }
