@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "py-soap"
+version = "2020.3.2"
+description = "SOAP Schemas Python Data Types library"
+repository="https://github.com/PurplShip/py-soap"
+homepage="https://github.com/PurplShip/py-soap"
+authors = ["Dan Kobina <danielkobina@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    { include = "pysoap" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: MIT License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = "^1.15.0"
+lxml = "^4.6.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
