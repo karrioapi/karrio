@@ -1,0 +1,74 @@
+site_name: purplship server
+site_url: https://docs.purplship.com
+site_description: >-
+  Open Source Shipping API Docs for integration with UPS API, FedEx API, DHL API, Canada Post API, and more.
+
+repo_url: https://github.com/purplship/purplship-server
+repo_name: purplship/purplship-server
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+  palette:
+    primary: purple
+    accent: purple
+  favicon: images/favicon.ico
+  logo: images/icon.png
+
+nav:
+  - Overview: index.md
+  - User Guides:
+    - user-guides/index.md
+    - user-guides/shipping.md
+    - user-guides/tracking.md
+    - Admin: user-guides/admin.md
+  - API Guides:
+    - api-guides/index.md
+  - Developer Guides:
+    - developer-guides/index.md
+    - Architecture: developer-guides/architecture.md
+    - developer-guides/installing.md
+    - developer-guides/rest-api.md
+    - developer-guides/graphql.md
+    - developer-guides/extensibility.md
+    - Deploy purplship:
+      - developer-guides/configuration.md
+      - developer-guides/docker.md
+      - developer-guides/heroku.md
+    - Community:
+      - FAQ: developer-guides/FAQ.md
+      - developer-guides/support.md
+      - developer-guides/developing.md
+#  - Insiders: insiders.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/purplship
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/purplship
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/purplship/purplship-server
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/purplship
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/kXEa3UMRHd
+
+  analytics:
+    provider: google
+    property: UA-111378601-2
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+copyright: Copyright &copy; 2021 purplship

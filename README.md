@@ -1,184 +1,200 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/purplship/purplship/raw/main/docs/images/icon.png" alt="purplship" height="100">
+      <img src="https://github.com/purplship/purplship/raw/main/purpleserver/purpleserver/static/extra/branding/icon.png" alt="purplship" height="100">
     </a>
   </p>
   <h2 align="center">
-    purplship - The Open Source multi-carrier shipping SDK
+    The Open Source Multi-carrier Shipping API
   </h2>
   <p align="center">
-    <a href="https://github.com/purplship/purplship/actions"><img src="https://github.com/purplship/purplship/workflows/purplship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
-    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" style="max-width:100%;"></a>
-    <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
-    <a href="https://codecov.io/gh/purplship/purplship"><img src="https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
-    <a href="https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41"></a>
+    <a href="https://github.com/purplship/purplship/actions"><img src="https://github.com/purplship/purplship/workflows/puprlship-server/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/agpl-3.0" rel="nofollow"><img src="https://camo.githubusercontent.com/cb1d26ec555a33e9f09fe279b5edc49996a3bb3b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d4147504c25323076332d626c75652e737667" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
   </p>
 </p>
 
-puprlship is a modern development kit that simplifies the integration of shipping carriers services into an app.
 
-The key features are:
+## What's purplship server?
 
-- **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
-- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Shipping`, `Tracking`...) 
+purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
+processes and fulfilment automation.
+The server is in Python, but you can use any programming language to send API requests to our growing network of
+shipping carriers from your app.
+
+- [Join us on Discord](https://discord.gg/gS88uE7sEx)
+- [Want to partner with us? Reach Out](https://purplship.com/#contact)
+
+purplship makes shipping services simple and accessible.
+Help us out… If you love Open standard and great software, give us a star! 🌟
+
+
+## Features
+
+- **Headless shipping API**: Power up your application with access to a network of carrier services
 - **Multi-carrier**: Integrate purplship once and connect to multiple shipping carrier APIs
-- **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
+- **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels
+- **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page
+- **Address Validation**: Validate shipping addresses using the Google Geocoding API
+- **Shipping Web App**: Use a single dashboard to orchestrate your logistics operation.
+- **Cloud**: Optimized for deployments using Docker
 
 
-*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/purplship/purplship-server).*
+<img src="https://github.com/purplship/purplship/raw/main/artifacts/shipping-dashboard.jpeg">
+<img src="https://github.com/purplship/purplship/raw/main/artifacts/tracking-dashboard.jpeg">
 
 
-## Requirements
+## Deployment
 
-Python 3.7+
+### `Docker`
 
-## Installation
-
-```bash
-# install purplship core
-pip install purplship
-
-# install the purplship canadapost extention
-pip install purplship.canadapost
-```
-
-Additional extensions:
+> check the latest version tags of the purplship/purplship-server image on [Docker Hub](https://hub.docker.com/r/purplship/purplship/tags)
 
 <details>
-<summary>Available carriers</summary>
+<summary>Use our image</summary>
 
-- `purplship.aramex`
-- `purplship.australiapost`
-- `purplship.canadapost`
-- `purplship.canpar`
-- `purplship.dhl-express`
-- `purplship.dhl-universal`
-- `purplship.dicom`
-- `purplship.fedex`
-- `purplship.purolator`
-- `purplship.royalmail`
-- `purplship.sendle`
-- `purplship.sf-express`
-- `purplship.tnt`
-- `purplship.ups`
-- `purplship.usps`
-- `purplship.usps-international`
-- `purplship.yanwen`
-- `purplship.yunexpress`
+- Start a Postgres database
+
+```bash
+docker run -d \
+  --name db --rm \
+  -e POSTGRES_DB=db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  postgres
+```
+
+- Run your shipping API
+
+```bash
+docker run -d \
+  --name pship --rm \
+  -e DEBUG_MODE=True \
+  -e ADMIN_EMAIL=admin@example.com \
+  -e ADMIN_PASSWORD=demo \
+  --link=db:db -p 5002:5002 \
+  danh91.docker.scarf.sh/purplship/purplship-server:2021.7
+```
 
 </details>
 
-## Usage
+<details>
+<summary>Or use docker-compose</summary>
 
-- Fetch shipping rates
+- Create a `docker-compose.yml` file
 
-```python
-import purplship
-from purplship.core.models import Address, Parcel, RateRequest
-from purplship.mappers.canadapost.settings import Settings
+```yaml
+version: '3'
 
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - pshipdb:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    networks:
+      - db_network
 
-# Initialize a carrier gateway
-canadapost = purplship.gateway["canadapost"].create(
-    Settings(
-        username="6e93d53968881714",
-        password="0bfa9fcb9853d1f51ee57a",
-        customer_number="2004381",
-        contract_id="42708517",
-        test=True
-    )
-)
+  pship:
+    image: danh91.docker.scarf.sh/purplship/server:2021.7
+    restart: unless-stopped
+    environment:
+      - DEBUG_MODE=True
+      - ALLOWED_HOSTS=*
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=demo
+      - DATABASE_NAME=db
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    depends_on:
+      - db
+    networks:
+      - db_network
 
-# Fetching shipment rates
+volumes:
+  pshipdb:
+    driver: local
 
-# Provide the shipper's address
-shipper = Address(
-    postal_code="V6M2V9",
-    city="Vancouver",
-    country_code="CA",
-    state_code="BC",
-    address_line1="5840 Oak St"
-)
-
-# Provide the recipient's address
-recipient = Address(
-    postal_code="E1C4Z8",
-    city="Moncton",
-    country_code="CA",
-    state_code="NB",
-    residential=False,
-    address_line1="125 Church St"
-)
-
-# Specify your package dimensions and weight
-parcel = Parcel(
-    height=3.0,
-    length=6.0,
-    width=3.0,
-    weight=0.5,
-    weight_unit='KG',
-    dimension_unit='CM'
-)
-
-# Prepare a rate request
-rate_request = RateRequest(
-    shipper=shipper,
-    recipient=recipient,
-    parcels=[parcel],
-    services=["canadapost_xpresspost"],
-)
-
-# Send a rate request using a carrier gateway
-response = purplship.Rating.fetch(rate_request).from_(canadapost)
-
-# Parse the returned response
-rates, messages = response.parse()
-
-print(rates)
-# [
-#     RateDetails(
-#         carrier_name="canadapost",
-#         carrier_id="canadapost",
-#         currency="CAD",
-#         transit_days=2,
-#         service="canadapost_xpresspost",
-#         discount=1.38,
-#         base_charge=12.26,
-#         total_charge=13.64,
-#         duties_and_taxes=0.0,
-#         extra_charges=[
-#             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
-#             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
-#         ],
-#         meta=None,
-#         id=None,
-#     )
-# ]
+networks:
+  db_network:
+    driver: bridge
 ```
+
+- Run the application
+
+```terminal
+docker-compose up
+```
+
+</details>
+
+Access the application at http://0.0.0.0:5002
+
+**Default Login**
+
+| email             | Password |
+| ----------------- | -------- |
+| admin@example.com | demo     |
+
+
+### `Heroku`
+
+Host your own purplship server for FREE with One-Click Deploy.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/purplship/purplship-heroku/tree/main/)
+
+
+## Editions
+
+purplship is available in two editions - **OSS** and **Enterprise**.
+
+The Open Source Edition is under the `Apache 2` License.
+
+To get the quotation of our Enterprise Edition, please visit [purplship.com](https://purplship.com) and contact us.
+
+- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
+
+
+|                                          | OSS         | Enterprise   |
+| ---------------------------------------- | ----------- | ------------ |
+| Multi-carrier shipping APIs              | Yes         | Yes          |
+| Carrier accounts                         | Unlimited   | Unlimited    |
+| Hosting                                  | Self-hosted | Self-hosted  |
+| Maintenance & support                    | Community   | Dedicated    |
+| Whitelabel                               | No          | Yes          |
+| Multi-tenant & Multi-org                 | No          | Yes          |
+| Reporting & Analytics (soon)             | No          | Yes          |
+| Shipping billing data (soon)             | No          | Yes          |
+
+
+## Official Client Libraries
+
+- [Node](https://github.com/purplship/purplship-node)
+- [PHP](https://github.com/purplship/purplship-php-client)
+- [Python](https://github.com/purplship/purplship-python-client)
+
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
+our [OpenAPI References](https://github.com/purplship/purplship/tree/main/schemas)
+
 
 ## Resources
 
-- [**Documentation**](https://sdk.purplship.com)
-- [**Bug Tracker**](https://github.com/puprlship/purplship/issues)
-- [**Github Community**](https://github.com/purplship/purplship-server/discussions)
-
-## Contributing
-
-We encourage you to contribute to puprlship! Please check out the
-[Contributing to purplship guide](/docs/contributing.md) for guidelines about how to proceed.
-[Join the purplship discord channel!](https://discord.gg/gS88uE7sEx)
-
-Do you want to extend purplship and integrate a custom carrier, check out 
-[Extending purplship](https://sdk.purplship.com/development/extending/)
+- [**Documentation**](https://docs.purplship.com)
+- [**Github Community**](https://github.com/purplship/purplship/discussions)
+- [**Issue Tracker**](https://github.com/purplship/purplship/issues)
+- [**Blog**](https://blog.purplship.com)
 
 ## License
 
-This project is licensed under the terms of the `LGPL v3` license.
-Please see [LICENSE.md](/LICENSE) for licensing details.
+**This project `codebase` license is under the terms of the `AGPL v3` license.**
 
+An OSS `build` is released under the `Apache 2` License.
 
-## Authors
+See the [LICENSE file](/LICENSE) for license rights and limitations.
 
-- **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
-- **purplship** | hello@purplship.com | [purplship.com](https://purplship.com)
+Any other questions, mail us at hello@purplship.com. We’d love to meet you!

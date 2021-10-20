@@ -1,0 +1,19 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n static %}
+{% block title %} | Account Deactivated{% endblock %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content has-text-centered">
+        <p class="subtitle is-4">{% trans 'We are sad to see you go...' %}</p>
+
+        <p>{% trans 'Your account has been deactivated. All history and configs are scheduled for deletion.' %}</p>
+        <br />
+        <br />
+        <p>{% trans 'Hope to see you another time.' %}</p>
+
+    </div>
+</div>
+
+{% endblock %}

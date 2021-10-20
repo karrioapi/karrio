@@ -1,0 +1,76 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n static %}
+{% block title %} | Sign In{% endblock %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content">
+        <p class="subtitle has-text-centered">{% trans 'Sign in to your account' %}</p>
+
+        <form method="post" action="{% url 'login' %}">{% csrf_token %}
+
+            {% if form.errors and not form.non_field_errors %}
+            <p class="has-text-danger">
+                {% if form.errors.items|length == 1 %}
+                {% trans "Please correct the error below." %}
+                {% else %}{% trans "Please correct the errors below." %}
+                {% endif %}
+            </p>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+            <p class="has-text-danger">{{ error }}</p>
+            {% endfor %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <p class="has-text-danger">
+                {% blocktrans trimmed %}
+                You are authenticated as {{ username }}, but are not authorized to
+                access this page. Would you like to login to a different account?
+                {% endblocktrans %}
+            </p>
+            {% endif %}
+
+            <div class="field mt-6">
+                <label class="label" for="{{ form.username.id_for_label }}">{% trans 'Email' %}</label>
+                <div class="control">
+                    <input class="input" id="{{ form.username.id_for_label }}"
+                       name="{{ form.username.html_name }}" type="email"
+                       placeholder="{% trans 'Email' %}" required>
+                </div>
+                <div class="has-text-danger">{{ form.username.errors }}</div>
+            </div>
+            <div class="field mt-5">
+                <label class="label level" for="{{ form.password.id_for_label }}">
+                    <span>{% trans 'Password' %}</span>
+                    <a class="is-size-7" href="{% url 'password_reset' %}" tabindex="-1">Forgot your password?</a>
+                </label>
+
+                <div class="control">
+                    <input class="input" id="{{ form.password.id_for_label }}"
+                       name="{{ form.password.html_name }}" type="password"
+                       placeholder="{% trans 'Password' %}" required>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+                <div class="has-text-danger">{{ form.password.errors }}</div>
+            </div>
+
+            <div class="field mt-6">
+                <div class="control">
+                    <input class="button is-primary is-fullwidth" type="submit" value="{% trans 'Log in' %}"/>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="has-text-centered my-4 is-size-6">
+    Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+</div>
+
+{% endblock %}
+

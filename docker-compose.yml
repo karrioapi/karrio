@@ -1,0 +1,83 @@
+version: '3'
+
+services:
+  pship:
+    image: purplship/dev
+    build:
+      context: ./
+      dockerfile: docker/dev.Dockerfile
+    container_name: pship
+    env_file: .env
+    volumes:
+      - .:/pship/app/
+      - pshipstatics:/pship/static
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - db_network
+      - web_network
+    command: purplship runserver 0.0.0.0:5002
+
+  worker:
+    image: purplship/dev
+    container_name: worker
+    env_file: .env
+    volumes:
+      - .:/pship/app/
+      - pshipdata:/pship/data
+    depends_on:
+      - db
+    networks:
+      - db_network
+    command: purplship run_huey -w 2
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - pshipstatics:/static
+    networks:
+      - web_network
+    depends_on:
+      - pship
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PGDATA: /var/lib/postgresql/data/pship-dev
+    ports:
+      - "5432:5432"
+    networks:
+      - db_network
+
+  redis:
+    restart: always
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+
+volumes:
+  redisdata:
+  pshipdata:
+  pshipstatics:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge

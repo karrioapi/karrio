@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  pship:
+    image: purplship/test
+    build:
+      context: ./
+      dockerfile: docker/dev.test.Dockerfile
+    container_name: pship
+    env_file: .env
+    volumes:
+      - .:/pship/app/
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - db_network
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+
+
+volumes:
+  redisdata:
+
+networks:
+  db_network:
+    driver: bridge
