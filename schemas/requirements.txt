@@ -1,0 +1,4 @@
+generateDS
+poetry
+twine
+wheel

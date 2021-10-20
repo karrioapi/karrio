@@ -1,0 +1,18 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="CarrierPickupCancelRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="FirmName" />
+                <xs:element type="xs:string" name="SuiteOrApt" />
+                <xs:element type="xs:string" name="Address2" />
+                <xs:element type="xs:string" name="Urbanization" />
+                <xs:element type="xs:string" name="City" />
+                <xs:element type="xs:string" name="State" />
+                <xs:element type="xs:string" name="ZIP5" />
+                <xs:element type="xs:string" name="ZIP4" />
+                <xs:element type="xs:string" name="ConfirmationNumber" />
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

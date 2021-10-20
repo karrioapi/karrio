@@ -1,0 +1,26 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation>Schema for defining the various entities that will
+			be used
+			for all ExpressConnect shipping functions.</xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:simpleType name="doubleThreeDecimalPlaces">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="doubleTwoDecimalPlaces">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:element name="CURRENCY" type="xsd:string"/>
+    <xsd:element name="SERVICE" type="xsd:string"/>
+    <xsd:element name="OPTION" type="xsd:string"/>
+    <xsd:element name="CONREF" type="xsd:string"/>
+    <xsd:element name="CONNUMBER" type="xsd:string"/>
+    <xsd:element name="GROUPCODE" type="xsd:string"/>
+
+</xsd:schema>

@@ -1,0 +1,82 @@
+{
+  "customerDetails": {
+    "shipperDetails": {
+      "postalCode": "14800",
+      "cityName": "Prague",
+      "countryCode": "CZ",
+      "provinceCode": "CZ",
+      "addressLine1": "addres1",
+      "addressLine2": "addres2",
+      "addressLine3": "addres3",
+      "countyName": "Central Bohemia"
+    },
+    "receiverDetails": {
+      "postalCode": "14800",
+      "cityName": "Prague",
+      "countryCode": "CZ",
+      "provinceCode": "CZ",
+      "addressLine1": "addres1",
+      "addressLine2": "addres2",
+      "addressLine3": "addres3",
+      "countyName": "Central Bohemia"
+    }
+  },
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "productCode": "P",
+  "localProductCode": "P",
+  "valueAddedServices": [
+    {
+      "serviceCode": "II",
+      "localServiceCode": "II",
+      "value": 100,
+      "currency": "GBP",
+      "method": "cash"
+    }
+  ],
+  "productsAndServices": [
+    {
+      "productCode": "P",
+      "localProductCode": "P",
+      "valueAddedServices": [
+        {
+          "serviceCode": "II",
+          "localServiceCode": "II",
+          "value": 100,
+          "currency": "GBP",
+          "method": "cash"
+        }
+      ]
+    }
+  ],
+  "payerCountryCode": "CZ",
+  "plannedShippingDateAndTime": "2020-03-24T13:00:00GMT+00:00",
+  "unitOfMeasurement": "metric",
+  "isCustomsDeclarable": false,
+  "monetaryAmount": [
+    {
+      "typeCode": "declaredValue",
+      "value": 100,
+      "currency": "CZK"
+    }
+  ],
+  "requestAllValueAddedServices": false,
+  "returnStandardProductsOnly": false,
+  "nextBusinessDay": false,
+  "productTypeCode": "all",
+  "packages": [
+    {
+      "typeCode": "3BX",
+      "weight": 10.5,
+      "dimensions": {
+        "length": 25,
+        "width": 35,
+        "height": 15
+      }
+    }
+  ]
+}

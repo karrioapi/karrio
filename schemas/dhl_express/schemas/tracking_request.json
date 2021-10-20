@@ -1,0 +1,15 @@
+{
+  "shipmentTrackingNumber": [
+    "1234567890"
+  ],
+  "pieceTrackingNumber": [
+    "1234567890"
+  ],
+  "shipmentReference": "1234567890",
+  "shipmentReferenceType": "CU",
+  "shipperAccountNumber": "1234567890",
+  "dateRangeFrom": "2020-05-01",
+  "dateRangeTo": "2020-05-01",
+  "trackingView": "all-checkpoints",
+  "levelOfDetail": "shipment"
+}

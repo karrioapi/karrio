@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://ws.aramex.net/ShippingAPI/v1/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://ws.aramex.net/ShippingAPI/v1/">
+    <xs:import schemaLocation="https://ws.aramex.net/ShippingAPI.V2/Location/Service_1_0.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+    <xs:element name="AddressValidationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Address" nillable="true" type="tns:Address"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClientInfo">
+        <xs:sequence>
+            <xs:element name="UserName" nillable="true" type="xs:string"/>
+            <xs:element name="Password" nillable="true" type="xs:string"/>
+            <xs:element name="Version" nillable="true" type="xs:string"/>
+            <xs:element name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="AccountPin" nillable="true" type="xs:string"/>
+            <xs:element name="AccountEntity" nillable="true" type="xs:string"/>
+            <xs:element name="AccountCountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Source" type="xs:int"/>
+            <xs:element minOccurs="0" name="PreferredLanguageCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+    <xs:complexType name="Transaction">
+        <xs:sequence>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="Reference4" nillable="true" type="xs:string"/>
+            <xs:element name="Reference5" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Transaction" nillable="true" type="tns:Transaction"/>
+    <xs:complexType name="Address">
+        <xs:sequence>
+            <xs:element name="Line1" nillable="true" type="xs:string"/>
+            <xs:element name="Line2" nillable="true" type="xs:string"/>
+            <xs:element name="Line3" nillable="true" type="xs:string"/>
+            <xs:element name="City" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="StateOrProvinceCode" nillable="true" type="xs:string"/>
+            <xs:element name="PostCode" nillable="true" type="xs:string"/>
+            <xs:element name="CountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Longitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="Latitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="BuildingNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="BuildingName" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Apartment" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="POBox" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Address" nillable="true" type="tns:Address"/>
+    <xs:element name="AddressValidationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="SuggestedAddresses" nillable="true" type="tns:ArrayOfAddress"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfNotification">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="tns:Notification"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfNotification" nillable="true" type="tns:ArrayOfNotification"/>
+    <xs:complexType name="Notification">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Message" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Notification" nillable="true" type="tns:Notification"/>
+    <xs:complexType name="ArrayOfAddress">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Address" nillable="true" type="tns:Address"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAddress" nillable="true" type="tns:ArrayOfAddress"/>
+    <xs:element name="CountriesFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountriesFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Countries" nillable="true" type="tns:ArrayOfCountry"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfCountry">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Country" nillable="true" type="tns:Country"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfCountry" nillable="true" type="tns:ArrayOfCountry"/>
+    <xs:complexType name="Country">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Name" nillable="true" type="xs:string"/>
+            <xs:element name="IsoCode" nillable="true" type="xs:string"/>
+            <xs:element name="StateRequired" type="xs:boolean"/>
+            <xs:element name="PostCodeRequired" type="xs:boolean"/>
+            <xs:element name="PostCodeRegex" nillable="true" type="q1:ArrayOfstring"
+                xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+            <xs:element name="InternationalCallingNumber" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Country" nillable="true" type="tns:Country"/>
+    <xs:element name="CountryFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Country" nillable="true" type="tns:Country"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CitiesFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="State" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="NameStartsWith" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CitiesFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Cities" nillable="true" type="q2:ArrayOfstring"
+                    xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OfficesFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OfficesFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Offices" nillable="true" type="tns:ArrayOfOffice"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfOffice">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Office" nillable="true" type="tns:Office"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfOffice" nillable="true" type="tns:ArrayOfOffice"/>
+    <xs:complexType name="Office">
+        <xs:sequence>
+            <xs:element name="Entity" nillable="true" type="xs:string"/>
+            <xs:element name="EntityDescription" nillable="true" type="xs:string"/>
+            <xs:element name="OfficeType" nillable="true" type="xs:string"/>
+            <xs:element name="Address" nillable="true" type="tns:Address"/>
+            <xs:element name="Telephone" nillable="true" type="xs:string"/>
+            <xs:element name="WorkingDays" nillable="true" type="xs:string"/>
+            <xs:element name="WorkingHours" nillable="true" type="xs:string"/>
+            <xs:element name="Longtitude" type="xs:decimal"/>
+            <xs:element name="Latitude" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Office" nillable="true" type="tns:Office"/>
+    <xs:element name="StatesFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StatesFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="States" nillable="true" type="tns:ArrayOfState"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfState">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="State" nillable="true" type="tns:State"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfState" nillable="true" type="tns:ArrayOfState"/>
+    <xs:complexType name="State">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Name" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="State" nillable="true" type="tns:State"/>
+    <xs:element name="AddressServiceabilityRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Address" nillable="true" type="tns:Address"/>
+                <xs:element minOccurs="0" name="ServiceDetails" nillable="true" type="tns:AddressServiceDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="AddressServiceDetails">
+        <xs:sequence>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="ServiceMode" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AddressServiceDetails" nillable="true" type="tns:AddressServiceDetails"/>
+    <xs:element name="AddressServiceabilityResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="IsServiced" nillable="true" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DropOffLocationsFetchingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DropOffLocationsFetchingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Locations" nillable="true" type="tns:ArrayOfDropOffLocation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfDropOffLocation">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="DropOffLocation" nillable="true" type="tns:DropOffLocation"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfDropOffLocation" nillable="true" type="tns:ArrayOfDropOffLocation"/>
+    <xs:complexType name="DropOffLocation">
+        <xs:sequence>
+            <xs:element name="ID" type="xs:int"/>
+            <xs:element name="Description" nillable="true" type="xs:string"/>
+            <xs:element name="Address" nillable="true" type="tns:Address"/>
+            <xs:element name="Telephone" nillable="true" type="xs:string"/>
+            <xs:element name="WorkingDays" nillable="true" type="xs:string"/>
+            <xs:element name="WorkingHours" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="DropOffLocation" nillable="true" type="tns:DropOffLocation"/>
+</xs:schema>

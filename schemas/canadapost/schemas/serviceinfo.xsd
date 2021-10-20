@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/serviceinfo-v2" xmlns="http://www.canadapost.ca/ws/serviceinfo-v2" elementFormDefault="qualified">    
+    <xsd:element name="info-messages" type="InfoMessagesType" />
+    <xsd:element name="info-message" type="InfoMessageType" />
+    
+    <xsd:complexType name="InfoMessagesType">
+        <xsd:sequence>
+            <xsd:element name="info-message" type="InfoMessageType"
+                minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="MessageType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:enumeration value="SO"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="InfoMessageType">
+        <xsd:all>
+      		<xsd:element name="message-type" type="MessageType" />
+            <xsd:element name="message-text" type="xsd:token" />
+            <xsd:element name="from-datetime" type="xsd:dateTime"/>
+            <xsd:element name="to-datetime" type="xsd:dateTime"/>
+        </xsd:all>
+    </xsd:complexType>
+</xsd:schema>
