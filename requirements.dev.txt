@@ -69,14 +69,14 @@ purplship.eshipper
 purplship.freightcom
 
 
-# purplship server core packages
--e ./packages/core
--e ./packages/graph
+# purplship server core modules
+-e ./modules/core
+-e ./modules/graph
 -e ./purplship
--e ./packages/proxy
--e ./packages/manager
--e ./packages/pricing
--e ./packages/events
+-e ./modules/proxy
+-e ./modules/manager
+-e ./modules/pricing
+-e ./modules/events
 
 
 # Dev dependencies
