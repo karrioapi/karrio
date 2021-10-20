@@ -1,3 +1,0 @@
-generateDs
-poetry
-twine
