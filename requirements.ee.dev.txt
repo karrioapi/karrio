@@ -1,5 +1,0 @@
--r ./requirements.dev.txt
-
-# Purplship server insider packages
--e ./ee/server/tenants
--e ./ee/server/orgs

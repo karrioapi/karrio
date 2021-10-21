@@ -1,0 +1,67 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: puprlship-tests
+
+on: [push]
+
+jobs:
+  sdk-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          ./scripts/setup-sdk-env.sh &&
+          ./scripts/run-sdk-typecheck.sh &&
+          ./scripts/run-sdk-tests.sh &&
+          pip install coverage codecov &&
+          coverage report && codecov
+        env:
+          CODECOV_TOKEN: f86de243-0032-429c-9fd2-254728e648e1
+  server-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          sudo chown -R 1000 ./
+          docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+            cd app &&
+            pip install -r requirements.dev.txt &&
+            pip install -r requirements.server.dev.txt &&
+            cd -
+            purplship migrate &&
+            purplship test --failfast purplship.server.proxy.tests &&
+            purplship test --failfast purplship.server.pricing.tests &&
+            purplship test --failfast purplship.server.manager.tests &&
+            purplship test --failfast purplship.server.events.tests &&
+            purplship test --failfast purplship.server.graph.tests
+          '
+
+  server-ee-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run ee Tests
+        run: |
+          sudo chown -R 1000 ./
+          docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+            cd app &&
+            pip install -r requirements.dev.txt &&
+            pip install -r requirements.server.ee.dev.txt &&
+            cd -
+            purplship migrate &&
+            purplship test --failfast purplship.server.proxy.tests &&
+            purplship test --failfast purplship.server.pricing.tests &&
+            purplship test --failfast purplship.server.manager.tests &&
+            purplship test --failfast purplship.server.events.tests &&
+            purplship test --failfast purplship.server.graph.tests &&
+            purplship test --failfast purplship.server.orgs.tests
+          '

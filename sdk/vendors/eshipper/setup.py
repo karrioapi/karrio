@@ -1,27 +1,12 @@
+"""Warning: This setup.py is only there for git install until poetry support git subdirectory"""
+
 from setuptools import setup, find_namespace_packages
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 setup(
-    name="purplship.eshipper",
-    version="2021.8",
-    description="eShipper purplship extension",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/purplship/purplship-bridges/tree/main/eshipper",
-    license="LGPLv3",
-    packages=find_namespace_packages(exclude=["tests*"]),
-    install_requires=[
-        "django",
-        "purplship>=2021.7",
-        "purplship-server.core",
-    ],
-    dependency_links=[],
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
-        "Operating System :: OS Independent",
-    ],
-    zip_safe=False,
+      name='purplship.eshipper',
+      version='0.0.0-dev',
+      license='LGPLv3',
+      packages=find_namespace_packages(exclude=["tests*"]),
+      install_requires=['purplship'],
+      zip_safe=False,
 )

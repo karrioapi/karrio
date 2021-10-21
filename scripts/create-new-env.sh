@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-# Python virtual environment helpers
-ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-BASE_DIR="${ROOT##*/}"
-ENV_DIR=".venv"
+# Source environment variables
+source "scripts/_env.sh"
 
 # prepare virtual environment directory
 echo 'prepare env directory ...'
 deactivate >/dev/null 2>&1
-rm -rf "${ROOT:?}/$ENV_DIR"
 mkdir -p "${ROOT:?}/$ENV_DIR"
+
+[[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR" ]] && rm -rf "${ROOT:?}/$ENV_DIR/$BASE_DIR"
 
 # create virtual environment
 echo "creating $BASE_DIR env ..."
@@ -19,5 +18,6 @@ echo "activating $BASE_DIR env ..."
 source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
 
 # install requirements
-echo "installing requirements ..."
-pip install --upgrade pip poetry wheel > /dev/null
+echo "installing base requirements ..."
+pip install -r "${ROOT}/requirements.dev.txt" --upgrade
+pip list

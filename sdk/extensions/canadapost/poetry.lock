@@ -14,7 +14,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "carrier.canadapost"
-version = "2021.8"
+version = "2021.10"
 description = "Canada Post API Schemas Python Data Types library"
 category = "main"
 optional = false

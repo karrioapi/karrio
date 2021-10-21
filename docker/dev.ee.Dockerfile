@@ -4,8 +4,8 @@ RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
 COPY . /pship/app/
 RUN cd /pship/app && \
-     pip install --upgrade pip && \
-    pip install -r requirements.ee.dev.txt
+    pip install -r requirements.dev.txt --upgrade && \
+    pip install -r requirements.server.ee.txt
 
 
 # The runtime image

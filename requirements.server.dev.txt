@@ -1,0 +1,34 @@
+PyJWT==2.1.0
+
+# Installed versions
+purplship
+purplship.aramex
+purplship.australiapost
+purplship.canadapost
+purplship.canpar
+purplship.dhl-express
+purplship.dhl-universal
+purplship.dicom
+purplship.fedex
+purplship.purolator
+purplship.royalmail
+purplship.sendle
+purplship.sf-express
+purplship.tnt
+purplship.ups
+purplship.usps
+purplship.usps_international
+purplship.yanwen
+purplship.yunexpress
+purplship.eshipper
+purplship.freightcom
+
+
+# purplship server core modules
+-e ./server/modules/core
+-e ./server/modules/graph
+-e ./server/main
+-e ./server/modules/proxy
+-e ./server/modules/manager
+-e ./server/modules/pricing
+-e ./server/modules/events
