@@ -1,6 +1,6 @@
 {
-  "short_name": "purpleboard",
-  "name": "Purple Board",
+  "short_name": "purplship",
+  "name": "purplship server",
   "icons": [
     {
       "src": "\/static\/branding\/android-chrome-192x192.png",
@@ -17,6 +17,6 @@
   ],
   "start_url": "\/",
   "display": "standalone",
-  "theme_color": "#9504af",
-  "background_color": "#9504af"
+  "theme_color": "#5722cc",
+  "background_color": "#5722cc"
 }

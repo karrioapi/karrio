@@ -111,7 +111,7 @@ node_modules/
 *.DS_Store
 .idea/
 staticfiles/*
-purplship/purplship/server/staticfiles/*
-!purplship/purplship/server/staticfiles/.gitkeep
+main/purplship/server/staticfiles/*
+!main/purplship/server/staticfiles/.gitkeep
 codegen/
 .pship/
