@@ -1,27 +1,27 @@
 PyJWT==2.1.0
 
 # Installed versions
-purplship
-purplship.aramex
-purplship.australiapost
-purplship.canadapost
-purplship.canpar
-purplship.dhl-express
-purplship.dhl-universal
-purplship.dicom
-purplship.fedex
-purplship.purolator
-purplship.royalmail
-purplship.sendle
-purplship.sf-express
-purplship.tnt
-purplship.ups
-purplship.usps
-purplship.usps_international
-purplship.yanwen
-purplship.yunexpress
-purplship.eshipper
-purplship.freightcom
+purplship==2021.10rc3
+purplship.aramex==2021.10rc3
+purplship.australiapost==2021.10rc3
+purplship.canadapost==2021.10rc3
+purplship.canpar==2021.10rc3
+purplship.dhl-express==2021.10rc3
+purplship.dhl-universal==2021.10rc3
+purplship.dicom==2021.10rc3
+purplship.fedex==2021.10rc3
+purplship.purolator==2021.10rc3
+purplship.royalmail==2021.10rc3
+purplship.sendle==2021.10rc3
+purplship.sf-express==2021.10rc3
+purplship.tnt==2021.10rc3
+purplship.ups==2021.10rc3
+purplship.usps==2021.10rc3
+purplship.usps_international==2021.10rc3
+purplship.yanwen==2021.10rc3
+purplship.yunexpress==2021.10rc3
+purplship.eshipper==2021.10rc3
+purplship.freightcom==2021.10rc3
 
 
 # purplship server core modules

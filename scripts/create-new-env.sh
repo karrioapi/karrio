@@ -19,5 +19,10 @@ source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
 
 # install requirements
 echo "installing base requirements ..."
-pip install -r "${ROOT}/requirements.dev.txt" --upgrade
+pip install pip --upgrade
+
+if [[ "$*" != *--empty* ]]; then
+    pip install -r "${ROOT}/requirements.dev.txt"
+fi
+
 pip list
