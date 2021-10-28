@@ -12,7 +12,7 @@ setup(
     url="https://github.com/Purplship/purplship-server",
     author="purplship",
     author_email="hello@purplship.com",
-    license="AGPLv3",
+    license="Purplship Enterprise",
     packages=find_namespace_packages("."),
     install_requires=[
         "django-extensions",
@@ -20,12 +20,8 @@ setup(
         "purplship.server.core",
         "purplship.server.graph",
     ],
-    dependency_links=[
-        "https://git.io/purplship",
-    ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     ],
     zip_safe=False,
     include_package_data=True,

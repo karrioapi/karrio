@@ -2,10 +2,10 @@
 name = "carrier.boxknight"
 version = "2020.11.2"
 description = "Boxknight API Schemas Python Data Types library"
-repository="https://github.com/PurplShip/purplship-carriers"
-homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.boxknight"
-authors = ["Dan Kobina <danielkobina@gmail.com>"]
-license = "MIT"
+repository="https://github.com/purplship/purplship"
+homepage="https://github.com/purplship/purplship/tree/main/carrier.boxknight"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
 readme = "README.md"
 packages = [
     { include = "boxknight_lib" }
@@ -14,7 +14,7 @@ classifiers = [
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
 	"Programming Language :: Python :: 3",
-	"License :: OSI Approved :: MIT License",
+	"License :: OSI Approved :: Apache Software License",
 ]
 
 [tool.poetry.dependencies]

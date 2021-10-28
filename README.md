@@ -1,14 +1,14 @@
 # <a href="https://purplship.com"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Sourcegraph" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
 
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![codecov](https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6)](https://codecov.io/gh/purplship/purplship)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
 
-purplship server is a multi-carrier shipping integartion platform.
+purplship is a multi-carrier shipping integartion platform.
 
 purplship makes shipping services simple and accessible.
-Help us out… If you love Open source and great software, give us a star! 🌟
+Help us out… If you love open source and great software, give us a star! 🌟
 
 **Features**
 
@@ -24,15 +24,15 @@ Help us out… If you love Open source and great software, give us a star! 🌟
 
 There are several ways to use Purplship:
 
-- [Purplship Cloud](https://cloud.purplship.com) you don't need to deploy anything. We will manage and scale your infrastructure.
-- [Purplship OSS](#purplship-oss) is an open-source version of Purplship that provides the core functionality of Purplship (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
+- [Purplship Cloud](https://cloud.purplship.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
+- [Purplship OSS](#purplship-oss) is an open-source version of purplship that provides the core functionality of purplship (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
 - [Purplship SDK](#purplship-sdk) is the core of the purplship abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration yourself.
 
 > Source code for all editions is contained in this repository. See the [License section](#license) for more details.
 
 ## Status
 
-- [x] Alpha: We are testing Purplship with a closed set of customers
+- [x] Alpha: We are testing purplship with a closed set of customers
 - [x] Public Alpha: Anyone can sign up over at [cloud.purplship.com](cloud.purplship.com). But go easy on us, there are a few kinks
 - [ ] Public Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready
@@ -144,7 +144,7 @@ Purplship should now be running at http://0.0.0.0:5002
 - [Python](https://github.com/purplship/purplship-python-client)
 
 Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
-our [OpenAPI References](https://github.com/purplship/purplship/tree/main/schemas)
+our [OpenAPI References](./server/schemas)
 
 ## Purplship SDK
 

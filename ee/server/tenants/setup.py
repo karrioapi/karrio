@@ -9,21 +9,17 @@ setup(
     description="Multi-carrier shipping API muti-tenant module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/PurplShip/purplship-server",
+    url="https://github.com/purplship/purplship",
     author="purplship",
-    author_email="danielk.developer@gmail.com",
-    license="Apache License Version 2.0",
+    author_email="hello@purplship.com",
+    license="Purplship Enterprise",
     packages=find_namespace_packages("."),
     install_requires=[
         "purplship.server.core",
         "django-tenants",
     ],
-    dependency_links=[
-        "https://git.io/purplship",
-    ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License",
     ],
     zip_safe=False,
 )

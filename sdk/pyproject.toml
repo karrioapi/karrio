@@ -2,8 +2,8 @@
 name = "purplship.sdk"
 version = "0.0.0"
 description = "purplship sdk env"
-authors = ["Dan Kobina <danielkobina@gmail.com>"]
-license = "LGPLv3"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
 
 [tool.poetry.dependencies]
 python = "^3.7"

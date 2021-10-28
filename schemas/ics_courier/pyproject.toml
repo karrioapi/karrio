@@ -4,8 +4,8 @@ version = "2021.10rc0"
 description = "ICS courier Web API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship-carriers"
 homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.ics_courier"
-authors = ["Dan Kobina <danielkobina@gmail.com>"]
-license = "MIT"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
 readme = "README.md"
 packages = [
     { include = "ics_courier_lib" }
@@ -14,7 +14,7 @@ classifiers = [
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
 	"Programming Language :: Python :: 3",
-	"License :: OSI Approved :: MIT License",
+	"License :: OSI Approved :: Apache Software License",
 ]
 
 [tool.poetry.dependencies]

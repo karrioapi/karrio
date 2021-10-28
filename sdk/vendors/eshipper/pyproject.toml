@@ -4,15 +4,15 @@ version = "2021.10"
 homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/eshipper"
 repository="https://github.com/purplship/purplship"
 description = "eShipper purplship extension"
-authors = ["Dan Kobina <danielkobina@gmail.com>"]
-license = "LGPLv3"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
 readme = "README.md"
 packages = [{ include = "purplship" }, { include = "eshipper_lib" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "License :: OSI Approved :: Apache Software License",
 ]
 
 [tool.poetry.dependencies]
