@@ -71,7 +71,7 @@ elif [[ "$*" == *gen:py:cli* ]]; then
         --additional-properties=packageName=purplship
 
 	cd -
-elif [[ "$*" == *build:pkg* ]]; then
+elif [[ "$*" == *build:pkgs* ]]; then
 	cd "${ROOT:?}"
     sm=$(find "${ROOT:?}/server" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
@@ -97,6 +97,6 @@ else
     echo "gen:ts:cli - Generate TypeScript client"
     echo "gen:php:cli - Generate PHP client"
     echo "gen:py:cli - Generate Python client"
-    echo "build:pkg - Build server packages"
+    echo "build:pkgs - Build server packages"
     echo "build:ee - Build enterprise packages"
 fi

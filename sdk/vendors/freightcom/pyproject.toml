@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.freightcom"
-version = "2021.10"
+version = "2021.10rc3"
 homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/freightcom"
 repository="https://github.com/purplship/purplship"
 description = "Freightcom purplship extension"
