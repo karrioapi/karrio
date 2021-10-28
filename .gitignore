@@ -107,4 +107,12 @@ venv.bak/
 
 .DS_Store
 
-.dist/
+# purplship stuff:
+.bash_history
+*.DS_Store
+.idea/
+staticfiles/*
+server/main/purplship/server/staticfiles/*
+!server/main/purplship/server/staticfiles/.gitkeep
+codegen/
+.pship/

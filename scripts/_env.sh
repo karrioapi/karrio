@@ -10,8 +10,8 @@ EE_DIST="${ROOT:?}/${ENV_DIR}/.ee-dist"
 mkdir -p "${DIST}" "${EE_DIST}"
 
 ## icon vars
-cross="\xE2\x9D\x8C"
-check="\xE2\x9C\x94"
+cross=$'\u274c'
+check=$'\u2714'
 
 
 clean_build_files() {

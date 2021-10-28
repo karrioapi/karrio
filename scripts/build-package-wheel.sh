@@ -26,7 +26,7 @@ cd - > /dev/null;
 
 # Log build result output
 if [[ ${r} -eq 1 ]]; then
-    echo "> build "${1}" ${cross} \n $output"; exit ${r};
+    echo "> build "${1}" ${cross} \n ${output}"; exit ${r};
 else
     echo "> build "${1}" ${check} ";
 fi;

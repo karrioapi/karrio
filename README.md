@@ -1,4 +1,4 @@
-# <a href="https://purplship.com"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Sourcegraph" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
+# <a href="https://purplship.com"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
 
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
@@ -291,3 +291,5 @@ This repository contains both OSS-licensed and non-OSS-licensed files. We mainta
 All files in the `/ee` fall under [Enterprise LICENSE](/ee/LICENSE).
 
 The remaining files fall under the [Apache 2 license](LICENSE). Purplship OSS is built only from the Apache-licensed files in this repository.
+
+Any other questions, mail us at hello@purplship.com We’d love to meet you!
