@@ -1,4 +1,4 @@
-# <a href="https://purplship.com"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
+# <a href="https://purplship.com target="_blank""><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
 
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
@@ -13,7 +13,7 @@ Help us out… If you love open source and great software, give us a star! 🌟
 **Features**
 
 - **Multi-carrier SDK**: Integrate purplship once and connect to multiple shipping carrier APIs
-- **Extendable**: Use the purplship SDK Framework to integrate with custom carrier APIs.
+- **Extensible**: Use the purplship SDK Framework to integrate with custom carrier APIs.
 - **Headless shipping API**: Power up your application with access to a network of carrier services.
 - **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels.
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.

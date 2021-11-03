@@ -1,14 +1,21 @@
 import logging
+import typing
 from django.utils import timezone
 from purplship.server.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import DP
 from purplship.server.core.gateway import Shipments, Carriers
-from purplship.server.core.serializers import TrackingDetails, TrackingRequest, ShipmentStatus, TrackerStatus
+from purplship.server.core.serializers import (
+    TrackingDetails,
+    TrackingRequest,
+    ShipmentStatus,
+    TrackerStatus,
+)
 
 import purplship.server.manager.models as models
 
 logger = logging.getLogger(__name__)
+DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="tracking")
 
 
 @owned_model_serializer
@@ -19,13 +26,16 @@ class TrackingSerializer(TrackingDetails):
     pending = BooleanField(required=False)
 
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
-        carrier_filters = validated_data['carrier_filters']
-        tracking_number = validated_data['tracking_number']
-        carrier = Carriers.first(context=context, **carrier_filters)
+        carrier_filter = validated_data["carrier_filter"]
+        tracking_number = validated_data["tracking_number"]
+        carrier = Carriers.first(
+            context=context,
+            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
+        )
 
         response = Shipments.track(
             TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
-            carrier=carrier
+            carrier=carrier,
         )
 
         return models.Tracking.objects.create(
@@ -38,16 +48,27 @@ class TrackingSerializer(TrackingDetails):
             tracking_carrier=carrier,
         )
 
-    def update(self, instance: models.Tracking, validated_data: dict, context, **kwargs) -> models.Tracking:
-        last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
+    def update(
+        self, instance: models.Tracking, validated_data: dict, context, **kwargs
+    ) -> models.Tracking:
+        last_fetch = (
+            timezone.now() - instance.updated_at
+        ).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 30 and instance.delivered is not True:
-            carrier_filters = validated_data['carrier_filters']
-            carrier = (Carriers.first(context=context, **carrier_filters) or instance.tracking_carrier)
+            carrier_filter = validated_data["carrier_filter"]
+            carrier = (
+                Carriers.first(
+                    context=context, **{**DEFAULT_CARRIER_FILTER, **carrier_filter}
+                )
+                or instance.tracking_carrier
+            )
 
             response = Shipments.track(
-                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data,
-                carrier=carrier
+                payload=TrackingRequest(
+                    dict(tracking_numbers=[instance.tracking_number])
+                ).data,
+                carrier=carrier,
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
@@ -59,19 +80,19 @@ class TrackingSerializer(TrackingDetails):
 
             if events != instance.events:
                 instance.events = events
-                changes.append('events')
+                changes.append("events")
 
             if response.tracking.delivered != instance.delivered:
                 instance.delivered = response.tracking.delivered
-                changes.append('delivered')
+                changes.append("delivered")
 
             if response.tracking.status != instance.status:
                 instance.status = response.tracking.status
-                changes.append('status')
+                changes.append("status")
 
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier
-                changes.append('tracking_carrier')
+                changes.append("tracking_carrier")
 
             if any(changes):
                 instance.save(update_fields=changes)
@@ -91,6 +112,6 @@ def update_shipment_tracker(tracker: models.Tracking):
 
         if tracker.shipment is not None and tracker.shipment.status != status:
             tracker.shipment.status = status
-            tracker.shipment.save(update_fields=['status'])
+            tracker.shipment.save(update_fields=["status"])
     except Exception as e:
         logger.exception("Failed to update the tracked shipment", e)

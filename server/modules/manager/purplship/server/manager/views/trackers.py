@@ -13,7 +13,12 @@ from django_filters import rest_framework as filters
 
 from purplship.server.core.views.api import GenericAPIView, APIView
 from purplship.server.core.serializers import (
-    MODELS, TrackingStatus, ErrorResponse, TestFilters, Operation, TrackerStatus
+    MODELS,
+    TrackingStatus,
+    ErrorResponse,
+    TestFilters,
+    Operation,
+    TrackerStatus,
 )
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.manager.router import router
@@ -22,7 +27,7 @@ import purplship.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-Trackers = PaginatedResult('TrackerList', TrackingStatus)
+Trackers = PaginatedResult("TrackerList", TrackingStatus)
 CARRIER_NAMES = list(MODELS.keys())
 
 
@@ -30,19 +35,31 @@ class TrackerFilters(filters.FilterSet):
     carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
 
     parameters = [
-        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
-        openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, enum=[k.value for k in list(TrackerStatus)]),
-        openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+        openapi.Parameter(
+            "carrier_name",
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_STRING,
+            enum=CARRIER_NAMES,
+        ),
+        openapi.Parameter("carrier_id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter(
+            "status",
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_STRING,
+            enum=[k.value for k in list(TrackerStatus)],
+        ),
+        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
     ]
 
     class Meta:
         model = models.Tracking
-        fields = ['test_mode', 'status']
+        fields = ["test_mode", "status"]
 
 
 class TrackerList(GenericAPIView):
-    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    pagination_class = type(
+        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
+    )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TrackerFilters
     model = models.Tracking
@@ -50,20 +67,22 @@ class TrackerList(GenericAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         _filters = tuple()
-        query_params = getattr(self.request, 'query_params', {})
-        carrier_name = query_params.get('carrier_name')
+        query_params = getattr(self.request, "query_params", {})
+        carrier_name = query_params.get("carrier_name")
 
         if carrier_name is not None:
-            _filters += (Q(**{f'tracking_carrier__{carrier_name}settings__isnull': False}),)
+            _filters += (
+                Q(**{f"tracking_carrier__{carrier_name}settings__isnull": False}),
+            )
 
         return queryset.filter(*_filters)
 
     @swagger_auto_schema(
-        tags=['Trackers'],
+        tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
         responses={200: Trackers(), 400: ErrorResponse()},
-        manual_parameters=TrackerFilters.parameters
+        manual_parameters=TrackerFilters.parameters,
     )
     def get(self, request: Request):
         """
@@ -75,33 +94,45 @@ class TrackerList(GenericAPIView):
 
 
 class TrackersCreate(APIView):
-    logging_methods = ['GET']
+    logging_methods = ["GET"]
 
     @swagger_auto_schema(
-        tags=['Trackers'],
+        tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment tracker",
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()},
         manual_parameters=[
-            openapi.Parameter('carrier_name', in_=openapi.IN_PATH, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
-        ]
+            openapi.Parameter(
+                "carrier_name",
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                enum=CARRIER_NAMES,
+            ),
+        ],
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
         """
-        carrier_filters = {
+        carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name
+            "carrier_name": carrier_name,
         }
-        tracking = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
+        tracking = (
+            models.Tracking.access_by(request)
+            .filter(tracking_number=tracking_number)
+            .first()
+        )
 
-        instance = SerializerDecorator[TrackingSerializer]\
-            (tracking, data=dict(tracking_number=tracking_number), context=request)\
-            .save(carrier_filters=carrier_filters)\
+        instance = (
+            SerializerDecorator[TrackingSerializer](
+                tracking, data=dict(tracking_number=tracking_number), context=request
+            )
+            .save(carrier_filter=carrier_filter)
             .instance
+        )
 
         return Response(TrackingStatus(instance).data)
 
@@ -110,16 +141,18 @@ class TrackersDetails(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
-        tags=['Trackers'],
+        tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
         operation_summary="Retrieves a shipment tracker",
-        responses={200: TrackingStatus(), 404: ErrorResponse()}
+        responses={200: TrackingStatus(), 404: ErrorResponse()},
     )
     def get(self, request: Request, id_or_tracking_number: str):
         """
         Retrieve a shipment tracker
         """
-        __filter = Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
+        __filter = Q(pk=id_or_tracking_number) | Q(
+            tracking_number=id_or_tracking_number
+        )
         trackers = models.Tracking.objects.filter(__filter)
 
         if len(trackers) == 0:
@@ -128,23 +161,36 @@ class TrackersDetails(APIView):
         return Response(TrackingStatus(trackers.first()).data)
 
     @swagger_auto_schema(
-        tags=['Trackers'],
+        tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
         operation_summary="Discard a shipment tracker",
-        responses={200: Operation(), 400: ErrorResponse()}
+        responses={200: Operation(), 400: ErrorResponse()},
     )
     def delete(self, request: Request, id_or_tracking_number: str):
         """
         Discard a shipment tracker.
         """
         tracker = models.Tracking.access_by(request).get(
-            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
+        )
 
         tracker.delete(keep_parents=True)
         serializer = Operation(dict(operation="Discard a tracker", success=True))
         return Response(serializer.data)
 
 
-router.urls.append(path('trackers', TrackerList.as_view(), name="trackers-list"))
-router.urls.append(path('trackers/<str:id_or_tracking_number>', TrackersDetails.as_view(), name="tracker-details"))
-router.urls.append(path('trackers/<carrier_name>/<tracking_number>', TrackersCreate.as_view(), name="shipment-tracker"))
+router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))
+router.urls.append(
+    path(
+        "trackers/<str:id_or_tracking_number>",
+        TrackersDetails.as_view(),
+        name="tracker-details",
+    )
+)
+router.urls.append(
+    path(
+        "trackers/<carrier_name>/<tracking_number>",
+        TrackersCreate.as_view(),
+        name="shipment-tracker",
+    )
+)
