@@ -4,8 +4,8 @@
 ROOT="$( cd "$( dirname $0 )/../" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
-DIST="${ROOT:?}/${ENV_DIR}/.dist"
-EE_DIST="${ROOT:?}/${ENV_DIR}/.ee-dist"
+DIST="${ROOT:?}/${ENV_DIR}/dist"
+EE_DIST="${ROOT:?}/${ENV_DIR}/ee-dist"
 
 mkdir -p "${DIST}" "${EE_DIST}"
 
