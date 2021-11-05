@@ -1,0 +1,15 @@
+{
+    "RateRequest": {
+        "postalCode": "H4X1Z5",
+        "originPostalCode": "H4R2A4"
+    },
+    "Rate": {
+        "price": 10,
+        "service": "NEXTDAY",
+        "name": "BoxKnight Next-Day Delivery",
+        "description": "Get your package the next opening day of the merchant (2019-10-30)",
+        "estimateDay": "2019-10-30",
+        "estimateFrom": "2019-10-30",
+        "estimateTo": "2019-10-30"
+    }
+}

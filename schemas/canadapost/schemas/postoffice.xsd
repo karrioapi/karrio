@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" targetNamespace="http://www.canadapost.ca/ws/postoffice" xmlns="http://www.canadapost.ca/ws/postoffice" elementFormDefault="qualified">
+
+  	<xsd:annotation>
+		<xsd:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:redefine schemaLocation="common.xsd"></xsd:redefine>
+
+    <xsd:element name="post-office-list">
+         <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="post-office" minOccurs="1" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="address" type="PostOfficeAddressType"/>
+                            <xsd:element name="distance">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:decimal">
+                                        <xsd:minInclusive value="0"/>
+                                        <xsd:maxInclusive value="99999.99"/>
+                                        <xsd:fractionDigits value="2"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="location" type="LocationType"/>
+                            <xsd:element name="name" type="NameType"/>
+                            <xsd:element name="office-id" type="OfficeIdType"/>
+                            <xsd:element name="bilingual-designation" type="xsd:boolean"/>
+                            <xsd:element ref="link"/>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="PostOfficeAddressType">
+      <xsd:all>
+            <xsd:element name="city">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="40"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="latitude"> <!-- North -->
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                        <xsd:minInclusive value="40"/>
+                        <xsd:maxInclusive value="90"/>
+                        <xsd:fractionDigits value="5"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="longitude"> <!-- West is negative -->
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                        <xsd:minInclusive value="-150"/>
+                        <xsd:maxInclusive value="-50"/>
+                        <xsd:fractionDigits value="5"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="postal-code" type="PostalCodeType"/>
+            <xsd:element name="province" type="ProvinceType"/>
+            <xsd:element name="office-address">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="64"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="LocationType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="NameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OfficeIdType">
+   		<xsd:restriction base="xsd:normalizedString">
+	       	<xsd:pattern value="\d{10}" />
+       	</xsd:restriction>
+    </xsd:simpleType>
+    
+    <!-- Description of postoffice get details elements -->
+
+    <xsd:element name="post-office-detail">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="address" type="PostOfficeAddressType"/>
+                <xsd:element name="location" type="LocationType"/>
+                <xsd:element name="name" type="NameType"/>
+                <xsd:element name="office-id" type="OfficeIdType"/>
+                <xsd:element name="bilingual-designation" type="xsd:boolean"/>
+                <xsd:element name="hours-list" minOccurs="1" maxOccurs="7">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="day">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:normalizedString">
+                                        <xsd:enumeration value="1"/><!--Sunday-->
+                                        <xsd:enumeration value="2"/><!--Monday-->
+                                        <xsd:enumeration value="3"/><!--Tuesday-->
+                                        <xsd:enumeration value="4"/><!--Wednesday-->
+                                        <xsd:enumeration value="5"/><!--Thursday-->
+                                        <xsd:enumeration value="6"/><!--Friday-->
+                                        <xsd:enumeration value="7"/><!--Saturday-->
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="time" type="Time24HoursType" minOccurs="1" maxOccurs="4"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

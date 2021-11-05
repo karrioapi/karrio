@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "carrier.ups"
+version = "2020.3.1"
+description = "UPS Web API Schemas Python Data Types library"
+repository="https://github.com/purplship/purplship"
+homepage="https://github.com/purplship/purplship/tree/main/carrier.ups"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
+readme = "README.md"
+packages = [
+    { include = "ups_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = "^1.15.0"
+lxml = "^4.6.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

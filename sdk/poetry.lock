@@ -1,0 +1,880 @@
+[[package]]
+name = "attrs"
+version = "21.2.0"
+description = "Classes Without Boilerplate"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[package.extras]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "zope.interface", "furo", "sphinx", "sphinx-notfound-page", "pre-commit"]
+docs = ["furo", "sphinx", "zope.interface", "sphinx-notfound-page"]
+tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "zope.interface"]
+tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins"]
+
+[[package]]
+name = "carrier.aramex"
+version = "2021.2"
+description = "Purolator Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.australiapost"
+version = "2021.2.1"
+description = "Australia Post API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.boxknight"
+version = "2020.11.2"
+description = "Boxknight API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.canadapost"
+version = "2021.7"
+description = "Canada Post API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.canpar"
+version = "2021.2"
+description = "Canpar Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.dhl-express"
+version = "2021.4"
+description = "DHL Express Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.dhl-universal"
+version = "2021.2.1"
+description = "DHL eCommerce API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.dicom"
+version = "2021.2.1"
+description = "Dicom Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.fedex"
+version = "2021.4"
+description = "FedEx Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.purolator"
+version = "2020.4.1"
+description = "Purolator Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.royalmail"
+version = "2021.2.1"
+description = "Australia Post API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.sendle"
+version = "2021.2.1"
+description = "Sendle API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.sf-express"
+version = "2021.2"
+description = "Purolator Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.tnt"
+version = "2021.3"
+description = "TNT Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.ups"
+version = "2020.3.1"
+description = "UPS Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.usps"
+version = "2021.6"
+description = "USPS Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "carrier.yanwen"
+version = "2021.2.1"
+description = "DHL eCommerce API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "carrier.yunexpress"
+version = "2021.2.1"
+description = "Purolator Web API Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+jstruct = "*"
+
+[[package]]
+name = "jstruct"
+version = "2021.7.1"
+description = "Readable serializable and deserializable Python nested models"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+attrs = "*"
+
+[[package]]
+name = "lxml"
+version = "4.6.3"
+description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
+
+[package.extras]
+cssselect = ["cssselect (>=0.7)"]
+html5 = ["html5lib"]
+htmlsoup = ["beautifulsoup4"]
+source = ["Cython (>=0.29.7)"]
+
+[[package]]
+name = "lxml-stubs"
+version = "0.1.1"
+description = "Type annotations for the lxml package"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["pytest (>=6.0.0)", "pytest-mypy-plugins (==1.4.0)", "coverage[toml] (==5.2)"]
+
+[[package]]
+name = "phonenumbers"
+version = "8.12.35"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "pillow"
+version = "8.4.0"
+description = "Python Imaging Library (Fork)"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
+name = "purplship"
+version = "2021.8"
+description = "Multi-carrier shipping API integration with python"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+jstruct = "^2021.7.1"
+lxml = "^4.6.2"
+lxml-stubs = "^0.1.1"
+phonenumbers = "^8.12.17"
+Pillow = "^8.1.0"
+py-soap = "^2020.3.2"
+xmltodict = "^0.12.0"
+
+[package.source]
+type = "directory"
+url = "core"
+
+[[package]]
+name = "purplship.aramex"
+version = "2021.10"
+description = "Purplship - Aramex Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.aramex" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/aramex"
+
+[[package]]
+name = "purplship.australiapost"
+version = "2021.10"
+description = "Purplship - Australia Post Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.australiapost" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/australiapost"
+
+[[package]]
+name = "purplship.boxknight"
+version = "2021.10"
+description = "Purplship - Boxknight Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.boxknight" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/boxknight"
+
+[[package]]
+name = "purplship.canadapost"
+version = "2021.10"
+description = "Purplship - Canada Post Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.canadapost" = ""
+purplship = ""
+
+[package.source]
+type = "directory"
+url = "extensions/canadapost"
+
+[[package]]
+name = "purplship.canpar"
+version = "2021.10"
+description = "Purplship - Canpar Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.canpar" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/canpar"
+
+[[package]]
+name = "purplship.dhl-express"
+version = "2021.10"
+description = "Purplship - DHL Express Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.dhl_express" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/dhl_express"
+
+[[package]]
+name = "purplship.dhl-universal"
+version = "2021.10"
+description = "Purplship - DHL Universal Tracking Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.dhl_universal" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/dhl_universal"
+
+[[package]]
+name = "purplship.dicom"
+version = "2021.10"
+description = "Purplship - Dicom Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.dicom" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/dicom"
+
+[[package]]
+name = "purplship.eshipper"
+version = "2021.10"
+description = "eShipper purplship extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+purplship = ""
+
+[package.source]
+type = "directory"
+url = "vendors/eshipper"
+
+[[package]]
+name = "purplship.fedex"
+version = "2021.10"
+description = "Purplship - Fedex Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.fedex" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/fedex"
+
+[[package]]
+name = "purplship.freightcom"
+version = "2021.10"
+description = "Freightcom purplship extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+purplship = ""
+
+[package.source]
+type = "directory"
+url = "vendors/freightcom"
+
+[[package]]
+name = "purplship.purolator"
+version = "2021.10"
+description = "Purplship - Purolator Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.purolator" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/purolator"
+
+[[package]]
+name = "purplship.royalmail"
+version = "2021.10"
+description = "Purplship - Royal Mail Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.royalmail" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/royalmail"
+
+[[package]]
+name = "purplship.sendle"
+version = "2021.10"
+description = "Purplship - Sendle Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.sendle" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/sendle"
+
+[[package]]
+name = "purplship.sf-express"
+version = "2021.10"
+description = "Purplship - SF-Express Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.sf_express" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/sf_express"
+
+[[package]]
+name = "purplship.tnt"
+version = "2021.10"
+description = "Purplship - TNT Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.tnt" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/tnt"
+
+[[package]]
+name = "purplship.ups"
+version = "2021.10"
+description = "Purplship - UPS Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.ups" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/ups"
+
+[[package]]
+name = "purplship.usps"
+version = "2021.10"
+description = "Purplship - USPS Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.usps" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/usps"
+
+[[package]]
+name = "purplship.usps-international"
+version = "2021.10"
+description = "Purplship - USPS International Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.usps" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/usps_international"
+
+[[package]]
+name = "purplship.yanwen"
+version = "2021.10"
+description = "Purplship - Yanwen Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.yanwen" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/yanwen"
+
+[[package]]
+name = "purplship.yunexpress"
+version = "2021.10"
+description = "Purplship - Yunexpress Shipping Extension"
+category = "dev"
+optional = false
+python-versions = "^3.7"
+develop = true
+
+[package.dependencies]
+"carrier.yunexpress" = ""
+purplship = "^2021.6"
+
+[package.source]
+type = "directory"
+url = "extensions/yunexpress"
+
+[[package]]
+name = "py-soap"
+version = "2020.3.2"
+description = "SOAP Schemas Python Data Types library"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+lxml = ">=4.6.2,<5.0.0"
+six = ">=1.15.0,<2.0.0"
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "xmltodict"
+version = "0.12.0"
+description = "Makes working with XML feel like you are working with JSON"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.7"
+content-hash = "c7e5b8a9b70a8a63a2ecc31102bb69e81aef8bbd1cd6bc0d47a5d2012a3b1079"
+
+[metadata.files]
+attrs = [
+    {file = "attrs-21.2.0-py2.py3-none-any.whl", hash = "sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1"},
+    {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
+]
+"carrier.aramex" = [
+    {file = "carrier.aramex-2021.2-py3-none-any.whl", hash = "sha256:d62edc7ff9e9d8cde6d1d60373c6c2f726cd622da6c50845e5f787e0bbf145a4"},
+]
+"carrier.australiapost" = [
+    {file = "carrier.australiapost-2021.2.1-py3-none-any.whl", hash = "sha256:2bb030a46c07636a041ea8a57f64a17674fe0c0cc8eb6ebff56e03faa0322730"},
+]
+"carrier.boxknight" = [
+    {file = "carrier.boxknight-2020.11.2-py3-none-any.whl", hash = "sha256:e6d99a06d98d624a21333d798c2ae681be1d1f29589111e5db9ed2fbde28b63a"},
+]
+"carrier.canadapost" = [
+    {file = "carrier.canadapost-2021.7-py3-none-any.whl", hash = "sha256:c81849b7ea8bbf13702c94e09b5aa93d869327f2c439377f186e32c142c17d77"},
+]
+"carrier.canpar" = [
+    {file = "carrier.canpar-2021.2-py3-none-any.whl", hash = "sha256:51b366a8abf7f02e45b95ee01f4bfc8296a46545c45480c9696819816d5c5927"},
+]
+"carrier.dhl-express" = [
+    {file = "carrier.dhl_express-2021.4-py3-none-any.whl", hash = "sha256:23fd7cd2e6658e2a77f49ddf8887624b3b6fc97fbe48d8bfce3139760d5fa36a"},
+]
+"carrier.dhl-universal" = [
+    {file = "carrier.dhl_universal-2021.2.1-py3-none-any.whl", hash = "sha256:4e78518ca280fd6a4a99a2ac17f038f4b2735388c949312c9d1c5e814f9db191"},
+]
+"carrier.dicom" = [
+    {file = "carrier.dicom-2021.2.1-py3-none-any.whl", hash = "sha256:f118f850aa526dd321f0c8f8a6801848fb0c9d4bb753688bf939dc7b931fd533"},
+]
+"carrier.fedex" = [
+    {file = "carrier.fedex-2021.4-py3-none-any.whl", hash = "sha256:9894a1bc5dc7bf81ff73202b881c1bc18eea347af37c6c42a1462284dee1999e"},
+]
+"carrier.purolator" = [
+    {file = "carrier.purolator-2020.4.1-py3-none-any.whl", hash = "sha256:9571870e3a47d5aba483a3a5db6dc6fa6135918b26b6878d989943652137b93b"},
+]
+"carrier.royalmail" = [
+    {file = "carrier.royalmail-2021.2.1-py3-none-any.whl", hash = "sha256:89227b38f82f3fab0b797702a8c1489302f5d4fae6303d7c2b08748239d3bca8"},
+]
+"carrier.sendle" = [
+    {file = "carrier.sendle-2021.2.1-py3-none-any.whl", hash = "sha256:9892fc9a1d306d85a6c6899417f8d1a3502b2d303762fc8300cbbe478a23bec4"},
+]
+"carrier.sf-express" = [
+    {file = "carrier.sf_express-2021.2-py3-none-any.whl", hash = "sha256:3fa0115d80d0fee7e6ccc5e7b1a1779898fa006c2fb5af52a7b91c9857111187"},
+]
+"carrier.tnt" = [
+    {file = "carrier.tnt-2021.3-py3-none-any.whl", hash = "sha256:90bb31bc3b400a62e32862b13060f2693c22b4f7c90726b8c3f37fed368ed591"},
+]
+"carrier.ups" = [
+    {file = "carrier.ups-2020.3.1-py3-none-any.whl", hash = "sha256:0f2346fe7360f4e91f8c6215404b8eabd1f8d57dbac8fcb87410c5cdcbd08f15"},
+]
+"carrier.usps" = [
+    {file = "carrier.usps-2021.6-py3-none-any.whl", hash = "sha256:3db8bb9d7ebd30ad7b4de01af71ed66b6088b63ea314729e4a2a2215f1864dfb"},
+]
+"carrier.yanwen" = [
+    {file = "carrier.yanwen-2021.2.1-py3-none-any.whl", hash = "sha256:78ebf2e40f0dd5de66b7fda6fb8ec705b292db46f1d3923cbf2ce642139ea361"},
+]
+"carrier.yunexpress" = [
+    {file = "carrier.yunexpress-2021.2.1-py3-none-any.whl", hash = "sha256:d385b947e1ce9c59f69f5df31f2a58e5a83c6e79eb3b1e372302a0bb42faa014"},
+]
+jstruct = [
+    {file = "jstruct-2021.7.1-py3-none-any.whl", hash = "sha256:3711294897334e51bc5a706231896018d474a8e458f879cc493eac9cdc6365c3"},
+]
+lxml = [
+    {file = "lxml-4.6.3-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:df7c53783a46febb0e70f6b05df2ba104610f2fb0d27023409734a3ecbb78fb2"},
+    {file = "lxml-4.6.3-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:1b7584d421d254ab86d4f0b13ec662a9014397678a7c4265a02a6d7c2b18a75f"},
+    {file = "lxml-4.6.3-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:079f3ae844f38982d156efce585bc540c16a926d4436712cf4baee0cce487a3d"},
+    {file = "lxml-4.6.3-cp27-cp27m-win32.whl", hash = "sha256:bc4313cbeb0e7a416a488d72f9680fffffc645f8a838bd2193809881c67dd106"},
+    {file = "lxml-4.6.3-cp27-cp27m-win_amd64.whl", hash = "sha256:8157dadbb09a34a6bd95a50690595e1fa0af1a99445e2744110e3dca7831c4ee"},
+    {file = "lxml-4.6.3-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:7728e05c35412ba36d3e9795ae8995e3c86958179c9770e65558ec3fdfd3724f"},
+    {file = "lxml-4.6.3-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:4bff24dfeea62f2e56f5bab929b4428ae6caba2d1eea0c2d6eb618e30a71e6d4"},
+    {file = "lxml-4.6.3-cp310-cp310-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_24_i686.whl", hash = "sha256:64812391546a18896adaa86c77c59a4998f33c24788cadc35789e55b727a37f4"},
+    {file = "lxml-4.6.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:c1a40c06fd5ba37ad39caa0b3144eb3772e813b5fb5b084198a985431c2f1e8d"},
+    {file = "lxml-4.6.3-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:74f7d8d439b18fa4c385f3f5dfd11144bb87c1da034a466c5b5577d23a1d9b51"},
+    {file = "lxml-4.6.3-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:f90ba11136bfdd25cae3951af8da2e95121c9b9b93727b1b896e3fa105b2f586"},
+    {file = "lxml-4.6.3-cp35-cp35m-manylinux2010_i686.whl", hash = "sha256:4c61b3a0db43a1607d6264166b230438f85bfed02e8cff20c22e564d0faff354"},
+    {file = "lxml-4.6.3-cp35-cp35m-manylinux2014_x86_64.whl", hash = "sha256:5c8c163396cc0df3fd151b927e74f6e4acd67160d6c33304e805b84293351d16"},
+    {file = "lxml-4.6.3-cp35-cp35m-win32.whl", hash = "sha256:f2380a6376dfa090227b663f9678150ef27543483055cc327555fb592c5967e2"},
+    {file = "lxml-4.6.3-cp35-cp35m-win_amd64.whl", hash = "sha256:c4f05c5a7c49d2fb70223d0d5bcfbe474cf928310ac9fa6a7c6dddc831d0b1d4"},
+    {file = "lxml-4.6.3-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:d2e35d7bf1c1ac8c538f88d26b396e73dd81440d59c1ef8522e1ea77b345ede4"},
+    {file = "lxml-4.6.3-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:289e9ca1a9287f08daaf796d96e06cb2bc2958891d7911ac7cae1c5f9e1e0ee3"},
+    {file = "lxml-4.6.3-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:bccbfc27563652de7dc9bdc595cb25e90b59c5f8e23e806ed0fd623755b6565d"},
+    {file = "lxml-4.6.3-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:d916d31fd85b2f78c76400d625076d9124de3e4bda8b016d25a050cc7d603f24"},
+    {file = "lxml-4.6.3-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:820628b7b3135403540202e60551e741f9b6d3304371712521be939470b454ec"},
+    {file = "lxml-4.6.3-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:c47ff7e0a36d4efac9fd692cfa33fbd0636674c102e9e8d9b26e1b93a94e7617"},
+    {file = "lxml-4.6.3-cp36-cp36m-win32.whl", hash = "sha256:5a0a14e264069c03e46f926be0d8919f4105c1623d620e7ec0e612a2e9bf1c04"},
+    {file = "lxml-4.6.3-cp36-cp36m-win_amd64.whl", hash = "sha256:92e821e43ad382332eade6812e298dc9701c75fe289f2a2d39c7960b43d1e92a"},
+    {file = "lxml-4.6.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:efd7a09678fd8b53117f6bae4fa3825e0a22b03ef0a932e070c0bdbb3a35e654"},
+    {file = "lxml-4.6.3-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:efac139c3f0bf4f0939f9375af4b02c5ad83a622de52d6dfa8e438e8e01d0eb0"},
+    {file = "lxml-4.6.3-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:0fbcf5565ac01dff87cbfc0ff323515c823081c5777a9fc7703ff58388c258c3"},
+    {file = "lxml-4.6.3-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:36108c73739985979bf302006527cf8a20515ce444ba916281d1c43938b8bb96"},
+    {file = "lxml-4.6.3-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:122fba10466c7bd4178b07dba427aa516286b846b2cbd6f6169141917283aae2"},
+    {file = "lxml-4.6.3-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:cdaf11d2bd275bf391b5308f86731e5194a21af45fbaaaf1d9e8147b9160ea92"},
+    {file = "lxml-4.6.3-cp37-cp37m-win32.whl", hash = "sha256:3439c71103ef0e904ea0a1901611863e51f50b5cd5e8654a151740fde5e1cade"},
+    {file = "lxml-4.6.3-cp37-cp37m-win_amd64.whl", hash = "sha256:4289728b5e2000a4ad4ab8da6e1db2e093c63c08bdc0414799ee776a3f78da4b"},
+    {file = "lxml-4.6.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:b007cbb845b28db4fb8b6a5cdcbf65bacb16a8bd328b53cbc0698688a68e1caa"},
+    {file = "lxml-4.6.3-cp38-cp38-manylinux1_i686.whl", hash = "sha256:76fa7b1362d19f8fbd3e75fe2fb7c79359b0af8747e6f7141c338f0bee2f871a"},
+    {file = "lxml-4.6.3-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:26e761ab5b07adf5f555ee82fb4bfc35bf93750499c6c7614bd64d12aaa67927"},
+    {file = "lxml-4.6.3-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:e1cbd3f19a61e27e011e02f9600837b921ac661f0c40560eefb366e4e4fb275e"},
+    {file = "lxml-4.6.3-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:66e575c62792c3f9ca47cb8b6fab9e35bab91360c783d1606f758761810c9791"},
+    {file = "lxml-4.6.3-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:1b38116b6e628118dea5b2186ee6820ab138dbb1e24a13e478490c7db2f326ae"},
+    {file = "lxml-4.6.3-cp38-cp38-win32.whl", hash = "sha256:89b8b22a5ff72d89d48d0e62abb14340d9e99fd637d046c27b8b257a01ffbe28"},
+    {file = "lxml-4.6.3-cp38-cp38-win_amd64.whl", hash = "sha256:2a9d50e69aac3ebee695424f7dbd7b8c6d6eb7de2a2eb6b0f6c7db6aa41e02b7"},
+    {file = "lxml-4.6.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:ce256aaa50f6cc9a649c51be3cd4ff142d67295bfc4f490c9134d0f9f6d58ef0"},
+    {file = "lxml-4.6.3-cp39-cp39-manylinux1_i686.whl", hash = "sha256:7610b8c31688f0b1be0ef882889817939490a36d0ee880ea562a4e1399c447a1"},
+    {file = "lxml-4.6.3-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:f8380c03e45cf09f8557bdaa41e1fa7c81f3ae22828e1db470ab2a6c96d8bc23"},
+    {file = "lxml-4.6.3-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:3082c518be8e97324390614dacd041bb1358c882d77108ca1957ba47738d9d59"},
+    {file = "lxml-4.6.3-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:884ab9b29feaca361f7f88d811b1eea9bfca36cf3da27768d28ad45c3ee6f969"},
+    {file = "lxml-4.6.3-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:6f12e1427285008fd32a6025e38e977d44d6382cf28e7201ed10d6c1698d2a9a"},
+    {file = "lxml-4.6.3-cp39-cp39-win32.whl", hash = "sha256:33bb934a044cf32157c12bfcfbb6649807da20aa92c062ef51903415c704704f"},
+    {file = "lxml-4.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:542d454665a3e277f76954418124d67516c5f88e51a900365ed54a9806122b83"},
+    {file = "lxml-4.6.3.tar.gz", hash = "sha256:39b78571b3b30645ac77b95f7c69d1bffc4cf8c3b157c435a34da72e78c82468"},
+]
+lxml-stubs = [
+    {file = "lxml-stubs-0.1.1.tar.gz", hash = "sha256:9b6a01ba4bccd6e532c01e19d2a3bc6d1d018fa0b9870236f61f315cb7b06648"},
+    {file = "lxml_stubs-0.1.1-py3-none-any.whl", hash = "sha256:d34a28be0e2525b0236aff7fe67af1f61911f556cadbc61f09810b69f762b747"},
+]
+phonenumbers = [
+    {file = "phonenumbers-8.12.35-py2.py3-none-any.whl", hash = "sha256:16c8f6d682ab5be550af2f4a2f81f0a90c8743e37babc7465edcefc106d0a1eb"},
+    {file = "phonenumbers-8.12.35.tar.gz", hash = "sha256:f426d419aabf6366c27ef1193918cc55217ef0e8be8f09cbf0667131037ca229"},
+]
+pillow = [
+    {file = "Pillow-8.4.0-cp310-cp310-macosx_10_10_universal2.whl", hash = "sha256:81f8d5c81e483a9442d72d182e1fb6dcb9723f289a57e8030811bac9ea3fef8d"},
+    {file = "Pillow-8.4.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3f97cfb1e5a392d75dd8b9fd274d205404729923840ca94ca45a0af57e13dbe6"},
+    {file = "Pillow-8.4.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:eb9fc393f3c61f9054e1ed26e6fe912c7321af2f41ff49d3f83d05bacf22cc78"},
+    {file = "Pillow-8.4.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d82cdb63100ef5eedb8391732375e6d05993b765f72cb34311fab92103314649"},
+    {file = "Pillow-8.4.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:62cc1afda735a8d109007164714e73771b499768b9bb5afcbbee9d0ff374b43f"},
+    {file = "Pillow-8.4.0-cp310-cp310-win32.whl", hash = "sha256:e3dacecfbeec9a33e932f00c6cd7996e62f53ad46fbe677577394aaa90ee419a"},
+    {file = "Pillow-8.4.0-cp310-cp310-win_amd64.whl", hash = "sha256:620582db2a85b2df5f8a82ddeb52116560d7e5e6b055095f04ad828d1b0baa39"},
+    {file = "Pillow-8.4.0-cp36-cp36m-macosx_10_10_x86_64.whl", hash = "sha256:1bc723b434fbc4ab50bb68e11e93ce5fb69866ad621e3c2c9bdb0cd70e345f55"},
+    {file = "Pillow-8.4.0-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:72cbcfd54df6caf85cc35264c77ede902452d6df41166010262374155947460c"},
+    {file = "Pillow-8.4.0-cp36-cp36m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:70ad9e5c6cb9b8487280a02c0ad8a51581dcbbe8484ce058477692a27c151c0a"},
+    {file = "Pillow-8.4.0-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:25a49dc2e2f74e65efaa32b153527fc5ac98508d502fa46e74fa4fd678ed6645"},
+    {file = "Pillow-8.4.0-cp36-cp36m-win32.whl", hash = "sha256:93ce9e955cc95959df98505e4608ad98281fff037350d8c2671c9aa86bcf10a9"},
+    {file = "Pillow-8.4.0-cp36-cp36m-win_amd64.whl", hash = "sha256:2e4440b8f00f504ee4b53fe30f4e381aae30b0568193be305256b1462216feff"},
+    {file = "Pillow-8.4.0-cp37-cp37m-macosx_10_10_x86_64.whl", hash = "sha256:8c803ac3c28bbc53763e6825746f05cc407b20e4a69d0122e526a582e3b5e153"},
+    {file = "Pillow-8.4.0-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c8a17b5d948f4ceeceb66384727dde11b240736fddeda54ca740b9b8b1556b29"},
+    {file = "Pillow-8.4.0-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1394a6ad5abc838c5cd8a92c5a07535648cdf6d09e8e2d6df916dfa9ea86ead8"},
+    {file = "Pillow-8.4.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:792e5c12376594bfcb986ebf3855aa4b7c225754e9a9521298e460e92fb4a488"},
+    {file = "Pillow-8.4.0-cp37-cp37m-win32.whl", hash = "sha256:d99ec152570e4196772e7a8e4ba5320d2d27bf22fdf11743dd882936ed64305b"},
+    {file = "Pillow-8.4.0-cp37-cp37m-win_amd64.whl", hash = "sha256:7b7017b61bbcdd7f6363aeceb881e23c46583739cb69a3ab39cb384f6ec82e5b"},
+    {file = "Pillow-8.4.0-cp38-cp38-macosx_10_10_x86_64.whl", hash = "sha256:d89363f02658e253dbd171f7c3716a5d340a24ee82d38aab9183f7fdf0cdca49"},
+    {file = "Pillow-8.4.0-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:0a0956fdc5defc34462bb1c765ee88d933239f9a94bc37d132004775241a7585"},
+    {file = "Pillow-8.4.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5b7bb9de00197fb4261825c15551adf7605cf14a80badf1761d61e59da347779"},
+    {file = "Pillow-8.4.0-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:72b9e656e340447f827885b8d7a15fc8c4e68d410dc2297ef6787eec0f0ea409"},
+    {file = "Pillow-8.4.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a5a4532a12314149d8b4e4ad8ff09dde7427731fcfa5917ff16d0291f13609df"},
+    {file = "Pillow-8.4.0-cp38-cp38-win32.whl", hash = "sha256:82aafa8d5eb68c8463b6e9baeb4f19043bb31fefc03eb7b216b51e6a9981ae09"},
+    {file = "Pillow-8.4.0-cp38-cp38-win_amd64.whl", hash = "sha256:066f3999cb3b070a95c3652712cffa1a748cd02d60ad7b4e485c3748a04d9d76"},
+    {file = "Pillow-8.4.0-cp39-cp39-macosx_10_10_x86_64.whl", hash = "sha256:5503c86916d27c2e101b7f71c2ae2cddba01a2cf55b8395b0255fd33fa4d1f1a"},
+    {file = "Pillow-8.4.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:4acc0985ddf39d1bc969a9220b51d94ed51695d455c228d8ac29fcdb25810e6e"},
+    {file = "Pillow-8.4.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0b052a619a8bfcf26bd8b3f48f45283f9e977890263e4571f2393ed8898d331b"},
+    {file = "Pillow-8.4.0-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:493cb4e415f44cd601fcec11c99836f707bb714ab03f5ed46ac25713baf0ff20"},
+    {file = "Pillow-8.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b8831cb7332eda5dc89b21a7bce7ef6ad305548820595033a4b03cf3091235ed"},
+    {file = "Pillow-8.4.0-cp39-cp39-win32.whl", hash = "sha256:5e9ac5f66616b87d4da618a20ab0a38324dbe88d8a39b55be8964eb520021e02"},
+    {file = "Pillow-8.4.0-cp39-cp39-win_amd64.whl", hash = "sha256:3eb1ce5f65908556c2d8685a8f0a6e989d887ec4057326f6c22b24e8a172c66b"},
+    {file = "Pillow-8.4.0-pp36-pypy36_pp73-macosx_10_10_x86_64.whl", hash = "sha256:ddc4d832a0f0b4c52fff973a0d44b6c99839a9d016fe4e6a1cb8f3eea96479c2"},
+    {file = "Pillow-8.4.0-pp36-pypy36_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:9a3e5ddc44c14042f0844b8cf7d2cd455f6cc80fd7f5eefbe657292cf601d9ad"},
+    {file = "Pillow-8.4.0-pp36-pypy36_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c70e94281588ef053ae8998039610dbd71bc509e4acbc77ab59d7d2937b10698"},
+    {file = "Pillow-8.4.0-pp37-pypy37_pp73-macosx_10_10_x86_64.whl", hash = "sha256:3862b7256046fcd950618ed22d1d60b842e3a40a48236a5498746f21189afbbc"},
+    {file = "Pillow-8.4.0-pp37-pypy37_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a4901622493f88b1a29bd30ec1a2f683782e57c3c16a2dbc7f2595ba01f639df"},
+    {file = "Pillow-8.4.0-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:84c471a734240653a0ec91dec0996696eea227eafe72a33bd06c92697728046b"},
+    {file = "Pillow-8.4.0-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:244cf3b97802c34c41905d22810846802a3329ddcb93ccc432870243211c79fc"},
+    {file = "Pillow-8.4.0.tar.gz", hash = "sha256:b8e2f83c56e141920c39464b852de3719dfbfb6e3c99a2d8da0edf4fb33176ed"},
+]
+purplship = []
+"purplship.aramex" = []
+"purplship.australiapost" = []
+"purplship.boxknight" = []
+"purplship.canadapost" = []
+"purplship.canpar" = []
+"purplship.dhl-express" = []
+"purplship.dhl-universal" = []
+"purplship.dicom" = []
+"purplship.eshipper" = []
+"purplship.fedex" = []
+"purplship.freightcom" = []
+"purplship.purolator" = []
+"purplship.royalmail" = []
+"purplship.sendle" = []
+"purplship.sf-express" = []
+"purplship.tnt" = []
+"purplship.ups" = []
+"purplship.usps" = []
+"purplship.usps-international" = []
+"purplship.yanwen" = []
+"purplship.yunexpress" = []
+py-soap = [
+    {file = "py_soap-2020.3.2-py3-none-any.whl", hash = "sha256:61e2ec956d349bdd9d4c6248a2ae3c4cc4b0a2a5cf6b439b6de480a3bc2766a1"},
+]
+six = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+xmltodict = [
+    {file = "xmltodict-0.12.0-py2.py3-none-any.whl", hash = "sha256:8bbcb45cc982f48b2ca8fe7e7827c5d792f217ecf1792626f808bf41c3b86051"},
+    {file = "xmltodict-0.12.0.tar.gz", hash = "sha256:50d8c638ed7ecb88d90561beedbf720c9b4e851a9fa6c47ebd64e99d166d8a21"},
+]

@@ -1,0 +1,13547 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#
+# Generated Sat Mar  7 09:04:19 2020 by generateDS.py version 2.35.15.
+# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+#
+# Command line options:
+#   ('--no-namespace-defs', '')
+#   ('-o', './python/rate_web_service_schema.py')
+#
+# Command line arguments:
+#   ./schemas/RateWebServiceSchema.xsd
+#
+# Command line:
+#   /Users/danielkobina/Documents/Open/.env/bin/generateDS --no-namespace-defs -o "./python/rate_web_service_schema.py" ./schemas/RateWebServiceSchema.xsd
+#
+# Current working directory (os.getcwd()):
+#   2020-03
+#
+
+from six.moves import zip_longest
+import os
+import sys
+import re as re_
+import base64
+import datetime as datetime_
+import decimal as decimal_
+try:
+    from lxml import etree as etree_
+except ImportError:
+    from xml.etree import ElementTree as etree_
+
+
+Validate_simpletypes_ = True
+SaveElementTreeNode = True
+if sys.version_info.major == 2:
+    BaseStrType_ = basestring
+else:
+    BaseStrType_ = str
+
+
+def parsexml_(infile, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    try:
+        if isinstance(infile, os.PathLike):
+            infile = os.path.join(infile)
+    except AttributeError:
+        pass
+    doc = etree_.parse(infile, parser=parser, **kwargs)
+    return doc
+
+def parsexmlstring_(instring, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    element = etree_.fromstring(instring, parser=parser, **kwargs)
+    return element
+
+#
+# Namespace prefix definition table (and other attributes, too)
+#
+# The module generatedsnamespaces, if it is importable, must contain
+# a dictionary named GeneratedsNamespaceDefs.  This Python dictionary
+# should map element type names (strings) to XML schema namespace prefix
+# definitions.  The export method for any class for which there is
+# a namespace prefix definition, will export that definition in the
+# XML representation of that element.  See the export method of
+# any generated element type class for an example of the use of this
+# table.
+# A sample table is:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceDefs = {
+#         "ElementtypeA": "http://www.xxx.com/namespaceA",
+#         "ElementtypeB": "http://www.xxx.com/namespaceB",
+#     }
+#
+# Additionally, the generatedsnamespaces module can contain a python
+# dictionary named GenerateDSNamespaceTypePrefixes that associates element
+# types with the namespace prefixes that are to be added to the
+# "xsi:type" attribute value.  See the exportAttributes method of
+# any generated element type and the generation of "xsi:type" for an
+# example of the use of this table.
+# An example table:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceTypePrefixes = {
+#         "ElementtypeC": "aaa:",
+#         "ElementtypeD": "bbb:",
+#     }
+#
+
+try:
+    from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
+except ImportError:
+    GenerateDSNamespaceDefs_ = {}
+try:
+    from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
+except ImportError:
+    GenerateDSNamespaceTypePrefixes_ = {}
+
+#
+# You can replace the following class definition by defining an
+# importable module named "generatedscollector" containing a class
+# named "GdsCollector".  See the default class definition below for
+# clues about the possible content of that class.
+#
+try:
+    from generatedscollector import GdsCollector as GdsCollector_
+except ImportError:
+
+    class GdsCollector_(object):
+
+        def __init__(self, messages=None):
+            if messages is None:
+                self.messages = []
+            else:
+                self.messages = messages
+
+        def add_message(self, msg):
+            self.messages.append(msg)
+
+        def get_messages(self):
+            return self.messages
+
+        def clear_messages(self):
+            self.messages = []
+
+        def print_messages(self):
+            for msg in self.messages:
+                print("Warning: {}".format(msg))
+
+        def write_messages(self, outstream):
+            for msg in self.messages:
+                outstream.write("Warning: {}\n".format(msg))
+
+
+#
+# The super-class for enum types
+#
+
+try:
+    from enum import Enum
+except ImportError:
+    Enum = object
+
+#
+# The root super-class for element type classes
+#
+# Calls to the methods in these classes are generated by generateDS.py.
+# You can replace these methods by re-implementing the following class
+#   in a module named generatedssuper.py.
+
+try:
+    from generatedssuper import GeneratedsSuper
+except ImportError as exp:
+    
+    class GeneratedsSuper(object):
+        __hash__ = object.__hash__
+        tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
+        class _FixedOffsetTZ(datetime_.tzinfo):
+            def __init__(self, offset, name):
+                self.__offset = datetime_.timedelta(minutes=offset)
+                self.__name = name
+            def utcoffset(self, dt):
+                return self.__offset
+            def tzname(self, dt):
+                return self.__name
+            def dst(self, dt):
+                return None
+        def gds_format_string(self, input_data, input_name=''):
+            return input_data
+        def gds_parse_string(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_validate_string(self, input_data, node=None, input_name=''):
+            if not input_data:
+                return ''
+            else:
+                return input_data
+        def gds_format_base64(self, input_data, input_name=''):
+            return base64.b64encode(input_data)
+        def gds_validate_base64(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_integer(self, input_data, input_name=''):
+            return '%d' % input_data
+        def gds_parse_integer(self, input_data, node=None, input_name=''):
+            try:
+                ival = int(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires integer value: %s' % exp)
+            return ival
+        def gds_validate_integer(self, input_data, node=None, input_name=''):
+            try:
+                value = int(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires integer value')
+            return value
+        def gds_format_integer_list(self, input_data, input_name=''):
+            return '%s' % ' '.join(input_data)
+        def gds_validate_integer_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    int(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of integer valuess')
+            return values
+        def gds_format_float(self, input_data, input_name=''):
+            return ('%.15f' % input_data).rstrip('0')
+        def gds_parse_float(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires float or double value: %s' % exp)
+            return fval_
+        def gds_validate_float(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires float value')
+            return value
+        def gds_format_float_list(self, input_data, input_name=''):
+            return '%s' % ' '.join(input_data)
+        def gds_validate_float_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of float values')
+            return values
+        def gds_format_decimal(self, input_data, input_name=''):
+            return ('%s' % input_data).rstrip('0')
+        def gds_parse_decimal(self, input_data, node=None, input_name=''):
+            try:
+                decimal_value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return decimal_value
+        def gds_validate_decimal(self, input_data, node=None, input_name=''):
+            try:
+                value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return value
+        def gds_format_decimal_list(self, input_data, input_name=''):
+            return '%s' % ' '.join(input_data)
+        def gds_validate_decimal_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    decimal_.Decimal(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of decimal values')
+            return values
+        def gds_format_double(self, input_data, input_name=''):
+            return '%e' % input_data
+        def gds_parse_double(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires double or float value: %s' % exp)
+            return fval_
+        def gds_validate_double(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires double or float value')
+            return value
+        def gds_format_double_list(self, input_data, input_name=''):
+            return '%s' % ' '.join(input_data)
+        def gds_validate_double_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(
+                        node, 'Requires sequence of double or float values')
+            return values
+        def gds_format_boolean(self, input_data, input_name=''):
+            return ('%s' % input_data).lower()
+        def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            if input_data in ('true', '1'):
+                bval = True
+            elif input_data in ('false', '0'):
+                bval = False
+            else:
+                raise_parse_error(node, 'Requires boolean value')
+            return bval
+        def gds_validate_boolean(self, input_data, node=None, input_name=''):
+            if input_data not in (True, 1, False, 0, ):
+                raise_parse_error(
+                    node,
+                    'Requires boolean value '
+                    '(one of True, 1, False, 0)')
+            return input_data
+        def gds_format_boolean_list(self, input_data, input_name=''):
+            return '%s' % ' '.join(input_data)
+        def gds_validate_boolean_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                if value not in (True, 1, False, 0, ):
+                    raise_parse_error(
+                        node,
+                        'Requires sequence of boolean values '
+                        '(one of True, 1, False, 0)')
+            return values
+        def gds_validate_datetime(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_datetime(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d.%s' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        @classmethod
+        def gds_parse_datetime(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            time_parts = input_data.split('.')
+            if len(time_parts) > 1:
+                micro_seconds = int(float('0.' + time_parts[1]) * 1000000)
+                input_data = '%s.%s' % (
+                    time_parts[0], "{}".format(micro_seconds).rjust(6, "0"), )
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt
+        def gds_validate_date(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_date(self, input_data, input_name=''):
+            _svalue = '%04d-%02d-%02d' % (
+                input_data.year,
+                input_data.month,
+                input_data.day,
+            )
+            try:
+                if input_data.tzinfo is not None:
+                    tzoff = input_data.tzinfo.utcoffset(input_data)
+                    if tzoff is not None:
+                        total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                        if total_seconds == 0:
+                            _svalue += 'Z'
+                        else:
+                            if total_seconds < 0:
+                                _svalue += '-'
+                                total_seconds *= -1
+                            else:
+                                _svalue += '+'
+                            hours = total_seconds // 3600
+                            minutes = (total_seconds - (hours * 3600)) // 60
+                            _svalue += '{0:02d}:{1:02d}'.format(
+                                hours, minutes)
+            except AttributeError:
+                pass
+            return _svalue
+        @classmethod
+        def gds_parse_date(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            dt = datetime_.datetime.strptime(input_data, '%Y-%m-%d')
+            dt = dt.replace(tzinfo=tz)
+            return dt.date()
+        def gds_validate_time(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_time(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%02d:%02d:%02d' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%02d:%02d:%02d.%s' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        def gds_validate_simple_patterns(self, patterns, target):
+            # pat is a list of lists of strings/patterns.
+            # The target value must match at least one of the patterns
+            # in order for the test to succeed.
+            found1 = True
+            for patterns1 in patterns:
+                found2 = False
+                for patterns2 in patterns1:
+                    mo = re_.search(patterns2, target)
+                    if mo is not None and len(mo.group(0)) == len(target):
+                        found2 = True
+                        break
+                if not found2:
+                    found1 = False
+                    break
+            return found1
+        @classmethod
+        def gds_parse_time(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            if len(input_data.split('.')) > 1:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt.time()
+        def gds_check_cardinality_(
+                self, value, input_name,
+                min_occurs=0, max_occurs=1, required=None):
+            if value is None:
+                length = 0
+            elif isinstance(value, list):
+                length = len(value)
+            else:
+                length = 1
+            if required is not None :
+                if required and length < 1:
+                    self.gds_collector_.add_message(
+                        "Required value {}{} is missing".format(
+                            input_name, self.gds_get_node_lineno_()))
+            if length < min_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is below "
+                    "the minimum allowed, "
+                    "expected at least {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        min_occurs, length))
+            elif length > max_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is above "
+                    "the maximum allowed, "
+                    "expected at most {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        max_occurs, length))
+        def gds_validate_builtin_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value, input_name=input_name)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_validate_defined_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_str_lower(self, instring):
+            return instring.lower()
+        def get_path_(self, node):
+            path_list = []
+            self.get_path_list_(node, path_list)
+            path_list.reverse()
+            path = '/'.join(path_list)
+            return path
+        Tag_strip_pattern_ = re_.compile(r'\{.*\}')
+        def get_path_list_(self, node, path_list):
+            if node is None:
+                return
+            tag = GeneratedsSuper.Tag_strip_pattern_.sub('', node.tag)
+            if tag:
+                path_list.append(tag)
+            self.get_path_list_(node.getparent(), path_list)
+        def get_class_obj_(self, node, default_class=None):
+            class_obj1 = default_class
+            if 'xsi' in node.nsmap:
+                classname = node.get('{%s}type' % node.nsmap['xsi'])
+                if classname is not None:
+                    names = classname.split(':')
+                    if len(names) == 2:
+                        classname = names[1]
+                    class_obj2 = globals().get(classname)
+                    if class_obj2 is not None:
+                        class_obj1 = class_obj2
+            return class_obj1
+        def gds_build_any(self, node, type_name=None):
+            # provide default value in case option --disable-xml is used.
+            content = ""
+            content = etree_.tostring(node, encoding="unicode")
+            return content
+        @classmethod
+        def gds_reverse_node_mapping(cls, mapping):
+            return dict(((v, k) for k, v in mapping.items()))
+        @staticmethod
+        def gds_encode(instring):
+            if sys.version_info.major == 2:
+                if ExternalEncoding:
+                    encoding = ExternalEncoding
+                else:
+                    encoding = 'utf-8'
+                return instring.encode(encoding)
+            else:
+                return instring
+        @staticmethod
+        def convert_unicode(instring):
+            if isinstance(instring, str):
+                result = quote_xml(instring)
+            elif sys.version_info.major == 2 and isinstance(instring, unicode):
+                result = quote_xml(instring).encode('utf8')
+            else:
+                result = GeneratedsSuper.gds_encode(str(instring))
+            return result
+        def __eq__(self, other):
+            def excl_select_objs_(obj):
+                return (obj[0] != 'parent_object_' and
+                        obj[0] != 'gds_collector_')
+            if type(self) != type(other):
+                return False
+            return all(x == y for x, y in zip_longest(
+                filter(excl_select_objs_, self.__dict__.items()),
+                filter(excl_select_objs_, other.__dict__.items())))
+        def __ne__(self, other):
+            return not self.__eq__(other)
+        # Django ETL transform hooks.
+        def gds_djo_etl_transform(self):
+            pass
+        def gds_djo_etl_transform_db_obj(self, dbobj):
+            pass
+        # SQLAlchemy ETL transform hooks.
+        def gds_sqa_etl_transform(self):
+            return 0, None
+        def gds_sqa_etl_transform_db_obj(self, dbobj):
+            pass
+        def gds_get_node_lineno_(self):
+            if (hasattr(self, "gds_elementtree_node_") and
+                    self.gds_elementtree_node_ is not None):
+                return ' near line {}'.format(
+                    self.gds_elementtree_node_.sourceline)
+            else:
+                return ""
+    
+    
+    def getSubclassFromModule_(module, class_):
+        '''Get the subclass of a class from a specific module.'''
+        name = class_.__name__ + 'Sub'
+        if hasattr(module, name):
+            return getattr(module, name)
+        else:
+            return None
+
+
+#
+# If you have installed IPython you can uncomment and use the following.
+# IPython is available from http://ipython.scipy.org/.
+#
+
+## from IPython.Shell import IPShellEmbed
+## args = ''
+## ipshell = IPShellEmbed(args,
+##     banner = 'Dropping into IPython',
+##     exit_msg = 'Leaving Interpreter, back to program.')
+
+# Then use the following line where and when you want to drop into the
+# IPython shell:
+#    ipshell('<some message> -- Entering ipshell.\nHit Ctrl-D to exit')
+
+#
+# Globals
+#
+
+ExternalEncoding = ''
+# Set this to false in order to deactivate during export, the use of
+# name space prefixes captured from the input document.
+UseCapturedNS_ = True
+CapturedNsmap_ = {}
+Tag_pattern_ = re_.compile(r'({.*})?(.*)')
+String_cleanup_pat_ = re_.compile(r"[\n\r\s]+")
+Namespace_extract_pat_ = re_.compile(r'{(.*)}(.*)')
+CDATA_pattern_ = re_.compile(r"<!\[CDATA\[.*?\]\]>", re_.DOTALL)
+
+# Change this to redirect the generated superclass module to use a
+# specific subclass module.
+CurrentSubclassModule_ = None
+
+#
+# Support/utility functions.
+#
+
+
+def showIndent(outfile, level, pretty_print=True):
+    if pretty_print:
+        for idx in range(level):
+            outfile.write('    ')
+
+
+def quote_xml(inStr):
+    "Escape markup chars, but do not modify CDATA sections."
+    if not inStr:
+        return ''
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s2 = ''
+    pos = 0
+    matchobjects = CDATA_pattern_.finditer(s1)
+    for mo in matchobjects:
+        s3 = s1[pos:mo.start()]
+        s2 += quote_xml_aux(s3)
+        s2 += s1[mo.start():mo.end()]
+        pos = mo.end()
+    s3 = s1[pos:]
+    s2 += quote_xml_aux(s3)
+    return s2
+
+
+def quote_xml_aux(inStr):
+    s1 = inStr.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    return s1
+
+
+def quote_attrib(inStr):
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s1 = s1.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    if '"' in s1:
+        if "'" in s1:
+            s1 = '"%s"' % s1.replace('"', "&quot;")
+        else:
+            s1 = "'%s'" % s1
+    else:
+        s1 = '"%s"' % s1
+    return s1
+
+
+def quote_python(inStr):
+    s1 = inStr
+    if s1.find("'") == -1:
+        if s1.find('\n') == -1:
+            return "'%s'" % s1
+        else:
+            return "'''%s'''" % s1
+    else:
+        if s1.find('"') != -1:
+            s1 = s1.replace('"', '\\"')
+        if s1.find('\n') == -1:
+            return '"%s"' % s1
+        else:
+            return '"""%s"""' % s1
+
+
+def get_all_text_(node):
+    if node.text is not None:
+        text = node.text
+    else:
+        text = ''
+    for child in node:
+        if child.tail is not None:
+            text += child.tail
+    return text
+
+
+def find_attr_value_(attr_name, node):
+    attrs = node.attrib
+    attr_parts = attr_name.split(':')
+    value = None
+    if len(attr_parts) == 1:
+        value = attrs.get(attr_name)
+    elif len(attr_parts) == 2:
+        prefix, name = attr_parts
+        namespace = node.nsmap.get(prefix)
+        if namespace is not None:
+            value = attrs.get('{%s}%s' % (namespace, name, ))
+    return value
+
+
+def encode_str_2_3(instr):
+    return instr
+
+
+class GDSParseError(Exception):
+    pass
+
+
+def raise_parse_error(node, msg):
+    if node is not None:
+        msg = '%s (element %s/line %d)' % (msg, node.tag, node.sourceline, )
+    raise GDSParseError(msg)
+
+
+class MixedContainer:
+    # Constants for category:
+    CategoryNone = 0
+    CategoryText = 1
+    CategorySimple = 2
+    CategoryComplex = 3
+    # Constants for content_type:
+    TypeNone = 0
+    TypeText = 1
+    TypeString = 2
+    TypeInteger = 3
+    TypeFloat = 4
+    TypeDecimal = 5
+    TypeDouble = 6
+    TypeBoolean = 7
+    TypeBase64 = 8
+    def __init__(self, category, content_type, name, value):
+        self.category = category
+        self.content_type = content_type
+        self.name = name
+        self.value = value
+    def getCategory(self):
+        return self.category
+    def getContenttype(self, content_type):
+        return self.content_type
+    def getValue(self):
+        return self.value
+    def getName(self):
+        return self.name
+    def export(self, outfile, level, name, namespace,
+               pretty_print=True):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                outfile.write(self.value)
+        elif self.category == MixedContainer.CategorySimple:
+            self.exportSimple(outfile, level, name)
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.export(
+                outfile, level, namespace, name_=name,
+                pretty_print=pretty_print)
+    def exportSimple(self, outfile, level, name):
+        if self.content_type == MixedContainer.TypeString:
+            outfile.write('<%s>%s</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeInteger or \
+                self.content_type == MixedContainer.TypeBoolean:
+            outfile.write('<%s>%d</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeFloat or \
+                self.content_type == MixedContainer.TypeDecimal:
+            outfile.write('<%s>%f</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeDouble:
+            outfile.write('<%s>%g</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeBase64:
+            outfile.write('<%s>%s</%s>' % (
+                self.name,
+                base64.b64encode(self.value),
+                self.name))
+    def to_etree(self, element):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                if len(element) > 0:
+                    if element[-1].tail is None:
+                        element[-1].tail = self.value
+                    else:
+                        element[-1].tail += self.value
+                else:
+                    if element.text is None:
+                        element.text = self.value
+                    else:
+                        element.text += self.value
+        elif self.category == MixedContainer.CategorySimple:
+            subelement = etree_.SubElement(
+                element, '%s' % self.name)
+            subelement.text = self.to_etree_simple()
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.to_etree(element)
+    def to_etree_simple(self):
+        if self.content_type == MixedContainer.TypeString:
+            text = self.value
+        elif (self.content_type == MixedContainer.TypeInteger or
+                self.content_type == MixedContainer.TypeBoolean):
+            text = '%d' % self.value
+        elif (self.content_type == MixedContainer.TypeFloat or
+                self.content_type == MixedContainer.TypeDecimal):
+            text = '%f' % self.value
+        elif self.content_type == MixedContainer.TypeDouble:
+            text = '%g' % self.value
+        elif self.content_type == MixedContainer.TypeBase64:
+            text = '%s' % base64.b64encode(self.value)
+        return text
+    def exportLiteral(self, outfile, level, name):
+        if self.category == MixedContainer.CategoryText:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        elif self.category == MixedContainer.CategorySimple:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        else:    # category == MixedContainer.CategoryComplex
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s",\n' % (
+                    self.category, self.content_type, self.name,))
+            self.value.exportLiteral(outfile, level + 1)
+            showIndent(outfile, level)
+            outfile.write(')\n')
+
+
+class MemberSpec_(object):
+    def __init__(self, name='', data_type='', container=0,
+            optional=0, child_attrs=None, choice=None):
+        self.name = name
+        self.data_type = data_type
+        self.container = container
+        self.child_attrs = child_attrs
+        self.choice = choice
+        self.optional = optional
+    def set_name(self, name): self.name = name
+    def get_name(self): return self.name
+    def set_data_type(self, data_type): self.data_type = data_type
+    def get_data_type_chain(self): return self.data_type
+    def get_data_type(self):
+        if isinstance(self.data_type, list):
+            if len(self.data_type) > 0:
+                return self.data_type[-1]
+            else:
+                return 'xs:string'
+        else:
+            return self.data_type
+    def set_container(self, container): self.container = container
+    def get_container(self): return self.container
+    def set_child_attrs(self, child_attrs): self.child_attrs = child_attrs
+    def get_child_attrs(self): return self.child_attrs
+    def set_choice(self, choice): self.choice = choice
+    def get_choice(self): return self.choice
+    def set_optional(self, optional): self.optional = optional
+    def get_optional(self): return self.optional
+
+
+def _cast(typ, value):
+    if typ is None or value is None:
+        return value
+    return typ(value)
+
+#
+# Data representation classes.
+#
+
+
+class RateRequest(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Request=None, PickupType=None, CustomerClassification=None, Shipment=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Request = Request
+        self.Request_nsprefix_ = None
+        self.PickupType = PickupType
+        self.PickupType_nsprefix_ = None
+        self.CustomerClassification = CustomerClassification
+        self.CustomerClassification_nsprefix_ = None
+        self.Shipment = Shipment
+        self.Shipment_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RateRequest)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RateRequest.subclass:
+            return RateRequest.subclass(*args_, **kwargs_)
+        else:
+            return RateRequest(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Request(self):
+        return self.Request
+    def set_Request(self, Request):
+        self.Request = Request
+    def get_PickupType(self):
+        return self.PickupType
+    def set_PickupType(self, PickupType):
+        self.PickupType = PickupType
+    def get_CustomerClassification(self):
+        return self.CustomerClassification
+    def set_CustomerClassification(self, CustomerClassification):
+        self.CustomerClassification = CustomerClassification
+    def get_Shipment(self):
+        return self.Shipment
+    def set_Shipment(self, Shipment):
+        self.Shipment = Shipment
+    def hasContent_(self):
+        if (
+            self.Request is not None or
+            self.PickupType is not None or
+            self.CustomerClassification is not None or
+            self.Shipment is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RateRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RateRequest')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RateRequest':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RateRequest')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RateRequest', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RateRequest'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RateRequest', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Request is not None:
+            namespaceprefix_ = self.Request_nsprefix_ + ':' if (UseCapturedNS_ and self.Request_nsprefix_) else ''
+            self.Request.export(outfile, level, namespaceprefix_='common:', namespacedef_='', name_='Request', pretty_print=pretty_print)
+        if self.PickupType is not None:
+            namespaceprefix_ = self.PickupType_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupType_nsprefix_) else ''
+            self.PickupType.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PickupType', pretty_print=pretty_print)
+        if self.CustomerClassification is not None:
+            namespaceprefix_ = self.CustomerClassification_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerClassification_nsprefix_) else ''
+            self.CustomerClassification.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomerClassification', pretty_print=pretty_print)
+        if self.Shipment is not None:
+            namespaceprefix_ = self.Shipment_nsprefix_ + ':' if (UseCapturedNS_ and self.Shipment_nsprefix_) else ''
+            self.Shipment.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Shipment', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Request':
+            obj_ = RequestType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Request = obj_
+            obj_.original_tagname_ = 'Request'
+        elif nodeName_ == 'PickupType':
+            obj_ = CodeDescriptionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PickupType = obj_
+            obj_.original_tagname_ = 'PickupType'
+        elif nodeName_ == 'CustomerClassification':
+            obj_ = CodeDescriptionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CustomerClassification = obj_
+            obj_.original_tagname_ = 'CustomerClassification'
+        elif nodeName_ == 'Shipment':
+            obj_ = ShipmentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Shipment = obj_
+            obj_.original_tagname_ = 'Shipment'
+# end class RateRequest
+
+
+class RateResponse(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Response=None, RatedShipment=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Response = Response
+        self.Response_nsprefix_ = None
+        if RatedShipment is None:
+            self.RatedShipment = []
+        else:
+            self.RatedShipment = RatedShipment
+        self.RatedShipment_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RateResponse)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RateResponse.subclass:
+            return RateResponse.subclass(*args_, **kwargs_)
+        else:
+            return RateResponse(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Response(self):
+        return self.Response
+    def set_Response(self, Response):
+        self.Response = Response
+    def get_RatedShipment(self):
+        return self.RatedShipment
+    def set_RatedShipment(self, RatedShipment):
+        self.RatedShipment = RatedShipment
+    def add_RatedShipment(self, value):
+        self.RatedShipment.append(value)
+    def insert_RatedShipment_at(self, index, value):
+        self.RatedShipment.insert(index, value)
+    def replace_RatedShipment_at(self, index, value):
+        self.RatedShipment[index] = value
+    def hasContent_(self):
+        if (
+            self.Response is not None or
+            self.RatedShipment
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RateResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RateResponse')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RateResponse':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RateResponse')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RateResponse', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RateResponse'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RateResponse', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Response is not None:
+            namespaceprefix_ = self.Response_nsprefix_ + ':' if (UseCapturedNS_ and self.Response_nsprefix_) else ''
+            self.Response.export(outfile, level, namespaceprefix_='common:', namespacedef_='', name_='Response', pretty_print=pretty_print)
+        for RatedShipment_ in self.RatedShipment:
+            namespaceprefix_ = self.RatedShipment_nsprefix_ + ':' if (UseCapturedNS_ and self.RatedShipment_nsprefix_) else ''
+            RatedShipment_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RatedShipment', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Response':
+            obj_ = ResponseType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Response = obj_
+            obj_.original_tagname_ = 'Response'
+        elif nodeName_ == 'RatedShipment':
+            obj_ = RatedShipmentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RatedShipment.append(obj_)
+            obj_.original_tagname_ = 'RatedShipment'
+# end class RateResponse
+
+
+class BillingWeightType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Weight=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Weight = Weight
+        self.Weight_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, BillingWeightType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if BillingWeightType.subclass:
+            return BillingWeightType.subclass(*args_, **kwargs_)
+        else:
+            return BillingWeightType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Weight(self):
+        return self.Weight
+    def set_Weight(self, Weight):
+        self.Weight = Weight
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Weight is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillingWeightType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('BillingWeightType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'BillingWeightType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='BillingWeightType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='BillingWeightType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='BillingWeightType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillingWeightType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Weight is not None:
+            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Weight), input_name='Weight')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Weight':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Weight')
+            value_ = self.gds_validate_string(value_, node, 'Weight')
+            self.Weight = value_
+            self.Weight_nsprefix_ = child_.prefix
+# end class BillingWeightType
+
+
+class RatedPackageType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, TransportationCharges=None, BaseServiceCharge=None, ServiceOptionsCharges=None, TotalCharges=None, Weight=None, BillingWeight=None, Accessorial=None, ItemizedCharges=None, NegotiatedCharges=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.TransportationCharges = TransportationCharges
+        self.TransportationCharges_nsprefix_ = None
+        self.BaseServiceCharge = BaseServiceCharge
+        self.BaseServiceCharge_nsprefix_ = None
+        self.ServiceOptionsCharges = ServiceOptionsCharges
+        self.ServiceOptionsCharges_nsprefix_ = None
+        self.TotalCharges = TotalCharges
+        self.TotalCharges_nsprefix_ = None
+        self.Weight = Weight
+        self.Weight_nsprefix_ = None
+        self.BillingWeight = BillingWeight
+        self.BillingWeight_nsprefix_ = None
+        if Accessorial is None:
+            self.Accessorial = []
+        else:
+            self.Accessorial = Accessorial
+        self.Accessorial_nsprefix_ = None
+        if ItemizedCharges is None:
+            self.ItemizedCharges = []
+        else:
+            self.ItemizedCharges = ItemizedCharges
+        self.ItemizedCharges_nsprefix_ = None
+        self.NegotiatedCharges = NegotiatedCharges
+        self.NegotiatedCharges_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RatedPackageType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RatedPackageType.subclass:
+            return RatedPackageType.subclass(*args_, **kwargs_)
+        else:
+            return RatedPackageType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_TransportationCharges(self):
+        return self.TransportationCharges
+    def set_TransportationCharges(self, TransportationCharges):
+        self.TransportationCharges = TransportationCharges
+    def get_BaseServiceCharge(self):
+        return self.BaseServiceCharge
+    def set_BaseServiceCharge(self, BaseServiceCharge):
+        self.BaseServiceCharge = BaseServiceCharge
+    def get_ServiceOptionsCharges(self):
+        return self.ServiceOptionsCharges
+    def set_ServiceOptionsCharges(self, ServiceOptionsCharges):
+        self.ServiceOptionsCharges = ServiceOptionsCharges
+    def get_TotalCharges(self):
+        return self.TotalCharges
+    def set_TotalCharges(self, TotalCharges):
+        self.TotalCharges = TotalCharges
+    def get_Weight(self):
+        return self.Weight
+    def set_Weight(self, Weight):
+        self.Weight = Weight
+    def get_BillingWeight(self):
+        return self.BillingWeight
+    def set_BillingWeight(self, BillingWeight):
+        self.BillingWeight = BillingWeight
+    def get_Accessorial(self):
+        return self.Accessorial
+    def set_Accessorial(self, Accessorial):
+        self.Accessorial = Accessorial
+    def add_Accessorial(self, value):
+        self.Accessorial.append(value)
+    def insert_Accessorial_at(self, index, value):
+        self.Accessorial.insert(index, value)
+    def replace_Accessorial_at(self, index, value):
+        self.Accessorial[index] = value
+    def get_ItemizedCharges(self):
+        return self.ItemizedCharges
+    def set_ItemizedCharges(self, ItemizedCharges):
+        self.ItemizedCharges = ItemizedCharges
+    def add_ItemizedCharges(self, value):
+        self.ItemizedCharges.append(value)
+    def insert_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges.insert(index, value)
+    def replace_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges[index] = value
+    def get_NegotiatedCharges(self):
+        return self.NegotiatedCharges
+    def set_NegotiatedCharges(self, NegotiatedCharges):
+        self.NegotiatedCharges = NegotiatedCharges
+    def hasContent_(self):
+        if (
+            self.TransportationCharges is not None or
+            self.BaseServiceCharge is not None or
+            self.ServiceOptionsCharges is not None or
+            self.TotalCharges is not None or
+            self.Weight is not None or
+            self.BillingWeight is not None or
+            self.Accessorial or
+            self.ItemizedCharges or
+            self.NegotiatedCharges is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedPackageType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RatedPackageType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RatedPackageType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RatedPackageType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RatedPackageType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RatedPackageType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedPackageType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.TransportationCharges is not None:
+            namespaceprefix_ = self.TransportationCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TransportationCharges_nsprefix_) else ''
+            self.TransportationCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TransportationCharges', pretty_print=pretty_print)
+        if self.BaseServiceCharge is not None:
+            namespaceprefix_ = self.BaseServiceCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.BaseServiceCharge_nsprefix_) else ''
+            self.BaseServiceCharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BaseServiceCharge', pretty_print=pretty_print)
+        if self.ServiceOptionsCharges is not None:
+            namespaceprefix_ = self.ServiceOptionsCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ServiceOptionsCharges_nsprefix_) else ''
+            self.ServiceOptionsCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ServiceOptionsCharges', pretty_print=pretty_print)
+        if self.TotalCharges is not None:
+            namespaceprefix_ = self.TotalCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalCharges_nsprefix_) else ''
+            self.TotalCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TotalCharges', pretty_print=pretty_print)
+        if self.Weight is not None:
+            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Weight), input_name='Weight')), namespaceprefix_ , eol_))
+        if self.BillingWeight is not None:
+            namespaceprefix_ = self.BillingWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.BillingWeight_nsprefix_) else ''
+            self.BillingWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillingWeight', pretty_print=pretty_print)
+        for Accessorial_ in self.Accessorial:
+            namespaceprefix_ = self.Accessorial_nsprefix_ + ':' if (UseCapturedNS_ and self.Accessorial_nsprefix_) else ''
+            Accessorial_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Accessorial', pretty_print=pretty_print)
+        for ItemizedCharges_ in self.ItemizedCharges:
+            namespaceprefix_ = self.ItemizedCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ItemizedCharges_nsprefix_) else ''
+            ItemizedCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ItemizedCharges', pretty_print=pretty_print)
+        if self.NegotiatedCharges is not None:
+            namespaceprefix_ = self.NegotiatedCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.NegotiatedCharges_nsprefix_) else ''
+            self.NegotiatedCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='NegotiatedCharges', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'TransportationCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TransportationCharges = obj_
+            obj_.original_tagname_ = 'TransportationCharges'
+        elif nodeName_ == 'BaseServiceCharge':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BaseServiceCharge = obj_
+            obj_.original_tagname_ = 'BaseServiceCharge'
+        elif nodeName_ == 'ServiceOptionsCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ServiceOptionsCharges = obj_
+            obj_.original_tagname_ = 'ServiceOptionsCharges'
+        elif nodeName_ == 'TotalCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TotalCharges = obj_
+            obj_.original_tagname_ = 'TotalCharges'
+        elif nodeName_ == 'Weight':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Weight')
+            value_ = self.gds_validate_string(value_, node, 'Weight')
+            self.Weight = value_
+            self.Weight_nsprefix_ = child_.prefix
+        elif nodeName_ == 'BillingWeight':
+            obj_ = BillingWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillingWeight = obj_
+            obj_.original_tagname_ = 'BillingWeight'
+        elif nodeName_ == 'Accessorial':
+            obj_ = AccessorialType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Accessorial.append(obj_)
+            obj_.original_tagname_ = 'Accessorial'
+        elif nodeName_ == 'ItemizedCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ItemizedCharges.append(obj_)
+            obj_.original_tagname_ = 'ItemizedCharges'
+        elif nodeName_ == 'NegotiatedCharges':
+            obj_ = NegotiatedChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.NegotiatedCharges = obj_
+            obj_.original_tagname_ = 'NegotiatedCharges'
+# end class RatedPackageType
+
+
+class AccessorialType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AccessorialType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AccessorialType.subclass:
+            return AccessorialType.subclass(*args_, **kwargs_)
+        else:
+            return AccessorialType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AccessorialType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AccessorialType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AccessorialType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AccessorialType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AccessorialType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AccessorialType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AccessorialType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class AccessorialType
+
+
+class NegotiatedChargesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ItemizedCharges=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if ItemizedCharges is None:
+            self.ItemizedCharges = []
+        else:
+            self.ItemizedCharges = ItemizedCharges
+        self.ItemizedCharges_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, NegotiatedChargesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if NegotiatedChargesType.subclass:
+            return NegotiatedChargesType.subclass(*args_, **kwargs_)
+        else:
+            return NegotiatedChargesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ItemizedCharges(self):
+        return self.ItemizedCharges
+    def set_ItemizedCharges(self, ItemizedCharges):
+        self.ItemizedCharges = ItemizedCharges
+    def add_ItemizedCharges(self, value):
+        self.ItemizedCharges.append(value)
+    def insert_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges.insert(index, value)
+    def replace_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges[index] = value
+    def hasContent_(self):
+        if (
+            self.ItemizedCharges
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='NegotiatedChargesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('NegotiatedChargesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'NegotiatedChargesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='NegotiatedChargesType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='NegotiatedChargesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='NegotiatedChargesType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='NegotiatedChargesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for ItemizedCharges_ in self.ItemizedCharges:
+            namespaceprefix_ = self.ItemizedCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ItemizedCharges_nsprefix_) else ''
+            ItemizedCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ItemizedCharges', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ItemizedCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ItemizedCharges.append(obj_)
+            obj_.original_tagname_ = 'ItemizedCharges'
+# end class NegotiatedChargesType
+
+
+class RatedShipmentType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Disclaimer=None, Service=None, RateChart=None, RatedShipmentAlert=None, BillableWeightCalculationMethod=None, RatingMethod=None, BillingWeight=None, TransportationCharges=None, BaseServiceCharge=None, ItemizedCharges=None, FRSShipmentData=None, ServiceOptionsCharges=None, TaxCharges=None, TotalCharges=None, TotalChargesWithTaxes=None, NegotiatedRateCharges=None, GuaranteedDelivery=None, RatedPackage=None, TimeInTransit=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if Disclaimer is None:
+            self.Disclaimer = []
+        else:
+            self.Disclaimer = Disclaimer
+        self.Disclaimer_nsprefix_ = None
+        self.Service = Service
+        self.Service_nsprefix_ = None
+        self.RateChart = RateChart
+        self.RateChart_nsprefix_ = None
+        if RatedShipmentAlert is None:
+            self.RatedShipmentAlert = []
+        else:
+            self.RatedShipmentAlert = RatedShipmentAlert
+        self.RatedShipmentAlert_nsprefix_ = None
+        self.BillableWeightCalculationMethod = BillableWeightCalculationMethod
+        self.BillableWeightCalculationMethod_nsprefix_ = None
+        self.RatingMethod = RatingMethod
+        self.RatingMethod_nsprefix_ = None
+        self.BillingWeight = BillingWeight
+        self.BillingWeight_nsprefix_ = None
+        self.TransportationCharges = TransportationCharges
+        self.TransportationCharges_nsprefix_ = None
+        self.BaseServiceCharge = BaseServiceCharge
+        self.BaseServiceCharge_nsprefix_ = None
+        if ItemizedCharges is None:
+            self.ItemizedCharges = []
+        else:
+            self.ItemizedCharges = ItemizedCharges
+        self.ItemizedCharges_nsprefix_ = None
+        self.FRSShipmentData = FRSShipmentData
+        self.FRSShipmentData_nsprefix_ = None
+        self.ServiceOptionsCharges = ServiceOptionsCharges
+        self.ServiceOptionsCharges_nsprefix_ = None
+        if TaxCharges is None:
+            self.TaxCharges = []
+        else:
+            self.TaxCharges = TaxCharges
+        self.TaxCharges_nsprefix_ = None
+        self.TotalCharges = TotalCharges
+        self.TotalCharges_nsprefix_ = None
+        self.TotalChargesWithTaxes = TotalChargesWithTaxes
+        self.TotalChargesWithTaxes_nsprefix_ = None
+        self.NegotiatedRateCharges = NegotiatedRateCharges
+        self.NegotiatedRateCharges_nsprefix_ = None
+        self.GuaranteedDelivery = GuaranteedDelivery
+        self.GuaranteedDelivery_nsprefix_ = None
+        if RatedPackage is None:
+            self.RatedPackage = []
+        else:
+            self.RatedPackage = RatedPackage
+        self.RatedPackage_nsprefix_ = None
+        self.TimeInTransit = TimeInTransit
+        self.TimeInTransit_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RatedShipmentType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RatedShipmentType.subclass:
+            return RatedShipmentType.subclass(*args_, **kwargs_)
+        else:
+            return RatedShipmentType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Disclaimer(self):
+        return self.Disclaimer
+    def set_Disclaimer(self, Disclaimer):
+        self.Disclaimer = Disclaimer
+    def add_Disclaimer(self, value):
+        self.Disclaimer.append(value)
+    def insert_Disclaimer_at(self, index, value):
+        self.Disclaimer.insert(index, value)
+    def replace_Disclaimer_at(self, index, value):
+        self.Disclaimer[index] = value
+    def get_Service(self):
+        return self.Service
+    def set_Service(self, Service):
+        self.Service = Service
+    def get_RateChart(self):
+        return self.RateChart
+    def set_RateChart(self, RateChart):
+        self.RateChart = RateChart
+    def get_RatedShipmentAlert(self):
+        return self.RatedShipmentAlert
+    def set_RatedShipmentAlert(self, RatedShipmentAlert):
+        self.RatedShipmentAlert = RatedShipmentAlert
+    def add_RatedShipmentAlert(self, value):
+        self.RatedShipmentAlert.append(value)
+    def insert_RatedShipmentAlert_at(self, index, value):
+        self.RatedShipmentAlert.insert(index, value)
+    def replace_RatedShipmentAlert_at(self, index, value):
+        self.RatedShipmentAlert[index] = value
+    def get_BillableWeightCalculationMethod(self):
+        return self.BillableWeightCalculationMethod
+    def set_BillableWeightCalculationMethod(self, BillableWeightCalculationMethod):
+        self.BillableWeightCalculationMethod = BillableWeightCalculationMethod
+    def get_RatingMethod(self):
+        return self.RatingMethod
+    def set_RatingMethod(self, RatingMethod):
+        self.RatingMethod = RatingMethod
+    def get_BillingWeight(self):
+        return self.BillingWeight
+    def set_BillingWeight(self, BillingWeight):
+        self.BillingWeight = BillingWeight
+    def get_TransportationCharges(self):
+        return self.TransportationCharges
+    def set_TransportationCharges(self, TransportationCharges):
+        self.TransportationCharges = TransportationCharges
+    def get_BaseServiceCharge(self):
+        return self.BaseServiceCharge
+    def set_BaseServiceCharge(self, BaseServiceCharge):
+        self.BaseServiceCharge = BaseServiceCharge
+    def get_ItemizedCharges(self):
+        return self.ItemizedCharges
+    def set_ItemizedCharges(self, ItemizedCharges):
+        self.ItemizedCharges = ItemizedCharges
+    def add_ItemizedCharges(self, value):
+        self.ItemizedCharges.append(value)
+    def insert_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges.insert(index, value)
+    def replace_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges[index] = value
+    def get_FRSShipmentData(self):
+        return self.FRSShipmentData
+    def set_FRSShipmentData(self, FRSShipmentData):
+        self.FRSShipmentData = FRSShipmentData
+    def get_ServiceOptionsCharges(self):
+        return self.ServiceOptionsCharges
+    def set_ServiceOptionsCharges(self, ServiceOptionsCharges):
+        self.ServiceOptionsCharges = ServiceOptionsCharges
+    def get_TaxCharges(self):
+        return self.TaxCharges
+    def set_TaxCharges(self, TaxCharges):
+        self.TaxCharges = TaxCharges
+    def add_TaxCharges(self, value):
+        self.TaxCharges.append(value)
+    def insert_TaxCharges_at(self, index, value):
+        self.TaxCharges.insert(index, value)
+    def replace_TaxCharges_at(self, index, value):
+        self.TaxCharges[index] = value
+    def get_TotalCharges(self):
+        return self.TotalCharges
+    def set_TotalCharges(self, TotalCharges):
+        self.TotalCharges = TotalCharges
+    def get_TotalChargesWithTaxes(self):
+        return self.TotalChargesWithTaxes
+    def set_TotalChargesWithTaxes(self, TotalChargesWithTaxes):
+        self.TotalChargesWithTaxes = TotalChargesWithTaxes
+    def get_NegotiatedRateCharges(self):
+        return self.NegotiatedRateCharges
+    def set_NegotiatedRateCharges(self, NegotiatedRateCharges):
+        self.NegotiatedRateCharges = NegotiatedRateCharges
+    def get_GuaranteedDelivery(self):
+        return self.GuaranteedDelivery
+    def set_GuaranteedDelivery(self, GuaranteedDelivery):
+        self.GuaranteedDelivery = GuaranteedDelivery
+    def get_RatedPackage(self):
+        return self.RatedPackage
+    def set_RatedPackage(self, RatedPackage):
+        self.RatedPackage = RatedPackage
+    def add_RatedPackage(self, value):
+        self.RatedPackage.append(value)
+    def insert_RatedPackage_at(self, index, value):
+        self.RatedPackage.insert(index, value)
+    def replace_RatedPackage_at(self, index, value):
+        self.RatedPackage[index] = value
+    def get_TimeInTransit(self):
+        return self.TimeInTransit
+    def set_TimeInTransit(self, TimeInTransit):
+        self.TimeInTransit = TimeInTransit
+    def hasContent_(self):
+        if (
+            self.Disclaimer or
+            self.Service is not None or
+            self.RateChart is not None or
+            self.RatedShipmentAlert or
+            self.BillableWeightCalculationMethod is not None or
+            self.RatingMethod is not None or
+            self.BillingWeight is not None or
+            self.TransportationCharges is not None or
+            self.BaseServiceCharge is not None or
+            self.ItemizedCharges or
+            self.FRSShipmentData is not None or
+            self.ServiceOptionsCharges is not None or
+            self.TaxCharges or
+            self.TotalCharges is not None or
+            self.TotalChargesWithTaxes is not None or
+            self.NegotiatedRateCharges is not None or
+            self.GuaranteedDelivery is not None or
+            self.RatedPackage or
+            self.TimeInTransit is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedShipmentType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RatedShipmentType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RatedShipmentType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RatedShipmentType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RatedShipmentType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RatedShipmentType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedShipmentType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Disclaimer_ in self.Disclaimer:
+            namespaceprefix_ = self.Disclaimer_nsprefix_ + ':' if (UseCapturedNS_ and self.Disclaimer_nsprefix_) else ''
+            Disclaimer_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Disclaimer', pretty_print=pretty_print)
+        if self.Service is not None:
+            namespaceprefix_ = self.Service_nsprefix_ + ':' if (UseCapturedNS_ and self.Service_nsprefix_) else ''
+            self.Service.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Service', pretty_print=pretty_print)
+        if self.RateChart is not None:
+            namespaceprefix_ = self.RateChart_nsprefix_ + ':' if (UseCapturedNS_ and self.RateChart_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRateChart>%s</%sRateChart>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RateChart), input_name='RateChart')), namespaceprefix_ , eol_))
+        for RatedShipmentAlert_ in self.RatedShipmentAlert:
+            namespaceprefix_ = self.RatedShipmentAlert_nsprefix_ + ':' if (UseCapturedNS_ and self.RatedShipmentAlert_nsprefix_) else ''
+            RatedShipmentAlert_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RatedShipmentAlert', pretty_print=pretty_print)
+        if self.BillableWeightCalculationMethod is not None:
+            namespaceprefix_ = self.BillableWeightCalculationMethod_nsprefix_ + ':' if (UseCapturedNS_ and self.BillableWeightCalculationMethod_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillableWeightCalculationMethod>%s</%sBillableWeightCalculationMethod>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillableWeightCalculationMethod), input_name='BillableWeightCalculationMethod')), namespaceprefix_ , eol_))
+        if self.RatingMethod is not None:
+            namespaceprefix_ = self.RatingMethod_nsprefix_ + ':' if (UseCapturedNS_ and self.RatingMethod_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRatingMethod>%s</%sRatingMethod>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RatingMethod), input_name='RatingMethod')), namespaceprefix_ , eol_))
+        if self.BillingWeight is not None:
+            namespaceprefix_ = self.BillingWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.BillingWeight_nsprefix_) else ''
+            self.BillingWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillingWeight', pretty_print=pretty_print)
+        if self.TransportationCharges is not None:
+            namespaceprefix_ = self.TransportationCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TransportationCharges_nsprefix_) else ''
+            self.TransportationCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TransportationCharges', pretty_print=pretty_print)
+        if self.BaseServiceCharge is not None:
+            namespaceprefix_ = self.BaseServiceCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.BaseServiceCharge_nsprefix_) else ''
+            self.BaseServiceCharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BaseServiceCharge', pretty_print=pretty_print)
+        for ItemizedCharges_ in self.ItemizedCharges:
+            namespaceprefix_ = self.ItemizedCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ItemizedCharges_nsprefix_) else ''
+            ItemizedCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ItemizedCharges', pretty_print=pretty_print)
+        if self.FRSShipmentData is not None:
+            namespaceprefix_ = self.FRSShipmentData_nsprefix_ + ':' if (UseCapturedNS_ and self.FRSShipmentData_nsprefix_) else ''
+            self.FRSShipmentData.export(outfile, level, namespaceprefix_, namespacedef_='', name_='FRSShipmentData', pretty_print=pretty_print)
+        if self.ServiceOptionsCharges is not None:
+            namespaceprefix_ = self.ServiceOptionsCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ServiceOptionsCharges_nsprefix_) else ''
+            self.ServiceOptionsCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ServiceOptionsCharges', pretty_print=pretty_print)
+        for TaxCharges_ in self.TaxCharges:
+            namespaceprefix_ = self.TaxCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TaxCharges_nsprefix_) else ''
+            TaxCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TaxCharges', pretty_print=pretty_print)
+        if self.TotalCharges is not None:
+            namespaceprefix_ = self.TotalCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalCharges_nsprefix_) else ''
+            self.TotalCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TotalCharges', pretty_print=pretty_print)
+        if self.TotalChargesWithTaxes is not None:
+            namespaceprefix_ = self.TotalChargesWithTaxes_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalChargesWithTaxes_nsprefix_) else ''
+            self.TotalChargesWithTaxes.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TotalChargesWithTaxes', pretty_print=pretty_print)
+        if self.NegotiatedRateCharges is not None:
+            namespaceprefix_ = self.NegotiatedRateCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.NegotiatedRateCharges_nsprefix_) else ''
+            self.NegotiatedRateCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='NegotiatedRateCharges', pretty_print=pretty_print)
+        if self.GuaranteedDelivery is not None:
+            namespaceprefix_ = self.GuaranteedDelivery_nsprefix_ + ':' if (UseCapturedNS_ and self.GuaranteedDelivery_nsprefix_) else ''
+            self.GuaranteedDelivery.export(outfile, level, namespaceprefix_, namespacedef_='', name_='GuaranteedDelivery', pretty_print=pretty_print)
+        for RatedPackage_ in self.RatedPackage:
+            namespaceprefix_ = self.RatedPackage_nsprefix_ + ':' if (UseCapturedNS_ and self.RatedPackage_nsprefix_) else ''
+            RatedPackage_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RatedPackage', pretty_print=pretty_print)
+        if self.TimeInTransit is not None:
+            namespaceprefix_ = self.TimeInTransit_nsprefix_ + ':' if (UseCapturedNS_ and self.TimeInTransit_nsprefix_) else ''
+            self.TimeInTransit.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TimeInTransit', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Disclaimer':
+            obj_ = DisclaimerType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Disclaimer.append(obj_)
+            obj_.original_tagname_ = 'Disclaimer'
+        elif nodeName_ == 'Service':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Service = obj_
+            obj_.original_tagname_ = 'Service'
+        elif nodeName_ == 'RateChart':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RateChart')
+            value_ = self.gds_validate_string(value_, node, 'RateChart')
+            self.RateChart = value_
+            self.RateChart_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RatedShipmentAlert':
+            obj_ = RatedShipmentInfoType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RatedShipmentAlert.append(obj_)
+            obj_.original_tagname_ = 'RatedShipmentAlert'
+        elif nodeName_ == 'BillableWeightCalculationMethod':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillableWeightCalculationMethod')
+            value_ = self.gds_validate_string(value_, node, 'BillableWeightCalculationMethod')
+            self.BillableWeightCalculationMethod = value_
+            self.BillableWeightCalculationMethod_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RatingMethod':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RatingMethod')
+            value_ = self.gds_validate_string(value_, node, 'RatingMethod')
+            self.RatingMethod = value_
+            self.RatingMethod_nsprefix_ = child_.prefix
+        elif nodeName_ == 'BillingWeight':
+            obj_ = BillingWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillingWeight = obj_
+            obj_.original_tagname_ = 'BillingWeight'
+        elif nodeName_ == 'TransportationCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TransportationCharges = obj_
+            obj_.original_tagname_ = 'TransportationCharges'
+        elif nodeName_ == 'BaseServiceCharge':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BaseServiceCharge = obj_
+            obj_.original_tagname_ = 'BaseServiceCharge'
+        elif nodeName_ == 'ItemizedCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ItemizedCharges.append(obj_)
+            obj_.original_tagname_ = 'ItemizedCharges'
+        elif nodeName_ == 'FRSShipmentData':
+            obj_ = FRSShipmentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.FRSShipmentData = obj_
+            obj_.original_tagname_ = 'FRSShipmentData'
+        elif nodeName_ == 'ServiceOptionsCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ServiceOptionsCharges = obj_
+            obj_.original_tagname_ = 'ServiceOptionsCharges'
+        elif nodeName_ == 'TaxCharges':
+            obj_ = TaxChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TaxCharges.append(obj_)
+            obj_.original_tagname_ = 'TaxCharges'
+        elif nodeName_ == 'TotalCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TotalCharges = obj_
+            obj_.original_tagname_ = 'TotalCharges'
+        elif nodeName_ == 'TotalChargesWithTaxes':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TotalChargesWithTaxes = obj_
+            obj_.original_tagname_ = 'TotalChargesWithTaxes'
+        elif nodeName_ == 'NegotiatedRateCharges':
+            obj_ = TotalChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.NegotiatedRateCharges = obj_
+            obj_.original_tagname_ = 'NegotiatedRateCharges'
+        elif nodeName_ == 'GuaranteedDelivery':
+            obj_ = GuaranteedDeliveryType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.GuaranteedDelivery = obj_
+            obj_.original_tagname_ = 'GuaranteedDelivery'
+        elif nodeName_ == 'RatedPackage':
+            obj_ = RatedPackageType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RatedPackage.append(obj_)
+            obj_.original_tagname_ = 'RatedPackage'
+        elif nodeName_ == 'TimeInTransit':
+            obj_ = TimeInTransitResponseType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TimeInTransit = obj_
+            obj_.original_tagname_ = 'TimeInTransit'
+# end class RatedShipmentType
+
+
+class ReturnContractServicesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ReturnContractServicesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ReturnContractServicesType.subclass:
+            return ReturnContractServicesType.subclass(*args_, **kwargs_)
+        else:
+            return ReturnContractServicesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ReturnContractServicesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ReturnContractServicesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ReturnContractServicesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ReturnContractServicesType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ReturnContractServicesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ReturnContractServicesType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ReturnContractServicesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class ReturnContractServicesType
+
+
+class TimeInTransitResponseType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PickupDate=None, DocumentsOnlyIndicator=None, PackageBillType=None, AutoDutyCode=None, Disclaimer=None, ServiceSummary=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PickupDate = PickupDate
+        self.PickupDate_nsprefix_ = None
+        self.DocumentsOnlyIndicator = DocumentsOnlyIndicator
+        self.DocumentsOnlyIndicator_nsprefix_ = None
+        self.PackageBillType = PackageBillType
+        self.PackageBillType_nsprefix_ = None
+        self.AutoDutyCode = AutoDutyCode
+        self.AutoDutyCode_nsprefix_ = None
+        self.Disclaimer = Disclaimer
+        self.Disclaimer_nsprefix_ = None
+        self.ServiceSummary = ServiceSummary
+        self.ServiceSummary_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TimeInTransitResponseType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TimeInTransitResponseType.subclass:
+            return TimeInTransitResponseType.subclass(*args_, **kwargs_)
+        else:
+            return TimeInTransitResponseType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PickupDate(self):
+        return self.PickupDate
+    def set_PickupDate(self, PickupDate):
+        self.PickupDate = PickupDate
+    def get_DocumentsOnlyIndicator(self):
+        return self.DocumentsOnlyIndicator
+    def set_DocumentsOnlyIndicator(self, DocumentsOnlyIndicator):
+        self.DocumentsOnlyIndicator = DocumentsOnlyIndicator
+    def get_PackageBillType(self):
+        return self.PackageBillType
+    def set_PackageBillType(self, PackageBillType):
+        self.PackageBillType = PackageBillType
+    def get_AutoDutyCode(self):
+        return self.AutoDutyCode
+    def set_AutoDutyCode(self, AutoDutyCode):
+        self.AutoDutyCode = AutoDutyCode
+    def get_Disclaimer(self):
+        return self.Disclaimer
+    def set_Disclaimer(self, Disclaimer):
+        self.Disclaimer = Disclaimer
+    def get_ServiceSummary(self):
+        return self.ServiceSummary
+    def set_ServiceSummary(self, ServiceSummary):
+        self.ServiceSummary = ServiceSummary
+    def hasContent_(self):
+        if (
+            self.PickupDate is not None or
+            self.DocumentsOnlyIndicator is not None or
+            self.PackageBillType is not None or
+            self.AutoDutyCode is not None or
+            self.Disclaimer is not None or
+            self.ServiceSummary is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TimeInTransitResponseType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TimeInTransitResponseType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TimeInTransitResponseType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TimeInTransitResponseType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TimeInTransitResponseType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TimeInTransitResponseType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TimeInTransitResponseType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PickupDate is not None:
+            namespaceprefix_ = self.PickupDate_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupDate_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPickupDate>%s</%sPickupDate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PickupDate), input_name='PickupDate')), namespaceprefix_ , eol_))
+        if self.DocumentsOnlyIndicator is not None:
+            namespaceprefix_ = self.DocumentsOnlyIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DocumentsOnlyIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDocumentsOnlyIndicator>%s</%sDocumentsOnlyIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DocumentsOnlyIndicator), input_name='DocumentsOnlyIndicator')), namespaceprefix_ , eol_))
+        if self.PackageBillType is not None:
+            namespaceprefix_ = self.PackageBillType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageBillType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackageBillType>%s</%sPackageBillType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackageBillType), input_name='PackageBillType')), namespaceprefix_ , eol_))
+        if self.AutoDutyCode is not None:
+            namespaceprefix_ = self.AutoDutyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.AutoDutyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAutoDutyCode>%s</%sAutoDutyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AutoDutyCode), input_name='AutoDutyCode')), namespaceprefix_ , eol_))
+        if self.Disclaimer is not None:
+            namespaceprefix_ = self.Disclaimer_nsprefix_ + ':' if (UseCapturedNS_ and self.Disclaimer_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDisclaimer>%s</%sDisclaimer>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Disclaimer), input_name='Disclaimer')), namespaceprefix_ , eol_))
+        if self.ServiceSummary is not None:
+            namespaceprefix_ = self.ServiceSummary_nsprefix_ + ':' if (UseCapturedNS_ and self.ServiceSummary_nsprefix_) else ''
+            self.ServiceSummary.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ServiceSummary', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PickupDate':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PickupDate')
+            value_ = self.gds_validate_string(value_, node, 'PickupDate')
+            self.PickupDate = value_
+            self.PickupDate_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DocumentsOnlyIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DocumentsOnlyIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DocumentsOnlyIndicator')
+            self.DocumentsOnlyIndicator = value_
+            self.DocumentsOnlyIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackageBillType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackageBillType')
+            value_ = self.gds_validate_string(value_, node, 'PackageBillType')
+            self.PackageBillType = value_
+            self.PackageBillType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AutoDutyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AutoDutyCode')
+            value_ = self.gds_validate_string(value_, node, 'AutoDutyCode')
+            self.AutoDutyCode = value_
+            self.AutoDutyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Disclaimer':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Disclaimer')
+            value_ = self.gds_validate_string(value_, node, 'Disclaimer')
+            self.Disclaimer = value_
+            self.Disclaimer_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ServiceSummary':
+            obj_ = ServiceSummaryType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ServiceSummary = obj_
+            obj_.original_tagname_ = 'ServiceSummary'
+# end class TimeInTransitResponseType
+
+
+class ServiceSummaryType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Service=None, EstimatedArrival=None, GuaranteedIndicator=None, Disclaimer=None, SaturdayDelivery=None, SaturdayDeliveryDisclaimer=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Service = Service
+        self.Service_nsprefix_ = None
+        self.EstimatedArrival = EstimatedArrival
+        self.EstimatedArrival_nsprefix_ = None
+        self.GuaranteedIndicator = GuaranteedIndicator
+        self.GuaranteedIndicator_nsprefix_ = None
+        self.Disclaimer = Disclaimer
+        self.Disclaimer_nsprefix_ = None
+        self.SaturdayDelivery = SaturdayDelivery
+        self.SaturdayDelivery_nsprefix_ = None
+        self.SaturdayDeliveryDisclaimer = SaturdayDeliveryDisclaimer
+        self.SaturdayDeliveryDisclaimer_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ServiceSummaryType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ServiceSummaryType.subclass:
+            return ServiceSummaryType.subclass(*args_, **kwargs_)
+        else:
+            return ServiceSummaryType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Service(self):
+        return self.Service
+    def set_Service(self, Service):
+        self.Service = Service
+    def get_EstimatedArrival(self):
+        return self.EstimatedArrival
+    def set_EstimatedArrival(self, EstimatedArrival):
+        self.EstimatedArrival = EstimatedArrival
+    def get_GuaranteedIndicator(self):
+        return self.GuaranteedIndicator
+    def set_GuaranteedIndicator(self, GuaranteedIndicator):
+        self.GuaranteedIndicator = GuaranteedIndicator
+    def get_Disclaimer(self):
+        return self.Disclaimer
+    def set_Disclaimer(self, Disclaimer):
+        self.Disclaimer = Disclaimer
+    def get_SaturdayDelivery(self):
+        return self.SaturdayDelivery
+    def set_SaturdayDelivery(self, SaturdayDelivery):
+        self.SaturdayDelivery = SaturdayDelivery
+    def get_SaturdayDeliveryDisclaimer(self):
+        return self.SaturdayDeliveryDisclaimer
+    def set_SaturdayDeliveryDisclaimer(self, SaturdayDeliveryDisclaimer):
+        self.SaturdayDeliveryDisclaimer = SaturdayDeliveryDisclaimer
+    def hasContent_(self):
+        if (
+            self.Service is not None or
+            self.EstimatedArrival is not None or
+            self.GuaranteedIndicator is not None or
+            self.Disclaimer is not None or
+            self.SaturdayDelivery is not None or
+            self.SaturdayDeliveryDisclaimer is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ServiceSummaryType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ServiceSummaryType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ServiceSummaryType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ServiceSummaryType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ServiceSummaryType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ServiceSummaryType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ServiceSummaryType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Service is not None:
+            namespaceprefix_ = self.Service_nsprefix_ + ':' if (UseCapturedNS_ and self.Service_nsprefix_) else ''
+            self.Service.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Service', pretty_print=pretty_print)
+        if self.EstimatedArrival is not None:
+            namespaceprefix_ = self.EstimatedArrival_nsprefix_ + ':' if (UseCapturedNS_ and self.EstimatedArrival_nsprefix_) else ''
+            self.EstimatedArrival.export(outfile, level, namespaceprefix_, namespacedef_='', name_='EstimatedArrival', pretty_print=pretty_print)
+        if self.GuaranteedIndicator is not None:
+            namespaceprefix_ = self.GuaranteedIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.GuaranteedIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sGuaranteedIndicator>%s</%sGuaranteedIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.GuaranteedIndicator), input_name='GuaranteedIndicator')), namespaceprefix_ , eol_))
+        if self.Disclaimer is not None:
+            namespaceprefix_ = self.Disclaimer_nsprefix_ + ':' if (UseCapturedNS_ and self.Disclaimer_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDisclaimer>%s</%sDisclaimer>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Disclaimer), input_name='Disclaimer')), namespaceprefix_ , eol_))
+        if self.SaturdayDelivery is not None:
+            namespaceprefix_ = self.SaturdayDelivery_nsprefix_ + ':' if (UseCapturedNS_ and self.SaturdayDelivery_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSaturdayDelivery>%s</%sSaturdayDelivery>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SaturdayDelivery), input_name='SaturdayDelivery')), namespaceprefix_ , eol_))
+        if self.SaturdayDeliveryDisclaimer is not None:
+            namespaceprefix_ = self.SaturdayDeliveryDisclaimer_nsprefix_ + ':' if (UseCapturedNS_ and self.SaturdayDeliveryDisclaimer_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSaturdayDeliveryDisclaimer>%s</%sSaturdayDeliveryDisclaimer>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SaturdayDeliveryDisclaimer), input_name='SaturdayDeliveryDisclaimer')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Service':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Service = obj_
+            obj_.original_tagname_ = 'Service'
+        elif nodeName_ == 'EstimatedArrival':
+            obj_ = EstimatedArrivalType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.EstimatedArrival = obj_
+            obj_.original_tagname_ = 'EstimatedArrival'
+        elif nodeName_ == 'GuaranteedIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'GuaranteedIndicator')
+            value_ = self.gds_validate_string(value_, node, 'GuaranteedIndicator')
+            self.GuaranteedIndicator = value_
+            self.GuaranteedIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Disclaimer':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Disclaimer')
+            value_ = self.gds_validate_string(value_, node, 'Disclaimer')
+            self.Disclaimer = value_
+            self.Disclaimer_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SaturdayDelivery':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SaturdayDelivery')
+            value_ = self.gds_validate_string(value_, node, 'SaturdayDelivery')
+            self.SaturdayDelivery = value_
+            self.SaturdayDelivery_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SaturdayDeliveryDisclaimer':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SaturdayDeliveryDisclaimer')
+            value_ = self.gds_validate_string(value_, node, 'SaturdayDeliveryDisclaimer')
+            self.SaturdayDeliveryDisclaimer = value_
+            self.SaturdayDeliveryDisclaimer_nsprefix_ = child_.prefix
+# end class ServiceSummaryType
+
+
+class EstimatedArrivalType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Arrival=None, BusinessDaysInTransit=None, Pickup=None, DayOfWeek=None, CustomerCenterCutoff=None, DelayCount=None, HolidayCount=None, RestDays=None, TotalTransitDays=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Arrival = Arrival
+        self.Arrival_nsprefix_ = None
+        self.BusinessDaysInTransit = BusinessDaysInTransit
+        self.BusinessDaysInTransit_nsprefix_ = None
+        self.Pickup = Pickup
+        self.Pickup_nsprefix_ = None
+        self.DayOfWeek = DayOfWeek
+        self.DayOfWeek_nsprefix_ = None
+        self.CustomerCenterCutoff = CustomerCenterCutoff
+        self.CustomerCenterCutoff_nsprefix_ = None
+        self.DelayCount = DelayCount
+        self.DelayCount_nsprefix_ = None
+        self.HolidayCount = HolidayCount
+        self.HolidayCount_nsprefix_ = None
+        self.RestDays = RestDays
+        self.RestDays_nsprefix_ = None
+        self.TotalTransitDays = TotalTransitDays
+        self.TotalTransitDays_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, EstimatedArrivalType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if EstimatedArrivalType.subclass:
+            return EstimatedArrivalType.subclass(*args_, **kwargs_)
+        else:
+            return EstimatedArrivalType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Arrival(self):
+        return self.Arrival
+    def set_Arrival(self, Arrival):
+        self.Arrival = Arrival
+    def get_BusinessDaysInTransit(self):
+        return self.BusinessDaysInTransit
+    def set_BusinessDaysInTransit(self, BusinessDaysInTransit):
+        self.BusinessDaysInTransit = BusinessDaysInTransit
+    def get_Pickup(self):
+        return self.Pickup
+    def set_Pickup(self, Pickup):
+        self.Pickup = Pickup
+    def get_DayOfWeek(self):
+        return self.DayOfWeek
+    def set_DayOfWeek(self, DayOfWeek):
+        self.DayOfWeek = DayOfWeek
+    def get_CustomerCenterCutoff(self):
+        return self.CustomerCenterCutoff
+    def set_CustomerCenterCutoff(self, CustomerCenterCutoff):
+        self.CustomerCenterCutoff = CustomerCenterCutoff
+    def get_DelayCount(self):
+        return self.DelayCount
+    def set_DelayCount(self, DelayCount):
+        self.DelayCount = DelayCount
+    def get_HolidayCount(self):
+        return self.HolidayCount
+    def set_HolidayCount(self, HolidayCount):
+        self.HolidayCount = HolidayCount
+    def get_RestDays(self):
+        return self.RestDays
+    def set_RestDays(self, RestDays):
+        self.RestDays = RestDays
+    def get_TotalTransitDays(self):
+        return self.TotalTransitDays
+    def set_TotalTransitDays(self, TotalTransitDays):
+        self.TotalTransitDays = TotalTransitDays
+    def hasContent_(self):
+        if (
+            self.Arrival is not None or
+            self.BusinessDaysInTransit is not None or
+            self.Pickup is not None or
+            self.DayOfWeek is not None or
+            self.CustomerCenterCutoff is not None or
+            self.DelayCount is not None or
+            self.HolidayCount is not None or
+            self.RestDays is not None or
+            self.TotalTransitDays is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='EstimatedArrivalType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('EstimatedArrivalType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'EstimatedArrivalType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='EstimatedArrivalType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='EstimatedArrivalType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='EstimatedArrivalType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='EstimatedArrivalType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Arrival is not None:
+            namespaceprefix_ = self.Arrival_nsprefix_ + ':' if (UseCapturedNS_ and self.Arrival_nsprefix_) else ''
+            self.Arrival.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Arrival', pretty_print=pretty_print)
+        if self.BusinessDaysInTransit is not None:
+            namespaceprefix_ = self.BusinessDaysInTransit_nsprefix_ + ':' if (UseCapturedNS_ and self.BusinessDaysInTransit_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBusinessDaysInTransit>%s</%sBusinessDaysInTransit>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BusinessDaysInTransit), input_name='BusinessDaysInTransit')), namespaceprefix_ , eol_))
+        if self.Pickup is not None:
+            namespaceprefix_ = self.Pickup_nsprefix_ + ':' if (UseCapturedNS_ and self.Pickup_nsprefix_) else ''
+            self.Pickup.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Pickup', pretty_print=pretty_print)
+        if self.DayOfWeek is not None:
+            namespaceprefix_ = self.DayOfWeek_nsprefix_ + ':' if (UseCapturedNS_ and self.DayOfWeek_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDayOfWeek>%s</%sDayOfWeek>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DayOfWeek), input_name='DayOfWeek')), namespaceprefix_ , eol_))
+        if self.CustomerCenterCutoff is not None:
+            namespaceprefix_ = self.CustomerCenterCutoff_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerCenterCutoff_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomerCenterCutoff>%s</%sCustomerCenterCutoff>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerCenterCutoff), input_name='CustomerCenterCutoff')), namespaceprefix_ , eol_))
+        if self.DelayCount is not None:
+            namespaceprefix_ = self.DelayCount_nsprefix_ + ':' if (UseCapturedNS_ and self.DelayCount_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDelayCount>%s</%sDelayCount>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DelayCount), input_name='DelayCount')), namespaceprefix_ , eol_))
+        if self.HolidayCount is not None:
+            namespaceprefix_ = self.HolidayCount_nsprefix_ + ':' if (UseCapturedNS_ and self.HolidayCount_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sHolidayCount>%s</%sHolidayCount>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HolidayCount), input_name='HolidayCount')), namespaceprefix_ , eol_))
+        if self.RestDays is not None:
+            namespaceprefix_ = self.RestDays_nsprefix_ + ':' if (UseCapturedNS_ and self.RestDays_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRestDays>%s</%sRestDays>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RestDays), input_name='RestDays')), namespaceprefix_ , eol_))
+        if self.TotalTransitDays is not None:
+            namespaceprefix_ = self.TotalTransitDays_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalTransitDays_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTotalTransitDays>%s</%sTotalTransitDays>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TotalTransitDays), input_name='TotalTransitDays')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Arrival':
+            obj_ = PickupType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Arrival = obj_
+            obj_.original_tagname_ = 'Arrival'
+        elif nodeName_ == 'BusinessDaysInTransit':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BusinessDaysInTransit')
+            value_ = self.gds_validate_string(value_, node, 'BusinessDaysInTransit')
+            self.BusinessDaysInTransit = value_
+            self.BusinessDaysInTransit_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Pickup':
+            obj_ = PickupType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Pickup = obj_
+            obj_.original_tagname_ = 'Pickup'
+        elif nodeName_ == 'DayOfWeek':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DayOfWeek')
+            value_ = self.gds_validate_string(value_, node, 'DayOfWeek')
+            self.DayOfWeek = value_
+            self.DayOfWeek_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CustomerCenterCutoff':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomerCenterCutoff')
+            value_ = self.gds_validate_string(value_, node, 'CustomerCenterCutoff')
+            self.CustomerCenterCutoff = value_
+            self.CustomerCenterCutoff_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DelayCount':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DelayCount')
+            value_ = self.gds_validate_string(value_, node, 'DelayCount')
+            self.DelayCount = value_
+            self.DelayCount_nsprefix_ = child_.prefix
+        elif nodeName_ == 'HolidayCount':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'HolidayCount')
+            value_ = self.gds_validate_string(value_, node, 'HolidayCount')
+            self.HolidayCount = value_
+            self.HolidayCount_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RestDays':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RestDays')
+            value_ = self.gds_validate_string(value_, node, 'RestDays')
+            self.RestDays = value_
+            self.RestDays_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TotalTransitDays':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TotalTransitDays')
+            value_ = self.gds_validate_string(value_, node, 'TotalTransitDays')
+            self.TotalTransitDays = value_
+            self.TotalTransitDays_nsprefix_ = child_.prefix
+# end class EstimatedArrivalType
+
+
+class DisclaimerType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DisclaimerType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DisclaimerType.subclass:
+            return DisclaimerType.subclass(*args_, **kwargs_)
+        else:
+            return DisclaimerType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DisclaimerType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DisclaimerType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DisclaimerType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DisclaimerType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DisclaimerType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DisclaimerType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DisclaimerType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class DisclaimerType
+
+
+class TaxChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Type=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Type = Type
+        self.Type_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TaxChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TaxChargeType.subclass:
+            return TaxChargeType.subclass(*args_, **kwargs_)
+        else:
+            return TaxChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Type(self):
+        return self.Type
+    def set_Type(self, Type):
+        self.Type = Type
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.Type is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TaxChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TaxChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TaxChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TaxChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TaxChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TaxChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TaxChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Type is not None:
+            namespaceprefix_ = self.Type_nsprefix_ + ':' if (UseCapturedNS_ and self.Type_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sType>%s</%sType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Type), input_name='Type')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Type':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Type')
+            value_ = self.gds_validate_string(value_, node, 'Type')
+            self.Type = value_
+            self.Type_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class TaxChargeType
+
+
+class TotalChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ItemizedCharges=None, TaxCharges=None, TotalCharge=None, TotalChargesWithTaxes=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if ItemizedCharges is None:
+            self.ItemizedCharges = []
+        else:
+            self.ItemizedCharges = ItemizedCharges
+        self.ItemizedCharges_nsprefix_ = None
+        if TaxCharges is None:
+            self.TaxCharges = []
+        else:
+            self.TaxCharges = TaxCharges
+        self.TaxCharges_nsprefix_ = None
+        self.TotalCharge = TotalCharge
+        self.TotalCharge_nsprefix_ = None
+        self.TotalChargesWithTaxes = TotalChargesWithTaxes
+        self.TotalChargesWithTaxes_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TotalChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TotalChargeType.subclass:
+            return TotalChargeType.subclass(*args_, **kwargs_)
+        else:
+            return TotalChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ItemizedCharges(self):
+        return self.ItemizedCharges
+    def set_ItemizedCharges(self, ItemizedCharges):
+        self.ItemizedCharges = ItemizedCharges
+    def add_ItemizedCharges(self, value):
+        self.ItemizedCharges.append(value)
+    def insert_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges.insert(index, value)
+    def replace_ItemizedCharges_at(self, index, value):
+        self.ItemizedCharges[index] = value
+    def get_TaxCharges(self):
+        return self.TaxCharges
+    def set_TaxCharges(self, TaxCharges):
+        self.TaxCharges = TaxCharges
+    def add_TaxCharges(self, value):
+        self.TaxCharges.append(value)
+    def insert_TaxCharges_at(self, index, value):
+        self.TaxCharges.insert(index, value)
+    def replace_TaxCharges_at(self, index, value):
+        self.TaxCharges[index] = value
+    def get_TotalCharge(self):
+        return self.TotalCharge
+    def set_TotalCharge(self, TotalCharge):
+        self.TotalCharge = TotalCharge
+    def get_TotalChargesWithTaxes(self):
+        return self.TotalChargesWithTaxes
+    def set_TotalChargesWithTaxes(self, TotalChargesWithTaxes):
+        self.TotalChargesWithTaxes = TotalChargesWithTaxes
+    def hasContent_(self):
+        if (
+            self.ItemizedCharges or
+            self.TaxCharges or
+            self.TotalCharge is not None or
+            self.TotalChargesWithTaxes is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TotalChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TotalChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TotalChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TotalChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TotalChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TotalChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TotalChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for ItemizedCharges_ in self.ItemizedCharges:
+            namespaceprefix_ = self.ItemizedCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ItemizedCharges_nsprefix_) else ''
+            ItemizedCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ItemizedCharges', pretty_print=pretty_print)
+        for TaxCharges_ in self.TaxCharges:
+            namespaceprefix_ = self.TaxCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TaxCharges_nsprefix_) else ''
+            TaxCharges_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TaxCharges', pretty_print=pretty_print)
+        if self.TotalCharge is not None:
+            namespaceprefix_ = self.TotalCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalCharge_nsprefix_) else ''
+            self.TotalCharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TotalCharge', pretty_print=pretty_print)
+        if self.TotalChargesWithTaxes is not None:
+            namespaceprefix_ = self.TotalChargesWithTaxes_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalChargesWithTaxes_nsprefix_) else ''
+            self.TotalChargesWithTaxes.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TotalChargesWithTaxes', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ItemizedCharges':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ItemizedCharges.append(obj_)
+            obj_.original_tagname_ = 'ItemizedCharges'
+        elif nodeName_ == 'TaxCharges':
+            obj_ = TaxChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TaxCharges.append(obj_)
+            obj_.original_tagname_ = 'TaxCharges'
+        elif nodeName_ == 'TotalCharge':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TotalCharge = obj_
+            obj_.original_tagname_ = 'TotalCharge'
+        elif nodeName_ == 'TotalChargesWithTaxes':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TotalChargesWithTaxes = obj_
+            obj_.original_tagname_ = 'TotalChargesWithTaxes'
+# end class TotalChargeType
+
+
+class RatedShipmentInfoType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RatedShipmentInfoType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RatedShipmentInfoType.subclass:
+            return RatedShipmentInfoType.subclass(*args_, **kwargs_)
+        else:
+            return RatedShipmentInfoType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedShipmentInfoType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RatedShipmentInfoType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RatedShipmentInfoType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RatedShipmentInfoType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RatedShipmentInfoType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RatedShipmentInfoType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RatedShipmentInfoType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class RatedShipmentInfoType
+
+
+class ChargesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, CurrencyCode=None, MonetaryValue=None, SubType=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+        self.SubType = SubType
+        self.SubType_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ChargesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ChargesType.subclass:
+            return ChargesType.subclass(*args_, **kwargs_)
+        else:
+            return ChargesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def get_SubType(self):
+        return self.SubType
+    def set_SubType(self, SubType):
+        self.SubType = SubType
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None or
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None or
+            self.SubType is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ChargesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ChargesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ChargesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ChargesType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ChargesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ChargesType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ChargesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+        if self.SubType is not None:
+            namespaceprefix_ = self.SubType_nsprefix_ + ':' if (UseCapturedNS_ and self.SubType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSubType>%s</%sSubType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SubType), input_name='SubType')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SubType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SubType')
+            value_ = self.gds_validate_string(value_, node, 'SubType')
+            self.SubType = value_
+            self.SubType_nsprefix_ = child_.prefix
+# end class ChargesType
+
+
+class TransportationChargesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, GrossCharge=None, DiscountAmount=None, DiscountPercentage=None, NetCharge=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.GrossCharge = GrossCharge
+        self.GrossCharge_nsprefix_ = None
+        self.DiscountAmount = DiscountAmount
+        self.DiscountAmount_nsprefix_ = None
+        self.DiscountPercentage = DiscountPercentage
+        self.DiscountPercentage_nsprefix_ = None
+        self.NetCharge = NetCharge
+        self.NetCharge_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TransportationChargesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TransportationChargesType.subclass:
+            return TransportationChargesType.subclass(*args_, **kwargs_)
+        else:
+            return TransportationChargesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_GrossCharge(self):
+        return self.GrossCharge
+    def set_GrossCharge(self, GrossCharge):
+        self.GrossCharge = GrossCharge
+    def get_DiscountAmount(self):
+        return self.DiscountAmount
+    def set_DiscountAmount(self, DiscountAmount):
+        self.DiscountAmount = DiscountAmount
+    def get_DiscountPercentage(self):
+        return self.DiscountPercentage
+    def set_DiscountPercentage(self, DiscountPercentage):
+        self.DiscountPercentage = DiscountPercentage
+    def get_NetCharge(self):
+        return self.NetCharge
+    def set_NetCharge(self, NetCharge):
+        self.NetCharge = NetCharge
+    def hasContent_(self):
+        if (
+            self.GrossCharge is not None or
+            self.DiscountAmount is not None or
+            self.DiscountPercentage is not None or
+            self.NetCharge is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TransportationChargesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TransportationChargesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TransportationChargesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TransportationChargesType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TransportationChargesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TransportationChargesType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TransportationChargesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.GrossCharge is not None:
+            namespaceprefix_ = self.GrossCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.GrossCharge_nsprefix_) else ''
+            self.GrossCharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='GrossCharge', pretty_print=pretty_print)
+        if self.DiscountAmount is not None:
+            namespaceprefix_ = self.DiscountAmount_nsprefix_ + ':' if (UseCapturedNS_ and self.DiscountAmount_nsprefix_) else ''
+            self.DiscountAmount.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DiscountAmount', pretty_print=pretty_print)
+        if self.DiscountPercentage is not None:
+            namespaceprefix_ = self.DiscountPercentage_nsprefix_ + ':' if (UseCapturedNS_ and self.DiscountPercentage_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDiscountPercentage>%s</%sDiscountPercentage>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DiscountPercentage), input_name='DiscountPercentage')), namespaceprefix_ , eol_))
+        if self.NetCharge is not None:
+            namespaceprefix_ = self.NetCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.NetCharge_nsprefix_) else ''
+            self.NetCharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='NetCharge', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'GrossCharge':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.GrossCharge = obj_
+            obj_.original_tagname_ = 'GrossCharge'
+        elif nodeName_ == 'DiscountAmount':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DiscountAmount = obj_
+            obj_.original_tagname_ = 'DiscountAmount'
+        elif nodeName_ == 'DiscountPercentage':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DiscountPercentage')
+            value_ = self.gds_validate_string(value_, node, 'DiscountPercentage')
+            self.DiscountPercentage = value_
+            self.DiscountPercentage_nsprefix_ = child_.prefix
+        elif nodeName_ == 'NetCharge':
+            obj_ = ChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.NetCharge = obj_
+            obj_.original_tagname_ = 'NetCharge'
+# end class TransportationChargesType
+
+
+class FRSShipmentType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, TransportationCharges=None, FreightDensityRate=None, HandlingUnits=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.TransportationCharges = TransportationCharges
+        self.TransportationCharges_nsprefix_ = None
+        self.FreightDensityRate = FreightDensityRate
+        self.FreightDensityRate_nsprefix_ = None
+        if HandlingUnits is None:
+            self.HandlingUnits = []
+        else:
+            self.HandlingUnits = HandlingUnits
+        self.HandlingUnits_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FRSShipmentType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FRSShipmentType.subclass:
+            return FRSShipmentType.subclass(*args_, **kwargs_)
+        else:
+            return FRSShipmentType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_TransportationCharges(self):
+        return self.TransportationCharges
+    def set_TransportationCharges(self, TransportationCharges):
+        self.TransportationCharges = TransportationCharges
+    def get_FreightDensityRate(self):
+        return self.FreightDensityRate
+    def set_FreightDensityRate(self, FreightDensityRate):
+        self.FreightDensityRate = FreightDensityRate
+    def get_HandlingUnits(self):
+        return self.HandlingUnits
+    def set_HandlingUnits(self, HandlingUnits):
+        self.HandlingUnits = HandlingUnits
+    def add_HandlingUnits(self, value):
+        self.HandlingUnits.append(value)
+    def insert_HandlingUnits_at(self, index, value):
+        self.HandlingUnits.insert(index, value)
+    def replace_HandlingUnits_at(self, index, value):
+        self.HandlingUnits[index] = value
+    def hasContent_(self):
+        if (
+            self.TransportationCharges is not None or
+            self.FreightDensityRate is not None or
+            self.HandlingUnits
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FRSShipmentType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FRSShipmentType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FRSShipmentType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FRSShipmentType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='FRSShipmentType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FRSShipmentType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FRSShipmentType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.TransportationCharges is not None:
+            namespaceprefix_ = self.TransportationCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.TransportationCharges_nsprefix_) else ''
+            self.TransportationCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TransportationCharges', pretty_print=pretty_print)
+        if self.FreightDensityRate is not None:
+            namespaceprefix_ = self.FreightDensityRate_nsprefix_ + ':' if (UseCapturedNS_ and self.FreightDensityRate_nsprefix_) else ''
+            self.FreightDensityRate.export(outfile, level, namespaceprefix_, namespacedef_='', name_='FreightDensityRate', pretty_print=pretty_print)
+        for HandlingUnits_ in self.HandlingUnits:
+            namespaceprefix_ = self.HandlingUnits_nsprefix_ + ':' if (UseCapturedNS_ and self.HandlingUnits_nsprefix_) else ''
+            HandlingUnits_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='HandlingUnits', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'TransportationCharges':
+            obj_ = TransportationChargesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TransportationCharges = obj_
+            obj_.original_tagname_ = 'TransportationCharges'
+        elif nodeName_ == 'FreightDensityRate':
+            obj_ = FreightDensityRateType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.FreightDensityRate = obj_
+            obj_.original_tagname_ = 'FreightDensityRate'
+        elif nodeName_ == 'HandlingUnits':
+            obj_ = HandlingUnitsResponseType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.HandlingUnits.append(obj_)
+            obj_.original_tagname_ = 'HandlingUnits'
+# end class FRSShipmentType
+
+
+class FreightDensityRateType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Density=None, TotalCubicFeet=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Density = Density
+        self.Density_nsprefix_ = None
+        self.TotalCubicFeet = TotalCubicFeet
+        self.TotalCubicFeet_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FreightDensityRateType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FreightDensityRateType.subclass:
+            return FreightDensityRateType.subclass(*args_, **kwargs_)
+        else:
+            return FreightDensityRateType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Density(self):
+        return self.Density
+    def set_Density(self, Density):
+        self.Density = Density
+    def get_TotalCubicFeet(self):
+        return self.TotalCubicFeet
+    def set_TotalCubicFeet(self, TotalCubicFeet):
+        self.TotalCubicFeet = TotalCubicFeet
+    def hasContent_(self):
+        if (
+            self.Density is not None or
+            self.TotalCubicFeet is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightDensityRateType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FreightDensityRateType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FreightDensityRateType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FreightDensityRateType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='FreightDensityRateType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FreightDensityRateType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightDensityRateType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Density is not None:
+            namespaceprefix_ = self.Density_nsprefix_ + ':' if (UseCapturedNS_ and self.Density_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDensity>%s</%sDensity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Density), input_name='Density')), namespaceprefix_ , eol_))
+        if self.TotalCubicFeet is not None:
+            namespaceprefix_ = self.TotalCubicFeet_nsprefix_ + ':' if (UseCapturedNS_ and self.TotalCubicFeet_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTotalCubicFeet>%s</%sTotalCubicFeet>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TotalCubicFeet), input_name='TotalCubicFeet')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Density':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Density')
+            value_ = self.gds_validate_string(value_, node, 'Density')
+            self.Density = value_
+            self.Density_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TotalCubicFeet':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TotalCubicFeet')
+            value_ = self.gds_validate_string(value_, node, 'TotalCubicFeet')
+            self.TotalCubicFeet = value_
+            self.TotalCubicFeet_nsprefix_ = child_.prefix
+# end class FreightDensityRateType
+
+
+class HandlingUnitsResponseType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Quantity=None, Type=None, Dimensions=None, AdjustedHeight=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Quantity = Quantity
+        self.Quantity_nsprefix_ = None
+        self.Type = Type
+        self.Type_nsprefix_ = None
+        self.Dimensions = Dimensions
+        self.Dimensions_nsprefix_ = None
+        self.AdjustedHeight = AdjustedHeight
+        self.AdjustedHeight_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, HandlingUnitsResponseType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if HandlingUnitsResponseType.subclass:
+            return HandlingUnitsResponseType.subclass(*args_, **kwargs_)
+        else:
+            return HandlingUnitsResponseType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Quantity(self):
+        return self.Quantity
+    def set_Quantity(self, Quantity):
+        self.Quantity = Quantity
+    def get_Type(self):
+        return self.Type
+    def set_Type(self, Type):
+        self.Type = Type
+    def get_Dimensions(self):
+        return self.Dimensions
+    def set_Dimensions(self, Dimensions):
+        self.Dimensions = Dimensions
+    def get_AdjustedHeight(self):
+        return self.AdjustedHeight
+    def set_AdjustedHeight(self, AdjustedHeight):
+        self.AdjustedHeight = AdjustedHeight
+    def hasContent_(self):
+        if (
+            self.Quantity is not None or
+            self.Type is not None or
+            self.Dimensions is not None or
+            self.AdjustedHeight is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsResponseType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('HandlingUnitsResponseType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'HandlingUnitsResponseType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HandlingUnitsResponseType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HandlingUnitsResponseType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='HandlingUnitsResponseType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsResponseType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Quantity is not None:
+            namespaceprefix_ = self.Quantity_nsprefix_ + ':' if (UseCapturedNS_ and self.Quantity_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sQuantity>%s</%sQuantity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Quantity), input_name='Quantity')), namespaceprefix_ , eol_))
+        if self.Type is not None:
+            namespaceprefix_ = self.Type_nsprefix_ + ':' if (UseCapturedNS_ and self.Type_nsprefix_) else ''
+            self.Type.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Type', pretty_print=pretty_print)
+        if self.Dimensions is not None:
+            namespaceprefix_ = self.Dimensions_nsprefix_ + ':' if (UseCapturedNS_ and self.Dimensions_nsprefix_) else ''
+            self.Dimensions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Dimensions', pretty_print=pretty_print)
+        if self.AdjustedHeight is not None:
+            namespaceprefix_ = self.AdjustedHeight_nsprefix_ + ':' if (UseCapturedNS_ and self.AdjustedHeight_nsprefix_) else ''
+            self.AdjustedHeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AdjustedHeight', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Quantity':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Quantity')
+            value_ = self.gds_validate_string(value_, node, 'Quantity')
+            self.Quantity = value_
+            self.Quantity_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Type':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Type = obj_
+            obj_.original_tagname_ = 'Type'
+        elif nodeName_ == 'Dimensions':
+            obj_ = HandlingUnitsDimensionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Dimensions = obj_
+            obj_.original_tagname_ = 'Dimensions'
+        elif nodeName_ == 'AdjustedHeight':
+            obj_ = AdjustedHeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdjustedHeight = obj_
+            obj_.original_tagname_ = 'AdjustedHeight'
+# end class HandlingUnitsResponseType
+
+
+class AddressType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AddressLine=None, City=None, StateProvinceCode=None, PostalCode=None, CountryCode=None, extensiontype_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if AddressLine is None:
+            self.AddressLine = []
+        else:
+            self.AddressLine = AddressLine
+        self.AddressLine_nsprefix_ = None
+        self.City = City
+        self.City_nsprefix_ = None
+        self.StateProvinceCode = StateProvinceCode
+        self.StateProvinceCode_nsprefix_ = None
+        self.PostalCode = PostalCode
+        self.PostalCode_nsprefix_ = None
+        self.CountryCode = CountryCode
+        self.CountryCode_nsprefix_ = None
+        self.extensiontype_ = extensiontype_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AddressType.subclass:
+            return AddressType.subclass(*args_, **kwargs_)
+        else:
+            return AddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AddressLine(self):
+        return self.AddressLine
+    def set_AddressLine(self, AddressLine):
+        self.AddressLine = AddressLine
+    def add_AddressLine(self, value):
+        self.AddressLine.append(value)
+    def insert_AddressLine_at(self, index, value):
+        self.AddressLine.insert(index, value)
+    def replace_AddressLine_at(self, index, value):
+        self.AddressLine[index] = value
+    def get_City(self):
+        return self.City
+    def set_City(self, City):
+        self.City = City
+    def get_StateProvinceCode(self):
+        return self.StateProvinceCode
+    def set_StateProvinceCode(self, StateProvinceCode):
+        self.StateProvinceCode = StateProvinceCode
+    def get_PostalCode(self):
+        return self.PostalCode
+    def set_PostalCode(self, PostalCode):
+        self.PostalCode = PostalCode
+    def get_CountryCode(self):
+        return self.CountryCode
+    def set_CountryCode(self, CountryCode):
+        self.CountryCode = CountryCode
+    def get_extensiontype_(self): return self.extensiontype_
+    def set_extensiontype_(self, extensiontype_): self.extensiontype_ = extensiontype_
+    def hasContent_(self):
+        if (
+            self.AddressLine or
+            self.City is not None or
+            self.StateProvinceCode is not None or
+            self.PostalCode is not None or
+            self.CountryCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AddressType'):
+        if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            if ":" not in self.extensiontype_:
+                imported_ns_type_prefix_ = GenerateDSNamespaceTypePrefixes_.get(self.extensiontype_, '')
+                outfile.write(' xsi:type="%s%s"' % (imported_ns_type_prefix_, self.extensiontype_))
+            else:
+                outfile.write(' xsi:type="%s"' % self.extensiontype_)
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AddressType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AddressLine_ in self.AddressLine:
+            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
+        if self.City is not None:
+            namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCity>%s</%sCity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.City), input_name='City')), namespaceprefix_ , eol_))
+        if self.StateProvinceCode is not None:
+            namespaceprefix_ = self.StateProvinceCode_nsprefix_ + ':' if (UseCapturedNS_ and self.StateProvinceCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sStateProvinceCode>%s</%sStateProvinceCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StateProvinceCode), input_name='StateProvinceCode')), namespaceprefix_ , eol_))
+        if self.PostalCode is not None:
+            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
+        if self.CountryCode is not None:
+            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('xsi:type', node)
+        if value is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            self.extensiontype_ = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AddressLine':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine')
+            self.AddressLine.append(value_)
+            self.AddressLine_nsprefix_ = child_.prefix
+        elif nodeName_ == 'City':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'City')
+            value_ = self.gds_validate_string(value_, node, 'City')
+            self.City = value_
+            self.City_nsprefix_ = child_.prefix
+        elif nodeName_ == 'StateProvinceCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'StateProvinceCode')
+            value_ = self.gds_validate_string(value_, node, 'StateProvinceCode')
+            self.StateProvinceCode = value_
+            self.StateProvinceCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PostalCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PostalCode')
+            value_ = self.gds_validate_string(value_, node, 'PostalCode')
+            self.PostalCode = value_
+            self.PostalCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CountryCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CountryCode')
+            value_ = self.gds_validate_string(value_, node, 'CountryCode')
+            self.CountryCode = value_
+            self.CountryCode_nsprefix_ = child_.prefix
+# end class AddressType
+
+
+class ShipToAddressType(AddressType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = AddressType
+    def __init__(self, AddressLine=None, City=None, StateProvinceCode=None, PostalCode=None, CountryCode=None, ResidentialAddressIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        super(ShipToAddressType, self).__init__(AddressLine, City, StateProvinceCode, PostalCode, CountryCode,  **kwargs_)
+        self.ResidentialAddressIndicator = ResidentialAddressIndicator
+        self.ResidentialAddressIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipToAddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipToAddressType.subclass:
+            return ShipToAddressType.subclass(*args_, **kwargs_)
+        else:
+            return ShipToAddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ResidentialAddressIndicator(self):
+        return self.ResidentialAddressIndicator
+    def set_ResidentialAddressIndicator(self, ResidentialAddressIndicator):
+        self.ResidentialAddressIndicator = ResidentialAddressIndicator
+    def hasContent_(self):
+        if (
+            self.ResidentialAddressIndicator is not None or
+            super(ShipToAddressType, self).hasContent_()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipToAddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipToAddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipToAddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipToAddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipToAddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipToAddressType'):
+        super(ShipToAddressType, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipToAddressType')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipToAddressType', fromsubclass_=False, pretty_print=True):
+        super(ShipToAddressType, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.ResidentialAddressIndicator is not None:
+            namespaceprefix_ = self.ResidentialAddressIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ResidentialAddressIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sResidentialAddressIndicator>%s</%sResidentialAddressIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ResidentialAddressIndicator), input_name='ResidentialAddressIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        super(ShipToAddressType, self).buildAttributes(node, attrs, already_processed)
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ResidentialAddressIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ResidentialAddressIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ResidentialAddressIndicator')
+            self.ResidentialAddressIndicator = value_
+            self.ResidentialAddressIndicator_nsprefix_ = child_.prefix
+        super(ShipToAddressType, self).buildChildren(child_, node, nodeName_, True)
+# end class ShipToAddressType
+
+
+class ShipAddressType(AddressType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = AddressType
+    def __init__(self, AddressLine=None, City=None, StateProvinceCode=None, PostalCode=None, CountryCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        super(ShipAddressType, self).__init__(AddressLine, City, StateProvinceCode, PostalCode, CountryCode,  **kwargs_)
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipAddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipAddressType.subclass:
+            return ShipAddressType.subclass(*args_, **kwargs_)
+        else:
+            return ShipAddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def hasContent_(self):
+        if (
+            super(ShipAddressType, self).hasContent_()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipAddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipAddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipAddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipAddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipAddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipAddressType'):
+        super(ShipAddressType, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipAddressType')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipAddressType', fromsubclass_=False, pretty_print=True):
+        super(ShipAddressType, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        super(ShipAddressType, self).buildAttributes(node, attrs, already_processed)
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        super(ShipAddressType, self).buildChildren(child_, node, nodeName_, True)
+        pass
+# end class ShipAddressType
+
+
+class CODType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CODFundsCode=None, CODAmount=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CODFundsCode = CODFundsCode
+        self.CODFundsCode_nsprefix_ = None
+        self.CODAmount = CODAmount
+        self.CODAmount_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CODType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CODType.subclass:
+            return CODType.subclass(*args_, **kwargs_)
+        else:
+            return CODType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CODFundsCode(self):
+        return self.CODFundsCode
+    def set_CODFundsCode(self, CODFundsCode):
+        self.CODFundsCode = CODFundsCode
+    def get_CODAmount(self):
+        return self.CODAmount
+    def set_CODAmount(self, CODAmount):
+        self.CODAmount = CODAmount
+    def hasContent_(self):
+        if (
+            self.CODFundsCode is not None or
+            self.CODAmount is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CODType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CODType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CODType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CODType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CODType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CODType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CODType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CODFundsCode is not None:
+            namespaceprefix_ = self.CODFundsCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CODFundsCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCODFundsCode>%s</%sCODFundsCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CODFundsCode), input_name='CODFundsCode')), namespaceprefix_ , eol_))
+        if self.CODAmount is not None:
+            namespaceprefix_ = self.CODAmount_nsprefix_ + ':' if (UseCapturedNS_ and self.CODAmount_nsprefix_) else ''
+            self.CODAmount.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CODAmount', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CODFundsCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CODFundsCode')
+            value_ = self.gds_validate_string(value_, node, 'CODFundsCode')
+            self.CODFundsCode = value_
+            self.CODFundsCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CODAmount':
+            obj_ = CODAmountType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CODAmount = obj_
+            obj_.original_tagname_ = 'CODAmount'
+# end class CODType
+
+
+class CODAmountType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CODAmountType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CODAmountType.subclass:
+            return CODAmountType.subclass(*args_, **kwargs_)
+        else:
+            return CODAmountType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CODAmountType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CODAmountType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CODAmountType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CODAmountType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CODAmountType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CODAmountType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CODAmountType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class CODAmountType
+
+
+class DeliveryConfirmationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, DCISType=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.DCISType = DCISType
+        self.DCISType_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DeliveryConfirmationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DeliveryConfirmationType.subclass:
+            return DeliveryConfirmationType.subclass(*args_, **kwargs_)
+        else:
+            return DeliveryConfirmationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_DCISType(self):
+        return self.DCISType
+    def set_DCISType(self, DCISType):
+        self.DCISType = DCISType
+    def hasContent_(self):
+        if (
+            self.DCISType is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DeliveryConfirmationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DeliveryConfirmationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DeliveryConfirmationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DeliveryConfirmationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DeliveryConfirmationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DeliveryConfirmationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DeliveryConfirmationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.DCISType is not None:
+            namespaceprefix_ = self.DCISType_nsprefix_ + ':' if (UseCapturedNS_ and self.DCISType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDCISType>%s</%sDCISType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DCISType), input_name='DCISType')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'DCISType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DCISType')
+            value_ = self.gds_validate_string(value_, node, 'DCISType')
+            self.DCISType = value_
+            self.DCISType_nsprefix_ = child_.prefix
+# end class DeliveryConfirmationType
+
+
+class DimensionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Length=None, Width=None, Height=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Length = Length
+        self.Length_nsprefix_ = None
+        self.Width = Width
+        self.Width_nsprefix_ = None
+        self.Height = Height
+        self.Height_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DimensionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DimensionsType.subclass:
+            return DimensionsType.subclass(*args_, **kwargs_)
+        else:
+            return DimensionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Length(self):
+        return self.Length
+    def set_Length(self, Length):
+        self.Length = Length
+    def get_Width(self):
+        return self.Width
+    def set_Width(self, Width):
+        self.Width = Width
+    def get_Height(self):
+        return self.Height
+    def set_Height(self, Height):
+        self.Height = Height
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Length is not None or
+            self.Width is not None or
+            self.Height is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DimensionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DimensionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DimensionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DimensionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DimensionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DimensionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DimensionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Length is not None:
+            namespaceprefix_ = self.Length_nsprefix_ + ':' if (UseCapturedNS_ and self.Length_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLength>%s</%sLength>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Length), input_name='Length')), namespaceprefix_ , eol_))
+        if self.Width is not None:
+            namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Width), input_name='Width')), namespaceprefix_ , eol_))
+        if self.Height is not None:
+            namespaceprefix_ = self.Height_nsprefix_ + ':' if (UseCapturedNS_ and self.Height_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Height), input_name='Height')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Length':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Length')
+            value_ = self.gds_validate_string(value_, node, 'Length')
+            self.Length = value_
+            self.Length_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Width':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Width')
+            value_ = self.gds_validate_string(value_, node, 'Width')
+            self.Width = value_
+            self.Width_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Height':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Height')
+            value_ = self.gds_validate_string(value_, node, 'Height')
+            self.Height = value_
+            self.Height_nsprefix_ = child_.prefix
+# end class DimensionsType
+
+
+class InsuredValueType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InsuredValueType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InsuredValueType.subclass:
+            return InsuredValueType.subclass(*args_, **kwargs_)
+        else:
+            return InsuredValueType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuredValueType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InsuredValueType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InsuredValueType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InsuredValueType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InsuredValueType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InsuredValueType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuredValueType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class InsuredValueType
+
+
+class PackageType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PackagingType=None, Dimensions=None, DimWeight=None, PackageWeight=None, Commodity=None, LargePackageIndicator=None, PackageServiceOptions=None, AdditionalHandlingIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PackagingType = PackagingType
+        self.PackagingType_nsprefix_ = None
+        self.Dimensions = Dimensions
+        self.Dimensions_nsprefix_ = None
+        self.DimWeight = DimWeight
+        self.DimWeight_nsprefix_ = None
+        self.PackageWeight = PackageWeight
+        self.PackageWeight_nsprefix_ = None
+        self.Commodity = Commodity
+        self.Commodity_nsprefix_ = None
+        self.LargePackageIndicator = LargePackageIndicator
+        self.LargePackageIndicator_nsprefix_ = None
+        self.PackageServiceOptions = PackageServiceOptions
+        self.PackageServiceOptions_nsprefix_ = None
+        self.AdditionalHandlingIndicator = AdditionalHandlingIndicator
+        self.AdditionalHandlingIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PackageType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PackageType.subclass:
+            return PackageType.subclass(*args_, **kwargs_)
+        else:
+            return PackageType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PackagingType(self):
+        return self.PackagingType
+    def set_PackagingType(self, PackagingType):
+        self.PackagingType = PackagingType
+    def get_Dimensions(self):
+        return self.Dimensions
+    def set_Dimensions(self, Dimensions):
+        self.Dimensions = Dimensions
+    def get_DimWeight(self):
+        return self.DimWeight
+    def set_DimWeight(self, DimWeight):
+        self.DimWeight = DimWeight
+    def get_PackageWeight(self):
+        return self.PackageWeight
+    def set_PackageWeight(self, PackageWeight):
+        self.PackageWeight = PackageWeight
+    def get_Commodity(self):
+        return self.Commodity
+    def set_Commodity(self, Commodity):
+        self.Commodity = Commodity
+    def get_LargePackageIndicator(self):
+        return self.LargePackageIndicator
+    def set_LargePackageIndicator(self, LargePackageIndicator):
+        self.LargePackageIndicator = LargePackageIndicator
+    def get_PackageServiceOptions(self):
+        return self.PackageServiceOptions
+    def set_PackageServiceOptions(self, PackageServiceOptions):
+        self.PackageServiceOptions = PackageServiceOptions
+    def get_AdditionalHandlingIndicator(self):
+        return self.AdditionalHandlingIndicator
+    def set_AdditionalHandlingIndicator(self, AdditionalHandlingIndicator):
+        self.AdditionalHandlingIndicator = AdditionalHandlingIndicator
+    def hasContent_(self):
+        if (
+            self.PackagingType is not None or
+            self.Dimensions is not None or
+            self.DimWeight is not None or
+            self.PackageWeight is not None or
+            self.Commodity is not None or
+            self.LargePackageIndicator is not None or
+            self.PackageServiceOptions is not None or
+            self.AdditionalHandlingIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PackageType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PackageType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PackageType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PackageType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PackagingType is not None:
+            namespaceprefix_ = self.PackagingType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackagingType_nsprefix_) else ''
+            self.PackagingType.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PackagingType', pretty_print=pretty_print)
+        if self.Dimensions is not None:
+            namespaceprefix_ = self.Dimensions_nsprefix_ + ':' if (UseCapturedNS_ and self.Dimensions_nsprefix_) else ''
+            self.Dimensions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Dimensions', pretty_print=pretty_print)
+        if self.DimWeight is not None:
+            namespaceprefix_ = self.DimWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.DimWeight_nsprefix_) else ''
+            self.DimWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DimWeight', pretty_print=pretty_print)
+        if self.PackageWeight is not None:
+            namespaceprefix_ = self.PackageWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageWeight_nsprefix_) else ''
+            self.PackageWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PackageWeight', pretty_print=pretty_print)
+        if self.Commodity is not None:
+            namespaceprefix_ = self.Commodity_nsprefix_ + ':' if (UseCapturedNS_ and self.Commodity_nsprefix_) else ''
+            self.Commodity.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Commodity', pretty_print=pretty_print)
+        if self.LargePackageIndicator is not None:
+            namespaceprefix_ = self.LargePackageIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.LargePackageIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLargePackageIndicator>%s</%sLargePackageIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LargePackageIndicator), input_name='LargePackageIndicator')), namespaceprefix_ , eol_))
+        if self.PackageServiceOptions is not None:
+            namespaceprefix_ = self.PackageServiceOptions_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageServiceOptions_nsprefix_) else ''
+            self.PackageServiceOptions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PackageServiceOptions', pretty_print=pretty_print)
+        if self.AdditionalHandlingIndicator is not None:
+            namespaceprefix_ = self.AdditionalHandlingIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalHandlingIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAdditionalHandlingIndicator>%s</%sAdditionalHandlingIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AdditionalHandlingIndicator), input_name='AdditionalHandlingIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PackagingType':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PackagingType = obj_
+            obj_.original_tagname_ = 'PackagingType'
+        elif nodeName_ == 'Dimensions':
+            obj_ = DimensionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Dimensions = obj_
+            obj_.original_tagname_ = 'Dimensions'
+        elif nodeName_ == 'DimWeight':
+            obj_ = PackageWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DimWeight = obj_
+            obj_.original_tagname_ = 'DimWeight'
+        elif nodeName_ == 'PackageWeight':
+            obj_ = PackageWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PackageWeight = obj_
+            obj_.original_tagname_ = 'PackageWeight'
+        elif nodeName_ == 'Commodity':
+            obj_ = CommodityType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Commodity = obj_
+            obj_.original_tagname_ = 'Commodity'
+        elif nodeName_ == 'LargePackageIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LargePackageIndicator')
+            value_ = self.gds_validate_string(value_, node, 'LargePackageIndicator')
+            self.LargePackageIndicator = value_
+            self.LargePackageIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackageServiceOptions':
+            obj_ = PackageServiceOptionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PackageServiceOptions = obj_
+            obj_.original_tagname_ = 'PackageServiceOptions'
+        elif nodeName_ == 'AdditionalHandlingIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AdditionalHandlingIndicator')
+            value_ = self.gds_validate_string(value_, node, 'AdditionalHandlingIndicator')
+            self.AdditionalHandlingIndicator = value_
+            self.AdditionalHandlingIndicator_nsprefix_ = child_.prefix
+# end class PackageType
+
+
+class CommodityType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, FreightClass=None, NMFC=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.FreightClass = FreightClass
+        self.FreightClass_nsprefix_ = None
+        self.NMFC = NMFC
+        self.NMFC_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CommodityType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CommodityType.subclass:
+            return CommodityType.subclass(*args_, **kwargs_)
+        else:
+            return CommodityType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_FreightClass(self):
+        return self.FreightClass
+    def set_FreightClass(self, FreightClass):
+        self.FreightClass = FreightClass
+    def get_NMFC(self):
+        return self.NMFC
+    def set_NMFC(self, NMFC):
+        self.NMFC = NMFC
+    def hasContent_(self):
+        if (
+            self.FreightClass is not None or
+            self.NMFC is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CommodityType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CommodityType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CommodityType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CommodityType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CommodityType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CommodityType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CommodityType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.FreightClass is not None:
+            namespaceprefix_ = self.FreightClass_nsprefix_ + ':' if (UseCapturedNS_ and self.FreightClass_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sFreightClass>%s</%sFreightClass>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.FreightClass), input_name='FreightClass')), namespaceprefix_ , eol_))
+        if self.NMFC is not None:
+            namespaceprefix_ = self.NMFC_nsprefix_ + ':' if (UseCapturedNS_ and self.NMFC_nsprefix_) else ''
+            self.NMFC.export(outfile, level, namespaceprefix_, namespacedef_='', name_='NMFC', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'FreightClass':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'FreightClass')
+            value_ = self.gds_validate_string(value_, node, 'FreightClass')
+            self.FreightClass = value_
+            self.FreightClass_nsprefix_ = child_.prefix
+        elif nodeName_ == 'NMFC':
+            obj_ = NMFCCommodityType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.NMFC = obj_
+            obj_.original_tagname_ = 'NMFC'
+# end class CommodityType
+
+
+class NMFCCommodityType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PrimeCode=None, SubCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PrimeCode = PrimeCode
+        self.PrimeCode_nsprefix_ = None
+        self.SubCode = SubCode
+        self.SubCode_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, NMFCCommodityType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if NMFCCommodityType.subclass:
+            return NMFCCommodityType.subclass(*args_, **kwargs_)
+        else:
+            return NMFCCommodityType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PrimeCode(self):
+        return self.PrimeCode
+    def set_PrimeCode(self, PrimeCode):
+        self.PrimeCode = PrimeCode
+    def get_SubCode(self):
+        return self.SubCode
+    def set_SubCode(self, SubCode):
+        self.SubCode = SubCode
+    def hasContent_(self):
+        if (
+            self.PrimeCode is not None or
+            self.SubCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='NMFCCommodityType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('NMFCCommodityType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'NMFCCommodityType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='NMFCCommodityType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='NMFCCommodityType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='NMFCCommodityType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='NMFCCommodityType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PrimeCode is not None:
+            namespaceprefix_ = self.PrimeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PrimeCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPrimeCode>%s</%sPrimeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PrimeCode), input_name='PrimeCode')), namespaceprefix_ , eol_))
+        if self.SubCode is not None:
+            namespaceprefix_ = self.SubCode_nsprefix_ + ':' if (UseCapturedNS_ and self.SubCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSubCode>%s</%sSubCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SubCode), input_name='SubCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PrimeCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PrimeCode')
+            value_ = self.gds_validate_string(value_, node, 'PrimeCode')
+            self.PrimeCode = value_
+            self.PrimeCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SubCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SubCode')
+            value_ = self.gds_validate_string(value_, node, 'SubCode')
+            self.SubCode = value_
+            self.SubCode_nsprefix_ = child_.prefix
+# end class NMFCCommodityType
+
+
+class PackageServiceOptionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, DeliveryConfirmation=None, AccessPointCOD=None, COD=None, DeclaredValue=None, ShipperDeclaredValue=None, ProactiveIndicator=None, RefrigerationIndicator=None, Insurance=None, VerbalConfirmationIndicator=None, UPSPremiumCareIndicator=None, HazMat=None, DryIce=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.DeliveryConfirmation = DeliveryConfirmation
+        self.DeliveryConfirmation_nsprefix_ = None
+        self.AccessPointCOD = AccessPointCOD
+        self.AccessPointCOD_nsprefix_ = None
+        self.COD = COD
+        self.COD_nsprefix_ = None
+        self.DeclaredValue = DeclaredValue
+        self.DeclaredValue_nsprefix_ = None
+        self.ShipperDeclaredValue = ShipperDeclaredValue
+        self.ShipperDeclaredValue_nsprefix_ = None
+        self.ProactiveIndicator = ProactiveIndicator
+        self.ProactiveIndicator_nsprefix_ = None
+        self.RefrigerationIndicator = RefrigerationIndicator
+        self.RefrigerationIndicator_nsprefix_ = None
+        self.Insurance = Insurance
+        self.Insurance_nsprefix_ = None
+        self.VerbalConfirmationIndicator = VerbalConfirmationIndicator
+        self.VerbalConfirmationIndicator_nsprefix_ = None
+        self.UPSPremiumCareIndicator = UPSPremiumCareIndicator
+        self.UPSPremiumCareIndicator_nsprefix_ = None
+        self.HazMat = HazMat
+        self.HazMat_nsprefix_ = None
+        self.DryIce = DryIce
+        self.DryIce_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PackageServiceOptionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PackageServiceOptionsType.subclass:
+            return PackageServiceOptionsType.subclass(*args_, **kwargs_)
+        else:
+            return PackageServiceOptionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_DeliveryConfirmation(self):
+        return self.DeliveryConfirmation
+    def set_DeliveryConfirmation(self, DeliveryConfirmation):
+        self.DeliveryConfirmation = DeliveryConfirmation
+    def get_AccessPointCOD(self):
+        return self.AccessPointCOD
+    def set_AccessPointCOD(self, AccessPointCOD):
+        self.AccessPointCOD = AccessPointCOD
+    def get_COD(self):
+        return self.COD
+    def set_COD(self, COD):
+        self.COD = COD
+    def get_DeclaredValue(self):
+        return self.DeclaredValue
+    def set_DeclaredValue(self, DeclaredValue):
+        self.DeclaredValue = DeclaredValue
+    def get_ShipperDeclaredValue(self):
+        return self.ShipperDeclaredValue
+    def set_ShipperDeclaredValue(self, ShipperDeclaredValue):
+        self.ShipperDeclaredValue = ShipperDeclaredValue
+    def get_ProactiveIndicator(self):
+        return self.ProactiveIndicator
+    def set_ProactiveIndicator(self, ProactiveIndicator):
+        self.ProactiveIndicator = ProactiveIndicator
+    def get_RefrigerationIndicator(self):
+        return self.RefrigerationIndicator
+    def set_RefrigerationIndicator(self, RefrigerationIndicator):
+        self.RefrigerationIndicator = RefrigerationIndicator
+    def get_Insurance(self):
+        return self.Insurance
+    def set_Insurance(self, Insurance):
+        self.Insurance = Insurance
+    def get_VerbalConfirmationIndicator(self):
+        return self.VerbalConfirmationIndicator
+    def set_VerbalConfirmationIndicator(self, VerbalConfirmationIndicator):
+        self.VerbalConfirmationIndicator = VerbalConfirmationIndicator
+    def get_UPSPremiumCareIndicator(self):
+        return self.UPSPremiumCareIndicator
+    def set_UPSPremiumCareIndicator(self, UPSPremiumCareIndicator):
+        self.UPSPremiumCareIndicator = UPSPremiumCareIndicator
+    def get_HazMat(self):
+        return self.HazMat
+    def set_HazMat(self, HazMat):
+        self.HazMat = HazMat
+    def get_DryIce(self):
+        return self.DryIce
+    def set_DryIce(self, DryIce):
+        self.DryIce = DryIce
+    def hasContent_(self):
+        if (
+            self.DeliveryConfirmation is not None or
+            self.AccessPointCOD is not None or
+            self.COD is not None or
+            self.DeclaredValue is not None or
+            self.ShipperDeclaredValue is not None or
+            self.ProactiveIndicator is not None or
+            self.RefrigerationIndicator is not None or
+            self.Insurance is not None or
+            self.VerbalConfirmationIndicator is not None or
+            self.UPSPremiumCareIndicator is not None or
+            self.HazMat is not None or
+            self.DryIce is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageServiceOptionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PackageServiceOptionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PackageServiceOptionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PackageServiceOptionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PackageServiceOptionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageServiceOptionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageServiceOptionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.DeliveryConfirmation is not None:
+            namespaceprefix_ = self.DeliveryConfirmation_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliveryConfirmation_nsprefix_) else ''
+            self.DeliveryConfirmation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DeliveryConfirmation', pretty_print=pretty_print)
+        if self.AccessPointCOD is not None:
+            namespaceprefix_ = self.AccessPointCOD_nsprefix_ + ':' if (UseCapturedNS_ and self.AccessPointCOD_nsprefix_) else ''
+            self.AccessPointCOD.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AccessPointCOD', pretty_print=pretty_print)
+        if self.COD is not None:
+            namespaceprefix_ = self.COD_nsprefix_ + ':' if (UseCapturedNS_ and self.COD_nsprefix_) else ''
+            self.COD.export(outfile, level, namespaceprefix_, namespacedef_='', name_='COD', pretty_print=pretty_print)
+        if self.DeclaredValue is not None:
+            namespaceprefix_ = self.DeclaredValue_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredValue_nsprefix_) else ''
+            self.DeclaredValue.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DeclaredValue', pretty_print=pretty_print)
+        if self.ShipperDeclaredValue is not None:
+            namespaceprefix_ = self.ShipperDeclaredValue_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperDeclaredValue_nsprefix_) else ''
+            self.ShipperDeclaredValue.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipperDeclaredValue', pretty_print=pretty_print)
+        if self.ProactiveIndicator is not None:
+            namespaceprefix_ = self.ProactiveIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ProactiveIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sProactiveIndicator>%s</%sProactiveIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ProactiveIndicator), input_name='ProactiveIndicator')), namespaceprefix_ , eol_))
+        if self.RefrigerationIndicator is not None:
+            namespaceprefix_ = self.RefrigerationIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.RefrigerationIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRefrigerationIndicator>%s</%sRefrigerationIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RefrigerationIndicator), input_name='RefrigerationIndicator')), namespaceprefix_ , eol_))
+        if self.Insurance is not None:
+            namespaceprefix_ = self.Insurance_nsprefix_ + ':' if (UseCapturedNS_ and self.Insurance_nsprefix_) else ''
+            self.Insurance.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Insurance', pretty_print=pretty_print)
+        if self.VerbalConfirmationIndicator is not None:
+            namespaceprefix_ = self.VerbalConfirmationIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.VerbalConfirmationIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sVerbalConfirmationIndicator>%s</%sVerbalConfirmationIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.VerbalConfirmationIndicator), input_name='VerbalConfirmationIndicator')), namespaceprefix_ , eol_))
+        if self.UPSPremiumCareIndicator is not None:
+            namespaceprefix_ = self.UPSPremiumCareIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.UPSPremiumCareIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUPSPremiumCareIndicator>%s</%sUPSPremiumCareIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UPSPremiumCareIndicator), input_name='UPSPremiumCareIndicator')), namespaceprefix_ , eol_))
+        if self.HazMat is not None:
+            namespaceprefix_ = self.HazMat_nsprefix_ + ':' if (UseCapturedNS_ and self.HazMat_nsprefix_) else ''
+            self.HazMat.export(outfile, level, namespaceprefix_, namespacedef_='', name_='HazMat', pretty_print=pretty_print)
+        if self.DryIce is not None:
+            namespaceprefix_ = self.DryIce_nsprefix_ + ':' if (UseCapturedNS_ and self.DryIce_nsprefix_) else ''
+            self.DryIce.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DryIce', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'DeliveryConfirmation':
+            obj_ = DeliveryConfirmationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DeliveryConfirmation = obj_
+            obj_.original_tagname_ = 'DeliveryConfirmation'
+        elif nodeName_ == 'AccessPointCOD':
+            obj_ = PackageServiceOptionsAccessPointCODType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AccessPointCOD = obj_
+            obj_.original_tagname_ = 'AccessPointCOD'
+        elif nodeName_ == 'COD':
+            obj_ = CODType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.COD = obj_
+            obj_.original_tagname_ = 'COD'
+        elif nodeName_ == 'DeclaredValue':
+            obj_ = InsuredValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DeclaredValue = obj_
+            obj_.original_tagname_ = 'DeclaredValue'
+        elif nodeName_ == 'ShipperDeclaredValue':
+            obj_ = ShipperDeclaredValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipperDeclaredValue = obj_
+            obj_.original_tagname_ = 'ShipperDeclaredValue'
+        elif nodeName_ == 'ProactiveIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ProactiveIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ProactiveIndicator')
+            self.ProactiveIndicator = value_
+            self.ProactiveIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RefrigerationIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RefrigerationIndicator')
+            value_ = self.gds_validate_string(value_, node, 'RefrigerationIndicator')
+            self.RefrigerationIndicator = value_
+            self.RefrigerationIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Insurance':
+            obj_ = InsuranceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Insurance = obj_
+            obj_.original_tagname_ = 'Insurance'
+        elif nodeName_ == 'VerbalConfirmationIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'VerbalConfirmationIndicator')
+            value_ = self.gds_validate_string(value_, node, 'VerbalConfirmationIndicator')
+            self.VerbalConfirmationIndicator = value_
+            self.VerbalConfirmationIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'UPSPremiumCareIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UPSPremiumCareIndicator')
+            value_ = self.gds_validate_string(value_, node, 'UPSPremiumCareIndicator')
+            self.UPSPremiumCareIndicator = value_
+            self.UPSPremiumCareIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'HazMat':
+            obj_ = HazMatType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.HazMat = obj_
+            obj_.original_tagname_ = 'HazMat'
+        elif nodeName_ == 'DryIce':
+            obj_ = DryIceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DryIce = obj_
+            obj_.original_tagname_ = 'DryIce'
+# end class PackageServiceOptionsType
+
+
+class HazMatType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PackageIdentifier=None, QValue=None, OverPackedIndicator=None, AllPackedInOneIndicator=None, HazMatChemicalRecord=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PackageIdentifier = PackageIdentifier
+        self.PackageIdentifier_nsprefix_ = None
+        self.QValue = QValue
+        self.QValue_nsprefix_ = None
+        self.OverPackedIndicator = OverPackedIndicator
+        self.OverPackedIndicator_nsprefix_ = None
+        self.AllPackedInOneIndicator = AllPackedInOneIndicator
+        self.AllPackedInOneIndicator_nsprefix_ = None
+        if HazMatChemicalRecord is None:
+            self.HazMatChemicalRecord = []
+        else:
+            self.HazMatChemicalRecord = HazMatChemicalRecord
+        self.HazMatChemicalRecord_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, HazMatType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if HazMatType.subclass:
+            return HazMatType.subclass(*args_, **kwargs_)
+        else:
+            return HazMatType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PackageIdentifier(self):
+        return self.PackageIdentifier
+    def set_PackageIdentifier(self, PackageIdentifier):
+        self.PackageIdentifier = PackageIdentifier
+    def get_QValue(self):
+        return self.QValue
+    def set_QValue(self, QValue):
+        self.QValue = QValue
+    def get_OverPackedIndicator(self):
+        return self.OverPackedIndicator
+    def set_OverPackedIndicator(self, OverPackedIndicator):
+        self.OverPackedIndicator = OverPackedIndicator
+    def get_AllPackedInOneIndicator(self):
+        return self.AllPackedInOneIndicator
+    def set_AllPackedInOneIndicator(self, AllPackedInOneIndicator):
+        self.AllPackedInOneIndicator = AllPackedInOneIndicator
+    def get_HazMatChemicalRecord(self):
+        return self.HazMatChemicalRecord
+    def set_HazMatChemicalRecord(self, HazMatChemicalRecord):
+        self.HazMatChemicalRecord = HazMatChemicalRecord
+    def add_HazMatChemicalRecord(self, value):
+        self.HazMatChemicalRecord.append(value)
+    def insert_HazMatChemicalRecord_at(self, index, value):
+        self.HazMatChemicalRecord.insert(index, value)
+    def replace_HazMatChemicalRecord_at(self, index, value):
+        self.HazMatChemicalRecord[index] = value
+    def hasContent_(self):
+        if (
+            self.PackageIdentifier is not None or
+            self.QValue is not None or
+            self.OverPackedIndicator is not None or
+            self.AllPackedInOneIndicator is not None or
+            self.HazMatChemicalRecord
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HazMatType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('HazMatType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'HazMatType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HazMatType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HazMatType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='HazMatType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HazMatType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PackageIdentifier is not None:
+            namespaceprefix_ = self.PackageIdentifier_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageIdentifier_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackageIdentifier>%s</%sPackageIdentifier>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackageIdentifier), input_name='PackageIdentifier')), namespaceprefix_ , eol_))
+        if self.QValue is not None:
+            namespaceprefix_ = self.QValue_nsprefix_ + ':' if (UseCapturedNS_ and self.QValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sQValue>%s</%sQValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.QValue), input_name='QValue')), namespaceprefix_ , eol_))
+        if self.OverPackedIndicator is not None:
+            namespaceprefix_ = self.OverPackedIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.OverPackedIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sOverPackedIndicator>%s</%sOverPackedIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OverPackedIndicator), input_name='OverPackedIndicator')), namespaceprefix_ , eol_))
+        if self.AllPackedInOneIndicator is not None:
+            namespaceprefix_ = self.AllPackedInOneIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.AllPackedInOneIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAllPackedInOneIndicator>%s</%sAllPackedInOneIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AllPackedInOneIndicator), input_name='AllPackedInOneIndicator')), namespaceprefix_ , eol_))
+        for HazMatChemicalRecord_ in self.HazMatChemicalRecord:
+            namespaceprefix_ = self.HazMatChemicalRecord_nsprefix_ + ':' if (UseCapturedNS_ and self.HazMatChemicalRecord_nsprefix_) else ''
+            HazMatChemicalRecord_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='HazMatChemicalRecord', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PackageIdentifier':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackageIdentifier')
+            value_ = self.gds_validate_string(value_, node, 'PackageIdentifier')
+            self.PackageIdentifier = value_
+            self.PackageIdentifier_nsprefix_ = child_.prefix
+        elif nodeName_ == 'QValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'QValue')
+            value_ = self.gds_validate_string(value_, node, 'QValue')
+            self.QValue = value_
+            self.QValue_nsprefix_ = child_.prefix
+        elif nodeName_ == 'OverPackedIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'OverPackedIndicator')
+            value_ = self.gds_validate_string(value_, node, 'OverPackedIndicator')
+            self.OverPackedIndicator = value_
+            self.OverPackedIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AllPackedInOneIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AllPackedInOneIndicator')
+            value_ = self.gds_validate_string(value_, node, 'AllPackedInOneIndicator')
+            self.AllPackedInOneIndicator = value_
+            self.AllPackedInOneIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'HazMatChemicalRecord':
+            obj_ = HazMatChemicalRecordType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.HazMatChemicalRecord.append(obj_)
+            obj_.original_tagname_ = 'HazMatChemicalRecord'
+# end class HazMatType
+
+
+class HazMatChemicalRecordType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ChemicalRecordIdentifier=None, ClassDivisionNumber=None, IDNumber=None, TransportationMode=None, RegulationSet=None, EmergencyPhone=None, EmergencyContact=None, ReportableQuantity=None, SubRiskClass=None, PackagingGroupType=None, Quantity=None, UOM=None, PackagingInstructionCode=None, ProperShippingName=None, TechnicalName=None, AdditionalDescription=None, PackagingType=None, HazardLabelRequired=None, PackagingTypeQuantity=None, CommodityRegulatedLevelCode=None, TransportCategory=None, TunnelRestrictionCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.ChemicalRecordIdentifier = ChemicalRecordIdentifier
+        self.ChemicalRecordIdentifier_nsprefix_ = None
+        self.ClassDivisionNumber = ClassDivisionNumber
+        self.ClassDivisionNumber_nsprefix_ = None
+        self.IDNumber = IDNumber
+        self.IDNumber_nsprefix_ = None
+        self.TransportationMode = TransportationMode
+        self.TransportationMode_nsprefix_ = None
+        self.RegulationSet = RegulationSet
+        self.RegulationSet_nsprefix_ = None
+        self.EmergencyPhone = EmergencyPhone
+        self.EmergencyPhone_nsprefix_ = None
+        self.EmergencyContact = EmergencyContact
+        self.EmergencyContact_nsprefix_ = None
+        self.ReportableQuantity = ReportableQuantity
+        self.ReportableQuantity_nsprefix_ = None
+        self.SubRiskClass = SubRiskClass
+        self.SubRiskClass_nsprefix_ = None
+        self.PackagingGroupType = PackagingGroupType
+        self.PackagingGroupType_nsprefix_ = None
+        self.Quantity = Quantity
+        self.Quantity_nsprefix_ = None
+        self.UOM = UOM
+        self.UOM_nsprefix_ = None
+        self.PackagingInstructionCode = PackagingInstructionCode
+        self.PackagingInstructionCode_nsprefix_ = None
+        self.ProperShippingName = ProperShippingName
+        self.ProperShippingName_nsprefix_ = None
+        self.TechnicalName = TechnicalName
+        self.TechnicalName_nsprefix_ = None
+        self.AdditionalDescription = AdditionalDescription
+        self.AdditionalDescription_nsprefix_ = None
+        self.PackagingType = PackagingType
+        self.PackagingType_nsprefix_ = None
+        self.HazardLabelRequired = HazardLabelRequired
+        self.HazardLabelRequired_nsprefix_ = None
+        self.PackagingTypeQuantity = PackagingTypeQuantity
+        self.PackagingTypeQuantity_nsprefix_ = None
+        self.CommodityRegulatedLevelCode = CommodityRegulatedLevelCode
+        self.CommodityRegulatedLevelCode_nsprefix_ = None
+        self.TransportCategory = TransportCategory
+        self.TransportCategory_nsprefix_ = None
+        self.TunnelRestrictionCode = TunnelRestrictionCode
+        self.TunnelRestrictionCode_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, HazMatChemicalRecordType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if HazMatChemicalRecordType.subclass:
+            return HazMatChemicalRecordType.subclass(*args_, **kwargs_)
+        else:
+            return HazMatChemicalRecordType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ChemicalRecordIdentifier(self):
+        return self.ChemicalRecordIdentifier
+    def set_ChemicalRecordIdentifier(self, ChemicalRecordIdentifier):
+        self.ChemicalRecordIdentifier = ChemicalRecordIdentifier
+    def get_ClassDivisionNumber(self):
+        return self.ClassDivisionNumber
+    def set_ClassDivisionNumber(self, ClassDivisionNumber):
+        self.ClassDivisionNumber = ClassDivisionNumber
+    def get_IDNumber(self):
+        return self.IDNumber
+    def set_IDNumber(self, IDNumber):
+        self.IDNumber = IDNumber
+    def get_TransportationMode(self):
+        return self.TransportationMode
+    def set_TransportationMode(self, TransportationMode):
+        self.TransportationMode = TransportationMode
+    def get_RegulationSet(self):
+        return self.RegulationSet
+    def set_RegulationSet(self, RegulationSet):
+        self.RegulationSet = RegulationSet
+    def get_EmergencyPhone(self):
+        return self.EmergencyPhone
+    def set_EmergencyPhone(self, EmergencyPhone):
+        self.EmergencyPhone = EmergencyPhone
+    def get_EmergencyContact(self):
+        return self.EmergencyContact
+    def set_EmergencyContact(self, EmergencyContact):
+        self.EmergencyContact = EmergencyContact
+    def get_ReportableQuantity(self):
+        return self.ReportableQuantity
+    def set_ReportableQuantity(self, ReportableQuantity):
+        self.ReportableQuantity = ReportableQuantity
+    def get_SubRiskClass(self):
+        return self.SubRiskClass
+    def set_SubRiskClass(self, SubRiskClass):
+        self.SubRiskClass = SubRiskClass
+    def get_PackagingGroupType(self):
+        return self.PackagingGroupType
+    def set_PackagingGroupType(self, PackagingGroupType):
+        self.PackagingGroupType = PackagingGroupType
+    def get_Quantity(self):
+        return self.Quantity
+    def set_Quantity(self, Quantity):
+        self.Quantity = Quantity
+    def get_UOM(self):
+        return self.UOM
+    def set_UOM(self, UOM):
+        self.UOM = UOM
+    def get_PackagingInstructionCode(self):
+        return self.PackagingInstructionCode
+    def set_PackagingInstructionCode(self, PackagingInstructionCode):
+        self.PackagingInstructionCode = PackagingInstructionCode
+    def get_ProperShippingName(self):
+        return self.ProperShippingName
+    def set_ProperShippingName(self, ProperShippingName):
+        self.ProperShippingName = ProperShippingName
+    def get_TechnicalName(self):
+        return self.TechnicalName
+    def set_TechnicalName(self, TechnicalName):
+        self.TechnicalName = TechnicalName
+    def get_AdditionalDescription(self):
+        return self.AdditionalDescription
+    def set_AdditionalDescription(self, AdditionalDescription):
+        self.AdditionalDescription = AdditionalDescription
+    def get_PackagingType(self):
+        return self.PackagingType
+    def set_PackagingType(self, PackagingType):
+        self.PackagingType = PackagingType
+    def get_HazardLabelRequired(self):
+        return self.HazardLabelRequired
+    def set_HazardLabelRequired(self, HazardLabelRequired):
+        self.HazardLabelRequired = HazardLabelRequired
+    def get_PackagingTypeQuantity(self):
+        return self.PackagingTypeQuantity
+    def set_PackagingTypeQuantity(self, PackagingTypeQuantity):
+        self.PackagingTypeQuantity = PackagingTypeQuantity
+    def get_CommodityRegulatedLevelCode(self):
+        return self.CommodityRegulatedLevelCode
+    def set_CommodityRegulatedLevelCode(self, CommodityRegulatedLevelCode):
+        self.CommodityRegulatedLevelCode = CommodityRegulatedLevelCode
+    def get_TransportCategory(self):
+        return self.TransportCategory
+    def set_TransportCategory(self, TransportCategory):
+        self.TransportCategory = TransportCategory
+    def get_TunnelRestrictionCode(self):
+        return self.TunnelRestrictionCode
+    def set_TunnelRestrictionCode(self, TunnelRestrictionCode):
+        self.TunnelRestrictionCode = TunnelRestrictionCode
+    def hasContent_(self):
+        if (
+            self.ChemicalRecordIdentifier is not None or
+            self.ClassDivisionNumber is not None or
+            self.IDNumber is not None or
+            self.TransportationMode is not None or
+            self.RegulationSet is not None or
+            self.EmergencyPhone is not None or
+            self.EmergencyContact is not None or
+            self.ReportableQuantity is not None or
+            self.SubRiskClass is not None or
+            self.PackagingGroupType is not None or
+            self.Quantity is not None or
+            self.UOM is not None or
+            self.PackagingInstructionCode is not None or
+            self.ProperShippingName is not None or
+            self.TechnicalName is not None or
+            self.AdditionalDescription is not None or
+            self.PackagingType is not None or
+            self.HazardLabelRequired is not None or
+            self.PackagingTypeQuantity is not None or
+            self.CommodityRegulatedLevelCode is not None or
+            self.TransportCategory is not None or
+            self.TunnelRestrictionCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HazMatChemicalRecordType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('HazMatChemicalRecordType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'HazMatChemicalRecordType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HazMatChemicalRecordType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HazMatChemicalRecordType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='HazMatChemicalRecordType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HazMatChemicalRecordType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.ChemicalRecordIdentifier is not None:
+            namespaceprefix_ = self.ChemicalRecordIdentifier_nsprefix_ + ':' if (UseCapturedNS_ and self.ChemicalRecordIdentifier_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sChemicalRecordIdentifier>%s</%sChemicalRecordIdentifier>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ChemicalRecordIdentifier), input_name='ChemicalRecordIdentifier')), namespaceprefix_ , eol_))
+        if self.ClassDivisionNumber is not None:
+            namespaceprefix_ = self.ClassDivisionNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ClassDivisionNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sClassDivisionNumber>%s</%sClassDivisionNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ClassDivisionNumber), input_name='ClassDivisionNumber')), namespaceprefix_ , eol_))
+        if self.IDNumber is not None:
+            namespaceprefix_ = self.IDNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.IDNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sIDNumber>%s</%sIDNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.IDNumber), input_name='IDNumber')), namespaceprefix_ , eol_))
+        if self.TransportationMode is not None:
+            namespaceprefix_ = self.TransportationMode_nsprefix_ + ':' if (UseCapturedNS_ and self.TransportationMode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTransportationMode>%s</%sTransportationMode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TransportationMode), input_name='TransportationMode')), namespaceprefix_ , eol_))
+        if self.RegulationSet is not None:
+            namespaceprefix_ = self.RegulationSet_nsprefix_ + ':' if (UseCapturedNS_ and self.RegulationSet_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRegulationSet>%s</%sRegulationSet>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RegulationSet), input_name='RegulationSet')), namespaceprefix_ , eol_))
+        if self.EmergencyPhone is not None:
+            namespaceprefix_ = self.EmergencyPhone_nsprefix_ + ':' if (UseCapturedNS_ and self.EmergencyPhone_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sEmergencyPhone>%s</%sEmergencyPhone>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.EmergencyPhone), input_name='EmergencyPhone')), namespaceprefix_ , eol_))
+        if self.EmergencyContact is not None:
+            namespaceprefix_ = self.EmergencyContact_nsprefix_ + ':' if (UseCapturedNS_ and self.EmergencyContact_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sEmergencyContact>%s</%sEmergencyContact>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.EmergencyContact), input_name='EmergencyContact')), namespaceprefix_ , eol_))
+        if self.ReportableQuantity is not None:
+            namespaceprefix_ = self.ReportableQuantity_nsprefix_ + ':' if (UseCapturedNS_ and self.ReportableQuantity_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sReportableQuantity>%s</%sReportableQuantity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ReportableQuantity), input_name='ReportableQuantity')), namespaceprefix_ , eol_))
+        if self.SubRiskClass is not None:
+            namespaceprefix_ = self.SubRiskClass_nsprefix_ + ':' if (UseCapturedNS_ and self.SubRiskClass_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSubRiskClass>%s</%sSubRiskClass>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SubRiskClass), input_name='SubRiskClass')), namespaceprefix_ , eol_))
+        if self.PackagingGroupType is not None:
+            namespaceprefix_ = self.PackagingGroupType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackagingGroupType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackagingGroupType>%s</%sPackagingGroupType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackagingGroupType), input_name='PackagingGroupType')), namespaceprefix_ , eol_))
+        if self.Quantity is not None:
+            namespaceprefix_ = self.Quantity_nsprefix_ + ':' if (UseCapturedNS_ and self.Quantity_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sQuantity>%s</%sQuantity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Quantity), input_name='Quantity')), namespaceprefix_ , eol_))
+        if self.UOM is not None:
+            namespaceprefix_ = self.UOM_nsprefix_ + ':' if (UseCapturedNS_ and self.UOM_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUOM>%s</%sUOM>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UOM), input_name='UOM')), namespaceprefix_ , eol_))
+        if self.PackagingInstructionCode is not None:
+            namespaceprefix_ = self.PackagingInstructionCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PackagingInstructionCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackagingInstructionCode>%s</%sPackagingInstructionCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackagingInstructionCode), input_name='PackagingInstructionCode')), namespaceprefix_ , eol_))
+        if self.ProperShippingName is not None:
+            namespaceprefix_ = self.ProperShippingName_nsprefix_ + ':' if (UseCapturedNS_ and self.ProperShippingName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sProperShippingName>%s</%sProperShippingName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ProperShippingName), input_name='ProperShippingName')), namespaceprefix_ , eol_))
+        if self.TechnicalName is not None:
+            namespaceprefix_ = self.TechnicalName_nsprefix_ + ':' if (UseCapturedNS_ and self.TechnicalName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTechnicalName>%s</%sTechnicalName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TechnicalName), input_name='TechnicalName')), namespaceprefix_ , eol_))
+        if self.AdditionalDescription is not None:
+            namespaceprefix_ = self.AdditionalDescription_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalDescription_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAdditionalDescription>%s</%sAdditionalDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AdditionalDescription), input_name='AdditionalDescription')), namespaceprefix_ , eol_))
+        if self.PackagingType is not None:
+            namespaceprefix_ = self.PackagingType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackagingType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackagingType>%s</%sPackagingType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackagingType), input_name='PackagingType')), namespaceprefix_ , eol_))
+        if self.HazardLabelRequired is not None:
+            namespaceprefix_ = self.HazardLabelRequired_nsprefix_ + ':' if (UseCapturedNS_ and self.HazardLabelRequired_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sHazardLabelRequired>%s</%sHazardLabelRequired>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HazardLabelRequired), input_name='HazardLabelRequired')), namespaceprefix_ , eol_))
+        if self.PackagingTypeQuantity is not None:
+            namespaceprefix_ = self.PackagingTypeQuantity_nsprefix_ + ':' if (UseCapturedNS_ and self.PackagingTypeQuantity_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackagingTypeQuantity>%s</%sPackagingTypeQuantity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackagingTypeQuantity), input_name='PackagingTypeQuantity')), namespaceprefix_ , eol_))
+        if self.CommodityRegulatedLevelCode is not None:
+            namespaceprefix_ = self.CommodityRegulatedLevelCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CommodityRegulatedLevelCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCommodityRegulatedLevelCode>%s</%sCommodityRegulatedLevelCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CommodityRegulatedLevelCode), input_name='CommodityRegulatedLevelCode')), namespaceprefix_ , eol_))
+        if self.TransportCategory is not None:
+            namespaceprefix_ = self.TransportCategory_nsprefix_ + ':' if (UseCapturedNS_ and self.TransportCategory_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTransportCategory>%s</%sTransportCategory>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TransportCategory), input_name='TransportCategory')), namespaceprefix_ , eol_))
+        if self.TunnelRestrictionCode is not None:
+            namespaceprefix_ = self.TunnelRestrictionCode_nsprefix_ + ':' if (UseCapturedNS_ and self.TunnelRestrictionCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTunnelRestrictionCode>%s</%sTunnelRestrictionCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TunnelRestrictionCode), input_name='TunnelRestrictionCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ChemicalRecordIdentifier':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ChemicalRecordIdentifier')
+            value_ = self.gds_validate_string(value_, node, 'ChemicalRecordIdentifier')
+            self.ChemicalRecordIdentifier = value_
+            self.ChemicalRecordIdentifier_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ClassDivisionNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ClassDivisionNumber')
+            value_ = self.gds_validate_string(value_, node, 'ClassDivisionNumber')
+            self.ClassDivisionNumber = value_
+            self.ClassDivisionNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'IDNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'IDNumber')
+            value_ = self.gds_validate_string(value_, node, 'IDNumber')
+            self.IDNumber = value_
+            self.IDNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TransportationMode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TransportationMode')
+            value_ = self.gds_validate_string(value_, node, 'TransportationMode')
+            self.TransportationMode = value_
+            self.TransportationMode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RegulationSet':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RegulationSet')
+            value_ = self.gds_validate_string(value_, node, 'RegulationSet')
+            self.RegulationSet = value_
+            self.RegulationSet_nsprefix_ = child_.prefix
+        elif nodeName_ == 'EmergencyPhone':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'EmergencyPhone')
+            value_ = self.gds_validate_string(value_, node, 'EmergencyPhone')
+            self.EmergencyPhone = value_
+            self.EmergencyPhone_nsprefix_ = child_.prefix
+        elif nodeName_ == 'EmergencyContact':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'EmergencyContact')
+            value_ = self.gds_validate_string(value_, node, 'EmergencyContact')
+            self.EmergencyContact = value_
+            self.EmergencyContact_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ReportableQuantity':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ReportableQuantity')
+            value_ = self.gds_validate_string(value_, node, 'ReportableQuantity')
+            self.ReportableQuantity = value_
+            self.ReportableQuantity_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SubRiskClass':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SubRiskClass')
+            value_ = self.gds_validate_string(value_, node, 'SubRiskClass')
+            self.SubRiskClass = value_
+            self.SubRiskClass_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackagingGroupType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackagingGroupType')
+            value_ = self.gds_validate_string(value_, node, 'PackagingGroupType')
+            self.PackagingGroupType = value_
+            self.PackagingGroupType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Quantity':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Quantity')
+            value_ = self.gds_validate_string(value_, node, 'Quantity')
+            self.Quantity = value_
+            self.Quantity_nsprefix_ = child_.prefix
+        elif nodeName_ == 'UOM':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UOM')
+            value_ = self.gds_validate_string(value_, node, 'UOM')
+            self.UOM = value_
+            self.UOM_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackagingInstructionCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackagingInstructionCode')
+            value_ = self.gds_validate_string(value_, node, 'PackagingInstructionCode')
+            self.PackagingInstructionCode = value_
+            self.PackagingInstructionCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ProperShippingName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ProperShippingName')
+            value_ = self.gds_validate_string(value_, node, 'ProperShippingName')
+            self.ProperShippingName = value_
+            self.ProperShippingName_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TechnicalName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TechnicalName')
+            value_ = self.gds_validate_string(value_, node, 'TechnicalName')
+            self.TechnicalName = value_
+            self.TechnicalName_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AdditionalDescription':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AdditionalDescription')
+            value_ = self.gds_validate_string(value_, node, 'AdditionalDescription')
+            self.AdditionalDescription = value_
+            self.AdditionalDescription_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackagingType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackagingType')
+            value_ = self.gds_validate_string(value_, node, 'PackagingType')
+            self.PackagingType = value_
+            self.PackagingType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'HazardLabelRequired':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'HazardLabelRequired')
+            value_ = self.gds_validate_string(value_, node, 'HazardLabelRequired')
+            self.HazardLabelRequired = value_
+            self.HazardLabelRequired_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PackagingTypeQuantity':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackagingTypeQuantity')
+            value_ = self.gds_validate_string(value_, node, 'PackagingTypeQuantity')
+            self.PackagingTypeQuantity = value_
+            self.PackagingTypeQuantity_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CommodityRegulatedLevelCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CommodityRegulatedLevelCode')
+            value_ = self.gds_validate_string(value_, node, 'CommodityRegulatedLevelCode')
+            self.CommodityRegulatedLevelCode = value_
+            self.CommodityRegulatedLevelCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TransportCategory':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TransportCategory')
+            value_ = self.gds_validate_string(value_, node, 'TransportCategory')
+            self.TransportCategory = value_
+            self.TransportCategory_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TunnelRestrictionCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TunnelRestrictionCode')
+            value_ = self.gds_validate_string(value_, node, 'TunnelRestrictionCode')
+            self.TunnelRestrictionCode = value_
+            self.TunnelRestrictionCode_nsprefix_ = child_.prefix
+# end class HazMatChemicalRecordType
+
+
+class PackageServiceOptionsAccessPointCODType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PackageServiceOptionsAccessPointCODType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PackageServiceOptionsAccessPointCODType.subclass:
+            return PackageServiceOptionsAccessPointCODType.subclass(*args_, **kwargs_)
+        else:
+            return PackageServiceOptionsAccessPointCODType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageServiceOptionsAccessPointCODType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PackageServiceOptionsAccessPointCODType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PackageServiceOptionsAccessPointCODType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PackageServiceOptionsAccessPointCODType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PackageServiceOptionsAccessPointCODType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageServiceOptionsAccessPointCODType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageServiceOptionsAccessPointCODType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class PackageServiceOptionsAccessPointCODType
+
+
+class DryIceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, RegulationSet=None, DryIceWeight=None, MedicalUseIndicator=None, AuditRequired=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.RegulationSet = RegulationSet
+        self.RegulationSet_nsprefix_ = None
+        self.DryIceWeight = DryIceWeight
+        self.DryIceWeight_nsprefix_ = None
+        self.MedicalUseIndicator = MedicalUseIndicator
+        self.MedicalUseIndicator_nsprefix_ = None
+        self.AuditRequired = AuditRequired
+        self.AuditRequired_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DryIceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DryIceType.subclass:
+            return DryIceType.subclass(*args_, **kwargs_)
+        else:
+            return DryIceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_RegulationSet(self):
+        return self.RegulationSet
+    def set_RegulationSet(self, RegulationSet):
+        self.RegulationSet = RegulationSet
+    def get_DryIceWeight(self):
+        return self.DryIceWeight
+    def set_DryIceWeight(self, DryIceWeight):
+        self.DryIceWeight = DryIceWeight
+    def get_MedicalUseIndicator(self):
+        return self.MedicalUseIndicator
+    def set_MedicalUseIndicator(self, MedicalUseIndicator):
+        self.MedicalUseIndicator = MedicalUseIndicator
+    def get_AuditRequired(self):
+        return self.AuditRequired
+    def set_AuditRequired(self, AuditRequired):
+        self.AuditRequired = AuditRequired
+    def hasContent_(self):
+        if (
+            self.RegulationSet is not None or
+            self.DryIceWeight is not None or
+            self.MedicalUseIndicator is not None or
+            self.AuditRequired is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DryIceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DryIceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DryIceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DryIceType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DryIceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DryIceType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DryIceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.RegulationSet is not None:
+            namespaceprefix_ = self.RegulationSet_nsprefix_ + ':' if (UseCapturedNS_ and self.RegulationSet_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRegulationSet>%s</%sRegulationSet>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RegulationSet), input_name='RegulationSet')), namespaceprefix_ , eol_))
+        if self.DryIceWeight is not None:
+            namespaceprefix_ = self.DryIceWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.DryIceWeight_nsprefix_) else ''
+            self.DryIceWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DryIceWeight', pretty_print=pretty_print)
+        if self.MedicalUseIndicator is not None:
+            namespaceprefix_ = self.MedicalUseIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.MedicalUseIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMedicalUseIndicator>%s</%sMedicalUseIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MedicalUseIndicator), input_name='MedicalUseIndicator')), namespaceprefix_ , eol_))
+        if self.AuditRequired is not None:
+            namespaceprefix_ = self.AuditRequired_nsprefix_ + ':' if (UseCapturedNS_ and self.AuditRequired_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAuditRequired>%s</%sAuditRequired>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AuditRequired), input_name='AuditRequired')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'RegulationSet':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RegulationSet')
+            value_ = self.gds_validate_string(value_, node, 'RegulationSet')
+            self.RegulationSet = value_
+            self.RegulationSet_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DryIceWeight':
+            obj_ = DryIceWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DryIceWeight = obj_
+            obj_.original_tagname_ = 'DryIceWeight'
+        elif nodeName_ == 'MedicalUseIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MedicalUseIndicator')
+            value_ = self.gds_validate_string(value_, node, 'MedicalUseIndicator')
+            self.MedicalUseIndicator = value_
+            self.MedicalUseIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AuditRequired':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AuditRequired')
+            value_ = self.gds_validate_string(value_, node, 'AuditRequired')
+            self.AuditRequired = value_
+            self.AuditRequired_nsprefix_ = child_.prefix
+# end class DryIceType
+
+
+class DryIceWeightType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Weight=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Weight = Weight
+        self.Weight_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DryIceWeightType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DryIceWeightType.subclass:
+            return DryIceWeightType.subclass(*args_, **kwargs_)
+        else:
+            return DryIceWeightType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Weight(self):
+        return self.Weight
+    def set_Weight(self, Weight):
+        self.Weight = Weight
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Weight is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DryIceWeightType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DryIceWeightType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DryIceWeightType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DryIceWeightType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DryIceWeightType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DryIceWeightType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DryIceWeightType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Weight is not None:
+            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Weight), input_name='Weight')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Weight':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Weight')
+            value_ = self.gds_validate_string(value_, node, 'Weight')
+            self.Weight = value_
+            self.Weight_nsprefix_ = child_.prefix
+# end class DryIceWeightType
+
+
+class ShipperDeclaredValueType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipperDeclaredValueType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipperDeclaredValueType.subclass:
+            return ShipperDeclaredValueType.subclass(*args_, **kwargs_)
+        else:
+            return ShipperDeclaredValueType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperDeclaredValueType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipperDeclaredValueType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipperDeclaredValueType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipperDeclaredValueType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipperDeclaredValueType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipperDeclaredValueType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperDeclaredValueType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class ShipperDeclaredValueType
+
+
+class InsuranceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, BasicFlexibleParcelIndicator=None, ExtendedFlexibleParcelIndicator=None, TimeInTransitFlexibleParcelIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.BasicFlexibleParcelIndicator = BasicFlexibleParcelIndicator
+        self.BasicFlexibleParcelIndicator_nsprefix_ = None
+        self.ExtendedFlexibleParcelIndicator = ExtendedFlexibleParcelIndicator
+        self.ExtendedFlexibleParcelIndicator_nsprefix_ = None
+        self.TimeInTransitFlexibleParcelIndicator = TimeInTransitFlexibleParcelIndicator
+        self.TimeInTransitFlexibleParcelIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InsuranceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InsuranceType.subclass:
+            return InsuranceType.subclass(*args_, **kwargs_)
+        else:
+            return InsuranceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_BasicFlexibleParcelIndicator(self):
+        return self.BasicFlexibleParcelIndicator
+    def set_BasicFlexibleParcelIndicator(self, BasicFlexibleParcelIndicator):
+        self.BasicFlexibleParcelIndicator = BasicFlexibleParcelIndicator
+    def get_ExtendedFlexibleParcelIndicator(self):
+        return self.ExtendedFlexibleParcelIndicator
+    def set_ExtendedFlexibleParcelIndicator(self, ExtendedFlexibleParcelIndicator):
+        self.ExtendedFlexibleParcelIndicator = ExtendedFlexibleParcelIndicator
+    def get_TimeInTransitFlexibleParcelIndicator(self):
+        return self.TimeInTransitFlexibleParcelIndicator
+    def set_TimeInTransitFlexibleParcelIndicator(self, TimeInTransitFlexibleParcelIndicator):
+        self.TimeInTransitFlexibleParcelIndicator = TimeInTransitFlexibleParcelIndicator
+    def hasContent_(self):
+        if (
+            self.BasicFlexibleParcelIndicator is not None or
+            self.ExtendedFlexibleParcelIndicator is not None or
+            self.TimeInTransitFlexibleParcelIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuranceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InsuranceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InsuranceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InsuranceType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InsuranceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InsuranceType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuranceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.BasicFlexibleParcelIndicator is not None:
+            namespaceprefix_ = self.BasicFlexibleParcelIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.BasicFlexibleParcelIndicator_nsprefix_) else ''
+            self.BasicFlexibleParcelIndicator.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BasicFlexibleParcelIndicator', pretty_print=pretty_print)
+        if self.ExtendedFlexibleParcelIndicator is not None:
+            namespaceprefix_ = self.ExtendedFlexibleParcelIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ExtendedFlexibleParcelIndicator_nsprefix_) else ''
+            self.ExtendedFlexibleParcelIndicator.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ExtendedFlexibleParcelIndicator', pretty_print=pretty_print)
+        if self.TimeInTransitFlexibleParcelIndicator is not None:
+            namespaceprefix_ = self.TimeInTransitFlexibleParcelIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.TimeInTransitFlexibleParcelIndicator_nsprefix_) else ''
+            self.TimeInTransitFlexibleParcelIndicator.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TimeInTransitFlexibleParcelIndicator', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'BasicFlexibleParcelIndicator':
+            obj_ = InsuranceValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BasicFlexibleParcelIndicator = obj_
+            obj_.original_tagname_ = 'BasicFlexibleParcelIndicator'
+        elif nodeName_ == 'ExtendedFlexibleParcelIndicator':
+            obj_ = InsuranceValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ExtendedFlexibleParcelIndicator = obj_
+            obj_.original_tagname_ = 'ExtendedFlexibleParcelIndicator'
+        elif nodeName_ == 'TimeInTransitFlexibleParcelIndicator':
+            obj_ = InsuranceValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TimeInTransitFlexibleParcelIndicator = obj_
+            obj_.original_tagname_ = 'TimeInTransitFlexibleParcelIndicator'
+# end class InsuranceType
+
+
+class InsuranceValueType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InsuranceValueType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InsuranceValueType.subclass:
+            return InsuranceValueType.subclass(*args_, **kwargs_)
+        else:
+            return InsuranceValueType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuranceValueType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InsuranceValueType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InsuranceValueType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InsuranceValueType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InsuranceValueType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InsuranceValueType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InsuranceValueType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class InsuranceValueType
+
+
+class PackageWeightType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Weight=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Weight = Weight
+        self.Weight_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PackageWeightType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PackageWeightType.subclass:
+            return PackageWeightType.subclass(*args_, **kwargs_)
+        else:
+            return PackageWeightType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Weight(self):
+        return self.Weight
+    def set_Weight(self, Weight):
+        self.Weight = Weight
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Weight is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageWeightType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PackageWeightType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PackageWeightType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PackageWeightType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PackageWeightType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageWeightType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageWeightType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Weight is not None:
+            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Weight), input_name='Weight')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Weight':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Weight')
+            value_ = self.gds_validate_string(value_, node, 'Weight')
+            self.Weight = value_
+            self.Weight_nsprefix_ = child_.prefix
+# end class PackageWeightType
+
+
+class UOMCodeDescriptionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, UOMCodeDescriptionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if UOMCodeDescriptionType.subclass:
+            return UOMCodeDescriptionType.subclass(*args_, **kwargs_)
+        else:
+            return UOMCodeDescriptionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='UOMCodeDescriptionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('UOMCodeDescriptionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'UOMCodeDescriptionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='UOMCodeDescriptionType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='UOMCodeDescriptionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='UOMCodeDescriptionType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='UOMCodeDescriptionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class UOMCodeDescriptionType
+
+
+class CodeDescriptionType1(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CodeDescriptionType1)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CodeDescriptionType1.subclass:
+            return CodeDescriptionType1.subclass(*args_, **kwargs_)
+        else:
+            return CodeDescriptionType1(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CodeDescriptionType1', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CodeDescriptionType1')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CodeDescriptionType1':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CodeDescriptionType1')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CodeDescriptionType1', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CodeDescriptionType1'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CodeDescriptionType1', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class CodeDescriptionType1
+
+
+class ShipmentRatingOptionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, NegotiatedRatesIndicator=None, FRSShipmentIndicator=None, RateChartIndicator=None, UserLevelDiscountIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.NegotiatedRatesIndicator = NegotiatedRatesIndicator
+        self.NegotiatedRatesIndicator_nsprefix_ = None
+        self.FRSShipmentIndicator = FRSShipmentIndicator
+        self.FRSShipmentIndicator_nsprefix_ = None
+        self.RateChartIndicator = RateChartIndicator
+        self.RateChartIndicator_nsprefix_ = None
+        self.UserLevelDiscountIndicator = UserLevelDiscountIndicator
+        self.UserLevelDiscountIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentRatingOptionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentRatingOptionsType.subclass:
+            return ShipmentRatingOptionsType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentRatingOptionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_NegotiatedRatesIndicator(self):
+        return self.NegotiatedRatesIndicator
+    def set_NegotiatedRatesIndicator(self, NegotiatedRatesIndicator):
+        self.NegotiatedRatesIndicator = NegotiatedRatesIndicator
+    def get_FRSShipmentIndicator(self):
+        return self.FRSShipmentIndicator
+    def set_FRSShipmentIndicator(self, FRSShipmentIndicator):
+        self.FRSShipmentIndicator = FRSShipmentIndicator
+    def get_RateChartIndicator(self):
+        return self.RateChartIndicator
+    def set_RateChartIndicator(self, RateChartIndicator):
+        self.RateChartIndicator = RateChartIndicator
+    def get_UserLevelDiscountIndicator(self):
+        return self.UserLevelDiscountIndicator
+    def set_UserLevelDiscountIndicator(self, UserLevelDiscountIndicator):
+        self.UserLevelDiscountIndicator = UserLevelDiscountIndicator
+    def hasContent_(self):
+        if (
+            self.NegotiatedRatesIndicator is not None or
+            self.FRSShipmentIndicator is not None or
+            self.RateChartIndicator is not None or
+            self.UserLevelDiscountIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentRatingOptionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentRatingOptionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentRatingOptionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentRatingOptionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentRatingOptionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentRatingOptionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentRatingOptionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.NegotiatedRatesIndicator is not None:
+            namespaceprefix_ = self.NegotiatedRatesIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.NegotiatedRatesIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sNegotiatedRatesIndicator>%s</%sNegotiatedRatesIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NegotiatedRatesIndicator), input_name='NegotiatedRatesIndicator')), namespaceprefix_ , eol_))
+        if self.FRSShipmentIndicator is not None:
+            namespaceprefix_ = self.FRSShipmentIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.FRSShipmentIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sFRSShipmentIndicator>%s</%sFRSShipmentIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.FRSShipmentIndicator), input_name='FRSShipmentIndicator')), namespaceprefix_ , eol_))
+        if self.RateChartIndicator is not None:
+            namespaceprefix_ = self.RateChartIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.RateChartIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRateChartIndicator>%s</%sRateChartIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RateChartIndicator), input_name='RateChartIndicator')), namespaceprefix_ , eol_))
+        if self.UserLevelDiscountIndicator is not None:
+            namespaceprefix_ = self.UserLevelDiscountIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.UserLevelDiscountIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUserLevelDiscountIndicator>%s</%sUserLevelDiscountIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UserLevelDiscountIndicator), input_name='UserLevelDiscountIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'NegotiatedRatesIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'NegotiatedRatesIndicator')
+            value_ = self.gds_validate_string(value_, node, 'NegotiatedRatesIndicator')
+            self.NegotiatedRatesIndicator = value_
+            self.NegotiatedRatesIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'FRSShipmentIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'FRSShipmentIndicator')
+            value_ = self.gds_validate_string(value_, node, 'FRSShipmentIndicator')
+            self.FRSShipmentIndicator = value_
+            self.FRSShipmentIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'RateChartIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RateChartIndicator')
+            value_ = self.gds_validate_string(value_, node, 'RateChartIndicator')
+            self.RateChartIndicator = value_
+            self.RateChartIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'UserLevelDiscountIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UserLevelDiscountIndicator')
+            value_ = self.gds_validate_string(value_, node, 'UserLevelDiscountIndicator')
+            self.UserLevelDiscountIndicator = value_
+            self.UserLevelDiscountIndicator_nsprefix_ = child_.prefix
+# end class ShipmentRatingOptionsType
+
+
+class ShipFromType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Name=None, AttentionName=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Name = Name
+        self.Name_nsprefix_ = None
+        self.AttentionName = AttentionName
+        self.AttentionName_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipFromType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipFromType.subclass:
+            return ShipFromType.subclass(*args_, **kwargs_)
+        else:
+            return ShipFromType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Name(self):
+        return self.Name
+    def set_Name(self, Name):
+        self.Name = Name
+    def get_AttentionName(self):
+        return self.AttentionName
+    def set_AttentionName(self, AttentionName):
+        self.AttentionName = AttentionName
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.Name is not None or
+            self.AttentionName is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipFromType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipFromType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipFromType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipFromType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipFromType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipFromType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipFromType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Name is not None:
+            namespaceprefix_ = self.Name_nsprefix_ + ':' if (UseCapturedNS_ and self.Name_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sName>%s</%sName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Name), input_name='Name')), namespaceprefix_ , eol_))
+        if self.AttentionName is not None:
+            namespaceprefix_ = self.AttentionName_nsprefix_ + ':' if (UseCapturedNS_ and self.AttentionName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAttentionName>%s</%sAttentionName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AttentionName), input_name='AttentionName')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Name':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Name')
+            value_ = self.gds_validate_string(value_, node, 'Name')
+            self.Name = value_
+            self.Name_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AttentionName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AttentionName')
+            value_ = self.gds_validate_string(value_, node, 'AttentionName')
+            self.AttentionName = value_
+            self.AttentionName_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            obj_ = ShipAddressType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class ShipFromType
+
+
+class ShipToType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Name=None, AttentionName=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Name = Name
+        self.Name_nsprefix_ = None
+        self.AttentionName = AttentionName
+        self.AttentionName_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipToType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipToType.subclass:
+            return ShipToType.subclass(*args_, **kwargs_)
+        else:
+            return ShipToType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Name(self):
+        return self.Name
+    def set_Name(self, Name):
+        self.Name = Name
+    def get_AttentionName(self):
+        return self.AttentionName
+    def set_AttentionName(self, AttentionName):
+        self.AttentionName = AttentionName
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.Name is not None or
+            self.AttentionName is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipToType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipToType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipToType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipToType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipToType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipToType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipToType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Name is not None:
+            namespaceprefix_ = self.Name_nsprefix_ + ':' if (UseCapturedNS_ and self.Name_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sName>%s</%sName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Name), input_name='Name')), namespaceprefix_ , eol_))
+        if self.AttentionName is not None:
+            namespaceprefix_ = self.AttentionName_nsprefix_ + ':' if (UseCapturedNS_ and self.AttentionName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAttentionName>%s</%sAttentionName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AttentionName), input_name='AttentionName')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Name':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Name')
+            value_ = self.gds_validate_string(value_, node, 'Name')
+            self.Name = value_
+            self.Name_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AttentionName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AttentionName')
+            value_ = self.gds_validate_string(value_, node, 'AttentionName')
+            self.AttentionName = value_
+            self.AttentionName_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            obj_ = ShipToAddressType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class ShipToType
+
+
+class ShipmentType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, OriginRecordTransactionTimestamp=None, Shipper=None, ShipTo=None, ShipFrom=None, AlternateDeliveryAddress=None, ShipmentIndicationType=None, PaymentDetails=None, FRSPaymentInformation=None, FreightShipmentInformation=None, GoodsNotInFreeCirculationIndicator=None, Service=None, NumOfPieces=None, ShipmentTotalWeight=None, DocumentsOnlyIndicator=None, Package=None, ShipmentServiceOptions=None, ShipmentRatingOptions=None, InvoiceLineTotal=None, RatingMethodRequestedIndicator=None, TaxInformationIndicator=None, PromotionalDiscountInformation=None, DeliveryTimeInformation=None, MasterCartonIndicator=None, WWEShipmentIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.OriginRecordTransactionTimestamp = OriginRecordTransactionTimestamp
+        self.OriginRecordTransactionTimestamp_nsprefix_ = None
+        self.Shipper = Shipper
+        self.Shipper_nsprefix_ = None
+        self.ShipTo = ShipTo
+        self.ShipTo_nsprefix_ = None
+        self.ShipFrom = ShipFrom
+        self.ShipFrom_nsprefix_ = None
+        self.AlternateDeliveryAddress = AlternateDeliveryAddress
+        self.AlternateDeliveryAddress_nsprefix_ = None
+        if ShipmentIndicationType is None:
+            self.ShipmentIndicationType = []
+        else:
+            self.ShipmentIndicationType = ShipmentIndicationType
+        self.ShipmentIndicationType_nsprefix_ = None
+        self.PaymentDetails = PaymentDetails
+        self.PaymentDetails_nsprefix_ = None
+        self.FRSPaymentInformation = FRSPaymentInformation
+        self.FRSPaymentInformation_nsprefix_ = None
+        self.FreightShipmentInformation = FreightShipmentInformation
+        self.FreightShipmentInformation_nsprefix_ = None
+        self.GoodsNotInFreeCirculationIndicator = GoodsNotInFreeCirculationIndicator
+        self.GoodsNotInFreeCirculationIndicator_nsprefix_ = None
+        self.Service = Service
+        self.Service_nsprefix_ = None
+        self.NumOfPieces = NumOfPieces
+        self.NumOfPieces_nsprefix_ = None
+        self.ShipmentTotalWeight = ShipmentTotalWeight
+        self.ShipmentTotalWeight_nsprefix_ = None
+        self.DocumentsOnlyIndicator = DocumentsOnlyIndicator
+        self.DocumentsOnlyIndicator_nsprefix_ = None
+        if Package is None:
+            self.Package = []
+        else:
+            self.Package = Package
+        self.Package_nsprefix_ = None
+        self.ShipmentServiceOptions = ShipmentServiceOptions
+        self.ShipmentServiceOptions_nsprefix_ = None
+        self.ShipmentRatingOptions = ShipmentRatingOptions
+        self.ShipmentRatingOptions_nsprefix_ = None
+        self.InvoiceLineTotal = InvoiceLineTotal
+        self.InvoiceLineTotal_nsprefix_ = None
+        self.RatingMethodRequestedIndicator = RatingMethodRequestedIndicator
+        self.RatingMethodRequestedIndicator_nsprefix_ = None
+        self.TaxInformationIndicator = TaxInformationIndicator
+        self.TaxInformationIndicator_nsprefix_ = None
+        self.PromotionalDiscountInformation = PromotionalDiscountInformation
+        self.PromotionalDiscountInformation_nsprefix_ = None
+        self.DeliveryTimeInformation = DeliveryTimeInformation
+        self.DeliveryTimeInformation_nsprefix_ = None
+        self.MasterCartonIndicator = MasterCartonIndicator
+        self.MasterCartonIndicator_nsprefix_ = None
+        self.WWEShipmentIndicator = WWEShipmentIndicator
+        self.WWEShipmentIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentType.subclass:
+            return ShipmentType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_OriginRecordTransactionTimestamp(self):
+        return self.OriginRecordTransactionTimestamp
+    def set_OriginRecordTransactionTimestamp(self, OriginRecordTransactionTimestamp):
+        self.OriginRecordTransactionTimestamp = OriginRecordTransactionTimestamp
+    def get_Shipper(self):
+        return self.Shipper
+    def set_Shipper(self, Shipper):
+        self.Shipper = Shipper
+    def get_ShipTo(self):
+        return self.ShipTo
+    def set_ShipTo(self, ShipTo):
+        self.ShipTo = ShipTo
+    def get_ShipFrom(self):
+        return self.ShipFrom
+    def set_ShipFrom(self, ShipFrom):
+        self.ShipFrom = ShipFrom
+    def get_AlternateDeliveryAddress(self):
+        return self.AlternateDeliveryAddress
+    def set_AlternateDeliveryAddress(self, AlternateDeliveryAddress):
+        self.AlternateDeliveryAddress = AlternateDeliveryAddress
+    def get_ShipmentIndicationType(self):
+        return self.ShipmentIndicationType
+    def set_ShipmentIndicationType(self, ShipmentIndicationType):
+        self.ShipmentIndicationType = ShipmentIndicationType
+    def add_ShipmentIndicationType(self, value):
+        self.ShipmentIndicationType.append(value)
+    def insert_ShipmentIndicationType_at(self, index, value):
+        self.ShipmentIndicationType.insert(index, value)
+    def replace_ShipmentIndicationType_at(self, index, value):
+        self.ShipmentIndicationType[index] = value
+    def get_PaymentDetails(self):
+        return self.PaymentDetails
+    def set_PaymentDetails(self, PaymentDetails):
+        self.PaymentDetails = PaymentDetails
+    def get_FRSPaymentInformation(self):
+        return self.FRSPaymentInformation
+    def set_FRSPaymentInformation(self, FRSPaymentInformation):
+        self.FRSPaymentInformation = FRSPaymentInformation
+    def get_FreightShipmentInformation(self):
+        return self.FreightShipmentInformation
+    def set_FreightShipmentInformation(self, FreightShipmentInformation):
+        self.FreightShipmentInformation = FreightShipmentInformation
+    def get_GoodsNotInFreeCirculationIndicator(self):
+        return self.GoodsNotInFreeCirculationIndicator
+    def set_GoodsNotInFreeCirculationIndicator(self, GoodsNotInFreeCirculationIndicator):
+        self.GoodsNotInFreeCirculationIndicator = GoodsNotInFreeCirculationIndicator
+    def get_Service(self):
+        return self.Service
+    def set_Service(self, Service):
+        self.Service = Service
+    def get_NumOfPieces(self):
+        return self.NumOfPieces
+    def set_NumOfPieces(self, NumOfPieces):
+        self.NumOfPieces = NumOfPieces
+    def get_ShipmentTotalWeight(self):
+        return self.ShipmentTotalWeight
+    def set_ShipmentTotalWeight(self, ShipmentTotalWeight):
+        self.ShipmentTotalWeight = ShipmentTotalWeight
+    def get_DocumentsOnlyIndicator(self):
+        return self.DocumentsOnlyIndicator
+    def set_DocumentsOnlyIndicator(self, DocumentsOnlyIndicator):
+        self.DocumentsOnlyIndicator = DocumentsOnlyIndicator
+    def get_Package(self):
+        return self.Package
+    def set_Package(self, Package):
+        self.Package = Package
+    def add_Package(self, value):
+        self.Package.append(value)
+    def insert_Package_at(self, index, value):
+        self.Package.insert(index, value)
+    def replace_Package_at(self, index, value):
+        self.Package[index] = value
+    def get_ShipmentServiceOptions(self):
+        return self.ShipmentServiceOptions
+    def set_ShipmentServiceOptions(self, ShipmentServiceOptions):
+        self.ShipmentServiceOptions = ShipmentServiceOptions
+    def get_ShipmentRatingOptions(self):
+        return self.ShipmentRatingOptions
+    def set_ShipmentRatingOptions(self, ShipmentRatingOptions):
+        self.ShipmentRatingOptions = ShipmentRatingOptions
+    def get_InvoiceLineTotal(self):
+        return self.InvoiceLineTotal
+    def set_InvoiceLineTotal(self, InvoiceLineTotal):
+        self.InvoiceLineTotal = InvoiceLineTotal
+    def get_RatingMethodRequestedIndicator(self):
+        return self.RatingMethodRequestedIndicator
+    def set_RatingMethodRequestedIndicator(self, RatingMethodRequestedIndicator):
+        self.RatingMethodRequestedIndicator = RatingMethodRequestedIndicator
+    def get_TaxInformationIndicator(self):
+        return self.TaxInformationIndicator
+    def set_TaxInformationIndicator(self, TaxInformationIndicator):
+        self.TaxInformationIndicator = TaxInformationIndicator
+    def get_PromotionalDiscountInformation(self):
+        return self.PromotionalDiscountInformation
+    def set_PromotionalDiscountInformation(self, PromotionalDiscountInformation):
+        self.PromotionalDiscountInformation = PromotionalDiscountInformation
+    def get_DeliveryTimeInformation(self):
+        return self.DeliveryTimeInformation
+    def set_DeliveryTimeInformation(self, DeliveryTimeInformation):
+        self.DeliveryTimeInformation = DeliveryTimeInformation
+    def get_MasterCartonIndicator(self):
+        return self.MasterCartonIndicator
+    def set_MasterCartonIndicator(self, MasterCartonIndicator):
+        self.MasterCartonIndicator = MasterCartonIndicator
+    def get_WWEShipmentIndicator(self):
+        return self.WWEShipmentIndicator
+    def set_WWEShipmentIndicator(self, WWEShipmentIndicator):
+        self.WWEShipmentIndicator = WWEShipmentIndicator
+    def hasContent_(self):
+        if (
+            self.OriginRecordTransactionTimestamp is not None or
+            self.Shipper is not None or
+            self.ShipTo is not None or
+            self.ShipFrom is not None or
+            self.AlternateDeliveryAddress is not None or
+            self.ShipmentIndicationType or
+            self.PaymentDetails is not None or
+            self.FRSPaymentInformation is not None or
+            self.FreightShipmentInformation is not None or
+            self.GoodsNotInFreeCirculationIndicator is not None or
+            self.Service is not None or
+            self.NumOfPieces is not None or
+            self.ShipmentTotalWeight is not None or
+            self.DocumentsOnlyIndicator is not None or
+            self.Package or
+            self.ShipmentServiceOptions is not None or
+            self.ShipmentRatingOptions is not None or
+            self.InvoiceLineTotal is not None or
+            self.RatingMethodRequestedIndicator is not None or
+            self.TaxInformationIndicator is not None or
+            self.PromotionalDiscountInformation is not None or
+            self.DeliveryTimeInformation is not None or
+            self.MasterCartonIndicator is not None or
+            self.WWEShipmentIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.OriginRecordTransactionTimestamp is not None:
+            namespaceprefix_ = self.OriginRecordTransactionTimestamp_nsprefix_ + ':' if (UseCapturedNS_ and self.OriginRecordTransactionTimestamp_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sOriginRecordTransactionTimestamp>%s</%sOriginRecordTransactionTimestamp>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OriginRecordTransactionTimestamp), input_name='OriginRecordTransactionTimestamp')), namespaceprefix_ , eol_))
+        if self.Shipper is not None:
+            namespaceprefix_ = self.Shipper_nsprefix_ + ':' if (UseCapturedNS_ and self.Shipper_nsprefix_) else ''
+            self.Shipper.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Shipper', pretty_print=pretty_print)
+        if self.ShipTo is not None:
+            namespaceprefix_ = self.ShipTo_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipTo_nsprefix_) else ''
+            self.ShipTo.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipTo', pretty_print=pretty_print)
+        if self.ShipFrom is not None:
+            namespaceprefix_ = self.ShipFrom_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipFrom_nsprefix_) else ''
+            self.ShipFrom.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipFrom', pretty_print=pretty_print)
+        if self.AlternateDeliveryAddress is not None:
+            namespaceprefix_ = self.AlternateDeliveryAddress_nsprefix_ + ':' if (UseCapturedNS_ and self.AlternateDeliveryAddress_nsprefix_) else ''
+            self.AlternateDeliveryAddress.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AlternateDeliveryAddress', pretty_print=pretty_print)
+        for ShipmentIndicationType_ in self.ShipmentIndicationType:
+            namespaceprefix_ = self.ShipmentIndicationType_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentIndicationType_nsprefix_) else ''
+            ShipmentIndicationType_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentIndicationType', pretty_print=pretty_print)
+        if self.PaymentDetails is not None:
+            namespaceprefix_ = self.PaymentDetails_nsprefix_ + ':' if (UseCapturedNS_ and self.PaymentDetails_nsprefix_) else ''
+            self.PaymentDetails.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PaymentDetails', pretty_print=pretty_print)
+        if self.FRSPaymentInformation is not None:
+            namespaceprefix_ = self.FRSPaymentInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.FRSPaymentInformation_nsprefix_) else ''
+            self.FRSPaymentInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='FRSPaymentInformation', pretty_print=pretty_print)
+        if self.FreightShipmentInformation is not None:
+            namespaceprefix_ = self.FreightShipmentInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.FreightShipmentInformation_nsprefix_) else ''
+            self.FreightShipmentInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='FreightShipmentInformation', pretty_print=pretty_print)
+        if self.GoodsNotInFreeCirculationIndicator is not None:
+            namespaceprefix_ = self.GoodsNotInFreeCirculationIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.GoodsNotInFreeCirculationIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sGoodsNotInFreeCirculationIndicator>%s</%sGoodsNotInFreeCirculationIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.GoodsNotInFreeCirculationIndicator), input_name='GoodsNotInFreeCirculationIndicator')), namespaceprefix_ , eol_))
+        if self.Service is not None:
+            namespaceprefix_ = self.Service_nsprefix_ + ':' if (UseCapturedNS_ and self.Service_nsprefix_) else ''
+            self.Service.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Service', pretty_print=pretty_print)
+        if self.NumOfPieces is not None:
+            namespaceprefix_ = self.NumOfPieces_nsprefix_ + ':' if (UseCapturedNS_ and self.NumOfPieces_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sNumOfPieces>%s</%sNumOfPieces>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumOfPieces), input_name='NumOfPieces')), namespaceprefix_ , eol_))
+        if self.ShipmentTotalWeight is not None:
+            namespaceprefix_ = self.ShipmentTotalWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentTotalWeight_nsprefix_) else ''
+            self.ShipmentTotalWeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentTotalWeight', pretty_print=pretty_print)
+        if self.DocumentsOnlyIndicator is not None:
+            namespaceprefix_ = self.DocumentsOnlyIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DocumentsOnlyIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDocumentsOnlyIndicator>%s</%sDocumentsOnlyIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DocumentsOnlyIndicator), input_name='DocumentsOnlyIndicator')), namespaceprefix_ , eol_))
+        for Package_ in self.Package:
+            namespaceprefix_ = self.Package_nsprefix_ + ':' if (UseCapturedNS_ and self.Package_nsprefix_) else ''
+            Package_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Package', pretty_print=pretty_print)
+        if self.ShipmentServiceOptions is not None:
+            namespaceprefix_ = self.ShipmentServiceOptions_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentServiceOptions_nsprefix_) else ''
+            self.ShipmentServiceOptions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentServiceOptions', pretty_print=pretty_print)
+        if self.ShipmentRatingOptions is not None:
+            namespaceprefix_ = self.ShipmentRatingOptions_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentRatingOptions_nsprefix_) else ''
+            self.ShipmentRatingOptions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentRatingOptions', pretty_print=pretty_print)
+        if self.InvoiceLineTotal is not None:
+            namespaceprefix_ = self.InvoiceLineTotal_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceLineTotal_nsprefix_) else ''
+            self.InvoiceLineTotal.export(outfile, level, namespaceprefix_, namespacedef_='', name_='InvoiceLineTotal', pretty_print=pretty_print)
+        if self.RatingMethodRequestedIndicator is not None:
+            namespaceprefix_ = self.RatingMethodRequestedIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.RatingMethodRequestedIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRatingMethodRequestedIndicator>%s</%sRatingMethodRequestedIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RatingMethodRequestedIndicator), input_name='RatingMethodRequestedIndicator')), namespaceprefix_ , eol_))
+        if self.TaxInformationIndicator is not None:
+            namespaceprefix_ = self.TaxInformationIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.TaxInformationIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTaxInformationIndicator>%s</%sTaxInformationIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TaxInformationIndicator), input_name='TaxInformationIndicator')), namespaceprefix_ , eol_))
+        if self.PromotionalDiscountInformation is not None:
+            namespaceprefix_ = self.PromotionalDiscountInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.PromotionalDiscountInformation_nsprefix_) else ''
+            self.PromotionalDiscountInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PromotionalDiscountInformation', pretty_print=pretty_print)
+        if self.DeliveryTimeInformation is not None:
+            namespaceprefix_ = self.DeliveryTimeInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliveryTimeInformation_nsprefix_) else ''
+            self.DeliveryTimeInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DeliveryTimeInformation', pretty_print=pretty_print)
+        if self.MasterCartonIndicator is not None:
+            namespaceprefix_ = self.MasterCartonIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.MasterCartonIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMasterCartonIndicator>%s</%sMasterCartonIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MasterCartonIndicator), input_name='MasterCartonIndicator')), namespaceprefix_ , eol_))
+        if self.WWEShipmentIndicator is not None:
+            namespaceprefix_ = self.WWEShipmentIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.WWEShipmentIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWWEShipmentIndicator>%s</%sWWEShipmentIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.WWEShipmentIndicator), input_name='WWEShipmentIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'OriginRecordTransactionTimestamp':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'OriginRecordTransactionTimestamp')
+            value_ = self.gds_validate_string(value_, node, 'OriginRecordTransactionTimestamp')
+            self.OriginRecordTransactionTimestamp = value_
+            self.OriginRecordTransactionTimestamp_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Shipper':
+            obj_ = ShipperType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Shipper = obj_
+            obj_.original_tagname_ = 'Shipper'
+        elif nodeName_ == 'ShipTo':
+            obj_ = ShipToType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipTo = obj_
+            obj_.original_tagname_ = 'ShipTo'
+        elif nodeName_ == 'ShipFrom':
+            obj_ = ShipFromType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipFrom = obj_
+            obj_.original_tagname_ = 'ShipFrom'
+        elif nodeName_ == 'AlternateDeliveryAddress':
+            obj_ = AlternateDeliveryAddressType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AlternateDeliveryAddress = obj_
+            obj_.original_tagname_ = 'AlternateDeliveryAddress'
+        elif nodeName_ == 'ShipmentIndicationType':
+            obj_ = IndicationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentIndicationType.append(obj_)
+            obj_.original_tagname_ = 'ShipmentIndicationType'
+        elif nodeName_ == 'PaymentDetails':
+            obj_ = PaymentDetailsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PaymentDetails = obj_
+            obj_.original_tagname_ = 'PaymentDetails'
+        elif nodeName_ == 'FRSPaymentInformation':
+            obj_ = FRSPaymentInfoType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.FRSPaymentInformation = obj_
+            obj_.original_tagname_ = 'FRSPaymentInformation'
+        elif nodeName_ == 'FreightShipmentInformation':
+            obj_ = FreightShipmentInformationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.FreightShipmentInformation = obj_
+            obj_.original_tagname_ = 'FreightShipmentInformation'
+        elif nodeName_ == 'GoodsNotInFreeCirculationIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'GoodsNotInFreeCirculationIndicator')
+            value_ = self.gds_validate_string(value_, node, 'GoodsNotInFreeCirculationIndicator')
+            self.GoodsNotInFreeCirculationIndicator = value_
+            self.GoodsNotInFreeCirculationIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Service':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Service = obj_
+            obj_.original_tagname_ = 'Service'
+        elif nodeName_ == 'NumOfPieces':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'NumOfPieces')
+            value_ = self.gds_validate_string(value_, node, 'NumOfPieces')
+            self.NumOfPieces = value_
+            self.NumOfPieces_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ShipmentTotalWeight':
+            obj_ = ShipmentWeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentTotalWeight = obj_
+            obj_.original_tagname_ = 'ShipmentTotalWeight'
+        elif nodeName_ == 'DocumentsOnlyIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DocumentsOnlyIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DocumentsOnlyIndicator')
+            self.DocumentsOnlyIndicator = value_
+            self.DocumentsOnlyIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Package':
+            obj_ = PackageType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Package.append(obj_)
+            obj_.original_tagname_ = 'Package'
+        elif nodeName_ == 'ShipmentServiceOptions':
+            obj_ = ShipmentServiceOptionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentServiceOptions = obj_
+            obj_.original_tagname_ = 'ShipmentServiceOptions'
+        elif nodeName_ == 'ShipmentRatingOptions':
+            obj_ = ShipmentRatingOptionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentRatingOptions = obj_
+            obj_.original_tagname_ = 'ShipmentRatingOptions'
+        elif nodeName_ == 'InvoiceLineTotal':
+            obj_ = InvoiceLineTotalType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.InvoiceLineTotal = obj_
+            obj_.original_tagname_ = 'InvoiceLineTotal'
+        elif nodeName_ == 'RatingMethodRequestedIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RatingMethodRequestedIndicator')
+            value_ = self.gds_validate_string(value_, node, 'RatingMethodRequestedIndicator')
+            self.RatingMethodRequestedIndicator = value_
+            self.RatingMethodRequestedIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TaxInformationIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TaxInformationIndicator')
+            value_ = self.gds_validate_string(value_, node, 'TaxInformationIndicator')
+            self.TaxInformationIndicator = value_
+            self.TaxInformationIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PromotionalDiscountInformation':
+            obj_ = PromotionalDiscountInformationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PromotionalDiscountInformation = obj_
+            obj_.original_tagname_ = 'PromotionalDiscountInformation'
+        elif nodeName_ == 'DeliveryTimeInformation':
+            obj_ = TimeInTransitRequestType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DeliveryTimeInformation = obj_
+            obj_.original_tagname_ = 'DeliveryTimeInformation'
+        elif nodeName_ == 'MasterCartonIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MasterCartonIndicator')
+            value_ = self.gds_validate_string(value_, node, 'MasterCartonIndicator')
+            self.MasterCartonIndicator = value_
+            self.MasterCartonIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'WWEShipmentIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'WWEShipmentIndicator')
+            value_ = self.gds_validate_string(value_, node, 'WWEShipmentIndicator')
+            self.WWEShipmentIndicator = value_
+            self.WWEShipmentIndicator_nsprefix_ = child_.prefix
+# end class ShipmentType
+
+
+class TimeInTransitRequestType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PackageBillType=None, Pickup=None, ReturnContractServices=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PackageBillType = PackageBillType
+        self.PackageBillType_nsprefix_ = None
+        self.Pickup = Pickup
+        self.Pickup_nsprefix_ = None
+        if ReturnContractServices is None:
+            self.ReturnContractServices = []
+        else:
+            self.ReturnContractServices = ReturnContractServices
+        self.ReturnContractServices_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TimeInTransitRequestType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TimeInTransitRequestType.subclass:
+            return TimeInTransitRequestType.subclass(*args_, **kwargs_)
+        else:
+            return TimeInTransitRequestType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PackageBillType(self):
+        return self.PackageBillType
+    def set_PackageBillType(self, PackageBillType):
+        self.PackageBillType = PackageBillType
+    def get_Pickup(self):
+        return self.Pickup
+    def set_Pickup(self, Pickup):
+        self.Pickup = Pickup
+    def get_ReturnContractServices(self):
+        return self.ReturnContractServices
+    def set_ReturnContractServices(self, ReturnContractServices):
+        self.ReturnContractServices = ReturnContractServices
+    def add_ReturnContractServices(self, value):
+        self.ReturnContractServices.append(value)
+    def insert_ReturnContractServices_at(self, index, value):
+        self.ReturnContractServices.insert(index, value)
+    def replace_ReturnContractServices_at(self, index, value):
+        self.ReturnContractServices[index] = value
+    def hasContent_(self):
+        if (
+            self.PackageBillType is not None or
+            self.Pickup is not None or
+            self.ReturnContractServices
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TimeInTransitRequestType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TimeInTransitRequestType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TimeInTransitRequestType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TimeInTransitRequestType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TimeInTransitRequestType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TimeInTransitRequestType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TimeInTransitRequestType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PackageBillType is not None:
+            namespaceprefix_ = self.PackageBillType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageBillType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPackageBillType>%s</%sPackageBillType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackageBillType), input_name='PackageBillType')), namespaceprefix_ , eol_))
+        if self.Pickup is not None:
+            namespaceprefix_ = self.Pickup_nsprefix_ + ':' if (UseCapturedNS_ and self.Pickup_nsprefix_) else ''
+            self.Pickup.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Pickup', pretty_print=pretty_print)
+        for ReturnContractServices_ in self.ReturnContractServices:
+            namespaceprefix_ = self.ReturnContractServices_nsprefix_ + ':' if (UseCapturedNS_ and self.ReturnContractServices_nsprefix_) else ''
+            ReturnContractServices_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ReturnContractServices', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PackageBillType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PackageBillType')
+            value_ = self.gds_validate_string(value_, node, 'PackageBillType')
+            self.PackageBillType = value_
+            self.PackageBillType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Pickup':
+            obj_ = PickupType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Pickup = obj_
+            obj_.original_tagname_ = 'Pickup'
+        elif nodeName_ == 'ReturnContractServices':
+            obj_ = ReturnContractServicesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ReturnContractServices.append(obj_)
+            obj_.original_tagname_ = 'ReturnContractServices'
+# end class TimeInTransitRequestType
+
+
+class PickupType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Date=None, Time=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Date = Date
+        self.Date_nsprefix_ = None
+        self.Time = Time
+        self.Time_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PickupType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PickupType.subclass:
+            return PickupType.subclass(*args_, **kwargs_)
+        else:
+            return PickupType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Date(self):
+        return self.Date
+    def set_Date(self, Date):
+        self.Date = Date
+    def get_Time(self):
+        return self.Time
+    def set_Time(self, Time):
+        self.Time = Time
+    def hasContent_(self):
+        if (
+            self.Date is not None or
+            self.Time is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PickupType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PickupType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PickupType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Date is not None:
+            namespaceprefix_ = self.Date_nsprefix_ + ':' if (UseCapturedNS_ and self.Date_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDate>%s</%sDate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Date), input_name='Date')), namespaceprefix_ , eol_))
+        if self.Time is not None:
+            namespaceprefix_ = self.Time_nsprefix_ + ':' if (UseCapturedNS_ and self.Time_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTime>%s</%sTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Time), input_name='Time')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Date':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Date')
+            value_ = self.gds_validate_string(value_, node, 'Date')
+            self.Date = value_
+            self.Date_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Time':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Time')
+            value_ = self.gds_validate_string(value_, node, 'Time')
+            self.Time = value_
+            self.Time_nsprefix_ = child_.prefix
+# end class PickupType
+
+
+class PromotionalDiscountInformationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PromoCode=None, PromoAliasCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PromoCode = PromoCode
+        self.PromoCode_nsprefix_ = None
+        self.PromoAliasCode = PromoAliasCode
+        self.PromoAliasCode_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PromotionalDiscountInformationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PromotionalDiscountInformationType.subclass:
+            return PromotionalDiscountInformationType.subclass(*args_, **kwargs_)
+        else:
+            return PromotionalDiscountInformationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PromoCode(self):
+        return self.PromoCode
+    def set_PromoCode(self, PromoCode):
+        self.PromoCode = PromoCode
+    def get_PromoAliasCode(self):
+        return self.PromoAliasCode
+    def set_PromoAliasCode(self, PromoAliasCode):
+        self.PromoAliasCode = PromoAliasCode
+    def hasContent_(self):
+        if (
+            self.PromoCode is not None or
+            self.PromoAliasCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PromotionalDiscountInformationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PromotionalDiscountInformationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PromotionalDiscountInformationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PromotionalDiscountInformationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PromotionalDiscountInformationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PromotionalDiscountInformationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PromotionalDiscountInformationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PromoCode is not None:
+            namespaceprefix_ = self.PromoCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PromoCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPromoCode>%s</%sPromoCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PromoCode), input_name='PromoCode')), namespaceprefix_ , eol_))
+        if self.PromoAliasCode is not None:
+            namespaceprefix_ = self.PromoAliasCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PromoAliasCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPromoAliasCode>%s</%sPromoAliasCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PromoAliasCode), input_name='PromoAliasCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PromoCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PromoCode')
+            value_ = self.gds_validate_string(value_, node, 'PromoCode')
+            self.PromoCode = value_
+            self.PromoCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PromoAliasCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PromoAliasCode')
+            value_ = self.gds_validate_string(value_, node, 'PromoAliasCode')
+            self.PromoAliasCode = value_
+            self.PromoAliasCode_nsprefix_ = child_.prefix
+# end class PromotionalDiscountInformationType
+
+
+class ShipmentWeightType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Weight=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Weight = Weight
+        self.Weight_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentWeightType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentWeightType.subclass:
+            return ShipmentWeightType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentWeightType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Weight(self):
+        return self.Weight
+    def set_Weight(self, Weight):
+        self.Weight = Weight
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Weight is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentWeightType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentWeightType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentWeightType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentWeightType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentWeightType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentWeightType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentWeightType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Weight is not None:
+            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Weight), input_name='Weight')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Weight':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Weight')
+            value_ = self.gds_validate_string(value_, node, 'Weight')
+            self.Weight = value_
+            self.Weight_nsprefix_ = child_.prefix
+# end class ShipmentWeightType
+
+
+class PaymentDetailsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ShipmentCharge=None, SplitDutyVATIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if ShipmentCharge is None:
+            self.ShipmentCharge = []
+        else:
+            self.ShipmentCharge = ShipmentCharge
+        self.ShipmentCharge_nsprefix_ = None
+        self.SplitDutyVATIndicator = SplitDutyVATIndicator
+        self.SplitDutyVATIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PaymentDetailsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PaymentDetailsType.subclass:
+            return PaymentDetailsType.subclass(*args_, **kwargs_)
+        else:
+            return PaymentDetailsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ShipmentCharge(self):
+        return self.ShipmentCharge
+    def set_ShipmentCharge(self, ShipmentCharge):
+        self.ShipmentCharge = ShipmentCharge
+    def add_ShipmentCharge(self, value):
+        self.ShipmentCharge.append(value)
+    def insert_ShipmentCharge_at(self, index, value):
+        self.ShipmentCharge.insert(index, value)
+    def replace_ShipmentCharge_at(self, index, value):
+        self.ShipmentCharge[index] = value
+    def get_SplitDutyVATIndicator(self):
+        return self.SplitDutyVATIndicator
+    def set_SplitDutyVATIndicator(self, SplitDutyVATIndicator):
+        self.SplitDutyVATIndicator = SplitDutyVATIndicator
+    def hasContent_(self):
+        if (
+            self.ShipmentCharge or
+            self.SplitDutyVATIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PaymentDetailsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PaymentDetailsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PaymentDetailsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PaymentDetailsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PaymentDetailsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PaymentDetailsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PaymentDetailsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for ShipmentCharge_ in self.ShipmentCharge:
+            namespaceprefix_ = self.ShipmentCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentCharge_nsprefix_) else ''
+            ShipmentCharge_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentCharge', pretty_print=pretty_print)
+        if self.SplitDutyVATIndicator is not None:
+            namespaceprefix_ = self.SplitDutyVATIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SplitDutyVATIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSplitDutyVATIndicator>%s</%sSplitDutyVATIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SplitDutyVATIndicator), input_name='SplitDutyVATIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ShipmentCharge':
+            obj_ = ShipmentChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentCharge.append(obj_)
+            obj_.original_tagname_ = 'ShipmentCharge'
+        elif nodeName_ == 'SplitDutyVATIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SplitDutyVATIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SplitDutyVATIndicator')
+            self.SplitDutyVATIndicator = value_
+            self.SplitDutyVATIndicator_nsprefix_ = child_.prefix
+# end class PaymentDetailsType
+
+
+class ShipmentChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Type=None, BillShipper=None, BillReceiver=None, BillThirdParty=None, ConsigneeBilledIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Type = Type
+        self.Type_nsprefix_ = None
+        self.BillShipper = BillShipper
+        self.BillShipper_nsprefix_ = None
+        self.BillReceiver = BillReceiver
+        self.BillReceiver_nsprefix_ = None
+        self.BillThirdParty = BillThirdParty
+        self.BillThirdParty_nsprefix_ = None
+        self.ConsigneeBilledIndicator = ConsigneeBilledIndicator
+        self.ConsigneeBilledIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentChargeType.subclass:
+            return ShipmentChargeType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Type(self):
+        return self.Type
+    def set_Type(self, Type):
+        self.Type = Type
+    def get_BillShipper(self):
+        return self.BillShipper
+    def set_BillShipper(self, BillShipper):
+        self.BillShipper = BillShipper
+    def get_BillReceiver(self):
+        return self.BillReceiver
+    def set_BillReceiver(self, BillReceiver):
+        self.BillReceiver = BillReceiver
+    def get_BillThirdParty(self):
+        return self.BillThirdParty
+    def set_BillThirdParty(self, BillThirdParty):
+        self.BillThirdParty = BillThirdParty
+    def get_ConsigneeBilledIndicator(self):
+        return self.ConsigneeBilledIndicator
+    def set_ConsigneeBilledIndicator(self, ConsigneeBilledIndicator):
+        self.ConsigneeBilledIndicator = ConsigneeBilledIndicator
+    def hasContent_(self):
+        if (
+            self.Type is not None or
+            self.BillShipper is not None or
+            self.BillReceiver is not None or
+            self.BillThirdParty is not None or
+            self.ConsigneeBilledIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Type is not None:
+            namespaceprefix_ = self.Type_nsprefix_ + ':' if (UseCapturedNS_ and self.Type_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sType>%s</%sType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Type), input_name='Type')), namespaceprefix_ , eol_))
+        if self.BillShipper is not None:
+            namespaceprefix_ = self.BillShipper_nsprefix_ + ':' if (UseCapturedNS_ and self.BillShipper_nsprefix_) else ''
+            self.BillShipper.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillShipper', pretty_print=pretty_print)
+        if self.BillReceiver is not None:
+            namespaceprefix_ = self.BillReceiver_nsprefix_ + ':' if (UseCapturedNS_ and self.BillReceiver_nsprefix_) else ''
+            self.BillReceiver.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillReceiver', pretty_print=pretty_print)
+        if self.BillThirdParty is not None:
+            namespaceprefix_ = self.BillThirdParty_nsprefix_ + ':' if (UseCapturedNS_ and self.BillThirdParty_nsprefix_) else ''
+            self.BillThirdParty.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillThirdParty', pretty_print=pretty_print)
+        if self.ConsigneeBilledIndicator is not None:
+            namespaceprefix_ = self.ConsigneeBilledIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ConsigneeBilledIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sConsigneeBilledIndicator>%s</%sConsigneeBilledIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ConsigneeBilledIndicator), input_name='ConsigneeBilledIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Type':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Type')
+            value_ = self.gds_validate_string(value_, node, 'Type')
+            self.Type = value_
+            self.Type_nsprefix_ = child_.prefix
+        elif nodeName_ == 'BillShipper':
+            obj_ = BillShipperChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillShipper = obj_
+            obj_.original_tagname_ = 'BillShipper'
+        elif nodeName_ == 'BillReceiver':
+            obj_ = BillReceiverChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillReceiver = obj_
+            obj_.original_tagname_ = 'BillReceiver'
+        elif nodeName_ == 'BillThirdParty':
+            obj_ = BillThirdPartyChargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillThirdParty = obj_
+            obj_.original_tagname_ = 'BillThirdParty'
+        elif nodeName_ == 'ConsigneeBilledIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ConsigneeBilledIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ConsigneeBilledIndicator')
+            self.ConsigneeBilledIndicator = value_
+            self.ConsigneeBilledIndicator_nsprefix_ = child_.prefix
+# end class ShipmentChargeType
+
+
+class BillShipperChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AccountNumber=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.AccountNumber = AccountNumber
+        self.AccountNumber_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, BillShipperChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if BillShipperChargeType.subclass:
+            return BillShipperChargeType.subclass(*args_, **kwargs_)
+        else:
+            return BillShipperChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AccountNumber(self):
+        return self.AccountNumber
+    def set_AccountNumber(self, AccountNumber):
+        self.AccountNumber = AccountNumber
+    def hasContent_(self):
+        if (
+            self.AccountNumber is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillShipperChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('BillShipperChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'BillShipperChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='BillShipperChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='BillShipperChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='BillShipperChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillShipperChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AccountNumber is not None:
+            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AccountNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
+            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
+            self.AccountNumber = value_
+            self.AccountNumber_nsprefix_ = child_.prefix
+# end class BillShipperChargeType
+
+
+class BillReceiverChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AccountNumber=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.AccountNumber = AccountNumber
+        self.AccountNumber_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, BillReceiverChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if BillReceiverChargeType.subclass:
+            return BillReceiverChargeType.subclass(*args_, **kwargs_)
+        else:
+            return BillReceiverChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AccountNumber(self):
+        return self.AccountNumber
+    def set_AccountNumber(self, AccountNumber):
+        self.AccountNumber = AccountNumber
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.AccountNumber is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillReceiverChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('BillReceiverChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'BillReceiverChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='BillReceiverChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='BillReceiverChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='BillReceiverChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillReceiverChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AccountNumber is not None:
+            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AccountNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
+            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
+            self.AccountNumber = value_
+            self.AccountNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            obj_ = BillReceiverAddressType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class BillReceiverChargeType
+
+
+class BillThirdPartyChargeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AccountNumber=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.AccountNumber = AccountNumber
+        self.AccountNumber_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, BillThirdPartyChargeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if BillThirdPartyChargeType.subclass:
+            return BillThirdPartyChargeType.subclass(*args_, **kwargs_)
+        else:
+            return BillThirdPartyChargeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AccountNumber(self):
+        return self.AccountNumber
+    def set_AccountNumber(self, AccountNumber):
+        self.AccountNumber = AccountNumber
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.AccountNumber is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillThirdPartyChargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('BillThirdPartyChargeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'BillThirdPartyChargeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='BillThirdPartyChargeType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='BillThirdPartyChargeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='BillThirdPartyChargeType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillThirdPartyChargeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AccountNumber is not None:
+            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AccountNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
+            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
+            self.AccountNumber = value_
+            self.AccountNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            class_obj_ = self.get_class_obj_(child_, AddressType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class BillThirdPartyChargeType
+
+
+class BillReceiverAddressType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PostalCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PostalCode = PostalCode
+        self.PostalCode_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, BillReceiverAddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if BillReceiverAddressType.subclass:
+            return BillReceiverAddressType.subclass(*args_, **kwargs_)
+        else:
+            return BillReceiverAddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PostalCode(self):
+        return self.PostalCode
+    def set_PostalCode(self, PostalCode):
+        self.PostalCode = PostalCode
+    def hasContent_(self):
+        if (
+            self.PostalCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillReceiverAddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('BillReceiverAddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'BillReceiverAddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='BillReceiverAddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='BillReceiverAddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='BillReceiverAddressType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='BillReceiverAddressType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PostalCode is not None:
+            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PostalCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PostalCode')
+            value_ = self.gds_validate_string(value_, node, 'PostalCode')
+            self.PostalCode = value_
+            self.PostalCode_nsprefix_ = child_.prefix
+# end class BillReceiverAddressType
+
+
+class AlternateDeliveryAddressType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Name=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Name = Name
+        self.Name_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AlternateDeliveryAddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AlternateDeliveryAddressType.subclass:
+            return AlternateDeliveryAddressType.subclass(*args_, **kwargs_)
+        else:
+            return AlternateDeliveryAddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Name(self):
+        return self.Name
+    def set_Name(self, Name):
+        self.Name = Name
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.Name is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AlternateDeliveryAddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AlternateDeliveryAddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AlternateDeliveryAddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AlternateDeliveryAddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AlternateDeliveryAddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AlternateDeliveryAddressType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AlternateDeliveryAddressType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Name is not None:
+            namespaceprefix_ = self.Name_nsprefix_ + ':' if (UseCapturedNS_ and self.Name_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sName>%s</%sName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Name), input_name='Name')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Name':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Name')
+            value_ = self.gds_validate_string(value_, node, 'Name')
+            self.Name = value_
+            self.Name_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            obj_ = ADRType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class AlternateDeliveryAddressType
+
+
+class ADRType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AddressLine=None, City=None, StateProvinceCode=None, PostalCode=None, CountryCode=None, ResidentialAddressIndicator=None, POBoxIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if AddressLine is None:
+            self.AddressLine = []
+        else:
+            self.AddressLine = AddressLine
+        self.AddressLine_nsprefix_ = None
+        self.City = City
+        self.City_nsprefix_ = None
+        self.StateProvinceCode = StateProvinceCode
+        self.StateProvinceCode_nsprefix_ = None
+        self.PostalCode = PostalCode
+        self.PostalCode_nsprefix_ = None
+        self.CountryCode = CountryCode
+        self.CountryCode_nsprefix_ = None
+        self.ResidentialAddressIndicator = ResidentialAddressIndicator
+        self.ResidentialAddressIndicator_nsprefix_ = None
+        self.POBoxIndicator = POBoxIndicator
+        self.POBoxIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ADRType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ADRType.subclass:
+            return ADRType.subclass(*args_, **kwargs_)
+        else:
+            return ADRType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AddressLine(self):
+        return self.AddressLine
+    def set_AddressLine(self, AddressLine):
+        self.AddressLine = AddressLine
+    def add_AddressLine(self, value):
+        self.AddressLine.append(value)
+    def insert_AddressLine_at(self, index, value):
+        self.AddressLine.insert(index, value)
+    def replace_AddressLine_at(self, index, value):
+        self.AddressLine[index] = value
+    def get_City(self):
+        return self.City
+    def set_City(self, City):
+        self.City = City
+    def get_StateProvinceCode(self):
+        return self.StateProvinceCode
+    def set_StateProvinceCode(self, StateProvinceCode):
+        self.StateProvinceCode = StateProvinceCode
+    def get_PostalCode(self):
+        return self.PostalCode
+    def set_PostalCode(self, PostalCode):
+        self.PostalCode = PostalCode
+    def get_CountryCode(self):
+        return self.CountryCode
+    def set_CountryCode(self, CountryCode):
+        self.CountryCode = CountryCode
+    def get_ResidentialAddressIndicator(self):
+        return self.ResidentialAddressIndicator
+    def set_ResidentialAddressIndicator(self, ResidentialAddressIndicator):
+        self.ResidentialAddressIndicator = ResidentialAddressIndicator
+    def get_POBoxIndicator(self):
+        return self.POBoxIndicator
+    def set_POBoxIndicator(self, POBoxIndicator):
+        self.POBoxIndicator = POBoxIndicator
+    def hasContent_(self):
+        if (
+            self.AddressLine or
+            self.City is not None or
+            self.StateProvinceCode is not None or
+            self.PostalCode is not None or
+            self.CountryCode is not None or
+            self.ResidentialAddressIndicator is not None or
+            self.POBoxIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ADRType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ADRType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ADRType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ADRType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ADRType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ADRType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ADRType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AddressLine_ in self.AddressLine:
+            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
+        if self.City is not None:
+            namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCity>%s</%sCity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.City), input_name='City')), namespaceprefix_ , eol_))
+        if self.StateProvinceCode is not None:
+            namespaceprefix_ = self.StateProvinceCode_nsprefix_ + ':' if (UseCapturedNS_ and self.StateProvinceCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sStateProvinceCode>%s</%sStateProvinceCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StateProvinceCode), input_name='StateProvinceCode')), namespaceprefix_ , eol_))
+        if self.PostalCode is not None:
+            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
+        if self.CountryCode is not None:
+            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
+        if self.ResidentialAddressIndicator is not None:
+            namespaceprefix_ = self.ResidentialAddressIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ResidentialAddressIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sResidentialAddressIndicator>%s</%sResidentialAddressIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ResidentialAddressIndicator), input_name='ResidentialAddressIndicator')), namespaceprefix_ , eol_))
+        if self.POBoxIndicator is not None:
+            namespaceprefix_ = self.POBoxIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.POBoxIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPOBoxIndicator>%s</%sPOBoxIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.POBoxIndicator), input_name='POBoxIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AddressLine':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine')
+            self.AddressLine.append(value_)
+            self.AddressLine_nsprefix_ = child_.prefix
+        elif nodeName_ == 'City':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'City')
+            value_ = self.gds_validate_string(value_, node, 'City')
+            self.City = value_
+            self.City_nsprefix_ = child_.prefix
+        elif nodeName_ == 'StateProvinceCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'StateProvinceCode')
+            value_ = self.gds_validate_string(value_, node, 'StateProvinceCode')
+            self.StateProvinceCode = value_
+            self.StateProvinceCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PostalCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PostalCode')
+            value_ = self.gds_validate_string(value_, node, 'PostalCode')
+            self.PostalCode = value_
+            self.PostalCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CountryCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CountryCode')
+            value_ = self.gds_validate_string(value_, node, 'CountryCode')
+            self.CountryCode = value_
+            self.CountryCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ResidentialAddressIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ResidentialAddressIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ResidentialAddressIndicator')
+            self.ResidentialAddressIndicator = value_
+            self.ResidentialAddressIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'POBoxIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'POBoxIndicator')
+            value_ = self.gds_validate_string(value_, node, 'POBoxIndicator')
+            self.POBoxIndicator = value_
+            self.POBoxIndicator_nsprefix_ = child_.prefix
+# end class ADRType
+
+
+class IndicationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, IndicationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if IndicationType.subclass:
+            return IndicationType.subclass(*args_, **kwargs_)
+        else:
+            return IndicationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='IndicationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('IndicationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'IndicationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='IndicationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='IndicationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='IndicationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='IndicationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class IndicationType
+
+
+class ShipmentServiceOptionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, SaturdayPickupIndicator=None, SaturdayDeliveryIndicator=None, AccessPointCOD=None, DeliverToAddresseeOnlyIndicator=None, DirectDeliveryOnlyIndicator=None, COD=None, DeliveryConfirmation=None, ReturnOfDocumentIndicator=None, UPScarbonneutralIndicator=None, CertificateOfOriginIndicator=None, PickupOptions=None, DeliveryOptions=None, RestrictedArticles=None, ShipperExportDeclarationIndicator=None, CommercialInvoiceRemovalIndicator=None, ImportControl=None, ReturnService=None, SDLShipmentIndicator=None, EPRAIndicator=None, InsideDelivery=None, ItemDisposalIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.SaturdayPickupIndicator = SaturdayPickupIndicator
+        self.SaturdayPickupIndicator_nsprefix_ = None
+        self.SaturdayDeliveryIndicator = SaturdayDeliveryIndicator
+        self.SaturdayDeliveryIndicator_nsprefix_ = None
+        self.AccessPointCOD = AccessPointCOD
+        self.AccessPointCOD_nsprefix_ = None
+        self.DeliverToAddresseeOnlyIndicator = DeliverToAddresseeOnlyIndicator
+        self.DeliverToAddresseeOnlyIndicator_nsprefix_ = None
+        self.DirectDeliveryOnlyIndicator = DirectDeliveryOnlyIndicator
+        self.DirectDeliveryOnlyIndicator_nsprefix_ = None
+        self.COD = COD
+        self.COD_nsprefix_ = None
+        self.DeliveryConfirmation = DeliveryConfirmation
+        self.DeliveryConfirmation_nsprefix_ = None
+        self.ReturnOfDocumentIndicator = ReturnOfDocumentIndicator
+        self.ReturnOfDocumentIndicator_nsprefix_ = None
+        self.UPScarbonneutralIndicator = UPScarbonneutralIndicator
+        self.UPScarbonneutralIndicator_nsprefix_ = None
+        self.CertificateOfOriginIndicator = CertificateOfOriginIndicator
+        self.CertificateOfOriginIndicator_nsprefix_ = None
+        self.PickupOptions = PickupOptions
+        self.PickupOptions_nsprefix_ = None
+        self.DeliveryOptions = DeliveryOptions
+        self.DeliveryOptions_nsprefix_ = None
+        self.RestrictedArticles = RestrictedArticles
+        self.RestrictedArticles_nsprefix_ = None
+        self.ShipperExportDeclarationIndicator = ShipperExportDeclarationIndicator
+        self.ShipperExportDeclarationIndicator_nsprefix_ = None
+        self.CommercialInvoiceRemovalIndicator = CommercialInvoiceRemovalIndicator
+        self.CommercialInvoiceRemovalIndicator_nsprefix_ = None
+        self.ImportControl = ImportControl
+        self.ImportControl_nsprefix_ = None
+        self.ReturnService = ReturnService
+        self.ReturnService_nsprefix_ = None
+        self.SDLShipmentIndicator = SDLShipmentIndicator
+        self.SDLShipmentIndicator_nsprefix_ = None
+        self.EPRAIndicator = EPRAIndicator
+        self.EPRAIndicator_nsprefix_ = None
+        self.InsideDelivery = InsideDelivery
+        self.InsideDelivery_nsprefix_ = None
+        self.ItemDisposalIndicator = ItemDisposalIndicator
+        self.ItemDisposalIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentServiceOptionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentServiceOptionsType.subclass:
+            return ShipmentServiceOptionsType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentServiceOptionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_SaturdayPickupIndicator(self):
+        return self.SaturdayPickupIndicator
+    def set_SaturdayPickupIndicator(self, SaturdayPickupIndicator):
+        self.SaturdayPickupIndicator = SaturdayPickupIndicator
+    def get_SaturdayDeliveryIndicator(self):
+        return self.SaturdayDeliveryIndicator
+    def set_SaturdayDeliveryIndicator(self, SaturdayDeliveryIndicator):
+        self.SaturdayDeliveryIndicator = SaturdayDeliveryIndicator
+    def get_AccessPointCOD(self):
+        return self.AccessPointCOD
+    def set_AccessPointCOD(self, AccessPointCOD):
+        self.AccessPointCOD = AccessPointCOD
+    def get_DeliverToAddresseeOnlyIndicator(self):
+        return self.DeliverToAddresseeOnlyIndicator
+    def set_DeliverToAddresseeOnlyIndicator(self, DeliverToAddresseeOnlyIndicator):
+        self.DeliverToAddresseeOnlyIndicator = DeliverToAddresseeOnlyIndicator
+    def get_DirectDeliveryOnlyIndicator(self):
+        return self.DirectDeliveryOnlyIndicator
+    def set_DirectDeliveryOnlyIndicator(self, DirectDeliveryOnlyIndicator):
+        self.DirectDeliveryOnlyIndicator = DirectDeliveryOnlyIndicator
+    def get_COD(self):
+        return self.COD
+    def set_COD(self, COD):
+        self.COD = COD
+    def get_DeliveryConfirmation(self):
+        return self.DeliveryConfirmation
+    def set_DeliveryConfirmation(self, DeliveryConfirmation):
+        self.DeliveryConfirmation = DeliveryConfirmation
+    def get_ReturnOfDocumentIndicator(self):
+        return self.ReturnOfDocumentIndicator
+    def set_ReturnOfDocumentIndicator(self, ReturnOfDocumentIndicator):
+        self.ReturnOfDocumentIndicator = ReturnOfDocumentIndicator
+    def get_UPScarbonneutralIndicator(self):
+        return self.UPScarbonneutralIndicator
+    def set_UPScarbonneutralIndicator(self, UPScarbonneutralIndicator):
+        self.UPScarbonneutralIndicator = UPScarbonneutralIndicator
+    def get_CertificateOfOriginIndicator(self):
+        return self.CertificateOfOriginIndicator
+    def set_CertificateOfOriginIndicator(self, CertificateOfOriginIndicator):
+        self.CertificateOfOriginIndicator = CertificateOfOriginIndicator
+    def get_PickupOptions(self):
+        return self.PickupOptions
+    def set_PickupOptions(self, PickupOptions):
+        self.PickupOptions = PickupOptions
+    def get_DeliveryOptions(self):
+        return self.DeliveryOptions
+    def set_DeliveryOptions(self, DeliveryOptions):
+        self.DeliveryOptions = DeliveryOptions
+    def get_RestrictedArticles(self):
+        return self.RestrictedArticles
+    def set_RestrictedArticles(self, RestrictedArticles):
+        self.RestrictedArticles = RestrictedArticles
+    def get_ShipperExportDeclarationIndicator(self):
+        return self.ShipperExportDeclarationIndicator
+    def set_ShipperExportDeclarationIndicator(self, ShipperExportDeclarationIndicator):
+        self.ShipperExportDeclarationIndicator = ShipperExportDeclarationIndicator
+    def get_CommercialInvoiceRemovalIndicator(self):
+        return self.CommercialInvoiceRemovalIndicator
+    def set_CommercialInvoiceRemovalIndicator(self, CommercialInvoiceRemovalIndicator):
+        self.CommercialInvoiceRemovalIndicator = CommercialInvoiceRemovalIndicator
+    def get_ImportControl(self):
+        return self.ImportControl
+    def set_ImportControl(self, ImportControl):
+        self.ImportControl = ImportControl
+    def get_ReturnService(self):
+        return self.ReturnService
+    def set_ReturnService(self, ReturnService):
+        self.ReturnService = ReturnService
+    def get_SDLShipmentIndicator(self):
+        return self.SDLShipmentIndicator
+    def set_SDLShipmentIndicator(self, SDLShipmentIndicator):
+        self.SDLShipmentIndicator = SDLShipmentIndicator
+    def get_EPRAIndicator(self):
+        return self.EPRAIndicator
+    def set_EPRAIndicator(self, EPRAIndicator):
+        self.EPRAIndicator = EPRAIndicator
+    def get_InsideDelivery(self):
+        return self.InsideDelivery
+    def set_InsideDelivery(self, InsideDelivery):
+        self.InsideDelivery = InsideDelivery
+    def get_ItemDisposalIndicator(self):
+        return self.ItemDisposalIndicator
+    def set_ItemDisposalIndicator(self, ItemDisposalIndicator):
+        self.ItemDisposalIndicator = ItemDisposalIndicator
+    def hasContent_(self):
+        if (
+            self.SaturdayPickupIndicator is not None or
+            self.SaturdayDeliveryIndicator is not None or
+            self.AccessPointCOD is not None or
+            self.DeliverToAddresseeOnlyIndicator is not None or
+            self.DirectDeliveryOnlyIndicator is not None or
+            self.COD is not None or
+            self.DeliveryConfirmation is not None or
+            self.ReturnOfDocumentIndicator is not None or
+            self.UPScarbonneutralIndicator is not None or
+            self.CertificateOfOriginIndicator is not None or
+            self.PickupOptions is not None or
+            self.DeliveryOptions is not None or
+            self.RestrictedArticles is not None or
+            self.ShipperExportDeclarationIndicator is not None or
+            self.CommercialInvoiceRemovalIndicator is not None or
+            self.ImportControl is not None or
+            self.ReturnService is not None or
+            self.SDLShipmentIndicator is not None or
+            self.EPRAIndicator is not None or
+            self.InsideDelivery is not None or
+            self.ItemDisposalIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentServiceOptionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentServiceOptionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentServiceOptionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentServiceOptionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentServiceOptionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentServiceOptionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentServiceOptionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.SaturdayPickupIndicator is not None:
+            namespaceprefix_ = self.SaturdayPickupIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SaturdayPickupIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSaturdayPickupIndicator>%s</%sSaturdayPickupIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SaturdayPickupIndicator), input_name='SaturdayPickupIndicator')), namespaceprefix_ , eol_))
+        if self.SaturdayDeliveryIndicator is not None:
+            namespaceprefix_ = self.SaturdayDeliveryIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SaturdayDeliveryIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSaturdayDeliveryIndicator>%s</%sSaturdayDeliveryIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SaturdayDeliveryIndicator), input_name='SaturdayDeliveryIndicator')), namespaceprefix_ , eol_))
+        if self.AccessPointCOD is not None:
+            namespaceprefix_ = self.AccessPointCOD_nsprefix_ + ':' if (UseCapturedNS_ and self.AccessPointCOD_nsprefix_) else ''
+            self.AccessPointCOD.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AccessPointCOD', pretty_print=pretty_print)
+        if self.DeliverToAddresseeOnlyIndicator is not None:
+            namespaceprefix_ = self.DeliverToAddresseeOnlyIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliverToAddresseeOnlyIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDeliverToAddresseeOnlyIndicator>%s</%sDeliverToAddresseeOnlyIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DeliverToAddresseeOnlyIndicator), input_name='DeliverToAddresseeOnlyIndicator')), namespaceprefix_ , eol_))
+        if self.DirectDeliveryOnlyIndicator is not None:
+            namespaceprefix_ = self.DirectDeliveryOnlyIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DirectDeliveryOnlyIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDirectDeliveryOnlyIndicator>%s</%sDirectDeliveryOnlyIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DirectDeliveryOnlyIndicator), input_name='DirectDeliveryOnlyIndicator')), namespaceprefix_ , eol_))
+        if self.COD is not None:
+            namespaceprefix_ = self.COD_nsprefix_ + ':' if (UseCapturedNS_ and self.COD_nsprefix_) else ''
+            self.COD.export(outfile, level, namespaceprefix_, namespacedef_='', name_='COD', pretty_print=pretty_print)
+        if self.DeliveryConfirmation is not None:
+            namespaceprefix_ = self.DeliveryConfirmation_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliveryConfirmation_nsprefix_) else ''
+            self.DeliveryConfirmation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DeliveryConfirmation', pretty_print=pretty_print)
+        if self.ReturnOfDocumentIndicator is not None:
+            namespaceprefix_ = self.ReturnOfDocumentIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ReturnOfDocumentIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sReturnOfDocumentIndicator>%s</%sReturnOfDocumentIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ReturnOfDocumentIndicator), input_name='ReturnOfDocumentIndicator')), namespaceprefix_ , eol_))
+        if self.UPScarbonneutralIndicator is not None:
+            namespaceprefix_ = self.UPScarbonneutralIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.UPScarbonneutralIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUPScarbonneutralIndicator>%s</%sUPScarbonneutralIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UPScarbonneutralIndicator), input_name='UPScarbonneutralIndicator')), namespaceprefix_ , eol_))
+        if self.CertificateOfOriginIndicator is not None:
+            namespaceprefix_ = self.CertificateOfOriginIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.CertificateOfOriginIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCertificateOfOriginIndicator>%s</%sCertificateOfOriginIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CertificateOfOriginIndicator), input_name='CertificateOfOriginIndicator')), namespaceprefix_ , eol_))
+        if self.PickupOptions is not None:
+            namespaceprefix_ = self.PickupOptions_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupOptions_nsprefix_) else ''
+            self.PickupOptions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PickupOptions', pretty_print=pretty_print)
+        if self.DeliveryOptions is not None:
+            namespaceprefix_ = self.DeliveryOptions_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliveryOptions_nsprefix_) else ''
+            self.DeliveryOptions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DeliveryOptions', pretty_print=pretty_print)
+        if self.RestrictedArticles is not None:
+            namespaceprefix_ = self.RestrictedArticles_nsprefix_ + ':' if (UseCapturedNS_ and self.RestrictedArticles_nsprefix_) else ''
+            self.RestrictedArticles.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RestrictedArticles', pretty_print=pretty_print)
+        if self.ShipperExportDeclarationIndicator is not None:
+            namespaceprefix_ = self.ShipperExportDeclarationIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperExportDeclarationIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sShipperExportDeclarationIndicator>%s</%sShipperExportDeclarationIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipperExportDeclarationIndicator), input_name='ShipperExportDeclarationIndicator')), namespaceprefix_ , eol_))
+        if self.CommercialInvoiceRemovalIndicator is not None:
+            namespaceprefix_ = self.CommercialInvoiceRemovalIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.CommercialInvoiceRemovalIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCommercialInvoiceRemovalIndicator>%s</%sCommercialInvoiceRemovalIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CommercialInvoiceRemovalIndicator), input_name='CommercialInvoiceRemovalIndicator')), namespaceprefix_ , eol_))
+        if self.ImportControl is not None:
+            namespaceprefix_ = self.ImportControl_nsprefix_ + ':' if (UseCapturedNS_ and self.ImportControl_nsprefix_) else ''
+            self.ImportControl.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ImportControl', pretty_print=pretty_print)
+        if self.ReturnService is not None:
+            namespaceprefix_ = self.ReturnService_nsprefix_ + ':' if (UseCapturedNS_ and self.ReturnService_nsprefix_) else ''
+            self.ReturnService.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ReturnService', pretty_print=pretty_print)
+        if self.SDLShipmentIndicator is not None:
+            namespaceprefix_ = self.SDLShipmentIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SDLShipmentIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSDLShipmentIndicator>%s</%sSDLShipmentIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SDLShipmentIndicator), input_name='SDLShipmentIndicator')), namespaceprefix_ , eol_))
+        if self.EPRAIndicator is not None:
+            namespaceprefix_ = self.EPRAIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.EPRAIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sEPRAIndicator>%s</%sEPRAIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.EPRAIndicator), input_name='EPRAIndicator')), namespaceprefix_ , eol_))
+        if self.InsideDelivery is not None:
+            namespaceprefix_ = self.InsideDelivery_nsprefix_ + ':' if (UseCapturedNS_ and self.InsideDelivery_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sInsideDelivery>%s</%sInsideDelivery>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InsideDelivery), input_name='InsideDelivery')), namespaceprefix_ , eol_))
+        if self.ItemDisposalIndicator is not None:
+            namespaceprefix_ = self.ItemDisposalIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.ItemDisposalIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sItemDisposalIndicator>%s</%sItemDisposalIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ItemDisposalIndicator), input_name='ItemDisposalIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'SaturdayPickupIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SaturdayPickupIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SaturdayPickupIndicator')
+            self.SaturdayPickupIndicator = value_
+            self.SaturdayPickupIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SaturdayDeliveryIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SaturdayDeliveryIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SaturdayDeliveryIndicator')
+            self.SaturdayDeliveryIndicator = value_
+            self.SaturdayDeliveryIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AccessPointCOD':
+            obj_ = ShipmentServiceOptionsAccessPointCODType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AccessPointCOD = obj_
+            obj_.original_tagname_ = 'AccessPointCOD'
+        elif nodeName_ == 'DeliverToAddresseeOnlyIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DeliverToAddresseeOnlyIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DeliverToAddresseeOnlyIndicator')
+            self.DeliverToAddresseeOnlyIndicator = value_
+            self.DeliverToAddresseeOnlyIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DirectDeliveryOnlyIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DirectDeliveryOnlyIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DirectDeliveryOnlyIndicator')
+            self.DirectDeliveryOnlyIndicator = value_
+            self.DirectDeliveryOnlyIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'COD':
+            obj_ = CODType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.COD = obj_
+            obj_.original_tagname_ = 'COD'
+        elif nodeName_ == 'DeliveryConfirmation':
+            obj_ = DeliveryConfirmationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DeliveryConfirmation = obj_
+            obj_.original_tagname_ = 'DeliveryConfirmation'
+        elif nodeName_ == 'ReturnOfDocumentIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ReturnOfDocumentIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ReturnOfDocumentIndicator')
+            self.ReturnOfDocumentIndicator = value_
+            self.ReturnOfDocumentIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'UPScarbonneutralIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UPScarbonneutralIndicator')
+            value_ = self.gds_validate_string(value_, node, 'UPScarbonneutralIndicator')
+            self.UPScarbonneutralIndicator = value_
+            self.UPScarbonneutralIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CertificateOfOriginIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CertificateOfOriginIndicator')
+            value_ = self.gds_validate_string(value_, node, 'CertificateOfOriginIndicator')
+            self.CertificateOfOriginIndicator = value_
+            self.CertificateOfOriginIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PickupOptions':
+            obj_ = PickupOptionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PickupOptions = obj_
+            obj_.original_tagname_ = 'PickupOptions'
+        elif nodeName_ == 'DeliveryOptions':
+            obj_ = DeliveryOptionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DeliveryOptions = obj_
+            obj_.original_tagname_ = 'DeliveryOptions'
+        elif nodeName_ == 'RestrictedArticles':
+            obj_ = RestrictedArticlesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RestrictedArticles = obj_
+            obj_.original_tagname_ = 'RestrictedArticles'
+        elif nodeName_ == 'ShipperExportDeclarationIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ShipperExportDeclarationIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ShipperExportDeclarationIndicator')
+            self.ShipperExportDeclarationIndicator = value_
+            self.ShipperExportDeclarationIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CommercialInvoiceRemovalIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CommercialInvoiceRemovalIndicator')
+            value_ = self.gds_validate_string(value_, node, 'CommercialInvoiceRemovalIndicator')
+            self.CommercialInvoiceRemovalIndicator = value_
+            self.CommercialInvoiceRemovalIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ImportControl':
+            obj_ = ImportControlType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ImportControl = obj_
+            obj_.original_tagname_ = 'ImportControl'
+        elif nodeName_ == 'ReturnService':
+            obj_ = ReturnServiceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ReturnService = obj_
+            obj_.original_tagname_ = 'ReturnService'
+        elif nodeName_ == 'SDLShipmentIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SDLShipmentIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SDLShipmentIndicator')
+            self.SDLShipmentIndicator = value_
+            self.SDLShipmentIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'EPRAIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'EPRAIndicator')
+            value_ = self.gds_validate_string(value_, node, 'EPRAIndicator')
+            self.EPRAIndicator = value_
+            self.EPRAIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'InsideDelivery':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'InsideDelivery')
+            value_ = self.gds_validate_string(value_, node, 'InsideDelivery')
+            self.InsideDelivery = value_
+            self.InsideDelivery_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ItemDisposalIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ItemDisposalIndicator')
+            value_ = self.gds_validate_string(value_, node, 'ItemDisposalIndicator')
+            self.ItemDisposalIndicator = value_
+            self.ItemDisposalIndicator_nsprefix_ = child_.prefix
+# end class ShipmentServiceOptionsType
+
+
+class ShipmentServiceOptionsAccessPointCODType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipmentServiceOptionsAccessPointCODType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipmentServiceOptionsAccessPointCODType.subclass:
+            return ShipmentServiceOptionsAccessPointCODType.subclass(*args_, **kwargs_)
+        else:
+            return ShipmentServiceOptionsAccessPointCODType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentServiceOptionsAccessPointCODType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentServiceOptionsAccessPointCODType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipmentServiceOptionsAccessPointCODType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentServiceOptionsAccessPointCODType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentServiceOptionsAccessPointCODType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentServiceOptionsAccessPointCODType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentServiceOptionsAccessPointCODType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class ShipmentServiceOptionsAccessPointCODType
+
+
+class ReturnServiceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ReturnServiceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ReturnServiceType.subclass:
+            return ReturnServiceType.subclass(*args_, **kwargs_)
+        else:
+            return ReturnServiceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ReturnServiceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ReturnServiceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ReturnServiceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ReturnServiceType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ReturnServiceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ReturnServiceType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ReturnServiceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class ReturnServiceType
+
+
+class ImportControlType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ImportControlType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ImportControlType.subclass:
+            return ImportControlType.subclass(*args_, **kwargs_)
+        else:
+            return ImportControlType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ImportControlType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ImportControlType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ImportControlType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ImportControlType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ImportControlType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ImportControlType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ImportControlType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class ImportControlType
+
+
+class RestrictedArticlesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AlcoholicBeveragesIndicator=None, DiagnosticSpecimensIndicator=None, PerishablesIndicator=None, PlantsIndicator=None, SeedsIndicator=None, SpecialExceptionsIndicator=None, TobaccoIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.AlcoholicBeveragesIndicator = AlcoholicBeveragesIndicator
+        self.AlcoholicBeveragesIndicator_nsprefix_ = None
+        self.DiagnosticSpecimensIndicator = DiagnosticSpecimensIndicator
+        self.DiagnosticSpecimensIndicator_nsprefix_ = None
+        self.PerishablesIndicator = PerishablesIndicator
+        self.PerishablesIndicator_nsprefix_ = None
+        self.PlantsIndicator = PlantsIndicator
+        self.PlantsIndicator_nsprefix_ = None
+        self.SeedsIndicator = SeedsIndicator
+        self.SeedsIndicator_nsprefix_ = None
+        self.SpecialExceptionsIndicator = SpecialExceptionsIndicator
+        self.SpecialExceptionsIndicator_nsprefix_ = None
+        self.TobaccoIndicator = TobaccoIndicator
+        self.TobaccoIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RestrictedArticlesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RestrictedArticlesType.subclass:
+            return RestrictedArticlesType.subclass(*args_, **kwargs_)
+        else:
+            return RestrictedArticlesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AlcoholicBeveragesIndicator(self):
+        return self.AlcoholicBeveragesIndicator
+    def set_AlcoholicBeveragesIndicator(self, AlcoholicBeveragesIndicator):
+        self.AlcoholicBeveragesIndicator = AlcoholicBeveragesIndicator
+    def get_DiagnosticSpecimensIndicator(self):
+        return self.DiagnosticSpecimensIndicator
+    def set_DiagnosticSpecimensIndicator(self, DiagnosticSpecimensIndicator):
+        self.DiagnosticSpecimensIndicator = DiagnosticSpecimensIndicator
+    def get_PerishablesIndicator(self):
+        return self.PerishablesIndicator
+    def set_PerishablesIndicator(self, PerishablesIndicator):
+        self.PerishablesIndicator = PerishablesIndicator
+    def get_PlantsIndicator(self):
+        return self.PlantsIndicator
+    def set_PlantsIndicator(self, PlantsIndicator):
+        self.PlantsIndicator = PlantsIndicator
+    def get_SeedsIndicator(self):
+        return self.SeedsIndicator
+    def set_SeedsIndicator(self, SeedsIndicator):
+        self.SeedsIndicator = SeedsIndicator
+    def get_SpecialExceptionsIndicator(self):
+        return self.SpecialExceptionsIndicator
+    def set_SpecialExceptionsIndicator(self, SpecialExceptionsIndicator):
+        self.SpecialExceptionsIndicator = SpecialExceptionsIndicator
+    def get_TobaccoIndicator(self):
+        return self.TobaccoIndicator
+    def set_TobaccoIndicator(self, TobaccoIndicator):
+        self.TobaccoIndicator = TobaccoIndicator
+    def hasContent_(self):
+        if (
+            self.AlcoholicBeveragesIndicator is not None or
+            self.DiagnosticSpecimensIndicator is not None or
+            self.PerishablesIndicator is not None or
+            self.PlantsIndicator is not None or
+            self.SeedsIndicator is not None or
+            self.SpecialExceptionsIndicator is not None or
+            self.TobaccoIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RestrictedArticlesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RestrictedArticlesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RestrictedArticlesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RestrictedArticlesType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RestrictedArticlesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RestrictedArticlesType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RestrictedArticlesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AlcoholicBeveragesIndicator is not None:
+            namespaceprefix_ = self.AlcoholicBeveragesIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.AlcoholicBeveragesIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAlcoholicBeveragesIndicator>%s</%sAlcoholicBeveragesIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AlcoholicBeveragesIndicator), input_name='AlcoholicBeveragesIndicator')), namespaceprefix_ , eol_))
+        if self.DiagnosticSpecimensIndicator is not None:
+            namespaceprefix_ = self.DiagnosticSpecimensIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DiagnosticSpecimensIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDiagnosticSpecimensIndicator>%s</%sDiagnosticSpecimensIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DiagnosticSpecimensIndicator), input_name='DiagnosticSpecimensIndicator')), namespaceprefix_ , eol_))
+        if self.PerishablesIndicator is not None:
+            namespaceprefix_ = self.PerishablesIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.PerishablesIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPerishablesIndicator>%s</%sPerishablesIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PerishablesIndicator), input_name='PerishablesIndicator')), namespaceprefix_ , eol_))
+        if self.PlantsIndicator is not None:
+            namespaceprefix_ = self.PlantsIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.PlantsIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPlantsIndicator>%s</%sPlantsIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PlantsIndicator), input_name='PlantsIndicator')), namespaceprefix_ , eol_))
+        if self.SeedsIndicator is not None:
+            namespaceprefix_ = self.SeedsIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SeedsIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSeedsIndicator>%s</%sSeedsIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SeedsIndicator), input_name='SeedsIndicator')), namespaceprefix_ , eol_))
+        if self.SpecialExceptionsIndicator is not None:
+            namespaceprefix_ = self.SpecialExceptionsIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.SpecialExceptionsIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSpecialExceptionsIndicator>%s</%sSpecialExceptionsIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SpecialExceptionsIndicator), input_name='SpecialExceptionsIndicator')), namespaceprefix_ , eol_))
+        if self.TobaccoIndicator is not None:
+            namespaceprefix_ = self.TobaccoIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.TobaccoIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTobaccoIndicator>%s</%sTobaccoIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TobaccoIndicator), input_name='TobaccoIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AlcoholicBeveragesIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AlcoholicBeveragesIndicator')
+            value_ = self.gds_validate_string(value_, node, 'AlcoholicBeveragesIndicator')
+            self.AlcoholicBeveragesIndicator = value_
+            self.AlcoholicBeveragesIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DiagnosticSpecimensIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DiagnosticSpecimensIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DiagnosticSpecimensIndicator')
+            self.DiagnosticSpecimensIndicator = value_
+            self.DiagnosticSpecimensIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PerishablesIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PerishablesIndicator')
+            value_ = self.gds_validate_string(value_, node, 'PerishablesIndicator')
+            self.PerishablesIndicator = value_
+            self.PerishablesIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PlantsIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PlantsIndicator')
+            value_ = self.gds_validate_string(value_, node, 'PlantsIndicator')
+            self.PlantsIndicator = value_
+            self.PlantsIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SeedsIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SeedsIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SeedsIndicator')
+            self.SeedsIndicator = value_
+            self.SeedsIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SpecialExceptionsIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SpecialExceptionsIndicator')
+            value_ = self.gds_validate_string(value_, node, 'SpecialExceptionsIndicator')
+            self.SpecialExceptionsIndicator = value_
+            self.SpecialExceptionsIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TobaccoIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TobaccoIndicator')
+            value_ = self.gds_validate_string(value_, node, 'TobaccoIndicator')
+            self.TobaccoIndicator = value_
+            self.TobaccoIndicator_nsprefix_ = child_.prefix
+# end class RestrictedArticlesType
+
+
+class PickupOptionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, LiftGateAtPickupIndicator=None, HoldForPickupIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.LiftGateAtPickupIndicator = LiftGateAtPickupIndicator
+        self.LiftGateAtPickupIndicator_nsprefix_ = None
+        self.HoldForPickupIndicator = HoldForPickupIndicator
+        self.HoldForPickupIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PickupOptionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PickupOptionsType.subclass:
+            return PickupOptionsType.subclass(*args_, **kwargs_)
+        else:
+            return PickupOptionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_LiftGateAtPickupIndicator(self):
+        return self.LiftGateAtPickupIndicator
+    def set_LiftGateAtPickupIndicator(self, LiftGateAtPickupIndicator):
+        self.LiftGateAtPickupIndicator = LiftGateAtPickupIndicator
+    def get_HoldForPickupIndicator(self):
+        return self.HoldForPickupIndicator
+    def set_HoldForPickupIndicator(self, HoldForPickupIndicator):
+        self.HoldForPickupIndicator = HoldForPickupIndicator
+    def hasContent_(self):
+        if (
+            self.LiftGateAtPickupIndicator is not None or
+            self.HoldForPickupIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupOptionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PickupOptionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PickupOptionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupOptionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupOptionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PickupOptionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupOptionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.LiftGateAtPickupIndicator is not None:
+            namespaceprefix_ = self.LiftGateAtPickupIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.LiftGateAtPickupIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLiftGateAtPickupIndicator>%s</%sLiftGateAtPickupIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LiftGateAtPickupIndicator), input_name='LiftGateAtPickupIndicator')), namespaceprefix_ , eol_))
+        if self.HoldForPickupIndicator is not None:
+            namespaceprefix_ = self.HoldForPickupIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.HoldForPickupIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sHoldForPickupIndicator>%s</%sHoldForPickupIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HoldForPickupIndicator), input_name='HoldForPickupIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'LiftGateAtPickupIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LiftGateAtPickupIndicator')
+            value_ = self.gds_validate_string(value_, node, 'LiftGateAtPickupIndicator')
+            self.LiftGateAtPickupIndicator = value_
+            self.LiftGateAtPickupIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'HoldForPickupIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'HoldForPickupIndicator')
+            value_ = self.gds_validate_string(value_, node, 'HoldForPickupIndicator')
+            self.HoldForPickupIndicator = value_
+            self.HoldForPickupIndicator_nsprefix_ = child_.prefix
+# end class PickupOptionsType
+
+
+class DeliveryOptionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, LiftGateAtDeliveryIndicator=None, DropOffAtUPSFacilityIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.LiftGateAtDeliveryIndicator = LiftGateAtDeliveryIndicator
+        self.LiftGateAtDeliveryIndicator_nsprefix_ = None
+        self.DropOffAtUPSFacilityIndicator = DropOffAtUPSFacilityIndicator
+        self.DropOffAtUPSFacilityIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DeliveryOptionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DeliveryOptionsType.subclass:
+            return DeliveryOptionsType.subclass(*args_, **kwargs_)
+        else:
+            return DeliveryOptionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_LiftGateAtDeliveryIndicator(self):
+        return self.LiftGateAtDeliveryIndicator
+    def set_LiftGateAtDeliveryIndicator(self, LiftGateAtDeliveryIndicator):
+        self.LiftGateAtDeliveryIndicator = LiftGateAtDeliveryIndicator
+    def get_DropOffAtUPSFacilityIndicator(self):
+        return self.DropOffAtUPSFacilityIndicator
+    def set_DropOffAtUPSFacilityIndicator(self, DropOffAtUPSFacilityIndicator):
+        self.DropOffAtUPSFacilityIndicator = DropOffAtUPSFacilityIndicator
+    def hasContent_(self):
+        if (
+            self.LiftGateAtDeliveryIndicator is not None or
+            self.DropOffAtUPSFacilityIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DeliveryOptionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DeliveryOptionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DeliveryOptionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DeliveryOptionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DeliveryOptionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DeliveryOptionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DeliveryOptionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.LiftGateAtDeliveryIndicator is not None:
+            namespaceprefix_ = self.LiftGateAtDeliveryIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.LiftGateAtDeliveryIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLiftGateAtDeliveryIndicator>%s</%sLiftGateAtDeliveryIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LiftGateAtDeliveryIndicator), input_name='LiftGateAtDeliveryIndicator')), namespaceprefix_ , eol_))
+        if self.DropOffAtUPSFacilityIndicator is not None:
+            namespaceprefix_ = self.DropOffAtUPSFacilityIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DropOffAtUPSFacilityIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDropOffAtUPSFacilityIndicator>%s</%sDropOffAtUPSFacilityIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DropOffAtUPSFacilityIndicator), input_name='DropOffAtUPSFacilityIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'LiftGateAtDeliveryIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LiftGateAtDeliveryIndicator')
+            value_ = self.gds_validate_string(value_, node, 'LiftGateAtDeliveryIndicator')
+            self.LiftGateAtDeliveryIndicator = value_
+            self.LiftGateAtDeliveryIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DropOffAtUPSFacilityIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DropOffAtUPSFacilityIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DropOffAtUPSFacilityIndicator')
+            self.DropOffAtUPSFacilityIndicator = value_
+            self.DropOffAtUPSFacilityIndicator_nsprefix_ = child_.prefix
+# end class DeliveryOptionsType
+
+
+class ShipperType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Name=None, AttentionName=None, ShipperNumber=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Name = Name
+        self.Name_nsprefix_ = None
+        self.AttentionName = AttentionName
+        self.AttentionName_nsprefix_ = None
+        self.ShipperNumber = ShipperNumber
+        self.ShipperNumber_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipperType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipperType.subclass:
+            return ShipperType.subclass(*args_, **kwargs_)
+        else:
+            return ShipperType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Name(self):
+        return self.Name
+    def set_Name(self, Name):
+        self.Name = Name
+    def get_AttentionName(self):
+        return self.AttentionName
+    def set_AttentionName(self, AttentionName):
+        self.AttentionName = AttentionName
+    def get_ShipperNumber(self):
+        return self.ShipperNumber
+    def set_ShipperNumber(self, ShipperNumber):
+        self.ShipperNumber = ShipperNumber
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.Name is not None or
+            self.AttentionName is not None or
+            self.ShipperNumber is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipperType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipperType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipperType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipperType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipperType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Name is not None:
+            namespaceprefix_ = self.Name_nsprefix_ + ':' if (UseCapturedNS_ and self.Name_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sName>%s</%sName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Name), input_name='Name')), namespaceprefix_ , eol_))
+        if self.AttentionName is not None:
+            namespaceprefix_ = self.AttentionName_nsprefix_ + ':' if (UseCapturedNS_ and self.AttentionName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAttentionName>%s</%sAttentionName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AttentionName), input_name='AttentionName')), namespaceprefix_ , eol_))
+        if self.ShipperNumber is not None:
+            namespaceprefix_ = self.ShipperNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sShipperNumber>%s</%sShipperNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipperNumber), input_name='ShipperNumber')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Name':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Name')
+            value_ = self.gds_validate_string(value_, node, 'Name')
+            self.Name = value_
+            self.Name_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AttentionName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AttentionName')
+            value_ = self.gds_validate_string(value_, node, 'AttentionName')
+            self.AttentionName = value_
+            self.AttentionName_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ShipperNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ShipperNumber')
+            value_ = self.gds_validate_string(value_, node, 'ShipperNumber')
+            self.ShipperNumber = value_
+            self.ShipperNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            class_obj_ = self.get_class_obj_(child_, AddressType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class ShipperType
+
+
+class GuaranteedDeliveryType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, BusinessDaysInTransit=None, DeliveryByTime=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.BusinessDaysInTransit = BusinessDaysInTransit
+        self.BusinessDaysInTransit_nsprefix_ = None
+        self.DeliveryByTime = DeliveryByTime
+        self.DeliveryByTime_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, GuaranteedDeliveryType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if GuaranteedDeliveryType.subclass:
+            return GuaranteedDeliveryType.subclass(*args_, **kwargs_)
+        else:
+            return GuaranteedDeliveryType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_BusinessDaysInTransit(self):
+        return self.BusinessDaysInTransit
+    def set_BusinessDaysInTransit(self, BusinessDaysInTransit):
+        self.BusinessDaysInTransit = BusinessDaysInTransit
+    def get_DeliveryByTime(self):
+        return self.DeliveryByTime
+    def set_DeliveryByTime(self, DeliveryByTime):
+        self.DeliveryByTime = DeliveryByTime
+    def hasContent_(self):
+        if (
+            self.BusinessDaysInTransit is not None or
+            self.DeliveryByTime is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GuaranteedDeliveryType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GuaranteedDeliveryType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'GuaranteedDeliveryType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GuaranteedDeliveryType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GuaranteedDeliveryType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GuaranteedDeliveryType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GuaranteedDeliveryType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.BusinessDaysInTransit is not None:
+            namespaceprefix_ = self.BusinessDaysInTransit_nsprefix_ + ':' if (UseCapturedNS_ and self.BusinessDaysInTransit_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBusinessDaysInTransit>%s</%sBusinessDaysInTransit>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BusinessDaysInTransit), input_name='BusinessDaysInTransit')), namespaceprefix_ , eol_))
+        if self.DeliveryByTime is not None:
+            namespaceprefix_ = self.DeliveryByTime_nsprefix_ + ':' if (UseCapturedNS_ and self.DeliveryByTime_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDeliveryByTime>%s</%sDeliveryByTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DeliveryByTime), input_name='DeliveryByTime')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'BusinessDaysInTransit':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BusinessDaysInTransit')
+            value_ = self.gds_validate_string(value_, node, 'BusinessDaysInTransit')
+            self.BusinessDaysInTransit = value_
+            self.BusinessDaysInTransit_nsprefix_ = child_.prefix
+        elif nodeName_ == 'DeliveryByTime':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DeliveryByTime')
+            value_ = self.gds_validate_string(value_, node, 'DeliveryByTime')
+            self.DeliveryByTime = value_
+            self.DeliveryByTime_nsprefix_ = child_.prefix
+# end class GuaranteedDeliveryType
+
+
+class FRSPaymentInfoType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Type=None, AccountNumber=None, Address=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Type = Type
+        self.Type_nsprefix_ = None
+        self.AccountNumber = AccountNumber
+        self.AccountNumber_nsprefix_ = None
+        self.Address = Address
+        self.Address_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FRSPaymentInfoType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FRSPaymentInfoType.subclass:
+            return FRSPaymentInfoType.subclass(*args_, **kwargs_)
+        else:
+            return FRSPaymentInfoType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Type(self):
+        return self.Type
+    def set_Type(self, Type):
+        self.Type = Type
+    def get_AccountNumber(self):
+        return self.AccountNumber
+    def set_AccountNumber(self, AccountNumber):
+        self.AccountNumber = AccountNumber
+    def get_Address(self):
+        return self.Address
+    def set_Address(self, Address):
+        self.Address = Address
+    def hasContent_(self):
+        if (
+            self.Type is not None or
+            self.AccountNumber is not None or
+            self.Address is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FRSPaymentInfoType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FRSPaymentInfoType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FRSPaymentInfoType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FRSPaymentInfoType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='FRSPaymentInfoType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FRSPaymentInfoType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FRSPaymentInfoType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Type is not None:
+            namespaceprefix_ = self.Type_nsprefix_ + ':' if (UseCapturedNS_ and self.Type_nsprefix_) else ''
+            self.Type.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Type', pretty_print=pretty_print)
+        if self.AccountNumber is not None:
+            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
+        if self.Address is not None:
+            namespaceprefix_ = self.Address_nsprefix_ + ':' if (UseCapturedNS_ and self.Address_nsprefix_) else ''
+            self.Address.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Address', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Type':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Type = obj_
+            obj_.original_tagname_ = 'Type'
+        elif nodeName_ == 'AccountNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
+            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
+            self.AccountNumber = value_
+            self.AccountNumber_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Address':
+            obj_ = PayerAddressType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Address = obj_
+            obj_.original_tagname_ = 'Address'
+# end class FRSPaymentInfoType
+
+
+class FreightShipmentInformationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, FreightDensityInfo=None, DensityEligibleIndicator=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.FreightDensityInfo = FreightDensityInfo
+        self.FreightDensityInfo_nsprefix_ = None
+        self.DensityEligibleIndicator = DensityEligibleIndicator
+        self.DensityEligibleIndicator_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FreightShipmentInformationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FreightShipmentInformationType.subclass:
+            return FreightShipmentInformationType.subclass(*args_, **kwargs_)
+        else:
+            return FreightShipmentInformationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_FreightDensityInfo(self):
+        return self.FreightDensityInfo
+    def set_FreightDensityInfo(self, FreightDensityInfo):
+        self.FreightDensityInfo = FreightDensityInfo
+    def get_DensityEligibleIndicator(self):
+        return self.DensityEligibleIndicator
+    def set_DensityEligibleIndicator(self, DensityEligibleIndicator):
+        self.DensityEligibleIndicator = DensityEligibleIndicator
+    def hasContent_(self):
+        if (
+            self.FreightDensityInfo is not None or
+            self.DensityEligibleIndicator is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightShipmentInformationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FreightShipmentInformationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FreightShipmentInformationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FreightShipmentInformationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='FreightShipmentInformationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FreightShipmentInformationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightShipmentInformationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.FreightDensityInfo is not None:
+            namespaceprefix_ = self.FreightDensityInfo_nsprefix_ + ':' if (UseCapturedNS_ and self.FreightDensityInfo_nsprefix_) else ''
+            self.FreightDensityInfo.export(outfile, level, namespaceprefix_, namespacedef_='', name_='FreightDensityInfo', pretty_print=pretty_print)
+        if self.DensityEligibleIndicator is not None:
+            namespaceprefix_ = self.DensityEligibleIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DensityEligibleIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDensityEligibleIndicator>%s</%sDensityEligibleIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DensityEligibleIndicator), input_name='DensityEligibleIndicator')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'FreightDensityInfo':
+            obj_ = FreightDensityInfoType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.FreightDensityInfo = obj_
+            obj_.original_tagname_ = 'FreightDensityInfo'
+        elif nodeName_ == 'DensityEligibleIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DensityEligibleIndicator')
+            value_ = self.gds_validate_string(value_, node, 'DensityEligibleIndicator')
+            self.DensityEligibleIndicator = value_
+            self.DensityEligibleIndicator_nsprefix_ = child_.prefix
+# end class FreightShipmentInformationType
+
+
+class PayerAddressType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PostalCode=None, CountryCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PostalCode = PostalCode
+        self.PostalCode_nsprefix_ = None
+        self.CountryCode = CountryCode
+        self.CountryCode_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PayerAddressType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PayerAddressType.subclass:
+            return PayerAddressType.subclass(*args_, **kwargs_)
+        else:
+            return PayerAddressType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PostalCode(self):
+        return self.PostalCode
+    def set_PostalCode(self, PostalCode):
+        self.PostalCode = PostalCode
+    def get_CountryCode(self):
+        return self.CountryCode
+    def set_CountryCode(self, CountryCode):
+        self.CountryCode = CountryCode
+    def hasContent_(self):
+        if (
+            self.PostalCode is not None or
+            self.CountryCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PayerAddressType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PayerAddressType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PayerAddressType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PayerAddressType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PayerAddressType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PayerAddressType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PayerAddressType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PostalCode is not None:
+            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
+        if self.CountryCode is not None:
+            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PostalCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PostalCode')
+            value_ = self.gds_validate_string(value_, node, 'PostalCode')
+            self.PostalCode = value_
+            self.PostalCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CountryCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CountryCode')
+            value_ = self.gds_validate_string(value_, node, 'CountryCode')
+            self.CountryCode = value_
+            self.CountryCode_nsprefix_ = child_.prefix
+# end class PayerAddressType
+
+
+class FreightDensityInfoType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AdjustedHeightIndicator=None, AdjustedHeight=None, HandlingUnits=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.AdjustedHeightIndicator = AdjustedHeightIndicator
+        self.AdjustedHeightIndicator_nsprefix_ = None
+        self.AdjustedHeight = AdjustedHeight
+        self.AdjustedHeight_nsprefix_ = None
+        if HandlingUnits is None:
+            self.HandlingUnits = []
+        else:
+            self.HandlingUnits = HandlingUnits
+        self.HandlingUnits_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FreightDensityInfoType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FreightDensityInfoType.subclass:
+            return FreightDensityInfoType.subclass(*args_, **kwargs_)
+        else:
+            return FreightDensityInfoType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AdjustedHeightIndicator(self):
+        return self.AdjustedHeightIndicator
+    def set_AdjustedHeightIndicator(self, AdjustedHeightIndicator):
+        self.AdjustedHeightIndicator = AdjustedHeightIndicator
+    def get_AdjustedHeight(self):
+        return self.AdjustedHeight
+    def set_AdjustedHeight(self, AdjustedHeight):
+        self.AdjustedHeight = AdjustedHeight
+    def get_HandlingUnits(self):
+        return self.HandlingUnits
+    def set_HandlingUnits(self, HandlingUnits):
+        self.HandlingUnits = HandlingUnits
+    def add_HandlingUnits(self, value):
+        self.HandlingUnits.append(value)
+    def insert_HandlingUnits_at(self, index, value):
+        self.HandlingUnits.insert(index, value)
+    def replace_HandlingUnits_at(self, index, value):
+        self.HandlingUnits[index] = value
+    def hasContent_(self):
+        if (
+            self.AdjustedHeightIndicator is not None or
+            self.AdjustedHeight is not None or
+            self.HandlingUnits
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightDensityInfoType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FreightDensityInfoType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FreightDensityInfoType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FreightDensityInfoType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='FreightDensityInfoType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FreightDensityInfoType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='FreightDensityInfoType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AdjustedHeightIndicator is not None:
+            namespaceprefix_ = self.AdjustedHeightIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.AdjustedHeightIndicator_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAdjustedHeightIndicator>%s</%sAdjustedHeightIndicator>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AdjustedHeightIndicator), input_name='AdjustedHeightIndicator')), namespaceprefix_ , eol_))
+        if self.AdjustedHeight is not None:
+            namespaceprefix_ = self.AdjustedHeight_nsprefix_ + ':' if (UseCapturedNS_ and self.AdjustedHeight_nsprefix_) else ''
+            self.AdjustedHeight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AdjustedHeight', pretty_print=pretty_print)
+        for HandlingUnits_ in self.HandlingUnits:
+            namespaceprefix_ = self.HandlingUnits_nsprefix_ + ':' if (UseCapturedNS_ and self.HandlingUnits_nsprefix_) else ''
+            HandlingUnits_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='HandlingUnits', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AdjustedHeightIndicator':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AdjustedHeightIndicator')
+            value_ = self.gds_validate_string(value_, node, 'AdjustedHeightIndicator')
+            self.AdjustedHeightIndicator = value_
+            self.AdjustedHeightIndicator_nsprefix_ = child_.prefix
+        elif nodeName_ == 'AdjustedHeight':
+            obj_ = AdjustedHeightType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdjustedHeight = obj_
+            obj_.original_tagname_ = 'AdjustedHeight'
+        elif nodeName_ == 'HandlingUnits':
+            obj_ = HandlingUnitsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.HandlingUnits.append(obj_)
+            obj_.original_tagname_ = 'HandlingUnits'
+# end class FreightDensityInfoType
+
+
+class AdjustedHeightType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Value=None, UnitOfMeasurement=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Value = Value
+        self.Value_nsprefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AdjustedHeightType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AdjustedHeightType.subclass:
+            return AdjustedHeightType.subclass(*args_, **kwargs_)
+        else:
+            return AdjustedHeightType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Value(self):
+        return self.Value
+    def set_Value(self, Value):
+        self.Value = Value
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def hasContent_(self):
+        if (
+            self.Value is not None or
+            self.UnitOfMeasurement is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdjustedHeightType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdjustedHeightType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AdjustedHeightType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdjustedHeightType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdjustedHeightType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdjustedHeightType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdjustedHeightType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Value is not None:
+            namespaceprefix_ = self.Value_nsprefix_ + ':' if (UseCapturedNS_ and self.Value_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sValue>%s</%sValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Value), input_name='Value')), namespaceprefix_ , eol_))
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Value':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Value')
+            value_ = self.gds_validate_string(value_, node, 'Value')
+            self.Value = value_
+            self.Value_nsprefix_ = child_.prefix
+        elif nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+# end class AdjustedHeightType
+
+
+class HandlingUnitsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Quantity=None, Type=None, Dimensions=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Quantity = Quantity
+        self.Quantity_nsprefix_ = None
+        self.Type = Type
+        self.Type_nsprefix_ = None
+        self.Dimensions = Dimensions
+        self.Dimensions_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, HandlingUnitsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if HandlingUnitsType.subclass:
+            return HandlingUnitsType.subclass(*args_, **kwargs_)
+        else:
+            return HandlingUnitsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Quantity(self):
+        return self.Quantity
+    def set_Quantity(self, Quantity):
+        self.Quantity = Quantity
+    def get_Type(self):
+        return self.Type
+    def set_Type(self, Type):
+        self.Type = Type
+    def get_Dimensions(self):
+        return self.Dimensions
+    def set_Dimensions(self, Dimensions):
+        self.Dimensions = Dimensions
+    def hasContent_(self):
+        if (
+            self.Quantity is not None or
+            self.Type is not None or
+            self.Dimensions is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('HandlingUnitsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'HandlingUnitsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HandlingUnitsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HandlingUnitsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='HandlingUnitsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Quantity is not None:
+            namespaceprefix_ = self.Quantity_nsprefix_ + ':' if (UseCapturedNS_ and self.Quantity_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sQuantity>%s</%sQuantity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Quantity), input_name='Quantity')), namespaceprefix_ , eol_))
+        if self.Type is not None:
+            namespaceprefix_ = self.Type_nsprefix_ + ':' if (UseCapturedNS_ and self.Type_nsprefix_) else ''
+            self.Type.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Type', pretty_print=pretty_print)
+        if self.Dimensions is not None:
+            namespaceprefix_ = self.Dimensions_nsprefix_ + ':' if (UseCapturedNS_ and self.Dimensions_nsprefix_) else ''
+            self.Dimensions.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Dimensions', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Quantity':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Quantity')
+            value_ = self.gds_validate_string(value_, node, 'Quantity')
+            self.Quantity = value_
+            self.Quantity_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Type':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Type = obj_
+            obj_.original_tagname_ = 'Type'
+        elif nodeName_ == 'Dimensions':
+            obj_ = HandlingUnitsDimensionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Dimensions = obj_
+            obj_.original_tagname_ = 'Dimensions'
+# end class HandlingUnitsType
+
+
+class HandlingUnitsDimensionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, UnitOfMeasurement=None, Length=None, Width=None, Height=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.UnitOfMeasurement = UnitOfMeasurement
+        self.UnitOfMeasurement_nsprefix_ = None
+        self.Length = Length
+        self.Length_nsprefix_ = None
+        self.Width = Width
+        self.Width_nsprefix_ = None
+        self.Height = Height
+        self.Height_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, HandlingUnitsDimensionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if HandlingUnitsDimensionsType.subclass:
+            return HandlingUnitsDimensionsType.subclass(*args_, **kwargs_)
+        else:
+            return HandlingUnitsDimensionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_UnitOfMeasurement(self):
+        return self.UnitOfMeasurement
+    def set_UnitOfMeasurement(self, UnitOfMeasurement):
+        self.UnitOfMeasurement = UnitOfMeasurement
+    def get_Length(self):
+        return self.Length
+    def set_Length(self, Length):
+        self.Length = Length
+    def get_Width(self):
+        return self.Width
+    def set_Width(self, Width):
+        self.Width = Width
+    def get_Height(self):
+        return self.Height
+    def set_Height(self, Height):
+        self.Height = Height
+    def hasContent_(self):
+        if (
+            self.UnitOfMeasurement is not None or
+            self.Length is not None or
+            self.Width is not None or
+            self.Height is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsDimensionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('HandlingUnitsDimensionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'HandlingUnitsDimensionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HandlingUnitsDimensionsType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HandlingUnitsDimensionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='HandlingUnitsDimensionsType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='HandlingUnitsDimensionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.UnitOfMeasurement is not None:
+            namespaceprefix_ = self.UnitOfMeasurement_nsprefix_ + ':' if (UseCapturedNS_ and self.UnitOfMeasurement_nsprefix_) else ''
+            self.UnitOfMeasurement.export(outfile, level, namespaceprefix_, namespacedef_='', name_='UnitOfMeasurement', pretty_print=pretty_print)
+        if self.Length is not None:
+            namespaceprefix_ = self.Length_nsprefix_ + ':' if (UseCapturedNS_ and self.Length_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLength>%s</%sLength>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Length), input_name='Length')), namespaceprefix_ , eol_))
+        if self.Width is not None:
+            namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Width), input_name='Width')), namespaceprefix_ , eol_))
+        if self.Height is not None:
+            namespaceprefix_ = self.Height_nsprefix_ + ':' if (UseCapturedNS_ and self.Height_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Height), input_name='Height')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'UnitOfMeasurement':
+            obj_ = CodeDescriptionType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.UnitOfMeasurement = obj_
+            obj_.original_tagname_ = 'UnitOfMeasurement'
+        elif nodeName_ == 'Length':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Length')
+            value_ = self.gds_validate_string(value_, node, 'Length')
+            self.Length = value_
+            self.Length_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Width':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Width')
+            value_ = self.gds_validate_string(value_, node, 'Width')
+            self.Width = value_
+            self.Width_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Height':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Height')
+            value_ = self.gds_validate_string(value_, node, 'Height')
+            self.Height = value_
+            self.Height_nsprefix_ = child_.prefix
+# end class HandlingUnitsDimensionsType
+
+
+class InvoiceLineTotalType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CurrencyCode=None, MonetaryValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CurrencyCode = CurrencyCode
+        self.CurrencyCode_nsprefix_ = None
+        self.MonetaryValue = MonetaryValue
+        self.MonetaryValue_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InvoiceLineTotalType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InvoiceLineTotalType.subclass:
+            return InvoiceLineTotalType.subclass(*args_, **kwargs_)
+        else:
+            return InvoiceLineTotalType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CurrencyCode(self):
+        return self.CurrencyCode
+    def set_CurrencyCode(self, CurrencyCode):
+        self.CurrencyCode = CurrencyCode
+    def get_MonetaryValue(self):
+        return self.MonetaryValue
+    def set_MonetaryValue(self, MonetaryValue):
+        self.MonetaryValue = MonetaryValue
+    def hasContent_(self):
+        if (
+            self.CurrencyCode is not None or
+            self.MonetaryValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceLineTotalType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InvoiceLineTotalType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InvoiceLineTotalType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InvoiceLineTotalType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InvoiceLineTotalType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InvoiceLineTotalType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceLineTotalType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CurrencyCode is not None:
+            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
+        if self.MonetaryValue is not None:
+            namespaceprefix_ = self.MonetaryValue_nsprefix_ + ':' if (UseCapturedNS_ and self.MonetaryValue_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sMonetaryValue>%s</%sMonetaryValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MonetaryValue), input_name='MonetaryValue')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CurrencyCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
+            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
+            self.CurrencyCode = value_
+            self.CurrencyCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'MonetaryValue':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'MonetaryValue')
+            value_ = self.gds_validate_string(value_, node, 'MonetaryValue')
+            self.MonetaryValue = value_
+            self.MonetaryValue_nsprefix_ = child_.prefix
+# end class InvoiceLineTotalType
+
+
+class ClientInformationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Property=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if Property is None:
+            self.Property = []
+        else:
+            self.Property = Property
+        self.Property_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ClientInformationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ClientInformationType.subclass:
+            return ClientInformationType.subclass(*args_, **kwargs_)
+        else:
+            return ClientInformationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Property(self):
+        return self.Property
+    def set_Property(self, Property):
+        self.Property = Property
+    def add_Property(self, value):
+        self.Property.append(value)
+    def insert_Property_at(self, index, value):
+        self.Property.insert(index, value)
+    def replace_Property_at(self, index, value):
+        self.Property[index] = value
+    def hasContent_(self):
+        if (
+            self.Property
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ClientInformationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ClientInformationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ClientInformationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ClientInformationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ClientInformationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='ClientInformationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ClientInformationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Property_ in self.Property:
+            namespaceprefix_ = self.Property_nsprefix_ + ':' if (UseCapturedNS_ and self.Property_nsprefix_) else ''
+            Property_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Property', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Property':
+            obj_ = PropertyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Property.append(obj_)
+            obj_.original_tagname_ = 'Property'
+# end class ClientInformationType
+
+
+class RequestType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, RequestOption=None, SubVersion=None, TransactionReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if RequestOption is None:
+            self.RequestOption = []
+        else:
+            self.RequestOption = RequestOption
+        self.RequestOption_nsprefix_ = None
+        self.SubVersion = SubVersion
+        self.SubVersion_nsprefix_ = None
+        self.TransactionReference = TransactionReference
+        self.TransactionReference_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RequestType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RequestType.subclass:
+            return RequestType.subclass(*args_, **kwargs_)
+        else:
+            return RequestType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_RequestOption(self):
+        return self.RequestOption
+    def set_RequestOption(self, RequestOption):
+        self.RequestOption = RequestOption
+    def add_RequestOption(self, value):
+        self.RequestOption.append(value)
+    def insert_RequestOption_at(self, index, value):
+        self.RequestOption.insert(index, value)
+    def replace_RequestOption_at(self, index, value):
+        self.RequestOption[index] = value
+    def get_SubVersion(self):
+        return self.SubVersion
+    def set_SubVersion(self, SubVersion):
+        self.SubVersion = SubVersion
+    def get_TransactionReference(self):
+        return self.TransactionReference
+    def set_TransactionReference(self, TransactionReference):
+        self.TransactionReference = TransactionReference
+    def hasContent_(self):
+        if (
+            self.RequestOption or
+            self.SubVersion is not None or
+            self.TransactionReference is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='RequestType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RequestType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='RequestType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='RequestType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for RequestOption_ in self.RequestOption:
+            namespaceprefix_ = self.RequestOption_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestOption_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRequestOption>%s</%sRequestOption>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(RequestOption_), input_name='RequestOption')), namespaceprefix_ , eol_))
+        if self.SubVersion is not None:
+            namespaceprefix_ = self.SubVersion_nsprefix_ + ':' if (UseCapturedNS_ and self.SubVersion_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSubVersion>%s</%sSubVersion>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SubVersion), input_name='SubVersion')), namespaceprefix_ , eol_))
+        if self.TransactionReference is not None:
+            namespaceprefix_ = self.TransactionReference_nsprefix_ + ':' if (UseCapturedNS_ and self.TransactionReference_nsprefix_) else ''
+            self.TransactionReference.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TransactionReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'RequestOption':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RequestOption')
+            value_ = self.gds_validate_string(value_, node, 'RequestOption')
+            self.RequestOption.append(value_)
+            self.RequestOption_nsprefix_ = child_.prefix
+        elif nodeName_ == 'SubVersion':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SubVersion')
+            value_ = self.gds_validate_string(value_, node, 'SubVersion')
+            self.SubVersion = value_
+            self.SubVersion_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TransactionReference':
+            obj_ = TransactionReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TransactionReference = obj_
+            obj_.original_tagname_ = 'TransactionReference'
+# end class RequestType
+
+
+class TransactionReferenceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CustomerContext=None, TransactionIdentifier=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CustomerContext = CustomerContext
+        self.CustomerContext_nsprefix_ = None
+        self.TransactionIdentifier = TransactionIdentifier
+        self.TransactionIdentifier_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TransactionReferenceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TransactionReferenceType.subclass:
+            return TransactionReferenceType.subclass(*args_, **kwargs_)
+        else:
+            return TransactionReferenceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CustomerContext(self):
+        return self.CustomerContext
+    def set_CustomerContext(self, CustomerContext):
+        self.CustomerContext = CustomerContext
+    def get_TransactionIdentifier(self):
+        return self.TransactionIdentifier
+    def set_TransactionIdentifier(self, TransactionIdentifier):
+        self.TransactionIdentifier = TransactionIdentifier
+    def hasContent_(self):
+        if (
+            self.CustomerContext is not None or
+            self.TransactionIdentifier is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='TransactionReferenceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TransactionReferenceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TransactionReferenceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TransactionReferenceType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TransactionReferenceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='TransactionReferenceType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='TransactionReferenceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CustomerContext is not None:
+            namespaceprefix_ = self.CustomerContext_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerContext_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomerContext>%s</%sCustomerContext>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerContext), input_name='CustomerContext')), namespaceprefix_ , eol_))
+        if self.TransactionIdentifier is not None:
+            namespaceprefix_ = self.TransactionIdentifier_nsprefix_ + ':' if (UseCapturedNS_ and self.TransactionIdentifier_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sTransactionIdentifier>%s</%sTransactionIdentifier>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TransactionIdentifier), input_name='TransactionIdentifier')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CustomerContext':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomerContext')
+            value_ = self.gds_validate_string(value_, node, 'CustomerContext')
+            self.CustomerContext = value_
+            self.CustomerContext_nsprefix_ = child_.prefix
+        elif nodeName_ == 'TransactionIdentifier':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'TransactionIdentifier')
+            value_ = self.gds_validate_string(value_, node, 'TransactionIdentifier')
+            self.TransactionIdentifier = value_
+            self.TransactionIdentifier_nsprefix_ = child_.prefix
+# end class TransactionReferenceType
+
+
+class ResponseType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ResponseStatus=None, Alert=None, AlertDetail=None, TransactionReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.ResponseStatus = ResponseStatus
+        self.ResponseStatus_nsprefix_ = None
+        if Alert is None:
+            self.Alert = []
+        else:
+            self.Alert = Alert
+        self.Alert_nsprefix_ = None
+        if AlertDetail is None:
+            self.AlertDetail = []
+        else:
+            self.AlertDetail = AlertDetail
+        self.AlertDetail_nsprefix_ = None
+        self.TransactionReference = TransactionReference
+        self.TransactionReference_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ResponseType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ResponseType.subclass:
+            return ResponseType.subclass(*args_, **kwargs_)
+        else:
+            return ResponseType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ResponseStatus(self):
+        return self.ResponseStatus
+    def set_ResponseStatus(self, ResponseStatus):
+        self.ResponseStatus = ResponseStatus
+    def get_Alert(self):
+        return self.Alert
+    def set_Alert(self, Alert):
+        self.Alert = Alert
+    def add_Alert(self, value):
+        self.Alert.append(value)
+    def insert_Alert_at(self, index, value):
+        self.Alert.insert(index, value)
+    def replace_Alert_at(self, index, value):
+        self.Alert[index] = value
+    def get_AlertDetail(self):
+        return self.AlertDetail
+    def set_AlertDetail(self, AlertDetail):
+        self.AlertDetail = AlertDetail
+    def add_AlertDetail(self, value):
+        self.AlertDetail.append(value)
+    def insert_AlertDetail_at(self, index, value):
+        self.AlertDetail.insert(index, value)
+    def replace_AlertDetail_at(self, index, value):
+        self.AlertDetail[index] = value
+    def get_TransactionReference(self):
+        return self.TransactionReference
+    def set_TransactionReference(self, TransactionReference):
+        self.TransactionReference = TransactionReference
+    def hasContent_(self):
+        if (
+            self.ResponseStatus is not None or
+            self.Alert or
+            self.AlertDetail or
+            self.TransactionReference is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ResponseType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ResponseType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='ResponseType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ResponseType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.ResponseStatus is not None:
+            namespaceprefix_ = self.ResponseStatus_nsprefix_ + ':' if (UseCapturedNS_ and self.ResponseStatus_nsprefix_) else ''
+            self.ResponseStatus.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ResponseStatus', pretty_print=pretty_print)
+        for Alert_ in self.Alert:
+            namespaceprefix_ = self.Alert_nsprefix_ + ':' if (UseCapturedNS_ and self.Alert_nsprefix_) else ''
+            Alert_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Alert', pretty_print=pretty_print)
+        for AlertDetail_ in self.AlertDetail:
+            namespaceprefix_ = self.AlertDetail_nsprefix_ + ':' if (UseCapturedNS_ and self.AlertDetail_nsprefix_) else ''
+            AlertDetail_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AlertDetail', pretty_print=pretty_print)
+        if self.TransactionReference is not None:
+            namespaceprefix_ = self.TransactionReference_nsprefix_ + ':' if (UseCapturedNS_ and self.TransactionReference_nsprefix_) else ''
+            self.TransactionReference.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TransactionReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ResponseStatus':
+            obj_ = CodeDescriptionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ResponseStatus = obj_
+            obj_.original_tagname_ = 'ResponseStatus'
+        elif nodeName_ == 'Alert':
+            obj_ = CodeDescriptionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Alert.append(obj_)
+            obj_.original_tagname_ = 'Alert'
+        elif nodeName_ == 'AlertDetail':
+            obj_ = DetailType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AlertDetail.append(obj_)
+            obj_.original_tagname_ = 'AlertDetail'
+        elif nodeName_ == 'TransactionReference':
+            obj_ = TransactionReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.TransactionReference = obj_
+            obj_.original_tagname_ = 'TransactionReference'
+# end class ResponseType
+
+
+class CodeDescriptionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CodeDescriptionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CodeDescriptionType.subclass:
+            return CodeDescriptionType.subclass(*args_, **kwargs_)
+        else:
+            return CodeDescriptionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='CodeDescriptionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CodeDescriptionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CodeDescriptionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CodeDescriptionType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CodeDescriptionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='CodeDescriptionType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='CodeDescriptionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+# end class CodeDescriptionType
+
+
+class DetailType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Description=None, ElementLevelInformation=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = None
+        self.ElementLevelInformation = ElementLevelInformation
+        self.ElementLevelInformation_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DetailType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DetailType.subclass:
+            return DetailType.subclass(*args_, **kwargs_)
+        else:
+            return DetailType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_ElementLevelInformation(self):
+        return self.ElementLevelInformation
+    def set_ElementLevelInformation(self, ElementLevelInformation):
+        self.ElementLevelInformation = ElementLevelInformation
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Description is not None or
+            self.ElementLevelInformation is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='DetailType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DetailType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DetailType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DetailType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DetailType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='DetailType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='DetailType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        if self.ElementLevelInformation is not None:
+            namespaceprefix_ = self.ElementLevelInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.ElementLevelInformation_nsprefix_) else ''
+            self.ElementLevelInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ElementLevelInformation', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ElementLevelInformation':
+            obj_ = ElementLevelInformationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ElementLevelInformation = obj_
+            obj_.original_tagname_ = 'ElementLevelInformation'
+# end class DetailType
+
+
+class ElementLevelInformationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Level=None, ElementIdentifier=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Level = Level
+        self.Level_nsprefix_ = None
+        if ElementIdentifier is None:
+            self.ElementIdentifier = []
+        else:
+            self.ElementIdentifier = ElementIdentifier
+        self.ElementIdentifier_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ElementLevelInformationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ElementLevelInformationType.subclass:
+            return ElementLevelInformationType.subclass(*args_, **kwargs_)
+        else:
+            return ElementLevelInformationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Level(self):
+        return self.Level
+    def set_Level(self, Level):
+        self.Level = Level
+    def get_ElementIdentifier(self):
+        return self.ElementIdentifier
+    def set_ElementIdentifier(self, ElementIdentifier):
+        self.ElementIdentifier = ElementIdentifier
+    def add_ElementIdentifier(self, value):
+        self.ElementIdentifier.append(value)
+    def insert_ElementIdentifier_at(self, index, value):
+        self.ElementIdentifier.insert(index, value)
+    def replace_ElementIdentifier_at(self, index, value):
+        self.ElementIdentifier[index] = value
+    def hasContent_(self):
+        if (
+            self.Level is not None or
+            self.ElementIdentifier
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ElementLevelInformationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ElementLevelInformationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ElementLevelInformationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ElementLevelInformationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ElementLevelInformationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='ElementLevelInformationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ElementLevelInformationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Level is not None:
+            namespaceprefix_ = self.Level_nsprefix_ + ':' if (UseCapturedNS_ and self.Level_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sLevel>%s</%sLevel>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Level), input_name='Level')), namespaceprefix_ , eol_))
+        for ElementIdentifier_ in self.ElementIdentifier:
+            namespaceprefix_ = self.ElementIdentifier_nsprefix_ + ':' if (UseCapturedNS_ and self.ElementIdentifier_nsprefix_) else ''
+            ElementIdentifier_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ElementIdentifier', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Level':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Level')
+            value_ = self.gds_validate_string(value_, node, 'Level')
+            self.Level = value_
+            self.Level_nsprefix_ = child_.prefix
+        elif nodeName_ == 'ElementIdentifier':
+            obj_ = ElementIdentifierType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ElementIdentifier.append(obj_)
+            obj_.original_tagname_ = 'ElementIdentifier'
+# end class ElementLevelInformationType
+
+
+class ElementIdentifierType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Code=None, Value=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Code = Code
+        self.Code_nsprefix_ = None
+        self.Value = Value
+        self.Value_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ElementIdentifierType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ElementIdentifierType.subclass:
+            return ElementIdentifierType.subclass(*args_, **kwargs_)
+        else:
+            return ElementIdentifierType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Code(self):
+        return self.Code
+    def set_Code(self, Code):
+        self.Code = Code
+    def get_Value(self):
+        return self.Value
+    def set_Value(self, Value):
+        self.Value = Value
+    def hasContent_(self):
+        if (
+            self.Code is not None or
+            self.Value is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ElementIdentifierType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ElementIdentifierType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ElementIdentifierType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ElementIdentifierType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ElementIdentifierType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='common:', name_='ElementIdentifierType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='common:', namespacedef_='', name_='ElementIdentifierType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Code is not None:
+            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
+        if self.Value is not None:
+            namespaceprefix_ = self.Value_nsprefix_ + ':' if (UseCapturedNS_ and self.Value_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sValue>%s</%sValue>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Value), input_name='Value')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Code':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Code')
+            value_ = self.gds_validate_string(value_, node, 'Code')
+            self.Code = value_
+            self.Code_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Value':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Value')
+            value_ = self.gds_validate_string(value_, node, 'Value')
+            self.Value = value_
+            self.Value_nsprefix_ = child_.prefix
+# end class ElementIdentifierType
+
+
+class PropertyType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Key=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.Key = _cast(None, Key)
+        self.Key_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PropertyType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PropertyType.subclass:
+            return PropertyType.subclass(*args_, **kwargs_)
+        else:
+            return PropertyType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Key(self):
+        return self.Key
+    def set_Key(self, Key):
+        self.Key = Key
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def hasContent_(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PropertyType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PropertyType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PropertyType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PropertyType')
+        if self.hasContent_():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PropertyType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PropertyType'):
+        if self.Key is not None and 'Key' not in already_processed:
+            already_processed.add('Key')
+            outfile.write(' Key=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Key), input_name='Key')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PropertyType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Key', node)
+        if value is not None and 'Key' not in already_processed:
+            already_processed.add('Key')
+            self.Key = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class PropertyType
+
+
+GDSClassesMapping = {
+    'ClientInformation': ClientInformationType,
+    'Request': RequestType,
+    'Response': ResponseType,
+}
+
+
+USAGE_TEXT = """
+Usage: python <Parser>.py [ -s ] <in_xml_file>
+"""
+
+
+def usage():
+    print(USAGE_TEXT)
+    sys.exit(1)
+
+
+def get_root_tag(node):
+    tag = Tag_pattern_.match(node.tag).groups()[-1]
+    rootClass = GDSClassesMapping.get(tag)
+    if rootClass is None:
+        rootClass = globals().get(tag)
+    return tag, rootClass
+
+
+def get_required_ns_prefix_defs(rootNode):
+    '''Get all name space prefix definitions required in this XML doc.
+    Return a dictionary of definitions and a char string of definitions.
+    '''
+    nsmap = {
+        prefix: uri
+        for node in rootNode.iter()
+        for (prefix, uri) in node.nsmap.items()
+        if prefix is not None
+    }
+    namespacedefs = ' '.join([
+        'xmlns:{}="{}"'.format(prefix, uri)
+        for prefix, uri in nsmap.items()
+    ])
+    return nsmap, namespacedefs
+
+
+def parse(inFileName, silence=False, print_warnings=True):
+    global CapturedNsmap_
+    gds_collector = GdsCollector_()
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RateRequest'
+        rootClass = RateRequest
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_=namespacedefs,
+            pretty_print=True)
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseEtree(inFileName, silence=False, print_warnings=True):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RateRequest'
+        rootClass = RateRequest
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    # Enable Python to collect the space used by the DOM.
+    mapping = {}
+    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        content = etree_.tostring(
+            rootElement, pretty_print=True,
+            xml_declaration=True, encoding="utf-8")
+        sys.stdout.write(str(content))
+        sys.stdout.write('\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj, rootElement, mapping, reverse_mapping
+
+
+def parseString(inString, silence=False, print_warnings=True):
+    '''Parse a string, create the object tree, and export it.
+
+    Arguments:
+    - inString -- A string.  This XML fragment should not start
+      with an XML declaration containing an encoding.
+    - silence -- A boolean.  If False, export the object.
+    Returns -- The root object in the tree.
+    '''
+    parser = None
+    rootNode= parsexmlstring_(inString, parser)
+    gds_collector = GdsCollector_()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RateRequest'
+        rootClass = RateRequest
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    if not SaveElementTreeNode:
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_='xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseLiteral(inFileName, silence=False, print_warnings=True):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RateRequest'
+        rootClass = RateRequest
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    # Enable Python to collect the space used by the DOM.
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('#from rate_web_service_schema import *\n\n')
+        sys.stdout.write('import rate_web_service_schema as model_\n\n')
+        sys.stdout.write('rootObj = model_.rootClass(\n')
+        rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
+        sys.stdout.write(')\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def main():
+    args = sys.argv[1:]
+    if len(args) == 1:
+        parse(args[0])
+    else:
+        usage()
+
+
+if __name__ == '__main__':
+    #import pdb; pdb.set_trace()
+    main()
+
+RenameMappings_ = {
+    "{http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1}CodeDescriptionType": "CodeDescriptionType1",
+}
+
+__all__ = [
+    "ADRType",
+    "AccessorialType",
+    "AddressType",
+    "AdjustedHeightType",
+    "AlternateDeliveryAddressType",
+    "BillReceiverAddressType",
+    "BillReceiverChargeType",
+    "BillShipperChargeType",
+    "BillThirdPartyChargeType",
+    "BillingWeightType",
+    "CODAmountType",
+    "CODType",
+    "ChargesType",
+    "ClientInformationType",
+    "CodeDescriptionType",
+    "CodeDescriptionType1",
+    "CommodityType",
+    "DeliveryConfirmationType",
+    "DeliveryOptionsType",
+    "DetailType",
+    "DimensionsType",
+    "DisclaimerType",
+    "DryIceType",
+    "DryIceWeightType",
+    "ElementIdentifierType",
+    "ElementLevelInformationType",
+    "EstimatedArrivalType",
+    "FRSPaymentInfoType",
+    "FRSShipmentType",
+    "FreightDensityInfoType",
+    "FreightDensityRateType",
+    "FreightShipmentInformationType",
+    "GuaranteedDeliveryType",
+    "HandlingUnitsDimensionsType",
+    "HandlingUnitsResponseType",
+    "HandlingUnitsType",
+    "HazMatChemicalRecordType",
+    "HazMatType",
+    "ImportControlType",
+    "IndicationType",
+    "InsuranceType",
+    "InsuranceValueType",
+    "InsuredValueType",
+    "InvoiceLineTotalType",
+    "NMFCCommodityType",
+    "NegotiatedChargesType",
+    "PackageServiceOptionsAccessPointCODType",
+    "PackageServiceOptionsType",
+    "PackageType",
+    "PackageWeightType",
+    "PayerAddressType",
+    "PaymentDetailsType",
+    "PickupOptionsType",
+    "PickupType",
+    "PromotionalDiscountInformationType",
+    "PropertyType",
+    "RateRequest",
+    "RateResponse",
+    "RatedPackageType",
+    "RatedShipmentInfoType",
+    "RatedShipmentType",
+    "RequestType",
+    "ResponseType",
+    "RestrictedArticlesType",
+    "ReturnContractServicesType",
+    "ReturnServiceType",
+    "ServiceSummaryType",
+    "ShipAddressType",
+    "ShipFromType",
+    "ShipToAddressType",
+    "ShipToType",
+    "ShipmentChargeType",
+    "ShipmentRatingOptionsType",
+    "ShipmentServiceOptionsAccessPointCODType",
+    "ShipmentServiceOptionsType",
+    "ShipmentType",
+    "ShipmentWeightType",
+    "ShipperDeclaredValueType",
+    "ShipperType",
+    "TaxChargeType",
+    "TimeInTransitRequestType",
+    "TimeInTransitResponseType",
+    "TotalChargeType",
+    "TransactionReferenceType",
+    "TransportationChargesType",
+    "UOMCodeDescriptionType"
+]

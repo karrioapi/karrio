@@ -1,0 +1,18 @@
+{
+  "warnings": [
+    "string"
+  ],
+  "address": [
+    {
+      "countryCode": "CZ",
+      "postalCode": "14800",
+      "cityName": "PRAGUE",
+      "countyName": "string",
+      "serviceArea": {
+        "code": "PRG",
+        "description": "PRAGUE-CZECH REPUBLIC, THE",
+        "GMTOffset": "+01:00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "ShipmentRequest": {
+    "trackingNumber": "W1234567",
+    "category": "Parcel",
+    "paymentType": "Prepaid",
+    "billingAccount": "400040",
+    "note": "This is a note for the driver",
+    "sender": {
+      "addressLine1": "10500 mystreet",
+      "addressLine2": "Suite 10",
+      "streetNumber": "10500",
+      "streetType": "AVE",
+      "streetName": "mystreet",
+      "streetDirection": "N",
+      "suite": "10",
+      "city": "Montreal",
+      "provinceCode": "QC",
+      "postalCode": "H9P2T7",
+      "countryCode": "CA",
+      "customerName": "Test Company",
+      "customerNickName": "string",
+      "contact": {
+        "language": "en",
+        "email": "example@dicom.com",
+        "department": "IT",
+        "telephone": "4501234567",
+        "extension": "320",
+        "fullName": "FullName Contact"
+      }
+    },
+    "consignee": {
+      "addressLine1": "10500 mystreet",
+      "addressLine2": "Suite 10",
+      "streetNumber": "10500",
+      "streetType": "AVE",
+      "streetName": "mystreet",
+      "streetDirection": "N",
+      "suite": "10",
+      "city": "Montreal",
+      "provinceCode": "QC",
+      "postalCode": "H9P2T7",
+      "countryCode": "CA",
+      "customerName": "Test Company",
+      "customerNickName": "string",
+      "contact": {
+        "language": "en",
+        "email": "example@dicom.com",
+        "department": "IT",
+        "telephone": "4501234567",
+        "extension": "320",
+        "fullName": "FullName Contact"
+      }
+    },
+    "unitOfMeasurement": "K",
+    "parcels": [
+      {
+        "id": "1",
+        "parcelType": "Box",
+        "quantity": 3,
+        "weight": 5,
+        "length": 5,
+        "depth": 5,
+        "width": 5,
+        "note": "Special instruction...",
+        "status": 0,
+        "FCA_Class": "100.00",
+        "hazmat": {
+          "number": "100",
+          "phone": "4510214786"
+        },
+        "requestReturnLabel": true,
+        "returnWaybill": "Q1234568"
+      }
+    ],
+    "surcharges": [
+      {
+        "id": "4658723",
+        "value": "Heating",
+        "type": "HEAT",
+        "name": "Heating",
+        "amount": 0
+      }
+    ],
+    "deliveryType": "GRD",
+    "references": [
+      {
+        "type": "INV",
+        "code": "123"
+      }
+    ],
+    "returnAddress": {
+      "addressLine1": "10500 mystreet",
+      "addressLine2": "Suite 10",
+      "streetNumber": "10500",
+      "streetType": "AVE",
+      "streetName": "mystreet",
+      "streetDirection": "N",
+      "suite": "10",
+      "city": "Montreal",
+      "provinceCode": "QC",
+      "postalCode": "H9P2T7",
+      "countryCode": "CA",
+      "customerName": "Test Company",
+      "customerNickName": "string",
+      "contact": {
+        "language": "en",
+        "email": "example@dicom.com",
+        "department": "IT",
+        "telephone": "4501234567",
+        "extension": "320",
+        "fullName": "FullName Contact"
+      }
+    },
+    "appointment": {
+      "type": "Scheduled",
+      "date": "2020-09-21T03:23:20Z",
+      "time": "15:00",
+      "phone": "5142648798"
+    },
+    "promoCodes": [
+      {
+        "code": "PROMO-465871"
+      }
+    ],
+    "internationalDetails": {
+      "currency": "USD",
+      "exchangeRate": 0,
+      "totalRetailValue": "500",
+      "dutyBilling": "N",
+      "descriptionOfGoods": "Floor Cleaner",
+      "importerOfRecord": {
+        "addressLine1": "10500 mystreet",
+        "addressLine2": "Suite 10",
+        "streetNumber": "10500",
+        "streetType": "AVE",
+        "streetName": "mystreet",
+        "streetDirection": "N",
+        "suite": "10",
+        "city": "Montreal",
+        "provinceCode": "QC",
+        "postalCode": "H9P2T7",
+        "countryCode": "CA",
+        "customerName": "Test Company",
+        "customerNickName": "string",
+        "contact": {
+          "language": "en",
+          "email": "example@dicom.com",
+          "department": "IT",
+          "telephone": "4501234567",
+          "extension": "320",
+          "fullName": "FullName Contact"
+        }
+      },
+      "broker": {
+        "id": "45612456",
+        "href": "",
+        "otherBroker": "Levingstone",
+        "CSA_BusinessNumber": "789"
+      },
+      "purpose": "COM",
+      "products": [
+        {
+          "id": "123",
+          "Quantity": 1
+        }
+      ],
+      "borderStatus": "LVS",
+      "isDicomBroker": true
+    },
+    "pickupDate": "2020-09-21T03:23:20Z"
+  },
+  "ShipmentResponse": {
+    "parcelTrackingNumbers": [
+      "string"
+    ],
+    "ID": "string",
+    "trackingNumber": "string"
+  }
+}

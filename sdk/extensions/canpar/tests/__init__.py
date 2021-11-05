@@ -1,0 +1,1 @@
+from tests.canpar import *

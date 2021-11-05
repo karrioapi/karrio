@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/ship/rate-v4"
+            xmlns="http://www.canadapost.ca/ws/ship/rate-v4" elementFormDefault="qualified">
+
+    <xsd:redefine schemaLocation="common.xsd">
+        <xsd:simpleType name="RelType">
+            <xsd:restriction base="RelType">
+                <xsd:enumeration value="service"/>
+                <xsd:enumeration value="option"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:redefine>
+
+    <xsd:element name="services">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="service" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="service-code" type="ServiceCodeType"/>
+                            <xsd:element name="service-name" type="xsd:normalizedString"/>
+                            <xsd:element name="link" type="LinkType"/>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="option">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="option-code" type="xsd:normalizedString"/>
+                <xsd:element name="option-name" type="xsd:normalizedString"/>
+                <xsd:element name="option-class" type="xsd:normalizedString"/>
+                <xsd:element name="prints-on-label" type="xsd:boolean"/>
+                <xsd:element name="qualifier-required" type="xsd:boolean"/>
+                <xsd:element name="conflicting-options" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="option-code" type="xsd:normalizedString" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="prerequisite-options" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="option-code" type="xsd:normalizedString" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="service">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="service-code" type="ServiceCodeType"/>
+                <xsd:element name="service-name" type="xsd:normalizedString"/>
+                <xsd:element name="comment" type="xsd:normalizedString" minOccurs="0"/>
+                <xsd:element name="options" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="option" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="option-code" type="xsd:normalizedString"/>
+                                        <xsd:element name="option-name" type="xsd:normalizedString"/>
+                                        <xsd:element name="link" type="LinkType"/>
+                                        <xsd:element name="mandatory" type="xsd:boolean"/>
+                                        <xsd:element name="qualifier-required" type="xsd:boolean"/>
+                                        <xsd:element name="qualifier-max" type="xsd:decimal" minOccurs="0"/>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="restrictions">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="weight-restriction" type="NumberRangeType"/>
+                            <xsd:element name="dimensional-restrictions">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="length" type="NumberRangeType"/>
+                                        <xsd:element name="width" type="NumberRangeType"/>
+                                        <xsd:element name="height" type="NumberRangeType"/>
+                                        <xsd:element name="length-plus-girth-max" type="xsd:decimal" minOccurs="0"/>
+                                        <xsd:element name="length-height-width-sum-max" type="xsd:decimal" minOccurs="0"/>
+                                        <xsd:element name="oversize-limit" type="xsd:decimal" minOccurs="0"/>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="density-factor" type="xsd:decimal" minOccurs="0"/>
+                            <xsd:element name="can-ship-in-mailing-tube" type="xsd:boolean"/>
+                            <xsd:element name="can-ship-unpackaged" type="xsd:boolean"/>
+                            <xsd:element name="allowed-as-return-service" type="xsd:boolean"/>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="options">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="option" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="option-code" type="xsd:token"/>
+                            <xsd:element name="option-name" type="xsd:token"/>
+                            <xsd:element name="link" type="LinkType"/>
+                            <xsd:element name="qualifier-required" type="xsd:boolean"/>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="NumberRangeType">
+        <xsd:attribute name="min" type="xsd:decimal"/>
+        <xsd:attribute name="max" type="xsd:decimal"/>
+    </xsd:complexType>
+</xsd:schema>

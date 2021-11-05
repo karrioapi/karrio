@@ -1,0 +1,90 @@
+{
+  "TrackingRequest": {
+    "trackingNumber": "",
+    "service": "",
+    "requesterCountryCode": "",
+    "originCountryCode": "",
+    "recipientPostalCode": "",
+    "language": "en",
+    "offset": 0,
+    "limit": 0
+  },
+  "TrackingResponse": {
+    "url": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "prevUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "nextUrl": "/shipments?trackingNumber=7777777770?offset=5&limit=5",
+    "firstUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "lastUrl": "/shipments?trackingNumber=7777777770?offset=10&limit=5",
+    "shipments": [
+      {
+        "id": "7777777770",
+        "service": "express",
+        "origin": {
+          "address": {
+            "countryCode": "NL",
+            "postalCode": "1043 AG",
+            "addressLocality": "Oderweg 2, AMSTERDAM"
+          }
+        },
+        "destination": {
+          "address": {
+            "countryCode": "NL",
+            "postalCode": "1043 AG",
+            "addressLocality": "Oderweg 2, AMSTERDAM"
+          }
+        },
+        "status": {
+          "timestamp": "2018-03-02T07:53:47Z",
+          "location": {
+            "address": {
+              "countryCode": "NL",
+              "postalCode": "1043 AG",
+              "addressLocality": "Oderweg 2, AMSTERDAM"
+            }
+          },
+          "statusCode": "pre-transit",
+          "status": "DELIVERED",
+          "description": "JESSICA",
+          "remark": "The shipment is pending completion of customs inspection.",
+          "nextSteps": "The status will be updated following customs inspection."
+        },
+        "estimatedTimeOfDelivery": "2018-08-03T00:00:00Z",
+        "estimatedDeliveryTimeFrame": {
+          "estimatedFrom": "2018-08-03T00:00:00Z",
+          "estimatedThrough": "2018-08-03T22:00:00Z"
+        },
+        "estimatedTimeOfDeliveryRemark": "By End of Day",
+        "serviceUrl": "http://www.dhl.de/de/privatkunden.html?piececode=7777777770",
+        "rerouteUrl": "https://www.dhl.de/de/privatkunden.html?piececode=7777777770&verfuegen_selected_tab=FIRST",
+        "details": {},
+        "events": [
+          {
+            "timestamp": "2018-03-02T07:53:47Z",
+            "location": {
+              "address": {
+                "countryCode": "NL",
+                "postalCode": "1043 AG",
+                "addressLocality": "Oderweg 2, AMSTERDAM"
+              }
+            },
+            "statusCode": "pre-transit",
+            "status": "DELIVERED",
+            "description": "JESSICA",
+            "remark": "The shipment is pending completion of customs inspection.",
+            "nextSteps": "The status will be updated following customs inspection."
+          }
+        ]
+      }
+    ],
+    "possibleAdditionalShipmentsUrl": [
+      "/shipments?trackingNumber=7777777770&service=parcel-de",
+      "/shipments?trackingNumber=7777777770&service=parcel-nl"
+    ]
+  },
+  "Error": {
+    "title": "No result found",
+    "detail": "No shipment with given tracking number found.",
+    "status": 404,
+    "instance": "/shipment/8264715546"
+  }
+}

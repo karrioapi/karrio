@@ -1,0 +1,118 @@
+{
+    "RateRequest": {
+        "sender": {
+            "number": "111",
+            "postalCode": "H9P2T7",
+            "provinceCode": "QC",
+            "countryCode": "CA",
+            "name": "Company Name"
+        },
+        "consignee": {
+            "number": "111",
+            "postalCode": "H9P2T7",
+            "provinceCode": "QC",
+            "countryCode": "CA",
+            "name": "Company Name"
+        },
+        "billing": "300081",
+        "paymentType": "Prepaid",
+        "deliveryType": "GRD",
+        "promoCodes": [
+            {
+                "code": "PROMO-465871"
+            }
+        ],
+        "unitOfMeasurement": "K",
+        "surcharges": [
+            {
+                "id": "4658723",
+                "value": "Heating",
+                "type": "HEAT",
+                "name": "Heating",
+                "amount": 0
+            }
+        ],
+        "parcels": [
+            {
+                "id": "1",
+                "parcelType": "Box",
+                "quantity": "3",
+                "weight": "5",
+                "length": "5",
+                "depth": "5",
+                "width": "5",
+                "note": "Special instruction...",
+                "status": 0,
+                "FCA_Class": "100.00",
+                "hazmat": {
+                    "number": "100",
+                    "phone": "4510214786"
+                },
+                "requestReturnLabel": true,
+                "returnWaybill": "Q1234568"
+            }
+        ],
+        "category": "Parcel",
+        "appointment": {
+            "type": "Scheduled",
+            "date": "2020-09-21T03:23:20Z",
+            "time": "15:00",
+            "phone": "5142648798"
+        }
+    },
+    "RateResponse": {
+        "rates": [
+            {
+                "grossAmount": "15",
+                "discountAmount": "10",
+                "fuelChargePercentage": 0,
+                "accountType": "GEN",
+                "rateType": "GRD",
+                "cubicWeight": "4.87",
+                "basicCharge": "17.95",
+                "weightCharge": "13.25",
+                "surcharges": [
+                    {
+                        "id": "4658723",
+                        "value": "Heating",
+                        "type": "HEAT",
+                        "name": "Heating",
+                        "amount": 0
+                    }
+                ],
+                "otherCharge": "5",
+                "subTotal": "28.21",
+                "unitOfMeasurement": "K",
+                "taxesDetails": [
+                    {
+                        "type": "TPS",
+                        "amount": "1.66",
+                        "name": "The goods and services"
+                    }
+                ],
+                "taxes": "4.97",
+                "fuelCharge": "4.94",
+                "zoneCharge": "0.0",
+                "total": "38.12"
+            }
+        ],
+        "delay": "1",
+        "terminalLimit": "1700",
+        "singleShipmentCost": "11",
+        "references": [
+            {
+                "type": "INV",
+                "code": "123"
+            }
+        ],
+        "unitOfMeasurement": "K",
+        "quantity": "2",
+        "parcelType": "Box",
+        "weight": "1.5",
+        "postalCodeDelivery": "H9P2T7",
+        "postalCodePickup": "H9P2T7",
+        "creator": "Maxime",
+        "date": "2020-09-21T03:23:20Z",
+        "warning": "string"
+    }
+}

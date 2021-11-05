@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  pship:
+    image: purplship/ee
+    build:
+      context: ./
+      dockerfile: docker/dev.ee.Dockerfile
+    container_name: pship
+    env_file: .env
+    volumes:
+      - .:/pship/app/
+      - pshipstatics:/pship/static
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - db_network
+      - web_network
+    command: purplship runserver 0.0.0.0:5002
+
+  worker:
+    image: purplship/ee
+    container_name: worker
+    env_file: .env
+    volumes:
+      - .:/pship/app/
+      - pshipdata:/pship/data
+    depends_on:
+      - db
+    networks:
+      - db_network
+    command: purplship run_huey -w 2
+
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+  nginx:
+    extends:
+      file: docker-compose.yml
+      service: nginx
+
+
+volumes:
+  redisdata:
+  pshipdata:
+  pshipstatics:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+

@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "carrier.dhl_ecom_de"
+version = "2021.10rc0"
+description = "DHL eCommerce Germany Web API Schemas Python Data Types library"
+repository="https://github.com/purplship/purplship-carriers"
+homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.dhl_ecom_de"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
+readme = "README.md"
+packages = [
+    { include = "dhl_ecom_de_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = ""
+lxml = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://ws.aramex.net/ShippingAPI/v1/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/">
+    <xs:import schemaLocation="https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+    <xs:element name="ShipmentCreationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q1:ClientInfo"
+                    xmlns:q1="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q2:Transaction"
+                    xmlns:q2="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Shipments" nillable="true" type="q3:ArrayOfShipment"
+                    xmlns:q3="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="LabelInfo" nillable="true" type="q4:LabelInfo"
+                    xmlns:q4="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClientInfo">
+        <xs:sequence>
+            <xs:element name="UserName" nillable="true" type="xs:string"/>
+            <xs:element name="Password" nillable="true" type="xs:string"/>
+            <xs:element name="Version" nillable="true" type="xs:string"/>
+            <xs:element name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="AccountPin" nillable="true" type="xs:string"/>
+            <xs:element name="AccountEntity" nillable="true" type="xs:string"/>
+            <xs:element name="AccountCountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Source" type="xs:int"/>
+            <xs:element minOccurs="0" name="PreferredLanguageCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ClientInfo" nillable="true" type="q5:ClientInfo"
+        xmlns:q5="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Transaction">
+        <xs:sequence>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="Reference4" nillable="true" type="xs:string"/>
+            <xs:element name="Reference5" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Transaction" nillable="true" type="q6:Transaction"
+        xmlns:q6="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfShipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipment" nillable="true" type="q7:Shipment"
+                xmlns:q7="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfShipment" nillable="true" type="q8:ArrayOfShipment"
+        xmlns:q8="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Shipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="Shipper" nillable="true" type="q9:Party"
+                xmlns:q9="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="Consignee" nillable="true" type="q10:Party"
+                xmlns:q10="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ThirdParty" nillable="true" type="q11:Party"
+                xmlns:q11="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ShippingDateTime" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="DueDate" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PickupLocation" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="OperationsInstructions" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="AccountingInstrcutions" nillable="true" type="xs:string"/>
+            <xs:element name="Details" nillable="true" type="q12:ShipmentDetails"
+                xmlns:q12="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="Attachments" nillable="true" type="q13:ArrayOfAttachment"
+                xmlns:q13="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ForeignHAWB" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="TransportType_x0020_" type="xs:int"/>
+            <xs:element minOccurs="0" name="PickupGUID" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="ScheduledDelivery" nillable="true" type="q14:ScheduledDelivery"
+                xmlns:q14="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Shipment" nillable="true" type="q15:Shipment"
+        xmlns:q15="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Party">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="PartyAddress" nillable="true" type="q16:Address"
+                xmlns:q16="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="Contact" nillable="true" type="q17:Contact"
+                xmlns:q17="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Party" nillable="true" type="q18:Party"
+        xmlns:q18="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Address">
+        <xs:sequence>
+            <xs:element name="Line1" nillable="true" type="xs:string"/>
+            <xs:element name="Line2" nillable="true" type="xs:string"/>
+            <xs:element name="Line3" nillable="true" type="xs:string"/>
+            <xs:element name="City" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="StateOrProvinceCode" nillable="true" type="xs:string"/>
+            <xs:element name="PostCode" nillable="true" type="xs:string"/>
+            <xs:element name="CountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Longitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="Latitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="BuildingNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="BuildingName" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Apartment" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="POBox" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Address" nillable="true" type="q19:Address"
+        xmlns:q19="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Contact">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Department" nillable="true" type="xs:string"/>
+            <xs:element name="PersonName" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CompanyName" nillable="true" type="xs:string"/>
+            <xs:element name="PhoneNumber1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PhoneNumber1Ext" nillable="true" type="xs:string"/>
+            <xs:element name="PhoneNumber2" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PhoneNumber2Ext" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="FaxNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CellPhone" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="EmailAddress" nillable="true" type="xs:string"/>
+            <xs:element name="Type" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Contact" nillable="true" type="q20:Contact"
+        xmlns:q20="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ShipmentDetails">
+        <xs:sequence>
+            <xs:element name="Dimensions" nillable="true" type="q21:Dimensions"
+                xmlns:q21="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ActualWeight" nillable="true" type="q22:Weight"
+                xmlns:q22="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ChargeableWeight" nillable="true" type="q23:Weight"
+                xmlns:q23="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="DescriptionOfGoods" nillable="true" type="xs:string"/>
+            <xs:element name="GoodsOriginCountry" nillable="true" type="xs:string"/>
+            <xs:element name="NumberOfPieces" type="xs:int"/>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentOptions" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CustomsValueAmount" nillable="true" type="q24:Money"
+                xmlns:q24="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="CashOnDeliveryAmount" nillable="true" type="q25:Money"
+                xmlns:q25="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="InsuranceAmount" nillable="true" type="q26:Money"
+                xmlns:q26="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="CashAdditionalAmount" nillable="true" type="q27:Money"
+                xmlns:q27="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="CashAdditionalAmountDescription" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CollectAmount" nillable="true" type="q28:Money"
+                xmlns:q28="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="Services" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Items" nillable="true" type="q29:ArrayOfShipmentItem"
+                xmlns:q29="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="DeliveryInstructions" nillable="true" type="q30:DeliveryInstructions"
+                xmlns:q30="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="AdditionalProperties" nillable="true" type="q31:ArrayOfAdditionalProperty"
+                xmlns:q31="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ContainsDangerousGoods" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentDetails" nillable="true" type="q32:ShipmentDetails"
+        xmlns:q32="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Dimensions">
+        <xs:sequence>
+            <xs:element name="Length" type="xs:double"/>
+            <xs:element name="Width" type="xs:double"/>
+            <xs:element name="Height" type="xs:double"/>
+            <xs:element name="Unit" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Dimensions" nillable="true" type="q33:Dimensions"
+        xmlns:q33="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Weight">
+        <xs:sequence>
+            <xs:element name="Unit" nillable="true" type="xs:string"/>
+            <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Weight" nillable="true" type="q34:Weight"
+        xmlns:q34="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Money">
+        <xs:sequence>
+            <xs:element name="CurrencyCode" nillable="true" type="xs:string"/>
+            <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Money" nillable="true" type="q35:Money"
+        xmlns:q35="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfShipmentItem">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentItem" nillable="true" type="q36:ShipmentItem"
+                xmlns:q36="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfShipmentItem" nillable="true" type="q37:ArrayOfShipmentItem"
+        xmlns:q37="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ShipmentItem">
+        <xs:sequence>
+            <xs:element name="PackageType" nillable="true" type="xs:string"/>
+            <xs:element name="Quantity" type="xs:int"/>
+            <xs:element name="Weight" nillable="true" type="q38:Weight"
+                xmlns:q38="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PiecesDimensions" nillable="true" type="q39:ArrayOfDimensions"
+                xmlns:q39="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="CommodityCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="GoodsDescription" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CountryOfOrigin" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CustomsValue" nillable="true" type="q40:Money"
+                xmlns:q40="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ContainerNumber" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentItem" nillable="true" type="q41:ShipmentItem"
+        xmlns:q41="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfDimensions">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Dimensions" nillable="true" type="q42:Dimensions"
+                xmlns:q42="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfDimensions" nillable="true" type="q43:ArrayOfDimensions"
+        xmlns:q43="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="DeliveryInstructions">
+        <xs:sequence>
+            <xs:element name="Option" nillable="true" type="xs:string"/>
+            <xs:element name="Reference" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="DeliveryInstructions" nillable="true" type="q44:DeliveryInstructions"
+        xmlns:q44="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfAdditionalProperty">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AdditionalProperty" nillable="true" type="q45:AdditionalProperty"
+                xmlns:q45="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAdditionalProperty" nillable="true" type="q46:ArrayOfAdditionalProperty"
+        xmlns:q46="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="AdditionalProperty">
+        <xs:sequence>
+            <xs:element name="CategoryName" nillable="true" type="xs:string"/>
+            <xs:element name="Name" nillable="true" type="xs:string"/>
+            <xs:element name="Value" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AdditionalProperty" nillable="true" type="q47:AdditionalProperty"
+        xmlns:q47="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfAttachment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Attachment" nillable="true" type="q48:Attachment"
+                xmlns:q48="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAttachment" nillable="true" type="q49:ArrayOfAttachment"
+        xmlns:q49="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Attachment">
+        <xs:sequence>
+            <xs:element name="FileName" nillable="true" type="xs:string"/>
+            <xs:element name="FileExtension" nillable="true" type="xs:string"/>
+            <xs:element name="FileContents" nillable="true" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Attachment" nillable="true" type="q50:Attachment"
+        xmlns:q50="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ScheduledDelivery">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="PreferredDeliveryDate" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="PreferredDeliveryTimeFrame_x0020_" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PreferredDeliveryTime" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ScheduledDelivery" nillable="true" type="q51:ScheduledDelivery"
+        xmlns:q51="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="LabelInfo">
+        <xs:sequence>
+            <xs:element name="ReportID" type="xs:int"/>
+            <xs:element name="ReportType" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="LabelInfo" nillable="true" type="q52:LabelInfo"
+        xmlns:q52="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="ShipmentCreationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q53:Transaction"
+                    xmlns:q53="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q54:ArrayOfNotification"
+                    xmlns:q54="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Shipments" nillable="true" type="q55:ArrayOfProcessedShipment"
+                    xmlns:q55="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfNotification">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="q56:Notification"
+                xmlns:q56="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfNotification" nillable="true" type="q57:ArrayOfNotification"
+        xmlns:q57="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Notification">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Message" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Notification" nillable="true" type="q58:Notification"
+        xmlns:q58="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfProcessedShipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessedShipment" nillable="true" type="q59:ProcessedShipment"
+                xmlns:q59="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfProcessedShipment" nillable="true" type="q60:ArrayOfProcessedShipment"
+        xmlns:q60="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ProcessedShipment">
+        <xs:sequence>
+            <xs:element name="ID" nillable="true" type="xs:string"/>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="ForeignHAWB" nillable="true" type="xs:string"/>
+            <xs:element name="HasErrors" type="xs:boolean"/>
+            <xs:element name="Notifications" nillable="true" type="q61:ArrayOfNotification"
+                xmlns:q61="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ShipmentLabel" nillable="true" type="q62:ShipmentLabel"
+                xmlns:q62="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ShipmentDetails" nillable="true" type="q63:ProcessedShipmentDetails"
+                xmlns:q63="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="ShipmentAttachments" nillable="true" type="q64:ArrayOfProcessedShipmentAttachment"
+                xmlns:q64="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProcessedShipment" nillable="true" type="q65:ProcessedShipment"
+        xmlns:q65="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ShipmentLabel">
+        <xs:sequence>
+            <xs:element name="LabelURL" nillable="true" type="xs:string"/>
+            <xs:element name="LabelFileContents" nillable="true" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentLabel" nillable="true" type="q66:ShipmentLabel"
+        xmlns:q66="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ProcessedShipmentDetails">
+        <xs:sequence>
+            <xs:element name="Origin" nillable="true" type="xs:string"/>
+            <xs:element name="Destination" nillable="true" type="xs:string"/>
+            <xs:element name="ChargeableWeight" nillable="true" type="q67:Weight"
+                xmlns:q67="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="DescriptionOfGoods" nillable="true" type="xs:string"/>
+            <xs:element name="GoodsOriginCountry" nillable="true" type="xs:string"/>
+            <xs:element name="NumberOfPieces" type="xs:int"/>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentOptions" nillable="true" type="xs:string"/>
+            <xs:element name="CustomsValueAmount" nillable="true" type="q68:Money"
+                xmlns:q68="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="CashOnDeliveryAmount" nillable="true" type="q69:Money"
+                xmlns:q69="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="InsuranceAmount" nillable="true" type="q70:Money"
+                xmlns:q70="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="CashAdditionalAmount" nillable="true" type="q71:Money"
+                xmlns:q71="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="CollectAmount" nillable="true" type="q72:Money"
+                xmlns:q72="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="Services" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProcessedShipmentDetails" nillable="true" type="q73:ProcessedShipmentDetails"
+        xmlns:q73="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfProcessedShipmentAttachment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessedShipmentAttachment" nillable="true" type="q74:ProcessedShipmentAttachment"
+                xmlns:q74="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfProcessedShipmentAttachment" nillable="true" type="q75:ArrayOfProcessedShipmentAttachment"
+        xmlns:q75="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ProcessedShipmentAttachment">
+        <xs:sequence>
+            <xs:element name="Name" nillable="true" type="xs:string"/>
+            <xs:element name="Type" type="q76:ProcessedShipmentAttachmentType"
+                xmlns:q76="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="Url" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProcessedShipmentAttachment" nillable="true" type="q77:ProcessedShipmentAttachment"
+        xmlns:q77="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:simpleType name="ProcessedShipmentAttachmentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CommercialInvoice"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="ProcessedShipmentAttachmentType" nillable="true" type="q78:ProcessedShipmentAttachmentType"
+        xmlns:q78="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="LabelPrintingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q79:ClientInfo"
+                    xmlns:q79="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q80:Transaction"
+                    xmlns:q80="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProductGroup" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="OriginEntity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="LabelInfo" nillable="true" type="q81:LabelInfo"
+                    xmlns:q81="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="LabelPrintingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q82:Transaction"
+                    xmlns:q82="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q83:ArrayOfNotification"
+                    xmlns:q83="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ShipmentLabel" nillable="true" type="q84:ShipmentLabel"
+                    xmlns:q84="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PickupCreationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q85:ClientInfo"
+                    xmlns:q85="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q86:Transaction"
+                    xmlns:q86="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Pickup" nillable="true" type="q87:Pickup"
+                    xmlns:q87="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="LabelInfo" nillable="true" type="q88:LabelInfo"
+                    xmlns:q88="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Pickup">
+        <xs:sequence>
+            <xs:element name="PickupAddress" nillable="true" type="q89:Address"
+                xmlns:q89="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="PickupContact" nillable="true" type="q90:Contact"
+                xmlns:q90="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="PickupLocation" nillable="true" type="xs:string"/>
+            <xs:element name="PickupDate" type="xs:dateTime"/>
+            <xs:element name="ReadyTime" type="xs:dateTime"/>
+            <xs:element name="LastPickupTime" type="xs:dateTime"/>
+            <xs:element name="ClosingTime" type="xs:dateTime"/>
+            <xs:element name="Comments" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Vehicle" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Shipments" nillable="true" type="q91:ArrayOfShipment"
+                xmlns:q91="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="PickupItems" nillable="true" type="q92:ArrayOfPickupItemDetail"
+                xmlns:q92="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="ExistingShipments" nillable="true" type="q93:ArrayOfExistingShipment"
+                xmlns:q93="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element minOccurs="0" name="Branch" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="RouteCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Dispatcher" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Pickup" nillable="true" type="q94:Pickup"
+        xmlns:q94="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfPickupItemDetail">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="PickupItemDetail" nillable="true" type="q95:PickupItemDetail"
+                xmlns:q95="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfPickupItemDetail" nillable="true" type="q96:ArrayOfPickupItemDetail"
+        xmlns:q96="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="PickupItemDetail">
+        <xs:sequence>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="NumberOfShipments" type="xs:int"/>
+            <xs:element name="PackageType" nillable="true" type="xs:string"/>
+            <xs:element name="Payment" nillable="true" type="xs:string"/>
+            <xs:element name="ShipmentWeight" nillable="true" type="q97:Weight"
+                xmlns:q97="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ShipmentVolume" nillable="true" type="q98:Volume"
+                xmlns:q98="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="NumberOfPieces" type="xs:int"/>
+            <xs:element name="CashAmount" nillable="true" type="q99:Money"
+                xmlns:q99="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ExtraCharges" nillable="true" type="q100:Money"
+                xmlns:q100="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="ShipmentDimensions" nillable="true" type="q101:Dimensions"
+                xmlns:q101="http://ws.aramex.net/ShippingAPI/v1/"/>
+            <xs:element name="Comments" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PickupItemDetail" nillable="true" type="q102:PickupItemDetail"
+        xmlns:q102="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="Volume">
+        <xs:sequence>
+            <xs:element name="Unit" nillable="true" type="xs:string"/>
+            <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Volume" nillable="true" type="q103:Volume"
+        xmlns:q103="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfExistingShipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ExistingShipment" nillable="true" type="q104:ExistingShipment"
+                xmlns:q104="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfExistingShipment" nillable="true" type="q105:ArrayOfExistingShipment"
+        xmlns:q105="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ExistingShipment">
+        <xs:sequence>
+            <xs:element name="Number" nillable="true" type="xs:string"/>
+            <xs:element name="OriginEntity" nillable="true" type="xs:string"/>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ExistingShipment" nillable="true" type="q106:ExistingShipment"
+        xmlns:q106="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="PickupCreationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q107:Transaction"
+                    xmlns:q107="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q108:ArrayOfNotification"
+                    xmlns:q108="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="ProcessedPickup" nillable="true" type="q109:ProcessedPickup"
+                    xmlns:q109="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ProcessedPickup">
+        <xs:sequence>
+            <xs:element name="ID" nillable="true" type="xs:string"/>
+            <xs:element name="GUID" type="ser:guid"/>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="ProcessedShipments" nillable="true" type="q110:ArrayOfProcessedShipment"
+                xmlns:q110="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProcessedPickup" nillable="true" type="q111:ProcessedPickup"
+        xmlns:q111="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="PickupCancelationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q112:ClientInfo"
+                    xmlns:q112="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q113:Transaction"
+                    xmlns:q113="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="PickupGUID" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PickupCancelationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q114:Transaction"
+                    xmlns:q114="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q115:ArrayOfNotification"
+                    xmlns:q115="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReserveRangeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q116:ClientInfo"
+                    xmlns:q116="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q117:Transaction"
+                    xmlns:q117="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Entity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProductGroup" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Count" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReserveRangeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q118:Transaction"
+                    xmlns:q118="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q119:ArrayOfNotification"
+                    xmlns:q119="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="FromWaybill" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ToWaybill" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="LastReservedShipmentNumberRangeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q120:ClientInfo"
+                    xmlns:q120="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q121:Transaction"
+                    xmlns:q121="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Entity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProductGroup" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="LastReservedShipmentNumberRangeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q122:Transaction"
+                    xmlns:q122="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q123:ArrayOfNotification"
+                    xmlns:q123="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="FromWaybill" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ToWaybill" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ScheduledDeliveryRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q124:ClientInfo"
+                    xmlns:q124="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q125:Transaction"
+                    xmlns:q125="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Address" nillable="true" type="q126:Address"
+                    xmlns:q126="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="ScheduledDelivery" nillable="true" type="q127:ScheduledDelivery"
+                    xmlns:q127="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProductGroup" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Entity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ConsigneePhone" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ShipperNumber" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ShipperReference" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Reference1" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Reference2" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Reference3" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ScheduledDeliveryResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q128:Transaction"
+                    xmlns:q128="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q129:ArrayOfNotification"
+                    xmlns:q129="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="HoldCreationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q130:ClientInfo"
+                    xmlns:q130="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q131:Transaction"
+                    xmlns:q131="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="ShipmentHolds" nillable="true" type="q132:ArrayOfShipmentHoldDetails"
+                    xmlns:q132="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfShipmentHoldDetails">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentHoldDetails" nillable="true" type="q133:ShipmentHoldDetails"
+                xmlns:q133="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfShipmentHoldDetails" nillable="true" type="q134:ArrayOfShipmentHoldDetails"
+        xmlns:q134="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ShipmentHoldDetails">
+        <xs:sequence>
+            <xs:element name="ShipmentNumber" nillable="true" type="xs:string"/>
+            <xs:element name="Comment" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentHoldDetails" nillable="true" type="q135:ShipmentHoldDetails"
+        xmlns:q135="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="HoldCreationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q136:Transaction"
+                    xmlns:q136="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q137:ArrayOfNotification"
+                    xmlns:q137="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="ProcessedShipmentHolds" nillable="true" type="q138:ArrayOfProcessedShipmentHold"
+                    xmlns:q138="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfProcessedShipmentHold">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessedShipmentHold" nillable="true" type="q139:ProcessedShipmentHold"
+                xmlns:q139="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfProcessedShipmentHold" nillable="true" type="q140:ArrayOfProcessedShipmentHold"
+        xmlns:q140="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ProcessedShipmentHold">
+        <xs:sequence>
+            <xs:element name="ID" nillable="true" type="xs:string"/>
+            <xs:element name="HasErrors" type="xs:boolean"/>
+            <xs:element name="Notifications" nillable="true" type="q141:ArrayOfNotification"
+                xmlns:q141="http://ws.aramex.net/ShippingAPI/v1/"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProcessedShipmentHold" nillable="true" type="q142:ProcessedShipmentHold"
+        xmlns:q142="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="ShipmentAttachmentAdditionRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q143:ClientInfo"
+                    xmlns:q143="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q144:Transaction"
+                    xmlns:q144="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProductGroup" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="OriginEntity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="AttachmentInfo" nillable="true" type="q145:AttachmentInfo"
+                    xmlns:q145="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="AttachmentInfo">
+        <xs:sequence>
+            <xs:element name="FileName" nillable="true" type="xs:string"/>
+            <xs:element name="FileExtension" nillable="true" type="xs:string"/>
+            <xs:element name="FileContentsAsBase64String" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AttachmentInfo" nillable="true" type="q146:AttachmentInfo"
+        xmlns:q146="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:element name="ShipmentAttachmentAdditionResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q147:Transaction"
+                    xmlns:q147="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q148:ArrayOfNotification"
+                    xmlns:q148="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PickupValidationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="q149:ClientInfo"
+                    xmlns:q149="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q150:Transaction"
+                    xmlns:q150="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Pickup" nillable="true" type="q151:Pickup"
+                    xmlns:q151="http://ws.aramex.net/ShippingAPI/v1/"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PickupValidationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="q152:Transaction"
+                    xmlns:q152="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="q153:ArrayOfNotification"
+                    xmlns:q153="http://ws.aramex.net/ShippingAPI/v1/"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

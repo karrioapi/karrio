@@ -1,0 +1,13 @@
+{
+  "shippingRates": [
+    {
+      "productCode": "string",
+      "rate": 0.0,
+      "currencyType": "string"
+    }
+  ],
+  "responseStatus": {
+    "responseStatusCode": "Continue",
+    "responseStatusMessage": "string"
+  }
+}

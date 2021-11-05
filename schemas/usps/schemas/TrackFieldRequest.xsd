@@ -1,0 +1,27 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="TrackFieldRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="Revision" minOccurs="0"/>
+                <xs:element type="xs:string" name="ClientIp" minOccurs="0"/>
+                <xs:element type="xs:string" name="SourceId" minOccurs="0"/>
+                <xs:simpleType name="SourceIdZIP" minOccurs="0">
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[0-9]{5}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+                <xs:element name="TrackID" maxOccurs="25">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:short" name="DestinationZipCode" minOccurs="0"/>
+                            <xs:element type="xs:date" name="MailingDate" minOccurs="0"/>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="ID"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

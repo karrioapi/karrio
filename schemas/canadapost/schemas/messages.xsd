@@ -1,0 +1,18 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/messages"
+            xmlns="http://www.canadapost.ca/ws/messages"
+            elementFormDefault="qualified">
+    <xsd:element name="messages">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="message" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="code" type="xsd:normalizedString"/>
+                            <xsd:element name="description" type="xsd:normalizedString"/>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
