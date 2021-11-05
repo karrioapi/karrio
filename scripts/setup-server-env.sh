@@ -5,11 +5,11 @@ source "scripts/create-new-env.sh"
 
 # Install requirements
 cd "${ROOT}"
-if [[ "$*" != *--ee* ]];
+if [[ "$*" != *--insiders* ]];
 then
     pip install -r "${ROOT:?}/requirements.server.dev.txt"
 else
-    pip install -r "${ROOT:?}/requirements.server.ee.dev.txt"
+    pip install -r "${ROOT:?}/requirements.server.insiders.dev.txt"
 fi
 cd -
 

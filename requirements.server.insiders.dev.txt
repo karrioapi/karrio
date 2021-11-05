@@ -1,5 +1,5 @@
 -r ./requirements.server.dev.txt
 
 # purplship enterprise modules
--e ./ee/server/tenants
--e ./ee/server/orgs
+-e ./insiders/server/tenants
+-e ./insiders/server/orgs

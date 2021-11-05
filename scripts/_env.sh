@@ -5,7 +5,7 @@ ROOT="$( cd "$( dirname $0 )/../" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
 DIST="${ROOT:?}/${ENV_DIR}/dist"
-EE_DIST="${ROOT:?}/${ENV_DIR}/ee-dist"
+EE_DIST="${ROOT:?}/${ENV_DIR}/insiders-dist"
 
 mkdir -p "${DIST}" "${EE_DIST}"
 
@@ -21,7 +21,7 @@ clean_build_files() {
 }
 
 backup_wheels() {
-    if [[ "$*" != *--ee* ]];
+    if [[ "$*" != *--insiders* ]];
     then
         find "${1}/dist" -name \*.whl -prune -exec mv '{}' "${DIST}" \;
     else

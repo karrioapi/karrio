@@ -44,18 +44,18 @@ jobs:
             purplship test --failfast purplship.server.graph.tests
           '
 
-  server-ee-tests:
+  server-insiders-tests:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Run ee Tests
+      - name: Run insiders Tests
         run: |
           sudo chown -R 1000 ./
           docker-compose -f docker-compose.test.yml run --rm pship bash -c '
             cd app &&
             pip install -r requirements.dev.txt &&
-            pip install -r requirements.server.ee.dev.txt &&
+            pip install -r requirements.server.insiders.dev.txt &&
             cd -
             purplship migrate &&
             purplship test --failfast purplship.server.proxy.tests &&

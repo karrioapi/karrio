@@ -5,7 +5,7 @@ ENV PATH="/pship/venv/bin:$PATH"
 COPY . /pship/app/
 RUN cd /pship/app && \
     pip install -r requirements.dev.txt --upgrade && \
-    pip install -r requirements.server.ee.dev.txt
+    pip install -r requirements.server.insiders.dev.txt
 
 
 # The runtime image

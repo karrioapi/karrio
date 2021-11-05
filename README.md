@@ -43,7 +43,7 @@ We are currently in Public Alpha. Watch "releases" of this repo to get notified 
 
 ### Purplship OSS
 
-> check the latest version tags of the purplship/server image on [Docker Hub](https://hub.docker.com/r/purplship/purplship-server/tags)
+> check the latest version tags of the purplship/server image on [Docker Hub](https://hub.docker.com/r/purplship/server/tags)
 
 <details>
 <summary>Using our Docker image</summary>
@@ -277,10 +277,10 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://docs.purplship.com)
+- [**Documentation**](https://purplship.com/docs)
 - [**Community Discussions**](https://github.com/purplship/purplship/discussions)
 - [**Issue Tracker**](https://github.com/purplship/purplship/issues)
-- [**Blog**](https://blog.purplship.com)
+- [**Blog**](https://purplship.com/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
 
@@ -288,7 +288,7 @@ print(rates)
 
 This repository contains both OSS-licensed and non-OSS-licensed files. We maintain one repository rather than two separate repositories mainly for development convenience.
 
-All files in the `/ee` fall under [Enterprise LICENSE](/ee/LICENSE).
+All files in the `/insiders` fall under [Purplship LICENSE](/insiders/LICENSE).
 
 The remaining files fall under the [Apache 2 license](LICENSE). Purplship OSS is built only from the Apache-licensed files in this repository.
 
