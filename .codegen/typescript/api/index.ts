@@ -47,8 +47,7 @@ export class PurplshipClient implements PurplshipClientInterface {
         "Accept": "application/json",
         "Content-Type": "application/json",
       },
-      ...clientConfig,
-      ...(typeof window !== 'undefined' ? {} : { fetchApi: require('node-fetch') }),
+      ...clientConfig
     });
 
     this.config = clientConfig;

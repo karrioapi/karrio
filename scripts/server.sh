@@ -73,12 +73,22 @@ elif [[ "$*" == *gen:py:cli* ]]; then
 	cd -
 elif [[ "$*" == *build:js* ]]; then
 	cd "${ROOT:?}/.codegen/typescript"
-	rm -rf node_modules; yarn;
+	rm -rf node_modules; 
+    yarn;
 	npx gulp build --output "${ROOT:?}/server/main/purplship/server/static/purplship/js/purplship.js"
 	cd -
 	purplship collectstatic --noinput
 elif [[ "$*" == *build:pkgs* ]]; then
 	cd "${ROOT:?}"
+    rm -rf "${DIST}/*"
+
+    # Generate ts client
+    . ${ROOT}/scripts/server.sh gen:ts:cli || exit 1
+
+    # Build js client
+    . ${ROOT}/scripts/server.sh build:js || exit 1
+
+    # Build server packages
     sm=$(find "${ROOT:?}/server" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
@@ -86,9 +96,9 @@ elif [[ "$*" == *build:pkgs* ]]; then
     done
 
 	cd -
-elif [[ "$*" == *build:ee* ]]; then
+elif [[ "$*" == *build:insiders* ]]; then
 	cd "${ROOT:?}"
-    sm=$(find "${ROOT:?}/ee" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
+    sm=$(find "${ROOT:?}/insiders" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
 		./scripts/build-package-wheel.sh "${module}" || exit 1

@@ -6626,10 +6626,10 @@
 
     var PurplshipClient = /** @class */ (function () {
         function PurplshipClient(clientConfig) {
-            var config = new Configuration(__assign(__assign({ credentials: "include", headers: {
+            var config = new Configuration(__assign({ credentials: "include", headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                } }, clientConfig), (typeof window !== 'undefined' ? {} : { fetchApi: require('node-fetch') })));
+                } }, clientConfig));
             this.config = clientConfig;
             this.API = new APIApi(config);
             this.addresses = new AddressesApi(config);
