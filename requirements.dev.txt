@@ -1,6 +1,0 @@
-carrier.ics-courier==2021.10rc0
-carrier.asendia-us==2021.2.2
-
--e extensions/ics_courier
--e extensions/asendia_us
--e extensions/ups_ground
