@@ -114,5 +114,8 @@ venv.bak/
 staticfiles/*
 server/main/purplship/server/staticfiles/*
 !server/main/purplship/server/staticfiles/.gitkeep
-codegen/
+
 .pship/
+.codegen/*
+!.codegen/typescript/
+.codegen/typescript/api/generated
