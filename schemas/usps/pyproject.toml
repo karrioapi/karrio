@@ -19,8 +19,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-six = "^1.15.0"
-lxml = "^4.6.2"
+six = ""
+lxml = ""
 
 
 [tool.poetry.dev-dependencies]
