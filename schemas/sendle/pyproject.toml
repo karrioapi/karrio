@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "carrier.sendle"
+version = "2021.2.1"
+description = "Sendle API Schemas Python Data Types library"
+repository="https://github.com/purplship/purplship"
+homepage="https://github.com/purplship/purplship/tree/main/carrier.sendle"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
+readme = "README.md"
+packages = [
+    { include = "sendle_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+jstruct = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

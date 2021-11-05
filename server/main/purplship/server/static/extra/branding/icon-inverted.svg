@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+  <style type="text/css">
+	.st0{fill:#79E5DD;}
+	.st1{fill:#FF4800;}
+	.st2{fill:#fff;fill-opacity:1;fill-rule:nonzero;stroke:none}
+  </style>
+  <g>
+    <path class="st0" d="M289,42.7h-67v0.1h-93.1c-39.2,0.1-71,31.9-71.1,71.1v141.7c0.1,39.2,31.9,71,71.1,71.1H251   c13.5,0,26.7-3.9,38.1-11.2V42.7z"/>
+    <circle class="st1" cx="156.9" cy="370.2" r="99.1"/>
+    <circle class="st2" cx="289" cy="208" r="165.2"/>
+  </g>
+</svg>

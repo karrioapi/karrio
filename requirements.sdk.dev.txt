@@ -1,0 +1,5 @@
+nose
+
+-e ./sdk/extensions/ics_courier
+-e ./sdk/extensions/asendia_us
+-e ./sdk/extensions/ups_ground

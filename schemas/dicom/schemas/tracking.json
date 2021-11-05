@@ -1,0 +1,61 @@
+{
+    "tracking": [
+        {
+            "custRefNum": "string",
+            "activities": [
+                {
+                    "activityDate": "2021-02-10T04:27:31Z",
+                    "createDate": "2021-02-10T04:27:31Z",
+                    "status": "Delivered",
+                    "statusDetail": "Shipper Release NSR",
+                    "code": "DL",
+                    "codeDetail": "NI",
+                    "group": "DL",
+                    "additionalInformation": "Package did not need a signature.",
+                    "terminal": "MTL",
+                    "latitude": "45.46770054493765",
+                    "longitude": "-73.71983885765076",
+                    "height": "10.5",
+                    "weight": "5.0",
+                    "width": "5.0",
+                    "length": "5.5",
+                    "parcelId": "2"
+                }
+            ],
+            "activityImages": [
+                {}
+            ],
+            "isAuthorized": true,
+            "id": "78852145",
+            "trackingNumber": "W1234567",
+            "category": "Parcel",
+            "paymentType": "Prepaid",
+            "billingAccount": "400040",
+            "note": "This is a note for the driver",
+            "status": "0",
+            "direction": "CA",
+            "sender": {},
+            "consignee": {},
+            "unitOfMeasurement": "K",
+            "parcels": [
+                {}
+            ],
+            "surcharges": [
+                {}
+            ],
+            "createDate": "2021-02-10T04:27:31Z",
+            "updateDate": "2021-02-10T04:27:31Z",
+            "deliveryType": "GRD",
+            "references": [
+                {}
+            ],
+            "returnAddress": {},
+            "appointment": {},
+            "promoCodes": [
+                {}
+            ],
+            "internationalDetails": {},
+            "pickupDate": "2021-02-10T04:27:31Z"
+        }
+    ]
+}

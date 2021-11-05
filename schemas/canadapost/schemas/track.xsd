@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" targetNamespace="http://www.canadapost.ca/ws/track" xmlns="http://www.canadapost.ca/ws/track" elementFormDefault="qualified">
+
+  	<xsd:annotation>
+		<xsd:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:annotation>
+		<xsd:documentation>Tracking REST schema</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="tracking-summary">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="pin-summary" type="pin-summary" maxOccurs="100" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="tracking-detail">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="pin" type="xsd:string" />
+				<xsd:element name="active-exists" type="xsd:string" />
+				<xsd:element name="archive-exists" type="xsd:string" />
+				<xsd:element name="changed-expected-date" type="xsd:string" />
+				<xsd:element name="destination-postal-id" type="xsd:string" />
+				<xsd:element name="expected-delivery-date" type="emptyDate" />
+				<xsd:element name="changed-expected-delivery-reason" type="xsd:string" />
+				<xsd:element name="mailed-by-customer-number" type="xsd:string" />
+				<xsd:element name="mailed-on-behalf-of-customer-number" type="xsd:string" />
+				<xsd:element name="original-pin" type="xsd:string" />
+				<xsd:element name="service-name" type="xsd:string" />
+				<xsd:element name="service-name-2" type="xsd:string" />
+				<xsd:element name="customer-ref-1" type="xsd:string" />
+				<xsd:element name="customer-ref-2" type="xsd:string" />
+				<xsd:element name="return-pin" type="xsd:string" />
+				<xsd:element name="signature-image-exists" type="xsd:string" />
+				<xsd:element name="suppress-signature" type="xsd:string" />
+				<xsd:element name="delivery-options" type="delivery-options" />
+				<xsd:element name="cod-remit-info" type="cod-remit-info" minOccurs="0" />
+				<xsd:element name="significant-events" type="significant-events" />
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>	
+
+	<xsd:element name="signature-image">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="filename" type="xsd:string" />
+				<xsd:element name="image" type="xsd:string" />
+				<xsd:element name="mime-type" type="xsd:string" />
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="delivery-confirmation-certificate">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="filename" type="xsd:string" />
+				<xsd:element name="image" type="xsd:string" />
+				<xsd:element name="mime-type" type="xsd:string" />
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>	
+
+	<xsd:complexType name="pin-summary">
+		<xsd:all>
+			<xsd:element name="pin" type="xsd:string" />
+			<xsd:element name="origin-postal-id" type="xsd:string" />
+			<xsd:element name="destination-postal-id" type="xsd:string" />
+			<xsd:element name="destination-province" type="xsd:string" />
+			<xsd:element name="service-name" type="xsd:string" />
+			<xsd:element name="mailed-on-date" type="emptyDate" />
+			<xsd:element name="expected-delivery-date" type="emptyDate" />
+			<xsd:element name="actual-delivery-date" type="emptyDate" />
+			<xsd:element name="delivery-option-completed-ind" type="xsd:string" />
+			<xsd:element name="event-date-time" type="xsd:string" />
+			<xsd:element name="event-description" type="xsd:string" />
+			<xsd:element name="attempted-date" type="emptyDate" />
+			<xsd:element name="customer-ref-1" type="xsd:string" />
+			<xsd:element name="customer-ref-2" type="xsd:string" />
+			<xsd:element name="return-pin" type="xsd:string" />
+			<xsd:element name="event-type" type="xsd:string" />
+			<xsd:element name="event-location" type="xsd:string" />
+			<xsd:element name="signatory-name" type="xsd:string" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="delivery-options">
+		<xsd:sequence>
+			<xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="delivery-option" type="xsd:string" />
+						<xsd:element name="delivery-option-description" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="significant-events">
+		<xsd:sequence>
+			<xsd:element name="occurrence" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="event-identifier" type="xsd:string" />
+						<xsd:element name="event-date" type="xsd:string" />
+						<xsd:element name="event-time" type="xsd:string" />
+						<xsd:element name="event-time-zone" type="xsd:string" />
+						<xsd:element name="event-description" type="xsd:string" />
+						<xsd:element name="signatory-name" type="xsd:string" />
+						<xsd:element name="event-site" type="xsd:string" />
+						<xsd:element name="event-province" type="xsd:string" />
+						<xsd:element name="event-retail-location-id" type="xsd:string" />
+						<xsd:element name="event-retail-name" type="xsd:string" />
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="cod-remit-info">
+		<xsd:all>
+			<xsd:element name="pin" type="xsd:string" />
+			<xsd:element name="type" type="xsd:string" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:simpleType name="emptyDate">
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+
+</xsd:schema>

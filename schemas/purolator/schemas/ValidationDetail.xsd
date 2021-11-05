@@ -1,0 +1,37 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF">
+    <xs:complexType name="ArrayOfValidationDetail">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfValidationDetail" nillable="true" type="tns:ArrayOfValidationDetail"/>
+    <xs:complexType name="ValidationDetail">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>This class holds the results of a single validation. Effectively, it's the same as a ValidationResult, but creating a separate class allows us to mark up a DataContract with impunity.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Key" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Get or set a name describing the location of the validation result.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Get or set a message describing the validation failure.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Tag" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Get or set a value characterizing the fault.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+</xs:schema>

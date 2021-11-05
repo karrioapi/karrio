@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xsd:element name="links">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="link" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="LinkType">
+        <xsd:attribute name="href" type="xsd:anyURI" use="required"/>
+        <xsd:attribute name="rel" type="RelType" use="required"/>
+        <xsd:attribute name="index" type="xsd:nonNegativeInteger" use="optional"/>
+        <xsd:attribute name="media-type" type="xsd:normalizedString" use="required"/>
+    </xsd:complexType>
+
+    <xsd:element name="link" type="LinkType"/>
+    <xsd:simpleType name="RelType">
+        <xsd:restriction base="xsd:string">
+
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="CcDetailsType">
+        <xsd:all>
+            <xsd:element name="cc-type" type="CcType" />
+            <xsd:element name="cc-number" type="CcNumberType" />
+            <xsd:element name="cc-name" type="CcNameType" />
+            <xsd:element name="cc-expiry" type="CcExpiryType" />
+            <xsd:element name="cc-cvv" type="CcCvvType" minOccurs="0" />
+            <xsd:element name="cc-address-details" type="CcAddressDetailsType" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="CcType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:enumeration value="MC"/>
+            <xsd:enumeration value="VIS"/>
+            <xsd:enumeration value="AME"/>
+            <xsd:enumeration value="DC"/>
+            <xsd:enumeration value="DIS"/>
+            <xsd:enumeration value="ER"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcNumberType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:pattern value="\d{1,25}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcMaskedNumberType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="25" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcNameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="40" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcExpiryType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:pattern value="\d{2}/\d{2}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcCvvType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="6" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcAuthorizationCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CcAuthorizationAmountType">
+        <xsd:restriction base="xsd:decimal">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CurrencyType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="CcAddressDetailsType">
+        <xsd:all>
+            <xsd:element name="address-line-1">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="address-line-2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="city">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="40" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="prov-state" type="ProvinceStateOrInternationalType" />
+            <xsd:element name="postal-zip-code" type="PostalCodeOrZipOrInternationalType" minOccurs="0" />
+            <xsd:element name="country-code" type="CountryCodeType" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ThirdPartyAccountIdType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="16" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ThirdPartyAccountCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:enumeration value="PB"/>
+            <xsd:enumeration value="FP"/>
+            <xsd:enumeration value="NE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AuthorizationCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="16" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AuthorizationAmountType">
+        <xsd:restriction base="xsd:decimal">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProvinceStateOrInternationalType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="20"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+  
+    
+    <xsd:simpleType name="PostalCodeOrZipType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="([A-Z]\d[A-Z]\d[A-Z]\d)|(\d{5}(-\d{4})?)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PostalCodeOrZipOrInternationalType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="14"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PostalCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Z]\d[A-Z]\d[A-Z]\d"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ZipCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{5}(-\d{4})?"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CountryCodeType">
+        <xsd:restriction base="xsd:string">
+             <xsd:pattern value="[a-zA-Z][a-zA-Z]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StateType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProvinceType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PhoneNumberType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CustomerIDType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{1,10}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ContractIDType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{1,10}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MethodOfPaymentType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="15" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PoNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[a-zA-Z0-9]{1,10}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OutletIDType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CostTypeNonZero">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minExclusive value="0" />
+            <xsd:maxInclusive value="999999.99" />
+            <xsd:fractionDigits value="2" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CostTypeAllowsZero">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="999999.99" />
+            <xsd:fractionDigits value="2" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+     <xsd:simpleType name="CostTypeAllowsNegative">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="-999999.99" />
+            <xsd:maxInclusive value="999999.99" />
+            <xsd:fractionDigits value="2" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ServiceCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="32"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="Time24HoursType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:pattern value="((0?\d)|(1\d)|(2[0-3])):[0-5]\d" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    
+     <xsd:simpleType name="DimensionMeasurementType">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minExclusive value="0"/>
+            <xsd:maxInclusive value="999.9"/>
+            <xsd:fractionDigits value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="WeightType">
+       <xsd:restriction base="xsd:decimal">
+         <xsd:minExclusive value="0"/>
+         <xsd:maxInclusive value="99.999"/>
+         <xsd:fractionDigits value="3"/>
+         </xsd:restriction>
+     </xsd:simpleType>
+
+    <xsd:simpleType name="MeterNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9]{7}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="CustomsUnitOfMeasure">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:length value="3" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

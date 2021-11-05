@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "purplship.freightcom"
+version = "2021.10rc3"
+homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/freightcom"
+repository="https://github.com/purplship/purplship"
+description = "Freightcom purplship extension"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache License Version 2.0"
+readme = "README.md"
+packages = [{ include = "purplship" }, { include = "freightcom_lib" }]
+classifiers=[
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+"purplship" = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

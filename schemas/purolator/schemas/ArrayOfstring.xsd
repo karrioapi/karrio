@@ -1,0 +1,10 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+    <xsd:complexType name="ArrayOfstring">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring"/>
+</xsd:schema>

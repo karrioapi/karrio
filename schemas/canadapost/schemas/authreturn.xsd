@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/authreturn-v2" xmlns="http://www.canadapost.ca/ws/authreturn-v2" elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:documentation>
+            V2.1 – Made 'parcel-characteristics' optional.
+            2002 – Updated AuthorizedReturnType to include create-public-key element to generate publicly accessible label
+                 – Updated AuthorizedReturnInfoType to include optional public-key-info
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:redefine schemaLocation="common.xsd">
+        <xsd:simpleType name="RelType">
+            <xsd:restriction base="RelType">
+                <xsd:enumeration value="returnLabel"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:redefine>
+
+    <xsd:element name="authorized-return" type="AuthorizedReturnType"/>
+
+    <xsd:element name="authorized-return-info" type="AuthorizedReturnInfoType"/>
+
+
+    <xsd:complexType name="AuthorizedReturnInfoType">
+        <xsd:all>
+            <xsd:element name="tracking-pin" type="TrackingPINType"/>
+            <xsd:element name="public-key-info" type="PublicKeyInfoType" minOccurs="0"/>
+            <xsd:element ref="links"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="TrackingPINType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="11"/>
+            <xsd:maxLength value="16"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="PublicKeyInfoType">
+        <xsd:all>
+            <xsd:element name="expiry-date" type="xsd:dateTime"/>
+            <xsd:element name="url" type="xsd:anyURI"/>
+        </xsd:all>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="AuthorizedReturnType">
+        <xsd:all>
+            <xsd:element name="create-public-key" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:boolean">
+                        <xsd:pattern value="true"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="service-code" type="ServiceCodeType"/>
+            <xsd:element name="returner" type="ReturnerType"/>
+            <xsd:element name="receiver" type="ReceiverType"/>
+            <xsd:element name="parcel-characteristics" type="ParcelCharacteristicsType" minOccurs="0"/>
+            <xsd:element name="print-preferences" type="PrintPreferencesType" minOccurs="0"/>
+            <xsd:element name="settlement-info" type="AuthSettlementInfoType" minOccurs="0"/>
+            <xsd:element name="references" type="ReferencesType" minOccurs="0"/>
+            <xsd:element name="notifications" type="NotificationsType" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="AuthSettlementInfoType">
+        <xsd:all>
+            <xsd:element name="paid-by-customer" type="CustomerIDType" minOccurs="0"/>
+            <xsd:element name="contract-id" type="ContractIDType" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ReturnerType">
+        <xsd:all>
+            <xsd:element name="name" type="ContactNameType"/>
+            <xsd:element name="company" type="CompanyNameType" minOccurs="0"/>
+            <xsd:element name="domestic-address" type="DomesticAddressDetailsType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ReceiverType">
+        <xsd:all>
+            <xsd:element name="name" type="ContactNameType"/>
+            <xsd:element name="company" type="CompanyNameType" minOccurs="0"/>
+            <xsd:element name="email" type="EmailType" minOccurs="0"/>
+            <xsd:element name="receiver-voice-number" type="PhoneNumberType" minOccurs="0"/>
+            <xsd:element name="domestic-address" type="DomesticAddressDetailsType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ReferencesType">
+        <xsd:all>
+            <xsd:element name="customer-ref-1" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="35"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="customer-ref-2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="35"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ContactNameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="44"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CompanyNameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="44"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EmailType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:pattern value="(['_A-Za-z0-9\-\+]+)(\.['_A-Za-z0-9\-\+]+)*@([A-Za-z0-9-]+)(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,5})"/>
+            <xsd:maxLength value="60"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="DomesticAddressDetailsType">
+        <xsd:all>
+            <xsd:element name="address-line-1">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="44"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="address-line-2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="44"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="city">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="40"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="province" type="ProvinceType"/>
+            <xsd:element name="postal-code" type="PostalCodeType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ParcelCharacteristicsType">
+        <xsd:all>
+            <xsd:element name="weight" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                        <xsd:minExclusive value="0"/>
+                        <xsd:maxInclusive value="999.999"/>
+                        <xsd:fractionDigits value="3"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="dimensions" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="length" type="DimensionMeasurementType"/>
+                        <xsd:element name="width" type="DimensionMeasurementType"/>
+                        <xsd:element name="height" type="DimensionMeasurementType"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="PrintPreferencesType">
+        <xsd:all>
+            <xsd:element name="output-format" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="8.5x11"/>
+                        <xsd:enumeration value="4x6"/>
+                        <xsd:enumeration value="3x5"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="encoding" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="PDF"/>
+                        <xsd:enumeration value="ZPL"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="show-packing-instructions" type="xsd:boolean" default="true" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="NotificationsType">
+        <xsd:sequence>
+            <xsd:element name="notification" minOccurs="1" maxOccurs="4">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="email" type="EmailType"/>
+                        <xsd:element name="on-shipment" type="xsd:boolean"/>
+                        <xsd:element name="on-exception" type="xsd:boolean"/>
+                        <xsd:element name="on-delivery" type="xsd:boolean"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="email-subject" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="tracking"/>
+                        <xsd:enumeration value="customer-ref-1"/>
+                        <xsd:enumeration value="customer-ref-2"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ReturnPolicyNumberType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="8"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AdditionalOrderInfoLabelEnType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="15"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AdditionalOrderInfoLabelFrType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="15"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AdditionalOrderInfoType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

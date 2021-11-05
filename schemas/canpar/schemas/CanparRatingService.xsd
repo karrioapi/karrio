@@ -1,0 +1,615 @@
+<xs:schema xmlns:ax27="http://dto.canshipws.canpar.com/xsd" xmlns:ax25="http://ws.dto.canshipws.canpar.com/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://dto.canshipws.canpar.com/xsd"/>
+    <xs:complexType name="GetVersionRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SearchCanadaPostRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="city" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="province" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="street_direction" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="street_name" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="street_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="street_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="validate_only" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SearchCanadaPostRs">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="address" nillable="true" type="ax27:Address"/>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="apply_association_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_individual_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_invoice_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipment" nillable="true" type="ax27:Shipment"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="processShipmentResult" nillable="true" type="ax27:ProcessShipmentResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetProfileRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetProfileRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="profile" nillable="true" type="ax27:Profile"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsResidentialRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="consignee_name" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="postal_code" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsResidentialRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="residential" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SubmitFileRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="data" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="file_name" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="file_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SubmitFileRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SubmitManifestRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="data" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="manifest_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SubmitManifestRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetProfilesRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetProfilesRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="profile" nillable="true" type="ax27:Profile"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsAlternativeServiceRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="delivery_postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="pickup_postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipping_date" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsAlternativeServiceRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="alternative_service" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsPostalCodeValidRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="province" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IsPostalCodeValidRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="result" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentAllPremiumsRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="apply_association_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_individual_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_invoice_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipment" nillable="true" type="ax27:Shipment"/>
+            <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentAllPremiumsRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="processShipmentResult" nillable="true" type="ax27:ProcessShipmentResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentPublicRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="shipment" nillable="true" type="ax27:Shipment"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentPublicRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="processShipmentResult" nillable="true" type="ax27:ProcessShipmentResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentAllServicesRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="apply_association_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_individual_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="apply_invoice_discount" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipment" nillable="true" type="ax27:Shipment"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateShipmentAllServicesRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="processShipmentResult" nillable="true" type="ax27:ProcessShipmentResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetAvailableServicesRq">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="delivery_country" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="delivery_postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="pickup_postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipping_date" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetAvailableServicesRs">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="error" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="getAvailableServicesResult" nillable="true" type="ax27:GetAvailableServicesResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Address">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="address_id" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="address_line_1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="address_line_2" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="address_line_3" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="attention" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="city" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="country" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="email" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="extension" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="phone" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="postal_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="province" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="residential" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Shipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="airport_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="billed_weight" type="xs:float"/>
+            <xs:element minOccurs="0" name="billed_weight_unit" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="cod_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="cod_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="collect" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="collect_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="collect_shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="consolidation_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="cos" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="cos_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="delivery_address" nillable="true" type="ax27:Address"/>
+            <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="dg" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="dg_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="dimention_unit" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="dv_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="ea_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="ea_zone" type="xs:byte"/>
+            <xs:element minOccurs="0" name="estimated_delivery_date" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="freight_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="fuel_surcharge" type="xs:float"/>
+            <xs:element minOccurs="0" name="handling" type="xs:float"/>
+            <xs:element minOccurs="0" name="handling_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="instruction" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="lg_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="manifest_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="nsr" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="order_id" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="over_size_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="over_weight_charge" type="xs:float"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="packages" nillable="true" type="ax27:Package"/>
+            <xs:element minOccurs="0" name="pickup_address" nillable="true" type="ax27:Address"/>
+            <xs:element minOccurs="0" name="premium" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="premium_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="proforma" nillable="true" type="ax27:Proforma"/>
+            <xs:element minOccurs="0" name="ra_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="reported_weight_unit" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="rural_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="send_email_to_delivery" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="send_email_to_pickup" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="service_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipment_status" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipping_date" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="subtotal" type="xs:float"/>
+            <xs:element minOccurs="0" name="subtotal_with_handling" type="xs:float"/>
+            <xs:element minOccurs="0" name="tax_charge_1" type="xs:float"/>
+            <xs:element minOccurs="0" name="tax_charge_2" type="xs:float"/>
+            <xs:element minOccurs="0" name="tax_code_1" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="tax_code_2" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="total" type="xs:float"/>
+            <xs:element minOccurs="0" name="total_with_handling" type="xs:float"/>
+            <xs:element minOccurs="0" name="transit_time" type="xs:byte"/>
+            <xs:element minOccurs="0" name="transit_time_guaranteed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="user_id" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="voided" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="xc_charge" type="xs:float"/>
+            <xs:element minOccurs="0" name="zone" type="xs:byte"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Package">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="alternative_reference" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="barcode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="billed_weight" type="xs:float"/>
+            <xs:element minOccurs="0" name="cod" nillable="true" type="ax27:COD"/>
+            <xs:element minOccurs="0" name="cost_centre" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="declared_value" type="xs:float"/>
+            <xs:element minOccurs="0" name="dim_weight" type="xs:float"/>
+            <xs:element minOccurs="0" name="dim_weight_flag" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="height" type="xs:float"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="length" type="xs:float"/>
+            <xs:element minOccurs="0" name="lg" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="min_weight_flag" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="over_size" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="over_weight" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="package_num" type="xs:int"/>
+            <xs:element minOccurs="0" name="package_reference" type="xs:long"/>
+            <xs:element minOccurs="0" name="reference" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="reported_weight" type="xs:float"/>
+            <xs:element minOccurs="0" name="store_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="width" type="xs:float"/>
+            <xs:element minOccurs="0" name="xc" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="COD">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="amount_1" type="xs:float"/>
+            <xs:element minOccurs="0" name="amount_2" type="xs:float"/>
+            <xs:element minOccurs="0" name="amount_3" type="xs:float"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="post_dated_cheque_1" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="post_dated_cheque_2" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="post_dated_cheque_3" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Proforma">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="broker_address" nillable="true" type="ax27:Address"/>
+            <xs:element minOccurs="0" name="business_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="currency_of_declared_value" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="extension" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="permit_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="phone" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="proforma_items" nillable="true" type="ax27:ProformaItem"/>
+            <xs:element minOccurs="0" name="reason_for_export" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="reference" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="status" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ProformaItem">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="commodity_info" nillable="true" type="ax27:CommodityInfo"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="quantity" type="xs:int"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CommodityInfo">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="country_of_origin" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="hs_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="inserted_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="province_of_origin" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="updated_on" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="value" type="xs:float"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ProcessShipmentResult">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="errors" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="messages" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="shipment" nillable="true" type="ax27:Shipment"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Profile">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="address" nillable="true" type="ax27:Address"/>
+            <xs:element minOccurs="0" name="blind_manifest" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="collect_service_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="consolidation_type" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="credit_cancelled" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="manifest_processing_code" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="otc" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="pickup_allowed" type="xs:boolean"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="ax27:Service"/>
+            <xs:element minOccurs="0" name="shipper_num" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="validate_store_num" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="weight_unit" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Service">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="cod_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="cos_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="dg_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="dim_factor" type="xs:float"/>
+            <xs:element minOccurs="0" name="half_kg" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="half_kg_increment" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="id" type="xs:int"/>
+            <xs:element minOccurs="0" name="max_cod_per_piece" type="xs:float"/>
+            <xs:element minOccurs="0" name="max_cod_per_shipment" type="xs:float"/>
+            <xs:element minOccurs="0" name="max_dv_per_piece" type="xs:float"/>
+            <xs:element minOccurs="0" name="max_dv_per_shipment" type="xs:float"/>
+            <xs:element minOccurs="0" name="max_num_of_pieces" type="xs:int"/>
+            <xs:element minOccurs="0" name="max_weight_per_piece" type="xs:int"/>
+            <xs:element minOccurs="0" name="max_weight_per_shipment" type="xs:int"/>
+            <xs:element minOccurs="0" name="noon_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="saturday_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="ten_am_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetAvailableServicesResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="cos_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="dg_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="estimated_delivery_date" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="noon_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="saturday_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="ten_am_allowed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="transit_time_guaranteed" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getVersionResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:GetVersionRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="searchCanadaPost">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:SearchCanadaPostRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="searchCanadaPostResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:SearchCanadaPostRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:RateShipmentRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:RateShipmentRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getProfile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:GetProfileRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getProfileResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:GetProfileRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isResidential">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:IsResidentialRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isResidentialResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:IsResidentialRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="submitFile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:SubmitFileRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="submitFileResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:SubmitFileRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="submitManifest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:SubmitManifestRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="submitManifestResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:SubmitManifestRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getProfiles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:GetProfilesRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getProfilesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:GetProfilesRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isAlternativeService">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:IsAlternativeServiceRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isAlternativeServiceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:IsAlternativeServiceRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isPostalCodeValid">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:IsPostalCodeValidRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isPostalCodeValidResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:IsPostalCodeValidRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentAllPremiums">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:RateShipmentAllPremiumsRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentAllPremiumsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:RateShipmentAllPremiumsRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentPublic">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:RateShipmentPublicRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentPublicResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:RateShipmentPublicRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentAllServices">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:RateShipmentAllServicesRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rateShipmentAllServicesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:RateShipmentAllServicesRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAvailableServices">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="request" nillable="true" type="ax25:GetAvailableServicesRq"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAvailableServicesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="ax25:GetAvailableServicesRs"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

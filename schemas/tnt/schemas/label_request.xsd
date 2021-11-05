@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation>Schema for defining the request message to be sent
+			to ExpressLabel
+			for the production of routing labels.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:include schemaLocation="label_common_definitions.xsd" />
+	<xsd:element name="labelRequest" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>The root XML element for a LabelRequest message
+				sent to
+				ExpressLabel in order to produce a routing label per piece.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="consignment" type="labelConsignmentsType"
+					nillable="false" minOccurs="1" maxOccurs="5">
+					<xsd:annotation>
+						<xsd:documentation>Data for up to 5 consignments may be supplied
+							in one request.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="labelConsignmentsType">
+		<xsd:annotation>
+			<xsd:documentation>The view of the consignments information that is
+				necessary for
+				ExpressLabel to be able to validate addresses,
+				determine the routing
+				and product availability and successfully
+				produce the information
+				required to allow routing labels to be
+				rendered per piece required.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="consignmentIdentity" type="consignmentIdentityType"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>This element contains a consignment number and
+						optional
+						customer reference. These values are used to identify a
+						consignment from any other consignment.
+
+						This value appears on a
+						routing label and is used as
+						the key for a consignment.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="collectionDateTime" type="xsd:dateTime"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The date that the consignment will be collected,
+						to be
+						supplied as CCYY-MM-DD'T'hh:mm:ss e.g 5:30 p.m. on
+						30th
+						December 2008 will be supplied as 2008-12-30T17:30:00.
+						This
+						datatype describes instances identified by the
+						combination of a
+						date and a time. Its value space is
+						described as a combination of
+						date and time of day in
+						Chapter 5.4 of ISO 8601 and the W3C XML
+						Schema
+						Recommendation . Its lexical space is the extended format:
+						[-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="sender" type="nameAndAddressRequestType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The origin is the address the consignment is
+						physically collected
+						from. This will be used to obtain a route for
+						the consignment and
+						will also appear on the label.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="delivery" type="nameAndAddressRequestType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The delivery is the address the consignment is
+						physically sent
+						to. This will be used to obtain a route for the
+						consignment and
+						will also appear on the label.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="contact" type="contactType" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>This is the contact information for this
+						delivery consignment.
+						This information only appears on some labels
+						but is present in the xml
+						response.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="product" type="productType" minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>Information relating to the TNT product chosen for this
+                        consignment. Example products are next day, before 10, etc.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="account" type="accountType" minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The TNT account paying for this consignment to
+						be transported.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="cashAmount" type="doubleTwoDecimalPlaces"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The cost of the consignment. This will only
+						appear on some labels
+						and only then if it is cash on delivery
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="cashCurrency" type="xsd:string"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The currency of the cost of the consignment.
+						This is part of the 2D Barcode.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="cashType" type="cashTypeEnum"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The cashType of the consignment. This is part of
+						the 2D Barcode.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ncolNumber" type="xsd:string"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The ncol number. This is part of the 2D Barcode.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="specialInstructions" type="xsd:string"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Any special instructions required to appear on
+						the label.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="bulkShipment" type="booleanEnum"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>This is a flag to show if this is a bulk
+						shipment or not</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="customControlled" type="booleanEnum"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>This is a flag to show if this is a custom
+						controlled consignment or not</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="termsOfPayment" type="senderReceiverEnum"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>This is a flag to show if this is a Sender pays
+						(S) or Receiver pays (R) consignment</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="totalNumberOfPieces" type="xsd:int"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The total number of pieces this consignment
+						contains. This
+						is used to print the sequence numbers on the labels,
+						e.g.
+						1 of x, where x is the value provided here.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="pieceLine" type="pieceLineType"
+				minOccurs="1" maxOccurs="99">
+				<xsd:annotation>
+					<xsd:documentation>One pieceLine XML block to be provided per type
+						of package in the
+						consignment. Each pieceLine defines the common
+						attributes that
+						one or more actual pieces share. For example, if
+						green boxes and
+						blue boxes are required to be shipped, then one
+						piece line per box
+						type needs to be provided, i.e one pieceLine for
+						green box
+						attributes
+						and one for blue box attributes. At least one
+						pieceLine per
+						consignment
+						must be provided. Individual pieces are
+						defined within the piece line.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="key" use="required" type="xsd:string" />
+	</xsd:complexType>
+	<xsd:complexType name="productType">
+		<xsd:annotation>
+			<xsd:documentation>Information relating to the TNT product chosen for
+				this consignment.
+				Example products are next day, before 10, etc</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="lineOfBusiness" type="integerMin0Max9" />
+			<xsd:element name="groupId" type="integerMin0Max9" />
+			<xsd:element name="subGroupId" type="integerMin0Max9" />
+			<xsd:element name="id" type="stringMaxLength4" />
+			<xsd:element name="type" type="productTypeEnum" />
+			<xsd:element name="option" type="stringMaxLength4"
+				minOccurs="0" maxOccurs="5" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

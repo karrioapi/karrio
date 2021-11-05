@@ -1,0 +1,68 @@
+{
+    "PickupRequest": {
+        "recipient": {
+            "name": "Charles Carmichael",
+            "phone": "+15145573849",
+            "notes": "Do not text, call instead.",
+            "email": "charles.carmichael@boxknight.com"
+        },
+        "recipientAddress": {
+            "street": "4455A Boul. Poirier",
+            "unit": "unit204 - BoxKnight HQ",
+            "city": "Montreal",
+            "province": "Quebec",
+            "country": "Canada",
+            "postalCode": "H4R 2A4"
+        },
+        "completeAfter": 1578439750000,
+        "completeBefore": 1578439950000,
+        "packageCount": 3,
+        "notes": "The entrance is through the green fence on the left. If no answer, leave behind the black bin.",
+        "orderIds": [
+            "93e11b39-0af8-40bb-742a-912375a09743",
+            "43e11a39-0af8-40bb-742a-962345z07582",
+            "93easle9-0af8-43bb-742a-962345z09623"
+        ]
+    },
+    "PickupResponse": {
+        "id": "93e11b39-0af8-40bb-742a-912375a09743",
+        "createdAt": "2019-10-25T22:56:06.000Z",
+        "createdBy": "93e66b39-0uf8-40bb-742a-911235a09743",
+        "merchantId": "13e11b39-0uf8-40bb-742a-913125a09743",
+        "completeAfter": 1578439750000,
+        "completeBefore": 1578439950000,
+        "recipient": {
+            "name": "Charles Carmichael",
+            "phone": "+15145573849",
+            "notes": "Do not text, call instead.",
+            "email": "charles.carmichael@boxknight.com"
+        },
+        "recipientAddress": {
+            "number": 1234,
+            "street": "Boul. Poirier",
+            "city": "Montreal",
+            "province": "Quebec",
+            "country": "Canada",
+            "postalCode": "H4R 2A4",
+            "sublocality": "Communauté-Urbaine-de-Montréal",
+            "location": {
+                "lat": 45.4755722,
+                "lng": -73.61911979999999
+            }
+        },
+        "packageCount": 3,
+        "notes": "The entrance is through the green fence on the left. If no answer, leave behind the black bin.",
+        "orderIds": [
+            "93e11b39-0af8-40bb-742a-912375a09743",
+            "43e11a39-0af8-40bb-742a-962345z07582",
+            "93easle9-0af8-43bb-742a-962345z09623"
+        ]
+    },
+    "PickupUpdateRequest": {
+        "orderIds": [
+            "2375a0as-0af8-40bb-742a-912375a09743",
+            "e11a3339-0af8-40bb-742a-962345ze11a3",
+            "ask12le9-0af8-43bb-742a-9623e11a3s23"
+        ]
+    }
+}

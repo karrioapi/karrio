@@ -1,0 +1,28 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+    <xs:import schemaLocation="https://ws.aramex.net/ShippingAPI.V2/Tracking/Service_1_0.svc?xsd=xsd0" namespace="http://ws.aramex.net/ShippingAPI/v1/"/>
+    <xs:complexType name="ArrayOfstring">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring"/>
+    <xs:complexType name="ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfstringArrayOfTrackingResultmFAkxlpY">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Key" nillable="true" type="xs:string"/>
+                        <xs:element xmlns:q1="http://ws.aramex.net/ShippingAPI/v1/" name="Value" nillable="true" type="q1:ArrayOfTrackingResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY" nillable="true" type="tns:ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY"/>
+</xs:schema>

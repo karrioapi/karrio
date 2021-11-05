@@ -2,10 +2,14 @@
 [run]
 branch = True
 omit =
-    */purplship/extensions/boxknight/*
-    */purplship/extensions/dicom/*
+    */sdk/extensions/asendia_us/*
+    */sdk/extensions/boxknight/*
+    */sdk/extensions/dicom/*
+    */sdk/extensions/ics_courier/*
+    */sdk/extensions/ups_ground/*
 
 [report]
 include =
-    */purplship/core/*
-    */purplship/extensions/*
+    */sdk/core/*
+    */sdk/extensions/*
+    */sdk/vendors/*

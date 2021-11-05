@@ -1,0 +1,10 @@
+{
+  "dispatchConfirmationNumbers": [
+    "PRG201220123456"
+  ],
+  "readyByTime": "12:00",
+  "nextPickupDate": "2020-06-01",
+  "warnings": [
+    "Pickup created bu somthing went wrong"
+  ]
+}

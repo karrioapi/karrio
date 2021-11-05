@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/openreturn-v2"
+            xmlns="http://www.canadapost.ca/ws/openreturn-v2" elementFormDefault="qualified">
+    <xsd:redefine schemaLocation="common.xsd">
+        <xsd:simpleType name="RelType">
+            <xsd:restriction base="RelType">
+                <xsd:enumeration value="self"/>
+                <xsd:enumeration value="details"/>
+                <xsd:enumeration value="nextArtifact"/>
+                <xsd:enumeration value="template"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:redefine>
+
+    <xsd:element name="open-return" type="OpenReturnType"/>
+
+    <xsd:element name="open-return-details" type="OpenReturnDetailsType"/>
+
+    <xsd:element name="open-return-info" type="OpenReturnInfoType"/>
+
+    <xsd:element name="templates" type="OpenReturnTemplatesInfoType"/>
+
+    <xsd:complexType name="OpenReturnType">
+        <xsd:all>
+            <xsd:element name="max-number-of-artifacts" type="xsd:positiveInteger"/>
+            <xsd:element name="service-code" type="ServiceCodeType"/>
+            <xsd:element name="receiver" type="DomesticAddressType"/>
+            <xsd:element name="print-preferences" type="PrintPreferencesType" minOccurs="0"/>
+            <xsd:element name="settlement-info" type="SettlementInfoType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="OpenReturnDetailsType">
+        <xsd:all>
+            <xsd:element name="artifacts-remaining" type="xsd:nonNegativeInteger"/>
+            <xsd:element name="open-return" type="OpenReturnType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="OpenReturnInfoType">
+        <xsd:all>
+            <xsd:element name="artifacts-remaining" type="xsd:nonNegativeInteger"/>
+            <xsd:element ref="links"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="SettlementInfoType">
+        <xsd:all>
+            <xsd:element name="contract-id" type="ContractIDType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="DomesticAddressType">
+        <xsd:all>
+            <xsd:element name="name" type="ContactNameType" minOccurs="0"/>
+            <xsd:element name="company" type="CompanyNameType" minOccurs="0"/>
+            <xsd:element name="domestic-address" type="DomesticAddressDetailsType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ContactNameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="44"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CompanyNameType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="44"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="DomesticAddressDetailsType">
+        <xsd:all>
+            <xsd:element name="address-line-1">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="44"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="address-line-2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="44"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="city">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="40"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="province" type="ProvinceType"/>
+            <xsd:element name="postal-code" type="PostalCodeType"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="PrintPreferencesType">
+        <xsd:all>
+            <xsd:element name="output-format" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="8.5x11"/>
+                        <xsd:enumeration value="4x6"/>
+                        <xsd:enumeration value="3x5"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="customer-input-type" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:token">
+                        <xsd:maxLength value="20" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="encoding" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="PDF"/>
+                        <xsd:enumeration value="ZPL"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="show-packing-instructions" type="xsd:boolean" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="OpenReturnTemplatesInfoType">
+        <xsd:sequence>
+            <xsd:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

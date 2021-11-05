@@ -1,0 +1,17 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="CityStateLookupRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ZipCode">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:short" name="Zip5" />
+                        </xs:sequence>
+                        <xs:attribute type="xs:byte" name="ID" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

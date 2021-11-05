@@ -1,0 +1,47 @@
+{
+  "pickup_date": "2015-11-24",
+  "first_mile_option": "pickup",
+  "description": "Kryptonite",
+  "weight": {
+    "value": "1",
+    "units": "kg"
+  },
+  "volume": {
+    "value": "0.01",
+    "units": "m3"
+  },
+  "customer_reference": "SupBdayPressie",
+  "metadata": {},
+  "sender": {
+    "contact": {
+      "name": "Lex Luthor",
+      "phone": "0412 345 678"
+    },
+    "address": {
+      "address_line1": "123 Gotham Ln",
+      "suburb": "Sydney",
+      "state_name": "NSW",
+      "postcode": "2000",
+      "country": "Australia"
+    },
+    "instructions": "Knock loudly"
+  },
+  "receiver": {
+    "contact": {
+      "name": "Clark Kent",
+      "email": "clarkissuper@dailyplanet.xyz"
+    },
+    "address": {
+      "address_line1": "445 Mount Eden Road",
+      "suburb": "Auckland",
+      "postcode": "2025",
+      "country": "New Zealand"
+    },
+    "instructions": "Give directly to Clark"
+  },
+  "contents": {
+    "description": "T-shirt",
+    "value": "20.00",
+    "country_of_origin": "China"
+  }
+}
