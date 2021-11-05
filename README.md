@@ -1,8 +1,7 @@
-# <a href="https://purplship.com target="_blank""><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="48px" /></picture></a>
+# <a href="https://next.purplship.com" target="_blank"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="96px" /></picture></a>
 
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![codecov](https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6)](https://codecov.io/gh/purplship/purplship)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
 
 purplship is a multi-carrier shipping integartion platform.
@@ -277,10 +276,10 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://purplship.com/docs)
+- [**Documentation**](https://next.purplship.com/docs)
 - [**Community Discussions**](https://github.com/purplship/purplship/discussions)
 - [**Issue Tracker**](https://github.com/purplship/purplship/issues)
-- [**Blog**](https://purplship.com/blog)
+- [**Blog**](https://next.purplship.com/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
 
