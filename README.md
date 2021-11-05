@@ -1,17 +1,17 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/purplship/purplship/raw/main/docs/images/icon.png" alt="purplship" height="100">
+      <picture><img src="./docs/images/icon.png"  alt="purplship" height="100"/></picture>
     </a>
   </p>
   <h2 align="center">
     purplship - The Open Source multi-carrier shipping SDK
   </h2>
   <p align="center">
-    <a href="https://github.com/purplship/purplship/actions"><img src="https://github.com/purplship/purplship/workflows/purplship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://github.com/purplship/purplship/actions/workflows/pythonpackage.yml"><img src="https://github.com/purplship/purplship/actions/workflows/pythonpackage.yml/badge.svg?branch=legacy" alt="CI" style="max-width:100%;"></a>
     <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" style="max-width:100%;"></a>
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
-    <a href="https://codecov.io/gh/purplship/purplship"><img src="https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
+    <a href="https://codecov.io/gh/purplship/purplship"><img src="https://codecov.io/gh/purplship/purplship/branch/legacy/graph/badge.svg?token=D07fio4Dn6"/></a>
     <a href="https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41"></a>
   </p>
 </p>
