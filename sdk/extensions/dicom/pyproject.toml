@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.dicom"
-version = "2021.10rc3"
+version = "2021.10"
 homepage="https://docs.purplship.com"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Dicom Shipping Extension"
