@@ -67,7 +67,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/server:2021.7
+  danh91.docker.scarf.sh/purplship/server:2021.10
 ```
 
 </details>
@@ -84,8 +84,6 @@ services:
   db:
     image: postgres
     restart: unless-stopped
-    volumes:
-      - pshipdb:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
@@ -94,7 +92,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/purplship-server:2021.7
+    image: danh91.docker.scarf.sh/purplship/server:2021.10
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True

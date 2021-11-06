@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 with open("purplship/server/VERSION", "r") as v:
-    version = v.read()
+    version = v.read().strip()
 
 setup(
       name='purplship.server',

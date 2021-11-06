@@ -17,7 +17,7 @@ check=$'\u2714'
 clean_build_files() {
     find $1 -type d -name dist -prune -exec rm -r '{}' \; || true
     find $1 -type d -name build -prune -exec rm -r '{}' \; || true
-    find $1 -type d -name "*.egg-info" -prune -exec rm -r '{}' \; || true
+    # find $1 -type d -name "*.egg-info" -prune -exec rm -r '{}' \; || true
 }
 
 backup_wheels() {

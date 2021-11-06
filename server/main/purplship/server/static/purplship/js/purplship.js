@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.purplship = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -114,7 +114,7 @@
                         case 3:
                             _i++;
                             return [3 /*break*/, 1];
-                        case 4: return [4 /*yield*/, this.configuration.fetchApi(fetchParams.url, fetchParams.init)];
+                        case 4: return [4 /*yield*/, (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init)];
                         case 5:
                             response = _d.sent();
                             _b = 0, _c = this.middleware;
@@ -167,13 +167,13 @@
             var middlewares = postMiddlewares.map(function (post) { return ({ post: post }); });
             return this.withMiddleware.apply(this, middlewares);
         };
-        BaseAPI.prototype.request = function (context) {
+        BaseAPI.prototype.request = function (context, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var _a, url, init, response;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _a = this.createFetchParams(context), url = _a.url, init = _a.init;
+                            _a = this.createFetchParams(context, initOverrides), url = _a.url, init = _a.init;
                             return [4 /*yield*/, this.fetchApi(url, init)];
                         case 1:
                             response = _b.sent();
@@ -185,7 +185,7 @@
                 });
             });
         };
-        BaseAPI.prototype.createFetchParams = function (context) {
+        BaseAPI.prototype.createFetchParams = function (context, initOverrides) {
             var url = this.configuration.basePath + context.path;
             if (context.query !== undefined && Object.keys(context.query).length !== 0) {
                 // only add the querystring to the URL if there are query parameters.
@@ -197,12 +197,7 @@
                 ? context.body
                 : JSON.stringify(context.body);
             var headers = Object.assign({}, this.configuration.headers, context.headers);
-            var init = {
-                method: context.method,
-                headers: headers,
-                body: body,
-                credentials: this.configuration.credentials
-            };
+            var init = __assign({ method: context.method, headers: headers, body: body, credentials: this.configuration.credentials }, initOverrides);
             return { url: url, init: init };
         };
         /**
@@ -241,7 +236,7 @@
         });
         Object.defineProperty(Configuration.prototype, "fetchApi", {
             get: function () {
-                return this.configuration.fetchApi || window.fetch.bind(window);
+                return this.configuration.fetchApi;
             },
             enumerable: false,
             configurable: true
@@ -988,9 +983,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.7`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2021.7
+     * The version of the OpenAPI document: 2021.10
      * Contact: hello@purplship.com
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1490,9 +1485,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.7`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2021.7
+     * The version of the OpenAPI document: 2021.10
      * Contact: hello@purplship.com
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1516,9 +1511,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.7`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2021.7
+     * The version of the OpenAPI document: 2021.10
      * Contact: hello@purplship.com
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2112,9 +2107,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.7`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2021.7
+     * The version of the OpenAPI document: 2021.10
      * Contact: hello@purplship.com
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2362,9 +2357,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.7`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2021.7
+     * The version of the OpenAPI document: 2021.10
      * Contact: hello@purplship.com
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2593,7 +2588,7 @@
          * Create a new address.
          * Create an address
          */
-        AddressesApi.prototype.createRaw = function (requestParameters) {
+        AddressesApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2614,7 +2609,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: AddressDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -2626,12 +2621,12 @@
          * Create a new address.
          * Create an address
          */
-        AddressesApi.prototype.create = function (requestParameters) {
+        AddressesApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2644,7 +2639,7 @@
          * Discard an address.
          * Discard an address
          */
-        AddressesApi.prototype.discardRaw = function (requestParameters) {
+        AddressesApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2663,7 +2658,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -2675,12 +2670,12 @@
          * Discard an address.
          * Discard an address
          */
-        AddressesApi.prototype.discard = function (requestParameters) {
+        AddressesApi.prototype.discard = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2693,7 +2688,7 @@
          * Retrieve all addresses.
          * List all addresses
          */
-        AddressesApi.prototype.listRaw = function (requestParameters) {
+        AddressesApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2715,7 +2710,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressListFromJSON(jsonValue); })];
@@ -2727,12 +2722,12 @@
          * Retrieve all addresses.
          * List all addresses
          */
-        AddressesApi.prototype.list = function (requestParameters) {
+        AddressesApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2745,7 +2740,7 @@
          * Retrieve an address.
          * Retrieve an address
          */
-        AddressesApi.prototype.retrieveRaw = function (requestParameters) {
+        AddressesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2764,7 +2759,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -2776,12 +2771,12 @@
          * Retrieve an address.
          * Retrieve an address
          */
-        AddressesApi.prototype.retrieve = function (requestParameters) {
+        AddressesApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2794,7 +2789,7 @@
          * update an address.
          * Update an address
          */
-        AddressesApi.prototype.updateRaw = function (requestParameters) {
+        AddressesApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2818,7 +2813,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: AddressDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -2830,12 +2825,12 @@
          * update an address.
          * Update an address
          */
-        AddressesApi.prototype.update = function (requestParameters) {
+        AddressesApi.prototype.update = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2860,7 +2855,7 @@
          * Authenticate the user and return a token pair
          * Obtain auth token pair
          */
-        APIApi.prototype.authenticateRaw = function (requestParameters) {
+        APIApi.prototype.authenticateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2881,7 +2876,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: TokenObtainPairToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
@@ -2893,12 +2888,12 @@
          * Authenticate the user and return a token pair
          * Obtain auth token pair
          */
-        APIApi.prototype.authenticate = function (requestParameters) {
+        APIApi.prototype.authenticate = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.authenticateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.authenticateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2910,7 +2905,7 @@
         /**
          * Data References
          */
-        APIApi.prototype.dataRaw = function () {
+        APIApi.prototype.dataRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2926,7 +2921,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ReferencesFromJSON(jsonValue); })];
@@ -2937,12 +2932,12 @@
         /**
          * Data References
          */
-        APIApi.prototype.data = function () {
+        APIApi.prototype.data = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.dataRaw()];
+                        case 0: return [4 /*yield*/, this.dataRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2955,7 +2950,7 @@
          * Authenticate the user and return a token pair
          * Refresh auth token
          */
-        APIApi.prototype.refreshTokenRaw = function (requestParameters) {
+        APIApi.prototype.refreshTokenRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -2976,7 +2971,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: TokenRefreshToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
@@ -2988,12 +2983,12 @@
          * Authenticate the user and return a token pair
          * Refresh auth token
          */
-        APIApi.prototype.refreshToken = function (requestParameters) {
+        APIApi.prototype.refreshToken = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.refreshTokenRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.refreshTokenRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3006,7 +3001,7 @@
          * Verify an existent authentication token
          * Verify auth token
          */
-        APIApi.prototype.verifyTokenRaw = function (requestParameters) {
+        APIApi.prototype.verifyTokenRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3027,7 +3022,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: TokenVerifyToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response)];
@@ -3039,12 +3034,12 @@
          * Verify an existent authentication token
          * Verify auth token
          */
-        APIApi.prototype.verifyToken = function (requestParameters) {
+        APIApi.prototype.verifyToken = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.verifyTokenRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.verifyTokenRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3069,7 +3064,7 @@
          * Returns the list of configured carriers
          * List all carriers
          */
-        CarriersApi.prototype.listRaw = function (requestParameters) {
+        CarriersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3103,7 +3098,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierListFromJSON(jsonValue); })];
@@ -3115,12 +3110,12 @@
          * Returns the list of configured carriers
          * List all carriers
          */
-        CarriersApi.prototype.list = function (requestParameters) {
+        CarriersApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3172,7 +3167,7 @@
          * Add a customs commodity.
          * Add a commodity
          */
-        CustomsApi.prototype.addCommodityRaw = function (requestParameters) {
+        CustomsApi.prototype.addCommodityRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3196,7 +3191,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: CommodityDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3208,12 +3203,12 @@
          * Add a customs commodity.
          * Add a commodity
          */
-        CustomsApi.prototype.addCommodity = function (requestParameters) {
+        CustomsApi.prototype.addCommodity = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.addCommodityRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.addCommodityRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3226,7 +3221,7 @@
          * Create a new customs declaration.
          * Create a customs info
          */
-        CustomsApi.prototype.createRaw = function (requestParameters) {
+        CustomsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3247,7 +3242,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: CustomsDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3259,12 +3254,12 @@
          * Create a new customs declaration.
          * Create a customs info
          */
-        CustomsApi.prototype.create = function (requestParameters) {
+        CustomsApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3277,7 +3272,7 @@
          * Discard a customs declaration.
          * Discard a customs info
          */
-        CustomsApi.prototype.discardRaw = function (requestParameters) {
+        CustomsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3296,7 +3291,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -3308,12 +3303,12 @@
          * Discard a customs declaration.
          * Discard a customs info
          */
-        CustomsApi.prototype.discard = function (requestParameters) {
+        CustomsApi.prototype.discard = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3326,7 +3321,7 @@
          * Discard a customs commodity.
          * Discard a commodity
          */
-        CustomsApi.prototype.discardCommodityRaw = function (requestParameters) {
+        CustomsApi.prototype.discardCommodityRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3348,7 +3343,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -3360,12 +3355,12 @@
          * Discard a customs commodity.
          * Discard a commodity
          */
-        CustomsApi.prototype.discardCommodity = function (requestParameters) {
+        CustomsApi.prototype.discardCommodity = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.discardCommodityRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.discardCommodityRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3378,7 +3373,7 @@
          * Retrieve all stored customs declarations.
          * List all customs info
          */
-        CustomsApi.prototype.listRaw = function (requestParameters) {
+        CustomsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3400,7 +3395,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsListFromJSON(jsonValue); })];
@@ -3412,12 +3407,12 @@
          * Retrieve all stored customs declarations.
          * List all customs info
          */
-        CustomsApi.prototype.list = function (requestParameters) {
+        CustomsApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3430,7 +3425,7 @@
          * Retrieve customs declaration.
          * Retrieve a customs info
          */
-        CustomsApi.prototype.retrieveRaw = function (requestParameters) {
+        CustomsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3449,7 +3444,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3461,12 +3456,12 @@
          * Retrieve customs declaration.
          * Retrieve a customs info
          */
-        CustomsApi.prototype.retrieve = function (requestParameters) {
+        CustomsApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3479,7 +3474,7 @@
          * modify an existing customs declaration.
          * Update a customs info
          */
-        CustomsApi.prototype.updateRaw = function (requestParameters) {
+        CustomsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3503,7 +3498,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: CustomsDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3515,12 +3510,12 @@
          * modify an existing customs declaration.
          * Update a customs info
          */
-        CustomsApi.prototype.update = function (requestParameters) {
+        CustomsApi.prototype.update = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3545,7 +3540,7 @@
          * Create a new parcel.
          * Create a parcel
          */
-        ParcelsApi.prototype.createRaw = function (requestParameters) {
+        ParcelsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3566,7 +3561,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ParcelDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -3578,12 +3573,12 @@
          * Create a new parcel.
          * Create a parcel
          */
-        ParcelsApi.prototype.create = function (requestParameters) {
+        ParcelsApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3596,7 +3591,7 @@
          * Remove a parcel.
          * Remove a parcel
          */
-        ParcelsApi.prototype.discardRaw = function (requestParameters) {
+        ParcelsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3615,7 +3610,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -3627,12 +3622,12 @@
          * Remove a parcel.
          * Remove a parcel
          */
-        ParcelsApi.prototype.discard = function (requestParameters) {
+        ParcelsApi.prototype.discard = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3645,7 +3640,7 @@
          * Retrieve all stored parcels.
          * List all parcels
          */
-        ParcelsApi.prototype.listRaw = function (requestParameters) {
+        ParcelsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3667,7 +3662,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelListFromJSON(jsonValue); })];
@@ -3679,12 +3674,12 @@
          * Retrieve all stored parcels.
          * List all parcels
          */
-        ParcelsApi.prototype.list = function (requestParameters) {
+        ParcelsApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3697,7 +3692,7 @@
          * Retrieve a parcel.
          * Retrieve a parcel
          */
-        ParcelsApi.prototype.retrieveRaw = function (requestParameters) {
+        ParcelsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3716,7 +3711,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -3728,12 +3723,12 @@
          * Retrieve a parcel.
          * Retrieve a parcel
          */
-        ParcelsApi.prototype.retrieve = function (requestParameters) {
+        ParcelsApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3746,7 +3741,7 @@
          * modify an existing parcel\'s details.
          * Update a parcel
          */
-        ParcelsApi.prototype.updateRaw = function (requestParameters) {
+        ParcelsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3770,7 +3765,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ParcelDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -3782,12 +3777,12 @@
          * modify an existing parcel\'s details.
          * Update a parcel
          */
-        ParcelsApi.prototype.update = function (requestParameters) {
+        ParcelsApi.prototype.update = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3812,7 +3807,7 @@
          * Cancel a pickup of one or more shipments.
          * Cancel a pickup
          */
-        PickupsApi.prototype.cancelRaw = function (requestParameters) {
+        PickupsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3836,7 +3831,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupCancelDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
@@ -3848,12 +3843,12 @@
          * Cancel a pickup of one or more shipments.
          * Cancel a pickup
          */
-        PickupsApi.prototype.cancel = function (requestParameters) {
+        PickupsApi.prototype.cancel = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.cancelRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.cancelRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3866,7 +3861,7 @@
          * Retrieve all scheduled pickups.
          * List shipment pickups
          */
-        PickupsApi.prototype.listRaw = function (requestParameters) {
+        PickupsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3891,7 +3886,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupListFromJSON(jsonValue); })];
@@ -3903,12 +3898,12 @@
          * Retrieve all scheduled pickups.
          * List shipment pickups
          */
-        PickupsApi.prototype.list = function (requestParameters) {
+        PickupsApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3921,7 +3916,7 @@
          * Retrieve a scheduled pickup.
          * Retrieve a pickup
          */
-        PickupsApi.prototype.retrieveRaw = function (requestParameters) {
+        PickupsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3940,7 +3935,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
@@ -3952,12 +3947,12 @@
          * Retrieve a scheduled pickup.
          * Retrieve a pickup
          */
-        PickupsApi.prototype.retrieve = function (requestParameters) {
+        PickupsApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3970,7 +3965,7 @@
          * Schedule a pickup for one or many shipments with labels already purchased.
          * Schedule a pickup
          */
-        PickupsApi.prototype.scheduleRaw = function (requestParameters) {
+        PickupsApi.prototype.scheduleRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -3997,7 +3992,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
@@ -4009,12 +4004,12 @@
          * Schedule a pickup for one or many shipments with labels already purchased.
          * Schedule a pickup
          */
-        PickupsApi.prototype.schedule = function (requestParameters) {
+        PickupsApi.prototype.schedule = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.scheduleRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.scheduleRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4027,7 +4022,7 @@
          * Modify a pickup for one or many shipments with labels already purchased.
          * Update a pickup
          */
-        PickupsApi.prototype.updateRaw = function (requestParameters) {
+        PickupsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4051,7 +4046,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupUpdateDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
@@ -4063,12 +4058,12 @@
          * Modify a pickup for one or many shipments with labels already purchased.
          * Update a pickup
          */
-        PickupsApi.prototype.update = function (requestParameters) {
+        PickupsApi.prototype.update = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4093,7 +4088,7 @@
          * Once the shipping rates are retrieved, provide the required info to submit the shipment by specifying your preferred rate.
          * Buy a shipment label
          */
-        ProxyApi.prototype.buyLabelRaw = function (requestParameters) {
+        ProxyApi.prototype.buyLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4114,7 +4109,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ShippingRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -4126,12 +4121,12 @@
          * Once the shipping rates are retrieved, provide the required info to submit the shipment by specifying your preferred rate.
          * Buy a shipment label
          */
-        ProxyApi.prototype.buyLabel = function (requestParameters) {
+        ProxyApi.prototype.buyLabel = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.buyLabelRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.buyLabelRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4144,7 +4139,7 @@
          * Cancel a pickup previously scheduled
          * Cancel a pickup
          */
-        ProxyApi.prototype.cancelPickupRaw = function (requestParameters) {
+        ProxyApi.prototype.cancelPickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4171,7 +4166,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupCancelRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4183,12 +4178,12 @@
          * Cancel a pickup previously scheduled
          * Cancel a pickup
          */
-        ProxyApi.prototype.cancelPickup = function (requestParameters) {
+        ProxyApi.prototype.cancelPickup = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.cancelPickupRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.cancelPickupRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4201,7 +4196,7 @@
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available.
          * Fetch shipment rates
          */
-        ProxyApi.prototype.fetchRatesRaw = function (requestParameters) {
+        ProxyApi.prototype.fetchRatesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4225,7 +4220,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: RateRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return RateResponseFromJSON(jsonValue); })];
@@ -4237,12 +4232,12 @@
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available.
          * Fetch shipment rates
          */
-        ProxyApi.prototype.fetchRates = function (requestParameters) {
+        ProxyApi.prototype.fetchRates = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.fetchRatesRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.fetchRatesRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4255,7 +4250,7 @@
          * Schedule one or many parcels pickup
          * Schedule a pickup
          */
-        ProxyApi.prototype.schedulePickupRaw = function (requestParameters) {
+        ProxyApi.prototype.schedulePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4282,7 +4277,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
@@ -4294,12 +4289,12 @@
          * Schedule one or many parcels pickup
          * Schedule a pickup
          */
-        ProxyApi.prototype.schedulePickup = function (requestParameters) {
+        ProxyApi.prototype.schedulePickup = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.schedulePickupRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.schedulePickupRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4312,7 +4307,7 @@
          * You can track a shipment by specifying the carrier and the shipment tracking number.
          * Track a shipment
          */
-        ProxyApi.prototype.trackShipmentRaw = function (requestParameters) {
+        ProxyApi.prototype.trackShipmentRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4337,7 +4332,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
@@ -4349,12 +4344,12 @@
          * You can track a shipment by specifying the carrier and the shipment tracking number.
          * Track a shipment
          */
-        ProxyApi.prototype.trackShipment = function (requestParameters) {
+        ProxyApi.prototype.trackShipment = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.trackShipmentRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.trackShipmentRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4367,7 +4362,7 @@
          * Modify a scheduled pickup
          * Update a pickup
          */
-        ProxyApi.prototype.updatePickupRaw = function (requestParameters) {
+        ProxyApi.prototype.updatePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4394,7 +4389,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupUpdateRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
@@ -4406,12 +4401,12 @@
          * Modify a scheduled pickup
          * Update a pickup
          */
-        ProxyApi.prototype.updatePickup = function (requestParameters) {
+        ProxyApi.prototype.updatePickup = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updatePickupRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updatePickupRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4424,7 +4419,7 @@
          * Cancel a shipment and the label previously created
          * Void a shipment label
          */
-        ProxyApi.prototype.voidLabelRaw = function (requestParameters) {
+        ProxyApi.prototype.voidLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4451,7 +4446,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ShipmentCancelRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4463,12 +4458,12 @@
          * Cancel a shipment and the label previously created
          * Void a shipment label
          */
-        ProxyApi.prototype.voidLabel = function (requestParameters) {
+        ProxyApi.prototype.voidLabel = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.voidLabelRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.voidLabelRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4492,7 +4487,9 @@
         CancelPickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         CancelPickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CancelPickupCarrierNameEnum["Dicom"] = "dicom";
+        CancelPickupCarrierNameEnum["Eshipper"] = "eshipper";
         CancelPickupCarrierNameEnum["Fedex"] = "fedex";
+        CancelPickupCarrierNameEnum["Freightcom"] = "freightcom";
         CancelPickupCarrierNameEnum["Purolator"] = "purolator";
         CancelPickupCarrierNameEnum["Royalmail"] = "royalmail";
         CancelPickupCarrierNameEnum["Sendle"] = "sendle";
@@ -4503,8 +4500,6 @@
         CancelPickupCarrierNameEnum["UspsInternational"] = "usps_international";
         CancelPickupCarrierNameEnum["Yanwen"] = "yanwen";
         CancelPickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-        CancelPickupCarrierNameEnum["Eshipper"] = "eshipper";
-        CancelPickupCarrierNameEnum["Freightcom"] = "freightcom";
     })(CancelPickupCarrierNameEnum || (CancelPickupCarrierNameEnum = {}));
     /**
         * @export
@@ -4519,7 +4514,9 @@
         SchedulePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         SchedulePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         SchedulePickupCarrierNameEnum["Dicom"] = "dicom";
+        SchedulePickupCarrierNameEnum["Eshipper"] = "eshipper";
         SchedulePickupCarrierNameEnum["Fedex"] = "fedex";
+        SchedulePickupCarrierNameEnum["Freightcom"] = "freightcom";
         SchedulePickupCarrierNameEnum["Purolator"] = "purolator";
         SchedulePickupCarrierNameEnum["Royalmail"] = "royalmail";
         SchedulePickupCarrierNameEnum["Sendle"] = "sendle";
@@ -4530,8 +4527,6 @@
         SchedulePickupCarrierNameEnum["UspsInternational"] = "usps_international";
         SchedulePickupCarrierNameEnum["Yanwen"] = "yanwen";
         SchedulePickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-        SchedulePickupCarrierNameEnum["Eshipper"] = "eshipper";
-        SchedulePickupCarrierNameEnum["Freightcom"] = "freightcom";
     })(SchedulePickupCarrierNameEnum || (SchedulePickupCarrierNameEnum = {}));
     /**
         * @export
@@ -4546,7 +4541,9 @@
         TrackShipmentCarrierNameEnum["DhlExpress"] = "dhl_express";
         TrackShipmentCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         TrackShipmentCarrierNameEnum["Dicom"] = "dicom";
+        TrackShipmentCarrierNameEnum["Eshipper"] = "eshipper";
         TrackShipmentCarrierNameEnum["Fedex"] = "fedex";
+        TrackShipmentCarrierNameEnum["Freightcom"] = "freightcom";
         TrackShipmentCarrierNameEnum["Purolator"] = "purolator";
         TrackShipmentCarrierNameEnum["Royalmail"] = "royalmail";
         TrackShipmentCarrierNameEnum["Sendle"] = "sendle";
@@ -4557,8 +4554,6 @@
         TrackShipmentCarrierNameEnum["UspsInternational"] = "usps_international";
         TrackShipmentCarrierNameEnum["Yanwen"] = "yanwen";
         TrackShipmentCarrierNameEnum["Yunexpress"] = "yunexpress";
-        TrackShipmentCarrierNameEnum["Eshipper"] = "eshipper";
-        TrackShipmentCarrierNameEnum["Freightcom"] = "freightcom";
     })(TrackShipmentCarrierNameEnum || (TrackShipmentCarrierNameEnum = {}));
     /**
         * @export
@@ -4573,7 +4568,9 @@
         UpdatePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         UpdatePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         UpdatePickupCarrierNameEnum["Dicom"] = "dicom";
+        UpdatePickupCarrierNameEnum["Eshipper"] = "eshipper";
         UpdatePickupCarrierNameEnum["Fedex"] = "fedex";
+        UpdatePickupCarrierNameEnum["Freightcom"] = "freightcom";
         UpdatePickupCarrierNameEnum["Purolator"] = "purolator";
         UpdatePickupCarrierNameEnum["Royalmail"] = "royalmail";
         UpdatePickupCarrierNameEnum["Sendle"] = "sendle";
@@ -4584,8 +4581,6 @@
         UpdatePickupCarrierNameEnum["UspsInternational"] = "usps_international";
         UpdatePickupCarrierNameEnum["Yanwen"] = "yanwen";
         UpdatePickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-        UpdatePickupCarrierNameEnum["Eshipper"] = "eshipper";
-        UpdatePickupCarrierNameEnum["Freightcom"] = "freightcom";
     })(UpdatePickupCarrierNameEnum || (UpdatePickupCarrierNameEnum = {}));
     /**
         * @export
@@ -4600,7 +4595,9 @@
         VoidLabelCarrierNameEnum["DhlExpress"] = "dhl_express";
         VoidLabelCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         VoidLabelCarrierNameEnum["Dicom"] = "dicom";
+        VoidLabelCarrierNameEnum["Eshipper"] = "eshipper";
         VoidLabelCarrierNameEnum["Fedex"] = "fedex";
+        VoidLabelCarrierNameEnum["Freightcom"] = "freightcom";
         VoidLabelCarrierNameEnum["Purolator"] = "purolator";
         VoidLabelCarrierNameEnum["Royalmail"] = "royalmail";
         VoidLabelCarrierNameEnum["Sendle"] = "sendle";
@@ -4611,8 +4608,6 @@
         VoidLabelCarrierNameEnum["UspsInternational"] = "usps_international";
         VoidLabelCarrierNameEnum["Yanwen"] = "yanwen";
         VoidLabelCarrierNameEnum["Yunexpress"] = "yunexpress";
-        VoidLabelCarrierNameEnum["Eshipper"] = "eshipper";
-        VoidLabelCarrierNameEnum["Freightcom"] = "freightcom";
     })(VoidLabelCarrierNameEnum || (VoidLabelCarrierNameEnum = {}));
 
     /* tslint:disable */
@@ -4628,7 +4623,7 @@
          * Add the customs declaration for the shipment if non existent.
          * Add a customs declaration
          */
-        ShipmentsApi.prototype.addCustomsRaw = function (requestParameters) {
+        ShipmentsApi.prototype.addCustomsRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4652,7 +4647,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: CustomsDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -4664,12 +4659,12 @@
          * Add the customs declaration for the shipment if non existent.
          * Add a customs declaration
          */
-        ShipmentsApi.prototype.addCustoms = function (requestParameters) {
+        ShipmentsApi.prototype.addCustoms = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.addCustomsRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.addCustomsRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4682,7 +4677,7 @@
          * Add a parcel to an existing shipment for a multi-parcel shipment.
          * Add a shipment parcel
          */
-        ShipmentsApi.prototype.addParcelRaw = function (requestParameters) {
+        ShipmentsApi.prototype.addParcelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4706,7 +4701,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ParcelDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -4718,12 +4713,12 @@
          * Add a parcel to an existing shipment for a multi-parcel shipment.
          * Add a shipment parcel
          */
-        ShipmentsApi.prototype.addParcel = function (requestParameters) {
+        ShipmentsApi.prototype.addParcel = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.addParcelRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.addParcelRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4736,7 +4731,7 @@
          * Void a shipment with the associated label.
          * Cancel a shipment
          */
-        ShipmentsApi.prototype.cancelRaw = function (requestParameters) {
+        ShipmentsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4755,7 +4750,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4767,12 +4762,12 @@
          * Void a shipment with the associated label.
          * Cancel a shipment
          */
-        ShipmentsApi.prototype.cancel = function (requestParameters) {
+        ShipmentsApi.prototype.cancel = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.cancelRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.cancelRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4785,7 +4780,7 @@
          * Create a new shipment instance.
          * Create a shipment
          */
-        ShipmentsApi.prototype.createRaw = function (requestParameters) {
+        ShipmentsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4809,7 +4804,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ShipmentDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -4821,12 +4816,12 @@
          * Create a new shipment instance.
          * Create a shipment
          */
-        ShipmentsApi.prototype.create = function (requestParameters) {
+        ShipmentsApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4839,7 +4834,7 @@
          * Retrieve all shipments.
          * List all shipments
          */
-        ShipmentsApi.prototype.listRaw = function (requestParameters) {
+        ShipmentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4885,7 +4880,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentListFromJSON(jsonValue); })];
@@ -4897,12 +4892,12 @@
          * Retrieve all shipments.
          * List all shipments
          */
-        ShipmentsApi.prototype.list = function (requestParameters) {
+        ShipmentsApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4915,7 +4910,7 @@
          * Select your preferred rates to buy a shipment label.
          * Buy a shipment label
          */
-        ShipmentsApi.prototype.purchaseRaw = function (requestParameters) {
+        ShipmentsApi.prototype.purchaseRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4939,7 +4934,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ShipmentPurchaseDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -4951,12 +4946,12 @@
          * Select your preferred rates to buy a shipment label.
          * Buy a shipment label
          */
-        ShipmentsApi.prototype.purchase = function (requestParameters) {
+        ShipmentsApi.prototype.purchase = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.purchaseRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.purchaseRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4969,7 +4964,7 @@
          * Refresh the list of the shipment rates
          * Fetch new shipment rates
          */
-        ShipmentsApi.prototype.ratesRaw = function (requestParameters) {
+        ShipmentsApi.prototype.ratesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -4993,7 +4988,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: ShipmentRateDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5005,12 +5000,12 @@
          * Refresh the list of the shipment rates
          * Fetch new shipment rates
          */
-        ShipmentsApi.prototype.rates = function (requestParameters) {
+        ShipmentsApi.prototype.rates = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.ratesRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.ratesRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5023,7 +5018,7 @@
          * Retrieve a shipment.
          * Retrieve a shipment
          */
-        ShipmentsApi.prototype.retrieveRaw = function (requestParameters) {
+        ShipmentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5042,7 +5037,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5054,12 +5049,12 @@
          * Retrieve a shipment.
          * Retrieve a shipment
          */
-        ShipmentsApi.prototype.retrieve = function (requestParameters) {
+        ShipmentsApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5072,7 +5067,7 @@
          * Add one or many options to your shipment.<br/> **eg:**<br/> - add shipment **insurance** - specify the preferred transaction **currency** - setup a **cash collected on delivery** option  ```json {     \"insurance\": 120,     \"currency\": \"USD\" } ```  And many more, check additional options available in the [reference](#operation/all_references).
          * Add shipment options
          */
-        ShipmentsApi.prototype.setOptionsRaw = function (requestParameters) {
+        ShipmentsApi.prototype.setOptionsRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5096,7 +5091,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: requestParameters.data,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5108,12 +5103,12 @@
          * Add one or many options to your shipment.<br/> **eg:**<br/> - add shipment **insurance** - specify the preferred transaction **currency** - setup a **cash collected on delivery** option  ```json {     \"insurance\": 120,     \"currency\": \"USD\" } ```  And many more, check additional options available in the [reference](#operation/all_references).
          * Add shipment options
          */
-        ShipmentsApi.prototype.setOptions = function (requestParameters) {
+        ShipmentsApi.prototype.setOptions = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.setOptionsRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.setOptionsRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5150,7 +5145,9 @@
         ListCarrierNameEnum["DhlExpress"] = "dhl_express";
         ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         ListCarrierNameEnum["Dicom"] = "dicom";
+        ListCarrierNameEnum["Eshipper"] = "eshipper";
         ListCarrierNameEnum["Fedex"] = "fedex";
+        ListCarrierNameEnum["Freightcom"] = "freightcom";
         ListCarrierNameEnum["Purolator"] = "purolator";
         ListCarrierNameEnum["Royalmail"] = "royalmail";
         ListCarrierNameEnum["Sendle"] = "sendle";
@@ -5161,8 +5158,6 @@
         ListCarrierNameEnum["UspsInternational"] = "usps_international";
         ListCarrierNameEnum["Yanwen"] = "yanwen";
         ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-        ListCarrierNameEnum["Eshipper"] = "eshipper";
-        ListCarrierNameEnum["Freightcom"] = "freightcom";
     })(ListCarrierNameEnum$1 || (ListCarrierNameEnum$1 = {}));
 
     /* tslint:disable */
@@ -5178,7 +5173,7 @@
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
          * Create a shipment tracker
          */
-        TrackersApi.prototype.createRaw = function (requestParameters) {
+        TrackersApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5203,7 +5198,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
@@ -5215,12 +5210,12 @@
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
          * Create a shipment tracker
          */
-        TrackersApi.prototype.create = function (requestParameters) {
+        TrackersApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5233,7 +5228,7 @@
          * Retrieve all shipment trackers.
          * List all shipment trackers
          */
-        TrackersApi.prototype.listRaw = function (requestParameters) {
+        TrackersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5267,7 +5262,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackerListFromJSON(jsonValue); })];
@@ -5279,12 +5274,12 @@
          * Retrieve all shipment trackers.
          * List all shipment trackers
          */
-        TrackersApi.prototype.list = function (requestParameters) {
+        TrackersApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5297,7 +5292,7 @@
          * Discard a shipment tracker.
          * Discard a shipment tracker
          */
-        TrackersApi.prototype.removeRaw = function (requestParameters) {
+        TrackersApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5316,7 +5311,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5328,12 +5323,12 @@
          * Discard a shipment tracker.
          * Discard a shipment tracker
          */
-        TrackersApi.prototype.remove = function (requestParameters) {
+        TrackersApi.prototype.remove = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.removeRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.removeRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5346,7 +5341,7 @@
          * Retrieve a shipment tracker
          * Retrieves a shipment tracker
          */
-        TrackersApi.prototype.retrievesRaw = function (requestParameters) {
+        TrackersApi.prototype.retrievesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5365,7 +5360,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
@@ -5377,12 +5372,12 @@
          * Retrieve a shipment tracker
          * Retrieves a shipment tracker
          */
-        TrackersApi.prototype.retrieves = function (requestParameters) {
+        TrackersApi.prototype.retrieves = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrievesRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrievesRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5406,7 +5401,9 @@
         CreateCarrierNameEnum["DhlExpress"] = "dhl_express";
         CreateCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CreateCarrierNameEnum["Dicom"] = "dicom";
+        CreateCarrierNameEnum["Eshipper"] = "eshipper";
         CreateCarrierNameEnum["Fedex"] = "fedex";
+        CreateCarrierNameEnum["Freightcom"] = "freightcom";
         CreateCarrierNameEnum["Purolator"] = "purolator";
         CreateCarrierNameEnum["Royalmail"] = "royalmail";
         CreateCarrierNameEnum["Sendle"] = "sendle";
@@ -5417,8 +5414,6 @@
         CreateCarrierNameEnum["UspsInternational"] = "usps_international";
         CreateCarrierNameEnum["Yanwen"] = "yanwen";
         CreateCarrierNameEnum["Yunexpress"] = "yunexpress";
-        CreateCarrierNameEnum["Eshipper"] = "eshipper";
-        CreateCarrierNameEnum["Freightcom"] = "freightcom";
     })(CreateCarrierNameEnum || (CreateCarrierNameEnum = {}));
     /**
         * @export
@@ -5444,7 +5439,9 @@
         ListCarrierNameEnum["DhlExpress"] = "dhl_express";
         ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         ListCarrierNameEnum["Dicom"] = "dicom";
+        ListCarrierNameEnum["Eshipper"] = "eshipper";
         ListCarrierNameEnum["Fedex"] = "fedex";
+        ListCarrierNameEnum["Freightcom"] = "freightcom";
         ListCarrierNameEnum["Purolator"] = "purolator";
         ListCarrierNameEnum["Royalmail"] = "royalmail";
         ListCarrierNameEnum["Sendle"] = "sendle";
@@ -5455,8 +5452,6 @@
         ListCarrierNameEnum["UspsInternational"] = "usps_international";
         ListCarrierNameEnum["Yanwen"] = "yanwen";
         ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-        ListCarrierNameEnum["Eshipper"] = "eshipper";
-        ListCarrierNameEnum["Freightcom"] = "freightcom";
     })(ListCarrierNameEnum || (ListCarrierNameEnum = {}));
 
     /* tslint:disable */
@@ -5472,7 +5467,7 @@
          * Create a new webhook.
          * Create a webhook
          */
-        WebhooksApi.prototype.createRaw = function (requestParameters) {
+        WebhooksApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5493,7 +5488,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: WebhookDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5505,12 +5500,12 @@
          * Create a new webhook.
          * Create a webhook
          */
-        WebhooksApi.prototype.create = function (requestParameters) {
+        WebhooksApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5523,7 +5518,7 @@
          * Retrieve all webhooks.
          * List all webhooks
          */
-        WebhooksApi.prototype.listRaw = function (requestParameters) {
+        WebhooksApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5548,7 +5543,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookListFromJSON(jsonValue); })];
@@ -5560,12 +5555,12 @@
          * Retrieve all webhooks.
          * List all webhooks
          */
-        WebhooksApi.prototype.list = function (requestParameters) {
+        WebhooksApi.prototype.list = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5578,7 +5573,7 @@
          * Remove a webhook.
          * Remove a webhook
          */
-        WebhooksApi.prototype.removeRaw = function (requestParameters) {
+        WebhooksApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5597,7 +5592,7 @@
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5609,12 +5604,12 @@
          * Remove a webhook.
          * Remove a webhook
          */
-        WebhooksApi.prototype.remove = function (requestParameters) {
+        WebhooksApi.prototype.remove = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.removeRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.removeRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5627,7 +5622,7 @@
          * Retrieve a webhook.
          * Retrieve a webhook
          */
-        WebhooksApi.prototype.retrieveRaw = function (requestParameters) {
+        WebhooksApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5646,7 +5641,7 @@
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5658,12 +5653,12 @@
          * Retrieve a webhook.
          * Retrieve a webhook
          */
-        WebhooksApi.prototype.retrieve = function (requestParameters) {
+        WebhooksApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5676,7 +5671,7 @@
          * test a webhook.
          * Test a webhook
          */
-        WebhooksApi.prototype.testRaw = function (requestParameters) {
+        WebhooksApi.prototype.testRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5700,7 +5695,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: WebhookTestRequestToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5712,12 +5707,12 @@
          * test a webhook.
          * Test a webhook
          */
-        WebhooksApi.prototype.test = function (requestParameters) {
+        WebhooksApi.prototype.test = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.testRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.testRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5730,7 +5725,7 @@
          * update a webhook.
          * Update a webhook
          */
-        WebhooksApi.prototype.updateRaw = function (requestParameters) {
+        WebhooksApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, response;
                 return __generator(this, function (_a) {
@@ -5754,7 +5749,7 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: WebhookDataToJSON(requestParameters.data),
-                                })];
+                                }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5766,12 +5761,12 @@
          * update a webhook.
          * Update a webhook
          */
-        WebhooksApi.prototype.update = function (requestParameters) {
+        WebhooksApi.prototype.update = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters)];
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5785,7 +5780,11 @@
 
     var PurplshipClient = /** @class */ (function () {
         function PurplshipClient(clientConfig) {
-            var config = new Configuration(clientConfig);
+            var config = new Configuration(__assign({ credentials: "include", headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                } }, clientConfig));
+            this.config = clientConfig;
             this.API = new APIApi(config);
             this.addresses = new AddressesApi(config);
             this.carriers = new CarriersApi(config);
@@ -5805,15 +5804,7 @@
         __extends(Purplship, _super);
         function Purplship(_a) {
             var apiKey = _a.apiKey, host = _a.host;
-            return _super.call(this, {
-                apiKey: apiKey,
-                basePath: host,
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json",
-                    'Accept': 'application/json',
-                }
-            }) || this;
+            return _super.call(this, { basePath: host, apiKey: apiKey }) || this;
         }
         return Purplship;
     }(PurplshipClient));
@@ -5823,5 +5814,5 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=purplship.js.map

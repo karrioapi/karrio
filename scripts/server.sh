@@ -38,11 +38,11 @@ elif [[ "$*" == *gen:openapi* ]]; then
 	cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/codegen"
+	mkdir -p "${ROOT:?}/.codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/server/schemas/openapi.json \
         -g typescript-fetch \
-		-o /local/codegen/node \
+		-o /local/.codegen/typescript/api/generated \
         --additional-properties=typescriptThreePlus=true \
         --additional-properties=modelPropertyNaming=snake_case \
         --additional-properties=useSingleRequestParameter=True
@@ -50,11 +50,11 @@ elif [[ "$*" == *gen:ts:cli* ]]; then
 	cd -
 elif [[ "$*" == *gen:php:cli* ]]; then
     cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/codegen"
+	mkdir -p "${ROOT:?}/.codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/server/schemas/openapi.json \
 		-g php \
-		-o /local/codegen/php \
+		-o /local/.codegen/php \
         --additional-properties=invokerPackage=Purplship \
         --additional-properties=packageName=Purplship \
         --additional-properties=prependFormOrBodyParameters=true
@@ -62,17 +62,33 @@ elif [[ "$*" == *gen:php:cli* ]]; then
 	cd -
 elif [[ "$*" == *gen:py:cli* ]]; then
 	cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/codegen"
+	mkdir -p "${ROOT:?}/.codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/schemas/openapi.json \
 		-g python \
-		-o /local/codegen/python \
+		-o /local/.codegen/python \
         --additional-properties=projectName=purplship-python \
         --additional-properties=packageName=purplship
 
 	cd -
+elif [[ "$*" == *build:js* ]]; then
+	cd "${ROOT:?}/.codegen/typescript"
+	rm -rf node_modules; 
+    yarn;
+	npx gulp build --output "${ROOT:?}/server/main/purplship/server/static/purplship/js/purplship.js"
+	cd -
+	purplship collectstatic --noinput
 elif [[ "$*" == *build:pkgs* ]]; then
 	cd "${ROOT:?}"
+    rm -rf "${DIST}/*"
+
+    # Generate ts client
+    . ${ROOT}/scripts/server.sh gen:ts:cli || exit 1
+
+    # Build js client
+    . ${ROOT}/scripts/server.sh build:js || exit 1
+
+    # Build server packages
     sm=$(find "${ROOT:?}/server" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
@@ -80,9 +96,9 @@ elif [[ "$*" == *build:pkgs* ]]; then
     done
 
 	cd -
-elif [[ "$*" == *build:ee* ]]; then
+elif [[ "$*" == *build:insiders* ]]; then
 	cd "${ROOT:?}"
-    sm=$(find "${ROOT:?}/ee" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
+    sm=$(find "${ROOT:?}/insiders" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
 		./scripts/build-package-wheel.sh "${module}" || exit 1
