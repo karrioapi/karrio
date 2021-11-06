@@ -222,12 +222,6 @@
         }
         return RequiredError;
     }(Error));
-    var COLLECTION_FORMATS = {
-        csv: ",",
-        ssv: " ",
-        tsv: "\t",
-        pipes: "|",
-    };
     var Configuration = /** @class */ (function () {
         function Configuration(configuration) {
             if (configuration === void 0) { configuration = {}; }
@@ -342,21 +336,6 @@
             .filter(function (part) { return part.length > 0; })
             .join('&');
     }
-    function mapValues(data, fn) {
-        return Object.keys(data).reduce(function (acc, key) {
-            var _a;
-            return (__assign(__assign({}, acc), (_a = {}, _a[key] = fn(data[key]), _a)));
-        }, {});
-    }
-    function canConsumeForm(consumes) {
-        for (var _i = 0, consumes_1 = consumes; _i < consumes_1.length; _i++) {
-            var consume = consumes_1[_i];
-            if ('multipart/form-data' === consume.contentType) {
-                return true;
-            }
-        }
-        return false;
-    }
     var JSONApiResponse = /** @class */ (function () {
         function JSONApiResponse(raw, transformer) {
             if (transformer === void 0) { transformer = function (jsonValue) { return jsonValue; }; }
@@ -378,58 +357,13 @@
         };
         return JSONApiResponse;
     }());
-    var VoidApiResponse = /** @class */ (function () {
-        function VoidApiResponse(raw) {
-            this.raw = raw;
-        }
-        VoidApiResponse.prototype.value = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, undefined];
-                });
-            });
-        };
-        return VoidApiResponse;
-    }());
-    var BlobApiResponse = /** @class */ (function () {
-        function BlobApiResponse(raw) {
-            this.raw = raw;
-        }
-        BlobApiResponse.prototype.value = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.raw.blob()];
-                        case 1: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        return BlobApiResponse;
-    }());
-    var TextApiResponse = /** @class */ (function () {
-        function TextApiResponse(raw) {
-            this.raw = raw;
-        }
-        TextApiResponse.prototype.value = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.raw.text()];
-                        case 1: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        return TextApiResponse;
-    }());
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.AddressCountryCodeEnum = void 0;
+    var AddressCountryCodeEnum;
     (function (AddressCountryCodeEnum) {
         AddressCountryCodeEnum["Ad"] = "AD";
         AddressCountryCodeEnum["Ae"] = "AE";
@@ -665,7 +599,7 @@
         AddressCountryCodeEnum["Za"] = "ZA";
         AddressCountryCodeEnum["Zm"] = "ZM";
         AddressCountryCodeEnum["Zw"] = "ZW";
-    })(exports.AddressCountryCodeEnum || (exports.AddressCountryCodeEnum = {}));
+    })(AddressCountryCodeEnum || (AddressCountryCodeEnum = {}));
     function AddressFromJSON(json) {
         return AddressFromJSONTyped(json);
     }
@@ -726,7 +660,7 @@
     * @export
     * @enum {string}
     */
-    exports.AddressDataCountryCodeEnum = void 0;
+    var AddressDataCountryCodeEnum;
     (function (AddressDataCountryCodeEnum) {
         AddressDataCountryCodeEnum["Ad"] = "AD";
         AddressDataCountryCodeEnum["Ae"] = "AE";
@@ -962,32 +896,7 @@
         AddressDataCountryCodeEnum["Za"] = "ZA";
         AddressDataCountryCodeEnum["Zm"] = "ZM";
         AddressDataCountryCodeEnum["Zw"] = "ZW";
-    })(exports.AddressDataCountryCodeEnum || (exports.AddressDataCountryCodeEnum = {}));
-    function AddressDataFromJSON(json) {
-        return AddressDataFromJSONTyped(json);
-    }
-    function AddressDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-        };
-    }
+    })(AddressDataCountryCodeEnum || (AddressDataCountryCodeEnum = {}));
     function AddressDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1026,19 +935,6 @@
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(AddressFromJSON)),
-        };
-    }
-    function AddressListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(AddressToJSON)),
         };
     }
 
@@ -1082,19 +978,6 @@
             'results': (json['results'].map(CarrierSettingsFromJSON)),
         };
     }
-    function CarrierListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(CarrierSettingsToJSON)),
-        };
-    }
 
     /* tslint:disable */
     /* eslint-disable */
@@ -1113,7 +996,7 @@
     * @export
     * @enum {string}
     */
-    exports.CarrierSettingsCarrierNameEnum = void 0;
+    var CarrierSettingsCarrierNameEnum;
     (function (CarrierSettingsCarrierNameEnum) {
         CarrierSettingsCarrierNameEnum["Aramex"] = "aramex";
         CarrierSettingsCarrierNameEnum["Australiapost"] = "australiapost";
@@ -1135,7 +1018,7 @@
         CarrierSettingsCarrierNameEnum["UspsInternational"] = "usps_international";
         CarrierSettingsCarrierNameEnum["Yanwen"] = "yanwen";
         CarrierSettingsCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(exports.CarrierSettingsCarrierNameEnum || (exports.CarrierSettingsCarrierNameEnum = {}));
+    })(CarrierSettingsCarrierNameEnum || (CarrierSettingsCarrierNameEnum = {}));
     function CarrierSettingsFromJSON(json) {
         return CarrierSettingsFromJSONTyped(json);
     }
@@ -1149,21 +1032,6 @@
             'carrier_id': json['carrier_id'],
             'test': json['test'],
             'active': json['active'],
-        };
-    }
-    function CarrierSettingsToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'test': value.test,
-            'active': value.active,
         };
     }
 
@@ -1200,11 +1068,11 @@
     * @export
     * @enum {string}
     */
-    exports.CommodityWeightUnitEnum = void 0;
+    var CommodityWeightUnitEnum;
     (function (CommodityWeightUnitEnum) {
         CommodityWeightUnitEnum["Kg"] = "KG";
         CommodityWeightUnitEnum["Lb"] = "LB";
-    })(exports.CommodityWeightUnitEnum || (exports.CommodityWeightUnitEnum = {}));
+    })(CommodityWeightUnitEnum || (CommodityWeightUnitEnum = {}));
     function CommodityFromJSON(json) {
         return CommodityFromJSONTyped(json);
     }
@@ -1249,29 +1117,11 @@
     * @export
     * @enum {string}
     */
-    exports.CommodityDataWeightUnitEnum = void 0;
+    var CommodityDataWeightUnitEnum;
     (function (CommodityDataWeightUnitEnum) {
         CommodityDataWeightUnitEnum["Kg"] = "KG";
         CommodityDataWeightUnitEnum["Lb"] = "LB";
-    })(exports.CommodityDataWeightUnitEnum || (exports.CommodityDataWeightUnitEnum = {}));
-    function CommodityDataFromJSON(json) {
-        return CommodityDataFromJSONTyped(json);
-    }
-    function CommodityDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'weight': json['weight'],
-            'weight_unit': json['weight_unit'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
-            'sku': !exists(json, 'sku') ? undefined : json['sku'],
-            'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
-            'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
-            'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
-        };
-    }
+    })(CommodityDataWeightUnitEnum || (CommodityDataWeightUnitEnum = {}));
     function CommodityDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1296,7 +1146,7 @@
     * @export
     * @enum {string}
     */
-    exports.CustomsContentTypeEnum = void 0;
+    var CustomsContentTypeEnum;
     (function (CustomsContentTypeEnum) {
         CustomsContentTypeEnum["Documents"] = "documents";
         CustomsContentTypeEnum["Gift"] = "gift";
@@ -1304,11 +1154,11 @@
         CustomsContentTypeEnum["Merchandise"] = "merchandise";
         CustomsContentTypeEnum["ReturnMerchandise"] = "return_merchandise";
         CustomsContentTypeEnum["Other"] = "other";
-    })(exports.CustomsContentTypeEnum || (exports.CustomsContentTypeEnum = {})); /**
+    })(CustomsContentTypeEnum || (CustomsContentTypeEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.CustomsIncotermEnum = void 0;
+    var CustomsIncotermEnum;
     (function (CustomsIncotermEnum) {
         CustomsIncotermEnum["Cfr"] = "CFR";
         CustomsIncotermEnum["Cif"] = "CIF";
@@ -1323,7 +1173,7 @@
         CustomsIncotermEnum["Fas"] = "FAS";
         CustomsIncotermEnum["Fca"] = "FCA";
         CustomsIncotermEnum["Fob"] = "FOB";
-    })(exports.CustomsIncotermEnum || (exports.CustomsIncotermEnum = {}));
+    })(CustomsIncotermEnum || (CustomsIncotermEnum = {}));
     function CustomsFromJSON(json) {
         return CustomsFromJSONTyped(json);
     }
@@ -1349,38 +1199,13 @@
             'options': !exists(json, 'options') ? undefined : json['options'],
         };
     }
-    function CustomsToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'aes': value.aes,
-            'eel_pfc': value.eel_pfc,
-            'content_type': value.content_type,
-            'content_description': value.content_description,
-            'incoterm': value.incoterm,
-            'commodities': value.commodities === undefined ? undefined : (value.commodities === null ? null : value.commodities.map(CommodityToJSON)),
-            'duty': DutyToJSON(value.duty),
-            'invoice': value.invoice,
-            'invoice_date': value.invoice_date,
-            'commercial_invoice': value.commercial_invoice,
-            'certify': value.certify,
-            'signer': value.signer,
-            'certificate_number': value.certificate_number,
-            'options': value.options,
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.CustomsDataContentTypeEnum = void 0;
+    var CustomsDataContentTypeEnum;
     (function (CustomsDataContentTypeEnum) {
         CustomsDataContentTypeEnum["Documents"] = "documents";
         CustomsDataContentTypeEnum["Gift"] = "gift";
@@ -1388,11 +1213,11 @@
         CustomsDataContentTypeEnum["Merchandise"] = "merchandise";
         CustomsDataContentTypeEnum["ReturnMerchandise"] = "return_merchandise";
         CustomsDataContentTypeEnum["Other"] = "other";
-    })(exports.CustomsDataContentTypeEnum || (exports.CustomsDataContentTypeEnum = {})); /**
+    })(CustomsDataContentTypeEnum || (CustomsDataContentTypeEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.CustomsDataIncotermEnum = void 0;
+    var CustomsDataIncotermEnum;
     (function (CustomsDataIncotermEnum) {
         CustomsDataIncotermEnum["Cfr"] = "CFR";
         CustomsDataIncotermEnum["Cif"] = "CIF";
@@ -1407,31 +1232,7 @@
         CustomsDataIncotermEnum["Fas"] = "FAS";
         CustomsDataIncotermEnum["Fca"] = "FCA";
         CustomsDataIncotermEnum["Fob"] = "FOB";
-    })(exports.CustomsDataIncotermEnum || (exports.CustomsDataIncotermEnum = {}));
-    function CustomsDataFromJSON(json) {
-        return CustomsDataFromJSONTyped(json);
-    }
-    function CustomsDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'aes': !exists(json, 'aes') ? undefined : json['aes'],
-            'eel_pfc': !exists(json, 'eel_pfc') ? undefined : json['eel_pfc'],
-            'content_type': !exists(json, 'content_type') ? undefined : json['content_type'],
-            'content_description': !exists(json, 'content_description') ? undefined : json['content_description'],
-            'incoterm': !exists(json, 'incoterm') ? undefined : json['incoterm'],
-            'commodities': !exists(json, 'commodities') ? undefined : (json['commodities'] === null ? null : json['commodities'].map(CommodityFromJSON)),
-            'duty': !exists(json, 'duty') ? undefined : DutyFromJSON(json['duty']),
-            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
-            'invoice_date': !exists(json, 'invoice_date') ? undefined : json['invoice_date'],
-            'commercial_invoice': !exists(json, 'commercial_invoice') ? undefined : json['commercial_invoice'],
-            'certify': !exists(json, 'certify') ? undefined : json['certify'],
-            'signer': !exists(json, 'signer') ? undefined : json['signer'],
-            'certificate_number': !exists(json, 'certificate_number') ? undefined : json['certificate_number'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-        };
-    }
+    })(CustomsDataIncotermEnum || (CustomsDataIncotermEnum = {}));
     function CustomsDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1471,35 +1272,22 @@
             'results': (json['results'].map(CustomsFromJSON)),
         };
     }
-    function CustomsListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(CustomsToJSON)),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.DutyPaidByEnum = void 0;
+    var DutyPaidByEnum;
     (function (DutyPaidByEnum) {
         DutyPaidByEnum["Sender"] = "sender";
         DutyPaidByEnum["Recipient"] = "recipient";
         DutyPaidByEnum["ThirdParty"] = "third_party";
-    })(exports.DutyPaidByEnum || (exports.DutyPaidByEnum = {})); /**
+    })(DutyPaidByEnum || (DutyPaidByEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.DutyCurrencyEnum = void 0;
+    var DutyCurrencyEnum;
     (function (DutyCurrencyEnum) {
         DutyCurrencyEnum["Eur"] = "EUR";
         DutyCurrencyEnum["Aed"] = "AED";
@@ -1644,7 +1432,7 @@
         DutyCurrencyEnum["Wst"] = "WST";
         DutyCurrencyEnum["Yer"] = "YER";
         DutyCurrencyEnum["Zar"] = "ZAR";
-    })(exports.DutyCurrencyEnum || (exports.DutyCurrencyEnum = {}));
+    })(DutyCurrencyEnum || (DutyCurrencyEnum = {}));
     function DutyFromJSON(json) {
         return DutyFromJSONTyped(json);
     }
@@ -1677,30 +1465,6 @@
     }
 
     /* tslint:disable */
-    function ErrorResponseFromJSON(json) {
-        return ErrorResponseFromJSONTyped(json);
-    }
-    function ErrorResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-        };
-    }
-    function ErrorResponseToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-        };
-    }
-
-    /* tslint:disable */
     function MessageFromJSON(json) {
         return MessageFromJSONTyped(json);
     }
@@ -1714,21 +1478,6 @@
             'message': !exists(json, 'message') ? undefined : json['message'],
             'code': !exists(json, 'code') ? undefined : json['code'],
             'details': !exists(json, 'details') ? undefined : json['details'],
-        };
-    }
-    function MessageToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'message': value.message,
-            'code': value.code,
-            'details': value.details,
         };
     }
 
@@ -1755,18 +1504,6 @@
         return {
             'operation': json['operation'],
             'success': json['success'],
-        };
-    }
-    function OperationToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'operation': value.operation,
-            'success': value.success,
         };
     }
 
@@ -1797,20 +1534,6 @@
             'carrier_id': json['carrier_id'],
         };
     }
-    function OperationConfirmationToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'operation': value.operation,
-            'success': value.success,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-        };
-    }
 
     /* tslint:disable */
     function OperationResponseFromJSON(json) {
@@ -1825,37 +1548,25 @@
             'confirmation': !exists(json, 'confirmation') ? undefined : OperationConfirmationFromJSON(json['confirmation']),
         };
     }
-    function OperationResponseToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-            'confirmation': OperationConfirmationToJSON(value.confirmation),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.ParcelWeightUnitEnum = void 0;
+    var ParcelWeightUnitEnum;
     (function (ParcelWeightUnitEnum) {
         ParcelWeightUnitEnum["Kg"] = "KG";
         ParcelWeightUnitEnum["Lb"] = "LB";
-    })(exports.ParcelWeightUnitEnum || (exports.ParcelWeightUnitEnum = {})); /**
+    })(ParcelWeightUnitEnum || (ParcelWeightUnitEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.ParcelDimensionUnitEnum = void 0;
+    var ParcelDimensionUnitEnum;
     (function (ParcelDimensionUnitEnum) {
         ParcelDimensionUnitEnum["Cm"] = "CM";
         ParcelDimensionUnitEnum["In"] = "IN";
-    })(exports.ParcelDimensionUnitEnum || (exports.ParcelDimensionUnitEnum = {}));
+    })(ParcelDimensionUnitEnum || (ParcelDimensionUnitEnum = {}));
     function ParcelFromJSON(json) {
         return ParcelFromJSONTyped(json);
     }
@@ -1906,40 +1617,19 @@
     * @export
     * @enum {string}
     */
-    exports.ParcelDataWeightUnitEnum = void 0;
+    var ParcelDataWeightUnitEnum;
     (function (ParcelDataWeightUnitEnum) {
         ParcelDataWeightUnitEnum["Kg"] = "KG";
         ParcelDataWeightUnitEnum["Lb"] = "LB";
-    })(exports.ParcelDataWeightUnitEnum || (exports.ParcelDataWeightUnitEnum = {})); /**
+    })(ParcelDataWeightUnitEnum || (ParcelDataWeightUnitEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.ParcelDataDimensionUnitEnum = void 0;
+    var ParcelDataDimensionUnitEnum;
     (function (ParcelDataDimensionUnitEnum) {
         ParcelDataDimensionUnitEnum["Cm"] = "CM";
         ParcelDataDimensionUnitEnum["In"] = "IN";
-    })(exports.ParcelDataDimensionUnitEnum || (exports.ParcelDataDimensionUnitEnum = {}));
-    function ParcelDataFromJSON(json) {
-        return ParcelDataFromJSONTyped(json);
-    }
-    function ParcelDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'weight': json['weight'],
-            'width': !exists(json, 'width') ? undefined : json['width'],
-            'height': !exists(json, 'height') ? undefined : json['height'],
-            'length': !exists(json, 'length') ? undefined : json['length'],
-            'packaging_type': !exists(json, 'packaging_type') ? undefined : json['packaging_type'],
-            'package_preset': !exists(json, 'package_preset') ? undefined : json['package_preset'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'content': !exists(json, 'content') ? undefined : json['content'],
-            'is_document': !exists(json, 'is_document') ? undefined : json['is_document'],
-            'weight_unit': json['weight_unit'],
-            'dimension_unit': !exists(json, 'dimension_unit') ? undefined : json['dimension_unit'],
-        };
-    }
+    })(ParcelDataDimensionUnitEnum || (ParcelDataDimensionUnitEnum = {}));
     function ParcelDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1976,35 +1666,22 @@
             'results': (json['results'].map(ParcelFromJSON)),
         };
     }
-    function ParcelListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(ParcelToJSON)),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.PaymentPaidByEnum = void 0;
+    var PaymentPaidByEnum;
     (function (PaymentPaidByEnum) {
         PaymentPaidByEnum["Sender"] = "sender";
         PaymentPaidByEnum["Recipient"] = "recipient";
         PaymentPaidByEnum["ThirdParty"] = "third_party";
-    })(exports.PaymentPaidByEnum || (exports.PaymentPaidByEnum = {})); /**
+    })(PaymentPaidByEnum || (PaymentPaidByEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.PaymentCurrencyEnum = void 0;
+    var PaymentCurrencyEnum;
     (function (PaymentCurrencyEnum) {
         PaymentCurrencyEnum["Eur"] = "EUR";
         PaymentCurrencyEnum["Aed"] = "AED";
@@ -2149,7 +1826,7 @@
         PaymentCurrencyEnum["Wst"] = "WST";
         PaymentCurrencyEnum["Yer"] = "YER";
         PaymentCurrencyEnum["Zar"] = "ZAR";
-    })(exports.PaymentCurrencyEnum || (exports.PaymentCurrencyEnum = {}));
+    })(PaymentCurrencyEnum || (PaymentCurrencyEnum = {}));
     function PaymentFromJSON(json) {
         return PaymentFromJSONTyped(json);
     }
@@ -2202,43 +1879,8 @@
             'test_mode': json['test_mode'],
         };
     }
-    function PickupToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'confirmation_number': value.confirmation_number,
-            'pickup_date': value.pickup_date,
-            'pickup_charge': ChargeToJSON(value.pickup_charge),
-            'ready_time': value.ready_time,
-            'closing_time': value.closing_time,
-            'address': AddressToJSON(value.address),
-            'parcels': (value.parcels === null ? null : value.parcels.map(ParcelToJSON)),
-            'instruction': value.instruction,
-            'package_location': value.package_location,
-            'options': value.options,
-            'test_mode': value.test_mode,
-        };
-    }
 
     /* tslint:disable */
-    function PickupCancelDataFromJSON(json) {
-        return PickupCancelDataFromJSONTyped(json);
-    }
-    function PickupCancelDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'reason': !exists(json, 'reason') ? undefined : json['reason'],
-        };
-    }
     function PickupCancelDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2252,20 +1894,6 @@
     }
 
     /* tslint:disable */
-    function PickupCancelRequestFromJSON(json) {
-        return PickupCancelRequestFromJSONTyped(json);
-    }
-    function PickupCancelRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'confirmation_number': json['confirmation_number'],
-            'address': !exists(json, 'address') ? undefined : AddressDataFromJSON(json['address']),
-            'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
-            'reason': !exists(json, 'reason') ? undefined : json['reason'],
-        };
-    }
     function PickupCancelRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2282,24 +1910,6 @@
     }
 
     /* tslint:disable */
-    function PickupDataFromJSON(json) {
-        return PickupDataFromJSONTyped(json);
-    }
-    function PickupDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'pickup_date': json['pickup_date'],
-            'address': !exists(json, 'address') ? undefined : AddressDataFromJSON(json['address']),
-            'ready_time': json['ready_time'],
-            'closing_time': json['closing_time'],
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'tracking_numbers': json['tracking_numbers'],
-        };
-    }
     function PickupDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2333,39 +1943,8 @@
             'results': (json['results'].map(PickupFromJSON)),
         };
     }
-    function PickupListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(PickupToJSON)),
-        };
-    }
 
     /* tslint:disable */
-    function PickupRequestFromJSON(json) {
-        return PickupRequestFromJSONTyped(json);
-    }
-    function PickupRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'pickup_date': json['pickup_date'],
-            'address': AddressDataFromJSON(json['address']),
-            'parcels': (json['parcels'] === null ? null : json['parcels'].map(ParcelDataFromJSON)),
-            'ready_time': json['ready_time'],
-            'closing_time': json['closing_time'],
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-        };
-    }
     function PickupRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2398,39 +1977,8 @@
             'pickup': !exists(json, 'pickup') ? undefined : PickupFromJSON(json['pickup']),
         };
     }
-    function PickupResponseToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-            'pickup': PickupToJSON(value.pickup),
-        };
-    }
 
     /* tslint:disable */
-    function PickupUpdateDataFromJSON(json) {
-        return PickupUpdateDataFromJSONTyped(json);
-    }
-    function PickupUpdateDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
-            'address': !exists(json, 'address') ? undefined : AddressDataFromJSON(json['address']),
-            'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
-            'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'tracking_numbers': !exists(json, 'tracking_numbers') ? undefined : json['tracking_numbers'],
-            'confirmation_number': json['confirmation_number'],
-        };
-    }
     function PickupUpdateDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2452,25 +2000,6 @@
     }
 
     /* tslint:disable */
-    function PickupUpdateRequestFromJSON(json) {
-        return PickupUpdateRequestFromJSONTyped(json);
-    }
-    function PickupUpdateRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'pickup_date': json['pickup_date'],
-            'address': AddressFromJSON(json['address']),
-            'parcels': (json['parcels'] === null ? null : json['parcels'].map(ParcelFromJSON)),
-            'confirmation_number': json['confirmation_number'],
-            'ready_time': json['ready_time'],
-            'closing_time': json['closing_time'],
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-        };
-    }
     function PickupUpdateRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2542,23 +2071,6 @@
     }
 
     /* tslint:disable */
-    function RateRequestFromJSON(json) {
-        return RateRequestFromJSONTyped(json);
-    }
-    function RateRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'shipper': AddressDataFromJSON(json['shipper']),
-            'recipient': AddressDataFromJSON(json['recipient']),
-            'parcels': (json['parcels'].map(ParcelDataFromJSON)),
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
-        };
-    }
     function RateRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2588,18 +2100,6 @@
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
             'rates': (json['rates'].map(RateFromJSON)),
-        };
-    }
-    function RateResponseToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-            'rates': (value.rates.map(RateToJSON)),
         };
     }
 
@@ -2645,42 +2145,13 @@
             'carrier_capabilities': json['carrier_capabilities'],
         };
     }
-    function ReferencesToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'APP_NAME': value.app_name,
-            'APP_VERSION': value.app_version,
-            'APP_WEBSITE': value.app_website,
-            'MULTI_ORGANIZATIONS': value.multi_organizations,
-            'ADDRESS_AUTO_COMPLETE': value.address_auto_complete,
-            'countries': value.countries,
-            'currencies': value.currencies,
-            'carriers': value.carriers,
-            'customs_content_type': value.customs_content_type,
-            'incoterms': value.incoterms,
-            'states': value.states,
-            'services': value.services,
-            'service_names': value.service_names,
-            'options': value.options,
-            'option_names': value.option_names,
-            'package_presets': value.package_presets,
-            'packaging_types': value.packaging_types,
-            'payment_types': value.payment_types,
-            'carrier_capabilities': value.carrier_capabilities,
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.ShipmentStatusEnum = void 0;
+    var ShipmentStatusEnum;
     (function (ShipmentStatusEnum) {
         ShipmentStatusEnum["Created"] = "created";
         ShipmentStatusEnum["Purchased"] = "purchased";
@@ -2688,15 +2159,15 @@
         ShipmentStatusEnum["Shipped"] = "shipped";
         ShipmentStatusEnum["InTransit"] = "in-transit";
         ShipmentStatusEnum["Delivered"] = "delivered";
-    })(exports.ShipmentStatusEnum || (exports.ShipmentStatusEnum = {})); /**
+    })(ShipmentStatusEnum || (ShipmentStatusEnum = {})); /**
     * @export
     * @enum {string}
     */
-    exports.ShipmentLabelTypeEnum = void 0;
+    var ShipmentLabelTypeEnum;
     (function (ShipmentLabelTypeEnum) {
         ShipmentLabelTypeEnum["Pdf"] = "PDF";
         ShipmentLabelTypeEnum["Zpl"] = "ZPL";
-    })(exports.ShipmentLabelTypeEnum || (exports.ShipmentLabelTypeEnum = {}));
+    })(ShipmentLabelTypeEnum || (ShipmentLabelTypeEnum = {}));
     function ShipmentFromJSON(json) {
         return ShipmentFromJSONTyped(json);
     }
@@ -2734,58 +2205,8 @@
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
         };
     }
-    function ShipmentToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'status': value.status,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'label': value.label,
-            'tracking_number': value.tracking_number,
-            'shipment_identifier': value.shipment_identifier,
-            'selected_rate': RateToJSON(value.selected_rate),
-            'selected_rate_id': value.selected_rate_id,
-            'rates': value.rates === undefined ? undefined : (value.rates.map(RateToJSON)),
-            'tracking_url': value.tracking_url,
-            'service': value.service,
-            'shipper': AddressToJSON(value.shipper),
-            'recipient': AddressToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelToJSON)),
-            'services': value.services,
-            'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'customs': CustomsToJSON(value.customs),
-            'reference': value.reference,
-            'label_type': value.label_type,
-            'carrier_ids': value.carrier_ids,
-            'tracker_id': value.tracker_id,
-            'created_at': value.created_at,
-            'test_mode': value.test_mode,
-            'meta': value.meta,
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-        };
-    }
 
     /* tslint:disable */
-    function ShipmentCancelRequestFromJSON(json) {
-        return ShipmentCancelRequestFromJSONTyped(json);
-    }
-    function ShipmentCancelRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'shipment_identifier': json['shipment_identifier'],
-            'service': !exists(json, 'service') ? undefined : json['service'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-        };
-    }
     function ShipmentCancelRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2805,31 +2226,11 @@
     * @export
     * @enum {string}
     */
-    exports.ShipmentDataLabelTypeEnum = void 0;
+    var ShipmentDataLabelTypeEnum;
     (function (ShipmentDataLabelTypeEnum) {
         ShipmentDataLabelTypeEnum["Pdf"] = "PDF";
         ShipmentDataLabelTypeEnum["Zpl"] = "ZPL";
-    })(exports.ShipmentDataLabelTypeEnum || (exports.ShipmentDataLabelTypeEnum = {}));
-    function ShipmentDataFromJSON(json) {
-        return ShipmentDataFromJSONTyped(json);
-    }
-    function ShipmentDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'shipper': AddressDataFromJSON(json['shipper']),
-            'recipient': AddressDataFromJSON(json['recipient']),
-            'parcels': (json['parcels'].map(ParcelDataFromJSON)),
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'customs': !exists(json, 'customs') ? undefined : CustomsDataFromJSON(json['customs']),
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
-        };
-    }
+    })(ShipmentDataLabelTypeEnum || (ShipmentDataLabelTypeEnum = {}));
     function ShipmentDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2865,44 +2266,17 @@
             'results': (json['results'].map(ShipmentFromJSON)),
         };
     }
-    function ShipmentListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(ShipmentToJSON)),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.ShipmentPurchaseDataLabelTypeEnum = void 0;
+    var ShipmentPurchaseDataLabelTypeEnum;
     (function (ShipmentPurchaseDataLabelTypeEnum) {
         ShipmentPurchaseDataLabelTypeEnum["Pdf"] = "PDF";
         ShipmentPurchaseDataLabelTypeEnum["Zpl"] = "ZPL";
-    })(exports.ShipmentPurchaseDataLabelTypeEnum || (exports.ShipmentPurchaseDataLabelTypeEnum = {}));
-    function ShipmentPurchaseDataFromJSON(json) {
-        return ShipmentPurchaseDataFromJSONTyped(json);
-    }
-    function ShipmentPurchaseDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'selected_rate_id': json['selected_rate_id'],
-            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-        };
-    }
+    })(ShipmentPurchaseDataLabelTypeEnum || (ShipmentPurchaseDataLabelTypeEnum = {}));
     function ShipmentPurchaseDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2919,19 +2293,6 @@
     }
 
     /* tslint:disable */
-    function ShipmentRateDataFromJSON(json) {
-        return ShipmentRateDataFromJSONTyped(json);
-    }
-    function ShipmentRateDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-        };
-    }
     function ShipmentRateDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2951,31 +2312,11 @@
     * @export
     * @enum {string}
     */
-    exports.ShippingRequestLabelTypeEnum = void 0;
+    var ShippingRequestLabelTypeEnum;
     (function (ShippingRequestLabelTypeEnum) {
         ShippingRequestLabelTypeEnum["Pdf"] = "PDF";
         ShippingRequestLabelTypeEnum["Zpl"] = "ZPL";
-    })(exports.ShippingRequestLabelTypeEnum || (exports.ShippingRequestLabelTypeEnum = {}));
-    function ShippingRequestFromJSON(json) {
-        return ShippingRequestFromJSONTyped(json);
-    }
-    function ShippingRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'shipper': AddressDataFromJSON(json['shipper']),
-            'recipient': AddressDataFromJSON(json['recipient']),
-            'parcels': (json['parcels'].map(ParcelDataFromJSON)),
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': PaymentFromJSON(json['payment']),
-            'customs': !exists(json, 'customs') ? undefined : CustomsDataFromJSON(json['customs']),
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
-            'selected_rate_id': json['selected_rate_id'],
-            'rates': (json['rates'].map(RateFromJSON)),
-        };
-    }
+    })(ShippingRequestLabelTypeEnum || (ShippingRequestLabelTypeEnum = {}));
     function ShippingRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2998,19 +2339,6 @@
     }
 
     /* tslint:disable */
-    function TokenObtainPairFromJSON(json) {
-        return TokenObtainPairFromJSONTyped(json);
-    }
-    function TokenObtainPairFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'email': json['email'],
-            'password': json['password'],
-            'org_id': !exists(json, 'org_id') ? undefined : json['org_id'],
-        };
-    }
     function TokenObtainPairToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3050,33 +2378,8 @@
             'refresh': json['refresh'],
         };
     }
-    function TokenPairToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'access': value.access,
-            'refresh': value.refresh,
-        };
-    }
 
     /* tslint:disable */
-    function TokenRefreshFromJSON(json) {
-        return TokenRefreshFromJSONTyped(json);
-    }
-    function TokenRefreshFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'refresh': json['refresh'],
-            'access': !exists(json, 'access') ? undefined : json['access'],
-            'org_id': !exists(json, 'org_id') ? undefined : json['org_id'],
-        };
-    }
     function TokenRefreshToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3091,29 +2394,6 @@
     }
 
     /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
-     *
-     * The version of the OpenAPI document: 2021.10
-     * Contact: hello@purplship.com
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
-    function TokenVerifyFromJSON(json) {
-        return TokenVerifyFromJSONTyped(json);
-    }
-    function TokenVerifyFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'token': json['token'],
-        };
-    }
     function TokenVerifyToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3140,19 +2420,6 @@
             'results': (json['results'].map(TrackingStatusFromJSON)),
         };
     }
-    function TrackerListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(TrackingStatusToJSON)),
-        };
-    }
 
     /* tslint:disable */
     function TrackingEventFromJSON(json) {
@@ -3170,21 +2437,6 @@
             'time': !exists(json, 'time') ? undefined : json['time'],
         };
     }
-    function TrackingEventToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'date': value.date,
-            'description': value.description,
-            'location': value.location,
-            'code': value.code,
-            'time': value.time,
-        };
-    }
 
     /* tslint:disable */
     function TrackingResponseFromJSON(json) {
@@ -3199,25 +2451,13 @@
             'tracking': !exists(json, 'tracking') ? undefined : TrackingStatusFromJSON(json['tracking']),
         };
     }
-    function TrackingResponseToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'messages': value.messages === undefined ? undefined : (value.messages.map(MessageToJSON)),
-            'tracking': TrackingStatusToJSON(value.tracking),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.TrackingStatusStatusEnum = void 0;
+    var TrackingStatusStatusEnum;
     (function (TrackingStatusStatusEnum) {
         TrackingStatusStatusEnum["Created"] = "created";
         TrackingStatusStatusEnum["Purchased"] = "purchased";
@@ -3225,7 +2465,7 @@
         TrackingStatusStatusEnum["Shipped"] = "shipped";
         TrackingStatusStatusEnum["InTransit"] = "in-transit";
         TrackingStatusStatusEnum["Delivered"] = "delivered";
-    })(exports.TrackingStatusStatusEnum || (exports.TrackingStatusStatusEnum = {}));
+    })(TrackingStatusStatusEnum || (TrackingStatusStatusEnum = {}));
     function TrackingStatusFromJSON(json) {
         return TrackingStatusFromJSONTyped(json);
     }
@@ -3244,31 +2484,13 @@
             'status': !exists(json, 'status') ? undefined : json['status'],
         };
     }
-    function TrackingStatusToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'tracking_number': value.tracking_number,
-            'events': value.events === undefined ? undefined : (value.events === null ? null : value.events.map(TrackingEventToJSON)),
-            'delivered': value.delivered,
-            'test_mode': value.test_mode,
-            'status': value.status,
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.WebhookEnabledEventsEnum = void 0;
+    var WebhookEnabledEventsEnum;
     (function (WebhookEnabledEventsEnum) {
         WebhookEnabledEventsEnum["All"] = "all";
         WebhookEnabledEventsEnum["ShipmentPurchased"] = "shipment.purchased";
@@ -3276,7 +2498,7 @@
         WebhookEnabledEventsEnum["ShipmentFulfilled"] = "shipment.fulfilled";
         WebhookEnabledEventsEnum["TrackerCreated"] = "tracker.created";
         WebhookEnabledEventsEnum["TrackerUpdated"] = "tracker.updated";
-    })(exports.WebhookEnabledEventsEnum || (exports.WebhookEnabledEventsEnum = {}));
+    })(WebhookEnabledEventsEnum || (WebhookEnabledEventsEnum = {}));
     function WebhookFromJSON(json) {
         return WebhookFromJSONTyped(json);
     }
@@ -3294,30 +2516,13 @@
             'last_event_at': !exists(json, 'last_event_at') ? undefined : (json['last_event_at'] === null ? null : new Date(json['last_event_at'])),
         };
     }
-    function WebhookToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'url': value.url,
-            'description': value.description,
-            'enabled_events': value.enabled_events,
-            'test_mode': value.test_mode,
-            'disabled': value.disabled,
-            'id': value.id,
-            'last_event_at': value.last_event_at === undefined ? undefined : (value.last_event_at === null ? null : value.last_event_at.toISOString()),
-        };
-    }
 
     /* tslint:disable */
     /**
     * @export
     * @enum {string}
     */
-    exports.WebhookDataEnabledEventsEnum = void 0;
+    var WebhookDataEnabledEventsEnum;
     (function (WebhookDataEnabledEventsEnum) {
         WebhookDataEnabledEventsEnum["All"] = "all";
         WebhookDataEnabledEventsEnum["ShipmentPurchased"] = "shipment.purchased";
@@ -3325,22 +2530,7 @@
         WebhookDataEnabledEventsEnum["ShipmentFulfilled"] = "shipment.fulfilled";
         WebhookDataEnabledEventsEnum["TrackerCreated"] = "tracker.created";
         WebhookDataEnabledEventsEnum["TrackerUpdated"] = "tracker.updated";
-    })(exports.WebhookDataEnabledEventsEnum || (exports.WebhookDataEnabledEventsEnum = {}));
-    function WebhookDataFromJSON(json) {
-        return WebhookDataFromJSONTyped(json);
-    }
-    function WebhookDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'url': json['url'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'enabled_events': json['enabled_events'],
-            'test_mode': json['test_mode'],
-            'disabled': !exists(json, 'disabled') ? undefined : json['disabled'],
-        };
-    }
+    })(WebhookDataEnabledEventsEnum || (WebhookDataEnabledEventsEnum = {}));
     function WebhookDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3371,44 +2561,8 @@
             'results': (json['results'].map(WebhookFromJSON)),
         };
     }
-    function WebhookListToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'next': value.next,
-            'previous': value.previous,
-            'results': (value.results.map(WebhookToJSON)),
-        };
-    }
 
     /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded  request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released.  The current version is `2021.10`.   Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,  list shipments, and list trackers. These list API methods share a common structure, taking at least these  two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order.  The offset parameter returns objects listed after an index.  The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates,  buy labels, create trackers and schedule pickups in `test_mode`.
-     *
-     * The version of the OpenAPI document: 2021.10
-     * Contact: hello@purplship.com
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
-    function WebhookTestRequestFromJSON(json) {
-        return WebhookTestRequestFromJSONTyped(json);
-    }
-    function WebhookTestRequestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'payload': json['payload'],
-        };
-    }
     function WebhookTestRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -6645,182 +5799,18 @@
         return PurplshipClient;
     }());
 
-    exports.AddressDataFromJSON = AddressDataFromJSON;
-    exports.AddressDataFromJSONTyped = AddressDataFromJSONTyped;
-    exports.AddressDataToJSON = AddressDataToJSON;
-    exports.AddressFromJSON = AddressFromJSON;
-    exports.AddressFromJSONTyped = AddressFromJSONTyped;
-    exports.AddressListFromJSON = AddressListFromJSON;
-    exports.AddressListFromJSONTyped = AddressListFromJSONTyped;
-    exports.AddressListToJSON = AddressListToJSON;
-    exports.AddressToJSON = AddressToJSON;
-    exports.AddressValidationFromJSON = AddressValidationFromJSON;
-    exports.AddressValidationFromJSONTyped = AddressValidationFromJSONTyped;
-    exports.AddressValidationToJSON = AddressValidationToJSON;
-    exports.BASE_PATH = BASE_PATH;
-    exports.BaseAPI = BaseAPI;
-    exports.BlobApiResponse = BlobApiResponse;
-    exports.COLLECTION_FORMATS = COLLECTION_FORMATS;
-    exports.CarrierListFromJSON = CarrierListFromJSON;
-    exports.CarrierListFromJSONTyped = CarrierListFromJSONTyped;
-    exports.CarrierListToJSON = CarrierListToJSON;
-    exports.CarrierSettingsFromJSON = CarrierSettingsFromJSON;
-    exports.CarrierSettingsFromJSONTyped = CarrierSettingsFromJSONTyped;
-    exports.CarrierSettingsToJSON = CarrierSettingsToJSON;
-    exports.ChargeFromJSON = ChargeFromJSON;
-    exports.ChargeFromJSONTyped = ChargeFromJSONTyped;
-    exports.ChargeToJSON = ChargeToJSON;
-    exports.CommodityDataFromJSON = CommodityDataFromJSON;
-    exports.CommodityDataFromJSONTyped = CommodityDataFromJSONTyped;
-    exports.CommodityDataToJSON = CommodityDataToJSON;
-    exports.CommodityFromJSON = CommodityFromJSON;
-    exports.CommodityFromJSONTyped = CommodityFromJSONTyped;
-    exports.CommodityToJSON = CommodityToJSON;
-    exports.Configuration = Configuration;
-    exports.CustomsDataFromJSON = CustomsDataFromJSON;
-    exports.CustomsDataFromJSONTyped = CustomsDataFromJSONTyped;
-    exports.CustomsDataToJSON = CustomsDataToJSON;
-    exports.CustomsFromJSON = CustomsFromJSON;
-    exports.CustomsFromJSONTyped = CustomsFromJSONTyped;
-    exports.CustomsListFromJSON = CustomsListFromJSON;
-    exports.CustomsListFromJSONTyped = CustomsListFromJSONTyped;
-    exports.CustomsListToJSON = CustomsListToJSON;
-    exports.CustomsToJSON = CustomsToJSON;
-    exports.DutyFromJSON = DutyFromJSON;
-    exports.DutyFromJSONTyped = DutyFromJSONTyped;
-    exports.DutyToJSON = DutyToJSON;
-    exports.ErrorResponseFromJSON = ErrorResponseFromJSON;
-    exports.ErrorResponseFromJSONTyped = ErrorResponseFromJSONTyped;
-    exports.ErrorResponseToJSON = ErrorResponseToJSON;
-    exports.JSONApiResponse = JSONApiResponse;
-    exports.MessageFromJSON = MessageFromJSON;
-    exports.MessageFromJSONTyped = MessageFromJSONTyped;
-    exports.MessageToJSON = MessageToJSON;
-    exports.OperationConfirmationFromJSON = OperationConfirmationFromJSON;
-    exports.OperationConfirmationFromJSONTyped = OperationConfirmationFromJSONTyped;
-    exports.OperationConfirmationToJSON = OperationConfirmationToJSON;
-    exports.OperationFromJSON = OperationFromJSON;
-    exports.OperationFromJSONTyped = OperationFromJSONTyped;
-    exports.OperationResponseFromJSON = OperationResponseFromJSON;
-    exports.OperationResponseFromJSONTyped = OperationResponseFromJSONTyped;
-    exports.OperationResponseToJSON = OperationResponseToJSON;
-    exports.OperationToJSON = OperationToJSON;
-    exports.ParcelDataFromJSON = ParcelDataFromJSON;
-    exports.ParcelDataFromJSONTyped = ParcelDataFromJSONTyped;
-    exports.ParcelDataToJSON = ParcelDataToJSON;
-    exports.ParcelFromJSON = ParcelFromJSON;
-    exports.ParcelFromJSONTyped = ParcelFromJSONTyped;
-    exports.ParcelListFromJSON = ParcelListFromJSON;
-    exports.ParcelListFromJSONTyped = ParcelListFromJSONTyped;
-    exports.ParcelListToJSON = ParcelListToJSON;
-    exports.ParcelToJSON = ParcelToJSON;
-    exports.PaymentFromJSON = PaymentFromJSON;
-    exports.PaymentFromJSONTyped = PaymentFromJSONTyped;
-    exports.PaymentToJSON = PaymentToJSON;
-    exports.PickupCancelDataFromJSON = PickupCancelDataFromJSON;
-    exports.PickupCancelDataFromJSONTyped = PickupCancelDataFromJSONTyped;
-    exports.PickupCancelDataToJSON = PickupCancelDataToJSON;
-    exports.PickupCancelRequestFromJSON = PickupCancelRequestFromJSON;
-    exports.PickupCancelRequestFromJSONTyped = PickupCancelRequestFromJSONTyped;
-    exports.PickupCancelRequestToJSON = PickupCancelRequestToJSON;
-    exports.PickupDataFromJSON = PickupDataFromJSON;
-    exports.PickupDataFromJSONTyped = PickupDataFromJSONTyped;
-    exports.PickupDataToJSON = PickupDataToJSON;
-    exports.PickupFromJSON = PickupFromJSON;
-    exports.PickupFromJSONTyped = PickupFromJSONTyped;
-    exports.PickupListFromJSON = PickupListFromJSON;
-    exports.PickupListFromJSONTyped = PickupListFromJSONTyped;
-    exports.PickupListToJSON = PickupListToJSON;
-    exports.PickupRequestFromJSON = PickupRequestFromJSON;
-    exports.PickupRequestFromJSONTyped = PickupRequestFromJSONTyped;
-    exports.PickupRequestToJSON = PickupRequestToJSON;
-    exports.PickupResponseFromJSON = PickupResponseFromJSON;
-    exports.PickupResponseFromJSONTyped = PickupResponseFromJSONTyped;
-    exports.PickupResponseToJSON = PickupResponseToJSON;
-    exports.PickupToJSON = PickupToJSON;
-    exports.PickupUpdateDataFromJSON = PickupUpdateDataFromJSON;
-    exports.PickupUpdateDataFromJSONTyped = PickupUpdateDataFromJSONTyped;
-    exports.PickupUpdateDataToJSON = PickupUpdateDataToJSON;
-    exports.PickupUpdateRequestFromJSON = PickupUpdateRequestFromJSON;
-    exports.PickupUpdateRequestFromJSONTyped = PickupUpdateRequestFromJSONTyped;
-    exports.PickupUpdateRequestToJSON = PickupUpdateRequestToJSON;
-    exports.PurplshipClient = PurplshipClient;
-    exports.RateFromJSON = RateFromJSON;
-    exports.RateFromJSONTyped = RateFromJSONTyped;
-    exports.RateRequestFromJSON = RateRequestFromJSON;
-    exports.RateRequestFromJSONTyped = RateRequestFromJSONTyped;
-    exports.RateRequestToJSON = RateRequestToJSON;
-    exports.RateResponseFromJSON = RateResponseFromJSON;
-    exports.RateResponseFromJSONTyped = RateResponseFromJSONTyped;
-    exports.RateResponseToJSON = RateResponseToJSON;
-    exports.RateToJSON = RateToJSON;
-    exports.ReferencesFromJSON = ReferencesFromJSON;
-    exports.ReferencesFromJSONTyped = ReferencesFromJSONTyped;
-    exports.ReferencesToJSON = ReferencesToJSON;
-    exports.RequiredError = RequiredError;
-    exports.ShipmentCancelRequestFromJSON = ShipmentCancelRequestFromJSON;
-    exports.ShipmentCancelRequestFromJSONTyped = ShipmentCancelRequestFromJSONTyped;
-    exports.ShipmentCancelRequestToJSON = ShipmentCancelRequestToJSON;
-    exports.ShipmentDataFromJSON = ShipmentDataFromJSON;
-    exports.ShipmentDataFromJSONTyped = ShipmentDataFromJSONTyped;
-    exports.ShipmentDataToJSON = ShipmentDataToJSON;
-    exports.ShipmentFromJSON = ShipmentFromJSON;
-    exports.ShipmentFromJSONTyped = ShipmentFromJSONTyped;
-    exports.ShipmentListFromJSON = ShipmentListFromJSON;
-    exports.ShipmentListFromJSONTyped = ShipmentListFromJSONTyped;
-    exports.ShipmentListToJSON = ShipmentListToJSON;
-    exports.ShipmentPurchaseDataFromJSON = ShipmentPurchaseDataFromJSON;
-    exports.ShipmentPurchaseDataFromJSONTyped = ShipmentPurchaseDataFromJSONTyped;
-    exports.ShipmentPurchaseDataToJSON = ShipmentPurchaseDataToJSON;
-    exports.ShipmentRateDataFromJSON = ShipmentRateDataFromJSON;
-    exports.ShipmentRateDataFromJSONTyped = ShipmentRateDataFromJSONTyped;
-    exports.ShipmentRateDataToJSON = ShipmentRateDataToJSON;
-    exports.ShipmentToJSON = ShipmentToJSON;
-    exports.ShippingRequestFromJSON = ShippingRequestFromJSON;
-    exports.ShippingRequestFromJSONTyped = ShippingRequestFromJSONTyped;
-    exports.ShippingRequestToJSON = ShippingRequestToJSON;
-    exports.TextApiResponse = TextApiResponse;
-    exports.TokenObtainPairFromJSON = TokenObtainPairFromJSON;
-    exports.TokenObtainPairFromJSONTyped = TokenObtainPairFromJSONTyped;
-    exports.TokenObtainPairToJSON = TokenObtainPairToJSON;
-    exports.TokenPairFromJSON = TokenPairFromJSON;
-    exports.TokenPairFromJSONTyped = TokenPairFromJSONTyped;
-    exports.TokenPairToJSON = TokenPairToJSON;
-    exports.TokenRefreshFromJSON = TokenRefreshFromJSON;
-    exports.TokenRefreshFromJSONTyped = TokenRefreshFromJSONTyped;
-    exports.TokenRefreshToJSON = TokenRefreshToJSON;
-    exports.TokenVerifyFromJSON = TokenVerifyFromJSON;
-    exports.TokenVerifyFromJSONTyped = TokenVerifyFromJSONTyped;
-    exports.TokenVerifyToJSON = TokenVerifyToJSON;
-    exports.TrackerListFromJSON = TrackerListFromJSON;
-    exports.TrackerListFromJSONTyped = TrackerListFromJSONTyped;
-    exports.TrackerListToJSON = TrackerListToJSON;
-    exports.TrackingEventFromJSON = TrackingEventFromJSON;
-    exports.TrackingEventFromJSONTyped = TrackingEventFromJSONTyped;
-    exports.TrackingEventToJSON = TrackingEventToJSON;
-    exports.TrackingResponseFromJSON = TrackingResponseFromJSON;
-    exports.TrackingResponseFromJSONTyped = TrackingResponseFromJSONTyped;
-    exports.TrackingResponseToJSON = TrackingResponseToJSON;
-    exports.TrackingStatusFromJSON = TrackingStatusFromJSON;
-    exports.TrackingStatusFromJSONTyped = TrackingStatusFromJSONTyped;
-    exports.TrackingStatusToJSON = TrackingStatusToJSON;
-    exports.VoidApiResponse = VoidApiResponse;
-    exports.WebhookDataFromJSON = WebhookDataFromJSON;
-    exports.WebhookDataFromJSONTyped = WebhookDataFromJSONTyped;
-    exports.WebhookDataToJSON = WebhookDataToJSON;
-    exports.WebhookFromJSON = WebhookFromJSON;
-    exports.WebhookFromJSONTyped = WebhookFromJSONTyped;
-    exports.WebhookListFromJSON = WebhookListFromJSON;
-    exports.WebhookListFromJSONTyped = WebhookListFromJSONTyped;
-    exports.WebhookListToJSON = WebhookListToJSON;
-    exports.WebhookTestRequestFromJSON = WebhookTestRequestFromJSON;
-    exports.WebhookTestRequestFromJSONTyped = WebhookTestRequestFromJSONTyped;
-    exports.WebhookTestRequestToJSON = WebhookTestRequestToJSON;
-    exports.WebhookToJSON = WebhookToJSON;
-    exports.canConsumeForm = canConsumeForm;
-    exports.exists = exists;
-    exports.mapValues = mapValues;
-    exports.querystring = querystring;
+    var Client = PurplshipClient;
+    var Purplship = /** @class */ (function (_super) {
+        __extends(Purplship, _super);
+        function Purplship(_a) {
+            var apiKey = _a.apiKey, host = _a.host;
+            return _super.call(this, { basePath: host, apiKey: apiKey }) || this;
+        }
+        return Purplship;
+    }(PurplshipClient));
+
+    exports.Client = Client;
+    exports.Purplship = Purplship;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

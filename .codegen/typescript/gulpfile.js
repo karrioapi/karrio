@@ -7,7 +7,7 @@ const output = argv.output === undefined ? './dist/purplship.js' : argv.output;
 
 gulp.task('build', async function () {
   const bundle = await rollup.rollup({
-    input: './api/index.ts',
+    input: './api/purplship.ts',
     plugins: [
       rollupTypescript()
     ]
