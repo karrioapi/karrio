@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
 RatePayload = {
     "shipper": {"postal_code": "H8Z 2Z3", "country_code": "CA"},
-    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "recipient": {"postal_code": "h8z2V4", "country_code": "CA"},
     "parcels": [
         {
             "height": 3,

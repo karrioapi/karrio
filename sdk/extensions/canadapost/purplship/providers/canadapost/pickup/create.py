@@ -25,7 +25,13 @@ from purplship.core.utils import (
     NF,
     XP,
 )
-from purplship.core.models import PickupRequest, PickupDetails, Message, ChargeDetails, PickupUpdateRequest
+from purplship.core.models import (
+    PickupRequest,
+    PickupDetails,
+    Message,
+    ChargeDetails,
+    PickupUpdateRequest,
+)
 from purplship.core.units import Packages
 from purplship.providers.canadapost.units import PackagePresets
 from purplship.providers.canadapost.utils import Settings
@@ -39,7 +45,9 @@ def parse_pickup_response(
 ) -> Tuple[PickupDetails, List[Message]]:
     pickup = (
         _extract_pickup_details(response, settings)
-        if len(response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
+        if len(
+            response.xpath(".//*[local-name() = $name]", name="pickup-request-header")
+        )
         > 0
         else None
     )
@@ -48,21 +56,35 @@ def parse_pickup_response(
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
     header = next(
-        (XP.to_object(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
+        (
+            XP.to_object(PickupRequestHeaderType, elt)
+            for elt in response.xpath(
+                ".//*[local-name() = $name]", name="pickup-request-header"
+            )
+        )
     )
     price = next(
-        (XP.to_object(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
-        None
+        (
+            XP.to_object(PickupRequestPriceType, elt)
+            for elt in response.xpath(
+                ".//*[local-name() = $name]", name="pickup-request-price"
+            )
+        ),
+        None,
     )
 
-    price_amount = sum(
-        [
-            NF.decimal(price.hst_amount or 0.0),
-            NF.decimal(price.gst_amount or 0.0),
-            NF.decimal(price.due_amount or 0.0),
-        ],
-        0.0,
-    ) if price is not None else None
+    price_amount = (
+        sum(
+            [
+                NF.decimal(price.hst_amount or 0.0),
+                NF.decimal(price.gst_amount or 0.0),
+                NF.decimal(price.due_amount or 0.0),
+            ],
+            0.0,
+        )
+        if price is not None
+        else None
+    )
 
     return PickupDetails(
         carrier_id=settings.carrier_id,
@@ -71,11 +93,15 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
         pickup_date=DF.fdate(header.next_pickup_date),
         pickup_charge=ChargeDetails(
             name="Pickup fees", amount=NF.decimal(price_amount), currency="CAD"
-        ) if price is not None else None,
+        )
+        if price is not None
+        else None,
     )
 
 
-def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[Pipeline]:
+def pickup_request(
+    payload: PickupRequest, settings: Settings
+) -> Serializable[Pipeline]:
     request: Pipeline = Pipeline(
         get_availability=lambda *_: _get_pickup_availability(payload),
         create_pickup=partial(_create_pickup, payload=payload, settings=settings),
@@ -83,7 +109,9 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[P
     return Serializable(request)
 
 
-def _create_pickup_request(payload: PickupRequest, settings: Settings, update: bool = False) -> Serializable[PickupRequestDetails]:
+def _create_pickup_request(
+    payload: PickupRequest, settings: Settings, update: bool = False
+) -> Serializable[PickupRequestDetails]:
     """
     pickup_request create a serializable typed PickupRequestDetailsType
 
@@ -111,7 +139,7 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings, update: b
         ),
         city=payload.address.city,
         province=payload.address.state_code,
-        postal_code=(payload.address.postal_code or "").replace(" ", ""),
+        postal_code=(payload.address.postal_code or "").replace(" ", "").upper(),
     )
 
     request = RequestType(
@@ -163,21 +191,37 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings, update: b
 
 
 def _get_pickup_availability(payload: PickupRequest):
-    return Job(id="availability", data=(payload.address.postal_code or "").replace(" ", ""))
+    return Job(
+        id="availability", data=(payload.address.postal_code or "").replace(" ", "")
+    )
 
 
-def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):
+def _create_pickup(
+    availability_response: str, payload: PickupRequest, settings: Settings
+):
     availability = XP.to_object(pickup_availability, XP.to_xml(availability_response))
-    data = _create_pickup_request(payload, settings) if availability.on_demand_tour else None
+    data = (
+        _create_pickup_request(payload, settings)
+        if availability.on_demand_tour
+        else None
+    )
 
     return Job(id="create_pickup", data=data, fallback="" if data is None else "")
 
 
-def _get_pickup(update_response: str, payload: PickupUpdateRequest, settings: Settings) -> Job:
+def _get_pickup(
+    update_response: str, payload: PickupUpdateRequest, settings: Settings
+) -> Job:
     errors = parse_error_response(XP.to_xml(XP.bundle_xml([update_response])), settings)
-    data = None if any(errors) else f"/enab/{settings.customer_number}/pickuprequest/{payload.confirmation_number}/details"
+    data = (
+        None
+        if any(errors)
+        else f"/enab/{settings.customer_number}/pickuprequest/{payload.confirmation_number}/details"
+    )
 
-    return Job(id="get_pickup", data=Serializable(data), fallback="" if data is None else "")
+    return Job(
+        id="get_pickup", data=Serializable(data), fallback="" if data is None else ""
+    )
 
 
 def _request_serializer(request: PickupRequestDetails, update: bool = False) -> str:
