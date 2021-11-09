@@ -9,7 +9,7 @@ from purplship.core import units, utils
 from purplship.server.core import dataunits, datatypes
 
 logger = logging.getLogger(__name__)
-DIMENSIONS = ['width', 'height', 'length', 'dimension_unit']
+DIMENSIONS = ["width", "height", "length", "dimension_unit"]
 
 
 def dimensions_required_together(value):
@@ -18,104 +18,122 @@ def dimensions_required_together(value):
 
     if any_dimension_specified and has_any_dimension_undefined:
         raise serializers.ValidationError(
-            'When one dimension is specified, all must be specified with a dimension_unit'
+            "When one dimension is specified, all must be specified with a dimension_unit"
         )
 
 
 def valid_time_format(value):
 
     try:
-        datetime.strptime(value, '%H:%M')
+        datetime.strptime(value, "%H:%M")
     except Exception:
-        raise serializers.ValidationError(
-            'The time format must match HH:HM'
-        )
+        raise serializers.ValidationError("The time format must match HH:HM")
 
 
 def valid_date_format(value):
 
     try:
-        datetime.strptime(value, '%Y-%m-%d')
+        datetime.strptime(value, "%Y-%m-%d")
     except Exception:
-        raise serializers.ValidationError(
-            'The date format must match YYYY-MM-DD'
-        )
+        raise serializers.ValidationError("The date format must match YYYY-MM-DD")
 
 
 def valid_datetime_format(value):
 
     try:
-        datetime.strptime(value, '%Y-%m-%d')
+        datetime.strptime(value, "%Y-%m-%d")
     except Exception:
         raise serializers.ValidationError(
-            'The datetime format must match YYYY-MM-DD HH:HM'
+            "The datetime format must match YYYY-MM-DD HH:HM"
         )
 
 
-class PresetSerializer:
+class PresetSerializer(serializers.Serializer):
+    def validate(self, data):
+        dimensions_required_together(data)
 
-    def __init__(self, *args, **kwargs):
-        data = kwargs.get('data')
-        if data is not None and 'package_preset' in data:
-            dimensions_required_together(data)
-            preset = next((
-                presets[data['package_preset']] for carrier, presets
-                in dataunits.REFERENCE_MODELS["package_presets"].items()
-                if data['package_preset'] in presets
-            ), {})
+        if data is not None and "package_preset" in data:
+            preset = next(
+                (
+                    presets[data["package_preset"]]
+                    for _, presets in dataunits.REFERENCE_MODELS[
+                        "package_presets"
+                    ].items()
+                    if data["package_preset"] in presets
+                ),
+                {},
+            )
 
-            kwargs.update(data={
-                **data,
-                "width": data.get("width", preset.get("width")),
-                "length": data.get("length", preset.get("length")),
-                "height": data.get("height", preset.get("height")),
-                "dimension_unit": data.get("dimension_unit", preset.get("dimension_unit"))
-            })
+            data.update(
+                {
+                    **data,
+                    "width": data.get("width", preset.get("width")),
+                    "length": data.get("length", preset.get("length")),
+                    "height": data.get("height", preset.get("height")),
+                    "dimension_unit": data.get(
+                        "dimension_unit", preset.get("dimension_unit")
+                    ),
+                }
+            )
 
-        super().__init__(*args, **kwargs)
+        return data
 
 
-class AugmentedAddressSerializer:
+class AugmentedAddressSerializer(serializers.Serializer):
+    def validate(self, data):
+        # Format and validate Postal Code
+        if all(data.get(key) is not None for key in ["country_code", "postal_code"]):
+            postal_code = data["postal_code"]
+            country_code = data["country_code"]
 
-    def __init__(self, *args, **kwargs):
-        data = kwargs.get('data')
-        if data is not None:
+            if country_code == units.Country.CA.name:
+                formatted = "".join(
+                    [c for c in postal_code.split() if c not in ["-", "_"]]
+                ).upper()
+                if not re.match(r"^([A-Za-z]\d[A-Za-z][-]?\d[A-Za-z]\d)", formatted):
+                    raise serializers.ValidationError(
+                        {"postal_code": "The Canadian postal code must match Z9Z9Z9"}
+                    )
 
-            # Format and validate Postal Code
-            if all(data.get(key) is not None for key in ['country_code', 'postal_code']):
-                postal_code = data['postal_code']
-                country_code = data['country_code']
+            elif country_code == units.Country.US.name:
+                formatted = "".join(postal_code.split())
+                if not re.match(r"^\d{5}(-\d{4})?$", formatted):
+                    raise serializers.ValidationError(
+                        {
+                            "postal_code": "The American postal code must match 9999 or 99999"
+                        }
+                    )
 
-                if country_code == units.Country.CA.name:
-                    formatted = ''.join([c for c in postal_code.split() if c not in ['-', '_']]).upper()
-                    if not re.match(r'^([A-Za-z]\d[A-Za-z][-]?\d[A-Za-z]\d)', formatted):
-                        raise serializers.ValidationError('The Canadian postal code must match Z9Z9Z9')
+            else:
+                formatted = postal_code
 
-                elif country_code == units.Country.US.name:
-                    formatted = ''.join(postal_code.split())
-                    if not re.match(r'^\d{5}(-\d{4})?$', formatted):
-                        raise serializers.ValidationError('The American postal code must match 9999 or 99999')
+            data.update({**data, "postal_code": formatted})
 
-                else:
-                    formatted = postal_code
+        # Format and validate Phone Number
+        if all(
+            data.get(key) is not None and data.get(key) != ""
+            for key in ["country_code", "phone_number"]
+        ):
+            phone_number = data["phone_number"]
+            country_code = data["country_code"]
 
-                data.update({**data, 'postal_code': formatted})
+            try:
+                formatted = phonenumbers.parse(phone_number, country_code)
+                data.update(
+                    {
+                        **data,
+                        "phone_number": phonenumbers.format_number(
+                            formatted, phonenumbers.PhoneNumberFormat.INTERNATIONAL
+                        ),
+                    }
+                )
+            except Exception as e:
+                logger.warning(e)
+                raise serializers.ValidationError(
+                    {"postal_code": "Invalid phone number format"}
+                )
 
-            # Format and validate Phone Number
-            if all(data.get(key) is not None and data.get(key) != "" for key in ['country_code', 'phone_number']):
-                phone_number = data['phone_number']
-                country_code = data['country_code']
-
-                try:
-                    formatted = phonenumbers.parse(phone_number, country_code)
-                    data.update({**data, 'phone_number': phonenumbers.format_number(formatted, phonenumbers.PhoneNumberFormat.INTERNATIONAL)})
-                except Exception as e:
-                    logger.warning(e)
-                    raise serializers.ValidationError("Invalid phone number format")
-
-            kwargs.update(data=data)
-
-        super().__init__(*args, **kwargs)
+        return data
 
 
 class AddressValidatorAbstract:
@@ -137,10 +155,7 @@ class GoogleGeocode(AddressValidatorAbstract):
     def get_info(is_authenticated: bool = True) -> dict:
         return dict(
             provider="google",
-            key=(
-                GoogleGeocode.get_api_key()
-                if is_authenticated else None
-            )
+            key=(GoogleGeocode.get_api_key() if is_authenticated else None),
         )
 
     @staticmethod
@@ -159,17 +174,19 @@ class GoogleGeocode(AddressValidatorAbstract):
             address.address_line2 or "",
             address.postal_code or "",
             address.city or "",
-            join=True
+            join=True,
         )
 
         if address_string is None:
-            raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
+            raise Exception(
+                "At least one address info must be provided (address_line1, city and/or postal_code)"
+            )
 
         enriched_address = utils.SF.concat_str(
             address_string,
             address.state_code or "",
             address.country_code or "",
-            join=True
+            join=True,
         )
 
         return enriched_address.replace(" ", "+")
@@ -178,25 +195,35 @@ class GoogleGeocode(AddressValidatorAbstract):
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:
         formatted_address = GoogleGeocode.format_address(address)
 
-        logger.debug(f'sending address validation request to Google Geocode API: {formatted_address}')
+        logger.debug(
+            f"sending address validation request to Google Geocode API: {formatted_address}"
+        )
         response = requests.request(
-            "GET", GoogleGeocode.get_url(),
+            "GET",
+            GoogleGeocode.get_url(),
             params=dict(
                 address=formatted_address,
                 key=GoogleGeocode.get_api_key(),
-                location_type="ROOFTOP")
+                location_type="ROOFTOP",
+            ),
         )
         response_data = response.json()
 
         is_ok = response_data.get("status") == "OK"
         results = response_data.get("results") or []
         meta = next(
-            (r for r in results if r.get("geometry", {}).get("location_type") == "ROOFTOP"),
-            None
+            (
+                r
+                for r in results
+                if r.get("geometry", {}).get("location_type") == "ROOFTOP"
+            ),
+            None,
         )
         success = is_ok and (meta is not None)
 
-        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
+        return datatypes.AddressValidation(
+            success=success, meta=(meta or dict(validation_results=results))
+        )
 
 
 class CanadaPostAddressComplete(AddressValidatorAbstract):
@@ -204,10 +231,7 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
     def get_info(is_authenticated: bool = True) -> dict:
         return dict(
             provider="canadapost",
-            key=(
-                CanadaPostAddressComplete.get_api_key()
-                if is_authenticated else None
-            )
+            key=(CanadaPostAddressComplete.get_api_key() if is_authenticated else None),
         )
 
     @staticmethod
@@ -219,7 +243,9 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
         key = config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
 
         if key is None or len(key) == 0:
-            raise Exception("No CANADAPOST_ADDRESS_COMPLETE_API_KEY provided for address validation")
+            raise Exception(
+                "No CANADAPOST_ADDRESS_COMPLETE_API_KEY provided for address validation"
+            )
 
         return key
 
@@ -231,11 +257,13 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
             address.city or "",
             address.postal_code or "",
             join=True,
-            separator=", "
+            separator=", ",
         )
 
         if address_string is None:
-            raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
+            raise Exception(
+                "At least one address info must be provided (address_line1, city and/or postal_code)"
+            )
 
         return address_string
 
@@ -243,7 +271,9 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:
         formatted_address = CanadaPostAddressComplete.format_address(address)
 
-        logger.debug(f'sending address validation request to Canada Post Address Complete API: {formatted_address}')
+        logger.debug(
+            f"sending address validation request to Canada Post Address Complete API: {formatted_address}"
+        )
         response = requests.request(
             "GET",
             CanadaPostAddressComplete.get_url(),
@@ -254,32 +284,42 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
                 MaxResults=5,
                 MaxSuggestions=5,
                 SearchFor="Places",
-                LanguagePreference="EN")
+                LanguagePreference="EN",
+            ),
         )
         results = response.json()
         is_ok = response.status_code == 200
         meta = next(
-            (r for r in results if (
-                r.get('Text').replace(",", "").lower() == address.address_line1.replace(",", "").lower()
-                and r.get('Next') == "Retrieve"  # means it is a permanent address
-            )),
-            None
+            (
+                r
+                for r in results
+                if (
+                    r.get("Text").replace(",", "").lower()
+                    == address.address_line1.replace(",", "").lower()
+                    and r.get("Next") == "Retrieve"  # means it is a permanent address
+                )
+            ),
+            None,
         )
         success = is_ok and (meta is not None)
 
-        return datatypes.AddressValidation(success=success, meta=(meta or dict(validation_results=results)))
+        return datatypes.AddressValidation(
+            success=success, meta=(meta or dict(validation_results=results))
+        )
 
 
 class Address:
     @staticmethod
     def get_info(is_authenticated: bool = True) -> dict:
-        is_enabled = any([
-            config.GOOGLE_CLOUD_API_KEY,
-            config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
-        ])
+        is_enabled = any(
+            [config.GOOGLE_CLOUD_API_KEY, config.CANADAPOST_ADDRESS_COMPLETE_API_KEY]
+        )
 
         if is_enabled:
-            return {'is_enabled': is_enabled, **Address.get_validator().get_info(is_authenticated)}
+            return {
+                "is_enabled": is_enabled,
+                **Address.get_validator().get_info(is_authenticated),
+            }
 
         return dict(is_enabled=is_enabled)
 

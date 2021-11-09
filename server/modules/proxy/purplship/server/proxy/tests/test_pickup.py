@@ -9,7 +9,8 @@ from purplship.server.core.tests import APITestCase
 class TesPickup(APITestCase):
     def test_schedule_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-details", kwargs=dict(carrier_name="canadapost")
+            "purplship.server.proxy:pickup-details",
+            kwargs=dict(carrier_name="canadapost"),
         )
 
         with patch("purplship.server.core.gateway.identity") as mock:
@@ -22,7 +23,8 @@ class TesPickup(APITestCase):
 
     def test_udpate_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-details", kwargs=dict(carrier_name="canadapost")
+            "purplship.server.proxy:pickup-details",
+            kwargs=dict(carrier_name="canadapost"),
         )
 
         with patch("purplship.server.core.gateway.identity") as mock:
@@ -35,7 +37,8 @@ class TesPickup(APITestCase):
 
     def test_cancel_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-cancel", kwargs=dict(carrier_name="canadapost")
+            "purplship.server.proxy:pickup-cancel",
+            kwargs=dict(carrier_name="canadapost"),
         )
 
         with patch("purplship.server.core.gateway.identity") as mock:
@@ -177,7 +180,7 @@ PICKUP_RESPONSE = {
             "company_name": "A corp.",
             "country_code": "CA",
             "email": "john@a.com",
-            "phone_number": "514 000 0000",
+            "phone_number": "+1 514-000-0000",
             "state_code": "NB",
             "suburb": None,
             "residential": False,
@@ -230,7 +233,7 @@ PICKUP_UPDATE_RESPONSE = {
             "company_name": "A corp.",
             "country_code": "CA",
             "email": "john@a.com",
-            "phone_number": "514 000 0000",
+            "phone_number": "+1 514-000-0000",
             "state_code": "NB",
             "suburb": None,
             "residential": False,

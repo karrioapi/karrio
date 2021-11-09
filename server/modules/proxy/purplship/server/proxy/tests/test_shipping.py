@@ -21,7 +21,8 @@ class TestShipping(APITestCase):
 
     def test_shipping_cancel(self):
         url = reverse(
-            "purplship.server.proxy:shipping-cancel", kwargs=dict(carrier_name="canadapost")
+            "purplship.server.proxy:shipping-cancel",
+            kwargs=dict(carrier_name="canadapost"),
         )
         data = SHIPPING_CANCEL_DATA
 
@@ -35,7 +36,8 @@ class TestShipping(APITestCase):
 
     def test_shipping_failed_cancel(self):
         url = reverse(
-            "purplship.server.proxy:shipping-cancel", kwargs=dict(carrier_name="canadapost")
+            "purplship.server.proxy:shipping-cancel",
+            kwargs=dict(carrier_name="canadapost"),
         )
         data = SHIPPING_CANCEL_DATA
 
@@ -71,7 +73,7 @@ SHIPPING_DATA = {
         "phone_number": "514 000 0000",
         "city": "Vancouver",
         "country_code": "CA",
-        "postal_code": "V6M2V9",
+        "postal_code": "v6m2V9",
         "residential": False,
         "state_code": "BC",
         "validate_location": False,
@@ -240,7 +242,7 @@ SHIPPING_RESPONSE = {
         "company_name": "B corp.",
         "country_code": "CA",
         "email": None,
-        "phone_number": "514 000 0000",
+        "phone_number": "+1 514-000-0000",
         "state_code": "BC",
         "suburb": None,
         "residential": False,
@@ -259,7 +261,7 @@ SHIPPING_RESPONSE = {
         "company_name": "A corp.",
         "country_code": "CA",
         "email": None,
-        "phone_number": "514 000 0000",
+        "phone_number": "+1 514-000-0000",
         "state_code": "NB",
         "suburb": None,
         "residential": False,
@@ -272,16 +274,16 @@ SHIPPING_RESPONSE = {
         {
             "id": None,
             "weight": 1.0,
-            "width": None,
-            "height": None,
-            "length": None,
+            "width": 42.0,
+            "height": 32.0,
+            "length": 32.0,
             "packaging_type": None,
             "package_preset": "canadapost_corrugated_small_box",
             "description": None,
             "content": None,
             "is_document": False,
             "weight_unit": "KG",
-            "dimension_unit": None,
+            "dimension_unit": "CM",
         }
     ],
     "services": [],
@@ -290,9 +292,10 @@ SHIPPING_RESPONSE = {
     "customs": None,
     "reference": "",
     "carrier_ids": [],
-    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "tracker_id": None,
     "created_at": ANY,
     "test_mode": True,
+    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
     "messages": [],
 }
 

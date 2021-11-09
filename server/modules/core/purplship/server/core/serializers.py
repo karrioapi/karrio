@@ -151,7 +151,7 @@ class AddressValidation(Serializer):
     )
 
 
-class AddressData(AugmentedAddressSerializer, Serializer):
+class AddressData(AugmentedAddressSerializer):
 
     postal_code = CharField(
         required=False,
@@ -306,7 +306,7 @@ class Commodity(EntitySerializer, CommodityData):
     pass
 
 
-class ParcelData(PresetSerializer, Serializer):
+class ParcelData(PresetSerializer):
 
     weight = FloatField(required=True, help_text="The parcel's weight")
     width = FloatField(required=False, allow_null=True, help_text="The parcel's width")

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.canadapost"
-version = "2021.11"
+version = "2021.10.1"
 homepage="https://docs.purplship.com"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Canada Post Shipping Extension"
