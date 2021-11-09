@@ -38,24 +38,39 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
 
     def test_create_cancel_shipment_request(self):
-        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        requests = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
         pipeline = requests.serialize()
         info_request = pipeline["info"]()
         refund_request = pipeline["refund"](NonSubmittedShipmentResponseXML)
         # Assuming that the refund job will be skipped
         cancel_request = pipeline["cancel"](refund_request.fallback)
 
-        self.assertEqual(info_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
-        self.assertEqual(cancel_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
+        self.assertEqual(
+            info_request.data.serialize(),
+            self.ShipmentCancelRequest.shipment_identifier,
+        )
+        self.assertEqual(
+            cancel_request.data.serialize(),
+            self.ShipmentCancelRequest.shipment_identifier,
+        )
 
     def test_create_cancel_transmitted_shipment_request(self):
-        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        requests = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
         pipeline = requests.serialize()
         info_request = pipeline["info"]()
         refund_request = pipeline["refund"](ShipmentResponseXML)
 
-        self.assertEqual(info_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
-        self.assertEqual(refund_request.data["payload"].serialize(), ShipmentRefundRequestXML)
+        self.assertEqual(
+            info_request.data.serialize(),
+            self.ShipmentCancelRequest.shipment_identifier,
+        )
+        self.assertEqual(
+            refund_request.data["payload"].serialize(), ShipmentRefundRequestXML
+        )
 
     def test_create_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
@@ -70,7 +85,11 @@ class TestCanadaPostShipment(unittest.TestCase):
 
     def test_cancel_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
-            mocks.side_effect = [NonSubmittedShipmentResponseXML, NonSubmittedShipmentResponseXML, ""]
+            mocks.side_effect = [
+                NonSubmittedShipmentResponseXML,
+                NonSubmittedShipmentResponseXML,
+                "",
+            ]
 
             purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -107,7 +126,9 @@ class TestCanadaPostShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
+            )
 
     def test_parse_shipment_cancel_response(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
@@ -129,7 +150,7 @@ if __name__ == "__main__":
 
 shipment_cancel_data = {
     "shipment_identifier": "123456789012",
-    "options": {"email": "test@test.com"}
+    "options": {"email": "test@test.com"},
 }
 
 shipment_data = {
@@ -147,7 +168,7 @@ shipment_data = {
         "company_name": "CGI",
         "address_line1": "23 jardin private",
         "city": "Ottawa",
-        "postal_code": "K1K 4T3",
+        "postal_code": "k1k 4t3",
         "country_code": "CA",
         "person_name": "Jain",
         "state_code": "ON",
@@ -176,7 +197,7 @@ shipment_with_package_preset_data = {
         "company_name": "CGI",
         "address_line1": "502 MAIN ST N",
         "city": "MONTREAL",
-        "postal_code": "H2B1A0",
+        "postal_code": "h2b1a0",
         "country_code": "CA",
         "person_name": "Bob",
         "phone_number": "1 (450) 823-8432",
@@ -200,7 +221,7 @@ shipment_with_package_preset_data = {
     ],
     "service": "canadapost_expedited_parcel",
     "options": {"cash_on_delivery": 25.5},
-    "label_type": "ZPL"
+    "label_type": "ZPL",
 }
 
 ParsedShipmentResponse = [
