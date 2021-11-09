@@ -10,21 +10,24 @@ from canadapost_lib.rating import (
     united_statesType,
     internationalType,
     price_quoteType,
-    service_standardType,
 )
-from functools import reduce
-from typing import List, Tuple, cast
+from typing import List, Tuple
 from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.providers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Packages, Services, Options
 from purplship.core.errors import OriginNotServicedError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.units import OptionCode, ServiceType, PackagePresets, MeasurementOptions
+from purplship.providers.canadapost.units import (
+    OptionCode,
+    ServiceType,
+    PackagePresets,
+    MeasurementOptions,
+)
 
 
 def parse_rate_response(
-        response: Element, settings: Settings
+    response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
     price_quotes = XP.find("price-quote", response)
     quotes: List[RateDetails] = [
@@ -36,7 +39,7 @@ def parse_rate_response(
 def _extract_quote(node: Element, settings: Settings) -> RateDetails:
     quote = XP.to_object(price_quoteType, node)
     service = ServiceType.map(quote.service_code)
-    adjustments = getattr(quote.price_details.adjustments, 'adjustment', [])
+    adjustments = getattr(quote.price_details.adjustments, "adjustment", [])
     discount = sum(NF.decimal(d.adjustment_cost or 0) for d in adjustments)
     transit_days = quote.service_standard.expected_transit_time
 
@@ -62,14 +65,12 @@ def _extract_quote(node: Element, settings: Settings) -> RateDetails:
             )
             for a in adjustments
         ],
-        meta=dict(
-            service_name=(service.name or quote.service_name)
-        )
+        meta=dict(service_name=(service.name or quote.service_name)),
     )
 
 
 def rate_request(
-        payload: RateRequest, settings: Settings
+    payload: RateRequest, settings: Settings
 ) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
@@ -97,13 +98,15 @@ def rate_request(
             optionsType(
                 option=[
                     optionType(
-                        option_code=getattr(option, 'key', option),
-                        option_amount=getattr(option, 'value', None)
+                        option_code=getattr(option, "key", option),
+                        option_amount=getattr(option, "value", None),
                     )
-                    for code, option in options if code in OptionCode
+                    for code, option in options
+                    if code in OptionCode
                 ]
             )
-            if any([c in OptionCode for c, _ in options]) else None
+            if any([c in OptionCode for c, _ in options])
+            else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=package.weight.map(MeasurementOptions).KG,
@@ -117,10 +120,9 @@ def rate_request(
             oversized=None,
         ),
         services=(
-            servicesType(
-                service_code=[svc.value for svc in services]
-            )
-            if any(services) else None
+            servicesType(service_code=[svc.value for svc in services])
+            if any(services)
+            else None
         ),
         origin_postal_code=shipper_postal_code,
         destination=destinationType(
@@ -137,8 +139,8 @@ def rate_request(
             international=(
                 internationalType(country_code=recipient_postal_code)
                 if (
-                        payload.recipient.country_code
-                        not in [Country.US.name, Country.CA.name]
+                    payload.recipient.country_code
+                    not in [Country.US.name, Country.CA.name]
                 )
                 else None
             ),

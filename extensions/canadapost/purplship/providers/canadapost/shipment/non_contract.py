@@ -1,4 +1,4 @@
-from typing import Tuple, List, Any
+from typing import Tuple, List
 from canadapost_lib.ncshipment import (
     NonContractShipmentType,
     NonContractShipmentInfoType,
@@ -30,7 +30,7 @@ from purplship.providers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
-    INTERNATIONAL_NON_DELIVERY_OPTION
+    INTERNATIONAL_NON_DELIVERY_OPTION,
 )
 from purplship.providers.canadapost.utils import Settings
 
@@ -65,18 +65,27 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShipmentType]:
+def shipment_request(
+    payload: ShipmentRequest, _
+) -> Serializable[NonContractShipmentType]:
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, OptionCode)
 
     is_intl = (
-        payload.recipient.country_code is not None and
-        payload.recipient.country_code != 'CA'
+        payload.recipient.country_code is not None
+        and payload.recipient.country_code != "CA"
     )
     all_options = (
-        [*options] + [(OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
-        if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
+        [*options]
+        + [
+            (
+                OptionCode.canadapost_return_to_sender.name,
+                OptionCode.canadapost_return_to_sender.value.apply(True),
+            )
+        ]
+        if is_intl
+        and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
         else [*options]
     )
 
@@ -89,8 +98,12 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
                 address_details=DomesticAddressDetailsType(
-                    address_line_1=SF.concat_str(payload.shipper.address_line1, join=True),
-                    address_line_2=SF.concat_str(payload.shipper.address_line2, join=True),
+                    address_line_1=SF.concat_str(
+                        payload.shipper.address_line1, join=True
+                    ),
+                    address_line_2=SF.concat_str(
+                        payload.shipper.address_line2, join=True
+                    ),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     postal_zip_code=(payload.shipper.postal_code or "").replace(" ", ""),
@@ -118,22 +131,24 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=getattr(option, 'key', option),
-                            option_amount=getattr(option, 'value', None),
+                            option_code=getattr(option, "key", option),
+                            option_amount=getattr(option, "value", None),
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for code, option in all_options if code in OptionCode
+                        for code, option in all_options
+                        if code in OptionCode
                     ]
                 )
-                if any(options) else None
+                if any(options)
+                else None
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=NF.decimal(package.weight.KG, .1),
+                weight=NF.decimal(package.weight.KG, 0.1),
                 dimensions=dimensionsType(
-                    length=NF.decimal(package.length.CM, .1),
-                    width=NF.decimal(package.width.CM, .1),
-                    height=NF.decimal(package.height.CM, .1),
+                    length=NF.decimal(package.length.CM, 0.1),
+                    width=NF.decimal(package.width.CM, 0.1),
+                    height=NF.decimal(package.height.CM, 0.1),
                 ),
                 unpackaged=None,
                 mailing_tube=None,
@@ -145,7 +160,8 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                     on_exception=True,
                     on_delivery=True,
                 )
-                if any([options.notification_email, payload.recipient.email]) else None
+                if any([options.notification_email, payload.recipient.email])
+                else None
             ),
             preferences=PreferencesType(
                 show_packing_instructions=False,
@@ -155,7 +171,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
             references=ReferencesType(
                 cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=getattr(payload, 'id', None),
+                customer_ref_2=getattr(payload, "id", None),
             ),
             customs=(
                 CustomsType(
@@ -184,7 +200,8 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                         ]
                     ),
                 )
-                if payload.customs is not None else None
+                if payload.customs is not None
+                else None
             ),
             settlement_info=None,
         ),
