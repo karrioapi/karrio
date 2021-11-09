@@ -93,13 +93,17 @@ def shipment_request(
     customs = payload.customs
     duty = getattr(customs, "duty", Duty())
     label_encoding, label_format = LabelType[payload.label_type or "PDF_4x6"].value
+    recipient_postal_code = (
+        (payload.recipient.postal_code or "").replace(" ", "").upper()
+    )
+    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = ShipmentType(
         customer_request_id=None,
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
-        requested_shipping_point=(payload.shipper.postal_code or "").replace(" ", ""),
+        requested_shipping_point=shipper_postal_code,
         shipping_point_id=None,
         expected_mailing_date=options.shipment_date,
         provide_pricing_info=True,
@@ -114,9 +118,13 @@ def shipment_request(
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
-                    postal_zip_code=(payload.shipper.postal_code or "").replace(" ", ""),
-                    address_line_1=SF.concat_str(payload.shipper.address_line1, join=True),
-                    address_line_2=SF.concat_str(payload.shipper.address_line2, join=True),
+                    postal_zip_code=shipper_postal_code,  # type: ignore
+                    address_line_1=SF.concat_str(
+                        payload.shipper.address_line1, join=True
+                    ),
+                    address_line_2=SF.concat_str(
+                        payload.shipper.address_line2, join=True
+                    ),
                 ),
             ),
             destination=DestinationType(
@@ -128,7 +136,7 @@ def shipment_request(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=(payload.recipient.postal_code or "").replace(" ", ""),
+                    postal_zip_code=recipient_postal_code,
                     address_line_1=SF.concat_str(
                         payload.recipient.address_line1, join=True
                     ),

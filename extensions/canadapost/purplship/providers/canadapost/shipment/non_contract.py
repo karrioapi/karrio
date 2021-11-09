@@ -88,6 +88,10 @@ def shipment_request(
         and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
         else [*options]
     )
+    recipient_postal_code = (
+        (payload.recipient.postal_code or "").replace(" ", "").upper()
+    )
+    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = NonContractShipmentType(
         requested_shipping_point=None,
@@ -106,7 +110,7 @@ def shipment_request(
                     ),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    postal_zip_code=(payload.shipper.postal_code or "").replace(" ", ""),
+                    postal_zip_code=shipper_postal_code,
                 ),
             ),
             destination=DestinationType(
@@ -124,7 +128,7 @@ def shipment_request(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=(payload.recipient.postal_code or "").replace(" ", ""),
+                    postal_zip_code=recipient_postal_code,
                 ),
             ),
             options=(
