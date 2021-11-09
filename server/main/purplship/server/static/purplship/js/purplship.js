@@ -2459,11 +2459,9 @@
     */
     var TrackingStatusStatusEnum;
     (function (TrackingStatusStatusEnum) {
-        TrackingStatusStatusEnum["Created"] = "created";
-        TrackingStatusStatusEnum["Purchased"] = "purchased";
-        TrackingStatusStatusEnum["Cancelled"] = "cancelled";
-        TrackingStatusStatusEnum["Shipped"] = "shipped";
+        TrackingStatusStatusEnum["Pending"] = "pending";
         TrackingStatusStatusEnum["InTransit"] = "in-transit";
+        TrackingStatusStatusEnum["Incident"] = "incident";
         TrackingStatusStatusEnum["Delivered"] = "delivered";
     })(TrackingStatusStatusEnum || (TrackingStatusStatusEnum = {}));
     function TrackingStatusFromJSON(json) {
