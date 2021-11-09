@@ -11,7 +11,7 @@ from canadapost_lib.rating import (
     internationalType,
     price_quoteType,
 )
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.providers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Packages, Services, Options
@@ -85,8 +85,8 @@ def rate_request(
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     services = Services(payload.services, ServiceType)
     options = Options(payload.options, OptionCode)
-    recipient_postal_code = (payload.recipient.postal_code or "").replace(" ", "")
-    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "")
+    recipient_postal_code = (payload.recipient.postal_code or "").replace(" ", "").upper()
+    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
