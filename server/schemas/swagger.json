@@ -5397,14 +5397,12 @@
                     "description": "The current tracking status",
                     "type": "string",
                     "enum": [
-                        "created",
-                        "purchased",
-                        "cancelled",
-                        "shipped",
+                        "pending",
                         "in-transit",
+                        "incident",
                         "delivered"
                     ],
-                    "default": "created"
+                    "default": "pending"
                 }
             }
         },
