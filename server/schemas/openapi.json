@@ -5977,13 +5977,11 @@
                         "title": "Status",
                         "type": "string",
                         "description": "The current tracking status",
-                        "default": "created",
+                        "default": "pending",
                         "enum": [
-                            "created",
-                            "purchased",
-                            "cancelled",
-                            "shipped",
+                            "pending",
                             "in-transit",
+                            "incident",
                             "delivered"
                         ]
                     }
