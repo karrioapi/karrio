@@ -60,7 +60,7 @@ psycopg2-binary==2.9.1
 purplship==2021.10
 purplship.aramex==2021.10
 purplship.australiapost==2021.10
-purplship.canadapost==2021.10
+purplship.canadapost==2021.10.1
 purplship.canpar==2021.10
 purplship.dhl-express==2021.10
 purplship.dhl-universal==2021.10
@@ -72,7 +72,7 @@ purplship.purolator==2021.10
 purplship.royalmail==2021.10
 purplship.sendle==2021.10
 purplship.server==2021.10
-purplship.server.core==2021.10.1
+purplship.server.core==2021.10.2
 purplship.server.events==2021.10
 purplship.server.graph==2021.10
 purplship.server.manager==2021.10
