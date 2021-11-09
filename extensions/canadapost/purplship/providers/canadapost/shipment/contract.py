@@ -62,29 +62,37 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=getattr(label, "text", None)
+        label=getattr(label, "text", None),
     )
 
 
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ShipmentType]:
-    package = Packages(payload.parcels, PackagePresets, required=['weight']).single
+    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, OptionCode)
 
     is_intl = (
-        payload.recipient.country_code is not None and
-        payload.recipient.country_code != 'CA'
+        payload.recipient.country_code is not None
+        and payload.recipient.country_code != "CA"
     )
-    payment_type = PaymentType.map(getattr(payload.payment, 'paid_by', None)).value
+    payment_type = PaymentType.map(getattr(payload.payment, "paid_by", None)).value
     all_options = (
-        [*options, (OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
-        if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION) else [*options]
+        [
+            *options,
+            (
+                OptionCode.canadapost_return_to_sender.name,
+                OptionCode.canadapost_return_to_sender.value.apply(True),
+            ),
+        ]
+        if is_intl
+        and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
+        else [*options]
     )
     customs = payload.customs
-    duty = getattr(customs, 'duty', Duty())
-    label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
+    duty = getattr(customs, "duty", Duty())
+    label_encoding, label_format = LabelType[payload.label_type or "PDF_4x6"].value
 
     request = ShipmentType(
         customer_request_id=None,
@@ -143,15 +151,17 @@ def shipment_request(
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=getattr(option, 'key', option),
-                            option_amount=getattr(option, 'value', None),
+                            option_code=getattr(option, "key", option),
+                            option_amount=getattr(option, "value", None),
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for code, option in all_options if code in OptionCode
+                        for code, option in all_options
+                        if code in OptionCode
                     ]
                 )
-                if any(all_options) else None
+                if any(all_options)
+                else None
             ),
             notification=(
                 NotificationType(
@@ -160,7 +170,8 @@ def shipment_request(
                     on_exception=True,
                     on_delivery=True,
                 )
-                if options.email_notification and any([options.email_notification_to, payload.recipient.email])
+                if options.email_notification
+                and any([options.email_notification_to, payload.recipient.email])
                 else None
             ),
             print_preferences=PrintPreferencesType(
@@ -200,14 +211,17 @@ def shipment_request(
                                 for item in customs.commodities
                             ]
                         )
-                    ) if any(customs.commodities or []) else None
+                    )
+                    if any(customs.commodities or [])
+                    else None,
                 )
-                if customs is not None else None
+                if customs is not None
+                else None
             ),
             references=ReferencesType(
                 cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=getattr(payload, 'id', None),
+                customer_ref_2=getattr(payload, "id", None),
             ),
             settlement_info=SettlementInfoType(
                 paid_by_customer=(
