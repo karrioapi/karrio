@@ -36,6 +36,7 @@ class TrackingSerializer(TrackingDetails):
         response = Shipments.track(
             TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
             carrier=carrier,
+            raise_on_error=False,
         )
 
         return models.Tracking.objects.create(
@@ -46,6 +47,7 @@ class TrackingSerializer(TrackingDetails):
             delivered=response.tracking.delivered,
             status=response.tracking.status,
             tracking_carrier=carrier,
+            messages=DP.to_dict(response.messages),
         )
 
     def update(
@@ -81,6 +83,10 @@ class TrackingSerializer(TrackingDetails):
             if events != instance.events:
                 instance.events = events
                 changes.append("events")
+
+            if response.messages != instance.messages:
+                instance.messages = DP.to_dict(response.messages)
+                changes.append("messages")
 
             if response.tracking.delivered != instance.delivered:
                 instance.delivered = response.tracking.delivered

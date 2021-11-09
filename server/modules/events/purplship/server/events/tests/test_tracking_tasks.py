@@ -136,6 +136,7 @@ TRACKERS_LIST = {
             "delivered": False,
             "status": "in-transit",
             "test_mode": True,
+            "messages": [],
         },
         {
             "id": ANY,
@@ -154,6 +155,7 @@ TRACKERS_LIST = {
             "delivered": False,
             "status": "in-transit",
             "test_mode": True,
+            "messages": [],
         },
     ],
 }
@@ -215,6 +217,7 @@ UPDATED_TRACKERS_LIST = {
             "delivered": False,
             "test_mode": True,
             "status": "in-transit",
+            "messages": [],
         },
         {
             "id": ANY,
@@ -233,6 +236,7 @@ UPDATED_TRACKERS_LIST = {
             "delivered": False,
             "test_mode": True,
             "status": "in-transit",
+            "messages": [],
         },
     ],
 }

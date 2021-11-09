@@ -265,7 +265,10 @@ class Shipments:
 
     @staticmethod
     def track(
-        payload: dict, carrier: models.Carrier = None, **carrier_filters
+        payload: dict,
+        carrier: models.Carrier = None,
+        raise_on_error: bool = True,
+        **carrier_filters,
     ) -> datatypes.TrackingResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -284,24 +287,36 @@ class Shipments:
         # The request call is wrapped in identity to simplify mocking in tests
         results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
-        if not any(results or []):
+        if not any(results or []) and raise_on_error:
             raise exceptions.PurplShipApiException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
-        return datatypes.TrackingResponse(
-            tracking=(
-                datatypes.Tracking(
-                    **{
-                        **DP.to_dict(results[0]),
-                        "id": f"trk_{uuid.uuid4().hex}",
-                        "test_mode": carrier.test,
-                        "status": compute_tracking_status(results[0]).value,
-                    }
+        result = next(iter(results or []), None)
+        details = result or datatypes.TrackingDetails(
+            carrier_id=carrier.carrier_id,
+            carrier_name=carrier.carrier_name,
+            tracking_number=payload["tracking_numbers"][0],
+            events=[
+                datatypes.TrackingEvent(
+                    date=datetime.now().strftime("%Y-%m-%d"),
+                    description="Awaiting package update...",
+                    code="UNKNOWN",
+                    time=datetime.now().strftime("%H:%M"),
                 )
-                if any(results)
-                else None
+            ],
+            delivered=False,
+        )
+
+        return datatypes.TrackingResponse(
+            tracking=datatypes.Tracking(
+                **{
+                    **DP.to_dict(details),
+                    "id": f"trk_{uuid.uuid4().hex}",
+                    "test_mode": carrier.test,
+                    "status": compute_tracking_status(result).value,
+                }
             ),
             messages=messages,
         )

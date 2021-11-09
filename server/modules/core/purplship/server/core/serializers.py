@@ -931,7 +931,12 @@ class TrackingDetails(Serializer):
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
-    pass
+    messages = Message(
+        required=False,
+        many=True,
+        default=[],
+        help_text="The list of note or warning messages",
+    )
 
 
 @allow_model_id(
