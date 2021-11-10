@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.sendle"
-version = "2021.2.1"
+version = "2021.11"
 description = "Sendle API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship"
 homepage="https://github.com/purplship/purplship/tree/main/carrier.sendle"
