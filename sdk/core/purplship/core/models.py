@@ -283,6 +283,7 @@ class TrackingDetails:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     delivered: bool = None
+    estimated_delivery: str = None
 
 
 @attr.s(auto_attribs=True)

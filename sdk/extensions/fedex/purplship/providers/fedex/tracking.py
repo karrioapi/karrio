@@ -7,6 +7,7 @@ from fedex_lib.track_service_v19 import (
     VersionId,
     TrackSelectionDetail,
     TrackPackageIdentifier,
+    TrackingDateOrTimestamp,
 )
 from purplship.core.utils import Serializable, Element, XP, DF
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
@@ -35,32 +36,35 @@ def parse_tracking_response(
 
 
 def _extract_tracking(
-    track_detail_node: Element, settings: Settings
+    detail_node: Element, settings: Settings
 ) -> Optional[TrackingDetails]:
     track_detail = TrackDetail()
-    track_detail.build(track_detail_node)
+    track_detail.build(detail_node)
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    delivered = any(e.EventType == 'DL' for e in track_detail.Events)
+    estimated_delivery = getattr(
+        XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp, first=True),
+        "DateOrTimestamp",
+        None,
+    )
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=track_detail.TrackingNumber,
-        events=list(
-            map(
-                lambda e: TrackingEvent(
-                    date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                    time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                    code=e.EventType,
-                    location=e.ArrivalLocation,
-                    description=e.EventDescription,
-                ),
-                track_detail.Events,
+        events=[
+            TrackingEvent(
+                date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                code=e.EventType,
+                location=e.ArrivalLocation,
+                description=e.EventDescription,
             )
-        ),
-        delivered=delivered
+            for e in track_detail.Events
+        ],
+        estimated_delivery=DF.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
+        delivered=any(e.EventType == "DL" for e in track_detail.Events),
     )
 
 

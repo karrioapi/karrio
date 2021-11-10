@@ -17,7 +17,8 @@ def parse_tracking_response(
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     details = XP.find("tracking-detail", response)
     tracking_details: List[TrackingDetails] = [
-        _extract_tracking(node, settings) for node in details
+        _extract_tracking(node, settings)
+        for node in details
         if len(XP.find("occurrence", node)) > 0
     ]
 
@@ -27,6 +28,12 @@ def parse_tracking_response(
 def _extract_tracking(detail_node: Element, settings: Settings) -> TrackingDetails:
     pin = XP.find("pin", detail_node, first=True)
     events: List[occurrenceType] = XP.find("occurrence", detail_node, occurrenceType)
+    expected_delivery = getattr(
+        XP.find("changed-expected-date", detail_node, first=True)
+        or XP.find("expected-delivery-date", detail_node, first=True),
+        "text",
+        None,
+    )
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -37,12 +44,17 @@ def _extract_tracking(detail_node: Element, settings: Settings) -> TrackingDetai
                 date=DF.fdate(event.event_date, "%Y-%m-%d"),
                 time=DF.ftime(event.event_time, "%H:%M:%S"),
                 code=event.event_identifier,
-                location=SF.concat_str(event.event_site, event.event_province, join=True, separator=', '),
-                description=event.event_description
+                location=SF.concat_str(
+                    event.event_site, event.event_province, join=True, separator=", "
+                ),
+                description=event.event_description,
             )
             for event in events
         ],
-        delivered=any(e.event_identifier in TRACKING_DELIVERED_EVENT_CODES for e in events)
+        estimated_delivery=DF.fdate(expected_delivery, "%Y-%m-%d"),
+        delivered=any(
+            e.event_identifier in TRACKING_DELIVERED_EVENT_CODES for e in events
+        ),
     )
 
 

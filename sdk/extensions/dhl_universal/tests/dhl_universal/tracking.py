@@ -60,6 +60,7 @@ ParsedTrackingResponse = [
             "carrier_id": "dhl_universal",
             "carrier_name": "dhl_universal",
             "delivered": True,
+            "estimated_delivery": "2018-08-03",
             "events": [
                 {
                     "code": "pre-transit",

@@ -77,6 +77,7 @@ ParsedTrackingResponse = [
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "delivered": True,
+            "estimated_delivery": "2011-04-05",
             "events": [
                 {
                     "code": "20",

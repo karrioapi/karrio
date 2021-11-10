@@ -29,11 +29,13 @@ def _extract_details(node: Element, settings) -> TrackingDetails:
     info = XP.to_object(TrackInfoType, node)
     details: List[TrackDetailType] = [*([info.TrackSummary] or []), *info.TrackDetail]
     delivered = info.StatusCategory.lower() == "delivered"
+    expected_delivery = info.ExpectedDeliveryDate or info.PredictedDeliveryDate
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.ID,
+        delivered=delivered,
         events=[
             TrackingEvent(
                 code=str(event.EventCode),
@@ -44,13 +46,14 @@ def _extract_details(node: Element, settings) -> TrackingDetails:
                     event.EventCity,
                     event.EventState,
                     event.EventCountry,
-                    str(event.EventZIPCode),
+                    str(event.EventZIPCode or ""),
                     join=True,
+                    separator=", ",
                 ),
             )
             for event in details
         ],
-        delivered=delivered,
+        estimated_delivery=DF.fdate(expected_delivery, "%B %d, %Y"),
     )
 
 

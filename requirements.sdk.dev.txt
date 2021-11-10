@@ -1,5 +1,10 @@
 nose
 
+# Carrier Schemas in Development
+-e ./schemas/sendle
+
+
+# Carrier Extenstions in Development
 -e ./sdk/extensions/ics_courier
 -e ./sdk/extensions/asendia_us
 -e ./sdk/extensions/ups_ground

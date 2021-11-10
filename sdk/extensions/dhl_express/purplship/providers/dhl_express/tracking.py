@@ -23,8 +23,9 @@ def parse_tracking_response(
     awb_nodes = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
 
     tracking_details = [
-        _extract_tracking(info_node, settings) for info_node in awb_nodes
-        if len(XP.find('ShipmentInfo', info_node)) > 0
+        _extract_tracking(info_node, settings)
+        for info_node in awb_nodes
+        if len(XP.find("ShipmentInfo", info_node)) > 0
     ]
     return (
         tracking_details,
@@ -35,9 +36,12 @@ def parse_tracking_response(
 def _extract_tracking(
     info_node: Element, settings: Settings
 ) -> Optional[TrackingDetails]:
-    tracking_number = XP.find('AWBNumber', info_node, first=True).text
-    events: List[ShipmentEvent] =  XP.find('ShipmentEvent', info_node, ShipmentEvent)
-    delivered = any(e.ServiceEvent.EventCode == 'OK' for e in events)
+    tracking_number = XP.find("AWBNumber", info_node, first=True).text
+    estimated_delivery = getattr(
+        XP.find("EstDlvyDate", info_node, first=True), "text", None
+    )
+    events: List[ShipmentEvent] = XP.find("ShipmentEvent", info_node, ShipmentEvent)
+    delivered = any(e.ServiceEvent.EventCode == "OK" for e in events)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -49,11 +53,12 @@ def _extract_tracking(
                 time=DF.ftime(e.Time),
                 code=e.ServiceEvent.EventCode,
                 location=e.ServiceArea.Description,
-                description=f'{e.ServiceEvent.Description} {e.Signatory}'.strip(),
+                description=f"{e.ServiceEvent.Description} {e.Signatory}".strip(),
             )
             for e in reversed(events)
         ],
-        delivered=delivered
+        estimated_delivery=DF.fdate(estimated_delivery, "%Y-%m-%d %H:%M:%S %Z%z"),
+        delivered=delivered,
     )
 
 

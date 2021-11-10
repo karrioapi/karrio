@@ -1,7 +1,20 @@
 from typing import List, Tuple
 from ups_lib.common import RequestType, TransactionReferenceType
-from ups_lib.track_web_service_schema import TrackRequest, ShipmentType, ActivityType, AddressType
-from purplship.core.utils import Serializable, Element, apply_namespaceprefix, create_envelope, Envelope, XP, DF
+from ups_lib.track_web_service_schema import (
+    TrackRequest,
+    ShipmentType,
+    ActivityType,
+    AddressType,
+)
+from purplship.core.utils import (
+    Serializable,
+    Element,
+    apply_namespaceprefix,
+    create_envelope,
+    Envelope,
+    XP,
+    DF,
+)
 from purplship.core.models import (
     TrackingEvent,
     TrackingRequest,
@@ -26,40 +39,45 @@ def _extract_details(shipment_node: Element, settings: Settings) -> TrackingDeta
     track_detail = XP.to_object(ShipmentType, shipment_node)
     activities = [
         XP.to_object(ActivityType, node)
-        for node in
-        shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
+        for node in shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
     ]
-    delivered = any(a.Status.Type == 'D' for a in activities)
+    delivered = any(a.Status.Type == "D" for a in activities)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=track_detail.InquiryNumber.Value,
-        events=list(
-            map(
-                lambda a: TrackingEvent(
-                    date=DF.fdate(a.Date, "%Y%m%d"),
-                    description=a.Status.Description if a.Status else None,
-                    location=(
-                        _format_location(a.ActivityLocation.Address)
-                        if a.ActivityLocation is not None and a.ActivityLocation.Address is not None else None
-                    ),
-                    time=DF.ftime(a.Time, "%H%M%S"),
-                    code=a.Status.Code if a.Status else None,
+        events=[
+            TrackingEvent(
+                date=DF.fdate(a.Date, "%Y%m%d"),
+                description=a.Status.Description if a.Status else None,
+                location=(
+                    _format_location(a.ActivityLocation.Address)
+                    if a.ActivityLocation is not None
+                    and a.ActivityLocation.Address is not None
+                    else None
                 ),
-                activities,
+                time=DF.ftime(a.Time, "%H%M%S"),
+                code=a.Status.Code if a.Status else None,
             )
-        ),
-        delivered=delivered
+            for a in activities
+        ],
+        delivered=delivered,
     )
 
 
 def _format_location(address: AddressType) -> str:
-    return ", ".join([
-        location for location in [
-            address.City, address.StateProvinceCode, address.CountryCode
-        ] if location is not None
-    ])
+    return ", ".join(
+        [
+            location
+            for location in [
+                address.City,
+                address.StateProvinceCode,
+                address.CountryCode,
+            ]
+            if location is not None
+        ]
+    )
 
 
 def tracking_request(
