@@ -37,9 +37,4 @@ urlpatterns = [
     path("admin/", admin.site.urls, name="app_admin"),
 ]
 
-if settings.HAS_EMBEDDED_CLIENT:
-    urlpatterns += [
-        path("", include("purplship.server.user.urls")),
-    ]
-
 urlpatterns += staticfiles_urlpatterns()

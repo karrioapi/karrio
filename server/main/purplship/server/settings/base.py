@@ -96,11 +96,6 @@ PURPLSHIP_CONF = [
             "module": "purplship.server.events",
             "urls": "purplship.server.events.urls",
         },
-        {
-            "app": "purplship.server.client",
-            "module": "purplship.server.client",
-            "urls": "purplship.server.client.urls",
-        },
         {"app": "purplship.server.pricing", "module": "purplship.server.pricing"},
     ]
     if importlib.util.find_spec(app["module"]) is not None
@@ -110,7 +105,6 @@ PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
-HAS_EMBEDDED_CLIENT = importlib.util.find_spec("purplship.server.client") is not None
 
 
 BASE_APPS = [
@@ -149,10 +143,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "purplship.server.urls"
-LOGOUT_REDIRECT_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/"
-LOGIN_REDIRECT_URL = "/" if HAS_EMBEDDED_CLIENT else "/admin/"
-LOGIN_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/admin/login/"
-OPEN_API_PATH = "openapi/" if HAS_EMBEDDED_CLIENT else ""
+LOGOUT_REDIRECT_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/admin/"
+LOGIN_URL = "/admin/login/"
+OPEN_API_PATH = "openapi/"
 
 
 TEMPLATES = [

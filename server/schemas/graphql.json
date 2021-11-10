@@ -12499,6 +12499,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "estimated_delivery",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
@@ -12508,6 +12520,18 @@
                   "name": "Boolean",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "messages",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSONString",
+                "ofType": null
               }
             },
             {
@@ -12651,6 +12675,16 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "TrackingEventType",
+          "possibleTypes": null
+        },
+        {
+          "description": "Allows use of a JSON String for input / output from the GraphQL schema.\n\nUse of this type is *not recommended* as you lose the benefits of having a defined, static\nschema (one of the key benefits of GraphQL).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "JSONString",
           "possibleTypes": null
         },
         {
@@ -14928,16 +14962,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "PartialAddressModelSerializerInput",
-          "possibleTypes": null
-        },
-        {
-          "description": "Allows use of a JSON String for input / output from the GraphQL schema.\n\nUse of this type is *not recommended* as you lose the benefits of having a defined, static\nschema (one of the key benefits of GraphQL).",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "JSONString",
           "possibleTypes": null
         },
         {
