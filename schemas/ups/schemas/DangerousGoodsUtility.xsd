@@ -1,0 +1,169 @@
+<xsd:schema targetNamespace="http://www.ups.com/XMLSchema/XOLTWS/DangerousGoodsUtility/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:dg="http://www.ups.com/XMLSchema/XOLTWS/DangerousGoodsUtility/v1.0" xmlns:ups="http://www.ups.com/XMLSchema" elementFormDefault="qualified" version="201907">
+	<xsd:import namespace="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" schemaLocation="common.xsd"/>
+	<xsd:element name="AcceptanceAuditPreCheckRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="OriginRecordTransactionTimestamp" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Shipment" type="dg:ShipmentType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ShipmentType">
+		<xsd:sequence>
+			<xsd:element name="ShipperNumber" type="xsd:string"/>
+			<xsd:element name="ShipFromAddress" type="dg:AddressType"/>
+			<xsd:element name="ShipToAddress" type="dg:AddressType"/>
+			<xsd:element name="Service" type="dg:ServiceType"/>
+			<xsd:element name="RegulationSet" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Package" type="dg:PackageType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddressType">
+		<xsd:sequence>
+			<xsd:element name="AddressLine" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="City" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StateProvinceCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PostalCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CountryCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PackageType">
+		<xsd:sequence>
+			<xsd:element name="PackageIdentifier" type="xsd:string"/>
+			<xsd:element name="PackageWeight" type="dg:PackageWeightType"/>
+			<xsd:element name="QValue" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="OverPackedIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransportationMode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EmergencyPhone" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EmergencyContact" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChemicalRecord" type="dg:ChemicalRecordType" maxOccurs="3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PackageWeightType">
+		<xsd:sequence>
+			<xsd:element name="Weight" type="xsd:string"/>
+			<xsd:element name="UnitOfMeasurement" type="dg:PackageWeightUOMType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PackageWeightUOMType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ChemicalRecordType">
+		<xsd:sequence>
+			<xsd:element name="ChemicalRecordIdentifier" type="xsd:string"/>
+			<xsd:element name="ReportableQuantity" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ClassDivisionNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="SubRiskClass" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IDNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingGroupType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Quantity" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="UOM" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingInstructionCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ProperShippingName" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TechnicalName" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AdditionalDescription" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="HazardLabelRequired" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingTypeQuantity" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CommodityRegulatedLevelCode" type="xsd:string"/>
+			<xsd:element name="TransportCategory" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TunnelRestrictionCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AllPackedInOneIndicator" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="AcceptanceAuditPreCheckResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="ShipperNumber" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Service" type="dg:ServiceType" minOccurs="0"/>
+				<xsd:element name="RegulationSet" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="PackageResults" type="dg:PackageResultsType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="PackageResultsType">
+		<xsd:sequence>
+			<xsd:element name="PackageIdentifier" type="xsd:string"/>
+			<xsd:element name="AccessibleIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EuropeBUIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChemicalRecordResults" type="dg:ChemicalRecordResultsType" maxOccurs="3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ChemicalRecordResultsType">
+		<xsd:sequence>
+			<xsd:element name="ChemicalRecordIdentifier" type="xsd:string"/>
+			<xsd:element name="ADRPoints" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransportCategory" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TunnelRestrictionCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ADRUnits" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="ChemicalReferenceDataRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="IDNumber" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="ProperShippingName" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="ShipperNumber" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ChemicalReferenceDataResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="ChemicalData" type="dg:ChemicalDataType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ChemicalDataType">
+		<xsd:sequence>
+			<xsd:element name="ChemicalDetail" type="dg:ChemicalDetailType" minOccurs="0"/>
+			<xsd:element name="ProperShippingNameDetail" type="dg:ProperShippingNameDetailType" minOccurs="0"/>
+			<xsd:element name="PackageQuantityLimitDetail" type="dg:PackageQuantityLimitDetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ChemicalDetailType">
+		<xsd:sequence>
+			<xsd:element name="RegulationSet" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IDNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="HazardousMaterialsDescription" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ClassDivisionNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="SubRiskClass" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingGroupType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="SpecialPermit" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TechnicalNameRequiredIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AdditionalShippingInformationRequiredIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TunnelRestrictionCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransportCategory" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransportMultiplierQuantity" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChannelTunnelAcceptedIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChemicalType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CAToUSShipmentAllowedIndicator" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProperShippingNameDetailType">
+		<xsd:sequence>
+			<xsd:element name="ProperShippingName" type="xsd:string" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PackageQuantityLimitDetailType">
+		<xsd:sequence>
+			<xsd:element name="PackageQuantityLimitTypeCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Quantity" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="UOM" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingInstructionCode" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

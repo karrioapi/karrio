@@ -1,0 +1,169 @@
+<!-- start :FreightPickup schema -->
+<!-- end :FreightPickup schema -->
+<xsd:schema targetNamespace="http://www.ups.com/XMLSchema/XOLTWS/FreightPickup/v1.0" xmlns:fpu="http://www.ups.com/XMLSchema/XOLTWS/FreightPickup/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="201901">
+	<xsd:import namespace="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" schemaLocation="common.xsd"/>
+	<!--FreightPickup Request Element-->
+	<xsd:element name="FreightPickupRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="PickupRequestConfirmationNumber" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="DestinationPostalCode" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="DestinationCountryCode" type="xsd:string"/>
+				<xsd:element name="Requester" type="fpu:RequesterType"/>
+				<xsd:element name="ShipFrom" type="fpu:ShipFromType"/>
+				<xsd:element name="ShipTo" type="fpu:ShipToType"/>
+				<xsd:element name="PickupDate" type="xsd:string"/>
+				<xsd:element name="EarliestTimeReady" type="xsd:string"/>
+				<xsd:element name="LatestTimeReady" type="xsd:string"/>
+				<xsd:element name="ShipmentServiceOptions" type="fpu:ShipmentServiceOptionsType" minOccurs="0"/>
+				<xsd:element name="ShipmentDetail" type="fpu:ShipmentDetailType" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="ExistingShipmentID" type="fpu:ExistingShipmentIDType" minOccurs="0"/>
+				<xsd:element name="POM" type="fpu:POMType" minOccurs="0"/>
+				<xsd:element name="PickupInstructions" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="AdditionalComments" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="HandlingInstructions" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="SpecialInstructions" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="DeliveryInstructions" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!--FreightCancelPickup Request Element-->
+	<xsd:element name="FreightCancelPickupRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="PickupRequestConfirmationNumber" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!--FreightPickup Response Element-->
+	<xsd:element name="FreightPickupResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="PickupRequestConfirmationNumber" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!--FreightCancelPickup Response Element-->
+	<xsd:element name="FreightCancelPickupResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="FreightCancelStatus" type="fpu:CancelStatusCodeDescriptionType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- start : List of complex types used by freightpickup schema -->
+	<xsd:complexType name="RequesterType">
+		<xsd:sequence>
+			<xsd:element name="ThirdPartyIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AttentionName" type="xsd:string"/>
+			<xsd:element name="EMailAddress" type="xsd:string"/>
+			<xsd:element name="Name" type="xsd:string"/>
+			<xsd:element name="Phone" type="fpu:PhoneType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddressType">
+		<xsd:sequence>
+			<xsd:element name="AddressLine" type="xsd:string" maxOccurs="3"/>
+			<xsd:element name="City" type="xsd:string"/>
+			<xsd:element name="StateProvinceCode" type="xsd:string"/>
+			<xsd:element name="PostalCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CountryCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PhoneType">
+		<xsd:sequence>
+			<xsd:element name="Number" type="xsd:string"/>
+			<xsd:element name="Extension" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipFromType">
+		<xsd:sequence>
+			<xsd:element name="AttentionName" type="xsd:string"/>
+			<xsd:element name="Name" type="xsd:string"/>
+			<xsd:element name="Address" type="fpu:AddressType"/>
+			<xsd:element name="Phone" type="fpu:PhoneType"/>
+			<xsd:element name="EMailAddress" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipToType">
+		<xsd:sequence>
+			<xsd:element name="AttentionName" type="xsd:string"/>
+			<xsd:element name="Address" type="fpu:AddressType"/>
+			<xsd:element name="Phone" type="fpu:PhoneType" minOccurs="0"/>
+			<xsd:element name="EMailAddress" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipmentServiceOptionsType">
+		<xsd:sequence>
+			<xsd:element name="FreezableProtectionIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="LimitedAccessPickupIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="LimitedAccessDeliveryIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ExtremeLengthIndicator" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipmentDetailType">
+		<xsd:sequence>
+			<xsd:element name="HazmatIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PackagingType" type="fpu:PickupCodeDescriptionType"/>
+			<xsd:element name="NumberOfPieces" type="xsd:string"/>
+			<xsd:element name="DescriptionOfCommodity" type="xsd:string"/>
+			<xsd:element name="Weight" type="fpu:WeightType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PickupCodeDescriptionType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="POMType">
+		<xsd:sequence>
+			<xsd:element name="POMNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="POMNumberType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PickupNotifications" type="fpu:PickupNotificationsType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PickupNotificationsType">
+		<xsd:sequence>
+			<xsd:element name="CompanyName" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EMailNotification" type="fpu:EMailNotificationType" minOccurs="0" maxOccurs="5"/>
+			<xsd:element name="FailedEMail" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="WeightType">
+		<xsd:sequence>
+			<xsd:element name="UnitOfMeasurement" type="fpu:UnitOfMeasurementType"/>
+			<xsd:element name="Value" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="UnitOfMeasurementType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExistingShipmentIDType">
+		<xsd:sequence>
+			<xsd:element name="ShipmentNumber" type="xsd:string"/>
+			<xsd:element name="BOLID" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="EMailNotificationType">
+		<xsd:sequence>
+			<xsd:element name="EMailAddress" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EventType" type="xsd:string" minOccurs="0" maxOccurs="4"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CancelStatusCodeDescriptionType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- end : List of comple
+x types used by freightpickup schema -->
+</xsd:schema>

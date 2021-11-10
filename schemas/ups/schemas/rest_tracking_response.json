@@ -1,0 +1,230 @@
+{
+  "trackResponse": {
+    "shipment": [
+      {
+        "package": [
+          {
+            "trackingNumber": "1ZR760R60332160282",
+            "deliveryDate": [
+              {
+                "type": "DEL",
+                "date": "20211021"
+              }
+            ],
+            "deliveryTime": {
+              "startTime": "",
+              "endTime": "143316",
+              "type": "DEL"
+            },
+            "activity": [
+              {
+                "location": {
+                  "address": {
+                    "city": "ADRIAN",
+                    "stateProvince": "MI",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "D",
+                  "description": "Delivered",
+                  "code": "FS"
+                },
+                "date": "20211021",
+                "time": "143316"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Adrian",
+                    "stateProvince": "MI",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Out For Delivery Today",
+                  "code": "OT"
+                },
+                "date": "20211021",
+                "time": "092215"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Adrian",
+                    "stateProvince": "MI",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Processing at UPS Facility",
+                  "code": "YP"
+                },
+                "date": "20211021",
+                "time": "042712"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Adrian",
+                    "stateProvince": "MI",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Arrived at Facility",
+                  "code": "AR"
+                },
+                "date": "20211021",
+                "time": "011500"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Maumee",
+                    "stateProvince": "OH",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Departed from Facility",
+                  "code": "DP"
+                },
+                "date": "20211021",
+                "time": "002700"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Maumee",
+                    "stateProvince": "OH",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Arrived at Facility",
+                  "code": "AR"
+                },
+                "date": "20211020",
+                "time": "175700"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Nashville",
+                    "stateProvince": "TN",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Departed from Facility",
+                  "code": "DP"
+                },
+                "date": "20211020",
+                "time": "082000"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Nashville",
+                    "stateProvince": "TN",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Arrived at Facility",
+                  "code": "AR"
+                },
+                "date": "20211019",
+                "time": "222400"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Nashville",
+                    "stateProvince": "TN",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Departed from Facility",
+                  "code": "DP"
+                },
+                "date": "20211019",
+                "time": "215900"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Nashville",
+                    "stateProvince": "TN",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Origin Scan",
+                  "code": "OR"
+                },
+                "date": "20211019",
+                "time": "200952"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "Nashville",
+                    "stateProvince": "TN",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "I",
+                  "description": "Drop-Off",
+                  "code": "XD"
+                },
+                "date": "20211019",
+                "time": "121800"
+              },
+              {
+                "location": {
+                  "address": {
+                    "city": "",
+                    "stateProvince": "",
+                    "postalCode": "",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "M",
+                  "description": "Shipper created a label, UPS has not received the package yet. ",
+                  "code": "MP"
+                },
+                "date": "20211018",
+                "time": "140229"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

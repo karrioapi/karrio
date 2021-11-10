@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.ups"
-version = "2020.3.1"
+version = "2020.11"
 description = "UPS Web API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship"
 homepage="https://github.com/purplship/purplship/tree/main/carrier.ups"

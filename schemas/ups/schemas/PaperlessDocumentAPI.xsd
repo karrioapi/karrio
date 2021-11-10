@@ -1,0 +1,77 @@
+<xsd:schema targetNamespace="http://www.ups.com/XMLSchema/XOLTWS/PaperlessDocumentAPI/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:da="http://www.ups.com/XMLSchema/XOLTWS/PaperlessDocumentAPI/v1.0" xmlns:ups="http://www.ups.com/XMLSchema" elementFormDefault="qualified" version="201801">
+	<xsd:import namespace="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" schemaLocation="common.xsd"/>
+	<xsd:element name="UploadRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="ShipperNumber" type="xsd:string"/>
+				<xsd:element name="UserCreatedForm" type="da:UserCreatedForm" maxOccurs="13"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="UserCreatedForm">
+		<xsd:sequence>
+			<xsd:element name="UserCreatedFormFileName" type="xsd:string"/>
+			<xsd:element name="UserCreatedFormFile" type="xsd:base64Binary"/>
+			<xsd:element name="UserCreatedFormFileFormat" type="xsd:string"/>
+			<xsd:element name="UserCreatedFormDocumentType" type="xsd:string" maxOccurs="13"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="UploadResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="FormsHistoryDocumentID" type="da:FormsHistoryDocumentIDType" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="FormsHistoryDocumentIDType">
+		<xsd:sequence>
+			<xsd:element name="DocumentID" type="xsd:string" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="DeleteRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="ShipperNumber" type="xsd:string"/>
+				<xsd:element name="DocumentID" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DeleteResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="PushToImageRepositoryRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Request"/>
+				<xsd:element name="ShipperNumber" type="xsd:string"/>
+				<xsd:element name="FormsHistoryDocumentID" type="da:FormsHistoryDocIDImageReq"/>
+				<xsd:element name="FormsGroupID" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="ShipmentIdentifier" type="xsd:string"/>
+				<xsd:element name="ShipmentDateAndTime" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="ShipmentType" type="xsd:string"/>
+				<xsd:element name="PRQConfirmationNumber" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="TrackingNumber" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="FormsHistoryDocIDImageReq">
+		<xsd:sequence>
+			<xsd:element name="DocumentID" type="xsd:string" maxOccurs="13"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="PushToImageRepositoryResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="common:Response"/>
+				<xsd:element name="FormsGroupID" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
