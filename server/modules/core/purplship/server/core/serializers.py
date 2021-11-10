@@ -928,6 +928,10 @@ class TrackingDetails(Serializer):
         choices=TRACKER_STATUS,
         help_text="The current tracking status",
     )
+    estimated_delivery = CharField(
+        required=False,
+        help_text="The delivery estimated date",
+    )
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):

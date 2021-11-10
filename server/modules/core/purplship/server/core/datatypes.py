@@ -243,6 +243,7 @@ class Tracking:
 
     status: str = ""
     delivered: bool = None
+    estimated_delivery: str = None
     id: str = None
     test_mode: bool = None
 

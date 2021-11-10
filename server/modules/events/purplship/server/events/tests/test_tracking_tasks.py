@@ -124,6 +124,7 @@ TRACKERS_LIST = {
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
+            "estimated_delivery": None,
             "events": [
                 {
                     "date": "2021-01-11",
@@ -143,6 +144,7 @@ TRACKERS_LIST = {
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
+            "estimated_delivery": None,
             "events": [
                 {
                     "date": "2012-10-04",
@@ -198,6 +200,7 @@ UPDATED_TRACKERS_LIST = {
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
+            "estimated_delivery": None,
             "events": [
                 {
                     "date": "2021-03-02",
@@ -224,6 +227,7 @@ UPDATED_TRACKERS_LIST = {
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
+            "estimated_delivery": None,
             "events": [
                 {
                     "date": "2012-10-04",

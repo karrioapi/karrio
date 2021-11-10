@@ -265,6 +265,7 @@ class Tracking(OwnedEntity):
         blank=True, null=True, default=partial(identity, value=[])
     )
     delivered = models.BooleanField(blank=True, null=True, default=False)
+    estimated_delivery = models.DateField(null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     messages = models.JSONField(
         blank=True, null=True, default=partial(identity, value=[])

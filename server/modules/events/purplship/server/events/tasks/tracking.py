@@ -139,6 +139,10 @@ def save_updated_trackers(
                         tracker.status = status
                         changes.append("status")
 
+                    if details.estimated_delivery != tracker.estimated_delivery:
+                        tracker.estimated_delivery = details.estimated_delivery
+                        changes.append("estimated_delivery")
+
                     if any(changes):
                         tracker.save(update_fields=changes)
                         serializers.update_shipment_tracker(tracker)

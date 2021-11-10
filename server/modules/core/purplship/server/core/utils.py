@@ -65,3 +65,11 @@ def compute_tracking_status(
         return serializers.TrackerStatus.pending
 
     return serializers.TrackerStatus.in_transit
+
+
+def is_sdk_message(
+    message: Optional[Union[datatypes.Message, List[datatypes.Message]]]
+) -> bool:
+    msg = next(iter(message), None) if isinstance(message, list) else message
+
+    return "SHIPPING_SDK_" in getattr(msg, "code", "")

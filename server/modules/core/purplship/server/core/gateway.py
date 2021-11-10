@@ -18,6 +18,7 @@ from purplship.server.core.utils import (
     identity,
     post_processing,
     upper,
+    is_sdk_message,
     compute_tracking_status,
 )
 
@@ -287,7 +288,7 @@ class Shipments:
         # The request call is wrapped in identity to simplify mocking in tests
         results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
-        if not any(results or []) and raise_on_error:
+        if not any(results or []) and (raise_on_error or is_sdk_message(messages)):
             raise exceptions.PurplShipApiException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_404_NOT_FOUND,

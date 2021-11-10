@@ -69,6 +69,7 @@ TRACKING_RESPONSE = {
     "test_mode": True,
     "delivered": False,
     "status": "in-transit",
+    "estimated_delivery": None,
     "events": [
         {
             "code": "KB",

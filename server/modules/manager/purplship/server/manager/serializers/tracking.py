@@ -47,6 +47,7 @@ class TrackingSerializer(TrackingDetails):
             delivered=response.tracking.delivered,
             status=response.tracking.status,
             tracking_carrier=carrier,
+            estimated_delivery=response.tracking.estimated_delivery,
             messages=DP.to_dict(response.messages),
         )
 
@@ -95,6 +96,10 @@ class TrackingSerializer(TrackingDetails):
             if response.tracking.status != instance.status:
                 instance.status = response.tracking.status
                 changes.append("status")
+
+            if response.tracking.estimated_delivery != instance.estimated_delivery:
+                instance.estimated_delivery = response.tracking.estimated_delivery
+                changes.append("estimated_delivery")
 
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier

@@ -49,6 +49,7 @@ TRACKING_RESPONSE = {
         "carrier_id": "ups_package",
         "carrier_name": "ups",
         "delivered": None,
+        "estimated_delivery": None,
         "events": [
             {
                 "code": "KB",

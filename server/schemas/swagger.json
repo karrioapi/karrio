@@ -5403,6 +5403,20 @@
                         "delivered"
                     ],
                     "default": "pending"
+                },
+                "estimated_delivery": {
+                    "title": "Estimated delivery",
+                    "description": "The delivery estimated date",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    },
+                    "default": []
                 }
             }
         },

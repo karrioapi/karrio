@@ -5984,6 +5984,19 @@
                             "incident",
                             "delivered"
                         ]
+                    },
+                    "estimated_delivery": {
+                        "title": "Estimated delivery",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The delivery estimated date"
+                    },
+                    "messages": {
+                        "type": "array",
+                        "description": "The list of note or warning messages",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
                     }
                 },
                 "description": "The tracking details retrieved"
