@@ -26,7 +26,7 @@ class TestUPSRating(unittest.TestCase):
         Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/Rate")
+        self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Rate")
 
     def test_parse_package_quote_response(self):
         with patch("purplship.mappers.ups.proxy.http") as mock:

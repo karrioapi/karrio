@@ -26,7 +26,8 @@ class TestUPSAddressValidation(unittest.TestCase):
             purplship.Address.validate(self.AddressValidationRequest).from_(gateway)
 
             self.assertEqual(
-                mock.call_args[1]["url"], f"{gateway.settings.server_url}/AV"
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/webservices/AV",
             )
 
     def test_parse_address_validation_response(self):

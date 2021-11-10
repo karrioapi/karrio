@@ -43,9 +43,14 @@ def _extract_tracking(
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    estimated_delivery = getattr(
-        XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp, first=True),
-        "DateOrTimestamp",
+    estimated_delivery = next(
+        iter(
+            [
+                d.DateOrTimestamp
+                for d in XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
+                if d.Type in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY", "COMMITMENT"]
+            ]
+        ),
         None,
     )
 

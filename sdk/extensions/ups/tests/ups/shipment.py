@@ -38,7 +38,7 @@ class TestUPSShipment(unittest.TestCase):
         Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/Ship")
+        self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Ship")
 
     def test_parse_shipment_response(self):
         with patch("purplship.mappers.ups.proxy.http") as mock:
@@ -64,7 +64,9 @@ class TestUPSShipment(unittest.TestCase):
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentCancelResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedShipmentCancelResponse
+            )
 
 
 if __name__ == "__main__":
@@ -146,7 +148,7 @@ package_shipment_with_package_preset_data = {
     "payment": {"paid_by": "sender"},
     "options": {"email_notification_to": "test@mail.com"},
     "reference": "Your Customer Context",
-    "label_type": "ZPL"
+    "label_type": "ZPL",
 }
 
 

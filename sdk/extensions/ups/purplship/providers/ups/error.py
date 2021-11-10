@@ -21,3 +21,18 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
     )
+
+
+def parse_rest_error_response(
+    errors: List[dict], settings: Settings, details: dict = None
+) -> List[Message]:
+    return [
+        Message(
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+            code=error.get("code"),
+            message=error.get("message"),
+            details=details,
+        )
+        for error in errors
+    ]

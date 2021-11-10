@@ -32,7 +32,11 @@ def _extract_detail(
     detail: Tuple[str, Tracking], settings: Settings
 ) -> TrackingDetails:
     tracking_number, tracking_details = detail
-    estimated_delivery = tracking_details.scheduling.estimated_delivery_date_minimum
+    estimated_delivery = (
+        tracking_details.scheduling.estimated_delivery_date_minimum
+        or tracking_details.scheduling.estimated_delivery_date_maximum
+        or tracking_details.scheduling.delivered_on
+    )
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,

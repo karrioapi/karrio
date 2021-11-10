@@ -2,6 +2,7 @@ nose
 
 # Carrier Schemas in Development
 -e ./schemas/sendle
+-e ./schemas/ups
 
 
 # Carrier Extenstions in Development

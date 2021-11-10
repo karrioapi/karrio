@@ -3,7 +3,7 @@ name = "purplship.sdk"
 version = "0.0.0"
 description = "purplship sdk env"
 authors = ["Purplship <hello@purplship.com>"]
-license = "Apache License Version 2.0"
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -33,5 +33,5 @@ python = "^3.7"
 "purplship.freightcom" = {path = "vendors/freightcom", develop = true}
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

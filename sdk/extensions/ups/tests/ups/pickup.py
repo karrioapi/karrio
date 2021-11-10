@@ -48,11 +48,11 @@ class TestUPSPickup(unittest.TestCase):
             rate_call, create_call = mocks.call_args_list
             self.assertEqual(
                 rate_call[1]["url"],
-                f"{gateway.settings.server_url}/Pickup",
+                f"{gateway.settings.server_url}/webservices/Pickup",
             )
             self.assertEqual(
                 create_call[1]["url"],
-                f"{gateway.settings.server_url}/Pickup",
+                f"{gateway.settings.server_url}/webservices/Pickup",
             )
 
     def test_update_pickup(self):
@@ -67,15 +67,15 @@ class TestUPSPickup(unittest.TestCase):
             rate_call, create_call, cancel_call = mocks.call_args_list
             self.assertEqual(
                 rate_call[1]["url"],
-                f"{gateway.settings.server_url}/Pickup",
+                f"{gateway.settings.server_url}/webservices/Pickup",
             )
             self.assertEqual(
                 create_call[1]["url"],
-                f"{gateway.settings.server_url}/Pickup",
+                f"{gateway.settings.server_url}/webservices/Pickup",
             )
             self.assertEqual(
                 cancel_call[1]["url"],
-                f"{gateway.settings.server_url}/Pickup",
+                f"{gateway.settings.server_url}/webservices/Pickup",
             )
 
     def test_parse_pickup_reply(self):
