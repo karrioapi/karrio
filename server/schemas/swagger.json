@@ -2918,13 +2918,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -3411,13 +3411,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -3799,13 +3799,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -4077,13 +4077,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -4306,13 +4306,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -5551,13 +5551,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -5711,13 +5711,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",
@@ -5799,13 +5799,13 @@
                     "title": "Next",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "previous": {
                     "title": "Previous",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "results": {
                     "type": "array",

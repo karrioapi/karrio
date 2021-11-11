@@ -3501,15 +3501,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -3994,15 +3994,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -4384,15 +4384,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -4662,15 +4662,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -4892,15 +4892,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -6131,15 +6131,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -6289,15 +6289,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
@@ -6377,15 +6377,15 @@
                 "properties": {
                     "next": {
                         "title": "Next",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "previous": {
                         "title": "Previous",
-                        "minLength": 1,
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "nullable": true
                     },
                     "results": {
                         "type": "array",
