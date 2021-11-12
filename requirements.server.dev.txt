@@ -1,38 +1,38 @@
 # Carrier Schemas in Development
--e ./schemas/sendle
--e ./schemas/ups
+# -e ./schemas/sendle
+# -e ./schemas/ups
 
 # Carrier Extenstions in Development
--e ./sdk/core
--e ./sdk/extensions/canadapost
--e ./sdk/extensions/canpar
--e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_universal
+# -e ./sdk/core
+# -e ./sdk/extensions/canadapost
+# -e ./sdk/extensions/canpar
+# -e ./sdk/extensions/dhl_express
+# -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/fedex
--e ./sdk/extensions/royalmail
--e ./sdk/extensions/sendle
--e ./sdk/extensions/ups
--e ./sdk/extensions/usps
--e ./sdk/extensions/usps_international
+# -e ./sdk/extensions/royalmail
+# -e ./sdk/extensions/sendle
+# -e ./sdk/extensions/ups
+# -e ./sdk/extensions/usps
+# -e ./sdk/extensions/usps_international
 
 
 # purplship
 purplship.aramex
 purplship.australiapost
-# purplship.canadapost
-# purplship.canpar
-# purplship.dhl-express
-# purplship.dhl-universal
+purplship.canadapost
+purplship.canpar
+purplship.dhl-express
+purplship.dhl-universal
 purplship.dicom
 # purplship.fedex
 purplship.purolator
-# purplship.royalmail
-# purplship.sendle
+purplship.royalmail
+purplship.sendle
 purplship.sf-express
 purplship.tnt
-# purplship.ups
-# purplship.usps
-# purplship.usps_international
+purplship.ups
+purplship.usps
+purplship.usps_international
 purplship.yanwen
 purplship.yunexpress
 purplship.eshipper

@@ -19,10 +19,23 @@ from fedex_lib.rate_service_v28 import (
     CustomerReference,
     CustomerReferenceType,
 )
-from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, DF
+from purplship.core.utils import (
+    create_envelope,
+    apply_namespaceprefix,
+    Element,
+    Serializable,
+    NF,
+    XP,
+    DF,
+)
 from purplship.core.units import Packages, Options, Services, CompleteAddress
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets, MeasurementOptions
+from purplship.providers.fedex.units import (
+    PackagingType,
+    ServiceType,
+    PackagePresets,
+    MeasurementOptions,
+)
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
@@ -70,7 +83,8 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     estimated_delivery = DF.date(rate.DeliveryTimestamp)
     transit = (
         ((estimated_delivery.date() - datetime.today().date()).days or None)
-        if estimated_delivery is not None else None
+        if estimated_delivery is not None
+        else None
     )
 
     return RateDetails(
@@ -84,7 +98,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         discount=discount,
         transit_days=transit,
         extra_charges=surcharges,
-        meta=dict(service_name=service.name_or_key)
+        meta=dict(service_name=service.name_or_key),
     )
 
 
@@ -96,7 +110,6 @@ def rate_request(
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, ServiceType).first
     options = Options(payload.options)
-
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
     request = FedexRateRequest(
@@ -112,7 +125,9 @@ def rate_request(
             ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
-            PackagingType=PackagingType[packages.package_type or 'your_packaging'].value,
+            PackagingType=PackagingType.map(
+                packages.package_type or "your_packaging"
+            ).value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
                 Units=packages.weight.unit,
@@ -125,7 +140,8 @@ def rate_request(
                 AccountNumber=settings.account_number,
                 Tins=(
                     [TaxpayerIdentification(Number=tax) for tax in shipper.taxes]
-                    if shipper.has_tax_info else None
+                    if shipper.has_tax_info
+                    else None
                 ),
                 Contact=(
                     Contact(
@@ -140,7 +156,8 @@ def rate_request(
                         FaxNumber=None,
                         EMailAddress=shipper.email,
                     )
-                    if shipper.has_contact_info else None
+                    if shipper.has_contact_info
+                    else None
                 ),
                 Address=Address(
                     StreetLines=shipper.address_lines,
@@ -158,7 +175,8 @@ def rate_request(
                 AccountNumber=None,
                 Tins=(
                     [TaxpayerIdentification(Number=tax) for tax in recipient.taxes]
-                    if recipient.has_tax_info else None
+                    if recipient.has_tax_info
+                    else None
                 ),
                 Contact=(
                     Contact(
@@ -173,7 +191,8 @@ def rate_request(
                         FaxNumber=None,
                         EMailAddress=recipient.email,
                     )
-                    if recipient.has_contact_info else None
+                    if recipient.has_contact_info
+                    else None
                 ),
                 Address=Address(
                     StreetLines=recipient.address_lines,
@@ -219,7 +238,8 @@ def rate_request(
                             Units=package.weight.unit,
                             Value=package.weight.value,
                         )
-                        if package.weight.value else None
+                        if package.weight.value
+                        else None
                     ),
                     Dimensions=(
                         Dimensions(
@@ -228,7 +248,15 @@ def rate_request(
                             Height=package.height.map(MeasurementOptions).value,
                             Units=package.dimension_unit.value,
                         )
-                        if package.has_dimensions else None
+                        if (
+                            # only set dimensions if the packaging type is set to your_packaging
+                            package.has_dimensions
+                            and PackagingType.map(
+                                package.packaging_type or "your_packaging"
+                            ).value
+                            == PackagingType.your_packaging.value
+                        )
+                        else None
                     ),
                     PhysicalPackaging=None,
                     ItemDescription=package.parcel.description,
@@ -237,10 +265,11 @@ def rate_request(
                         [
                             CustomerReference(
                                 CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
-                                Value=payload.reference
+                                Value=payload.reference,
                             )
                         ]
-                        if any(payload.reference or "") else None
+                        if any(payload.reference or "")
+                        else None
                     ),
                     SpecialServicesRequested=None,
                     ContentRecords=None,
