@@ -36,7 +36,7 @@
         "/": {
             "get": {
                 "operationId": "&&ping",
-                "summary": "purplship instance Metadata",
+                "summary": "Instance Metadata",
                 "description": "",
                 "parameters": [],
                 "responses": {
