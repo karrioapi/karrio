@@ -74,7 +74,7 @@ purplship.sendle==2021.11
 purplship.server==2021.11
 purplship.server.core==2021.11
 purplship.server.events==2021.11
-purplship.server.graph==2021.10
+purplship.server.graph==2021.11
 purplship.server.manager==2021.11
 purplship.server.pricing==2021.10
 purplship.server.proxy==2021.11
