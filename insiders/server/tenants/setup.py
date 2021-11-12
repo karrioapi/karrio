@@ -13,7 +13,7 @@ setup(
     author="purplship",
     author_email="hello@purplship.com",
     license="Purplship Enterprise",
-    packages=find_namespace_packages("."),
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "purplship.server.core",
         "django-tenants",

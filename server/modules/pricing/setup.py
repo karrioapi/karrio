@@ -13,7 +13,7 @@ setup(
     author="purplship",
     author_email="hello@purplship.com",
     license="Apache License Version 2.0",
-    packages=find_namespace_packages("."),
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=["purplship.server.core"],
     classifiers=[
         "Programming Language :: Python :: 3",
