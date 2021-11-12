@@ -5,7 +5,7 @@ description = "DHL eCommerce Americas API Schemas Python Data Types library"
 repository="https://github.com/purplship/purplship-carriers"
 homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.dhl_ecom_am"
 authors = ["Purplship <hello@purplship.com>"]
-license = "Apache License Version 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "dhl_ecom_am_lib" }]
 classifiers = [

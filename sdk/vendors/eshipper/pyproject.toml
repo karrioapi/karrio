@@ -5,7 +5,7 @@ homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/eshipper"
 repository="https://github.com/purplship/purplship"
 description = "eShipper purplship extension"
 authors = ["Purplship <hello@purplship.com>"]
-license = "Apache License Version 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "purplship" }, { include = "eshipper_lib" }]
 classifiers=[

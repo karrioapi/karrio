@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "purplship.sendle"
 version = "2021.11"
-homepage="https://docs.purplship.com"
+homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Sendle Shipping Extension"
 authors = ["Purplship <hello@purplship.com>"]
