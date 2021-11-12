@@ -17,7 +17,9 @@ class Metadata(Serializer):
     APP_VERSION = CharField()
     APP_WEBSITE = CharField()
     MULTI_ORGANIZATIONS = BooleanField()
-    ADDRESS_AUTO_COMPLETE = PlainDictField()
+    ADMIN = CharField()
+    OPENAPI = CharField()
+    GRAPHQL = CharField()
 
 
 @swagger_auto_schema(

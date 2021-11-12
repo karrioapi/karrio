@@ -14,7 +14,6 @@ METADATA = {
 }
 
 REFERENCE_MODELS = {
-    **METADATA,
     **collect_references(),
     "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
     "incoterms": {c.name: c.value for c in list(Incoterm)},

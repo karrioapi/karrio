@@ -2486,7 +2486,9 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
-                "ADDRESS_AUTO_COMPLETE"
+                "ADMIN",
+                "OPENAPI",
+                "GRAPHQL"
             ],
             "type": "object",
             "properties": {
@@ -2509,10 +2511,20 @@
                     "title": "Multi organizations",
                     "type": "boolean"
                 },
-                "ADDRESS_AUTO_COMPLETE": {
-                    "title": "Address auto complete",
-                    "type": "object",
-                    "additionalProperties": true
+                "ADMIN": {
+                    "title": "Admin",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "OPENAPI": {
+                    "title": "Openapi",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "GRAPHQL": {
+                    "title": "Graphql",
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
@@ -5497,6 +5509,9 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
+                "ADMIN",
+                "OPENAPI",
+                "GRAPHQL",
                 "ADDRESS_AUTO_COMPLETE",
                 "countries",
                 "currencies",
@@ -5533,6 +5548,21 @@
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
                     "type": "boolean"
+                },
+                "ADMIN": {
+                    "title": "Admin",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "OPENAPI": {
+                    "title": "Openapi",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "GRAPHQL": {
+                    "title": "Graphql",
+                    "type": "string",
+                    "minLength": 1
                 },
                 "ADDRESS_AUTO_COMPLETE": {
                     "title": "Address auto complete",

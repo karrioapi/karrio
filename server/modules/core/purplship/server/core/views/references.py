@@ -20,6 +20,9 @@ class References(Serializer):
     APP_VERSION = CharField()
     APP_WEBSITE = CharField()
     MULTI_ORGANIZATIONS = BooleanField()
+    ADMIN = CharField()
+    OPENAPI = CharField()
+    GRAPHQL = CharField()
     ADDRESS_AUTO_COMPLETE = PlainDictField()
 
     countries = PlainDictField()
@@ -39,23 +42,27 @@ class References(Serializer):
 
 
 @swagger_auto_schema(
-    methods=['get'],
-    tags=['API'],
+    methods=["get"],
+    tags=["API"],
     operation_id=f"{ENDPOINT_ID}data",
     operation_summary="Data References",
-    responses={200: References()}
+    responses={200: References()},
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
     is_authenticated = request.auth is not None
     references = {
-        **dataunits.REFERENCE_MODELS,
+        **dataunits.METADATA,
+        "ADMIN": f"{ request.scheme }://{ request.get_host() }/admin/",
+        "OPENAPI": f"{ request.scheme }://{ request.get_host() }/openapi",
+        "GRAPHQL": f"{ request.scheme }://{ request.get_host() }/graphql",
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
+        **dataunits.REFERENCE_MODELS,
     }
 
     return Response(references, status=status.HTTP_200_OK)
 
 
-router.urls.append(path('references', references))
+router.urls.append(path("references", references))

@@ -3067,11 +3067,13 @@
         "schemas": {
             "Metadata": {
                 "required": [
-                    "ADDRESS_AUTO_COMPLETE",
+                    "ADMIN",
                     "APP_NAME",
                     "APP_VERSION",
                     "APP_WEBSITE",
-                    "MULTI_ORGANIZATIONS"
+                    "GRAPHQL",
+                    "MULTI_ORGANIZATIONS",
+                    "OPENAPI"
                 ],
                 "type": "object",
                 "properties": {
@@ -3094,10 +3096,20 @@
                         "title": "Multi organizations",
                         "type": "boolean"
                     },
-                    "ADDRESS_AUTO_COMPLETE": {
-                        "title": "Address auto complete",
-                        "type": "object",
-                        "properties": {}
+                    "ADMIN": {
+                        "title": "Admin",
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "OPENAPI": {
+                        "title": "Openapi",
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "GRAPHQL": {
+                        "title": "Graphql",
+                        "minLength": 1,
+                        "type": "string"
                     }
                 }
             },
@@ -6076,10 +6088,13 @@
             "References": {
                 "required": [
                     "ADDRESS_AUTO_COMPLETE",
+                    "ADMIN",
                     "APP_NAME",
                     "APP_VERSION",
                     "APP_WEBSITE",
+                    "GRAPHQL",
                     "MULTI_ORGANIZATIONS",
+                    "OPENAPI",
                     "carrier_capabilities",
                     "carriers",
                     "countries",
@@ -6115,6 +6130,21 @@
                     "MULTI_ORGANIZATIONS": {
                         "title": "Multi organizations",
                         "type": "boolean"
+                    },
+                    "ADMIN": {
+                        "title": "Admin",
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "OPENAPI": {
+                        "title": "Openapi",
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "GRAPHQL": {
+                        "title": "Graphql",
+                        "minLength": 1,
+                        "type": "string"
                     },
                     "ADDRESS_AUTO_COMPLETE": {
                         "title": "Address auto complete",
