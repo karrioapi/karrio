@@ -19,7 +19,11 @@ class TestFeDexQuote(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>", "", request.serialize()
+            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>",
+            "",
+            request.serialize().replace(
+                "                <v28:ShipTimestamp>", "<v28:ShipTimestamp>"
+            ),
         )
         self.assertEqual(serialized_request, RateRequestXml)
 
@@ -29,7 +33,11 @@ class TestFeDexQuote(unittest.TestCase):
         )
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>", "", request.serialize()
+            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>",
+            "",
+            request.serialize().replace(
+                "                <v28:ShipTimestamp>", "<v28:ShipTimestamp>"
+            ),
         )
 
         self.assertEqual(serialized_request, RateRequestUsingPackagePresetXML)
@@ -258,7 +266,7 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
             </v28:Version>
             <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
             <v28:RequestedShipment>
-                
+
                 <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
                 <v28:PackagingType>YOUR_PACKAGING</v28:PackagingType>
                 <v28:TotalWeight>
@@ -330,7 +338,7 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
             </v28:Version>
             <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
             <v28:RequestedShipment>
-                
+
                 <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
                 <v28:PackagingType>FEDEX_PAK</v28:PackagingType>
                 <v28:TotalWeight>
@@ -365,12 +373,6 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                         <v28:Units>LB</v28:Units>
                         <v28:Value>2.2</v28:Value>
                     </v28:Weight>
-                    <v28:Dimensions>
-                        <v28:Length>1</v28:Length>
-                        <v28:Width>11</v28:Width>
-                        <v28:Height>14</v28:Height>
-                        <v28:Units>IN</v28:Units>
-                    </v28:Dimensions>
                 </v28:RequestedPackageLineItems>
             </v28:RequestedShipment>
         </v28:RateRequest>
