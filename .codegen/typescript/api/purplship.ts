@@ -1,9 +1,12 @@
-import { PurplshipClient } from './index';
+import { ConfigurationParameters, PurplshipClient } from './index';
 
-export const Client = PurplshipClient;
+export default function Purplship(apiKey: string, host: string = 'https://cloud.purplship.com', apiKeyPrefix: string = 'Token') {
+  const clientConfig: ConfigurationParameters = {
+    basePath: host,
+    apiKey: `${apiKeyPrefix} ${apiKey}`,
+  };
 
-export class Purplship extends PurplshipClient {
-  constructor({ apiKey, host }: { apiKey: string, host: string }) {
-    super({ basePath: host, apiKey });
-  }
+  return new PurplshipClient(clientConfig);
 }
+
+Purplship.Client = PurplshipClient;

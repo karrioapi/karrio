@@ -76,6 +76,7 @@ elif [[ "$*" == *build:js* ]]; then
 	cd "${ROOT:?}/.codegen/typescript"
 	rm -rf node_modules;
     yarn;
+    rm "${ROOT:?}/.codegen/typescript/api/generated/apis/index.ts"
 	npx gulp build --output "${ROOT:?}/server/main/purplship/server/static/purplship/js/purplship.js"
 	cd -
 	purplship collectstatic --noinput
