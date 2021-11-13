@@ -18,19 +18,34 @@ class Query:
     user = graphene.Field(types.UserType)
     token = graphene.Field(types.TokenType, org_id=graphene.String(required=False))
 
-    user_connections = graphene.List(types.ConnectionType, test=graphene.Boolean(required=False))
-    system_connections = graphene.List(types.SystemConnectionType, test=graphene.Boolean(required=False))
+    user_connections = graphene.List(
+        types.ConnectionType, test=graphene.Boolean(required=False)
+    )
+    system_connections = graphene.List(
+        types.SystemConnectionType, test=graphene.Boolean(required=False)
+    )
 
     default_templates = types.generic.GenericScalar()
-    address_templates = django_filter.DjangoFilterConnectionField(types.AddressTemplateType)
-    customs_templates = django_filter.DjangoFilterConnectionField(types.CustomsTemplateType)
-    parcel_templates = django_filter.DjangoFilterConnectionField(types.ParcelTemplateType)
+    address_templates = django_filter.DjangoFilterConnectionField(
+        types.AddressTemplateType
+    )
+    customs_templates = django_filter.DjangoFilterConnectionField(
+        types.CustomsTemplateType
+    )
+    parcel_templates = django_filter.DjangoFilterConnectionField(
+        types.ParcelTemplateType
+    )
 
     log = graphene.Field(types.LogType, id=graphene.Int(required=True))
-    logs = django_filter.DjangoFilterConnectionField(types.LogType, filterset_class=types.LogFilter)
+    logs = django_filter.DjangoFilterConnectionField(
+        types.LogType, filterset_class=types.LogFilter
+    )
     shipments = django_filter.DjangoFilterConnectionField(types.ShipmentType)
     trackers = django_filter.DjangoFilterConnectionField(types.TrackerType)
+
     webhooks = django_filter.DjangoFilterConnectionField(types.WebhookType)
+    events = django_filter.DjangoFilterConnectionField(types.EventType)
+    event = graphene.Field(types.EventType, id=graphene.String(required=True))
 
     @types.login_required
     def resolve_user(self, info):
@@ -42,7 +57,9 @@ class Query:
 
     @types.login_required
     def resolve_user_connections(self, info, **kwargs):
-        connections = providers.Carrier.access_by(info.context).filter(created_by__isnull=False, **kwargs)
+        connections = providers.Carrier.access_by(info.context).filter(
+            created_by__isnull=False, **kwargs
+        )
         return [connection.settings for connection in connections]
 
     @types.login_required
@@ -52,7 +69,10 @@ class Query:
     @types.login_required
     def resolve_default_templates(self, info, **kwargs):
         templates = graph.Template.access_by(info.context).filter(is_default=True)
-        return [serializers.DefaultTemplateSerializer(template).data for template in templates]
+        return [
+            serializers.DefaultTemplateSerializer(template).data
+            for template in templates
+        ]
 
     @types.login_required
     def resolve_address_templates(self, info, **kwargs):
@@ -86,6 +106,14 @@ class Query:
     def resolve_webhooks(self, info, **kwargs):
         return events.Webhook.access_by(info.context)
 
+    @types.login_required
+    def resolve_event(self, info, **kwargs):
+        return events.Event.access_by(info.context).filter(**kwargs).first()
+
+    @types.login_required
+    def resolve_events(self, info, **kwargs):
+        return events.Event.access_by(info.context)
+
 
 class Mutation:
     update_user = mutations.UpdateUser.Field()
@@ -98,12 +126,17 @@ class Mutation:
 
     create_template = mutations.CreateTemplate.Field()
     update_template = mutations.UpdateTemplate.Field()
-    delete_template = mutations.create_delete_mutation('DeleteTemplate', graph.Template).Field()
+    delete_template = mutations.create_delete_mutation(
+        "DeleteTemplate", graph.Template
+    ).Field()
 
     discard_commodity = mutations.create_delete_mutation(
-        'DiscardCommodity', manager.Commodity, customs__template__isnull=False).Field()
+        "DiscardCommodity", manager.Commodity, customs__template__isnull=False
+    ).Field()
 
     create_connection = mutations.CreateConnection.Field()
     update_connection = mutations.UpdateConnection.Field()
-    delete_connection = mutations.create_delete_mutation('DeleteConnection', providers.Carrier).Field()
+    delete_connection = mutations.create_delete_mutation(
+        "DeleteConnection", providers.Carrier
+    ).Field()
     mutate_system_connection = mutations.SystemCarrierMutation.Field()

@@ -22,15 +22,18 @@ def login_required(func):
     def wrapper(*args, **kwargs):
         *a, info = args
         if info.context.user.is_anonymous:
-            raise exceptions.AuthenticationFailed(_('You are not authenticated'), code='login_required')
+            raise exceptions.AuthenticationFailed(
+                _("You are not authenticated"), code="login_required"
+            )
 
         return func(*args, **kwargs)
+
     return wrapper
 
 
 class CustomNode(graphene.Node):
     class Meta:
-        name = 'CustomNode'
+        name = "CustomNode"
 
     @classmethod
     def to_global_id(cls, type, id):
@@ -40,14 +43,14 @@ class CustomNode(graphene.Node):
 class UserType(graphene_django.DjangoObjectType):
     class Meta:
         model = User
-        fields = ('email', 'full_name', 'is_staff', 'last_login', 'date_joined')
+        fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
 
 
 class ConnectionType:
     carrier_name = graphene.String(required=True)
 
     def resolve_carrier_name(self, info):
-        return getattr(self, 'settings', self).carrier_name
+        return getattr(self, "settings", self).carrier_name
 
 
 class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
@@ -55,10 +58,20 @@ class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
 
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'test', 'carrier_id', 'carrier_name', 'active', 'test', 'capabilities')
+        fields = (
+            "created_at",
+            "updated_at",
+            "id",
+            "test",
+            "carrier_id",
+            "carrier_name",
+            "active",
+            "test",
+            "capabilities",
+        )
 
     def resolve_enabled(self, info):
-        if hasattr(self, 'org'):
+        if hasattr(self, "org"):
             return self.active_orgs.filter(id=info.context.org.id).exists()
 
         return self.active_users.filter(id=info.context.user.id).exists()
@@ -66,16 +79,18 @@ class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
 
 class LogFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(
-        method='status_filter', choices=[('succeeded', 'succeeded'), ('failed', 'failed')])
+        method="status_filter",
+        choices=[("succeeded", "succeeded"), ("failed", "failed")],
+    )
 
     class Meta:
         model = core.APILog
-        fields = {'path': ['contains']}
+        fields = {"path": ["contains"]}
 
     def status_filter(self, queryset, name, value):
-        if value == 'succeeded':
+        if value == "succeeded":
             return queryset.filter(status_code__range=[200, 399])
-        elif value == 'failed':
+        elif value == "failed":
             return queryset.filter(status_code__range=[400, 599])
 
         return queryset
@@ -90,7 +105,7 @@ class LogType(graphene_django.DjangoObjectType):
 class TokenType(graphene_django.DjangoObjectType):
     class Meta:
         model = auth.Token
-        exclude = ('user', )
+        exclude = ("user",)
 
 
 class MessageType(graphene.ObjectType):
@@ -125,7 +140,7 @@ class RateType(graphene.ObjectType):
 class CommodityType(graphene_django.DjangoObjectType):
     class Meta:
         model = manager.Commodity
-        exclude = ('customs_set', )
+        exclude = ("customs_set",)
 
 
 class AddressType(graphene_django.DjangoObjectType):
@@ -133,13 +148,16 @@ class AddressType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Address
-        exclude = ('pickup_set', 'recipient', 'shipper', 'template')
+        exclude = ("pickup_set", "recipient", "shipper", "template")
 
 
 class ParcelType(graphene_django.DjangoObjectType):
     class Meta:
         model = manager.Parcel
-        exclude = ('shipment_parcels', 'template', )
+        exclude = (
+            "shipment_parcels",
+            "template",
+        )
 
 
 class DutyType(graphene.ObjectType):
@@ -157,7 +175,7 @@ class CustomsType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Customs
-        exclude = ('shipment_set', 'template', 'options')
+        exclude = ("shipment_set", "template", "options")
 
     def resolve_commodities(self, info):
         return self.commodities.all()
@@ -168,10 +186,10 @@ class AddressTemplateType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ('customs', 'parcel')
+        exclude = ("customs", "parcel")
         filter_fields = {
-            'label': ['icontains'],
-            'address__address_line1': ['icontains']
+            "label": ["icontains"],
+            "address__address_line1": ["icontains"],
         }
         interfaces = (CustomNode,)
 
@@ -181,8 +199,8 @@ class CustomsTemplateType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ('address', 'parcel')
-        filter_fields = {'label': ['icontains']}
+        exclude = ("address", "parcel")
+        filter_fields = {"label": ["icontains"]}
         interfaces = (CustomNode,)
 
 
@@ -191,8 +209,8 @@ class ParcelTemplateType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ('address', 'customs')
-        filter_fields = {'label': ['icontains']}
+        exclude = ("address", "customs")
+        filter_fields = {"label": ["icontains"]}
         interfaces = (CustomNode,)
 
 
@@ -220,7 +238,7 @@ class TrackerType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Tracking
-        filter_fields = ['delivered']
+        filter_fields = ["delivered"]
         interfaces = (CustomNode,)
 
 
@@ -252,8 +270,8 @@ class ShipmentType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Shipment
-        exclude = ('pickup_shipments', 'selected_rate_carrier', 'carriers')
-        filter_fields = ['status']
+        exclude = ("pickup_shipments", "selected_rate_carrier", "carriers")
+        filter_fields = ["status"]
         interfaces = (CustomNode,)
 
     def resolve_carrier_ids(self, info):
@@ -263,37 +281,49 @@ class ShipmentType(graphene_django.DjangoObjectType):
         return self.parcels.all()
 
     def resolve_carrier_id(self, info):
-        return getattr(self.selected_rate_carrier, 'carrier_id', None)
+        return getattr(self.selected_rate_carrier, "carrier_id", None)
 
     def resolve_carrier_name(self, info):
-        return getattr(self.selected_rate_carrier, 'carrier_name', None)
+        return getattr(self.selected_rate_carrier, "carrier_name", None)
 
 
 class WebhookType(graphene_django.DjangoObjectType):
     class Meta:
         model = events.Webhook
-        exclude = ('failure_streak_count', )
-        filter_fields = {'description': ['icontains']}
+        exclude = ("failure_streak_count",)
+        filter_fields = {"description": ["icontains"]}
+        interfaces = (CustomNode,)
+
+
+class EventType(graphene_django.DjangoObjectType):
+    data = generic.GenericScalar()
+
+    class Meta:
+        model = events.Event
+        filter_fields = ["type"]
         interfaces = (CustomNode,)
 
 
 def setup_carrier_model(model_type):
     _extra_fields = {}
 
-    if hasattr(model_type, 'account_country_code'):
+    if hasattr(model_type, "account_country_code"):
         _extra_fields.update(account_country_code=graphene.String(required=True))
 
     class Meta:
         model = model_type
-        exclude = ('carrier_ptr', )
+        exclude = ("carrier_ptr",)
 
-    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), {
-        'Meta': Meta,
-        **_extra_fields
-    })
+    return type(
+        model_type.__name__,
+        (graphene_django.DjangoObjectType, ConnectionType),
+        {"Meta": Meta, **_extra_fields},
+    )
 
 
 class ConnectionType(graphene.Union):
-
     class Meta:
-        types = tuple(setup_carrier_model(carrier_model) for carrier_model in providers.MODELS.values())
+        types = tuple(
+            setup_carrier_model(carrier_model)
+            for carrier_model in providers.MODELS.values()
+        )
