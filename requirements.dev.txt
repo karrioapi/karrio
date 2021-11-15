@@ -7,3 +7,6 @@ mypy
 poetry
 twine
 wheel
+
+# Carrier Schemas in Development
+-e ./schemas/dhl_parcel_pl
