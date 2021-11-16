@@ -14,6 +14,13 @@ def identity(value: Union[Any, Callable]) -> T:
     return value() if callable(value) else value
 
 
+def failsafe(callable: Callable[[], T]) -> T:
+    try:
+        return callable()
+    except Exception:
+        return None
+
+
 def post_processing(methods: List[str] = None):
     def class_wrapper(klass):
         setattr(

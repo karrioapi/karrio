@@ -1,6 +1,7 @@
 import logging
 from django.db.models import signals
 
+from purplship.server.core.utils import failsafe
 import purplship.server.core.serializers as serializers
 import purplship.server.manager.models as models
 import purplship.server.events.tasks as tasks
@@ -41,7 +42,7 @@ def shipment_updated(
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=instance.created_by.id,
+        user_id=failsafe(lambda: instance.created_by.id),
         org_id=getattr(getattr(instance, "org", None), "id", None),
     )
 
@@ -57,7 +58,7 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=instance.created_by.id,
+        user_id=failsafe(lambda: instance.created_by.id),
         org_id=getattr(getattr(instance, "org", None), "id", None),
     )
 
@@ -82,7 +83,7 @@ def tracker_updated(
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=instance.created_by.id,
+        user_id=failsafe(lambda: instance.created_by.id),
         org_id=getattr(getattr(instance, "org", None), "id", None),
     )
 
