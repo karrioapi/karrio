@@ -43,15 +43,12 @@ def _extract_tracking(
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    estimated_delivery = next(
-        iter(
-            [
-                d.DateOrTimestamp
-                for d in XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
-                if d.Type in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY", "COMMITMENT"]
-            ]
-        ),
-        None,
+    date_or_timestamps = XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
+    estimated_delivery = (
+        _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_DELIVERY")
+        or _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_TENDER")
+        or _parse_date_or_timestamp(date_or_timestamps, "ANTICIPATED_TENDER")
+        or _parse_date_or_timestamp(date_or_timestamps, "ESTIMATED_DELIVERY")
     )
 
     return TrackingDetails(
@@ -68,8 +65,26 @@ def _extract_tracking(
             )
             for e in track_detail.Events
         ],
-        estimated_delivery=DF.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
+        estimated_delivery=estimated_delivery,
         delivered=any(e.EventType == "DL" for e in track_detail.Events),
+    )
+
+
+def _parse_date_or_timestamp(
+    date_or_timestamps: List[TrackingDateOrTimestamp], type: str
+) -> Optional[str]:
+    format = (
+        "%Y-%m-%dT%H:%M:%S" if type == "ANTICIPATED_TENDER" else "%Y-%m-%dT%H:%M:%S%z"
+    )
+    return next(
+        iter(
+            [
+                DF.fdate(d.DateOrTimestamp, format)
+                for d in date_or_timestamps
+                if d.Type == type
+            ]
+        ),
+        None,
     )
 
 
