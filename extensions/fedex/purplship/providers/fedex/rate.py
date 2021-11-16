@@ -110,7 +110,6 @@ def rate_request(
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, ServiceType).first
     options = Options(payload.options)
-
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
     request = FedexRateRequest(
@@ -250,6 +249,7 @@ def rate_request(
                             Units=package.dimension_unit.value,
                         )
                         if (
+                            # only set dimensions if the packaging type is set to your_packaging
                             package.has_dimensions
                             and PackagingType.map(
                                 package.packaging_type or "your_packaging"

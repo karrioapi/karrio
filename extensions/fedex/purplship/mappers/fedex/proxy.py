@@ -1,4 +1,5 @@
 from typing import Any
+from fedex_lib.ship_service_v26 import TrackingId
 from purplship.core.utils import (
     XP,
     request as http,
@@ -6,7 +7,7 @@ from purplship.core.utils import (
     Serializable,
     Deserializable,
     Job,
-    Envelope
+    Envelope,
 )
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.fedex.settings import Settings
@@ -38,10 +39,27 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def create_shipment(
-        self, request: Serializable[Envelope]
-    ) -> Deserializable[str]:
-        response = self._send_request("/ship", request)
+    def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+
+        requests = request.serialize()
+        response = self._send_request("/ship", Serializable(requests[0]))
+        master_id = XP.find(
+            "MasterTrackingId", XP.to_xml(response), TrackingId, first=True
+        )
+
+        if len(requests) > 1 and master_id is not None:
+            responses = [
+                self._send_request(
+                    "/ship",
+                    Serializable(
+                        request.replace(
+                            "[MASTER_ID_TYPE]", master_id.TrackingIdType
+                        ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber)
+                    ),
+                )
+                for request in requests[1:]
+            ]
+            return Deserializable(XP.bundle_xml([response, *responses]), XP.to_xml)
 
         return Deserializable(response, XP.to_xml)
 
@@ -74,9 +92,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def cancel_pickup(
-        self, request: Serializable[Envelope]
-    ) -> Deserializable[str]:
+    def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request("/pickup", request)
 
         return Deserializable(response, XP.to_xml)
