@@ -19,26 +19,7 @@ class Serializable(Generic[T]):
 
     def serialize(self) -> Any:
         serialized_value = self._serializer(self.value)
-        if isinstance(self.value, list):
-            logger.info(
-                f"""serialized request:: [
-                {[
-                    f"{content}"
-                    for content in self.value
-                ]}
-            ]"""
-            )
-        elif isinstance(self.value, dict):
-            logger.info(
-                f"""serialized request:: {
-                {[
-                    f"{key}: {content}"
-                    for key, content in self.value.items()
-                ]}
-            }"""
-            )
-        else:
-            logger.info("serialized request::" f"{serialized_value}")
+        logger.info("serialized request::" f"{serialized_value}")
         return serialized_value
 
 
@@ -48,25 +29,6 @@ class Deserializable(Generic[T]):
     _deserializer: Callable[[T], Any] = _identity
 
     def deserialize(self) -> Any:
-        if isinstance(self.value, list):
-            logger.info(
-                f"""deserialized response:: [
-                {[
-                    f"{content}"
-                    for content in self.value
-                ]}
-            ]"""
-            )
-        elif isinstance(self.value, dict):
-            logger.info(
-                f"""deserialized response:: {
-                {[
-                    f"{key}: {content}"
-                    for key, content in self.value.items()
-                ]}
-            }"""
-            )
-        else:
-            logger.info("deserialized response::" f"{self.value}")
+        logger.info("deserialized response::" f"{self.value}")
 
         return self._deserializer(self.value)

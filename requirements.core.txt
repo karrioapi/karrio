@@ -1,5 +1,5 @@
 purplship
-purplship.server
+purplship.server==2021.11rc4
 purplship.server.core
 purplship.server.events
 purplship.server.graph

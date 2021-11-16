@@ -12,8 +12,8 @@ T = TypeVar("T")
 
 
 class Element(_Element):
-    def xpath(self, *args, **kwargs) -> List["Element"]:
-        pass  # type: ignore
+    def xpath(self, *args, **kwargs) -> List["Element"]:  # type: ignore
+        pass
 
 
 class GenerateDSAbstract(Envelope):

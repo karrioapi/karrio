@@ -28,7 +28,7 @@ def gif_to_pdf(gif_str: str) -> str:
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def bundle_pdfs(base64_strings: List[str]) -> io.BytesIO:
+def bundle_pdfs(base64_strings: List[str]) -> PdfFileMerger:
     merger = PdfFileMerger()
 
     for b64_str in base64_strings:
@@ -40,7 +40,7 @@ def bundle_pdfs(base64_strings: List[str]) -> io.BytesIO:
     return merger
 
 
-def bundle_imgs(base64_strings: List[str]) -> io.BytesIO:
+def bundle_imgs(base64_strings: List[str]) -> Image:
     image_buffers = [
         io.BytesIO(base64.b64decode(b64_str)) for b64_str in base64_strings
     ]

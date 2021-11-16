@@ -650,11 +650,12 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                     <v26:LabelOrder>SHIPPING_LABEL_FIRST</v26:LabelOrder>
                 </v26:LabelSpecification>
                 <v26:MasterTrackingId>
+                    <v26:TrackingIdType>[MASTER_ID_TYPE]</v26:TrackingIdType>
                     <v26:TrackingNumber>[MASTER_TRACKING_ID]</v26:TrackingNumber>
                 </v26:MasterTrackingId>
                 <v26:PackageCount>2</v26:PackageCount>
                 <v26:RequestedPackageLineItems>
-                    <v26:SequenceNumber>1</v26:SequenceNumber>
+                    <v26:SequenceNumber>2</v26:SequenceNumber>
                     <v26:Weight>
                         <v26:Units>LB</v26:Units>
                         <v26:Value>2</v26:Value>
