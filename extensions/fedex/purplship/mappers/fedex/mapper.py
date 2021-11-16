@@ -19,7 +19,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.providers.fedex.package import (
+from purplship.providers.fedex import (
     parse_shipment_cancel_response,
     parse_shipment_response,
     parse_rate_response,

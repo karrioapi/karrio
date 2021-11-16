@@ -3,13 +3,16 @@ import re
 import asyncio
 import logging
 import base64
-from PIL import Image
+from PIL import Image, ImageFile
+from PyPDF2 import PdfFileMerger
+from simple_zpl2 import ZPLDocument
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from typing import List, TypeVar, Callable, Optional, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
 
@@ -25,11 +28,74 @@ def gif_to_pdf(gif_str: str) -> str:
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
+def bundle_pdfs(base64_strings: List[str]) -> PdfFileMerger:
+    merger = PdfFileMerger()
+
+    for b64_str in base64_strings:
+        content = base64.b64decode(b64_str)
+        buffer = io.BytesIO()
+        buffer.write(content)
+        merger.append(buffer)
+
+    return merger
+
+
+def bundle_imgs(base64_strings: List[str]) -> Image:
+    image_buffers = [
+        io.BytesIO(base64.b64decode(b64_str)) for b64_str in base64_strings
+    ]
+    images = [Image.open(buffer) for buffer in image_buffers]
+    widths, heights = zip(*(i.size for i in images))
+
+    max_width = max(widths)
+    total_height = sum(heights)
+
+    image = Image.new("RGB", (max_width, total_height))
+
+    x_offset = 0
+    for im in images:
+        image.paste(im, (0, x_offset))
+        x_offset += im.size[1]
+
+    return image
+
+
+def bundle_zpls(base64_strings: List[str]) -> str:
+    doc = ZPLDocument()
+    for b64_str in base64_strings:
+        doc.add_zpl_raw(base64.b64decode(b64_str).decode("utf-8"))
+
+    return doc.zpl_text
+
+
+def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
+    """Return a base64 string from a list of base64 strings."""
+    result = io.BytesIO()
+
+    if format == "PDF":
+        pdf_buffer = bundle_pdfs(base64_strings)
+        pdf_buffer.write(result)
+
+    elif "ZPL" in format:
+        content = bundle_zpls(base64_strings)
+        result.write(content.encode("utf-8"))
+
+    else:
+        image = bundle_imgs(base64_strings)
+        image.save(result, format)
+
+    return base64.b64encode(result.getvalue()).decode("utf-8")
+
+
 def decode_bytes(byte):
     return byte.decode("utf-8")
 
 
-def request(decoder: Callable = decode_bytes, on_error: Callable[[HTTPError], str] = None, **args) -> str:
+def request(
+    decoder: Callable = decode_bytes,
+    on_error: Callable[[HTTPError], str] = None,
+    **args,
+) -> str:
     """Return an HTTP response body.
 
     make a http request (wrapper around Request method from built in urllib)
@@ -58,7 +124,9 @@ def request(decoder: Callable = decode_bytes, on_error: Callable[[HTTPError], st
         return error
 
 
-def exec_parrallel(function: Callable, sequence: List[S], max_workers: int = 2) -> List[T]:
+def exec_parrallel(
+    function: Callable, sequence: List[S], max_workers: int = 2
+) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
     with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
         requests = {executor.submit(function, item): item for item in sequence}
@@ -76,21 +144,20 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
 
 
 class Location:
-
     def __init__(self, value: Optional[str], **kwargs):
         self.value = value
         self.extra = kwargs
 
     @property
     def as_zip4(self) -> Optional[str]:
-        if re.match(r'/^SW\d{4}$/', self.value or ""):
+        if re.match(r"/^SW\d{4}$/", self.value or ""):
             return self.value
 
         return None
 
     @property
     def as_zip5(self) -> Optional[str]:
-        if not re.match(r'/^SW\d{5}$/', self.value or ""):
+        if not re.match(r"/^SW\d{5}$/", self.value or ""):
             return self.value
 
         return None
@@ -98,6 +165,7 @@ class Location:
     @property
     def as_country_name(self) -> str:
         from purplship.core.units import Country
+
         if self.value in Country:
             return Country[self.value].value
 
@@ -106,11 +174,14 @@ class Location:
     @property
     def as_state_name(self) -> str:
         from purplship.core.units import CountryState
+
         try:
-            country: Any = CountryState.__members__.get(self.extra['country'])
-            if self.value in getattr(country, 'value', []):
+            country: Any = CountryState.__members__.get(self.extra["country"])
+            if self.value in getattr(country, "value", []):
                 return country.value[self.value].value
 
             return self.value
         except KeyError as e:
-            raise Exception('Missing country code. e.g: Location(state_code, country="US").as_state_name') from e
+            raise Exception(
+                'Missing country code. e.g: Location(state_code, country="US").as_state_name'
+            ) from e

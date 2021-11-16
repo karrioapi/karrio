@@ -15,3 +15,10 @@ from purplship.providers.fedex.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+from purplship.providers.fedex.rate import rate_request, parse_rate_response
+from purplship.providers.fedex.shipment import (
+    parse_shipment_cancel_response,
+    parse_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
+)
