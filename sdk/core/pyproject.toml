@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship"
-version = "2021.11"
+version = "2021.11.2"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Multi-carrier shipping API integration with python"
@@ -24,6 +24,8 @@ py-soap = "^2020.3.2"
 xmltodict = "^0.12.0"
 phonenumbers = "^8.12.17"
 Pillow = "^8.1.0"
+PyPDF2 = "^1.26.0"
+simple_zpl2 = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 

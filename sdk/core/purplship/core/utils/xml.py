@@ -12,7 +12,8 @@ T = TypeVar("T")
 
 
 class Element(_Element):
-    def xpath(self, *args, **kwargs) -> List['Element']: pass  # type: ignore
+    def xpath(self, *args, **kwargs) -> List["Element"]:
+        pass  # type: ignore
 
 
 class GenerateDSAbstract(Envelope):
@@ -22,7 +23,9 @@ class GenerateDSAbstract(Envelope):
 class XMLPARSER:
     @staticmethod
     def build(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
-        warnings.warn("build is deprecated. Use to_object instead", category=DeprecationWarning)
+        warnings.warn(
+            "build is deprecated. Use to_object instead", category=DeprecationWarning
+        )
         return XMLPARSER.to_object(element_type, xml_node)
 
     @staticmethod
@@ -41,10 +44,19 @@ class XMLPARSER:
         return instance
 
     @staticmethod
-    def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = None, first: bool = None):
+    def find(
+        tag: str,
+        in_element: Element,
+        element_type: Type[Union[T, Element]] = None,
+        first: bool = None,
+    ):
         children = [
-            (child if element_type is None else XMLPARSER.to_object(element_type, child))
-            for child in in_element.xpath(".//*[local-name() = $name]", name=tag)
+            (
+                child
+                if element_type is None
+                else XMLPARSER.to_object(element_type, child)
+            )
+            for child in list(in_element.xpath(".//*[local-name() = $name]", name=tag))
         ]
 
         if first is True:
@@ -73,7 +85,13 @@ class XMLPARSER:
         :param xml_strings:
         :return: a bundled XML text containing all the micro XML string
         """
-        bundle = "".join([XMLPARSER.xml_tostring(XMLPARSER.to_xml(x)) for x in xml_strings if x is not None and x != ""])
+        bundle = "".join(
+            [
+                XMLPARSER.xml_tostring(XMLPARSER.to_xml(x))
+                for x in xml_strings
+                if x is not None and x != ""
+            ]
+        )
         return f"<wrapper>{bundle}</wrapper>"
 
     @staticmethod

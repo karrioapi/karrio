@@ -3,7 +3,7 @@
 # -e ./schemas/ups
 
 # Carrier Extenstions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
