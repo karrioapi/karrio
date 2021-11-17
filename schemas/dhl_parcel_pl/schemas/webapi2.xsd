@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="DHL24Webapi" targetNamespace="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
+<xs:schema elementFormDefault="qualified" targetNamespace="https://dhl24.com.pl/webapi2/provider/service.html?ws=1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="getVersion">
         <xs:complexType/>
     </xs:element>
@@ -1329,4 +1327,4 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-</schema>
+</xs:schema>
