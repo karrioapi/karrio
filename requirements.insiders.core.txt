@@ -1,10 +1,12 @@
 -f https://git.io/purplship
+--extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/purplship%2Fcloud/packages/pypi/simple
 purplship
 purplship.server==2021.11rc4
 purplship.server.core
 purplship.server.events
 purplship.server.graph
 purplship.server.manager
+purplship.server.orgs
 purplship.server.pricing
 purplship.server.proxy
 purplship.aramex
