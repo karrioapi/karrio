@@ -59,17 +59,25 @@ TrackingRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoa
 </soap-env:Envelope>
 """
 
-TrackingResponseXML = """<SOAP-ENV:Envelope
-  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-  xmlns:ns1="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
-  <SOAP-ENV:Body>
-    <ns1:getTrackAndTraceInfoResponse>
-      <getTrackAndTraceInfoResult>
-        <shipmentId>24333892874</shipmentId>
-        <receivedBy></receivedBy>
-        <events/>
-      </getTrackAndTraceInfoResult>
-    </ns1:getTrackAndTraceInfoResponse>
-  </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+TrackingResponseXML = """<?xml version="1.0" encoding="utf-8"?>
+<getTrackAndTraceInfoResponse xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1" xsi:schemaLocation="https://dhl24.com.pl/webapi2/provider/service.html?ws=1 schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <getTrackAndTraceInfoResult>
+    <shipmentId>string</shipmentId>
+    <receivedBy>string</receivedBy>
+    <events>
+      <item>
+        <status>string</status>
+        <description>string</description>
+        <terminal>string</terminal>
+        <timestamp>string</timestamp>
+      </item>
+      <item>
+        <status>string</status>
+        <description>string</description>
+        <terminal>string</terminal>
+        <timestamp>string</timestamp>
+      </item>
+    </events>
+  </getTrackAndTraceInfoResult>
+</getTrackAndTraceInfoResponse>
 """

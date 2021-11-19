@@ -326,131 +326,26 @@ ShipmentLabelRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/0
 </soap:Envelope>
 """
 
-ShipmentResponseXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
-    <soapenv:Body>
-        <ns:processShipmentResponse xmlns:ns="http://ws.business.canshipws.dhl_parcel_pl.com">
-            <ns:return xmlns:ax211="http://dto.canshipws.dhl_parcel_pl.com/xsd"
-                xmlns:ax29="http://ws.dto.canshipws.dhl_parcel_pl.com/xsd"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ax29:ProcessShipmentRs">
-                <ax29:error xsi:nil="true"/>
-                <ax29:processShipmentResult xsi:type="ax211:ProcessShipmentResult">
-                    <ax211:shipment xsi:type="ax211:Shipment">
-                        <ax211:airport_code/>
-                        <ax211:billed_weight>1.0</ax211:billed_weight>
-                        <ax211:billed_weight_unit>L</ax211:billed_weight_unit>
-                        <ax211:cod_charge>0.0</ax211:cod_charge>
-                        <ax211:cod_type>N</ax211:cod_type>
-                        <ax211:collect_shipper_num/>
-                        <ax211:consolidation_type/>
-                        <ax211:cos>false</ax211:cos>
-                        <ax211:cos_charge>0.0</ax211:cos_charge>
-                        <ax211:delivery_address xsi:type="ax211:Address">
-                            <ax211:address_id>A1</ax211:address_id>
-                            <ax211:address_line_1>1 TEST ST</ax211:address_line_1>
-                            <ax211:address_line_2/>
-                            <ax211:address_line_3/>
-                            <ax211:attention/>
-                            <ax211:city>TORONTO</ax211:city>
-                            <ax211:country>CA</ax211:country>
-                            <ax211:email>1@1.COM,2@2.COM</ax211:email>
-                            <ax211:extension>23</ax211:extension>
-                            <ax211:id>10001951</ax211:id>
-                            <ax211:inserted_on>2012-06-15T15:41:11.763Z</ax211:inserted_on>
-                            <ax211:name>TEST ADDRESS</ax211:name>
-                            <ax211:phone>4161234567</ax211:phone>
-                            <ax211:postal_code>M4X1W7</ax211:postal_code>
-                            <ax211:province>ON</ax211:province>
-                            <ax211:residential>false</ax211:residential>
-                            <ax211:updated_on>2012-06-15T15:41:11.998Z</ax211:updated_on>
-                        </ax211:delivery_address>
-                        <ax211:description/>
-                        <ax211:dg>false</ax211:dg>
-                        <ax211:dg_charge>0.0</ax211:dg_charge>
-                        <ax211:dimention_unit>I</ax211:dimention_unit>
-                        <ax211:dv_charge>0.0</ax211:dv_charge>
-                        <ax211:ea_charge>0.0</ax211:ea_charge>
-                        <ax211:ea_zone>0</ax211:ea_zone>
-                        <ax211:estimated_delivery_date>2012-06-18T04:00:00.000Z</ax211:estimated_delivery_date>
-                        <ax211:freight_charge>7.57</ax211:freight_charge>
-                        <ax211:fuel_surcharge>0.0</ax211:fuel_surcharge>
-                        <ax211:handling>0.0</ax211:handling>
-                        <ax211:handling_type>$</ax211:handling_type>
-                        <ax211:id>10000696</ax211:id>
-                        <ax211:inserted_on>2012-06-15T15:41:11.763Z</ax211:inserted_on>
-                        <ax211:instruction/>
-                        <ax211:manifest_num xsi:nil="true"/>
-                        <ax211:nsr>false</ax211:nsr>
-                        <ax211:packages xsi:type="ax211:Package">
-                            <ax211:alternative_reference/>
-                            <ax211:barcode>D999999990000000461001</ax211:barcode>
-                            <ax211:billed_weight>1.0</ax211:billed_weight>
-                            <ax211:cod xsi:nil="true"/>
-                            <ax211:cost_centre/>
-                            <ax211:declared_value>0.0</ax211:declared_value>
-                            <ax211:dim_weight>0.0</ax211:dim_weight>
-                            <ax211:dim_weight_flag>false</ax211:dim_weight_flag>
-                            <ax211:height>0.0</ax211:height>
-                            <ax211:id>10001802</ax211:id>
-                            <ax211:inserted_on>2012-06-15T15:41:11.763Z</ax211:inserted_on>
-                            <ax211:length>0.0</ax211:length>
-                            <ax211:min_weight_flag>false</ax211:min_weight_flag>
-                            <ax211:package_num>1</ax211:package_num>
-                            <ax211:package_reference>461</ax211:package_reference>
-                            <ax211:reference/>
-                            <ax211:reported_weight>1.0</ax211:reported_weight>
-                            <ax211:store_num/>
-                            <ax211:updated_on>2012-06-15T15:41:11.998Z</ax211:updated_on>
-                            <ax211:width>0.0</ax211:width>
-                            <ax211:xc>false</ax211:xc>
-                        </ax211:packages>
-                        <ax211:pickup_address xsi:type="ax211:Address">
-                            <ax211:address_id>A1</ax211:address_id>
-                            <ax211:address_line_1>1 TEST ST</ax211:address_line_1>
-                            <ax211:address_line_2/>
-                            <ax211:address_line_3/>
-                            <ax211:attention/>
-                            <ax211:city>TORONTO</ax211:city>
-                            <ax211:country>CA</ax211:country>
-                            <ax211:email>1@1.COM,2@2.COM</ax211:email>
-                            <ax211:extension>23</ax211:extension>
-                            <ax211:id>10001950</ax211:id>
-                            <ax211:inserted_on>2012-06-15T15:41:11.763Z</ax211:inserted_on>
-                            <ax211:name>TEST ADDRESS</ax211:name>
-                            <ax211:phone>4161234567</ax211:phone>
-                            <ax211:postal_code>L6T0G8</ax211:postal_code>
-                            <ax211:province>ON</ax211:province>
-                            <ax211:residential>false</ax211:residential>
-                            <ax211:updated_on>2012-06-15T15:41:11.998Z</ax211:updated_on>
-                        </ax211:pickup_address>
-                        <ax211:premium>N</ax211:premium>
-                        <ax211:premium_charge>0.0</ax211:premium_charge>
-                        <ax211:proforma xsi:nil="true"/>
-                        <ax211:ra_charge>2.75</ax211:ra_charge>
-                        <ax211:reported_weight_unit>L</ax211:reported_weight_unit>
-                        <ax211:rural_charge>0.0</ax211:rural_charge>
-                        <ax211:send_email_to_delivery>false</ax211:send_email_to_delivery>
-                        <ax211:send_email_to_pickup>false</ax211:send_email_to_pickup>
-                        <ax211:service_type>1</ax211:service_type>
-                        <ax211:shipment_status>R</ax211:shipment_status>
-                        <ax211:shipper_num>99999999</ax211:shipper_num>
-                        <ax211:shipping_date>2012-06-15T04:00:00.000Z</ax211:shipping_date>
-                        <ax211:tax_charge_1>1.34</ax211:tax_charge_1>
-                        <ax211:tax_charge_2>0.0</ax211:tax_charge_2>
-                        <ax211:tax_code_1>ONHST</ax211:tax_code_1>
-                        <ax211:tax_code_2/>
-                        <ax211:transit_time>1</ax211:transit_time>
-                        <ax211:transit_time_guaranteed>false</ax211:transit_time_guaranteed>
-                        <ax211:updated_on>2012-06-15T15:41:11.998Z</ax211:updated_on>
-                        <ax211:user_id>user_id</ax211:user_id>
-                        <ax211:voided>false</ax211:voided>
-                        <ax211:xc_charge>0.0</ax211:xc_charge>
-                        <ax211:zone>1</ax211:zone>
-                    </ax211:shipment>
-                </ax29:processShipmentResult>
-            </ns:return>
-        </ns:processShipmentResponse>
-    </soapenv:Body>
-</soapenv:Envelope>
+ShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
+<createShipmentResponse xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1" xsi:schemaLocation="https://dhl24.com.pl/webapi2/provider/service.html?ws=1 schema.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <createShipmentResult>
+        <shipmentNotificationNumber>string</shipmentNotificationNumber>
+        <shipmentTrackingNumber>string</shipmentTrackingNumber>
+        <packagesTrackingNumbers>string</packagesTrackingNumbers>
+        <dispatchNotificationNumber>string</dispatchNotificationNumber>
+        <label>
+            <labelType>string</labelType>
+            <labelFormat>string</labelFormat>
+            <labelContent>string</labelContent>
+            <cn23Content>string</cn23Content>
+            <cn23MimeType>string</cn23MimeType>
+            <fvProformaContent>string</fvProformaContent>
+            <fvProformaMimeType>string</fvProformaMimeType>
+            <fvProformaNumer>string</fvProformaNumer>
+        </label>
+    </createShipmentResult>
+</createShipmentResponse>
 """
 
 ShipmentLabelResponseXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
@@ -467,30 +362,30 @@ ShipmentLabelResponseXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org
 </soapenv:Envelope>
 """
 
-VoidShipmentRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.dhl_parcel_pl.com" xmlns:xsd="http://ws.dto.canshipws.dhl_parcel_pl.com/xsd" >
-    <soap:Header/>
-    <soap:Body>
-        <ws:voidShipment>
-            <ws:request>
-                <xsd:id>10000696</xsd:id>
-                <xsd:password>password</xsd:password>
-                <xsd:user_id>user_id</xsd:user_id>
-            </ws:request>
-        </ws:voidShipment>
-    </soap:Body>
-</soap:Envelope>
-"""
-
-VoidShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+VoidShipmentRequestXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ser="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
+    <soapenv:Header/>
     <soapenv:Body>
-        <ns:voidShipmentResponse xmlns:ns="http://ws.business.canshipws.dhl_parcel_pl.com">
-            <ns:return xmlns:ax211="http://dto.canshipws.dhl_parcel_pl.com/xsd"
-                xmlns:ax29="http://ws.dto.canshipws.dhl_parcel_pl.com/xsd"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ax29:VoidShipmentRs">
-                <ax29:error xsi:nil="true"/>
-            </ns:return>
-        </ns:voidShipmentResponse>
+        <ser:deleteShipment>
+            <authData>
+                <username>?</username>
+                <password>?</password>
+            </authData>
+            <shipment>
+                <shipmentIdentificationNumber>?</shipmentIdentificationNumber>
+            </shipment>
+        </ser:deleteShipment>
     </soapenv:Body>
 </soapenv:Envelope>
+"""
+
+VoidShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
+<deleteShipmentResponse xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1" xsi:schemaLocation="https://dhl24.com.pl/webapi2/provider/service.html?ws=1 schema.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <deleteShipmentResult>
+        <id>string</id>
+        <result>0</result>
+        <error>string</error>
+    </deleteShipmentResult>
+</deleteShipmentResponse>
 """

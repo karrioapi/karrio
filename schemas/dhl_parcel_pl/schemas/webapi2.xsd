@@ -1,5 +1,6 @@
 <xs:schema elementFormDefault="qualified" targetNamespace="https://dhl24.com.pl/webapi2/provider/service.html?ws=1"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <xs:element name="getVersion">
         <xs:complexType/>
     </xs:element>
