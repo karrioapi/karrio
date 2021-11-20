@@ -31,13 +31,14 @@ def parse_tracking_response(
         for node in response.values()
         if XP.find("getTrackAndTraceInfoResult", node, first=True) is not None
     ]
-    errors = [
-        parse_error_response(
-            XP.find("Fault", node, first=True), settings, dict(tracking_number=number)
-        )
-        for number, node in response.items()
-        if XP.find("Fault", node, first=True) is not None
-    ]
+    errors: List[Message] = sum(
+        [
+            parse_error_response(node, settings, dict(tracking_number=number))
+            for number, node in response.items()
+            if XP.find("Fault", node, first=True) is not None
+        ],
+        [],
+    )
 
     return details, errors
 

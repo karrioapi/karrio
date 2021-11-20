@@ -7,7 +7,11 @@ from purplship.core.models import (
     Message,
 )
 from purplship.providers.dhl_poland import (
+    parse_shipment_cancel_response,
     parse_tracking_response,
+    parse_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
     tracking_request,
 )
 from purplship.mappers.dhl_poland.settings import Settings
@@ -16,8 +20,24 @@ from purplship.mappers.dhl_poland.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
+    def create_shipment_request(self, payload: Serializable[str]) -> Serializable:
+        return shipment_request(payload, self.settings)
+
+    def create_cancel_shipment_request(self, payload: TrackingRequest) -> Serializable:
+        return shipment_cancel_request(payload, self.settings)
+
     def create_tracking_request(self, payload: TrackingRequest) -> Serializable:
         return tracking_request(payload, self.settings)
+
+    def parse_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[TrackingDetails, List[Message]]:
+        return parse_shipment_response(response.deserialize(), self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[TrackingDetails, List[Message]]:
+        return parse_shipment_cancel_response(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]

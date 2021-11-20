@@ -20,6 +20,7 @@ from dhl_poland_lib.services import (
     ShipmentTime,
     createShipment,
     Service as DhlService,
+    CreateShipmentResponse,
 )
 from purplship.core.models import (
     Message,
@@ -49,18 +50,36 @@ from purplship.providers.dhl_poland.units import (
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    pass
+    errors = parse_error_response(response, settings)
+    shipment = (
+        _extract_details(response, settings)
+        if XP.find("createShipmentResult", response, first=True) is not None
+        else None
+    )
+
+    return shipment, errors
 
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    pass
+    shipment = XP.find(
+        "createShipmentResult", response, CreateShipmentResponse, first=True
+    )
+
+    return ShipmentDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        tracking_number=shipment.shipmentNotificationNumber,
+        shipment_identifier=shipment.shipmentTrackingNumber,
+        label=shipment.label.labelContent,
+        meta=dict(invoice=shipment.label.fvProformaContent),
+    )
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[str]:
     packages = Packages(payload.parcels, required=["weight"])
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
-    options = Options(payload.options)
+    options = Options(payload.options, Option)
 
     is_international = shipper.country_code != recipient.country_code
     service_type = Service.map(payload.service).value_or_key or (
@@ -98,10 +117,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                     textInstruction=None,
                                     collectOnDeliveryForm=None,
                                 )
-                                for option in options
+                                for code, option in options
+                                if code in Option
                             ]
                         )
-                        if any(options)
+                        if any([code for code, _ in options if code in Option])
                         else None
                     ),
                     shipmentTime=(
@@ -155,8 +175,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             postalCode=shipper.postal_code,
                             city=shipper.city,
                             street=shipper.address_line,
-                            houseNumber=(shipper.address_line2 or ""),
-                            apartmentNumber=None,
+                            houseNumber=shipper.street_number,
+                            apartmentNumber=shipper.suite,
                         ),
                     ),
                     receiver=ReceiverAddressat(
@@ -200,8 +220,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             postalCode=recipient.postal_code,
                             city=recipient.city,
                             street=recipient.address_line,
-                            houseNumber=(recipient.address_line2 or ""),
-                            apartmentNumber=None,
+                            houseNumber=shipper.street_number,
+                            apartmentNumber=shipper.suite,
                         ),
                     ),
                     neighbour=None,
@@ -210,7 +230,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     item=[
                         Package(
                             type_=PackagingType[
-                                package.package_type or "your_packaging"
+                                package.packaging_type or "your_packaging"
                             ].value,
                             euroReturn=None,
                             weight=package.weight.KG,

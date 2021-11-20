@@ -26,6 +26,10 @@ class TestDHLPolandTracking(unittest.TestCase):
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}",
             )
+            self.assertEqual(
+                mock.call_args[1]["headers"]["soapaction"],
+                f"{gateway.settings.server_url}#getTrackAndTraceInfo",
+            )
 
     def test_parse_tracking_response(self):
         with patch("purplship.mappers.dhl_poland.proxy.http") as mock:

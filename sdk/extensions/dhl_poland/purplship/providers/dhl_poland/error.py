@@ -8,11 +8,14 @@ from purplship.providers.dhl_poland.utils import Settings
 def parse_error_response(
     response: Element, settings: Settings, details: dict = None
 ) -> List[Message]:
-    error = XP.build(Fault, response)
-    return Message(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        message=error.faultstring,
-        code=error.faultcode,
-        details=details,
-    )
+    errors = XP.find("Fault", response, Fault)
+    return [
+        Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            message=error.faultstring,
+            code=error.faultcode,
+            details=details,
+        )
+        for error in errors
+    ]

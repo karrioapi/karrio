@@ -30,7 +30,7 @@ class Proxy(BaseProxy):
                 number=request[0],
                 data=self._send_request(
                     Serializable(request[1]),
-                    soapaction="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1#getTrackAndTraceInfo",
+                    soapaction=f"{self.settings.server_url}#getTrackAndTraceInfo",
                 ),
             ),
             requests.serialize().items(),
@@ -42,3 +42,19 @@ class Proxy(BaseProxy):
                 result["number"]: XP.to_xml(result["data"]) for result in results
             },
         )
+
+    def create_shipment(self, request: Serializable) -> Deserializable[str]:
+        response = self._send_request(
+            request,
+            soapaction=f"{self.settings.server_url}#createShipment",
+        )
+
+        return Deserializable(response, XP.to_xml)
+
+    def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
+        response = self._send_request(
+            request,
+            soapaction=f"{self.settings.server_url}#deleteShipment",
+        )
+
+        return Deserializable(response, XP.to_xml)

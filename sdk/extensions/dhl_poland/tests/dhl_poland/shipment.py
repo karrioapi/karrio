@@ -1,6 +1,5 @@
-import re
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import purplship
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
@@ -16,7 +15,7 @@ class TestDHLPolandShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
-        self.assertEqual(request.serialize(), ShipmentLabelRequestXML)
+        self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_void_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
@@ -26,69 +25,54 @@ class TestDHLPolandShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
     # def test_create_shipment(self):
-    #     with patch("purplship.mappers.dhl_poland.proxy.http") as mocks:
-    #         mocks.side_effect = [
-    #             ShipmentResponseXML,
-    #             ShipmentLabelResponseXML,
-    #         ]
-    #         purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
-
-    #         process_shipment_call, get_label_call = mocks.call_args_list
-
-    #         self.assertEqual(
-    #             process_shipment_call[1]["url"],
-    #             f"{gateway.settings.server_url}/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
-    #         )
-    #         self.assertEqual(
-    #             process_shipment_call[1]["headers"]["soapaction"], "urn:processShipment"
-    #         )
-    #         self.assertEqual(
-    #             get_label_call[1]["url"],
-    #             f"{gateway.settings.server_url}/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
-    #         )
-    #         self.assertEqual(
-    #             get_label_call[1]["headers"]["soapaction"], "urn:getLabels"
-    #         )
-
-    # def test_void_shipment(self):
     #     with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
     #         mock.return_value = "<a></a>"
-    #         purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
+    #         purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
 
     #         self.assertEqual(
     #             mock.call_args[1]["url"],
-    #             f"{gateway.settings.server_url}/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
+    #             gateway.settings.server_url,
     #         )
     #         self.assertEqual(
-    #             mock.call_args[1]["headers"]["soapaction"], "urn:voidShipment"
+    #             mock.call_args[1]["headers"]["soapaction"],
+    #             f"{gateway.settings.server_url}#createShipment",
     #         )
 
-    # def test_parse_shipment_response(self):
-    #     with patch("purplship.mappers.dhl_poland.proxy.http") as mocks:
-    #         mocks.side_effect = [
-    #             ShipmentResponseXML,
-    #             ShipmentLabelResponseXML,
-    #         ]
-    #         parsed_response = (
-    #             purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-    #         )
+    def test_void_shipment(self):
+        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
 
-    #         self.assertEqual(
-    #             DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-    #         )
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                gateway.settings.server_url,
+            )
+            self.assertEqual(
+                mock.call_args[1]["headers"]["soapaction"],
+                f"{gateway.settings.server_url}#deleteShipment",
+            )
 
-    # def test_parse_void_shipment_response(self):
-    #     with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
-    #         mock.return_value = VoidShipmentResponseXML
-    #         parsed_response = (
-    #             purplship.Shipment.cancel(self.VoidShipmentRequest)
-    #             .from_(gateway)
-    #             .parse()
-    #         )
+    def test_parse_shipment_response(self):
+        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+            mock.return_value = ShipmentResponseXML
+            parsed_response = (
+                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
 
-    #         self.assertEqual(
-    #             DP.to_dict(parsed_response), DP.to_dict(ParsedVoidShipmentResponse)
-    #         )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
+
+    def test_parse_void_shipment_response(self):
+        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+            mock.return_value = VoidShipmentResponseXML
+            parsed_response = (
+                purplship.Shipment.cancel(self.VoidShipmentRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedVoidShipmentResponse
+            )
 
 
 if __name__ == "__main__":
@@ -99,24 +83,28 @@ void_shipment_data = {"shipment_identifier": "10000696"}
 
 shipment_data = {
     "shipper": {
-        "company_name": "CGI",
-        "address_line1": "502 MAIN ST N",
-        "city": "MONTREAL",
-        "postal_code": "H2B1A0",
-        "country_code": "CA",
-        "person_name": "Bob",
-        "phone_number": "1 (450) 823-8432",
-        "state_code": "QC",
-        "residential": False,
+        "company_name": "Janek",
+        "person_name": "3e General Partnership",
+        "address_line1": "9 Lesna",
+        "city": "Wawa",
+        "postal_code": "00909",
+        "country_code": "PL",
+        "phone_number": "123456789",
+        "email": "testomir@gmail.pl",
+        "residential": True,
+        "extra": {"street_number": "9", "suite": "59"},
     },
     "recipient": {
-        "address_line1": "1 TEST ST",
-        "city": "TORONTO",
-        "company_name": "TEST ADDRESS",
-        "phone_number": "4161234567",
-        "postal_code": "M4X1W7",
-        "state_code": "ON",
+        "company_name": "Me",
+        "person_name": "3e General Partnership",
+        "address_line1": "Lesna",
+        "city": "Wawa",
+        "postal_code": "00001",
+        "country_code": "PL",
+        "phone_number": "123456789",
+        "email": "testomir@gmail.pl",
         "residential": False,
+        "extra": {"street_number": "9", "suite": "59"},
     },
     "parcels": [
         {
@@ -132,7 +120,17 @@ shipment_data = {
     },
 }
 
-ParsedShipmentResponse = []
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "dhl_poland",
+        "carrier_name": "dhl_poland",
+        "label": ANY,
+        "meta": {"invoice": "string"},
+        "shipment_identifier": "string",
+        "tracking_number": "string",
+    },
+    [],
+]
 
 ParsedVoidShipmentResponse = [
     {
@@ -145,124 +143,83 @@ ParsedVoidShipmentResponse = [
 ]
 
 
-ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
         <createShipment>
             <authData>
-                <username>test</username>
-                <password>123456789</password>
+                <username>username</username>
+                <password>password</password>
             </authData>
             <shipment>
                 <shipmentInfo>
-                    <dropOffType>REQUEST COURIER</dropOffType>
+                    <dropOffType>REGULAR_PICKUP</dropOffType>
                     <serviceType>AH</serviceType>
                     <billing>
-                        <shippingPaymentType>SHIPPER</shippingPaymentType>
-                        <billingAccountNumber>1204663</billingAccountNumber>
+                        <shippingPaymentType>PaymentType.shipper</shippingPaymentType>
                         <paymentType>BANK_TRANSFER</paymentType>
-                        <costsCenter>ABC1235</costsCenter>
                     </billing>
                     <specialServices>
                         <item>
-                            <serviceType>ODB</serviceType>
-                        </item>
-                        <item>
-                            <serviceType>UBEZP</serviceType>
-                            <serviceValue>20000</serviceValue>
+                            <serviceType>POD</serviceType>
                         </item>
                     </specialServices>
-                    <shipmentTime>
-                        <shipmentDate>2012—10—23</shipmentDate>
-                        <shipmentStartHour>12:00</shipmentStartHour>
-                        <shipmentEndHour>15:00</shipmentEndHour>
-                    </shipmentTime>
-                    <labelType>BLP</labelType>
+                    <labelType>LBLP</labelType>
                 </shipmentInfo>
-                <content>Gra komputerowa</content>
-                <comment>ostroznie</comment>
+                <content>N/A</content>
+                <reference></reference>
                 <ship>
                     <shipper>
                         <preaviso>
-                            <personName>Thomas Test</personName>
+                            <personName>3e General Partnership</personName>
                             <phoneNumber>123456789</phoneNumber>
-                            <emailAddress>thomas@test.com</emailAddress>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
                         </preaviso>
                         <contact>
-                            <personName>Thomas Test</personName>
-                            <phoneNumber>l23456789</phoneNumber>
-                            <emailAddress>thomas0test.com</emailAddress>
+                            <personName>3e General Partnership</personName>
+                            <phoneNumber>123456789</phoneNumber>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
                         </contact>
                         <address>
-                            <name>Thomas Test</name>
-                            <postalCode>02823</postalCode>
-                            <city>Warszawa</city>
-                            <street>Osmahska</street>
-                            <houseNumber>2</houseNumber>
-                            <apartmentNumber></apartmentNumber>
+                            <name>Janek</name>
+                            <postalCode>00909</postalCode>
+                            <city>Wawa</city>
+                            <street>9 Lesna</street>
+                            <houseNumber>9</houseNumber>
+                            <apartmentNumber>59</apartmentNumber>
                         </address>
                     </shipper>
                     <receiver>
                         <preaviso>
-                            <personName>Receiver</personName>
+                            <personName>3e General Partnership</personName>
                             <phoneNumber>123456789</phoneNumber>
-                            <emailAddress>receiverNgmail.com</emailAddress>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
                         </preaviso>
                         <contact>
-                            <personName>Receiver</personName>
+                            <personName>3e General Partnership</personName>
                             <phoneNumber>123456789</phoneNumber>
-                            <emailAddress>receiver@gmail.com</emailAddress>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
                         </contact>
                         <address>
                             <country>PL</country>
-                            <name>Receiver</name>
-                            <addressType>C</addressType>
-                            <postalCode>30001</postalCode>
-                            <city>Krakow</city>
-                            <street>Jasnogorska</street>
-                            <houseNumber>44</houseNumber>
-                            <apartmentNumber>55</apartmentNumber>
+                            <addressType>B</addressType>
+                            <name>Me</name>
+                            <postalCode>00001</postalCode>
+                            <city>Wawa</city>
+                            <street>Lesna</street>
+                            <houseNumber>9</houseNumber>
+                            <apartmentNumber>59</apartmentNumber>
                         </address>
                     </receiver>
                 </ship>
                 <pieceList>
                     <item>
-                        <type>ENVELOPE</type>
-                        <quantity>1</quantity>
-                    </item>
-                    <item>
                         <type>PACKAGE</type>
-                        <weight>20</weight>
-                        <width>60</width>
-                        <height>40</height>
-                        <length>40</length>
-                        <quantity>1</quantity>
+                        <weight>0</weight>
+                        <width>7</width>
+                        <height>7</height>
+                        <length>25</length>
                     </item>
                 </pieceList>
-                <customs>
-                    <customsType>U</customsType>
-                    <costsOfShipment>l0</costsOfShipment>
-                    <currency>PLN</currency>
-                    <nipNr>5218487281</nipNr>
-                    <categoryOfItem>Inne</categoryOfItem>
-                    <countryOfOrigin>PL</countryOfOrigin>
-                    <customAgreements>
-                        <notExceedValue>T</notExceedValue>
-                        <notProhibitedGoods>T</notProhibitedGoods>
-                        <notRestrictedGoods>T</notRestrictedGoods>
-                    </customAgreements>
-                    <customsItem>
-                        <item>
-                            <nameEn>test</nameEn>
-                            <namePl>test</namePl>
-                            <quantity>2</quantity>
-                            <weight>2.0</weight>
-                            <value>l00</value>
-                            <tariffCode>001</tariffCode>
-                        </item>
-                    </customsItem>
-                    <firstName>Testomir</firstName>
-                    <secondaryName>Testalski</secondaryName>
-                </customs>
             </shipment>
         </createShipment>
     </soap-env:Body>
@@ -291,20 +248,19 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
 </createShipmentResponse>
 """
 
-VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:ser="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
+VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
-        <deleteShipment>
+        <soap-env:deleteShipment>
             <authData>
-                <username>test</username>
-                <password>123456789</password>
+                <username>username</username>
+                <password>password</password>
             </authData>
             <shipment>
                 <shipmentIdentificationNumber>10000696</shipmentIdentificationNumber>
             </shipment>
-        </deleteShipment>
+        </soap-env:deleteShipment>
     </soap-env:Body>
-</soapenv:Envelope>
+</soap-env:Envelope>
 """
 
 VoidShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
