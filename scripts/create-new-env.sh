@@ -24,5 +24,3 @@ pip install pip --upgrade
 if [[ "$*" != *--empty* ]]; then
     pip install -r "${ROOT}/requirements.dev.txt"
 fi
-
-pip list

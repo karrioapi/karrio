@@ -24,19 +24,19 @@ class TestDHLPolandShipment(unittest.TestCase):
 
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
-    # def test_create_shipment(self):
-    #     with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
-    #         mock.return_value = "<a></a>"
-    #         purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
+    def test_create_shipment(self):
+        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
 
-    #         self.assertEqual(
-    #             mock.call_args[1]["url"],
-    #             gateway.settings.server_url,
-    #         )
-    #         self.assertEqual(
-    #             mock.call_args[1]["headers"]["soapaction"],
-    #             f"{gateway.settings.server_url}#createShipment",
-    #         )
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                gateway.settings.server_url,
+            )
+            self.assertEqual(
+                mock.call_args[1]["headers"]["soapaction"],
+                f"{gateway.settings.server_url}#createShipment",
+            )
 
     def test_void_shipment(self):
         with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
