@@ -26,10 +26,19 @@ class Proxy(BaseProxy):
 
     def get_tracking(self, requests: Serializable) -> Deserializable:
         responses = exec_async(
-            lambda request: self._send_request(
-                Serializable(request),
-                soapaction="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1#getTrackAndTraceInfo",
+            lambda request: dict(
+                number=request[0],
+                data=self._send_request(
+                    Serializable(request[1]),
+                    soapaction="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1#getTrackAndTraceInfo",
+                ),
             ),
-            requests.serialize(),
+            requests.serialize().items(),
         )
-        return Deserializable(XP.bundle_xml(responses), XP.to_xml)
+
+        return Deserializable(
+            responses,
+            lambda results: {
+                result["number"]: XP.to_xml(result["data"]) for result in results
+            },
+        )

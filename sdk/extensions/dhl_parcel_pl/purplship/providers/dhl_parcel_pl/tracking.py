@@ -1,5 +1,9 @@
-from typing import List, Tuple, cast
-from dhl_parcel_pl_lib.services import getTrackAndTraceInfo
+from typing import List, Tuple, Dict
+from dhl_parcel_pl_lib.services import (
+    getTrackAndTraceInfo,
+    TrackAndTraceResponse,
+    TrackAndTraceEvent,
+)
 from purplship.core.models import (
     Message,
     TrackingRequest,
@@ -20,20 +24,53 @@ from purplship.providers.dhl_parcel_pl.utils import Settings
 
 
 def parse_tracking_response(
-    response: Element, settings: Settings
+    response: Dict[str, Element], settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
-    pass
+    details = [
+        _extract_tracking_details(node, settings)
+        for node in response.values()
+        if XP.find("getTrackAndTraceInfoResult", node, first=True) is not None
+    ]
+    errors = [
+        parse_error_response(
+            XP.find("Fault", node, first=True), settings, dict(tracking_number=number)
+        )
+        for number, node in response.items()
+        if XP.find("Fault", node, first=True) is not None
+    ]
+
+    return details, errors
 
 
 def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDetails:
-    pass
+    track: TrackAndTraceResponse = XP.find(
+        "getTrackAndTraceInfoResult", node, TrackAndTraceResponse, first=True
+    )
+    events = [XP.build(TrackAndTraceEvent, item) for item in XP.find("item", node)]
+
+    return TrackingDetails(
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
+        tracking_number=track.shipmentId,
+        events=[
+            TrackingEvent(
+                date=DF.fdate(event.timestamp, "%Y-%m-%d %H:%M:%S"),
+                description=event.description,
+                location=event.terminal,
+                code=event.status,
+                time=DF.ftime(event.timestamp, "%Y-%m-%d %H:%M:%S"),
+            )
+            for event in events
+        ],
+        delivered=any(track.receivedBy or ""),
+    )
 
 
 def tracking_request(
     payload: TrackingRequest, settings: Settings
-) -> Serializable[List[Envelope]]:
-    requests = [
-        create_envelope(
+) -> Serializable[Dict[str, Envelope]]:
+    requests = {
+        tracking_number: create_envelope(
             body_prefix="",
             body_content=getTrackAndTraceInfo(
                 authData=settings.auth_data,
@@ -41,11 +78,12 @@ def tracking_request(
             ),
         )
         for tracking_number in payload.tracking_numbers
-    ]
+    }
 
     return Serializable(
         requests,
-        lambda reqs: [
-            settings.serialize(req, request_name="getTrackAndTraceInfo") for req in reqs
-        ],
+        lambda requests: {
+            number: settings.serialize(request, request_name="getTrackAndTraceInfo")
+            for number, request in requests.items()
+        },
     )
