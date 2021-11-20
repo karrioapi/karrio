@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @attr.s(auto_attribs=True)
 class Gateway:
     """The carrier connection instance"""
+
     mapper: Mapper
     proxy: Proxy
     settings: Settings
@@ -30,30 +31,39 @@ class Gateway:
         messages = []
 
         if request not in self.capabilities:
-            messages.append(Message(
-                carrier_id=self.settings.carrier_id,
-                carrier_name=self.settings.carrier_name,
-                code="SHIPPING_SDK_NON_SUPPORTED_ERROR",
-                message="this operation is not supported."
-            ))
+            messages.append(
+                Message(
+                    carrier_id=self.settings.carrier_id,
+                    carrier_name=self.settings.carrier_name,
+                    code="SHIPPING_SDK_NON_SUPPORTED_ERROR",
+                    message="this operation is not supported.",
+                )
+            )
 
         if (
-                any(origin_country_code or "")
-                and any(self.settings.account_country_code or "")
-                and (origin_country_code != self.settings.account_country_code)
+            any(origin_country_code or "")
+            and any(self.settings.account_country_code or "")
+            and (origin_country_code != self.settings.account_country_code)
         ):
-            messages.append(Message(
-                carrier_id=self.settings.carrier_id,
-                carrier_name=self.settings.carrier_name,
-                code="SHIPPING_SDK_ORIGIN_NOT_SERVICED_ERROR",
-                message="this account cannot ship from origin {}".format(origin_country_code)
-            ))
+            messages.append(
+                Message(
+                    carrier_id=self.settings.carrier_id,
+                    carrier_name=self.settings.carrier_name,
+                    code="SHIPPING_SDK_ORIGIN_NOT_SERVICED_ERROR",
+                    message="this account cannot ship from origin {}".format(
+                        origin_country_code
+                    ),
+                )
+            )
 
         return messages
 
     @property
     def features(self) -> List[str]:
-        warnings.warn("features is deprecated. Use capabilities instead", category=DeprecationWarning)
+        warnings.warn(
+            "features is deprecated. Use capabilities instead",
+            category=DeprecationWarning,
+        )
         return self.capabilities
 
 
@@ -78,7 +88,7 @@ class ICreate:
 class GatewayInitializer:
     """Gateway initializer helper"""
 
-    __instance: 'GatewayInitializer' = None
+    __instance: "GatewayInitializer" = None
 
     def __init__(self):
         if GatewayInitializer.__instance is not None:
@@ -131,7 +141,7 @@ class GatewayInitializer:
         return import_extensions()
 
     @staticmethod
-    def get_instance() -> 'GatewayInitializer':
+    def get_instance() -> "GatewayInitializer":
         """Return the singleton instance of the GatewayInitializer"""
 
         if GatewayInitializer.__instance is None:
@@ -139,9 +149,9 @@ class GatewayInitializer:
         return GatewayInitializer.__instance
 
 
-nl = '\n    '
-logger.info(f"""
+nl = "\n    "
+logger.info(
+    f"""
 Purplship default gateway mapper initialized.
-Registered providers:
-    {f"{nl}".join(GatewayInitializer.get_instance().providers.keys())}
-""")
+"""
+)

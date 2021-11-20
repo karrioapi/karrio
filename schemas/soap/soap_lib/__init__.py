@@ -1,1 +1,1 @@
-from pysoap.envelope import Header, Body, Envelope
+from soap_lib.envelope import Header, Body, Envelope

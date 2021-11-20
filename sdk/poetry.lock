@@ -141,7 +141,7 @@ jstruct = "*"
 
 [[package]]
 name = "carrier.sendle"
-version = "2021.2.1"
+version = "2021.11"
 description = "Sendle API Schemas Python Data Types library"
 category = "dev"
 optional = false
@@ -176,15 +176,15 @@ six = ">=1.15.0,<2.0.0"
 
 [[package]]
 name = "carrier.ups"
-version = "2020.3.1"
+version = "2020.11"
 description = "UPS Web API Schemas Python Data Types library"
 category = "dev"
 optional = false
 python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
-lxml = ">=4.6.2,<5.0.0"
-six = ">=1.15.0,<2.0.0"
+lxml = "*"
+six = "*"
 
 [[package]]
 name = "carrier.usps"
@@ -219,6 +219,33 @@ python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
 jstruct = "*"
+
+[[package]]
+name = "certifi"
+version = "2021.10.8"
+description = "Python package for providing Mozilla's CA Bundle."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "charset-normalizer"
+version = "2.0.7"
+description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
+category = "dev"
+optional = false
+python-versions = ">=3.5.0"
+
+[package.extras]
+unicode_backport = ["unicodedata2"]
+
+[[package]]
+name = "idna"
+version = "3.3"
+description = "Internationalized Domain Names in Applications (IDNA)"
+category = "dev"
+optional = false
+python-versions = ">=3.5"
 
 [[package]]
 name = "jstruct"
@@ -258,7 +285,7 @@ test = ["pytest (>=6.0.0)", "pytest-mypy-plugins (==1.4.0)", "coverage[toml] (==
 
 [[package]]
 name = "phonenumbers"
-version = "8.12.36"
+version = "8.12.37"
 description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
 category = "dev"
 optional = false
@@ -274,7 +301,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "purplship"
-version = "2021.10"
+version = "2021.11.3"
 description = "Multi-carrier shipping API integration with python"
 category = "dev"
 optional = false
@@ -288,6 +315,8 @@ lxml-stubs = "^0.1.1"
 phonenumbers = "^8.12.17"
 Pillow = "^8.1.0"
 py-soap = "^2020.3.2"
+PyPDF2 = "^1.26.0"
+simple_zpl2 = ""
 xmltodict = "^0.12.0"
 
 [package.source]
@@ -347,7 +376,7 @@ url = "extensions/boxknight"
 
 [[package]]
 name = "purplship.canadapost"
-version = "2021.10.1"
+version = "2021.11"
 description = "Purplship - Canada Post Shipping Extension"
 category = "dev"
 optional = false
@@ -364,7 +393,7 @@ url = "extensions/canadapost"
 
 [[package]]
 name = "purplship.canpar"
-version = "2021.10"
+version = "2021.11"
 description = "Purplship - Canpar Shipping Extension"
 category = "dev"
 optional = false
@@ -373,7 +402,7 @@ develop = true
 
 [package.dependencies]
 "carrier.canpar" = ""
-purplship = "^2021.6"
+purplship = ""
 
 [package.source]
 type = "directory"
@@ -448,7 +477,7 @@ url = "vendors/eshipper"
 
 [[package]]
 name = "purplship.fedex"
-version = "2021.11"
+version = "2021.11.3"
 description = "Purplship - Fedex Shipping Extension"
 category = "dev"
 optional = false
@@ -566,7 +595,7 @@ url = "extensions/tnt"
 
 [[package]]
 name = "purplship.ups"
-version = "2021.10"
+version = "2021.11"
 description = "Purplship - UPS Shipping Extension"
 category = "dev"
 optional = false
@@ -662,12 +691,62 @@ lxml = ">=4.6.2,<5.0.0"
 six = ">=1.15.0,<2.0.0"
 
 [[package]]
+name = "pypdf2"
+version = "1.26.0"
+description = "PDF toolkit"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "requests"
+version = "2.26.0"
+description = "Python HTTP for Humans."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
+
+[package.dependencies]
+certifi = ">=2017.4.17"
+charset-normalizer = {version = ">=2.0.0,<2.1.0", markers = "python_version >= \"3\""}
+idna = {version = ">=2.5,<4", markers = "python_version >= \"3\""}
+urllib3 = ">=1.21.1,<1.27"
+
+[package.extras]
+socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
+use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
+
+[[package]]
+name = "simple-zpl2"
+version = "0.3.0"
+description = "For building ZPL2 strings for printing barcodes with Zebra or compatible label printers."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
 category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "urllib3"
+version = "1.26.7"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+
+[package.extras]
+brotli = ["brotlipy (>=0.6.0)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
+socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "xmltodict"
@@ -721,7 +800,7 @@ attrs = [
     {file = "carrier.royalmail-2021.2.1-py3-none-any.whl", hash = "sha256:89227b38f82f3fab0b797702a8c1489302f5d4fae6303d7c2b08748239d3bca8"},
 ]
 "carrier.sendle" = [
-    {file = "carrier.sendle-2021.2.1-py3-none-any.whl", hash = "sha256:9892fc9a1d306d85a6c6899417f8d1a3502b2d303762fc8300cbbe478a23bec4"},
+    {file = "carrier.sendle-2021.11-py3-none-any.whl", hash = "sha256:428c28156aec25fccd25b6b9a5b64f2b8359167e3e026d8e330d182349e4623e"},
 ]
 "carrier.sf-express" = [
     {file = "carrier.sf_express-2021.2-py3-none-any.whl", hash = "sha256:3fa0115d80d0fee7e6ccc5e7b1a1779898fa006c2fb5af52a7b91c9857111187"},
@@ -730,7 +809,7 @@ attrs = [
     {file = "carrier.tnt-2021.3-py3-none-any.whl", hash = "sha256:90bb31bc3b400a62e32862b13060f2693c22b4f7c90726b8c3f37fed368ed591"},
 ]
 "carrier.ups" = [
-    {file = "carrier.ups-2020.3.1-py3-none-any.whl", hash = "sha256:0f2346fe7360f4e91f8c6215404b8eabd1f8d57dbac8fcb87410c5cdcbd08f15"},
+    {file = "carrier.ups-2020.11-py3-none-any.whl", hash = "sha256:b2c454c28407a76448eb5811dd534ea17a9eb1cea912f3ff988c5237fab5ee55"},
 ]
 "carrier.usps" = [
     {file = "carrier.usps-2021.6-py3-none-any.whl", hash = "sha256:3db8bb9d7ebd30ad7b4de01af71ed66b6088b63ea314729e4a2a2215f1864dfb"},
@@ -740,6 +819,18 @@ attrs = [
 ]
 "carrier.yunexpress" = [
     {file = "carrier.yunexpress-2021.2.1-py3-none-any.whl", hash = "sha256:d385b947e1ce9c59f69f5df31f2a58e5a83c6e79eb3b1e372302a0bb42faa014"},
+]
+certifi = [
+    {file = "certifi-2021.10.8-py2.py3-none-any.whl", hash = "sha256:d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569"},
+    {file = "certifi-2021.10.8.tar.gz", hash = "sha256:78884e7c1d4b00ce3cea67b44566851c4343c120abd683433ce934a68ea58872"},
+]
+charset-normalizer = [
+    {file = "charset-normalizer-2.0.7.tar.gz", hash = "sha256:e019de665e2bcf9c2b64e2e5aa025fa991da8720daa3c1138cadd2fd1856aed0"},
+    {file = "charset_normalizer-2.0.7-py3-none-any.whl", hash = "sha256:f7af805c321bfa1ce6714c51f254e0d5bb5e5834039bc17db7ebe3a4cec9492b"},
+]
+idna = [
+    {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
+    {file = "idna-3.3.tar.gz", hash = "sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d"},
 ]
 jstruct = [
     {file = "jstruct-2021.7.1-py3-none-any.whl", hash = "sha256:3711294897334e51bc5a706231896018d474a8e458f879cc493eac9cdc6365c3"},
@@ -811,8 +902,8 @@ lxml-stubs = [
     {file = "lxml_stubs-0.1.1-py3-none-any.whl", hash = "sha256:d34a28be0e2525b0236aff7fe67af1f61911f556cadbc61f09810b69f762b747"},
 ]
 phonenumbers = [
-    {file = "phonenumbers-8.12.36-py2.py3-none-any.whl", hash = "sha256:fa91fff1cefee6873c78f08c767f341a7658c849ffb74b605cb38cefef0e76fa"},
-    {file = "phonenumbers-8.12.36.tar.gz", hash = "sha256:e29717fcf86d68082fc6e42ca07e52bff863b6e0b354edd1644ba15c35ef213d"},
+    {file = "phonenumbers-8.12.37-py2.py3-none-any.whl", hash = "sha256:355956697047bc89efd89909373a0bdc50ac725c5613b2684a478d6b408a4010"},
+    {file = "phonenumbers-8.12.37.tar.gz", hash = "sha256:dbc560992844a059f56c7c0c6a587904e65d956740bbfb7e39589980bc9055b8"},
 ]
 pillow = [
     {file = "Pillow-8.4.0-cp310-cp310-macosx_10_10_universal2.whl", hash = "sha256:81f8d5c81e483a9442d72d182e1fb6dcb9723f289a57e8030811bac9ea3fef8d"},
@@ -882,9 +973,23 @@ purplship = []
 py-soap = [
     {file = "py_soap-2020.3.2-py3-none-any.whl", hash = "sha256:61e2ec956d349bdd9d4c6248a2ae3c4cc4b0a2a5cf6b439b6de480a3bc2766a1"},
 ]
+pypdf2 = [
+    {file = "PyPDF2-1.26.0.tar.gz", hash = "sha256:e28f902f2f0a1603ea95ebe21dff311ef09be3d0f0ef29a3e44a932729564385"},
+]
+requests = [
+    {file = "requests-2.26.0-py2.py3-none-any.whl", hash = "sha256:6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"},
+    {file = "requests-2.26.0.tar.gz", hash = "sha256:b8aa58f8cf793ffd8782d3d8cb19e66ef36f7aba4353eec859e74678b01b07a7"},
+]
+simple-zpl2 = [
+    {file = "simple_zpl2-0.3.0.tar.gz", hash = "sha256:9ef956e531a9757e5f02ba2deab3476d89eea798f1d1c21e5b19f9b471ae1488"},
+]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+urllib3 = [
+    {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},
+    {file = "urllib3-1.26.7.tar.gz", hash = "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece"},
 ]
 xmltodict = [
     {file = "xmltodict-0.12.0-py2.py3-none-any.whl", hash = "sha256:8bbcb45cc982f48b2ca8fe7e7827c5d792f217ecf1792626f808bf41c3b86051"},

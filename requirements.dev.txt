@@ -2,8 +2,12 @@ bandit
 black
 coverage
 generateDS
-mkdocs-material
 mypy
 poetry
 twine
 wheel
+
+# Carrier Schemas in Development
+-e ./schemas/soap
+-e ./schemas/dhl_poland
+-e ./sdk/extensions/dhl_poland
