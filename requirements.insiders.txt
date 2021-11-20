@@ -75,7 +75,7 @@ purplship.freightcom==2021.10
 purplship.purolator==2021.10
 purplship.royalmail==2021.11
 purplship.sendle==2021.11
-purplship.server==2021.11rc4
+purplship.server==2021.11rc5
 purplship.server.core==2021.11.2
 purplship.server.events==2021.11.2
 purplship.server.graph==2021.11.1
