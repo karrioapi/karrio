@@ -8,5 +8,6 @@ twine
 wheel
 
 # Carrier Schemas in Development
--e ./schemas/dhl_parcel_pl
--e ./sdk/extensions/dhl_parcel_pl
+-e ./schemas/soap
+-e ./schemas/dhl_poland
+-e ./sdk/extensions/dhl_poland
