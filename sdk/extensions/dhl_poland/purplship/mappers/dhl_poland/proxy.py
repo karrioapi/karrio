@@ -8,9 +8,10 @@ from purplship.core.utils import (
 from purplship.universal.mappers import Proxy as UniversalProxy
 from purplship.core.utils.helpers import exec_async
 from purplship.mappers.dhl_poland.settings import Settings
+from purplship.api.proxy import Proxy as BaseProxy
 
 
-class Proxy(UniversalProxy):
+class Proxy(UniversalProxy, BaseProxy):
     settings: Settings
 
     def _send_request(self, request: Serializable[Any], soapaction: str) -> str:

@@ -1,3 +1,4 @@
+import attr
 from typing import List, Tuple
 from purplship.core.utils import (
     Serializable,
@@ -9,11 +10,11 @@ from purplship.core.models import (
     ServiceLevel,
 )
 from purplship.core.units import Dimension, Packages, Weight
-from purplship.api.proxy import Proxy as BaseProxy
 from purplship.universal.mappers import Settings
 
 
-class Proxy(BaseProxy):
+@attr.s(auto_attribs=True)
+class Proxy:
     settings: Settings
 
     def get_rates(
