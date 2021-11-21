@@ -6,6 +6,7 @@ nose
 
 
 # Carrier Extenstions in Development
+-e ./sdk/core
 -e ./sdk/extensions/ics_courier
 -e ./sdk/extensions/asendia_us
 -e ./sdk/extensions/ups_ground
