@@ -1,16 +1,17 @@
-from typing import List, Any
+from typing import Any
 from purplship.core.utils import (
     Serializable,
     Deserializable,
-    XP,
     request as http,
+    XP,
 )
+from purplship.universal.mappers import Proxy as UniversalProxy
 from purplship.core.utils.helpers import exec_async
 from purplship.mappers.dhl_poland.settings import Settings
 from purplship.api.proxy import Proxy as BaseProxy
 
 
-class Proxy(BaseProxy):
+class Proxy(UniversalProxy, BaseProxy):
     settings: Settings
 
     def _send_request(self, request: Serializable[Any], soapaction: str) -> str:
@@ -23,6 +24,9 @@ class Proxy(BaseProxy):
             },
             method="POST",
         )
+
+    def get_rates(self, request: Serializable) -> Deserializable:
+        return super().get_rates(request)
 
     def get_tracking(self, requests: Serializable) -> Deserializable:
         responses = exec_async(
