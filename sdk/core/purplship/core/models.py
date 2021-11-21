@@ -322,3 +322,35 @@ class ConfirmationDetails:
     carrier_id: str
     success: bool
     operation: str
+
+
+@attr.s(auto_attribs=True)
+class ServiceLevel:
+    """Purplship unified service level data type."""
+
+    service_name: str
+    service_code: str
+    description: str = ""
+    id: str = None
+
+    # Costs definition
+    cost: float = None
+    currency: str = None
+
+    # Estimated delivery date
+    estimated_transit_days: int = None
+    estimated_transit_margin: int = None
+
+    # Size restrictions
+    max_weight: float = None
+    max_width: float = None
+    max_height: float = None
+    max_length: float = None
+    weight_unit: str = None
+    dimension_unit: str = None
+    supported_packaging_types: List[str] = None
+    supported_package_presets: List[str] = None
+
+    # Destination supports
+    domicile: bool = None
+    international: bool = None
