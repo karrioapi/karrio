@@ -430,8 +430,17 @@ class Duty(Serializer):
 )
 class CustomsData(Serializer):
 
-    aes = CharField(required=False, allow_blank=True, allow_null=True)
-    eel_pfc = CharField(required=False, allow_blank=True, allow_null=True)
+    commodities = Commodity(
+        many=True, required=True, help_text="The parcel content items"
+    )
+    duty = Duty(
+        required=False,
+        allow_null=True,
+        help_text="""
+    The payment details.<br/>
+    Note that this is required for a Dutiable parcel shipped internationally.
+    """,
+    )
     content_type = ChoiceField(
         required=False, choices=CUSTOMS_CONTENT_TYPE, allow_blank=True, allow_null=True
     )
@@ -441,17 +450,6 @@ class CustomsData(Serializer):
         allow_null=True,
         choices=INCOTERMS,
         help_text="The customs 'term of trade' also known as 'incoterm'",
-    )
-    commodities = Commodity(
-        many=True, required=False, allow_null=True, help_text="The parcel content items"
-    )
-    duty = Duty(
-        required=False,
-        allow_null=True,
-        help_text="""
-    The payment details.<br/>
-    Note that this is required for a Dutiable parcel shipped internationally.
-    """,
     )
     invoice = CharField(
         required=False,
@@ -477,8 +475,24 @@ class CustomsData(Serializer):
         help_text="Indicate that signer certified confirmed all",
     )
     signer = CharField(required=False, allow_blank=True, allow_null=True)
-    certificate_number = CharField(required=False, allow_blank=True, allow_null=True)
-    options = PlainDictField(required=False, allow_null=True)
+    options = PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""
+    Customs identification options.
+    ```
+    {
+        "aes": "5218487281",
+        "eel_pfc": "5218487281",
+        "license_number": "5218487281",
+        "certificate_number": "5218487281",
+        "nip_number": "5218487281",
+        "eori_number": "5218487281",
+        "vat_registration_number": "5218487281",
+    }
+    ```
+    """,
+    )
 
 
 class Customs(EntitySerializer, CustomsData):

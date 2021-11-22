@@ -114,8 +114,6 @@ class Commodity(OwnedEntity):
 
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
-        "eel_pfc",
-        "aes",
         "content_description",
         "content_type",
         "incoterm",
@@ -123,7 +121,6 @@ class Customs(OwnedEntity):
         "certify",
         "duty",
         "created_by",
-        "certificate_number",
         "signer",
         "invoice",
         "invoice_date",
@@ -144,11 +141,8 @@ class Customs(OwnedEntity):
         editable=False,
     )
 
-    aes = models.CharField(max_length=20, null=True, blank=True)
-    eel_pfc = models.CharField(max_length=20, null=True, blank=True)
     certify = models.BooleanField(null=True)
     commercial_invoice = models.BooleanField(null=True)
-    certificate_number = models.CharField(max_length=50, null=True, blank=True)
     content_type = models.CharField(max_length=50, null=True, blank=True)
     content_description = models.CharField(max_length=250, null=True, blank=True)
     incoterm = models.CharField(max_length=20, choices=INCOTERMS)

@@ -225,12 +225,9 @@ class TestCustomsTemplate(GraphTestCase):
                 label
                 is_default
                 customs {
-                  aes
-                  eel_pfc
                   incoterm
                   content_type
                   commercial_invoice
-                  certificate_number
                   content_description
                   duty {
                     paid_by
@@ -306,12 +303,9 @@ class TestCustomsTemplate(GraphTestCase):
                 is_default
                 label
                 customs {
-                  aes
-                  eel_pfc
                   incoterm
                   content_type
                   commercial_invoice
-                  certificate_number
                   content_description
                   duty {
                     paid_by
@@ -422,10 +416,10 @@ ADDRESS_TEMPLATE_RESPONSE = {
                 "validate_location": None,
                 "validation": None,
             },
-            'errors': None,
-            'id': ANY,
-            'is_default': False,
-            'label': 'Warehouse'
+            "errors": None,
+            "id": ANY,
+            "is_default": False,
+            "label": "Warehouse",
         }
     }
 }
@@ -459,10 +453,10 @@ ADDRESS_TEMPLATE_UPDATE_RESPONSE = {
                 "validate_location": None,
                 "validation": None,
             },
-            'id': ANY,
-            'is_default': False,
-            'label': 'Warehouse Update',
-            'errors': None,
+            "id": ANY,
+            "is_default": False,
+            "label": "Warehouse Update",
+            "errors": None,
         }
     }
 }
@@ -479,22 +473,22 @@ PARCEL_TEMPLATE_DATA = {
 }
 
 PARCEL_TEMPLATE_RESPONSE = {
-    'data': {
-        'create_template': {
-            'errors': None,
-            'id': ANY,
-            'is_default': False,
-            'label': 'Purple Pack',
-            'parcel': {
-                'dimension_unit': 'CM',
-                'height': 32.0,
-                'length': 32.0,
-                'package_preset': 'canadapost_corrugated_small_box',
-                'packaging_type': None,
-                'weight': 1.0,
-                'weight_unit': 'KG',
-                'width': 42.0
-            }
+    "data": {
+        "create_template": {
+            "errors": None,
+            "id": ANY,
+            "is_default": False,
+            "label": "Purple Pack",
+            "parcel": {
+                "dimension_unit": "CM",
+                "height": 32.0,
+                "length": 32.0,
+                "package_preset": "canadapost_corrugated_small_box",
+                "packaging_type": None,
+                "weight": 1.0,
+                "weight_unit": "KG",
+                "width": 42.0,
+            },
         }
     }
 }
@@ -552,8 +546,6 @@ CUSTOMS_TEMPLATE_RESPONSE = {
     "data": {
         "create_template": {
             "customs": {
-                "aes": None,
-                "certificate_number": None,
                 "certify": None,
                 "commercial_invoice": None,
                 "commodities": [
@@ -583,15 +575,14 @@ CUSTOMS_TEMPLATE_RESPONSE = {
                 "content_description": None,
                 "content_type": "documents",
                 "duty": None,
-                "eel_pfc": None,
                 "incoterm": "DDU",
                 "invoice": None,
                 "signer": None,
             },
-            'id': ANY,
-            'is_default': False,
-            'label': 'Customs info template',
-            'errors': None,
+            "id": ANY,
+            "is_default": False,
+            "label": "Customs info template",
+            "errors": None,
         }
     }
 }
@@ -617,12 +608,9 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
             "is_default": False,
             "label": "Customs info template",
             "customs": {
-                "aes": None,
-                "eel_pfc": None,
                 "incoterm": "DDU",
                 "content_type": "documents",
                 "commercial_invoice": None,
-                "certificate_number": None,
                 "content_description": None,
                 "duty": {
                     "account_number": None,
