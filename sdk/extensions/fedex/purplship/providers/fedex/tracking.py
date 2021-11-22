@@ -74,7 +74,9 @@ def _parse_date_or_timestamp(
     date_or_timestamps: List[TrackingDateOrTimestamp], type: str
 ) -> Optional[str]:
     format = (
-        "%Y-%m-%dT%H:%M:%S" if type == "ANTICIPATED_TENDER" else "%Y-%m-%dT%H:%M:%S%z"
+        "%Y-%m-%dT%H:%M:%S"
+        if type not in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY"]
+        else "%Y-%m-%dT%H:%M:%S%z"
     )
     return next(
         iter(
