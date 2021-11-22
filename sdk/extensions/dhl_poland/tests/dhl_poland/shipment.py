@@ -10,12 +10,22 @@ class TestDHLPolandShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.InternationalShipmentRequest = ShipmentRequest(
+            **interantional_shipment_data
+        )
         self.VoidShipmentRequest = ShipmentCancelRequest(**void_shipment_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         self.assertEqual(request.serialize(), ShipmentRequestXML)
+
+    def test_create_international_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(
+            self.InternationalShipmentRequest
+        )
+
+        self.assertEqual(request.serialize(), InternationalShipmentRequestXML)
 
     def test_create_void_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
@@ -120,6 +130,27 @@ shipment_data = {
     },
 }
 
+interantional_shipment_data = {
+    **shipment_data,
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "k1k 4t3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+        "phone_number": "1 (450) 823-8432",
+        "residential": False,
+        "extra": {"street_number": "23"},
+    },
+    "customs": {
+        "duty": {"paid_by": "sender", "declared_value": "100.0"},
+        "commodities": [{"weight": "10", "description": "test"}],
+        "options": {"nip_number": "5218487281"},
+    },
+}
+
 ParsedShipmentResponse = [
     {
         "carrier_id": "dhl_poland",
@@ -155,7 +186,7 @@ ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlso
                     <dropOffType>REGULAR_PICKUP</dropOffType>
                     <serviceType>AH</serviceType>
                     <billing>
-                        <shippingPaymentType>PaymentType.shipper</shippingPaymentType>
+                        <shippingPaymentType>SHIPPER</shippingPaymentType>
                         <paymentType>BANK_TRANSFER</paymentType>
                     </billing>
                     <specialServices>
@@ -220,6 +251,102 @@ ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlso
                         <length>25</length>
                     </item>
                 </pieceList>
+            </shipment>
+        </createShipment>
+    </soap-env:Body>
+</soap-env:Envelope>
+"""
+
+InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
+    <soap-env:Body>
+        <createShipment>
+            <authData>
+                <username>username</username>
+                <password>password</password>
+            </authData>
+            <shipment>
+                <shipmentInfo>
+                    <dropOffType>REGULAR_PICKUP</dropOffType>
+                    <serviceType>AH</serviceType>
+                    <billing>
+                        <shippingPaymentType>SHIPPER</shippingPaymentType>
+                        <paymentType>BANK_TRANSFER</paymentType>
+                    </billing>
+                    <specialServices>
+                        <item>
+                            <serviceType>POD</serviceType>
+                        </item>
+                    </specialServices>
+                    <labelType>LBLP</labelType>
+                </shipmentInfo>
+                <content>N/A</content>
+                <reference></reference>
+                <ship>
+                    <shipper>
+                        <preaviso>
+                            <personName>3e General Partnership</personName>
+                            <phoneNumber>123456789</phoneNumber>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
+                        </preaviso>
+                        <contact>
+                            <personName>3e General Partnership</personName>
+                            <phoneNumber>123456789</phoneNumber>
+                            <emailAddress>testomir@gmail.pl</emailAddress>
+                        </contact>
+                        <address>
+                            <name>Janek</name>
+                            <postalCode>00909</postalCode>
+                            <city>Wawa</city>
+                            <street>9 Lesna</street>
+                            <houseNumber>9</houseNumber>
+                            <apartmentNumber>59</apartmentNumber>
+                        </address>
+                    </shipper>
+                    <receiver>
+                        <preaviso>
+                            <personName>Jain</personName>
+                            <phoneNumber>1 (450) 823-8432</phoneNumber>
+                        </preaviso>
+                        <contact>
+                            <personName>Jain</personName>
+                            <phoneNumber>1 (450) 823-8432</phoneNumber>
+                        </contact>
+                        <address>
+                            <country>CA</country>
+                            <addressType>B</addressType>
+                            <name>CGI</name>
+                            <postalCode>k1k 4t3</postalCode>
+                            <city>Ottawa</city>
+                            <street>23 jardin private</street>
+                            <houseNumber>9</houseNumber>
+                            <apartmentNumber>59</apartmentNumber>
+                        </address>
+                    </receiver>
+                </ship>
+                <pieceList>
+                    <item>
+                        <type>PACKAGE</type>
+                        <weight>0</weight>
+                        <width>7</width>
+                        <height>7</height>
+                        <length>25</length>
+                    </item>
+                </pieceList>
+                <customs>
+                    <customsType>S</customsType>
+                    <firstName>N/A</firstName>
+                    <secondaryName>N/A</secondaryName>
+                    <costsOfShipment>100.0</costsOfShipment>
+                    <nipNr>5218487281</nipNr>
+                    <categoryOfItem>9</categoryOfItem>
+                    <countryOfOrigin>PL</countryOfOrigin>
+                    <grossWeight>0.45</grossWeight>
+                    <customAgreements>
+                        <notExceedValue>true</notExceedValue>
+                        <notProhibitedGoods>true</notProhibitedGoods>
+                        <notRestrictedGoods>true</notRestrictedGoods>
+                    </customAgreements>
+                </customs>
             </shipment>
         </createShipment>
     </soap-env:Body>

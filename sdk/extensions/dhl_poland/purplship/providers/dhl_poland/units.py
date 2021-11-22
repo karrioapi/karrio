@@ -2,6 +2,21 @@ from purplship.core.utils import Enum, Flag, Spec
 from purplship.core.models import ServiceLevel
 
 
+class CustomsContentType(Flag):
+    other = "9"
+    sale_of_goods = "11"
+    return_of_goods = "21"
+    gifts = "31"
+    samples_of_goods = "32"
+    documents = "91"
+
+    """ Unified Content type mapping """
+    gift = gifts
+    sample = samples_of_goods
+    merchandise = sale_of_goods
+    return_merchandise = return_of_goods
+
+
 class LabelType(Flag):
     BLP_LABEL = "BLP"
     LBLP_LABEL_A4_PDF = "LBLP"

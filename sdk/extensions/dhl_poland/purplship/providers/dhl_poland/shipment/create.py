@@ -9,6 +9,7 @@ from dhl_poland_lib.services import (
     ArrayOfService,
     Billing,
     CreateShipmentRequest,
+    CustomsAgreementData,
     CustomsData,
     CustomsItemData,
     Package,
@@ -35,7 +36,14 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.core.units import CompleteAddress, Packages, Options, Weight, WeightUnit
+from purplship.core.units import (
+    CompleteAddress,
+    CustomsInfo,
+    Packages,
+    Options,
+    Weight,
+    WeightUnit,
+)
 from purplship.providers.dhl_poland.error import parse_error_response
 from purplship.providers.dhl_poland.utils import Settings
 from purplship.providers.dhl_poland.units import (
@@ -44,6 +52,7 @@ from purplship.providers.dhl_poland.units import (
     Service,
     LabelType,
     PaymentType,
+    CustomsContentType,
 )
 
 
@@ -80,6 +89,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
     options = Options(payload.options, Option)
+    customs = CustomsInfo(payload.customs)
 
     is_international = shipper.country_code != recipient.country_code
     service_type = Service.map(payload.service).value_or_key or (
@@ -89,8 +99,6 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     )
     label_type = LabelType.map(payload.label_type or "PDF").value
     payment = payload.payment or Payment()
-    customs = payload.customs
-    duty = getattr(customs, "duty", None)
 
     request = create_envelope(
         body_content=createShipment(
@@ -101,7 +109,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     dropOffType="REGULAR_PICKUP",
                     serviceType=service_type,
                     billing=Billing(
-                        shippingPaymentType=PaymentType[payment.paid_by],
+                        shippingPaymentType=PaymentType[payment.paid_by].value,
                         billingAccountNumber=(
                             payment.account_number or settings.account_number
                         ),
@@ -117,11 +125,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                     textInstruction=None,
                                     collectOnDeliveryForm=None,
                                 )
-                                for code, option in options
-                                if code in Option
+                                for _, option in options
                             ]
                         )
-                        if any([code for code, _ in options if code in Option])
+                        if any(options)
                         else None
                     ),
                     shipmentTime=(
@@ -135,7 +142,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     ),
                     labelType=label_type,
                 ),
-                content="N/A",
+                content=payload.parcels[0].content or "N/A",
                 comment=None,
                 reference=payload.reference,
                 ship=Ship(
@@ -246,21 +253,27 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 ),
                 customs=(
                     CustomsData(
-                        customsType="U",
+                        customsType="S",
                         firstName=getattr(
-                            getattr(duty, "bil_to", None), "company_name", "N/A"
+                            getattr(customs.duty, "bil_to", shipper.company_name),
+                            "company_name",
+                            "N/A",
                         ),
                         secondaryName=getattr(
-                            getattr(duty, "bil_to", None), "person_name", "N/A"
+                            getattr(customs.duty, "bil_to", shipper.person_name),
+                            "person_name",
+                            "N/A",
                         ),
                         costsOfShipment=getattr(
-                            duty or options, "declared_value", None
+                            customs.duty or options, "declared_value", None
                         ),
-                        currency=getattr(duty or options, "currency", "EUR"),
-                        nipNr=None,
-                        eoriNr=None,
-                        vatRegistrationNumber=None,
-                        categoryOfItem=None,
+                        currency=getattr(customs.duty or options, "currency", "EUR"),
+                        nipNr=customs.nip_number,
+                        eoriNr=customs.eori_number,
+                        vatRegistrationNumber=customs.vat_registration_number,
+                        categoryOfItem=CustomsContentType[
+                            customs.content_type or "other"
+                        ].value,
                         invoiceNr=customs.invoice,
                         invoice=None,
                         invoiceDate=customs.invoice_date,
@@ -272,7 +285,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                 item=[
                                     CustomsItemData(
                                         nameEn=item.description or "N/A",
-                                        namePl="N/A",
+                                        namePl=item.description or "N/A",
                                         quantity=item.quantity,
                                         weight=Weight(
                                             item.weight,
@@ -287,9 +300,13 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             if any(customs.commodities)
                             else None
                         ),
-                        customAgreements=None,
+                        customAgreements=CustomsAgreementData(
+                            notExceedValue=True,
+                            notProhibitedGoods=True,
+                            notRestrictedGoods=True,
+                        ),
                     )
-                    if customs is not None
+                    if customs.is_defined
                     else None
                 ),
             ),
