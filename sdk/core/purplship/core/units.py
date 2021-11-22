@@ -602,14 +602,13 @@ class Services:
 class CustomsOption(Enum):
     """universal shipment customs identifiers"""
 
-    currency = Spec.asValue("currency")
     aes = Spec.asValue("aes")
     eel_pfc = Spec.asValue("eel_pfc")
+    nip_number = Spec.asValue("eori_number")
+    eori_number = Spec.asValue("eori_number")
     license_number = Spec.asValue("license_number")
     certificate_number = Spec.asValue("certificate_number")
     vat_registration_number = Spec.asValue("vat_registration_number")
-    eori_number = Spec.asValue("eori_number")
-    nip_number = Spec.asValue("eori_number")
 
 
 class CustomsInfo:

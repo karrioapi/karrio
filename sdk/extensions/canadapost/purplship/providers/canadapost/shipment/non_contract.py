@@ -18,7 +18,7 @@ from canadapost_lib.ncshipment import (
     CustomsType,
     PreferencesType,
 )
-from purplship.core.units import Currency, WeightUnit, Options, Packages
+from purplship.core.units import Currency, CustomsInfo, WeightUnit, Options, Packages
 from purplship.core.utils import Serializable, Element, SF, XP, NF
 from purplship.core.models import (
     Message,
@@ -71,6 +71,7 @@ def shipment_request(
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType.map(payload.service).value_or_key
     options = Options(payload.options, OptionCode)
+    customs = CustomsInfo(payload.customs)
 
     is_intl = (
         payload.recipient.country_code is not None
@@ -181,12 +182,14 @@ def shipment_request(
                 CustomsType(
                     currency=Currency.AUD.value,
                     conversion_from_cad=None,
-                    reason_for_export=payload.customs.incoterm,
-                    other_reason=payload.customs.content_description,
-                    duties_and_taxes_prepaid=payload.customs.duty.account_number,
-                    certificate_number=None,
-                    licence_number=None,
-                    invoice_number=None,
+                    reason_for_export=customs.incoterm,
+                    other_reason=customs.content_description,
+                    duties_and_taxes_prepaid=getattr(
+                        customs.duty, "account_number", None
+                    ),
+                    certificate_number=customs.certificate_number,
+                    licence_number=customs.licence_number,
+                    invoice_number=customs.invoice,
                     sku_list=sku_listType(
                         item=[
                             SkuType(
@@ -200,11 +203,11 @@ def shipment_request(
                                 country_of_origin=payload.shipper.country_code,
                                 province_of_origin=None,
                             )
-                            for item in payload.customs.commodities
+                            for item in customs.commodities or []
                         ]
                     ),
                 )
-                if payload.customs is not None
+                if customs.is_defined
                 else None
             ),
             settlement_info=None,

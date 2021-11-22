@@ -75,9 +75,10 @@ def _parse_date_or_timestamp(
 ) -> Optional[str]:
     format = (
         "%Y-%m-%dT%H:%M:%S"
-        if type not in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY"]
+        if type in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY"]
         else "%Y-%m-%dT%H:%M:%S%z"
     )
+    print(format, type, "<<<<<<<<")
     return next(
         iter(
             [
