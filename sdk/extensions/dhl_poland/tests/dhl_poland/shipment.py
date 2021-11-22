@@ -143,7 +143,7 @@ ParsedVoidShipmentResponse = [
 ]
 
 
-ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
+ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
         <createShipment>
             <authData>
@@ -248,7 +248,7 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
 </createShipmentResponse>
 """
 
-VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
+VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
         <soap-env:deleteShipment>
             <authData>

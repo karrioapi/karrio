@@ -35,10 +35,10 @@ class Settings(BaseSettings):
         )
 
     @staticmethod
-    def serialize(envelope: Envelope, request_name: str) -> str:
+    def serialize(envelope: Envelope, request_name: str, namesapce: str) -> str:
         namespacedef_ = (
             'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"'
-            ' xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1"'
+            f' xmlns="{namesapce}"'
         )
         envelope.ns_prefix_ = "soap-env"
         envelope.Body.ns_prefix_ = envelope.ns_prefix_

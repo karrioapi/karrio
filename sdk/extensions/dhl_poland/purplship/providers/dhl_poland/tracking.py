@@ -84,7 +84,11 @@ def tracking_request(
     return Serializable(
         requests,
         lambda requests: {
-            number: settings.serialize(request, request_name="getTrackAndTraceInfo")
+            number: settings.serialize(
+                request,
+                "getTrackAndTraceInfo",
+                settings.server_url,
+            )
             for number, request in requests.items()
         },
     )

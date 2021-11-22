@@ -99,7 +99,7 @@ ParsedErrorResponse = [
     ],
 ]
 
-TrackingRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1">
+TrackingRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
         <getTrackAndTraceInfo>
             <authData>
