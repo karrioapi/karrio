@@ -5,18 +5,16 @@ import attr
 from jstruct.types import JList
 from purplship.core.models import ServiceLevel
 from purplship.universal.mappers import Settings as UniversalSettings
-from purplship.providers.dhl_poland.utils import (
-    Settings as BaseSettings,
-    DEFAULT_SERVICES,
-)
+from purplship.providers.dhl_poland.units import DEFAULT_SERVICES
+from purplship.providers.dhl_poland.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings, UniversalSettings):
     """DHL Parcel Poland connection settings."""
 
-    username: str
-    password: str
+    username: str  # type: ignore
+    password: str  # type: ignore
     account_number: str = None
 
     id: str = None

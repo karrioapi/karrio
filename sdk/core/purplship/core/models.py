@@ -339,7 +339,6 @@ class ServiceLevel:
 
     # Estimated delivery date
     estimated_transit_days: int = None
-    estimated_transit_margin: int = None
 
     # Size restrictions
     max_weight: float = None
@@ -348,8 +347,6 @@ class ServiceLevel:
     max_length: float = None
     weight_unit: str = None
     dimension_unit: str = None
-    supported_packaging_types: List[str] = None
-    supported_package_presets: List[str] = None
 
     # Destination supports
     domicile: bool = None

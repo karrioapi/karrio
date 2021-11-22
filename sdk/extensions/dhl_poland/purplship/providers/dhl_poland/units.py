@@ -1,4 +1,5 @@
 from purplship.core.utils import Enum, Flag, Spec
+from purplship.core.models import ServiceLevel
 
 
 class LabelType(Flag):
@@ -62,3 +63,49 @@ class Option(Flag):
     """ Unified Option type mapping """
     cash_on_delivery = dhl_poland_collect_on_delivery
     insurance = dhl_poland_insuration
+
+
+DEFAULT_SERVICES = [
+    ServiceLevel(
+        service_name="DHL Poland Premium",
+        service_code="dhl_poland_premium",
+        cost="0.00",
+        currency="USD",
+        domicile=True,
+    ),
+    ServiceLevel(
+        service_name="DHL Poland Polska",
+        service_code="dhl_poland_polska",
+        cost="0.00",
+        currency="USD",
+        domicile=True,
+    ),
+    ServiceLevel(
+        service_name="DHL Poland 09",
+        service_code="dhl_poland_09",
+        cost="0.00",
+        currency="USD",
+        domicile=True,
+    ),
+    ServiceLevel(
+        service_name="DHL Poland 12",
+        service_code="dhl_poland_12",
+        cost="0.00",
+        currency="USD",
+        domicile=True,
+    ),
+    ServiceLevel(
+        service_name="DHL Poland Connect",
+        service_code="dhl_poland_connect",
+        cost="0.00",
+        currency="USD",
+        international=True,
+    ),
+    ServiceLevel(
+        service_name="DHL Poland International",
+        service_code="dhl_poland_international",
+        cost="0.00",
+        currency="USD",
+        international=True,
+    ),
+]
