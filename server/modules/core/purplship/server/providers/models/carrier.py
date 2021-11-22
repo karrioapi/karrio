@@ -101,11 +101,19 @@ class Carrier(OwnedEntity):
 
     @property
     def data(self) -> CarrierSettings:
+        _extra = dict()
+
+        if hasattr(self.settings, "services"):
+            _extra.update(
+                services=[model_to_dict(s) for s in self.settings.services.all()]
+            )
+
         return CarrierSettings.create(
             {
                 "id": self.settings.id,
                 "carrier_name": self.settings.carrier_name,
                 **model_to_dict(self.settings),
+                **_extra,
             }
         )
 
@@ -132,7 +140,7 @@ class ServiceLevel(OwnedEntity):
     description = models.CharField(max_length=250, null=True, blank=True)
 
     cost = models.FloatField(blank=True, null=True)
-    currency = models.CharField(max_length=4, choices=CURRENCIES, null=True)
+    currency = models.CharField(max_length=4, choices=CURRENCIES, null=True, blank=True)
 
     estimated_transit_days = models.IntegerField(blank=True, null=True)
 
@@ -140,8 +148,12 @@ class ServiceLevel(OwnedEntity):
     max_width = models.FloatField(blank=True, null=True)
     max_height = models.FloatField(blank=True, null=True)
     max_length = models.FloatField(blank=True, null=True)
-    weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNITS, null=True)
-    dimension_unit = models.CharField(max_length=2, choices=DIMENSION_UNITS, null=True)
+    weight_unit = models.CharField(
+        max_length=2, choices=WEIGHT_UNITS, null=True, blank=True
+    )
+    dimension_unit = models.CharField(
+        max_length=2, choices=DIMENSION_UNITS, null=True, blank=True
+    )
 
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)

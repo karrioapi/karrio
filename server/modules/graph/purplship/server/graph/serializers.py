@@ -247,9 +247,13 @@ class DefaultTemplateSerializer(serializers.EntitySerializer):
 
 @owned_model_serializer
 class ServiceLevelModelSerializer(ModelSerializer):
-    dimension_unit = serializers.CharField(required=False)
-    weight_unit = serializers.CharField(required=False)
-    currency = serializers.CharField(required=False)
+    dimension_unit = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    weight_unit = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    currency = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = providers.ServiceLevel
@@ -339,7 +343,6 @@ class ConnectionModelSerializerBase(ModelSerializer):
         services = validated_data.get(name, {}).get("services") or getattr(
             settings, "default_services", []
         )
-
         if any(services):
             save_many_to_many_data(
                 "services",
