@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "carrier.dhl_poland"
-version = "2021.11rc6"
-description = "DHL Parcel Poland Web API Schemas Python Data Types library"
-repository="https://github.com/purplship/purplship-carriers"
-homepage="https://github.com/purplship/purplship-carriers/tree/main/schemas/carrier.dhl_poland"
+name = "py-soap"
+version = "2021.11"
+description = "SOAP Schemas Python Data Types library"
+repository="https://github.com/purplship/purplship"
+homepage="https://github.com/purplship/purplship/tree/main/schemas/soap"
 authors = ["Purplship <hello@purplship.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [
-    { include = "dhl_poland_lib" }
+    { include = "pysoap" }
 ]
 classifiers = [
 	"Intended Audience :: Developers",

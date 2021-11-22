@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="pysoap",
+    name="py-soap",
     version="0.0.0-dev",
     license="MIT",
     packages=find_packages(),

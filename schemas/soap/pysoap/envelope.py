@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Nov 17 08:54:20 2021 by generateDS.py version 2.40.5.
+# Generated Sun Nov 21 22:54:33 2021 by generateDS.py version 2.40.5.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './soap_lib/envelope.py')
+#   ('-o', './pysoap/envelope.py')
 #
 # Command line arguments:
 #   ./schemas/schemas.xmlsoap.org.xml
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./soap_lib/envelope.py" ./schemas/schemas.xmlsoap.org.xml
+#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./pysoap/envelope.py" ./schemas/schemas.xmlsoap.org.xml
 #
 # Current working directory (os.getcwd()):
 #   soap

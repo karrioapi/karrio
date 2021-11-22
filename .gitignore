@@ -108,6 +108,8 @@ venv.bak/
 .DS_Store
 
 # purplship stuff:
+sdk/**/poetry.lock
+schemas/**/poetry.lock
 .bash_history
 *.DS_Store
 .idea/
