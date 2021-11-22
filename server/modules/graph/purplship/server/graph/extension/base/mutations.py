@@ -25,16 +25,22 @@ class SerializerMutation(mutation.SerializerMutation):
     def get_serializer_kwargs(cls, root, info, **input):
         data = input.copy()
 
-        if 'id' in input:
-            instance = cls._meta.model_class.access_by(info.context).get(id=data.pop('id'))
+        if "id" in input:
+            instance = cls._meta.model_class.access_by(info.context).get(
+                id=data.pop("id")
+            )
 
-            return {'instance': instance, 'data': data, 'partial': True, 'context': info.context}
+            return {
+                "instance": instance,
+                "data": data,
+                "partial": True,
+                "context": info.context,
+            }
 
-        return {'data': data, 'partial': False, 'context': info.context}
+        return {"data": data, "partial": False, "context": info.context}
 
 
 class CreateConnection(SerializerMutation):
-
     class Meta:
         model_operations = ("create",)
         convert_choices_to_enum = False
@@ -42,40 +48,70 @@ class CreateConnection(SerializerMutation):
 
 
 class UpdateConnection(SerializerMutation):
-
     class Meta:
         model_operations = ("update",)
         convert_choices_to_enum = False
         serializer_class = serializers.PartialConnectionModelSerializer
 
+    @classmethod
+    def get_serializer_kwargs(cls, root, info, **input):
+        kwargs = super().get_serializer_kwargs(root, info, **input)
+
+        instance = kwargs.get("instance")
+        settings_name = next(
+            (k for k in kwargs.get("data", {}).keys() if "settings" in k), ""
+        )
+        settings_data = kwargs.get("data", {}).get(settings_name, {})
+
+        if "services" in settings_data and instance is not None:
+            services = settings_data.pop("services")
+            settings = getattr(instance, "settings", None)
+            extra = {"context": info.context}
+            save_many_to_many_data(
+                "services",
+                serializers.ServiceLevelModelSerializer,
+                settings,
+                payload=dict(services=services),
+                **extra
+            )
+
+        return kwargs
+
 
 class CreateTemplate(SerializerMutation):
-
     class Meta:
         model_operations = ("create",)
         convert_choices_to_enum = False
-        serializer_class = serializers.make_fields_optional(serializers.TemplateModelSerializer)
+        serializer_class = serializers.make_fields_optional(
+            serializers.TemplateModelSerializer
+        )
 
 
 class UpdateTemplate(SerializerMutation):
-
     class Meta:
         model_operations = ("update",)
         convert_choices_to_enum = False
-        serializer_class = serializers.make_fields_optional(serializers.TemplateModelSerializer)
+        serializer_class = serializers.make_fields_optional(
+            serializers.TemplateModelSerializer
+        )
 
     @classmethod
     def get_serializer_kwargs(cls, root, info, **input):
         kwargs = super().get_serializer_kwargs(root, info, **input)
 
-        instance = kwargs.get('instance')
-        customs_data = kwargs.get('data', {}).get('customs', {})
+        instance = kwargs.get("instance")
+        customs_data = kwargs.get("data", {}).get("customs", {})
 
-        if 'commodities' in customs_data and instance is not None:
-            customs = getattr(instance, 'customs', None)
-            extra = {'context': info.context}
+        if "commodities" in customs_data and instance is not None:
+            customs = getattr(instance, "customs", None)
+            extra = {"context": info.context}
             save_many_to_many_data(
-                'commodities', serializers.CommodityModelSerializer, customs, payload=customs_data, **extra)
+                "commodities",
+                serializers.CommodityModelSerializer,
+                customs,
+                payload=customs_data,
+                **extra
+            )
 
         return kwargs
 
@@ -93,12 +129,12 @@ class SystemCarrierMutation(graphene.relay.ClientIDMutation):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
         if enable:
-            if hasattr(carrier, 'active_orgs'):
+            if hasattr(carrier, "active_orgs"):
                 carrier.active_orgs.add(info.context.org)
             else:
                 carrier.active_users.add(info.context.user)
         else:
-            if hasattr(carrier, 'active_orgs'):
+            if hasattr(carrier, "active_orgs"):
                 carrier.active_orgs.remove(info.context.org)
             else:
                 carrier.active_users.remove(info.context.user)
@@ -120,13 +156,16 @@ class TokenMutation(graphene.relay.ClientIDMutation):
         if refresh and any(tokens):
             tokens.delete()
 
-        token = SerializerDecorator[TokenSerializer](data={}, context=info.context).save().instance
+        token = (
+            SerializerDecorator[TokenSerializer](data={}, context=info.context)
+            .save()
+            .instance
+        )
 
         return TokenMutation(token=token)
 
 
 class UpdateUser(SerializerMutation):
-
     class Meta:
         model_operations = ("update",)
         serializer_class = serializers.UserModelSerializer
@@ -135,7 +174,7 @@ class UpdateUser(SerializerMutation):
     def get_serializer_kwargs(cls, root, info, **data):
         instance = cls._meta.model_class.objects.get(id=info.context.user.id)
 
-        return {'instance': instance, 'data': data, 'partial': True}
+        return {"instance": instance, "data": data, "partial": True}
 
 
 class RegisterUser(DjangoFormMutation):
@@ -199,7 +238,7 @@ class ConfirmPasswordReset(DjangoFormMutation):
     @classmethod
     def get_form_kwargs(cls, root, info, **input):
         kwargs = super().get_form_kwargs(root, info, **input)
-        user = cls.get_user(input.get('uid'))
+        user = cls.get_user(input.get("uid"))
         kwargs.update(user=user)
 
         return kwargs
@@ -209,7 +248,13 @@ class ConfirmPasswordReset(DjangoFormMutation):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = types.User._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, types.User.DoesNotExist, ValidationError):
+        except (
+            TypeError,
+            ValueError,
+            OverflowError,
+            types.User.DoesNotExist,
+            ValidationError,
+        ):
             user = None
         return user
 

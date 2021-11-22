@@ -6,6 +6,7 @@ mypy
 poetry
 twine
 wheel
+nose
 
 # Carrier Schemas in Development
 -e ./schemas/soap

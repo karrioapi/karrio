@@ -7,6 +7,8 @@ from rest_framework import exceptions
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+from purplship.core import units
+
 import purplship.server.core.models as core
 import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
@@ -46,14 +48,14 @@ class UserType(graphene_django.DjangoObjectType):
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
 
 
-class ConnectionType:
+class BaseConnectionType:
     carrier_name = graphene.String(required=True)
 
     def resolve_carrier_name(self, info):
         return getattr(self, "settings", self).carrier_name
 
 
-class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
+class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType):
     enabled = graphene.Boolean(required=True)
 
     class Meta:
@@ -304,11 +306,27 @@ class EventType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
+class ServiceLevelType(graphene_django.DjangoObjectType):
+    class Meta:
+        model = providers.ServiceLevel
+        exclude = ("dhlpolandsettings_set",)
+        interfaces = (CustomNode,)
+
+
 def setup_carrier_model(model_type):
     _extra_fields = {}
 
     if hasattr(model_type, "account_country_code"):
         _extra_fields.update(account_country_code=graphene.String(required=True))
+
+    if hasattr(model_type, "services"):
+
+        def resolve_services(self, info):
+            return self.services.all()
+
+        _extra_fields.update(
+            services=graphene.List(ServiceLevelType), resolve_services=resolve_services
+        )
 
     class Meta:
         model = model_type
@@ -316,7 +334,7 @@ def setup_carrier_model(model_type):
 
     return type(
         model_type.__name__,
-        (graphene_django.DjangoObjectType, ConnectionType),
+        (graphene_django.DjangoObjectType, BaseConnectionType),
         {"Meta": Meta, **_extra_fields},
     )
 
