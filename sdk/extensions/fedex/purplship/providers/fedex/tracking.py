@@ -20,6 +20,11 @@ from purplship.core.models import (
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
+estimated_date_formats = [
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S",
+]
+
 
 def parse_tracking_response(
     response: Element, settings: Settings
@@ -73,16 +78,10 @@ def _extract_tracking(
 def _parse_date_or_timestamp(
     date_or_timestamps: List[TrackingDateOrTimestamp], type: str
 ) -> Optional[str]:
-    format = (
-        "%Y-%m-%dT%H:%M:%S"
-        if type in ["ANTICIPATED_TENDER", "ESTIMATED_DELIVERY"]
-        else "%Y-%m-%dT%H:%M:%S%z"
-    )
-    print(format, type, "<<<<<<<<")
     return next(
         iter(
             [
-                DF.fdate(d.DateOrTimestamp, format)
+                DF.fdate(d.DateOrTimestamp, try_formats=estimated_date_formats)
                 for d in date_or_timestamps
                 if d.Type == type
             ]
