@@ -642,7 +642,7 @@ class CustomsInfo:
         return iter(self._options.items())
 
     @property
-    def is_defined(self) -> str:
+    def is_defined(self) -> bool:
         return self._customs is not None
 
     @property
