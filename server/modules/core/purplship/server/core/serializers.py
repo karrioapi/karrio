@@ -479,7 +479,9 @@ class CustomsData(Serializer):
         required=False,
         allow_null=True,
         help_text="""
-    Customs identification options.
+    <details>
+    <summary>Customs identification options.</summary>
+
     ```
     {
         "aes": "5218487281",
@@ -491,6 +493,9 @@ class CustomsData(Serializer):
         "vat_registration_number": "5218487281",
     }
     ```
+
+    Please check the docs for carrier specific options.
+    </details>
     """,
     )
 
@@ -586,10 +591,26 @@ class RateRequest(Serializer):
     options = PlainDictField(
         required=False,
         allow_null=True,
-        help_text=f"""
-    The options available for the shipment.
+        help_text="""
+    <details>
+    <summary>The options available for the shipment.</summary>
 
-    Please consult [the reference](#operation/references) for additional specific carriers options.
+    ```
+    {
+        "currency": "USD",
+        "insurance": 100.00,
+        "cash_on_delivery": 30.00,
+        "shipment_date": "2020-01-01",
+        "dangerous_good": true,
+        "declared_value": 150.00,
+        "email_notification": true,
+        "email_notification_to": shipper@mail.com,
+        "signature_confirmation": true,
+    }
+    ```
+
+    Please check the docs for carrier specific options.
+    </details>
     """,
     )
     reference = CharField(
@@ -989,8 +1010,25 @@ class ShippingData(Serializer):
         required=False,
         allow_null=True,
         help_text="""
-    The options available for the shipment.<br/>
-    Please consult [the reference](#operation/references) for additional specific carriers options.
+    <details>
+    <summary>The options available for the shipment.</summary>
+
+    ```
+    {
+        "currency": "USD",
+        "insurance": 100.00,
+        "cash_on_delivery": 30.00,
+        "shipment_date": "2020-01-01",
+        "dangerous_good": true,
+        "declared_value": 150.00,
+        "email_notification": true,
+        "email_notification_to": shipper@mail.com,
+        "signature_confirmation": true,
+    }
+    ```
+
+    Please check the docs for carrier specific options.
+    </details>
     """,
     )
     payment = Payment(required=False, allow_null=True, help_text="The payment details")
@@ -1153,8 +1191,25 @@ class ShipmentContent(Serializer):
         required=False,
         allow_null=True,
         help_text="""
-    The options available for the shipment.<br/>
-    Please consult [the reference](#operation/references) for additional specific carriers options.
+    <details>
+    <summary>The options available for the shipment.</summary>
+
+    ```
+    {
+        "currency": "USD",
+        "insurance": 100.00,
+        "cash_on_delivery": 30.00,
+        "shipment_date": "2020-01-01",
+        "dangerous_good": true,
+        "declared_value": 150.00,
+        "email_notification": true,
+        "email_notification_to": shipper@mail.com,
+        "signature_confirmation": true,
+    }
+    ```
+
+    Please check the docs for carrier specific options.
+    </details>
     """,
     )
 

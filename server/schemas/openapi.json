@@ -4155,9 +4155,7 @@
                         "nullable": true
                     }
                 },
-                "description": "The parcel content items",
-                "nullable": true,
-                "x-nullable": true
+                "description": "The parcel content items"
             },
             "Duty": {
                 "type": "object",
@@ -4345,6 +4343,9 @@
                 "x-nullable": true
             },
             "Customs": {
+                "required": [
+                    "commodities"
+                ],
                 "type": "object",
                 "properties": {
                     "id": {
@@ -4353,15 +4354,15 @@
                         "type": "string",
                         "description": "A unique identifier"
                     },
-                    "aes": {
-                        "title": "Aes",
-                        "type": "string",
-                        "nullable": true
+                    "commodities": {
+                        "type": "array",
+                        "description": "The parcel content items",
+                        "items": {
+                            "$ref": "#/components/schemas/Commodity"
+                        }
                     },
-                    "eel_pfc": {
-                        "title": "Eel pfc",
-                        "type": "string",
-                        "nullable": true
+                    "duty": {
+                        "$ref": "#/components/schemas/Duty"
                     },
                     "content_type": {
                         "title": "Content type",
@@ -4402,17 +4403,6 @@
                             "FOB"
                         ]
                     },
-                    "commodities": {
-                        "type": "array",
-                        "description": "The parcel content items",
-                        "nullable": true,
-                        "items": {
-                            "$ref": "#/components/schemas/Commodity"
-                        }
-                    },
-                    "duty": {
-                        "$ref": "#/components/schemas/Duty"
-                    },
                     "invoice": {
                         "title": "Invoice",
                         "type": "string",
@@ -4442,15 +4432,11 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "certificate_number": {
-                        "title": "Certificate number",
-                        "type": "string",
-                        "nullable": true
-                    },
                     "options": {
                         "title": "Options",
                         "type": "object",
                         "properties": {},
+                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     }
                 }
@@ -4482,17 +4468,20 @@
                 }
             },
             "CustomsData": {
+                "required": [
+                    "commodities"
+                ],
                 "type": "object",
                 "properties": {
-                    "aes": {
-                        "title": "Aes",
-                        "type": "string",
-                        "nullable": true
+                    "commodities": {
+                        "type": "array",
+                        "description": "The parcel content items",
+                        "items": {
+                            "$ref": "#/components/schemas/Commodity"
+                        }
                     },
-                    "eel_pfc": {
-                        "title": "Eel pfc",
-                        "type": "string",
-                        "nullable": true
+                    "duty": {
+                        "$ref": "#/components/schemas/Duty"
                     },
                     "content_type": {
                         "title": "Content type",
@@ -4533,17 +4522,6 @@
                             "FOB"
                         ]
                     },
-                    "commodities": {
-                        "type": "array",
-                        "description": "The parcel content items",
-                        "nullable": true,
-                        "items": {
-                            "$ref": "#/components/schemas/Commodity"
-                        }
-                    },
-                    "duty": {
-                        "$ref": "#/components/schemas/Duty"
-                    },
                     "invoice": {
                         "title": "Invoice",
                         "type": "string",
@@ -4573,15 +4551,11 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "certificate_number": {
-                        "title": "Certificate number",
-                        "type": "string",
-                        "nullable": true
-                    },
                     "options": {
                         "title": "Options",
                         "type": "object",
                         "properties": {},
+                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     }
                 }
@@ -5376,7 +5350,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\nThe options available for the shipment.\n\nPlease consult [the reference](#operation/references) for additional specific carriers options.\n",
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     },
                     "reference": {
@@ -5714,7 +5688,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\nThe options available for the shipment.<br/>\nPlease consult [the reference](#operation/references) for additional specific carriers options.\n",
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     },
                     "payment": {
@@ -5869,7 +5843,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\nThe options available for the shipment.<br/>\nPlease consult [the reference](#operation/references) for additional specific carriers options.\n",
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     },
                     "payment": {
@@ -6290,7 +6264,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\nThe options available for the shipment.<br/>\nPlease consult [the reference](#operation/references) for additional specific carriers options.\n",
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                         "nullable": true
                     },
                     "payment": {
