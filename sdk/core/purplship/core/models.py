@@ -328,6 +328,7 @@ class ServiceLevel:
     service_code: str
     description: str = ""
     id: str = None
+    active: bool = True
 
     # Costs definition
     cost: float = None

@@ -23,7 +23,7 @@ class LabelType(Flag):
     ZBLP_LABEL_ZPL = "ZBLP"
 
     """ Unified Label type mapping """
-    PDF = LBLP_LABEL_A4_PDF
+    PDF = BLP_LABEL
     ZPL = ZBLP_LABEL_ZPL
 
 

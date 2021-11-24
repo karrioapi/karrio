@@ -99,6 +99,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     )
     label_type = LabelType.map(payload.label_type or "PDF").value
     payment = payload.payment or Payment()
+    quantity = len(customs.commodities or []) if customs.is_defined else 1
 
     request = create_envelope(
         body_content=createShipment(
@@ -133,12 +134,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     ),
                     shipmentTime=(
                         ShipmentTime(
-                            shipmentDate=options.shipment_date,
+                            shipmentDate=(
+                                options.shipment_date or time.strftime("%Y-%m-%d")
+                            ),
                             shipmentStartHour="10:00",
                             shipmentEndHour="10:00",
                         )
-                        if options.shipment_date
-                        else None
                     ),
                     labelType=label_type,
                 ),
@@ -179,10 +180,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ),
                         address=Address(
                             name=(shipper.company_name or shipper.person_name),
-                            postalCode=shipper.postal_code,
+                            postalCode=(shipper.postal_code or "").replace("-", ""),
                             city=shipper.city,
                             street=shipper.address_line,
-                            houseNumber=shipper.street_number,
+                            houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),
                     ),
@@ -224,10 +225,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             postnummer=None,
                             addressType=("C" if recipient.residential else "B"),
                             name=(recipient.company_name or recipient.person_name),
-                            postalCode=recipient.postal_code,
+                            postalCode=(recipient.postal_code or "").replace("-", ""),
                             city=recipient.city,
                             street=recipient.address_line,
-                            houseNumber=shipper.street_number,
+                            houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),
                     ),
@@ -244,7 +245,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             width=package.width.CM,
                             height=package.height.CM,
                             length=package.length.CM,
-                            quantity=None,
+                            quantity=quantity,
                             nonStandard=None,
                             blpPieceId=None,
                         )

@@ -1,3 +1,4 @@
+import time
 import unittest
 from unittest.mock import patch, ANY
 import purplship
@@ -194,7 +195,12 @@ ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlso
                             <serviceType>POD</serviceType>
                         </item>
                     </specialServices>
-                    <labelType>LBLP</labelType>
+                    <shipmentTime>
+                        <shipmentDate>{time.strftime("%Y-%m-%d")}</shipmentDate>
+                        <shipmentStartHour>10:00</shipmentStartHour>
+                        <shipmentEndHour>10:00</shipmentEndHour>
+                    </shipmentTime>
+                    <labelType>BLP</labelType>
                 </shipmentInfo>
                 <content>N/A</content>
                 <reference></reference>
@@ -249,6 +255,7 @@ ShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://schemas.xmlso
                         <width>7</width>
                         <height>7</height>
                         <length>25</length>
+                        <quantity>1</quantity>
                     </item>
                 </pieceList>
             </shipment>
@@ -277,7 +284,12 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                             <serviceType>POD</serviceType>
                         </item>
                     </specialServices>
-                    <labelType>LBLP</labelType>
+                    <shipmentTime>
+                        <shipmentDate>{time.strftime("%Y-%m-%d")}</shipmentDate>
+                        <shipmentStartHour>10:00</shipmentStartHour>
+                        <shipmentEndHour>10:00</shipmentEndHour>
+                    </shipmentTime>
+                    <labelType>BLP</labelType>
                 </shipmentInfo>
                 <content>N/A</content>
                 <reference></reference>
@@ -330,6 +342,7 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                         <width>7</width>
                         <height>7</height>
                         <length>25</length>
+                        <quantity>1</quantity>
                     </item>
                 </pieceList>
                 <customs>

@@ -48,7 +48,7 @@ def filter_service_level(
         implicitly_requested = len(request.services or []) == 0
         excluded = len(request.services or []) > 0 and not explicitly_requested
 
-        if excluded:
+        if not service.active or excluded:
             return False
 
         # Check if destination covered
