@@ -280,7 +280,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         countryOfOrigin=shipper.country_code,
                         additionalInfo=None,
                         grossWeight=packages.weight.KG,
-                        CustomsItem=(
+                        customsItem=(
                             ArrayOfCustomsitemdata(
                                 item=[
                                     CustomsItemData(

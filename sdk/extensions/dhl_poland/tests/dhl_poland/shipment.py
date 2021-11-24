@@ -341,6 +341,14 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                     <categoryOfItem>9</categoryOfItem>
                     <countryOfOrigin>PL</countryOfOrigin>
                     <grossWeight>0.45</grossWeight>
+                    <customsItem>
+                        <item>
+                            <nameEn>test</nameEn>
+                            <namePl>test</namePl>
+                            <quantity>1</quantity>
+                            <weight>10.0</weight>
+                        </item>
+                    </customsItem>
                     <customAgreements>
                         <notExceedValue>true</notExceedValue>
                         <notProhibitedGoods>true</notProhibitedGoods>
