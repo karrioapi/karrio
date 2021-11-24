@@ -1,6 +1,6 @@
 -f https://git.io/purplship
 purplship
-purplship.server==2021.11rc5
+purplship.server==2021.11rc6
 purplship.server.core
 purplship.server.events
 purplship.server.graph
@@ -12,6 +12,7 @@ purplship.australiapost
 purplship.canadapost
 purplship.canpar
 purplship.dhl-express
+purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex

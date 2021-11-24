@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship"
-version = "2021.11rc6"
+version = "2021.11.4"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Multi-carrier shipping API integration with python"

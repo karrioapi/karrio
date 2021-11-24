@@ -1,12 +1,12 @@
 # Carrier Schemas in Development
--e ./schemas/dhl_poland
+# -e ./schemas/dhl_poland
 
 # Carrier Extenstions in Development
--e ./sdk/core
+# -e ./sdk/core
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_poland
+# -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
@@ -21,6 +21,7 @@ purplship.australiapost
 purplship.canadapost
 purplship.canpar
 purplship.dhl-express
+purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex

@@ -1,6 +1,6 @@
 
 # Schemas in Development
--e ./schemas/dhl_poland
+# -e ./schemas/dhl_poland
 
 # SDK extentions
 -e ./sdk/core
@@ -10,6 +10,7 @@
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
 -e ./sdk/vendors/eshipper
@@ -30,5 +31,4 @@
 -e ./sdk/extensions/ics_courier
 -e ./sdk/extensions/asendia_us
 -e ./sdk/extensions/ups_ground
--e ./sdk/extensions/dhl_poland
 

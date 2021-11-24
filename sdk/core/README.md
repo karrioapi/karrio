@@ -1,4 +1,4 @@
-# <a href="https://next.purplship.com" target="_blank"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
+# <a href="https://next.purplship.com" target="_blank"><img alt="Purplship" src="/purplship/purplship/raw/main/server/main/purplship/server/static/extra/branding/logo.svg" height="50px" /></a>
 
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)

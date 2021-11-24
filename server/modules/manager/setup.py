@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.manager",
-    version="2021.11.1",
+    version="2021.11.2",
     description="Multi-carrier shipping API Shipments manager module",
     long_description=long_description,
     long_description_content_type="text/markdown",
