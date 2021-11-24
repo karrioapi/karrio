@@ -2417,7 +2417,7 @@
               "name": "options",
               "type": {
                 "kind": "SCALAR",
-                "name": "ObjectType",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -4368,16 +4368,6 @@
           "interfaces": null,
           "kind": "SCALAR",
           "name": "GenericScalar",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "ObjectType",
           "possibleTypes": null
         },
         {
@@ -11263,6 +11253,22 @@
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "active",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19554,6 +19560,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "active",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "cost",
               "type": {
                 "kind": "SCALAR",
@@ -22250,6 +22266,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "active",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "cost",
               "type": {
                 "kind": "SCALAR",
@@ -24519,7 +24545,7 @@
               "name": "options",
               "type": {
                 "kind": "SCALAR",
-                "name": "ObjectType",
+                "name": "GenericScalar",
                 "ofType": null
               }
             }
@@ -28112,7 +28138,7 @@
               "name": "options",
               "type": {
                 "kind": "SCALAR",
-                "name": "ObjectType",
+                "name": "GenericScalar",
                 "ofType": null
               }
             }
