@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from purplship.core.utils import DP
 from purplship.server.serializers import (
     ModelSerializer,
-    Serializer,
     save_one_to_one_data,
     save_many_to_many_data,
     owned_model_serializer,
@@ -68,7 +67,7 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
                 key: {"read_only": False} for key in ["validate_location", "validation"]
             },
         }
-        exclude = ["created_at", "updated_at", "created_by"]
+        exclude = ["id", "created_at", "updated_at", "created_by"]
 
 
 @owned_model_serializer
@@ -84,13 +83,14 @@ class CommodityModelSerializer(ModelSerializer):
 class CustomsModelSerializer(ModelSerializer):
     NESTED_FIELDS = ["commodities"]
 
+    incoterm = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     commodities = make_fields_optional(CommodityModelSerializer)(
         many=True, allow_null=True, required=False
     )
 
     class Meta:
         model = manager.Customs
-        exclude = ["created_at", "updated_at", "created_by", "options"]
+        exclude = ["id", "created_at", "updated_at", "created_by"]
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict):
@@ -101,13 +101,9 @@ class CustomsModelSerializer(ModelSerializer):
                 if name not in self.NESTED_FIELDS
             },
             "options": (
-                DP.to_dict(validated_data["options"])
-                if "options" in validated_data
-                else None
+                validated_data["options"] if "options" in validated_data else None
             ),
-            "duty": (
-                DP.to_dict(validated_data["duty"]) if "duty" in validated_data else None
-            ),
+            "duty": (validated_data["duty"] if "duty" in validated_data else None),
         }
 
         instance = super().create(data)
@@ -145,9 +141,16 @@ class CustomsModelSerializer(ModelSerializer):
 
 @owned_model_serializer
 class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
+    weight_unit = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    dimension_unit = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+
     class Meta:
         model = manager.Parcel
-        exclude = ["created_at", "updated_at", "created_by"]
+        exclude = ["id", "created_at", "updated_at", "created_by"]
 
 
 @owned_model_serializer

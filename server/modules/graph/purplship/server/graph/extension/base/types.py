@@ -1,13 +1,14 @@
 import functools
 import graphene
+import django_filters
 import graphene_django
 from graphene.types import generic
-import django_filters
+from graphene.types.scalars import Scalar
+from graphene.types.objecttype import ObjectType
 from rest_framework import exceptions
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from purplship.core import units
 
 import purplship.server.core.models as core
 import purplship.server.providers.models as providers
@@ -31,6 +32,12 @@ def login_required(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+class ObjectType(Scalar):
+    @staticmethod
+    def serialize(data):
+        return data
 
 
 class CustomNode(graphene.Node):
@@ -174,10 +181,11 @@ class DutyType(graphene.ObjectType):
 class CustomsType(graphene_django.DjangoObjectType):
     commodities = graphene.List(CommodityType)
     duty = graphene.Field(DutyType)
+    options = generic.GenericScalar()
 
     class Meta:
         model = manager.Customs
-        exclude = ("shipment_set", "template", "options")
+        exclude = ("shipment_set", "template")
 
     def resolve_commodities(self, info):
         return self.commodities.all()

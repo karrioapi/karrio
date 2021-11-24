@@ -2,7 +2,6 @@ import graphene
 import graphene_django.filter as django_filter
 
 from purplship.server.user.serializers import TokenSerializer
-
 import purplship.server.core.views.api as api
 import purplship.server.core.gateway as gateway
 import purplship.server.providers.models as providers
@@ -124,12 +123,6 @@ class Mutation:
     request_password_reset = mutations.RequestPasswordReset.Field()
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
 
-    create_template = mutations.CreateTemplate.Field()
-    update_template = mutations.UpdateTemplate.Field()
-    delete_template = mutations.create_delete_mutation(
-        "DeleteTemplate", graph.Template
-    ).Field()
-
     discard_commodity = mutations.create_delete_mutation(
         "DiscardCommodity", manager.Commodity, customs__template__isnull=False
     ).Field()
@@ -140,3 +133,20 @@ class Mutation:
         "DeleteConnection", providers.Carrier
     ).Field()
     mutate_system_connection = mutations.SystemCarrierMutation.Field()
+
+    create_address_template = mutations.create_template_mutation("Address").Field()
+    update_address_template = mutations.create_template_mutation(
+        "Address", True
+    ).Field()
+
+    create_customs_template = mutations.create_template_mutation("Customs").Field()
+    update_customs_template = mutations.create_template_mutation(
+        "Customs", True
+    ).Field()
+
+    create_parcel_template = mutations.create_template_mutation("Parcel").Field()
+    update_parcel_template = mutations.create_template_mutation("Parcel", True).Field()
+
+    delete_template = mutations.create_delete_mutation(
+        "DeleteTemplate", graph.Template
+    ).Field()

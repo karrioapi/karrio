@@ -9,25 +9,27 @@ class TestAddressTemplate(GraphTestCase):
     def _create_address_template(self):
         return self.query(
             """
-            mutation create_template($data: CreateTemplateInput!) {
-              create_template(input: $data) {
-                id
-                is_default
-                label
-                address {
-                  company_name
-                  person_name
-                  address_line1
-                  address_line2
-                  postal_code
-                  residential
-                  city
-                  state_code
-                  country_code
-                  email
-                  phone_number
-                  validation
-                  validate_location
+            mutation create_address_template($data: AddressTemplateInput!) {
+              create_address_template(input: $data) {
+                template {
+                  id
+                  is_default
+                  label
+                  address {
+                    company_name
+                    person_name
+                    address_line1
+                    address_line2
+                    postal_code
+                    residential
+                    city
+                    state_code
+                    country_code
+                    email
+                    phone_number
+                    validation
+                    validate_location
+                  }
                 }
                 errors {
                   field
@@ -36,7 +38,7 @@ class TestAddressTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_template",
+            op_name="create_address_template",
             variables=ADDRESS_TEMPLATE_DATA,
         )
 
@@ -51,25 +53,27 @@ class TestAddressTemplate(GraphTestCase):
         template = json.loads(self._create_address_template().content)
         response = self.query(
             """
-            mutation update_template($data: UpdateTemplateInput!) {
-              update_template(input: $data) {
-                id
-                is_default
-                label
-                address {
-                  company_name
-                  person_name
-                  address_line1
-                  address_line2
-                  postal_code
-                  residential
-                  city
-                  state_code
-                  country_code
-                  email
-                  phone_number
-                  validation
-                  validate_location
+            mutation update_address_template($data: PartialAddressTemplateInput!) {
+              update_address_template(input: $data) {
+                template {
+                  id
+                  is_default
+                  label
+                  address {
+                    company_name
+                    person_name
+                    address_line1
+                    address_line2
+                    postal_code
+                    residential
+                    city
+                    state_code
+                    country_code
+                    email
+                    phone_number
+                    validation
+                    validate_location
+                  }
                 }
                 errors {
                   field
@@ -78,11 +82,11 @@ class TestAddressTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_template",
+            op_name="update_address_template",
             variables={
                 **ADDRESS_TEMPLATE_UPDATE_DATA,
                 "data": {
-                    "id": template["data"]["create_template"]["id"],
+                    "id": template["data"]["create_address_template"]["template"]["id"],
                     **ADDRESS_TEMPLATE_UPDATE_DATA["data"],
                 },
             },
@@ -94,7 +98,7 @@ class TestAddressTemplate(GraphTestCase):
 
     def test_delete_address_template(self):
         template = json.loads(self._create_address_template().content)
-        template_id = template["data"]["create_template"]["id"]
+        template_id = template["data"]["create_address_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
@@ -119,20 +123,22 @@ class TestParcelTemplate(GraphTestCase):
     def _create_parcel_template(self):
         return self.query(
             """
-            mutation create_template($data: CreateTemplateInput!) {
-              create_template(input: $data) {
-                id
-                is_default
-                label
-                parcel {
-                  width
-                  height
-                  length
-                  dimension_unit
-                  weight
-                  weight_unit
-                  packaging_type
-                  package_preset
+            mutation create_parcel_template($data: ParcelTemplateInput!) {
+              create_parcel_template(input: $data) {
+                template {
+                  id
+                  is_default
+                  label
+                  parcel {
+                    width
+                    height
+                    length
+                    dimension_unit
+                    weight
+                    weight_unit
+                    packaging_type
+                    package_preset
+                  }
                 }
                 errors {
                   field
@@ -141,7 +147,7 @@ class TestParcelTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_template",
+            op_name="create_parcel_template",
             variables=PARCEL_TEMPLATE_DATA,
         )
 
@@ -156,20 +162,22 @@ class TestParcelTemplate(GraphTestCase):
         template = json.loads(self._create_parcel_template().content)
         response = self.query(
             """
-            mutation update_template($data: UpdateTemplateInput!) {
-              update_template(input: $data) {
-                id
-                is_default
-                label
-                parcel {
-                  width
-                  height
-                  length
-                  dimension_unit
-                  weight
-                  weight_unit
-                  packaging_type
-                  package_preset
+            mutation update_parcel_template($data: PartialParcelTemplateInput!) {
+              update_parcel_template(input: $data) {
+                template {
+                  id
+                  is_default
+                  label
+                  parcel {
+                    width
+                    height
+                    length
+                    dimension_unit
+                    weight
+                    weight_unit
+                    packaging_type
+                    package_preset
+                  }
                 }
                 errors {
                   field
@@ -178,11 +186,11 @@ class TestParcelTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_template",
+            op_name="update_parcel_template",
             variables={
                 **PARCEL_TEMPLATE_UPDATE_DATA,
                 "data": {
-                    "id": template["data"]["create_template"]["id"],
+                    "id": template["data"]["create_parcel_template"]["template"]["id"],
                     **PARCEL_TEMPLATE_UPDATE_DATA["data"],
                 },
             },
@@ -194,7 +202,7 @@ class TestParcelTemplate(GraphTestCase):
 
     def test_delete_parcel_template(self):
         template = json.loads(self._create_parcel_template().content)
-        template_id = template["data"]["create_template"]["id"]
+        template_id = template["data"]["create_parcel_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
@@ -219,50 +227,52 @@ class TestCustomsTemplate(GraphTestCase):
     def _create_customs_info_template(self):
         return self.query(
             """
-            mutation create_template($data: CreateTemplateInput!) {
-              create_template(input: $data) {
-                id
-                label
-                is_default
-                customs {
-                  incoterm
-                  content_type
-                  commercial_invoice
-                  content_description
-                  duty {
-                    paid_by
-                    currency
-                    account_number
-                    declared_value
-                    bill_to {
-                      company_name
-                      person_name
-                      address_line1
-                      address_line2
-                      postal_code
-                      residential
-                      city
-                      state_code
-                      country_code
-                      email
-                      phone_number
-                      validation
-                      validate_location
+            mutation create_customs_template($data: CustomsTemplateInput!) {
+              create_customs_template(input: $data) {
+                template {
+                  id
+                  label
+                  is_default
+                  customs {
+                    incoterm
+                    content_type
+                    commercial_invoice
+                    content_description
+                    duty {
+                      paid_by
+                      currency
+                      account_number
+                      declared_value
+                      bill_to {
+                        company_name
+                        person_name
+                        address_line1
+                        address_line2
+                        postal_code
+                        residential
+                        city
+                        state_code
+                        country_code
+                        email
+                        phone_number
+                        validation
+                        validate_location
+                      }
                     }
-                  }
-                  invoice
-                  signer
-                  certify
-                  commodities {
-                    id
-                    sku
-                    weight
-                    quantity
-                    weight_unit
-                    description
-                    value_amount
-                    value_currency
-                    origin_country
+                    invoice
+                    signer
+                    certify
+                    commodities {
+                      id
+                      sku
+                      weight
+                      quantity
+                      weight_unit
+                      description
+                      value_amount
+                      value_currency
+                      origin_country
+                    }
                   }
                 }
                 errors {
@@ -272,7 +282,7 @@ class TestCustomsTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_template",
+            op_name="create_customs_template",
             variables=CUSTOMS_TEMPLATE_DATA,
         )
 
@@ -286,61 +296,67 @@ class TestCustomsTemplate(GraphTestCase):
     def test_update_customs_info_template(self):
         template = json.loads(self._create_customs_info_template().content)
         CUSTOMS_TEMPLATE_UPDATE_DATA["data"]["id"] = template["data"][
-            "create_template"
-        ]["id"]
+            "create_customs_template"
+        ]["template"]["id"]
         CUSTOMS_TEMPLATE_UPDATE_DATA["data"]["customs"]["commodities"][0]["id"] = next(
             c["id"]
-            for c in template["data"]["create_template"]["customs"]["commodities"]
+            for c in template["data"]["create_customs_template"]["template"]["customs"][
+                "commodities"
+            ]
             if c["sku"]
-            == template["data"]["create_template"]["customs"]["commodities"][0]["sku"]
+            == template["data"]["create_customs_template"]["template"]["customs"][
+                "commodities"
+            ][0]["sku"]
         )
 
         response = self.query(
             """
-            mutation update_template($data: UpdateTemplateInput!) {
-              update_template(input: $data) {
-                id
-                is_default
-                label
-                customs {
-                  incoterm
-                  content_type
-                  commercial_invoice
-                  content_description
-                  duty {
-                    paid_by
-                    currency
-                    account_number
-                    declared_value
-                    bill_to {
-                      company_name
-                      person_name
-                      address_line1
-                      address_line2
-                      postal_code
-                      residential
-                      city
-                      state_code
-                      country_code
-                      email
-                      phone_number
-                      validation
-                      validate_location
+            mutation update_customs_template($data: PartialCustomsTemplateInput!) {
+              update_customs_template(input: $data) {
+                template {
+                  id
+                  is_default
+                  label
+                  customs {
+                    incoterm
+                    content_type
+                    commercial_invoice
+                    content_description
+                    duty {
+                      paid_by
+                      currency
+                      account_number
+                      declared_value
+                      bill_to {
+                        company_name
+                        person_name
+                        address_line1
+                        address_line2
+                        postal_code
+                        residential
+                        city
+                        state_code
+                        country_code
+                        email
+                        phone_number
+                        validation
+                        validate_location
+                      }
                     }
-                  }
-                  invoice
-                  signer
-                  certify
-                  commodities {
-                    id
-                    sku
-                    weight
-                    quantity
-                    weight_unit
-                    description
-                    value_amount
-                    value_currency
-                    origin_country
+                    invoice
+                    signer
+                    certify
+                    commodities {
+                      id
+                      sku
+                      weight
+                      quantity
+                      weight_unit
+                      description
+                      value_amount
+                      value_currency
+                      origin_country
+                    }
                   }
                 }
                 errors {
@@ -350,7 +366,7 @@ class TestCustomsTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_template",
+            op_name="update_customs_template",
             variables=CUSTOMS_TEMPLATE_UPDATE_DATA,
         )
         response_data = json.loads(response.content)
@@ -360,7 +376,7 @@ class TestCustomsTemplate(GraphTestCase):
 
     def test_delete_customs_info(self):
         template = json.loads(self._create_customs_info_template().content)
-        template_id = template["data"]["create_template"]["id"]
+        template_id = template["data"]["create_customs_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
@@ -400,26 +416,28 @@ ADDRESS_TEMPLATE_DATA = {
 
 ADDRESS_TEMPLATE_RESPONSE = {
     "data": {
-        "create_template": {
-            "address": {
-                "address_line1": "125 Church St",
-                "address_line2": None,
-                "city": "Moncton",
-                "company_name": "A corp.",
-                "country_code": "CA",
-                "email": None,
-                "person_name": "John Doe",
-                "phone_number": "+1 514-000-0000",
-                "postal_code": "E1C4Z8",
-                "residential": False,
-                "state_code": "NB",
-                "validate_location": None,
-                "validation": None,
+        "create_address_template": {
+            "template": {
+                "id": ANY,
+                "is_default": False,
+                "label": "Warehouse",
+                "address": {
+                    "company_name": "A corp.",
+                    "person_name": "John Doe",
+                    "address_line1": "125 Church St",
+                    "address_line2": None,
+                    "postal_code": "E1C4Z8",
+                    "residential": False,
+                    "city": "Moncton",
+                    "state_code": "NB",
+                    "country_code": "CA",
+                    "email": None,
+                    "phone_number": "+1 514-000-0000",
+                    "validation": None,
+                    "validate_location": None,
+                },
             },
             "errors": None,
-            "id": ANY,
-            "is_default": False,
-            "label": "Warehouse",
         }
     }
 }
@@ -437,25 +455,28 @@ ADDRESS_TEMPLATE_UPDATE_DATA = {
 
 ADDRESS_TEMPLATE_UPDATE_RESPONSE = {
     "data": {
-        "update_template": {
-            "address": {
-                "address_line1": "125 Church St",
-                "address_line2": None,
-                "city": "Moncton",
-                "company_name": "A corp.",
-                "country_code": "CA",
-                "email": "test@gmail.com",
-                "person_name": "John Moe",
-                "phone_number": "+1 514-000-0000",
-                "postal_code": "E1C4Z8",
-                "residential": False,
-                "state_code": "NB",
-                "validate_location": None,
-                "validation": None,
+        "update_address_template": {
+            "template": {
+                "id": ANY,
+                "address": {
+                    "address_line1": "125 Church St",
+                    "address_line2": None,
+                    "city": "Moncton",
+                    "company_name": "A corp.",
+                    "country_code": "CA",
+                    "email": "test@gmail.com",
+                    "person_name": "John Moe",
+                    "phone_number": "+1 514-000-0000",
+                    "postal_code": "E1C4Z8",
+                    "residential": False,
+                    "state_code": "NB",
+                    "validate_location": None,
+                    "validation": None,
+                },
+                "id": ANY,
+                "is_default": False,
+                "label": "Warehouse Update",
             },
-            "id": ANY,
-            "is_default": False,
-            "label": "Warehouse Update",
             "errors": None,
         }
     }
@@ -474,20 +495,22 @@ PARCEL_TEMPLATE_DATA = {
 
 PARCEL_TEMPLATE_RESPONSE = {
     "data": {
-        "create_template": {
+        "create_parcel_template": {
             "errors": None,
-            "id": ANY,
-            "is_default": False,
-            "label": "Purple Pack",
-            "parcel": {
-                "dimension_unit": "CM",
-                "height": 32.0,
-                "length": 32.0,
-                "package_preset": "canadapost_corrugated_small_box",
-                "packaging_type": None,
-                "weight": 1.0,
-                "weight_unit": "KG",
-                "width": 42.0,
+            "template": {
+                "id": ANY,
+                "is_default": False,
+                "label": "Purple Pack",
+                "parcel": {
+                    "dimension_unit": "CM",
+                    "height": 32.0,
+                    "length": 32.0,
+                    "package_preset": "canadapost_corrugated_small_box",
+                    "packaging_type": None,
+                    "weight": 1.0,
+                    "weight_unit": "KG",
+                    "width": 42.0,
+                },
             },
         }
     }
@@ -504,20 +527,22 @@ PARCEL_TEMPLATE_UPDATE_DATA = {
 
 PARCEL_TEMPLATE_UPDATE_RESPONSE = {
     "data": {
-        "update_template": {
+        "update_parcel_template": {
             "errors": None,
-            "id": ANY,
-            "is_default": False,
-            "label": "Purple Pack",
-            "parcel": {
-                "dimension_unit": "CM",
-                "height": 32.0,
-                "length": 32.0,
-                "package_preset": "canadapost_corrugated_small_box",
-                "packaging_type": None,
-                "weight": 0.45,
-                "weight_unit": "LB",
-                "width": 42.0,
+            "template": {
+                "id": ANY,
+                "is_default": False,
+                "label": "Purple Pack",
+                "parcel": {
+                    "dimension_unit": "CM",
+                    "height": 32.0,
+                    "length": 32.0,
+                    "package_preset": "canadapost_corrugated_small_box",
+                    "packaging_type": None,
+                    "weight": 0.45,
+                    "weight_unit": "LB",
+                    "width": 42.0,
+                },
             },
         }
     }
@@ -544,44 +569,47 @@ CUSTOMS_TEMPLATE_DATA = {
 
 CUSTOMS_TEMPLATE_RESPONSE = {
     "data": {
-        "create_template": {
-            "customs": {
-                "certify": None,
-                "commercial_invoice": None,
-                "commodities": [
-                    {
-                        "description": None,
-                        "id": ANY,
-                        "origin_country": None,
-                        "quantity": 4,
-                        "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
-                        "value_amount": None,
-                        "value_currency": None,
-                        "weight": 0.75,
-                        "weight_unit": "KG",
-                    },
-                    {
-                        "description": None,
-                        "id": ANY,
-                        "origin_country": None,
-                        "quantity": None,
-                        "sku": "6787L8K7J8L7J8L7K8",
-                        "value_amount": None,
-                        "value_currency": None,
-                        "weight": 1.15,
-                        "weight_unit": "KG",
-                    },
-                ],
-                "content_description": None,
-                "content_type": "documents",
-                "duty": None,
-                "incoterm": "DDU",
-                "invoice": None,
-                "signer": None,
+        "create_customs_template": {
+            "template": {
+                "id": ANY,
+                "customs": {
+                    "certify": None,
+                    "commercial_invoice": None,
+                    "commodities": [
+                        {
+                            "description": None,
+                            "id": ANY,
+                            "origin_country": None,
+                            "quantity": 4,
+                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "value_amount": None,
+                            "value_currency": None,
+                            "weight": 0.75,
+                            "weight_unit": "KG",
+                        },
+                        {
+                            "description": None,
+                            "id": ANY,
+                            "origin_country": None,
+                            "quantity": None,
+                            "sku": "6787L8K7J8L7J8L7K8",
+                            "value_amount": None,
+                            "value_currency": None,
+                            "weight": 1.15,
+                            "weight_unit": "KG",
+                        },
+                    ],
+                    "content_description": None,
+                    "content_type": "documents",
+                    "duty": None,
+                    "incoterm": "DDU",
+                    "invoice": None,
+                    "signer": None,
+                },
+                "id": ANY,
+                "is_default": False,
+                "label": "Customs info template",
             },
-            "id": ANY,
-            "is_default": False,
-            "label": "Customs info template",
             "errors": None,
         }
     }
@@ -596,56 +624,58 @@ CUSTOMS_TEMPLATE_UPDATE_DATA = {
                     "weight_unit": "LB",
                 }
             ],
-            "duty": '{"paid_by": "SENDER"}',
+            "duty": {"paid_by": "SENDER"},
         }
     }
 }
 
 CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
     "data": {
-        "update_template": {
-            "id": ANY,
-            "is_default": False,
-            "label": "Customs info template",
-            "customs": {
-                "incoterm": "DDU",
-                "content_type": "documents",
-                "commercial_invoice": None,
-                "content_description": None,
-                "duty": {
-                    "account_number": None,
-                    "bill_to": None,
-                    "currency": None,
-                    "declared_value": None,
-                    "paid_by": "SENDER",
+        "update_customs_template": {
+            "template": {
+                "id": ANY,
+                "is_default": False,
+                "label": "Customs info template",
+                "customs": {
+                    "incoterm": "DDU",
+                    "content_type": "documents",
+                    "commercial_invoice": None,
+                    "content_description": None,
+                    "duty": {
+                        "account_number": None,
+                        "bill_to": None,
+                        "currency": None,
+                        "declared_value": None,
+                        "paid_by": "sender",
+                    },
+                    "invoice": None,
+                    "signer": None,
+                    "certify": None,
+                    "commodities": [
+                        {
+                            "id": ANY,
+                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "weight": 1.0,
+                            "quantity": 4,
+                            "weight_unit": "LB",
+                            "description": None,
+                            "value_amount": None,
+                            "value_currency": None,
+                            "origin_country": None,
+                        },
+                        {
+                            "id": ANY,
+                            "sku": "6787L8K7J8L7J8L7K8",
+                            "weight": 1.15,
+                            "quantity": None,
+                            "weight_unit": "KG",
+                            "description": None,
+                            "value_amount": None,
+                            "value_currency": None,
+                            "origin_country": None,
+                        },
+                    ],
                 },
-                "invoice": None,
-                "signer": None,
-                "certify": None,
-                "commodities": [
-                    {
-                        "id": ANY,
-                        "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
-                        "weight": 1.0,
-                        "quantity": 4,
-                        "weight_unit": "LB",
-                        "description": None,
-                        "value_amount": None,
-                        "value_currency": None,
-                        "origin_country": None,
-                    },
-                    {
-                        "id": ANY,
-                        "sku": "6787L8K7J8L7J8L7K8",
-                        "weight": 1.15,
-                        "quantity": None,
-                        "weight_unit": "KG",
-                        "description": None,
-                        "value_amount": None,
-                        "value_currency": None,
-                        "origin_country": None,
-                    },
-                ],
             },
             "errors": None,
         }

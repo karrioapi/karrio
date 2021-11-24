@@ -1,5 +1,6 @@
 import logging
 import graphene
+from graphene_django.types import ErrorType
 from graphene_django.rest_framework import mutation
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
@@ -9,9 +10,11 @@ from django.core.exceptions import ValidationError
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
 from purplship.server.user.serializers import TokenSerializer, Token
 from purplship.server.providers import models as providers
+from purplship.server.graph import models as graph
 import purplship.server.graph.forms as forms
 import purplship.server.graph.serializers as serializers
 import purplship.server.graph.extension.base.types as types
+import purplship.server.graph.extension.base.inputs as inputs
 
 logger = logging.getLogger(__name__)
 
@@ -72,48 +75,83 @@ class UpdateConnection(SerializerMutation):
                 serializers.ServiceLevelModelSerializer,
                 settings,
                 payload=dict(services=services),
-                **extra
+                **extra,
             )
 
         return kwargs
 
 
-class CreateTemplate(SerializerMutation):
-    class Meta:
-        model_operations = ("create",)
-        convert_choices_to_enum = False
-        serializer_class = serializers.make_fields_optional(
-            serializers.TemplateModelSerializer
-        )
+def create_template_mutation(template: str, update: bool = False):
+    _type = getattr(types, f"{template}TemplateType")
+    _model = getattr(
+        inputs,
+        f"Update{template}TemplateInput"
+        if update
+        else f"Create{template}TemplateInput",
+    )
+    _props = {"id": (graphene.String(required=True) if update else None)}
+    _props[template.lower()] = graphene.Field(_model, required=True)
 
+    _Base = type("Base", (), _props)
 
-class UpdateTemplate(SerializerMutation):
-    class Meta:
-        model_operations = ("update",)
-        convert_choices_to_enum = False
-        serializer_class = serializers.make_fields_optional(
-            serializers.TemplateModelSerializer
-        )
+    class Mutation:
+        errors = graphene.List(ErrorType)
+        template = graphene.Field(_type)
 
-    @classmethod
-    def get_serializer_kwargs(cls, root, info, **input):
-        kwargs = super().get_serializer_kwargs(root, info, **input)
+        class Input(_Base):
+            label = graphene.String(required=not update)
+            is_default = graphene.Boolean(default=False)
 
-        instance = kwargs.get("instance")
-        customs_data = kwargs.get("data", {}).get("customs", {})
+        @classmethod
+        @types.login_required
+        def mutate_and_get_payload(cls, root, info, **input):
+            data = input.copy()
+            instance = (
+                graph.Template.access_by(info.context).get(id=input["id"])
+                if "id" in input
+                else None
+            )
+            customs_data = data.get("customs", {})
 
-        if "commodities" in customs_data and instance is not None:
-            customs = getattr(instance, "customs", None)
-            extra = {"context": info.context}
-            save_many_to_many_data(
-                "commodities",
-                serializers.CommodityModelSerializer,
-                customs,
-                payload=customs_data,
-                **extra
+            if "commodities" in customs_data and instance is not None:
+                customs = getattr(instance, "customs", None)
+                extra = {"context": info.context}
+                save_many_to_many_data(
+                    "commodities",
+                    serializers.CommodityModelSerializer,
+                    customs,
+                    payload=customs_data,
+                    **extra,
+                )
+
+            serializer = serializers.TemplateModelSerializer(
+                instance,
+                data=data,
+                context=info.context,
+                partial=(instance is not None),
             )
 
-        return kwargs
+            if not serializer.is_valid():
+                return cls(
+                    template=None, errors=ErrorType.from_errors(serializer.errors)
+                )
+
+            try:
+                template = (
+                    SerializerDecorator[serializers.TemplateModelSerializer](
+                        instance, data=data, context=info.context
+                    )
+                    .save()
+                    .instance
+                )
+                serializers.ensure_unique_default_related_data(
+                    data, context=info.context
+                )
+                return cls(template=template)
+            except Exception as e:
+                return cls(errors=ErrorType.from_errors(e))
+
+    return type(_model.__name__, (Mutation, graphene.relay.ClientIDMutation), {})
 
 
 class SystemCarrierMutation(graphene.relay.ClientIDMutation):
