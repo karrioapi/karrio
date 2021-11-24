@@ -157,6 +157,7 @@ ParsedRateResponseWithoutSelection = [
             "service_code": "carrier_standard",
             "service_name": "Standard",
             "weight_unit": "LB",
+            "active": True,
         },
         {
             "cost": "15.00",
@@ -167,6 +168,7 @@ ParsedRateResponseWithoutSelection = [
             "service_code": "carrier_premium",
             "service_name": "Premium",
             "weight_unit": "LB",
+            "active": True,
         },
     ],
     [],
@@ -183,6 +185,7 @@ ParsedRateResponseStandardService = [
             "service_code": "carrier_standard",
             "service_name": "Standard",
             "weight_unit": "LB",
+            "active": True,
         },
     ],
     [],
@@ -199,6 +202,7 @@ ParsedRateResponseHighWeightService = [
             "service_code": "carrier_premium",
             "service_name": "Premium",
             "weight_unit": "LB",
+            "active": True,
         }
     ],
     [
@@ -220,6 +224,7 @@ ParsedInternationalRateResponseService = [
             "service_code": "carrier_interational_parcel",
             "service_name": "International Parcel",
             "weight_unit": "LB",
+            "active": True,
         }
     ],
     [],
