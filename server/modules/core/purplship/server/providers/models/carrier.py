@@ -138,6 +138,7 @@ class ServiceLevel(OwnedEntity):
     service_name = models.CharField(max_length=50)
     service_code = models.CharField(max_length=50)
     description = models.CharField(max_length=250, null=True, blank=True)
+    active = models.BooleanField(default=True)
 
     cost = models.FloatField(blank=True, null=True)
     currency = models.CharField(max_length=4, choices=CURRENCIES, null=True, blank=True)
