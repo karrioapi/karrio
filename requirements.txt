@@ -21,7 +21,7 @@ carrier.usps==2021.6
 carrier.yanwen==2021.2.1
 carrier.yunexpress==2021.2.1
 certifi==2021.10.8
-charset-normalizer==2.0.7
+charset-normalizer==2.0.8
 click==8.0.3
 coreapi==2.3.3
 coreschema==0.0.4
@@ -44,7 +44,7 @@ graphql-relay==2.0.1
 gunicorn==20.1.0
 h11==0.12.0
 hiredis==2.0.0
-huey==2.4.1
+huey==2.4.2
 idna==3.3
 inflection==0.5.1
 itypes==1.2.0
@@ -56,7 +56,7 @@ lxml-stubs==0.3.0
 MarkupSafe==2.0.1
 more-itertools==8.12.0
 packaging==21.3
-phonenumbers==8.12.37
+phonenumbers==8.12.38
 Pillow==8.4.0
 promise==2.3
 psycopg2-binary==2.9.2
@@ -70,7 +70,7 @@ purplship.dhl-poland==2021.11
 purplship.dhl-universal==2021.11
 purplship.dicom==2021.10
 purplship.eshipper==2021.10
-purplship.fedex==2021.11.3
+purplship.fedex==2021.11.4
 purplship.freightcom==2021.10
 purplship.purolator==2021.10
 purplship.royalmail==2021.11
