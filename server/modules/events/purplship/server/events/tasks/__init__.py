@@ -5,7 +5,9 @@ from huey.contrib.djhuey import db_task, db_periodic_task
 from purplship.server.events.tasks import tracking, webhook
 
 logger = logging.getLogger(__name__)
-DEFAULT_TRACKERS_UPDATE_INTERVAL = int(getattr(settings, 'DEFAULT_TRACKERS_UPDATE_INTERVAL', 10800) / 60)
+DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
+    getattr(settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200) / 60
+)
 
 
 @db_periodic_task(crontab(minute=f"*/{DEFAULT_TRACKERS_UPDATE_INTERVAL}"))

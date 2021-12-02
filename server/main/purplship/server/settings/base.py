@@ -181,6 +181,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Purplship Middleware
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.CreatorAccess'
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.WideAccess'
+DEFAULT_TRACKERS_UPDATE_INTERVAL = config("TRACKING_PULSE", default=7200, cast=int)
 
 
 # Database

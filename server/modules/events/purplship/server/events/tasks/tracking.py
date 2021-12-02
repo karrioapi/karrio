@@ -1,7 +1,7 @@
 import time
 import logging
 import datetime
-from typing import List, cast, Tuple
+from typing import List, Tuple
 from itertools import groupby
 
 from django.conf import settings
@@ -22,7 +22,7 @@ RequestBatches = Tuple[Gateway, IRequestFrom, Delay, List[models.Tracking]]
 BatchResponse = List[Tuple[TrackingDetails, List[Message]]]
 
 DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
-    settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 10800
+    settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
 )
 
 
