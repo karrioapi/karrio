@@ -112,6 +112,18 @@ class Commodity(OwnedEntity):
     )
 
 
+class CustomsManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "commodities",
+                "created_by",
+            )
+        )
+
+
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
         "content_description",
@@ -127,6 +139,7 @@ class Customs(OwnedEntity):
         "options",
     ]
     RELATIONAL_PROPS = ["commodities"]
+    objects = CustomsManager()
 
     class Meta:
         db_table = "customs"
@@ -166,6 +179,19 @@ class Customs(OwnedEntity):
         return super().delete(*args, **kwargs)
 
 
+class PickupManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "pickup_carrier",
+                "shipments",
+                "created_by",
+            )
+        )
+
+
 class Pickup(OwnedEntity):
     DIRECT_PROPS = [
         "confirmation_number",
@@ -178,6 +204,7 @@ class Pickup(OwnedEntity):
         "pickup_charge",
         "created_by",
     ]
+    objects = PickupManager()
 
     class Meta:
         db_table = "pickup"
@@ -237,7 +264,18 @@ class Pickup(OwnedEntity):
         return [shipment.tracking_number for shipment in self.shipments.all()]
 
 
+class TrackingManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related("tracking_carrier", "created_by", "shipment")
+        )
+
+
 class Tracking(OwnedEntity):
+    objects = TrackingManager()
+
     class Meta:
         db_table = "tracking-status"
         verbose_name = "Tracking Status"
@@ -289,13 +327,29 @@ class Tracking(OwnedEntity):
         )
 
 
+class ShipmentManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "shipper",
+                "recipient",
+                "parcels",
+                "carriers",
+                "selected_rate_carrier",
+                "created_by",
+                "tracker",
+            )
+        )
+
+
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         "label",
         "options",
         "services",
         "status",
-        "service",
         "meta",
         "label_type",
         "tracking_number",
@@ -309,6 +363,7 @@ class Shipment(OwnedEntity):
         "reference",
     ]
     RELATIONAL_PROPS = ["shipper", "recipient", "parcels", "customs", "selected_rate"]
+    objects = ShipmentManager()
 
     class Meta:
         db_table = "shipment"

@@ -56,13 +56,13 @@ def update_trackers(
 
 def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatches]:
     start = 0
-    end = 5
+    end = 10
     batches = []
 
     while any(trackers[start:end]):
         try:
             # Add a request delay to avoid sending two request batches to a carrier at the same time
-            delay = int(((end / 5) * 10) - 10)
+            delay = int(((end / 10) * 10) - 10)
             # Get the common tracking carrier
             carrier = trackers[0].tracking_carrier
             # Collect the 5 trackers between the start and end indexes
@@ -85,8 +85,8 @@ def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatch
             logger.warning(f"failed to prepare tracking batch ({start}, {end}) request")
             logger.error(request_error, exc_info=True)
 
-        end += 5
-        start += 5
+        end += 10
+        start += 10
 
     return batches
 

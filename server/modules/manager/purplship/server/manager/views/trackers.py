@@ -62,6 +62,7 @@ class TrackerList(GenericAPIView):
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TrackerFilters
+    serializer_class = Trackers
     model = models.Tracking
 
     def get_queryset(self):

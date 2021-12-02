@@ -18,7 +18,6 @@ from purplship.server.core.exceptions import PurplShipApiException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.core.serializers import (
     MODELS,
-    CARRIERS,
     FlagField,
     ShipmentStatus,
     ErrorResponse,
@@ -107,6 +106,7 @@ class ShipmentList(GenericAPIView):
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ShipmentFilters
+    serializer_class = Shipments
     model = models.Shipment
 
     def get_queryset(self):

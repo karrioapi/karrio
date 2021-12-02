@@ -1,6 +1,6 @@
 import logging
 
-from rest_framework import status, serializers
+from rest_framework import status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -20,46 +20,53 @@ from purplship.server.core.serializers import (
 )
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.manager.router import router
-from purplship.server.manager.serializers import PickupData, PickupUpdateData, PickupCancelData
+from purplship.server.manager.serializers import (
+    PickupData,
+    PickupUpdateData,
+    PickupCancelData,
+)
 import purplship.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-Pickups = PaginatedResult('PickupList', Pickup)
+Pickups = PaginatedResult("PickupList", Pickup)
 
 
 class PickupFilters(filters.FilterSet):
     parameters = [
-        openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
     ]
 
     class Meta:
         model = models.Pickup
-        fields = ['test_mode']
+        fields = ["test_mode"]
 
 
 class PickupList(GenericAPIView):
-    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    pagination_class = type(
+        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
+    )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = PickupFilters
+    serializer_class = Pickups
     model = models.Pickup
 
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickups(), 400: ErrorResponse()},
         manual_parameters=PickupFilters.parameters,
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request GET \\
                   --url '/v1/pickups' \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def get(self, request: Request):
         """
@@ -71,9 +78,8 @@ class PickupList(GenericAPIView):
 
 
 class PickupRequest(APIView):
-
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
@@ -81,8 +87,8 @@ class PickupRequest(APIView):
         request_body=PickupData(),
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request POST \\
                   --url /v1/pickups/<PICKUP_ID> \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -104,9 +110,9 @@ class PickupRequest(APIView):
                         "8545763607864201002"
                     ]
                 }'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def post(self, request: Request, carrier_name: str):
         """
@@ -117,29 +123,31 @@ class PickupRequest(APIView):
             "carrier_name": carrier_name,
         }
 
-        pickup = SerializerDecorator[PickupData](
-            data=request.data, context=request).save(carrier_filter=carrier_filter).instance
+        pickup = (
+            SerializerDecorator[PickupData](data=request.data, context=request)
+            .save(carrier_filter=carrier_filter)
+            .instance
+        )
 
         return Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
 
 
 class PickupDetails(APIView):
-
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request GET \\
                   --url /v1/pickups/<PICKUP_ID> \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def get(self, request: Request, pk: str):
         """Retrieve a scheduled pickup."""
@@ -147,15 +155,15 @@ class PickupDetails(APIView):
         return Response(Pickup(pickup).data)
 
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupUpdateData(),
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request PATCH \\
                   --url /v1/pickups/<PICKUP_ID> \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -168,52 +176,75 @@ class PickupDetails(APIView):
                     "ready_time": "13:00",
                     "closing_time": "20:00",
                 }'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def patch(self, request: Request, pk: str):
         """
         Modify a pickup for one or many shipments with labels already purchased.
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
-        instance = SerializerDecorator[PickupUpdateData](
-            pickup, data=request.data, context=request).save().instance
+        instance = (
+            SerializerDecorator[PickupUpdateData](
+                pickup, data=request.data, context=request
+            )
+            .save()
+            .instance
+        )
 
         return Response(Pickup(instance).data, status=status.HTTP_200_OK)
 
 
 class PickupCancel(APIView):
-
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupCancelData(),
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request POST \\
                   --url /v1/pickups/<PICKUP_ID> \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def post(self, request: Request, pk: str):
         """
         Cancel a pickup of one or more shipments.
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
-        confirmation = SerializerDecorator[PickupCancelData](
-            pickup, data=request.data, context=request).save().instance
+        confirmation = (
+            SerializerDecorator[PickupCancelData](
+                pickup, data=request.data, context=request
+            )
+            .save()
+            .instance
+        )
 
-        return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
+        return Response(
+            OperationConfirmation(confirmation).data, status=status.HTTP_200_OK
+        )
 
 
-router.urls.append(path('pickups', PickupList.as_view(), name="shipment-pickup-list"))
-router.urls.append(path('pickups/<str:pk>', PickupDetails.as_view(), name="shipment-pickup-details"))
-router.urls.append(path('pickups/<str:pk>/cancel', PickupCancel.as_view(), name="shipment-pickup-cancel"))
-router.urls.append(path('pickups/<str:carrier_name>/schedule', PickupRequest.as_view(), name="shipment-pickup-request"))
+router.urls.append(path("pickups", PickupList.as_view(), name="shipment-pickup-list"))
+router.urls.append(
+    path("pickups/<str:pk>", PickupDetails.as_view(), name="shipment-pickup-details")
+)
+router.urls.append(
+    path(
+        "pickups/<str:pk>/cancel", PickupCancel.as_view(), name="shipment-pickup-cancel"
+    )
+)
+router.urls.append(
+    path(
+        "pickups/<str:carrier_name>/schedule",
+        PickupRequest.as_view(),
+        name="shipment-pickup-request",
+    )
+)
