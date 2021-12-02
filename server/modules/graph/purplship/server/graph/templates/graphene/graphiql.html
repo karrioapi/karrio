@@ -27,7 +27,7 @@ add "&raw" to the end of the URL within a browser.
       height: 40px;
       background-color: rgba(50, 50, 159, 70%);
       border-radius: 50%;
-      z-index: 2;
+      z-index: 10;
       box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
     }
     @media screen and (max-width: 50rem) {
@@ -69,7 +69,7 @@ add "&raw" to the end of the URL within a browser.
   </script>
   <script src="{% static 'graphene_django/graphiql.js' %}"></script>
 
-  <a class="admin-link" href="/admin" title="Admin Console">
+  <a class="admin-link" href="{% url 'admin:index' %}" title="Admin Console">
     <img src="{% static 'img/dashboard.svg' %}" width="26" style="margin: 7px;">
   </a>
 </body>

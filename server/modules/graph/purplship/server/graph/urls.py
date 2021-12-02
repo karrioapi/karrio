@@ -12,7 +12,7 @@ class GraphQLView(AllAuthentication, BaseGraphQLView):
     pass
 
 
-app_name = 'purplship.server.graph'
+app_name = "purplship.server.graph"
 urlpatterns = [
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
 ]

@@ -107,6 +107,20 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 
 
+# components path settings
+BASE_PATH = config("BASE_PATH", default="")
+if len(BASE_PATH) > 0 and BASE_PATH.startswith("/"):
+    BASE_PATH = BASE_PATH[1:]
+if len(BASE_PATH) > 0 and not BASE_PATH.endswith("/"):
+    BASE_PATH = BASE_PATH + "/"
+
+ROOT_URLCONF = "purplship.server.urls"
+LOGOUT_REDIRECT_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/admin/"
+LOGIN_URL = "/admin/login/"
+OPEN_API_PATH = "openapi/"
+
+
 BASE_APPS = [
     "purplship.server.user",
     "django.contrib.auth",
@@ -141,12 +155,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-ROOT_URLCONF = "purplship.server.urls"
-LOGOUT_REDIRECT_URL = "/admin/login/"
-LOGIN_REDIRECT_URL = "/admin/"
-LOGIN_URL = "/admin/login/"
-OPEN_API_PATH = "openapi/"
 
 
 TEMPLATES = [
