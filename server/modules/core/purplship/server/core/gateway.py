@@ -20,6 +20,7 @@ from purplship.server.core.utils import (
     upper,
     is_sdk_message,
     compute_tracking_status,
+    filter_rate_carrier_compatible_gateways,
 )
 
 logger = logging.getLogger(__name__)
@@ -73,11 +74,11 @@ class Carriers:
             )
             query += (carrier_is_active | system_carrier_is_active,)
 
-        # Check if a specific carrier_id is provide, to add it to the query
+        # Check if a specific carrier_id is provided, to add it to the query
         if "carrier_id" in list_filter:
             query += (Q(carrier_id=list_filter["carrier_id"]),)
 
-        # Check if a specific carrier_id is provide, to add it to the query
+        # Check if a specific carrier_id is provided, to add it to the query
         if "capability" in list_filter:
             query += (Q(capabilities__contains=[list_filter["capability"]]),)
 
@@ -454,6 +455,7 @@ class Rates:
         payload: dict, carriers: List[models.Carrier] = None, **carrier_filters
     ) -> datatypes.RateResponse:
         carrier_ids = payload.get("carrier_ids", [])
+        shipper_country_code = payload["shipper"].get("country_code")
         carriers = carriers or Carriers.list(
             **{
                 **dict(active=True, capability="rating", carrier_ids=carrier_ids),
@@ -461,9 +463,9 @@ class Rates:
             }
         )
 
-        gateways = [
-            c.gateway for c in carriers if "get_rates" in c.gateway.capabilities
-        ]
+        gateways = filter_rate_carrier_compatible_gateways(
+            carriers, carrier_ids, shipper_country_code
+        )
 
         if len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")

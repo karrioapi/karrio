@@ -80,3 +80,30 @@ def is_sdk_message(
     msg = next(iter(message), None) if isinstance(message, list) else message
 
     return "SHIPPING_SDK_" in getattr(msg, "code", "")
+
+
+def filter_rate_carrier_compatible_gateways(
+    carriers: List, carrier_ids: List[str], shipper_country_code: Optional[str] = None
+) -> List:
+    """
+    This function filters the carriers based on the capability to "get_rates"
+    and if no explicit carrier list is provided, it will filter out any
+    carrier that does not support the shipper's country code.
+    """
+    return [
+        carrier.gateway
+        for carrier in carriers
+        if (
+            ("get_rates" in carrier.gateway.capabilities and len(carrier_ids) > 0)
+            or (
+                "get_rates" in carrier.gateway.capabilities
+                and len(carrier_ids) == 0
+                and shipper_country_code is not None
+                and any(carrier.gateway.settings.account_country_code or [])
+                and (
+                    carrier.gateway.settings.account_country_code
+                    == shipper_country_code
+                )
+            )
+        )
+    ]
