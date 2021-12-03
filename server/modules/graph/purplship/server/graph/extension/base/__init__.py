@@ -39,11 +39,19 @@ class Query:
     logs = django_filter.DjangoFilterConnectionField(
         types.LogType, filterset_class=types.LogFilter
     )
-    shipments = django_filter.DjangoFilterConnectionField(types.ShipmentType)
-    trackers = django_filter.DjangoFilterConnectionField(types.TrackerType)
+    shipments = django_filter.DjangoFilterConnectionField(
+        types.ShipmentType, filterset_class=types.ShipmentFilter
+    )
+    trackers = django_filter.DjangoFilterConnectionField(
+        types.TrackerType, filterset_class=types.TrackerFilter
+    )
 
-    webhooks = django_filter.DjangoFilterConnectionField(types.WebhookType)
-    events = django_filter.DjangoFilterConnectionField(types.EventType)
+    webhooks = django_filter.DjangoFilterConnectionField(
+        types.WebhookType, filterset_class=types.WebhookFilter
+    )
+    events = django_filter.DjangoFilterConnectionField(
+        types.EventType, filterset_class=types.EventFilter
+    )
     event = graphene.Field(types.EventType, id=graphene.String(required=True))
 
     @types.login_required

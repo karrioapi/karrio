@@ -4,12 +4,14 @@ import django_filters
 import graphene_django
 from graphene.types import generic
 from graphene.types.scalars import Scalar
-from graphene.types.objecttype import ObjectType
 from rest_framework import exceptions
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-
+from purplship.core.utils import DP
+from purplship.server.events.serializers import EventTypes
+import purplship.server.core.serializers as serializers
 import purplship.server.core.models as core
 import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
@@ -18,6 +20,7 @@ import purplship.server.graph.models as graph
 import purplship.server.user.models as auth
 
 User = get_user_model()
+CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 def login_required(func):
@@ -87,14 +90,32 @@ class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType)
 
 
 class LogFilter(django_filters.FilterSet):
+    api_endpoint = django_filters.CharFilter(field_name="path")
+    date_after = django_filters.DateFilter(field_name="requested_at", lookup_expr="gte")
+    date_before = django_filters.DateFilter(
+        field_name="requested_at", lookup_expr="lte"
+    )
+    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
+    method = django_filters.ChoiceFilter(
+        field_name="method",
+        choices=[
+            ("GET", "GET"),
+            ("POST", "POST"),
+            ("PATCH", "PATCH"),
+            ("DELETE", "DELETE"),
+        ],
+    )
     status = django_filters.ChoiceFilter(
         method="status_filter",
         choices=[("succeeded", "succeeded"), ("failed", "failed")],
     )
+    status_code = django_filters.NumberFilter(
+        field_name="status_code", lookup_expr="exact"
+    )
 
     class Meta:
         model = core.APILog
-        fields = {"path": ["contains"]}
+        fields = []
 
     def status_filter(self, queryset, name, value):
         if value == "succeeded":
@@ -104,11 +125,44 @@ class LogFilter(django_filters.FilterSet):
 
         return queryset
 
+    def entity_filter(self, queryset, name, value):
+        try:
+            return queryset.filter(response__icontains=value)
+        except:
+            return queryset
+
 
 class LogType(graphene_django.DjangoObjectType):
+    data = generic.GenericScalar()
+    response = generic.GenericScalar()
+    query_params = generic.GenericScalar()
+
     class Meta:
         model = core.APILog
+        exclude = (
+            "errors",
+            "view",
+            "view_method",
+        )
         interfaces = (CustomNode,)
+
+    def resolve_response(self, info):
+        try:
+            return DP.to_dict(self.response)
+        except:
+            return self.response
+
+    def resolve_data(self, info):
+        try:
+            return DP.to_dict(self.data)
+        except:
+            return self.data
+
+    def resolve_query_params(self, info):
+        try:
+            return DP.to_dict(self.query_params)
+        except:
+            return self.query_params
 
 
 class TokenType(graphene_django.DjangoObjectType):
@@ -242,14 +296,50 @@ class TrackingEventType(graphene.ObjectType):
     time = graphene.String()
 
 
-class TrackerType(graphene_django.DjangoObjectType):
-    tracking_carrier = graphene.Field(SystemConnectionType)
-    events = graphene.List(TrackingEventType)
+class TrackerFilter(django_filters.FilterSet):
+    created_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+    carrier_name = django_filters.ChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in CARRIER_NAMES],
+    )
+    status = django_filters.ChoiceFilter(
+        field_name="status",
+        choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
+    )
+    test_mode = django_filters.BooleanFilter(field_name="test_mode")
 
     class Meta:
         model = manager.Tracking
-        filter_fields = ["delivered"]
+        fields = []
+
+    def carrier_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(**{f"tracking_carrier__{value}settings__isnull": False}),
+        )
+
+
+class TrackerType(graphene_django.DjangoObjectType):
+    carrier_id = graphene.String()
+    carrier_name = graphene.String()
+
+    events = graphene.List(TrackingEventType)
+    status = graphene.Enum.from_enum(serializers.TrackerStatus)()
+
+    class Meta:
+        model = manager.Tracking
+        filter_fields = ["tracking_carrier"]
         interfaces = (CustomNode,)
+
+    def resolve_carrier_id(self, info):
+        return getattr(self.tracking_carrier, "carrier_id", None)
+
+    def resolve_carrier_name(self, info):
+        return getattr(self.tracking_carrier, "carrier_name", None)
 
 
 class PaymentType(graphene.ObjectType):
@@ -257,6 +347,59 @@ class PaymentType(graphene.ObjectType):
     currency = graphene.String()
     account_number = graphene.String()
     id = graphene.String()
+
+
+class ShipmentFilter(django_filters.FilterSet):
+    address = django_filters.CharFilter(
+        field_name="recipient__address_line1", lookup_expr="icontains"
+    )
+    created_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+    carrier_name = django_filters.ChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in CARRIER_NAMES],
+    )
+    reference = django_filters.CharFilter(
+        field_name="reference", lookup_expr="icontains"
+    )
+    service = django_filters.CharFilter(field_name="selected_rate__service")
+    status = django_filters.ChoiceFilter(
+        field_name="status",
+        choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
+    )
+    option_key = django_filters.CharFilter(
+        field_name="options",
+        method="option_key_filter",
+    )
+    option_value = django_filters.CharFilter(
+        field_name="options",
+        method="option_value_filter",
+    )
+    test_mode = django_filters.BooleanFilter(field_name="test_mode")
+
+    class Meta:
+        model = core.APILog
+        fields = []
+
+    def carrier_filter(self, queryset, name, value):
+        try:
+            return queryset.filter(
+                Q(meta__rate_provider=value)
+                | Q(**{f"selected_rate_carrier__{value}settings__isnull": False}),
+            )
+        except Exception as e:
+            print(e)
+            return queryset
+
+    def option_key_filter(self, queryset, name, value):
+        return queryset.filter(Q(options__has_key=value))
+
+    def option_value_filter(self, queryset, name, value):
+        return queryset.filter(Q(options__values__contains=value))
 
 
 class ShipmentType(graphene_django.DjangoObjectType):
@@ -269,14 +412,20 @@ class ShipmentType(graphene_django.DjangoObjectType):
     parcels = graphene.List(ParcelType)
     payment = graphene.Field(PaymentType)
 
+    service = graphene.String()
     services = graphene.List(graphene.String)
     carrier_ids = graphene.List(graphene.String)
     messages = graphene.List(MessageType)
+    selected_rate_id = graphene.String()
     selected_rate = graphene.Field(RateType)
     rates = graphene.List(RateType)
 
+    carrier_ids = graphene.List(graphene.String)
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
+    tracker_id = graphene.String()
+
+    status = graphene.Enum.from_enum(serializers.ShipmentStatus)()
 
     class Meta:
         model = manager.Shipment
@@ -284,25 +433,70 @@ class ShipmentType(graphene_django.DjangoObjectType):
         filter_fields = ["status"]
         interfaces = (CustomNode,)
 
-    def resolve_carrier_ids(self, info):
-        return [c.carrier_id for c in self.carriers or []]
-
     def resolve_parcels(self, info):
         return self.parcels.all()
 
     def resolve_carrier_id(self, info):
         return getattr(self.selected_rate_carrier, "carrier_id", None)
 
+    def resolve_carrier_ids(self, info):
+        return getattr(self, "carrier_ids", None)
+
     def resolve_carrier_name(self, info):
         return getattr(self.selected_rate_carrier, "carrier_name", None)
+
+
+class WebhookFilter(django_filters.FilterSet):
+    created_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+    description = django_filters.CharFilter(
+        field_name="description", lookup_expr="icontains"
+    )
+    events = django_filters.MultipleChoiceFilter(
+        field_name="enabled_events",
+        method="events_filter",
+        choices=[(c.value, c.value) for c in list(EventTypes)],
+    )
+    disabled = django_filters.BooleanFilter(field_name="disabled")
+    test_mode = django_filters.BooleanFilter(field_name="test_mode")
+    url = django_filters.CharFilter(field_name="url", lookup_expr="icontains")
+
+    class Meta:
+        model = events.Webhook
+        fields = []
+
+    def events_filter(self, queryset, name, values):
+        return queryset.filter(
+            Q(enabled_events__contains=values) | Q(enabled_events__contains=["all"])
+        )
 
 
 class WebhookType(graphene_django.DjangoObjectType):
     class Meta:
         model = events.Webhook
         exclude = ("failure_streak_count",)
-        filter_fields = {"description": ["icontains"]}
         interfaces = (CustomNode,)
+
+
+class EventFilter(django_filters.FilterSet):
+    date_after = django_filters.DateFilter(field_name="created_at", lookup_expr="gte")
+    date_before = django_filters.DateFilter(field_name="created_at", lookup_expr="lte")
+    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
+    type = django_filters.CharFilter(field_name="type", lookup_expr="iexact")
+
+    class Meta:
+        model = events.Event
+        fields = []
+
+    def entity_filter(self, queryset, name, value):
+        try:
+            return queryset.filter(data__icontains=value)
+        except:
+            return queryset
 
 
 class EventType(graphene_django.DjangoObjectType):

@@ -531,7 +531,47 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "path__contains",
+                  "name": "api_endpoint",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "date_after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Date",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "date_before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Date",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "entity_id",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "method",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
@@ -545,6 +585,16 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "status_code",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Float",
                     "ofType": null
                   }
                 }
@@ -614,10 +664,100 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "address",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "created_after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "created_before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "carrier_name",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "reference",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "service",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "status",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "option_key",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "option_value",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "test_mode",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 }
@@ -687,7 +827,47 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "delivered",
+                  "name": "created_after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "created_before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "carrier_name",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "status",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "test_mode",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
@@ -760,7 +940,71 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "description__icontains",
+                  "name": "created_after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "created_before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "description",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "events",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "disabled",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "test_mode",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "url",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
@@ -827,6 +1071,36 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "date_after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Date",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "date_before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Date",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "entity_id",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -1148,10 +1422,10 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "delivered",
+                  "name": "tracking_carrier",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Boolean",
+                    "name": "ID",
                     "ofType": null
                   }
                 }
@@ -1411,16 +1685,6 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": null,
-                  "name": "description__icontains",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -7106,17 +7370,13 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "status",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "TrackingStatus",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "TrackerStatus",
+                "ofType": null
               }
             },
             {
@@ -7206,13 +7466,17 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": null,
+              "description": "",
               "isDeprecated": false,
               "name": "tracking_carrier",
               "type": {
-                "kind": "OBJECT",
-                "name": "SystemConnectionType",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SystemConnectionType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -7249,6 +7513,30 @@
                     }
                   }
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "carrier_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "carrier_name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             }
           ],
@@ -7357,34 +7645,34 @@
           "enumValues": [
             {
               "deprecationReason": null,
-              "description": "pending",
+              "description": null,
               "isDeprecated": false,
-              "name": "PENDING"
+              "name": "pending"
             },
             {
               "deprecationReason": null,
-              "description": "in-transit",
+              "description": null,
               "isDeprecated": false,
-              "name": "IN_TRANSIT"
+              "name": "in_transit"
             },
             {
               "deprecationReason": null,
-              "description": "incident",
+              "description": null,
               "isDeprecated": false,
-              "name": "INCIDENT"
+              "name": "incident"
             },
             {
               "deprecationReason": null,
-              "description": "delivered",
+              "description": null,
               "isDeprecated": false,
-              "name": "DELIVERED"
+              "name": "delivered"
             }
           ],
           "fields": null,
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "TrackingStatus",
+          "name": "TrackerStatus",
           "possibleTypes": null
         },
         {
@@ -7539,17 +7827,13 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "status",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "ShipmentStatus",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "ShipmentStatus",
+                "ofType": null
               }
             },
             {
@@ -7843,10 +8127,10 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "delivered",
+                  "name": "tracking_carrier",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Boolean",
+                    "name": "ID",
                     "ofType": null
                   }
                 }
@@ -7918,6 +8202,30 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "service",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "selected_rate_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "carrier_ids",
               "type": {
                 "kind": "LIST",
@@ -7927,6 +8235,18 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "tracker_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             }
           ],
@@ -7947,39 +8267,39 @@
           "enumValues": [
             {
               "deprecationReason": null,
-              "description": "created",
+              "description": null,
               "isDeprecated": false,
-              "name": "CREATED"
+              "name": "created"
             },
             {
               "deprecationReason": null,
-              "description": "purchased",
+              "description": null,
               "isDeprecated": false,
-              "name": "PURCHASED"
+              "name": "purchased"
             },
             {
               "deprecationReason": null,
-              "description": "cancelled",
+              "description": null,
               "isDeprecated": false,
-              "name": "CANCELLED"
+              "name": "cancelled"
             },
             {
               "deprecationReason": null,
-              "description": "shipped",
+              "description": null,
               "isDeprecated": false,
-              "name": "SHIPPED"
+              "name": "shipped"
             },
             {
               "deprecationReason": null,
-              "description": "in-transit",
+              "description": null,
               "isDeprecated": false,
-              "name": "IN_TRANSIT"
+              "name": "transit"
             },
             {
               "deprecationReason": null,
-              "description": "delivered",
+              "description": null,
               "isDeprecated": false,
-              "name": "DELIVERED"
+              "name": "delivered"
             }
           ],
           "fields": null,
@@ -9385,30 +9705,6 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "method called by this endpoint",
-              "isDeprecated": false,
-              "name": "view",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "",
-              "isDeprecated": false,
-              "name": "view_method",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "remote_addr",
@@ -9457,48 +9753,36 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "query_params",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "data",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "response",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "",
-              "isDeprecated": false,
-              "name": "errors",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
