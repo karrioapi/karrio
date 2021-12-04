@@ -39,20 +39,26 @@ class Query:
     logs = django_filter.DjangoFilterConnectionField(
         types.LogType, filterset_class=types.LogFilter
     )
+
+    shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
     shipments = django_filter.DjangoFilterConnectionField(
         types.ShipmentType, filterset_class=types.ShipmentFilter
     )
+
+    tracker = graphene.Field(types.TrackerType, id=graphene.String(required=True))
     trackers = django_filter.DjangoFilterConnectionField(
         types.TrackerType, filterset_class=types.TrackerFilter
     )
 
+    webhook = graphene.Field(types.WebhookType, id=graphene.String(required=True))
     webhooks = django_filter.DjangoFilterConnectionField(
         types.WebhookType, filterset_class=types.WebhookFilter
     )
+
+    event = graphene.Field(types.EventType, id=graphene.String(required=True))
     events = django_filter.DjangoFilterConnectionField(
         types.EventType, filterset_class=types.EventFilter
     )
-    event = graphene.Field(types.EventType, id=graphene.String(required=True))
 
     @types.login_required
     def resolve_user(self, info):
@@ -102,12 +108,24 @@ class Query:
         return api.APILog.access_by(info.context)
 
     @types.login_required
+    def resolve_shipment(self, info, **kwargs):
+        return manager.Shipment.access_by(info.context).filter(**kwargs).first()
+
+    @types.login_required
     def resolve_shipments(self, info, **kwargs):
         return manager.Shipment.access_by(info.context)
 
     @types.login_required
+    def resolve_tracker(self, info, **kwargs):
+        return manager.Tracking.access_by(info.context).filter(**kwargs).first()
+
+    @types.login_required
     def resolve_trackers(self, info, **kwargs):
         return manager.Tracking.access_by(info.context)
+
+    @types.login_required
+    def resolve_webhook(self, info, **kwargs):
+        return events.Webhook.access_by(info.context).filter(**kwargs).first()
 
     @types.login_required
     def resolve_webhooks(self, info, **kwargs):

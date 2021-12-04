@@ -328,6 +328,7 @@ class TrackerType(graphene_django.DjangoObjectType):
     carrier_name = graphene.String()
 
     events = graphene.List(TrackingEventType)
+    messages = graphene.List(MessageType)
     status = graphene.Enum.from_enum(serializers.TrackerStatus)()
 
     class Meta:
