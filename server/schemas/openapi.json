@@ -2006,19 +2006,21 @@
                         }
                     },
                     {
-                        "name": "created_start",
+                        "name": "created_after",
                         "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
                             "type": "string",
-                            "format": "date"
+                            "format": "date-time"
                         }
                     },
                     {
-                        "name": "created_end",
+                        "name": "created_before",
                         "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
                             "type": "string",
-                            "format": "date"
+                            "format": "date-time"
                         }
                     },
                     {
@@ -2540,6 +2542,24 @@
                                 "incident",
                                 "delivered"
                             ]
+                        }
+                    },
+                    {
+                        "name": "created_after",
+                        "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "created_before",
+                        "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
                         }
                     },
                     {
