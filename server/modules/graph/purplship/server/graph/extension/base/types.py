@@ -2,12 +2,14 @@ import functools
 import graphene
 import django_filters
 import graphene_django
+import rest_framework.status as http_status
 from graphene.types import generic
 from graphene.types.scalars import Scalar
 from rest_framework import exceptions
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+import django.forms as forms
 
 from purplship.core.utils import DP
 from purplship.server.events.serializers import EventTypes
@@ -21,6 +23,7 @@ import purplship.server.user.models as auth
 
 User = get_user_model()
 CARRIER_NAMES = list(providers.MODELS.keys())
+HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
 
 
 def login_required(func):
@@ -35,6 +38,10 @@ def login_required(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+    pass
 
 
 class ObjectType(Scalar):
@@ -91,12 +98,14 @@ class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType)
 
 class LogFilter(django_filters.FilterSet):
     api_endpoint = django_filters.CharFilter(field_name="path")
-    date_after = django_filters.DateFilter(field_name="requested_at", lookup_expr="gte")
-    date_before = django_filters.DateFilter(
+    date_after = django_filters.DateTimeFilter(
+        field_name="requested_at", lookup_expr="gte"
+    )
+    date_before = django_filters.DateTimeFilter(
         field_name="requested_at", lookup_expr="lte"
     )
     entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    method = django_filters.ChoiceFilter(
+    method = django_filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
             ("GET", "GET"),
@@ -109,8 +118,10 @@ class LogFilter(django_filters.FilterSet):
         method="status_filter",
         choices=[("succeeded", "succeeded"), ("failed", "failed")],
     )
-    status_code = django_filters.NumberFilter(
-        field_name="status_code", lookup_expr="exact"
+    status_code = django_filters.TypedMultipleChoiceFilter(
+        coerce=int,
+        field_name="status_code",
+        choices=[(s, s) for s in HTTP_STATUS],
     )
 
     class Meta:
@@ -126,10 +137,7 @@ class LogFilter(django_filters.FilterSet):
         return queryset
 
     def entity_filter(self, queryset, name, value):
-        try:
-            return queryset.filter(response__icontains=value)
-        except:
-            return queryset
+        return queryset.filter(response__icontains=value)
 
 
 class LogType(graphene_django.DjangoObjectType):
@@ -303,11 +311,11 @@ class TrackerFilter(django_filters.FilterSet):
     created_before = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    carrier_name = django_filters.ChoiceFilter(
+    carrier_name = django_filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in CARRIER_NAMES],
     )
-    status = django_filters.ChoiceFilter(
+    status = django_filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
     )
@@ -317,10 +325,17 @@ class TrackerFilter(django_filters.FilterSet):
         model = manager.Tracking
         fields = []
 
-    def carrier_filter(self, queryset, name, value):
-        return queryset.filter(
-            Q(**{f"tracking_carrier__{value}settings__isnull": False}),
-        )
+    def carrier_filter(self, queryset, name, values):
+        _filters = [
+            Q(**{f"tracking_carrier__{value}settings__isnull": False})
+            for value in values
+        ]
+        query = _filters.pop()
+
+        for item in _filters:
+            query |= item
+
+        return queryset.filter(query)
 
 
 class TrackerType(graphene_django.DjangoObjectType):
@@ -360,19 +375,21 @@ class ShipmentFilter(django_filters.FilterSet):
     created_before = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    carrier_name = django_filters.ChoiceFilter(
+    carrier_name = django_filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in CARRIER_NAMES],
     )
     reference = django_filters.CharFilter(
         field_name="reference", lookup_expr="icontains"
     )
-    service = django_filters.CharFilter(field_name="selected_rate__service")
-    status = django_filters.ChoiceFilter(
+    service = CharInFilter(
+        method="service_filter", field_name="selected_rate__service", lookup_expr="in"
+    )
+    status = django_filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
     )
-    option_key = django_filters.CharFilter(
+    option_key = CharInFilter(
         field_name="options",
         method="option_key_filter",
     )
@@ -383,24 +400,29 @@ class ShipmentFilter(django_filters.FilterSet):
     test_mode = django_filters.BooleanFilter(field_name="test_mode")
 
     class Meta:
-        model = core.APILog
+        model = manager.Shipment
         fields = []
 
-    def carrier_filter(self, queryset, name, value):
-        try:
-            return queryset.filter(
-                Q(meta__rate_provider=value)
-                | Q(**{f"selected_rate_carrier__{value}settings__isnull": False}),
-            )
-        except Exception as e:
-            print(e)
-            return queryset
+    def carrier_filter(self, queryset, name, values):
+        _filters = [
+            Q(**{f"selected_rate_carrier__{value}settings__isnull": False})
+            for value in values
+        ]
+        query = Q(meta__rate_provider__in=values)
+
+        for item in _filters:
+            query |= item
+
+        return queryset.filter(query)
 
     def option_key_filter(self, queryset, name, value):
         return queryset.filter(Q(options__has_key=value))
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(Q(options__values__contains=value))
+
+    def service_filter(self, queryset, name, values):
+        return queryset.filter(Q(selected_rate__service__in=values))
 
 
 class ShipmentType(graphene_django.DjangoObjectType):
@@ -487,7 +509,7 @@ class EventFilter(django_filters.FilterSet):
     date_after = django_filters.DateFilter(field_name="created_at", lookup_expr="gte")
     date_before = django_filters.DateFilter(field_name="created_at", lookup_expr="lte")
     entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    type = django_filters.CharFilter(field_name="type", lookup_expr="iexact")
+    type = CharInFilter(field_name="type", lookup_expr="in")
 
     class Meta:
         model = events.Event

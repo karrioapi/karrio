@@ -544,7 +544,7 @@
                   "name": "date_after",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Date",
+                    "name": "DateTime",
                     "ofType": null
                   }
                 },
@@ -554,7 +554,7 @@
                   "name": "date_before",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Date",
+                    "name": "DateTime",
                     "ofType": null
                   }
                 },
@@ -573,9 +573,13 @@
                   "description": null,
                   "name": "method",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -593,9 +597,13 @@
                   "description": null,
                   "name": "status_code",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 }
               ],
@@ -723,9 +731,13 @@
                   "description": null,
                   "name": "carrier_name",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -743,9 +755,13 @@
                   "description": null,
                   "name": "service",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -753,9 +769,13 @@
                   "description": null,
                   "name": "status",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -763,9 +783,13 @@
                   "description": null,
                   "name": "option_key",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -903,9 +927,13 @@
                   "description": null,
                   "name": "carrier_name",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -913,9 +941,13 @@
                   "description": null,
                   "name": "status",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 },
                 {
@@ -1217,9 +1249,13 @@
                   "description": null,
                   "name": "type",
                   "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 }
               ],
