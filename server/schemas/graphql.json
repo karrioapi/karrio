@@ -1220,7 +1220,7 @@
                   "name": "date_after",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Date",
+                    "name": "DateTime",
                     "ofType": null
                   }
                 },
@@ -1230,7 +1230,7 @@
                   "name": "date_before",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Date",
+                    "name": "DateTime",
                     "ofType": null
                   }
                 },
@@ -1869,16 +1869,6 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": null,
-                  "name": "type",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -7491,9 +7481,13 @@
               "isDeprecated": false,
               "name": "status",
               "type": {
-                "kind": "ENUM",
-                "name": "TrackerStatus",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "TrackerStatus",
+                  "ofType": null
+                }
               }
             },
             {
@@ -7519,12 +7513,16 @@
               "isDeprecated": false,
               "name": "events",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "TrackingEventType",
-                  "ofType": null
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "TrackingEventType",
+                    "ofType": null
+                  }
                 }
               }
             },
@@ -7575,12 +7573,16 @@
               "isDeprecated": false,
               "name": "messages",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "MessageType",
-                  "ofType": null
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MessageType",
+                    "ofType": null
+                  }
                 }
               }
             },
@@ -7643,9 +7645,13 @@
               "isDeprecated": false,
               "name": "carrier_id",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -7655,9 +7661,13 @@
               "isDeprecated": false,
               "name": "carrier_name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -8013,9 +8023,13 @@
               "isDeprecated": false,
               "name": "status",
               "type": {
-                "kind": "ENUM",
-                "name": "ShipmentStatus",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "ShipmentStatus",
+                  "ofType": null
+                }
               }
             },
             {
@@ -8025,9 +8039,13 @@
               "isDeprecated": false,
               "name": "recipient",
               "type": {
-                "kind": "OBJECT",
-                "name": "AddressType",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "AddressType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -8037,9 +8055,13 @@
               "isDeprecated": false,
               "name": "shipper",
               "type": {
-                "kind": "OBJECT",
-                "name": "AddressType",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "AddressType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -8229,12 +8251,16 @@
               "isDeprecated": false,
               "name": "rates",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "RateType",
-                  "ofType": null
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "RateType",
+                    "ofType": null
+                  }
                 }
               }
             },
@@ -8245,12 +8271,16 @@
               "isDeprecated": false,
               "name": "parcels",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ParcelType",
-                  "ofType": null
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ParcelType",
+                    "ofType": null
+                  }
                 }
               }
             },

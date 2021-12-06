@@ -89,7 +89,11 @@ class TrackerList(GenericAPIView):
 
         if carrier_name is not None:
             _filters += (
-                Q(**{f"tracking_carrier__{carrier_name}settings__isnull": False}),
+                Q(
+                    **{
+                        f"tracking_carrier__{carrier_name.replace('_', '')}settings__isnull": False
+                    }
+                ),
             )
 
         return queryset.filter(*_filters)

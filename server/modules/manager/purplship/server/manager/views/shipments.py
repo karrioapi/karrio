@@ -121,7 +121,7 @@ class ShipmentList(GenericAPIView):
             _filters += (
                 Q(meta__rate_provider=carrier_name)
                 | Q(
-                    **{f"selected_rate_carrier__{carrier_name}settings__isnull": False}
+                    **{f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False}
                 ),
             )
 

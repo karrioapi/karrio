@@ -97,7 +97,7 @@ class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType)
 
 
 class LogFilter(django_filters.FilterSet):
-    api_endpoint = django_filters.CharFilter(field_name="path")
+    api_endpoint = django_filters.CharFilter(field_name="path", lookup_expr="icontains")
     date_after = django_filters.DateTimeFilter(
         field_name="requested_at", lookup_expr="gte"
     )
@@ -327,7 +327,7 @@ class TrackerFilter(django_filters.FilterSet):
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(**{f"tracking_carrier__{value}settings__isnull": False})
+            Q(**{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False})
             for value in values
         ]
         query = _filters.pop()
@@ -339,12 +339,12 @@ class TrackerFilter(django_filters.FilterSet):
 
 
 class TrackerType(graphene_django.DjangoObjectType):
-    carrier_id = graphene.String()
-    carrier_name = graphene.String()
+    carrier_id = graphene.String(required=True)
+    carrier_name = graphene.String(required=True)
 
-    events = graphene.List(TrackingEventType)
-    messages = graphene.List(MessageType)
-    status = graphene.Enum.from_enum(serializers.TrackerStatus)()
+    events = graphene.List(TrackingEventType, required=True)
+    messages = graphene.List(MessageType, required=True)
+    status = graphene.Enum.from_enum(serializers.TrackerStatus)(required=True)
 
     class Meta:
         model = manager.Tracking
@@ -405,7 +405,11 @@ class ShipmentFilter(django_filters.FilterSet):
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(**{f"selected_rate_carrier__{value}settings__isnull": False})
+            Q(
+                **{
+                    f"selected_rate_carrier__{value.replace('_', '')}settings__isnull": False
+                }
+            )
             for value in values
         ]
         query = Q(meta__rate_provider__in=values)
@@ -429,10 +433,10 @@ class ShipmentType(graphene_django.DjangoObjectType):
     carrier_id = graphene.String()
     carrier_name = graphene.String()
 
-    shipper = graphene.Field(AddressType)
-    recipient = graphene.Field(AddressType)
+    shipper = graphene.Field(AddressType, required=True)
+    recipient = graphene.Field(AddressType, required=True)
     customs = graphene.Field(CustomsType)
-    parcels = graphene.List(ParcelType)
+    parcels = graphene.List(ParcelType, required=True)
     payment = graphene.Field(PaymentType)
 
     service = graphene.String()
@@ -441,14 +445,14 @@ class ShipmentType(graphene_django.DjangoObjectType):
     messages = graphene.List(MessageType)
     selected_rate_id = graphene.String()
     selected_rate = graphene.Field(RateType)
-    rates = graphene.List(RateType)
+    rates = graphene.List(RateType, required=True)
 
     carrier_ids = graphene.List(graphene.String)
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
     tracker_id = graphene.String()
 
-    status = graphene.Enum.from_enum(serializers.ShipmentStatus)()
+    status = graphene.Enum.from_enum(serializers.ShipmentStatus)(required=True)
 
     class Meta:
         model = manager.Shipment
@@ -506,10 +510,18 @@ class WebhookType(graphene_django.DjangoObjectType):
 
 
 class EventFilter(django_filters.FilterSet):
-    date_after = django_filters.DateFilter(field_name="created_at", lookup_expr="gte")
-    date_before = django_filters.DateFilter(field_name="created_at", lookup_expr="lte")
+    date_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    date_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
     entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    type = CharInFilter(field_name="type", lookup_expr="in")
+    type = django_filters.MultipleChoiceFilter(
+        field_name="type",
+        method="types_filter",
+        choices=[(c.value, c.value) for c in list(EventTypes) if c != EventTypes.all],
+    )
 
     class Meta:
         model = events.Event
@@ -521,13 +533,15 @@ class EventFilter(django_filters.FilterSet):
         except:
             return queryset
 
+    def types_filter(self, queryset, name, values):
+        return queryset.filter(Q(type__in=values))
+
 
 class EventType(graphene_django.DjangoObjectType):
     data = generic.GenericScalar()
 
     class Meta:
         model = events.Event
-        filter_fields = ["type"]
         interfaces = (CustomNode,)
 
 
