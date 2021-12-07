@@ -1,6 +1,6 @@
 -f https://git.io/purplship
 purplship
-purplship.server==2021.11rc6
+purplship.server
 purplship.server.core
 purplship.server.events
 purplship.server.graph
