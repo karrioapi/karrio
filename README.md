@@ -163,6 +163,7 @@ pip install purplship.canadapost
 - `purplship.canadapost`
 - `purplship.canpar`
 - `purplship.dhl-express`
+- `purplship.dhl-poland`
 - `purplship.dhl-universal`
 - `purplship.dicom`
 - `purplship.fedex`
@@ -189,7 +190,7 @@ pip install purplship.canadapost
 ```python
 import purplship
 from purplship.core.models import Address, Parcel, RateRequest
-from purplship.mappers.canadapost.settings import Settings
+from purplship.mappers.canadapost import Settings
 
 
 # Initialize a carrier gateway
