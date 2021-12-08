@@ -1,0 +1,32 @@
+-f https://git.io/purplship
+--extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/purplship%2Fcloud/packages/pypi/simple
+purplship
+purplship.server
+purplship.server.core
+purplship.server.events
+purplship.server.graph
+purplship.server.manager
+purplship.server.orgs
+purplship.server.pricing
+purplship.server.proxy
+purplship.aramex
+purplship.australiapost
+purplship.canadapost
+purplship.canpar
+purplship.dhl-express
+purplship.dhl-poland
+purplship.dhl-universal
+purplship.dicom
+purplship.fedex
+purplship.purolator
+purplship.royalmail
+purplship.sendle
+purplship.sf-express
+purplship.tnt
+purplship.ups
+purplship.usps
+purplship.usps_international
+purplship.yanwen
+purplship.yunexpress
+purplship.eshipper
+purplship.freightcom

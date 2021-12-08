@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.graph",
-    version="2021.10",
+    version="2021.11.5",
     description="Multi-carrier shipping API Graph module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,7 @@ setup(
     author="purplship",
     author_email="hello@purplship.com",
     license="Apache License Version 2.0",
-    packages=find_namespace_packages(),
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "purplship.server.core",
         "graphene-django",
@@ -25,4 +25,5 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
     zip_safe=False,
+    include_package_data=True,
 )

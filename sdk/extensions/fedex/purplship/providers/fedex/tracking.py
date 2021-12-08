@@ -7,6 +7,7 @@ from fedex_lib.track_service_v19 import (
     VersionId,
     TrackSelectionDetail,
     TrackPackageIdentifier,
+    TrackingDateOrTimestamp,
 )
 from purplship.core.utils import Serializable, Element, XP, DF
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
@@ -18,6 +19,11 @@ from purplship.core.models import (
 )
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
+
+estimated_date_formats = [
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S",
+]
 
 
 def parse_tracking_response(
@@ -35,32 +41,52 @@ def parse_tracking_response(
 
 
 def _extract_tracking(
-    track_detail_node: Element, settings: Settings
+    detail_node: Element, settings: Settings
 ) -> Optional[TrackingDetails]:
     track_detail = TrackDetail()
-    track_detail.build(track_detail_node)
+    track_detail.build(detail_node)
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    delivered = any(e.EventType == 'DL' for e in track_detail.Events)
+    date_or_timestamps = XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
+    estimated_delivery = (
+        _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_DELIVERY")
+        or _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_TENDER")
+        or _parse_date_or_timestamp(date_or_timestamps, "ANTICIPATED_TENDER")
+        or _parse_date_or_timestamp(date_or_timestamps, "ESTIMATED_DELIVERY")
+    )
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=track_detail.TrackingNumber,
-        events=list(
-            map(
-                lambda e: TrackingEvent(
-                    date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                    time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                    code=e.EventType,
-                    location=e.ArrivalLocation,
-                    description=e.EventDescription,
-                ),
-                track_detail.Events,
+        events=[
+            TrackingEvent(
+                date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                code=e.EventType,
+                location=e.ArrivalLocation,
+                description=e.EventDescription,
             )
+            for e in track_detail.Events
+        ],
+        estimated_delivery=estimated_delivery,
+        delivered=any(e.EventType == "DL" for e in track_detail.Events),
+    )
+
+
+def _parse_date_or_timestamp(
+    date_or_timestamps: List[TrackingDateOrTimestamp], type: str
+) -> Optional[str]:
+    return next(
+        iter(
+            [
+                DF.fdate(d.DateOrTimestamp, try_formats=estimated_date_formats)
+                for d in date_or_timestamps
+                if d.Type == type
+            ]
         ),
-        delivered=delivered
+        None,
     )
 
 

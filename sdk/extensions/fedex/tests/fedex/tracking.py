@@ -32,7 +32,9 @@ class TestFeDexTracking(unittest.TestCase):
             mock.return_value = TrackingResponseXML
             parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            )
 
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.mappers.fedex.proxy.http") as mock:
@@ -73,6 +75,7 @@ ParsedTrackingResponse = [
             "carrier_name": "fedex",
             "carrier_id": "carrier_id",
             "delivered": False,
+            "estimated_delivery": "2016-11-17",
             "events": [
                 {
                     "code": "OC",

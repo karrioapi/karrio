@@ -30,4 +30,5 @@ class Deserializable(Generic[T]):
 
     def deserialize(self) -> Any:
         logger.info("deserialized response::" f"{self.value}")
+
         return self._deserializer(self.value)

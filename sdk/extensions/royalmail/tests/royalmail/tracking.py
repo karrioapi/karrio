@@ -59,6 +59,8 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "royalmail",
             "carrier_name": "royalmail",
+            "delivered": False,
+            "estimated_delivery": "2017-02-20",
             "events": [
                 {
                     "code": "EVNMI",

@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from usps_lib.track_field_request import TrackFieldRequest, TrackIDType
 from usps_lib.track_response import TrackInfoType, TrackDetailType
-from purplship.core.utils import Serializable, Element, XP, DF
+from purplship.core.utils import Serializable, Element, XP, DF, SF
 from purplship.core.models import (
     TrackingRequest,
     Message,
@@ -29,33 +29,31 @@ def _extract_details(node: Element, settings) -> TrackingDetails:
     info = XP.to_object(TrackInfoType, node)
     details: List[TrackDetailType] = [*([info.TrackSummary] or []), *info.TrackDetail]
     delivered = info.StatusCategory.lower() == "delivered"
+    expected_delivery = info.ExpectedDeliveryDate or info.PredictedDeliveryDate
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.ID,
+        delivered=delivered,
         events=[
             TrackingEvent(
                 code=str(event.EventCode),
                 date=DF.fdate(event.EventDate, "%B %d, %Y"),
                 time=DF.ftime(event.EventTime, "%H:%M %p"),
                 description=event.Event,
-                location=", ".join(
-                    [
-                        location
-                        for location in [
-                            event.EventCity,
-                            event.EventState,
-                            event.EventCountry,
-                            str(event.EventZIPCode),
-                        ]
-                        if location is not None
-                    ]
+                location=SF.concat_str(
+                    event.EventCity,
+                    event.EventState,
+                    event.EventCountry,
+                    str(event.EventZIPCode or ""),
+                    join=True,
+                    separator=", ",
                 ),
             )
             for event in details
         ],
-        delivered=delivered
+        estimated_delivery=DF.fdate(expected_delivery, "%B %d, %Y"),
     )
 
 

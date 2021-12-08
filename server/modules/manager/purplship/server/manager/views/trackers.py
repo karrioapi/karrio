@@ -32,6 +32,8 @@ CARRIER_NAMES = list(MODELS.keys())
 
 
 class TrackerFilters(filters.FilterSet):
+    created_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
+    created_before = filters.DateFilter(field_name="created_at", lookup_expr="lte")
     carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
 
     parameters = [
@@ -49,6 +51,20 @@ class TrackerFilters(filters.FilterSet):
             enum=[k.value for k in list(TrackerStatus)],
         ),
         openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+        openapi.Parameter(
+            "created_before",
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_STRING,
+            format=openapi.FORMAT_DATETIME,
+            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+        ),
+        openapi.Parameter(
+            "created_after",
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_STRING,
+            format=openapi.FORMAT_DATETIME,
+            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+        ),
     ]
 
     class Meta:
@@ -62,6 +78,7 @@ class TrackerList(GenericAPIView):
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TrackerFilters
+    serializer_class = Trackers
     model = models.Tracking
 
     def get_queryset(self):
@@ -72,7 +89,11 @@ class TrackerList(GenericAPIView):
 
         if carrier_name is not None:
             _filters += (
-                Q(**{f"tracking_carrier__{carrier_name}settings__isnull": False}),
+                Q(
+                    **{
+                        f"tracking_carrier__{carrier_name.replace('_', '')}settings__isnull": False
+                    }
+                ),
             )
 
         return queryset.filter(*_filters)

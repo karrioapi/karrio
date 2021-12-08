@@ -44,15 +44,9 @@ services:
       file: docker-compose.yml
       service: redis
 
-  nginx:
-    extends:
-      file: docker-compose.yml
-      service: nginx
-
-
 volumes:
-  redisdata:
-  pshipdata:
+  redisdata: null
+  pshipdata: null
   pshipstatics:
     driver: local
 
@@ -61,4 +55,3 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
-

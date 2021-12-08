@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ups="http://www.ups.com/XMLSchema" elementFormDefault="unqualified" version="201901">
+	<xsd:element name="LocatorResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Response"/>
+				<xsd:element minOccurs="0" name="Geocode" type="GeocodeType"/>
+				<xsd:element minOccurs="0" name="SearchResults" type="SearchResultsType"/>
+				<xsd:element default="false" minOccurs="0" name="AllowAllConfidenceLevels" type="xsd:string"/>	
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="GeocodeType">
+		<xsd:sequence>
+			<xsd:element name="Latitude" type="xsd:string"/>
+			<xsd:element name="Longitude" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SearchResultsType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="GeocodeCandidate" type="GeocodeCandidateType"/>
+				<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+					<xsd:element minOccurs="0" name="Disclaimer" type="xsd:string"/>
+					<xsd:element maxOccurs="unbounded" minOccurs="0" name="DropLocation" type="DropLocationType"/>
+				</xsd:sequence>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="AvailableLocationAttributes" type="LocationAttributesType"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GeocodeCandidateType">
+		<xsd:sequence>
+			<xsd:element name="AddressKeyFormat" type="AddressKeyFormatType"/>
+			<xsd:element name="Geocode" type="GeocodeType"/>
+			<xsd:element minOccurs="0" name="LandmarkName" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddressKeyFormatType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="ConsigneeName" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="AddressLine" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision3" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision2" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision1" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostcodePrimaryLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostcodeExtendedLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="CountryCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="AdditionalChargeIndicator">
+		<xsd:complexType/>
+	</xsd:element>
+	<xsd:complexType name="LocationAttributesType">
+		<xsd:sequence>
+			<xsd:element name="OptionType" type="CodeType"/>
+			<xsd:element maxOccurs="unbounded" name="OptionCode" type="OptionCodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OptionCodeType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Category" type="xsd:string"/>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Name" type="xsd:string"/>			
+			<xsd:element maxOccurs="1" minOccurs="0" name="TransportationPickUpSchedule" type="TransportationPickUpScheduleType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransportationPickUpScheduleType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="PickUp" type="PickUpType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PickUpType">
+		<xsd:sequence>
+			<xsd:element name="DayOfWeek" type="xsd:string"/>
+			<xsd:element minOccurs="1" name="PickUpDetails" type="PickUpDetailsType"/>			
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PickUpDetailsType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="PickUpTime" type="xsd:string"/>	
+			<xsd:element minOccurs="0" name="NoPickUpIndicator" type="xsd:string"/>					
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="CodeType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DropLocationType">
+		<xsd:sequence>
+			<xsd:element name="LocationID" type="xsd:string" />
+			<xsd:element name="IVR" type="IVRType" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element minOccurs="0" name="OriginOrDestination"
+				type="xsd:string" />
+			<xsd:element name="Geocode" type="GeocodeType" />
+			<xsd:element name="AddressKeyFormat"
+				type="AddressKeyFormatType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="PhoneNumber" type="xsd:string" />
+			<xsd:element minOccurs="0" name="FaxNumber"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="EMailAddress"
+				type="xsd:string" />
+			<xsd:element maxOccurs="unbounded" name="LocationAttribute"
+				type="LocationAttributesType" />
+			<xsd:element name="Distance" type="DistanceType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="SpecialInstructions" type="SpecialInstructionsType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="LatestGroundDropOffTime" type="xsd:string" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="LatestAirDropOffTime" type="xsd:string" />
+			<xsd:element minOccurs="0" ref="AdditionalChargeIndicator" />
+			<xsd:element minOccurs="0" name="StandardHoursOfOperation"
+				type="xsd:string" />
+			<xsd:element minOccurs="0"
+				name="NonStandardHoursOfOperation" type="xsd:string" />
+			<xsd:element minOccurs="0" name="WillCallHoursOfOperation"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="Number" type="xsd:string" />
+			<xsd:element minOccurs="0" name="HomePageURL"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="Comments"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="AdditionalComments"
+				type="AdditionalCommentsType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="Disclaimer" type="xsd:string" />
+			<xsd:element minOccurs="0" name="SLIC" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Timezone"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="FacilityType"
+				type="xsd:string" />
+			<xsd:element minOccurs="0" name="OperatingHours"
+				type="OperatingHoursType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="LocalizedInstruction" type="LocalizedInstructionType" />
+			<xsd:element maxOccurs="unbounded" minOccurs="0"
+				name="PromotionInformation" type="PromotionInformationType" />
+			<xsd:element minOccurs="0" name="SortCode"
+				type="SortCodeType" />
+			<xsd:element minOccurs="0" name="ServiceOfferingList"
+				type="ServiceOfferingListType" />
+			<xsd:element minOccurs="0"
+				name="DisplayPhoneNumberIndicator" type="xsd:string" />
+			<xsd:element minOccurs="0" name="AccessPointInformation"
+				type="AccessPointInformationType" />
+			<xsd:element maxOccurs="1" minOccurs="0"
+				name="LocationImage" type="LocationImageType">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0"
+				name="LocationNewIndicator" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0"
+				name="PromotionalLinkURL" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="FeaturedRank"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0"
+				name="WillCallLocationIndicator" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="IVRType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="PhraseID" type="xsd:string"/>
+			<xsd:element minOccurs="0" ref="TextToSpeechIndicator"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="TextToSpeechIndicator">
+		<xsd:complexType/>
+	</xsd:element>
+	<xsd:complexType name="UnitOfMeasurementType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DistanceType">
+		<xsd:sequence>
+			<xsd:element name="Value" type="xsd:string"/>
+			<xsd:element name="UnitOfMeasurement" type="UnitOfMeasurementType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ImageType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="Type" type="xsd:string"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="Image" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SpecialInstructionsType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="Segment" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MapDimensionsType">
+		<xsd:sequence>
+			<xsd:element name="Height" type="xsd:string"/>
+			<xsd:element name="Width" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ImageMapType">
+		<xsd:sequence>
+			<xsd:element name="LocationID" type="xsd:string"/>
+			<xsd:element name="XCoordinate" type="xsd:string"/>
+			<xsd:element name="YCoordinate" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DirectionsType">
+		<xsd:sequence>
+			<xsd:element name="Segment" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Distance" type="DistanceType"/>
+			<xsd:element minOccurs="0" name="Time" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TotalDistanceType">
+		<xsd:sequence>
+			<xsd:element name="Distance" type="DistanceType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LocalizedInstructionType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Locale" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Last50ftInstruction" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OperatingHoursType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="StandardHours" type="StandardHoursType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="StandardHoursType">
+		<xsd:sequence>
+			<xsd:element name="HoursType" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="DayOfWeek" type="DayOfWeekType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DayOfWeekType">
+		<xsd:sequence>
+				<xsd:element name="Day" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="OpenHours" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="CloseHours" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="LatestDropOffHours" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PrepHours" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ClosedIndicator" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Open24HoursIndicator" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SortCodeType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="HubSortCode" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="FreightSortFacilityCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AdditionalCommentsType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="CommentType" type="CommentTypeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CommentTypeType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Code" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Text" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Response">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" ref="TransactionReference"/>
+				<xsd:element name="ResponseStatusCode" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="ResponseStatusDescription" type="xsd:string"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="Error"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TransactionReference">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="CustomerContext" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="XpciVersion" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Error">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ErrorSeverity" type="xsd:string"/>
+				<xsd:element name="ErrorCode" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="ErrorDescription" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="MinimumRetrySeconds" type="xsd:string"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="ErrorLocation"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="ErrorDigest" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ErrorLocation">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="ErrorLocationElementName" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="ErrorLocationAttributeName" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="AccessPointInformationType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="PublicAccessPointID" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ImageURL" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="LoadCapacityRatio" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="BusinessClassificationList" type="BusinessClassificationListType"/>
+			<xsd:element minOccurs="0" name="AccessPointStatus" type="CodeType"/>
+			<xsd:element minOccurs="0" name="FacilitySLIC" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PrivateNetworkList" type="PrivateNetworkListType"/>
+			<xsd:element minOccurs="0" name="Availability" type="AvailabilityType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BusinessClassificationListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="BusinessClassification" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PrivateNetworkListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="PrivateNetwork" type="PrivateNetworkType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PrivateNetworkType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="NetworkID" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="NetworkDescription" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceOfferingListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ServiceOffering" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AvailabilityType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="ShippingAvailability" type="AvailableReasonType"/>
+			<xsd:element minOccurs="0" name="DCRAvailability" type="AvailableReasonType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PromotionInformationType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Locale" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Promotion" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AvailableReasonType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="AvailableIndicator" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="UnavailableReason" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LocationImageType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="SecureURL" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="NonSecureURL" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -8,10 +8,10 @@ from purplship.providers.fedex.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """FedEx connection settings."""
 
-    user_key: str
     password: str
     meter_number: str
     account_number: str
+    user_key: str = None
     account_country_code: str = None
 
     id: str = None

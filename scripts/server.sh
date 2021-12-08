@@ -28,6 +28,7 @@ if [[ "$*" == *gen:graph* ]]; then
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
+    docker rm -f swagger
 	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/server/schemas/swagger.json"
 	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
 	sleep 5 &&
@@ -73,8 +74,9 @@ elif [[ "$*" == *gen:py:cli* ]]; then
 	cd -
 elif [[ "$*" == *build:js* ]]; then
 	cd "${ROOT:?}/.codegen/typescript"
-	rm -rf node_modules; 
+	rm -rf node_modules;
     yarn;
+    rm -f "${ROOT:?}/.codegen/typescript/api/generated/apis/index.ts"
 	npx gulp build --output "${ROOT:?}/server/main/purplship/server/static/purplship/js/purplship.js"
 	cd -
 	purplship collectstatic --noinput
@@ -101,7 +103,7 @@ elif [[ "$*" == *build:insiders* ]]; then
     sm=$(find "${ROOT:?}/insiders" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
-		./scripts/build-package-wheel.sh "${module}" || exit 1
+		./scripts/build-package-wheel.sh "${module}" --insiders || exit 1
     done
 
 	cd -

@@ -14,9 +14,8 @@ NOTIFICATION_DATETIME = timezone.now()
 
 
 class TestWebhooks(APITestCase):
-
     def test_create_webhook(self):
-        url = reverse('purplship.server.events:webhook-list')
+        url = reverse("purplship.server.events:webhook-list")
         data = WEBHOOK_DATA
 
         response = self.client.post(url, data)
@@ -29,19 +28,23 @@ class TestWebhooks(APITestCase):
 class TestWebhookDetails(APITestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.webhook: Webhook = Webhook.objects.create(**{
-            "url": "http://localhost:8080",
-            "description": "Testing Hook",
-            "enabled_events": ["all"],
-            "test_mode": True,
-            "disabled": False,
-            "id": ANY,
-            "last_event_at": None,
-            "created_by": self.user
-        })
+        self.webhook: Webhook = Webhook.objects.create(
+            **{
+                "url": "http://localhost:8080",
+                "description": "Testing Hook",
+                "enabled_events": ["all"],
+                "test_mode": True,
+                "disabled": False,
+                "id": ANY,
+                "last_event_at": None,
+                "created_by": self.user,
+            }
+        )
 
     def test_update_webhook(self):
-        url = reverse('purplship.server.events:webhook-details', kwargs=dict(pk=self.webhook.pk))
+        url = reverse(
+            "purplship.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
+        )
         data = WEBHOOK_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -51,7 +54,9 @@ class TestWebhookDetails(APITestCase):
         self.assertDictEqual(response_data, WEBHOOK_UPDATED_RESPONSE)
 
     def test_webhook_notify(self):
-        url = reverse('purplship.server.events:webhook-details', kwargs=dict(pk=self.webhook.pk))
+        url = reverse(
+            "purplship.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
+        )
 
         with patch("purplship.server.events.tasks.webhook.identity") as mocks:
             response = Response()
@@ -59,10 +64,11 @@ class TestWebhookDetails(APITestCase):
             mocks.return_value = response
 
             notify_webhook_subscribers(
-                event='shipment.purchased',
-                data={'shipment': 'content'},
+                event="shipment.purchased",
+                data={"shipment": "content"},
                 event_at=NOTIFICATION_DATETIME,
-                test_mode=True
+                test_mode=True,
+                ctx=dict(user_id=self.user.id),
             )
 
         response = self.client.get(url)
@@ -71,50 +77,44 @@ class TestWebhookDetails(APITestCase):
         self.assertDictEqual(response_data, WEBHOOK_NOTIFIED_RESPONSE)
 
 
-
 WEBHOOK_DATA = {
-  "url": "http://localhost:8080",
-  "description": "Testing Hook",
-  "enabled_events": ["all"],
-  "test_mode": True
+    "url": "http://localhost:8080",
+    "description": "Testing Hook",
+    "enabled_events": ["all"],
+    "test_mode": True,
 }
 
 WEBHOOK_RESPONSE = {
-  "url": "http://localhost:8080",
-  "description": "Testing Hook",
-  "enabled_events": [
-    "all"
-  ],
-  "test_mode": True,
-  "disabled": False,
-  "id": ANY,
-  "last_event_at": None
+    "url": "http://localhost:8080",
+    "description": "Testing Hook",
+    "enabled_events": ["all"],
+    "test_mode": True,
+    "disabled": False,
+    "id": ANY,
+    "last_event_at": None,
 }
 
 WEBHOOK_UPDATE_DATA = {
-  "description": "Testing Hook Updated",
-  "enabled_events": ["shipment.purchased", "shipment.cancelled"]
+    "description": "Testing Hook Updated",
+    "enabled_events": ["shipment.purchased", "shipment.cancelled"],
 }
 
 WEBHOOK_UPDATED_RESPONSE = {
-  "url": "http://localhost:8080",
-  "description": "Testing Hook Updated",
-  "enabled_events": [
-    "shipment.purchased",
-    "shipment.cancelled"
-  ],
-  "test_mode": True,
-  "disabled": False,
-  "id": ANY,
-  "last_event_at": None
+    "url": "http://localhost:8080",
+    "description": "Testing Hook Updated",
+    "enabled_events": ["shipment.purchased", "shipment.cancelled"],
+    "test_mode": True,
+    "disabled": False,
+    "id": ANY,
+    "last_event_at": None,
 }
 
 WEBHOOK_NOTIFIED_RESPONSE = {
-  "url": "http://localhost:8080",
-  "description": "Testing Hook",
-  "enabled_events": ["all"],
-  "test_mode": True,
-  "disabled": False,
-  "id": ANY,
-  "last_event_at": NOTIFICATION_DATETIME.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    "url": "http://localhost:8080",
+    "description": "Testing Hook",
+    "enabled_events": ["all"],
+    "test_mode": True,
+    "disabled": False,
+    "id": ANY,
+    "last_event_at": NOTIFICATION_DATETIME.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
 }

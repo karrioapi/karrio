@@ -96,11 +96,6 @@ PURPLSHIP_CONF = [
             "module": "purplship.server.events",
             "urls": "purplship.server.events.urls",
         },
-        {
-            "app": "purplship.server.client",
-            "module": "purplship.server.client",
-            "urls": "purplship.server.client.urls",
-        },
         {"app": "purplship.server.pricing", "module": "purplship.server.pricing"},
     ]
     if importlib.util.find_spec(app["module"]) is not None
@@ -110,7 +105,20 @@ PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
-HAS_EMBEDDED_CLIENT = importlib.util.find_spec("purplship.server.client") is not None
+
+
+# components path settings
+BASE_PATH = config("BASE_PATH", default="")
+if len(BASE_PATH) > 0 and BASE_PATH.startswith("/"):
+    BASE_PATH = BASE_PATH[1:]
+if len(BASE_PATH) > 0 and not BASE_PATH.endswith("/"):
+    BASE_PATH = BASE_PATH + "/"
+
+ROOT_URLCONF = "purplship.server.urls"
+LOGOUT_REDIRECT_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/admin/"
+LOGIN_URL = "/admin/login/"
+OPEN_API_PATH = "openapi/"
 
 
 BASE_APPS = [
@@ -148,12 +156,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "purplship.server.urls"
-LOGOUT_REDIRECT_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/"
-LOGIN_REDIRECT_URL = "/" if HAS_EMBEDDED_CLIENT else "/admin/"
-LOGIN_URL = "/login/" if HAS_EMBEDDED_CLIENT else "/admin/login/"
-OPEN_API_PATH = "openapi/" if HAS_EMBEDDED_CLIENT else ""
-
 
 TEMPLATES = [
     {
@@ -179,6 +181,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Purplship Middleware
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.CreatorAccess'
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.WideAccess'
+DEFAULT_TRACKERS_UPDATE_INTERVAL = config("TRACKING_PULSE", default=7200, cast=int)
 
 
 # Database
@@ -234,7 +237,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
 STATIC_ROOT = config("STATIC_ROOT_DIR", default=(BASE_DIR / "server" / "staticfiles"))
 
 STATICFILES_DIRS = [
@@ -352,9 +355,12 @@ LOGGING = {
     "handlers": {
         "file": {
             "level": "DEBUG",
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "formatter": "verbose",
             "filename": LOG_FILE_NAME,
+            "when": "D",  # this specifies the interval
+            "interval": 1,  # defaults to 1, only necessary for other values
+            "backupCount": 20,  # how many backup file to keep, 10 days
         },
         "console": {
             "class": "logging.StreamHandler",

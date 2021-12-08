@@ -11,6 +11,8 @@ clean_build_files .
 
 # build wheel
 if [ -f "pyproject.toml" ]; then
+    rm -f poetry.lock
+    poetry update
     output=$(poetry build -f wheel 2>&1);
     r=$?;
 else

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.core",
-    version="2021.10.2",
+    version="2021.11.5",
     description="Multi-carrier shipping API Core module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,7 @@ setup(
     author="purplship",
     author_email="hello@purplship.com",
     license="Apache License Version 2.0",
-    packages=find_namespace_packages(),
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "purplship",
         "psycopg2-binary",

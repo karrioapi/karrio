@@ -20,18 +20,27 @@ from purplship.core.models import (
     PickupUpdateRequest as BasePickupUpdateRequest,
     PickupCancelRequest as BasePickupCancelRequest,
     ConfirmationDetails as Confirmation,
-    TrackingEvent
+    TrackingEvent,
+    TrackingDetails,
 )
 
 
 class ShipmentStatus(Enum):
-    created = 'created'
-    cancelled = 'cancelled'
-    purchased = 'purchased'
+    created = "created"
+    cancelled = "cancelled"
+    purchased = "purchased"
 
 
 class CarrierSettings:
-    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, active: bool = None, id: str = None, **kwargs):
+    def __init__(
+        self,
+        carrier_name: str,
+        carrier_id: str,
+        test: bool = None,
+        active: bool = None,
+        id: str = None,
+        **kwargs
+    ):
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
         self.active = active
@@ -39,14 +48,15 @@ class CarrierSettings:
         self.id = id
 
         for name, value in kwargs.items():
-            if name not in ['carrier_ptr', 'created_by']:
+            if name not in ["carrier_ptr", "created_by"]:
                 self.__setattr__(name, value)
 
     # TODO: rename this to avoid confusion
     def dict(self):
         return {
-            name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'created_by', 'active', 'capabilities']
+            name: value
+            for name, value in self.__dict__.items()
+            if name not in ["carrier_name", "created_by", "active", "capabilities"]
         }
 
     @classmethod
@@ -229,10 +239,11 @@ class Tracking:
     carrier_name: str
     carrier_id: str
     tracking_number: str
-    events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    events: List[TrackingEvent] = JList[TrackingEvent]
 
     status: str = ""
     delivered: bool = None
+    estimated_delivery: str = None
     id: str = None
     test_mode: bool = None
 

@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "purplship.canpar"
-version = "2021.10"
-homepage="https://docs.purplship.com"
+version = "2021.11"
+homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Canpar Shipping Extension"
 authors = ["Purplship <hello@purplship.com>"]
-license = "Apache License Version 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "purplship" }]
 classifiers=[
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.6"
+"purplship" = ""
 "carrier.canpar" = ""
 
 [tool.poetry.dev-dependencies]

@@ -2,7 +2,7 @@ from uuid import uuid4
 from typing import Tuple, List
 from asendia_us_lib.shipping_request import ShippingRequest, Item
 from asendia_us_lib.shipping_response import PackageLabel
-from purplship.core.units import Packages, Options, Weight
+from purplship.core.units import CustomsInfo, Packages, Options, Weight
 from purplship.core.utils import Serializable, DP
 from purplship.core.models import (
     ShipmentRequest,
@@ -21,7 +21,9 @@ from purplship.providers.asendia_us.error import parse_error_response
 from purplship.providers.asendia_us.utils import Settings
 
 
-def parse_shipment_response(responses: Tuple[str, dict], settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
+def parse_shipment_response(
+    responses: Tuple[str, dict], settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
     _, response = responses
     errors = parse_error_response(response, settings)
     details = (
@@ -46,17 +48,21 @@ def _extract_details(response: Tuple[str, dict], settings: Settings) -> Shipment
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ShippingRequest]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[ShippingRequest]:
     package = Packages(payload.parcels).single
     options = Options(payload.options, Option)
     product_code = Service.map(payload.service).value_or_key
-    unique_id = getattr(payload, 'id', uuid4().hex)
-    customs = payload.customs or Customs(commodities=[])
+    unique_id = getattr(payload, "id", uuid4().hex)
+    customs = CustomsInfo(payload.customs or Customs(commodities=[]))
 
     request = ShippingRequest(
         accountNumber=settings.account_number,
         subAccountNumber=options.asendia_sub_account_number,
-        processingLocation=ProcessingLocation.map(options.asendia_processing_location or "SFO").name,
+        processingLocation=ProcessingLocation.map(
+            options.asendia_processing_location or "SFO"
+        ).name,
         includeRate=True,
         labelType=LabelType.map(payload.label_type or "PDF").name_or_key,
         orderNumber=unique_id,
@@ -116,10 +122,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 quantity=item.quantity,
                 unitWeight=Weight(item.weight, package.weight_unit).value,
                 countryOfOrigin=item.origin_country,
-                htsNumber=None
+                htsNumber=None,
             )
             for item in customs.commodities
-        ]
+        ],
     )
 
     return Serializable(request)

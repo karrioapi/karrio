@@ -37,7 +37,9 @@ class TestCanparTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -51,6 +53,7 @@ ParsedTrackingResponse = [
             "carrier_id": "canpar",
             "carrier_name": "canpar",
             "delivered": True,
+            "estimated_delivery": "2011-03-07",
             "events": [
                 {
                     "code": "DEL",
@@ -135,7 +138,7 @@ TrackingResponseXML = """<wrapper>
                             <ax23:updated_on>2015-01-22T23:17:26.681Z</ax23:updated_on>
                         </ax23:consignee_address>
                         <ax23:delivered>false</ax23:delivered>
-                        <ax23:estimated_delivery_date xsi:nil="true" />
+                        <ax23:estimated_delivery_date>20110307</ax23:estimated_delivery_date>
                         <ax23:events xsi:type="ax23:TrackingEvent">
                             <ax23:address xsi:type="ax23:Address">
                                 <ax23:address_id />

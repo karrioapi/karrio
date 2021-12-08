@@ -1,7 +1,8 @@
-from typing import List, Any
+from typing import List, Any, Tuple
 from ups_lib.av_request import AddressValidationRequest
 from purplship.core.utils import (
     XP,
+    DP,
     request as http,
     exec_parrallel,
     Serializable,
@@ -28,36 +29,50 @@ class Proxy(BaseProxy):
     def validate_address(
         self, request: Serializable[AddressValidationRequest]
     ) -> Deserializable[str]:
-        response = self._send_request("/AV", request)
+        response = self._send_request("/webservices/AV", request)
 
         return Deserializable(response, XP.to_xml)
 
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request("/Rate", request)
+        response = self._send_request("/webservices/Rate", request)
 
         return Deserializable(response, XP.to_xml)
 
     def get_tracking(
-        self, request: Serializable[List[Envelope]]
-    ) -> Deserializable[str]:
+        self, request: Serializable[List[str]]
+    ) -> Deserializable[List[Tuple[str, dict]]]:
         """
-        get_tracking make parallel request for each TrackRequest
+        get_tracking makes parallel requests for each tracking number
         """
 
-        def get_tracking(track_request: str):
-            return self._send_request("/Track", Serializable(track_request))
+        def get_tracking(tracking_number: str):
+            return tracking_number, http(
+                url=f"{self.settings.server_url}/track/v1/details/{tracking_number}",
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessLicenseNumber": self.settings.access_license_number,
+                    "Username": self.settings.username,
+                    "Password": self.settings.password,
+                },
+                method="GET",
+            )
 
-        response: List[str] = exec_parrallel(get_tracking, request.serialize())
-
-        return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
+        responses: List[str] = exec_parrallel(get_tracking, request.serialize())
+        return Deserializable(
+            responses,
+            lambda res: [
+                (num, DP.to_dict(track)) for num, track in res if any(track.strip())
+            ],
+        )
 
     def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request("/Ship", request)
+        response = self._send_request("/webservices/Ship", request)
 
         return Deserializable(response, XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
-        response = self._send_request("/Ship", request)
+        response = self._send_request("/webservices/Ship", request)
 
         return Deserializable(response, XP.to_xml)
 
@@ -66,7 +81,7 @@ class Proxy(BaseProxy):
             if job.data is None:
                 return job.fallback
 
-            return self._send_request("/Pickup", job.data)
+            return self._send_request("/webservices/Pickup", job.data)
 
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
@@ -77,7 +92,7 @@ class Proxy(BaseProxy):
             if job.data is None:
                 return job.fallback
 
-            return self._send_request("/Pickup", job.data)
+            return self._send_request("/webservices/Pickup", job.data)
 
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
@@ -85,6 +100,6 @@ class Proxy(BaseProxy):
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request("/Pickup", request)
+        response = self._send_request("/webservices/Pickup", request)
 
         return Deserializable(response, XP.to_xml)

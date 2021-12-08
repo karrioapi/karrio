@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (
     ValidationError,
 )
 from django.utils.translation import gettext_lazy as _
-from django_email_verification import send_email
+from purplship.server.user.utils import send_email
 
 
 class SignUpForm(UserCreationForm):

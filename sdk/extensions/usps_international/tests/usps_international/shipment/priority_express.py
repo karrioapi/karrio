@@ -77,8 +77,6 @@ shipment_data = {
     "customs": {
         "content_type": "merchandise",
         "incoterm": "DDU",
-        "license_number": "LIC-24356879",
-        "certificate_number": "CERT-97865342",
         "invoice": "INV-040903",
         "commodities": [
             {
@@ -98,10 +96,12 @@ shipment_data = {
         },
         "certify": True,
         "signer": "Admin",
+        "options": {
+            "license_number": "LIC-24356879",
+            "certificate_number": "CERT-97865342",
+        },
     },
-    "options": {
-        "shipment_date": "2021-05-15"
-    }
+    "options": {"shipment_date": "2021-05-15"},
 }
 
 

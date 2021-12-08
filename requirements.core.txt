@@ -1,3 +1,4 @@
+-f https://git.io/purplship
 purplship
 purplship.server
 purplship.server.core
@@ -11,6 +12,7 @@ purplship.australiapost
 purplship.canadapost
 purplship.canpar
 purplship.dhl-express
+purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex

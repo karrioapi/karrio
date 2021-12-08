@@ -14,7 +14,7 @@ from typing import (
     NamedTuple,
 )
 from purplship.core.utils import NF, Enum, Spec, SF
-from purplship.core.models import Parcel, Address, AddressExtra
+from purplship.core.models import Customs, Parcel, Address, AddressExtra
 from purplship.core.errors import (
     FieldError,
     FieldErrorCode,
@@ -597,6 +597,57 @@ class Services:
     @property
     def first(self) -> Enum:
         return next(iter(self._services), None)
+
+
+class CustomsOption(Enum):
+    """universal shipment customs identifiers"""
+
+    aes = Spec.asValue("aes")
+    eel_pfc = Spec.asValue("eel_pfc")
+    nip_number = Spec.asValue("eori_number")
+    eori_number = Spec.asValue("eori_number")
+    license_number = Spec.asValue("license_number")
+    certificate_number = Spec.asValue("certificate_number")
+    vat_registration_number = Spec.asValue("vat_registration_number")
+
+
+class CustomsInfo:
+    """The customs info processing helper"""
+
+    def __init__(self, customs: Customs = None, option_type: Type[Enum] = Enum):
+        option_values = {}
+
+        for key, val in getattr(customs, "options", {}).items():
+            if option_type is not None and key in option_type:
+                option_values[option_type[key].name] = option_type[key].value.apply(val)
+            elif key in CustomsOption and key:
+                option_values[key] = CustomsOption[key].value.apply(val)
+
+        self._customs = customs
+        self._options = option_values
+
+    def __getitem__(self, item):
+        return getattr(self._customs, item, None) or self._options.get(item)
+
+    def __getattr__(self, item):
+        return getattr(self._customs, item, None) or self._options.get(item)
+
+    def __contains__(self, item) -> bool:
+        return item in self._options or hasattr(self._customs, item)
+
+    def __len__(self) -> int:
+        return len(self._options.items())
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        return iter(self._options.items())
+
+    @property
+    def is_defined(self) -> bool:
+        return self._customs is not None
+
+    @property
+    def duty(self) -> str:
+        return getattr(self._customs, "duty", None)
 
 
 class Phone:

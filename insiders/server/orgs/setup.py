@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.orgs",
-    version="2021.10rc1",
+    version="2021.11.5",
     description="Multi-carrier shipping API organization module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,7 @@ setup(
     author="purplship",
     author_email="hello@purplship.com",
     license="Purplship Enterprise",
-    packages=find_namespace_packages("."),
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "django-extensions",
         "django-organizations",

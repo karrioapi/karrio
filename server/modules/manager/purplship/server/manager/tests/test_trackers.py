@@ -69,6 +69,7 @@ TRACKING_RESPONSE = {
     "test_mode": True,
     "delivered": False,
     "status": "in-transit",
+    "estimated_delivery": None,
     "events": [
         {
             "code": "KB",
@@ -78,4 +79,5 @@ TRACKING_RESPONSE = {
             "time": "10:39",
         }
     ],
+    "messages": [],
 }

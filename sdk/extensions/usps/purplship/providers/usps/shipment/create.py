@@ -9,7 +9,14 @@ from usps_lib.evs_request import (
     ExtraServicesType,
 )
 from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.units import Packages, Options, WeightUnit, Weight, Country
+from purplship.core.units import (
+    CustomsInfo,
+    Packages,
+    Options,
+    WeightUnit,
+    Weight,
+    Country,
+)
 from purplship.core.utils import Serializable, Element, Location, XP
 from purplship.core.models import (
     ShipmentRequest,
@@ -21,13 +28,19 @@ from purplship.core.models import (
 )
 
 from purplship.providers.usps.units import (
-    LabelFormat, ServiceType, PackagingType, ShipmentOption, ContentType
+    LabelFormat,
+    ServiceType,
+    PackagingType,
+    ShipmentOption,
+    ContentType,
 )
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps.utils import Settings
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
+def parse_shipment_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     details = _extract_details(response, settings)
 
@@ -40,30 +53,46 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-
         label=shipment.LabelImage,
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[eVSRequest]:
-    if payload.shipper.country_code is not None and payload.shipper.country_code != Country.US.name:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[eVSRequest]:
+    if (
+        payload.shipper.country_code is not None
+        and payload.shipper.country_code != Country.US.name
+    ):
         raise OriginNotServicedError(payload.shipper.country_code)
 
-    if payload.recipient.country_code is not None and payload.recipient.country_code != Country.US.name:
+    if (
+        payload.recipient.country_code is not None
+        and payload.recipient.country_code != Country.US.name
+    ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
     service = ServiceType.map(payload.service).value_or_key
     package = Packages(payload.parcels).single
     options = Options(payload.options, ShipmentOption)
 
-    customs = payload.customs or Customs(commodities=[])
-    extra_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
-    label_format = LabelFormat[payload.label_type or 'usps_6_x_4_label'].value
-    insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
+    customs = CustomsInfo(payload.customs or Customs(commodities=[]))
+    extra_services = [
+        getattr(option, "value", option)
+        for key, option in options
+        if "usps_option" not in key
+    ]
+    label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
+    insurance = next(
+        (option.value for key, option in options if "usps_insurance" in key),
+        options.insurance,
+    )
     # Gets the first provided non delivery option or default to "RETURN"
-    non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
+    non_delivery = next(
+        (option.value for name, option in options if "non_delivery" in name), "RETURN"
+    )
     redirect_address = Address(**(options.usps_option_redirect_non_delivery or {}))
 
     request = eVSRequest(
@@ -72,7 +101,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Revision="1",
         ImageParameters=ImageParametersType(
             ImageParameter=label_format,
-            LabelSequence=LabelSequenceType(PackageNumber=1, TotalPackages=1)
+            LabelSequence=LabelSequenceType(PackageNumber=1, TotalPackages=1),
         ),
         FromName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
@@ -101,7 +130,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         AllowNonCleansedDestAddr=False,
         WeightInOunces=package.weight.OZ,
         ServiceType=service,
-        Container=PackagingType[package.packaging_type or 'variable'].value,
+        Container=PackagingType[package.packaging_type or "variable"].value,
         Width=package.width.IN,
         Length=package.length.IN,
         Height=package.height.IN,
@@ -116,7 +145,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CustomerRefNo=None,
         ExtraServices=(
             ExtraServicesType(ExtraService=[s for s in extra_services])
-            if any(extra_services) else None
+            if any(extra_services)
+            else None
         ),
         CRID=settings.customer_registration_id,
         MID=settings.mailer_id,
@@ -144,19 +174,25 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         Description=item.description,
                         Quantity=item.quantity,
                         Value=item.value_amount,
-                        NetPounds=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
-                        NetOunces=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).OZ,
+                        NetPounds=Weight(
+                            item.weight, WeightUnit[item.weight_unit or "LB"]
+                        ).LB,
+                        NetOunces=Weight(
+                            item.weight, WeightUnit[item.weight_unit or "LB"]
+                        ).OZ,
                         HSTariffNumber=item.sku,
-                        CountryOfOrigin=Location(item.origin_country).as_country_name
+                        CountryOfOrigin=Location(item.origin_country).as_country_name,
                     )
                     for item in customs.commodities
                 ]
             )
-            if payload.customs is not None else None
+            if payload.customs is not None
+            else None
         ),
         CustomsContentType=(
             ContentType[customs.content_type or "other"].value
-            if payload.customs is not None else None
+            if payload.customs is not None
+            else None
         ),
         ContentComments=None,
         RestrictionType=None,

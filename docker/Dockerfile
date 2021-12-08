@@ -1,11 +1,16 @@
 # The base image compilation
 FROM python:3.8-slim AS compile-image
+
+ARG REQUIREMENTS="requirements.txt"
+ARG REGISTRY_TOKEN
+ARG REGISTRY_TOKEN_NAME
+
 RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
-COPY requirements.txt /temp/
+COPY "${REQUIREMENTS}" /temp/
 RUN pip install --upgrade pip && \
     pip install dumb-init && \
-    pip install -r /temp/requirements.txt
+    pip install -r "/temp/${REQUIREMENTS}"
 
 
 # The runtime image

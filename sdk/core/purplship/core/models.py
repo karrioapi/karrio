@@ -99,8 +99,6 @@ class Customs:
     """customs info unified data type."""
 
     commodities: List[Commodity] = JList[Commodity, REQUIRED]
-    aes: str = None
-    eel_pfc: str = None
     certify: bool = None
     signer: str = None
     content_type: str = None
@@ -108,8 +106,6 @@ class Customs:
     incoterm: str = None
     invoice: str = None
     invoice_date: str = None
-    license_number: str = None
-    certificate_number: str = None
     duty: Duty = JStruct[Duty]
     commercial_invoice: bool = False
     options: Dict = {}
@@ -283,6 +279,7 @@ class TrackingDetails:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     delivered: bool = None
+    estimated_delivery: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -321,3 +318,33 @@ class ConfirmationDetails:
     carrier_id: str
     success: bool
     operation: str
+
+
+@attr.s(auto_attribs=True)
+class ServiceLevel:
+    """Purplship unified service level data type."""
+
+    service_name: str
+    service_code: str
+    description: str = ""
+    id: str = None
+    active: bool = True
+
+    # Costs definition
+    cost: float = None
+    currency: str = None
+
+    # Estimated delivery date
+    estimated_transit_days: int = None
+
+    # Size restrictions
+    max_weight: float = None
+    max_width: float = None
+    max_height: float = None
+    max_length: float = None
+    weight_unit: str = None
+    dimension_unit: str = None
+
+    # Destination supports
+    domicile: bool = None
+    international: bool = None

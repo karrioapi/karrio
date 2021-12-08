@@ -16,7 +16,7 @@ gulp.task('build', async function () {
   await bundle.write({
     file: output,
     format: 'umd',
-    name: 'purplship',
+    name: 'Purplship',
     sourcemap: true
   });
 });

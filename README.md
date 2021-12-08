@@ -67,7 +67,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/server:2021.10
+  danh91.docker.scarf.sh/purplship/server:2021.11
 ```
 
 </details>
@@ -92,7 +92,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/server:2021.10
+    image: danh91.docker.scarf.sh/purplship/server:2021.11
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -163,6 +163,7 @@ pip install purplship.canadapost
 - `purplship.canadapost`
 - `purplship.canpar`
 - `purplship.dhl-express`
+- `purplship.dhl-poland`
 - `purplship.dhl-universal`
 - `purplship.dicom`
 - `purplship.fedex`
@@ -189,7 +190,7 @@ pip install purplship.canadapost
 ```python
 import purplship
 from purplship.core.models import Address, Parcel, RateRequest
-from purplship.mappers.canadapost.settings import Settings
+from purplship.mappers.canadapost import Settings
 
 
 # Initialize a carrier gateway

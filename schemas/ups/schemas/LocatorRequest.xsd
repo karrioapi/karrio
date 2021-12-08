@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ups="http://www.ups.com/XMLSchema" elementFormDefault="unqualified" version="201901">
+	<xsd:element name="LocatorRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Request"/>
+				<xsd:element minOccurs="0" name="OriginAddress" type="OriginAddressType"/>
+				<xsd:element name="Translate" type="TranslateType"/>
+				<xsd:element minOccurs="0" name="UnitOfMeasurement" type="UnitOfMeasurementType"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="LocationID" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="LocationSearchCriteria" type="LocationSearchCriteriaType"/>
+				<xsd:element minOccurs="0" name="SortCriteria" type="SortCriteriaType"/>
+				<xsd:element default="false" minOccurs="0" name="AllowAllConfidenceLevels" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="SearchOptionCode" type="xsd:string"/>
+				<xsd:element minOccurs="0" name="ServiceGeoUnit" type="ServiceGeoUnitType"/>
+				<xsd:element minOccurs="0" name="FreightIndicator" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="GeocodeType">
+		<xsd:sequence>
+			<xsd:element name="Latitude" type="xsd:string"/>
+			<xsd:element name="Longitude" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OriginAddressType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Geocode" type="GeocodeType"/>
+			<xsd:element minOccurs="0" name="AddressKeyFormat" type="AddressKeyFormatType"/>
+			<xsd:element minOccurs="0" name="MaximumListSize" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddressKeyFormatType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="AddressLine" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="AddressLine3" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="AddressLine2" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision3" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision2" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PoliticalDivision1" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostcodePrimaryLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostcodeExtendedLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="CountryCode" type="xsd:string"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="SingleLineAddress" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TranslateType">
+		<xsd:sequence>
+			<xsd:element name="LanguageCode" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Locale" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="UnitOfMeasurementType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LocationSearchCriteriaType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="SearchOption" type="SearchOptionType"/>
+			<xsd:element minOccurs="0" name="MaximumListSize" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="SearchRadius" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ServiceSearch" type="ServiceSearchType"/>
+			<xsd:element minOccurs="0" name="FreightWillCallSearch" type="FreightWillCallSearchType"/>
+			<xsd:element minOccurs="0" name="AccessPointSearch" type="AccessPointSearchType"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="OpenTimeCriteria" type="OpenTimeCriteriaType">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SearchOptionType">
+		<xsd:sequence>
+			<xsd:element name="OptionType" type="CodeType"/>
+			<xsd:element maxOccurs="unbounded" name="OptionCode" type="OptionCodeType"/>
+			<xsd:element minOccurs="0" name="Relation" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OptionCodeType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CodeType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceSearchType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Time" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ServiceCode" type="CodeType"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ServiceOptionCode" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FreightWillCallSearchType">
+		<xsd:sequence>
+			<xsd:element name="FreightWillCallRequestType" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="FacilityAddress" type="FacilityAddressType"/>
+			<xsd:element minOccurs="0" name="OriginOrDestination" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="FormatPostalCode" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="DayOfWeekCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FacilityAddressType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="SLIC" type="xsd:string"/>
+			<xsd:element maxOccurs="2" minOccurs="0" name="AddressLine" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="City" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostalCodePrimaryLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostalCodeExtendedLow" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="State" type="xsd:string"/>
+			<xsd:element name="CountryCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceGeoUnitType">
+		<xsd:sequence>
+			<xsd:element name="ServiceCode" type="xsd:string"/>
+			<xsd:element name="GeoPoliticalUnit" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Request">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" ref="TransactionReference"/>
+				<xsd:element name="RequestAction" type="xsd:string"/>
+				<xsd:element name="RequestOption" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TransactionReference">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="CustomerContext" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="AccessPointSearchType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="PublicAccessPointID" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="AccessPointStatus" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="AccountNumber" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="IncludeCriteria" type="IncludeCriteriaType"/>
+			<xsd:element minOccurs="0" name="ExcludeFromResult" type="ExcludeFromResultType"/>
+			<xsd:element minOccurs="0" name="SearchIdCriteria" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExcludeFromResultType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="BusinessClassificationCode" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="BusinessName" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Radius" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="PostalCodeList" type="PostalCodeListType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PostalCodeListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="PostalCode" type="PostalCodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PostalCodeType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="PrimaryPostalCode" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="SecondaryPostalCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="IncludeCriteriaType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="MerchantAccountNumberList" type="MerchantAccountNumberListType"/>
+			<xsd:element minOccurs="0" name="SearchFilter" type="SearchFilterType"/>
+			<xsd:element minOccurs="0" name="ServiceOfferingList" type="ServiceOfferingListType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SearchFilterType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="DCRIndicator" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ShippingAvailabilityIndicator" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ShipperPreparationDelay" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="ClickAndCollectSortWithDistance" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceOfferingListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ServiceOffering" type="CodeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MerchantAccountNumberListType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="MerchantAccountNumber" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SortCriteriaType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="SortType" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="EnhancedSearchOptionType">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OpenTimeCriteriaType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="DayOfWeekCode" type="xsd:string"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="FromTime" type="xsd:string"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ToTime" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "carrier.dhl_poland"
+version = "2021.11"
+description = "DHL Parcel Poland Web API Schemas Python Data Types library"
+repository="https://github.com/purplship/purplship-carriers"
+homepage="https://github.com/purplship/purplship-carriers/tree/main/schemas/carrier.dhl_poland"
+authors = ["Purplship <hello@purplship.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [
+    { include = "dhl_poland_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = ""
+lxml = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

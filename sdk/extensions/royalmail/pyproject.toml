@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "purplship.royalmail"
-version = "2021.10"
-homepage="https://docs.purplship.com"
+version = "2021.11"
+homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Royal Mail Shipping Extension"
 authors = ["Purplship <hello@purplship.com>"]
-license = "Apache License Version 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "purplship" }]
 classifiers=[

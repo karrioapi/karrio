@@ -2,8 +2,8 @@ bandit
 black
 coverage
 generateDS
-mkdocs-material
 mypy
 poetry
 twine
 wheel
+nose

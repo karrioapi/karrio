@@ -36,18 +36,32 @@ class TestCustomsInfoDetails(APITestCase):
         self.assertDictEqual(response_data, CUSTOMS_UPDATE_RESPONSE)
 
 
-CUSTOMS_DATA = {"incoterm": "DDU"}
+CUSTOMS_DATA = {
+    "incoterm": "DDU",
+    "commodities": [
+        {"description": "cn", "weight": 4.0, "weight_unit": "KG", "sku": "cc"},
+    ],
+}
 
 CUSTOMS_RESPONSE = {
-    "aes": None,
-    "certificate_number": None,
     "certify": None,
     "commercial_invoice": None,
-    "commodities": [],
+    "commodities": [
+        {
+            "description": "cn",
+            "id": ANY,
+            "origin_country": None,
+            "quantity": None,
+            "sku": "cc",
+            "value_amount": None,
+            "value_currency": None,
+            "weight": 4.0,
+            "weight_unit": "KG",
+        }
+    ],
     "content_description": None,
     "content_type": None,
     "duty": None,
-    "eel_pfc": None,
     "id": ANY,
     "incoterm": "DDU",
     "invoice": None,
@@ -59,15 +73,12 @@ CUSTOMS_RESPONSE = {
 CUSTOMS_UPDATE_DATA = {"incoterm": "DDP"}
 
 CUSTOMS_UPDATE_RESPONSE = {
-    "aes": None,
-    "certificate_number": None,
     "certify": None,
     "commercial_invoice": None,
     "commodities": [],
     "content_description": None,
     "content_type": None,
     "duty": None,
-    "eel_pfc": None,
     "id": ANY,
     "incoterm": "DDP",
     "invoice": None,

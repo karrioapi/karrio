@@ -15,8 +15,15 @@ class TestDHLTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
         # remove MessageTime, Date and ReadyTime for testing purpose
+
         self.assertEqual(
-            re.sub("<MessageTime>[^>]+</MessageTime>", "", request.serialize()),
+            re.sub(
+                "<MessageTime>[^>]+</MessageTime>",
+                "",
+                request.serialize().replace(
+                    "            <MessageTime>", "<MessageTime>"
+                ),
+            ),
             TrackingRequestXML,
         )
 
@@ -265,6 +272,7 @@ ParsedInTransitTrackingResponse = [
             "carrier_id": "carrier_id",
             "carrier_name": "dhl_express",
             "delivered": False,
+            "estimated_delivery": "2021-05-07",
             "events": [
                 {
                     "code": "PU",
@@ -328,7 +336,7 @@ TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
 TrackingRequestXML = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
-            
+
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>

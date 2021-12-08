@@ -1,40 +1,67 @@
-from typing import Union
+from typing import Union, List
 from datetime import datetime
 
 
 class DATEFORMAT:
     @staticmethod
-    def date(date_str: Union[str, datetime] = None, current_format: str = "%Y-%m-%d"):
-        if date_str is None:
+    def date(
+        date_value: Union[str, datetime] = None,
+        current_format: str = "%Y-%m-%d",
+        try_formats: List[str] = None,
+    ) -> datetime:
+        if date_value is None:
             return None
-        if isinstance(date_str, str) and not any(date_str.split(" ")):
+        if isinstance(date_value, str) and not any(date_value.split(" ")):
             return None
-        if isinstance(date_str, datetime):
-            return date_str
+        if isinstance(date_value, datetime):
+            return date_value
 
-        return datetime.strptime(str(date_str), current_format)
+        if any(try_formats or []):
+            for format in try_formats:
+                try:
+                    return datetime.strptime(date_value, format)
+                except ValueError:
+                    pass
+
+        return datetime.strptime(str(date_value), current_format)
 
     @staticmethod
-    def fdate(date_str: str = None, current_format: str = "%Y-%m-%d"):
-        date = DATEFORMAT.date(date_str, current_format)
+    def fdate(
+        date_str: str = None,
+        current_format: str = "%Y-%m-%d",
+        try_formats: List[str] = None,
+    ):
+        date = DATEFORMAT.date(
+            date_str, current_format=current_format, try_formats=try_formats
+        )
         if date is None:
             return None
         return date.strftime("%Y-%m-%d")
 
     @staticmethod
     def fdatetime(
-        date_str: str = None, current_format: str = "%Y-%m-%d %H:%M:%S", output_format: str = "%Y-%m-%d %H:%M:%S"
+        date_str: str = None,
+        current_format: str = "%Y-%m-%d %H:%M:%S",
+        output_format: str = "%Y-%m-%d %H:%M:%S",
+        try_formats: List[str] = None,
     ):
-        date = DATEFORMAT.date(date_str, current_format)
+        date = DATEFORMAT.date(
+            date_str, current_format=current_format, try_formats=try_formats
+        )
         if date is None:
             return None
         return date.strftime(output_format)
 
     @staticmethod
     def ftime(
-        time_str: str, current_format: str = "%H:%M:%S", output_format: str = "%H:%M"
+        time_str: str,
+        current_format: str = "%H:%M:%S",
+        output_format: str = "%H:%M",
+        try_formats: List[str] = None,
     ):
-        time = DATEFORMAT.date(time_str, current_format)
+        time = DATEFORMAT.date(
+            time_str, current_format=current_format, try_formats=try_formats
+        )
         if time is None:
             return None
         return time.strftime(output_format)

@@ -18,7 +18,6 @@ from purplship.server.core.exceptions import PurplShipApiException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.core.serializers import (
     MODELS,
-    CARRIERS,
     FlagField,
     ShipmentStatus,
     ErrorResponse,
@@ -50,8 +49,8 @@ Shipments = PaginatedResult("ShipmentList", Shipment)
 
 
 class ShipmentFilters(filters.FilterSet):
-    created_start = filters.DateFilter(field_name="created_at", lookup_expr="gte")
-    created_end = filters.DateFilter(field_name="created_at", lookup_expr="lte")
+    created_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
+    created_before = filters.DateFilter(field_name="created_at", lookup_expr="lte")
     carrier_id = filters.CharFilter(field_name="selected_rate_carrier__carrier_id")
     service = filters.CharFilter(field_name="selected_rate__service")
     reference = filters.CharFilter(field_name="reference", lookup_expr="iregex")
@@ -74,16 +73,18 @@ class ShipmentFilters(filters.FilterSet):
         openapi.Parameter("service", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter("reference", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter(
-            "created_end",
+            "created_before",
             in_=openapi.IN_QUERY,
             type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATE,
+            format=openapi.FORMAT_DATETIME,
+            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
         ),
         openapi.Parameter(
-            "created_start",
+            "created_after",
             in_=openapi.IN_QUERY,
             type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATE,
+            format=openapi.FORMAT_DATETIME,
+            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
         ),
     ]
 
@@ -107,6 +108,7 @@ class ShipmentList(GenericAPIView):
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ShipmentFilters
+    serializer_class = Shipments
     model = models.Shipment
 
     def get_queryset(self):
@@ -119,7 +121,7 @@ class ShipmentList(GenericAPIView):
             _filters += (
                 Q(meta__rate_provider=carrier_name)
                 | Q(
-                    **{f"selected_rate_carrier__{carrier_name}settings__isnull": False}
+                    **{f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False}
                 ),
             )
 
