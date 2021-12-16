@@ -46,7 +46,7 @@ from purplship.core.utils import (
     DF,
 )
 from purplship.core.units import Options, Packages, CompleteAddress, Weight
-from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
+from purplship.core.models import Duty, ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 from purplship.providers.fedex.units import (
@@ -115,7 +115,7 @@ def shipment_request(
     ]
     label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
     customs = payload.customs
-    duty = customs.duty if customs is not None else None
+    duty = (customs.duty or Duty(paid_by="sender")) if customs is not None else None
     bill_to = CompleteAddress(getattr(duty, "bill_to", None))
 
     requests = [
@@ -313,13 +313,16 @@ def shipment_request(
                                     else None
                                 ),
                             )
-                            if duty is not None
-                            else None
                         ),
                         DocumentContent=None,
-                        CustomsValue=Money(
-                            Currency=(duty.currency or options.currency),
-                            Amount=(duty.declared_value or options.declared_value),
+                        CustomsValue=(
+                            Money(
+                                Currency=getattr(duty or options, "currency", None),
+                                Amount=getattr(duty or options, "declared_value", None),
+                            )
+                            if getattr(duty or options, "declared_value", None)
+                            is not None
+                            else None
                         ),
                         FreightOnValue=None,
                         InsuranceCharges=None,
