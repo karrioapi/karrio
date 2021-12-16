@@ -317,10 +317,14 @@ def shipment_request(
                         DocumentContent=None,
                         CustomsValue=(
                             Money(
-                                Currency=getattr(duty or options, "currency", None),
-                                Amount=getattr(duty or options, "declared_value", None),
+                                Currency=(
+                                    getattr(duty, "currency", options.currency) or "USD"
+                                ),
+                                Amount=getattr(
+                                    duty, "declared_value", options.declared_value
+                                ),
                             )
-                            if getattr(duty or options, "declared_value", None)
+                            if getattr(duty, "declared_value", options.declared_value)
                             is not None
                             else None
                         ),

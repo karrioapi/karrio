@@ -141,7 +141,7 @@ shipment_data = {
         }
     ],
     "service": "fedex_international_priority",
-    "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
+    "options": {"currency": "USD"},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {
         "duty": {"paid_by": "sender", "declared_value": "100."},
