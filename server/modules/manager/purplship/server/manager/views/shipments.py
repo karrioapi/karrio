@@ -121,7 +121,9 @@ class ShipmentList(GenericAPIView):
             _filters += (
                 Q(meta__rate_provider=carrier_name)
                 | Q(
-                    **{f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False}
+                    **{
+                        f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False
+                    }
                 ),
             )
 
@@ -198,7 +200,7 @@ class ShipmentDetail(APIView):
             ShipmentStatus.created.value,
         ]:
             raise PurplShipApiException(
-                f"The shipment is '{shipment.status}' and can therefore not be cancelled anymore...",
+                f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
                 code="state_error",
                 status_code=status.HTTP_409_CONFLICT,
             )
@@ -207,7 +209,7 @@ class ShipmentDetail(APIView):
             raise PurplShipApiException(
                 (
                     f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
-                    "Please cancel this shipment from the pickup before."
+                    "Please cancel this shipment pickup before."
                 ),
                 code="state_error",
                 status_code=status.HTTP_409_CONFLICT,
@@ -423,7 +425,7 @@ class ShipmentPurchase(APIView):
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
-                f"The shipment is '{shipment.status}' and therefore already {ShipmentStatus.purchased.value}",
+                f"The shipment is '{shipment.status}' and cannot be purchased again",
                 code="state_error",
                 status_code=status.HTTP_409_CONFLICT,
             )

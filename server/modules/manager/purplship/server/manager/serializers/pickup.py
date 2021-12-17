@@ -40,7 +40,7 @@ def shipment_exists(value):
             if val.first().pickup_shipments.exists() is True
         ]
         raise serializers.ValidationError(
-            f"The following shipments {scheduled} are already scheduled pickups",
+            f"The following shipments {scheduled} are already scheduled for pickups",
             code="invalid",
         )
 
@@ -60,7 +60,7 @@ def pickup_exists(value):
 def address_exists(value):
     if value is str and not models.Address.objects.filter(pk=value).exists():
         raise serializers.ValidationError(
-            f"Address with id {value} not found: {value}", code="invalid"
+            {"address": f"Address with id {value} not found: {value}"}, code="invalid"
         )
 
 
