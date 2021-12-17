@@ -44,7 +44,7 @@ class TestUPSTracking(unittest.TestCase):
                 DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
             )
 
-    def test_tracking_unknown_response_parsing(self):
+    def test_invalid_tracking_number_response_parsing(self):
         with patch("purplship.mappers.ups.proxy.http") as mock:
             mock.return_value = InvalidTrackingNumberResponseJSON
             parsed_response = (
@@ -53,6 +53,18 @@ class TestUPSTracking(unittest.TestCase):
             self.assertEqual(
                 DP.to_dict(parsed_response),
                 DP.to_dict(ParsedInvalidTrackingNumberResponse),
+            )
+
+    def test_tracking_number_not_found_response_parsing(self):
+        with patch("purplship.mappers.ups.proxy.http") as mock:
+            mock.return_value = TrackingNumberNotFoundResponseJSON
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            print(DP.to_dict(parsed_response))
+            self.assertEqual(
+                DP.to_dict(parsed_response),
+                DP.to_dict(ParsedTrackingNumberNotFound),
             )
 
 
@@ -65,15 +77,13 @@ TrackingRequestPayload = ["1Z12345E6205277936"]
 ParsedAuthError = [
     [],
     [
-        [
-            {
-                "carrier_id": "ups",
-                "carrier_name": "ups",
-                "code": "250003",
-                "details": {"tracking_number": "1Z12345E6205277936"},
-                "message": "Invalid Access License number",
-            }
-        ]
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "code": "250003",
+            "details": {"tracking_number": "1Z12345E6205277936"},
+            "message": "Invalid Access License number",
+        }
     ],
 ]
 
@@ -176,18 +186,29 @@ ParsedTrackingResponse = [
     [],
 ]
 
+ParsedTrackingNumberNotFound = [
+    [],
+    [
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "code": "TW0001",
+            "details": {"tracking_number": "1Z12345E6205277936"},
+            "message": "Tracking Information Not Found",
+        }
+    ],
+]
+
 ParsedInvalidTrackingNumberResponse = [
     [],
     [
-        [
-            {
-                "carrier_id": "ups",
-                "carrier_name": "ups",
-                "code": "TV1002",
-                "details": {"tracking_number": "1Z12345E6205277936"},
-                "message": "Invalid inquiry number",
-            }
-        ]
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "code": "TV1002",
+            "details": {"tracking_number": "1Z12345E6205277936"},
+            "message": "Invalid inquiry number",
+        }
     ],
 ]
 
@@ -447,3 +468,15 @@ InvalidTrackingNumberResponseJSON = """{
   }
 }
 """
+
+TrackingNumberNotFoundResponseJSON = """{
+    "trackResponse": {
+        "shipment": [
+            {
+                "warnings": [
+                    {"code": "TW0001", "message": "Tracking Information Not Found"}
+                ]
+            }
+        ]
+    }
+}"""

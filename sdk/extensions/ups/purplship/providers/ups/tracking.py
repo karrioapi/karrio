@@ -23,20 +23,36 @@ from purplship.providers.ups.utils import Settings
 def parse_tracking_response(
     responses: List[Tuple[str, dict]], settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
-    details = [
-        _extract_details(response["trackResponse"]["shipment"][0], settings)
-        for _, response in responses
-        if "trackResponse" in response
+    packages = [
+        result["trackResponse"]["shipment"][0]
+        for _, result in responses
+        if "trackResponse" in result
+        and result["trackResponse"]["shipment"][0].get("package") is not None
     ]
-    messages = [
-        parse_rest_error_response(
-            response["response"]["errors"],
-            settings,
-            details=dict(tracking_number=tracking_number),
-        )
-        for tracking_number, response in responses
-        if "response" in response
-    ]
+    messages: List[Message] = sum(
+        [
+            parse_rest_error_response(
+                [
+                    *(  # get errors from the response object returned by UPS
+                        result["response"].get("errors", [])
+                        if "response" in result
+                        else []
+                    ),
+                    *(  # get warnings from the trackResponse object returned by UPS
+                        result["trackResponse"]["shipment"][0].get("warnings", [])
+                        if "trackResponse" in result
+                        else []
+                    ),
+                ],
+                settings,
+                details=dict(tracking_number=tracking_number),
+            )
+            for tracking_number, result in responses
+        ],
+        [],
+    )
+
+    details = [_extract_details(package, settings) for package in packages]
 
     return details, messages
 
