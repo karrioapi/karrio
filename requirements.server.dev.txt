@@ -8,7 +8,7 @@ Django==3.2.9
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
-# -e ./sdk/extensions/dhl_poland
+-e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle

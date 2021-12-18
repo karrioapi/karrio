@@ -5,13 +5,13 @@ from purplship.core.utils import (
     request as http,
     XP,
 )
-from purplship.universal.mappers import Proxy as UniversalProxy
+from purplship.universal.mappers import RatingMixinProxy
 from purplship.core.utils.helpers import exec_async
 from purplship.mappers.dhl_poland.settings import Settings
 from purplship.api.proxy import Proxy as BaseProxy
 
 
-class Proxy(UniversalProxy, BaseProxy):
+class Proxy(RatingMixinProxy, BaseProxy):
     settings: Settings
 
     def _send_request(self, request: Serializable[Any], soapaction: str) -> str:
