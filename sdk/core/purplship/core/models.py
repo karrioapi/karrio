@@ -348,3 +348,22 @@ class ServiceLevel:
     # Destination supports
     domicile: bool = None
     international: bool = None
+
+
+@attr.s(auto_attribs=True)
+class LabelTemplate:
+    """Purplship unified label template data type."""
+
+    name: str
+    template: str
+    description: str = ""
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ServiceLabel:
+    """Purplship unified service label data type."""
+
+    label: str
+    label_type: str
+    tracking_number: str = None
