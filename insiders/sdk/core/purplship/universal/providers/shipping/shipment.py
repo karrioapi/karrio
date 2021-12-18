@@ -5,7 +5,7 @@ from purplship.core.models import (
     ShipmentDetails,
     Message,
 )
-from purplship.universal.providers.utils import ShippingMixinSettings
+from purplship.universal.providers.shipping.utils import ShippingMixinSettings
 from sdk.core.purplship.core.models import ServiceLabel
 
 
@@ -19,15 +19,15 @@ def parse_shipment_response(
 
 
 def _extract_details(
-    service: ServiceLabel, settings: ShippingMixinSettings
+    service_label: ServiceLabel, settings: ShippingMixinSettings
 ) -> ShipmentDetails:
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        label=service.label,
-        tracking_number=service.tracking_number,
-        shipment_identifier=service.shipment_identifier,
-        meta=dict(service_name=service.service_name),
+        label=service_label.label,
+        tracking_number=service_label.tracking_number,
+        shipment_identifier=service_label.tracking_number,
+        meta=dict(service_name=service_label.service_name),
     )
 
 

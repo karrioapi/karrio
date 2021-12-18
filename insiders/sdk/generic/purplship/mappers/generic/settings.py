@@ -4,7 +4,8 @@ from typing import List
 import attr
 from jstruct.types import JList, REQUIRED
 from purplship.core.models import ServiceLevel, LabelTemplate
-from purplship.universal.mappers import RatingMixinSettings, ShippingMixinSettings
+from purplship.universal.mappers.rating_proxy import RatingMixinSettings
+from purplship.universal.mappers.shipping_proxy import ShippingMixinSettings
 from purplship.providers.generic.units import DEFAULT_SERVICES
 from purplship.providers.generic.utils import Settings as BaseSettings
 

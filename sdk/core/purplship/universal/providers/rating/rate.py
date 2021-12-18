@@ -6,7 +6,7 @@ from purplship.core.models import (
     Message,
     ServiceLevel,
 )
-from purplship.universal.providers.utils import RatingMixinSettings
+from purplship.universal.providers.rating.utils import RatingMixinSettings
 
 
 def parse_rate_response(

@@ -10,7 +10,6 @@ Django==3.2.9
 # -e ./sdk/extensions/dhl_express
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/fedex
--e ./sdk/extensions/generic
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/ups

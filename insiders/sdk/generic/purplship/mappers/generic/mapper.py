@@ -7,10 +7,12 @@ from purplship.core.models import (
     Message,
     ShipmentDetails,
 )
-from purplship.universal.providers import (
+from purplship.universal.providers.shipping import (
     parse_shipment_response,
-    parse_rate_response,
     shipment_request,
+)
+from purplship.universal.providers.rating import (
+    parse_rate_response,
     rate_request,
 )
 from purplship.mappers.generic.settings import Settings

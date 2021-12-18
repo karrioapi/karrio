@@ -1,0 +1,5 @@
+-r ./requirements.sdk.dev.txt
+
+# SDK extentions
+-e ./insiders/sdk/core
+-e ./insiders/sdk/generic

@@ -5,7 +5,7 @@ from purplship.core.utils import (
     request as http,
     XP,
 )
-from purplship.universal.mappers import RatingMixinProxy
+from purplship.universal.mappers.rating_proxy import RatingMixinProxy
 from purplship.core.utils.helpers import exec_async
 from purplship.mappers.dhl_poland.settings import Settings
 from purplship.api.proxy import Proxy as BaseProxy

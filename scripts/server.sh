@@ -100,6 +100,7 @@ elif [[ "$*" == *build:pkgs* ]]; then
 	cd -
 elif [[ "$*" == *build:insiders* ]]; then
 	cd "${ROOT:?}"
+    rm -rf "${EE_DIST}/*"
     sm=$(find "${ROOT:?}/insiders" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do
