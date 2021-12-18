@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "purplship.generic"
-version = "2021.11"
+name = "purplship.insiders"
+version = "2021.12"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
-description = "Purplship - Generic Shipping Extension"
+description = "Multi-carrier shipping API integration with python"
 authors = ["Purplship <hello@purplship.com>"]
 license = "Apache-2.0"
 readme = "README.md"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = ""
+purplship = ""
 
 [tool.poetry.dev-dependencies]
 

@@ -8,6 +8,7 @@ from purplship.core.models import (
     TrackingDetails,
     Message,
 )
+from purplship.universal.providers.rating import parse_rate_response, rate_request
 from purplship.providers.dhl_poland import (
     parse_shipment_cancel_response,
     parse_tracking_response,
@@ -16,7 +17,6 @@ from purplship.providers.dhl_poland import (
     shipment_request,
     tracking_request,
 )
-from purplship.universal.providers import parse_rate_response, rate_request
 from purplship.mappers.dhl_poland.settings import Settings
 
 

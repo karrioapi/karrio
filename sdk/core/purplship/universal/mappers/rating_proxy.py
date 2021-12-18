@@ -1,27 +1,32 @@
 import attr
 from typing import List, Tuple
-from jstruct import JList
-
-from purplship.core.settings import Settings
-from purplship.core.units import Dimension, Packages, Weight
-from purplship.core.models import Message, RateRequest, ServiceLevel
-from sdk.core.purplship.core.models import LabelTemplate, ServiceLabel, ShipmentRequest
+from purplship.core.utils import (
+    Serializable,
+    Deserializable,
+)
+from purplship.core.models import (
+    Message,
+    RateRequest,
+    ServiceLevel,
+)
+from purplship.core.units import (
+    Weight,
+    Dimension,
+    Packages,
+)
+from purplship.universal.providers.rating import RatingMixinSettings
 
 
 @attr.s(auto_attribs=True)
-class RatingMixinSettings(Settings):
-    """Universal rating settings mixin."""
+class RatingMixinProxy:
+    settings: RatingMixinSettings
 
-    # Additional properties
-    services: List[ServiceLevel] = JList[ServiceLevel]
+    def get_rates(
+        self, request: Serializable[RateRequest]
+    ) -> Deserializable[Tuple[List[ServiceLevel], List[Message]]]:
+        response = filter_service_level(request.serialize(), self.settings)
 
-
-@attr.s(auto_attribs=True)
-class ShippingMixinSettings(Settings):
-    """Universal shipping settings mixin."""
-
-    # Additional properties
-    templates: List[LabelTemplate] = JList[LabelTemplate]
+        return Deserializable(response)
 
 
 def filter_service_level(
@@ -164,17 +169,3 @@ def filter_service_level(
     services = [service for service in settings.services if match_requirements(service)]
 
     return services, errors
-
-
-def generate_service_label(
-    request: ShipmentRequest, settings: ShippingMixinSettings
-) -> Tuple[ServiceLabel, List[Message]]:
-
-    messages = []
-    service_label = ServiceLabel(
-        label="",
-        label_type="",
-        tracking_number="",
-    )
-
-    return service_label, messages

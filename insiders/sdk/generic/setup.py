@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name="purplship.dhl_poland",
+    name="purplship.generic",
     version="0.0.0-dev",
-    license="LGPLv3",
-    packages=find_namespace_packages(exclude=["tests"]),
-    install_requires=["purplship", "carrier.dhl_poland"],
+    license="Apache-2.0",
+    packages=find_namespace_packages(),
+    install_requires=["purplship", "purplship.insiders"],
     zip_safe=False,
 )
