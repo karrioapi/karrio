@@ -16,7 +16,7 @@ from purplship.providers.dhl_poland import (
     shipment_request,
     tracking_request,
 )
-from purplship.universal.providers.rate import parse_rate_response, rate_request
+from purplship.universal.providers import parse_rate_response, rate_request
 from purplship.mappers.dhl_poland.settings import Settings
 
 
