@@ -1,6 +1,5 @@
 from datetime import datetime
-from base64 import encodebytes
-from typing import List, Tuple, cast
+from typing import List, Tuple
 from fedex_lib.ship_service_v26 import (
     ProcessShipmentRequest,
     TransactionDetail,
