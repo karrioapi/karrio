@@ -3,6 +3,7 @@ Django==3.2.9
 # Carrier Schemas in Development
 # -e ./schemas/dhl_poland
 
+
 # Carrier Extenstions in Development
 -e ./sdk/core
 # -e ./sdk/extensions/canadapost
@@ -15,6 +16,10 @@ Django==3.2.9
 # -e ./sdk/extensions/ups
 # -e ./sdk/extensions/usps
 # -e ./sdk/extensions/usps_international
+
+
+-e ./insiders/sdk/core
+-e ./insiders/sdk/generic
 
 
 purplship

@@ -1,14 +1,17 @@
 import unittest
 from purplship.core.utils import DP, Serializable
 from purplship.core.models import RateRequest
-from purplship.universal.mappers import Settings, Proxy
+from purplship.universal.mappers.rating_proxy import (
+    RatingMixinSettings,
+    RatingMixinProxy,
+)
 
 
 class TestCanadaPostRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.settings = Settings(**settings_data)
-        self.proxy = Proxy(self.settings)
+        self.settings = RatingMixinSettings(**settings_data)
+        self.proxy = RatingMixinProxy(self.settings)
 
     def test_rate_without_service_selection_request(self):
         RateRequestWithoutSelection = Serializable(RateRequest(**rate_request_data))
@@ -95,6 +98,7 @@ if __name__ == "__main__":
 
 
 settings_data = {
+    "carrier_id": "universal",
     "services": [
         {
             "service_name": "Standard",
@@ -126,7 +130,7 @@ settings_data = {
             "domicile": False,
             "international": True,
         },
-    ]
+    ],
 }
 
 rate_request_data = {
@@ -207,6 +211,7 @@ ParsedRateResponseHighWeightService = [
     ],
     [
         {
+            "carrier_id": "universal",
             "code": "invalid_weight",
             "message": "the weight exceeds service carrier_standard max weight",
         }
@@ -234,6 +239,7 @@ ParsedInternationalRateResponseHighWeightService = [
     [],
     [
         {
+            "carrier_id": "universal",
             "code": "invalid_weight",
             "message": "the weight exceeds service carrier_interational_parcel max weight",
         }
