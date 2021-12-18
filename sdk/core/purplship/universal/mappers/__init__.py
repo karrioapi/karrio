@@ -1,5 +1,1 @@
-from purplship.universal.mappers.settings import (
-    RatingMixinSettings,
-    ShippingMixinSettings,
-)
-from purplship.universal.mappers.proxy import ShippingMixinProxy, RatingMixinProxy
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore

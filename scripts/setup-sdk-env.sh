@@ -5,5 +5,10 @@ source "scripts/create-new-env.sh"
 
 # Install requirements
 cd "${ROOT}" &&
-pip install -r requirements.sdk.dev.txt
+if [[ "$*" != *--insiders* ]];
+then
+    pip install -r "${ROOT:?}/requirements.sdk.dev.txt"
+else
+    pip install -r "${ROOT:?}/requirements.sdk.insiders.dev.txt"
+fi
 cd -

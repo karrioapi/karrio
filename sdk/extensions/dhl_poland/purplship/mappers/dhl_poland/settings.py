@@ -4,7 +4,7 @@ from typing import List
 import attr
 from jstruct.types import JList
 from purplship.core.models import ServiceLevel
-from purplship.universal.mappers import RatingMixinSettings
+from purplship.universal.mappers.rating_proxy import RatingMixinSettings
 from purplship.providers.dhl_poland.units import DEFAULT_SERVICES
 from purplship.providers.dhl_poland.utils import Settings as BaseSettings
 
