@@ -1039,7 +1039,7 @@ class ShippingData(Serializer):
     </details>
     """,
     )
-    payment = Payment(required=False, allow_null=True, help_text="The payment details")
+    payment = Payment(required=False, default={}, help_text="The payment details")
     customs = CustomsData(
         required=False,
         allow_null=True,
@@ -1065,7 +1065,6 @@ class ShippingData(Serializer):
 class ShippingRequest(ShippingData):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
     rates = Rate(many=True, help_text="The list for shipment rates fetched previously")
-    payment = Payment(required=True, help_text="The payment details")
 
 
 class ShipmentData(ShippingData):

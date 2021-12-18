@@ -168,7 +168,7 @@ def shipment_request(
                         if code in OptionCode
                     ]
                 )
-                if any(all_options)
+                if any([code for code, _ in all_options if code in OptionCode])
                 else None
             ),
             notification=(
