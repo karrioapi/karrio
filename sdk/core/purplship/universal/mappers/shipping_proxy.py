@@ -34,6 +34,7 @@ def generate_service_label(
         label="",
         label_type="",
         tracking_number="",
+        service_name="",
     )
 
     return service_label, messages
