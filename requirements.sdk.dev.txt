@@ -15,6 +15,7 @@
 -e ./sdk/extensions/dicom
 -e ./sdk/vendors/eshipper
 -e ./sdk/extensions/fedex
+-e ./sdk/extensions/generic
 -e ./sdk/vendors/freightcom
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/royalmail

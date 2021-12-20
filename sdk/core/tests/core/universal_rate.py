@@ -7,7 +7,7 @@ from purplship.universal.mappers.rating_proxy import (
 )
 
 
-class TestCanadaPostRating(unittest.TestCase):
+class TestUniversalRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.settings = RatingMixinSettings(**settings_data)
