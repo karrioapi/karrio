@@ -1,1 +1,0 @@
-# Purplship Insiders SDK Core
