@@ -8,7 +8,7 @@ from purplship.providers.generic import units
 
 METADATA = Metadata(
     id="generic",
-    label="Generic",
+    label="Custom Carrier",
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,

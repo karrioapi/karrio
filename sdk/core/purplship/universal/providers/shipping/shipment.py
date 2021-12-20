@@ -6,12 +6,12 @@ from purplship.core.models import (
     Message,
 )
 from purplship.universal.providers.shipping.utils import ShippingMixinSettings
-from sdk.core.purplship.core.models import ServiceLabel
+from purplship.core.models import ServiceLabel
 
 
 def parse_shipment_response(
     response: Tuple[ServiceLabel, List[Message]], settings: ShippingMixinSettings
-) -> Tuple[List[ShipmentDetails], List[Message]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     service_label, errors = response
     shipments = _extract_details(service_label, settings)
 
