@@ -276,3 +276,10 @@ def make_fields_optional(serializer: Type[ModelSerializer]):
         }
 
     return type(_name, (serializer,), dict(Meta=_Meta))
+
+
+def exclude_id_field(serializer: Type[ModelSerializer]):
+    class _Meta(serializer.Meta):
+        exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
+
+    return type(serializer.__name__, (serializer,), dict(Meta=_Meta))

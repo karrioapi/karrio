@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 from purplship import gateway
 from purplship.server.providers.models.carrier import Carrier, ServiceLevel
+from purplship.server.providers.models.template import LabelTemplate
 import purplship.server.providers.extension.models as extensions
 
 logger = logging.getLogger(__name__)
