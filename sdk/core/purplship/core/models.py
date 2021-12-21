@@ -62,13 +62,17 @@ class Parcel:
     width: float = None
     height: float = None
     length: float = None
-    packaging_type: str = None
-    package_preset: str = None
-    description: str = None
-    content: str = None
-    is_document: bool = False
     weight_unit: str = None
     dimension_unit: str = None
+
+    packaging_type: str = None
+    package_preset: str = None
+
+    is_document: bool = False
+    description: str = None
+    content: str = None
+
+    items: List[Commodity] = JList[Commodity]
 
 
 @attr.s(auto_attribs=True)
