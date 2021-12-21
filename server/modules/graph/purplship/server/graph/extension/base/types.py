@@ -9,7 +9,6 @@ from rest_framework import exceptions
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-import django.forms as forms
 
 from purplship.core.utils import DP
 from purplship.server.events.serializers import EventTypes
@@ -552,11 +551,23 @@ class ServiceLevelType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
+class LabelTemplateType(graphene_django.DjangoObjectType):
+    class Meta:
+        model = providers.LabelTemplate
+        exclude = ("genericsettings_set",)
+        interfaces = (CustomNode,)
+
+
 def setup_carrier_model(model_type):
     _extra_fields = {}
 
     if hasattr(model_type, "account_country_code"):
         _extra_fields.update(account_country_code=graphene.String(required=True))
+
+    if hasattr(model_type, "label_template"):
+        _extra_fields.update(
+            label_template=graphene.Field(LabelTemplateType),
+        )
 
     if hasattr(model_type, "services"):
 

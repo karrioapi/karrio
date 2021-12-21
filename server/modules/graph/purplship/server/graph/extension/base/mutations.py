@@ -90,7 +90,7 @@ def create_template_mutation(template: str, update: bool = False):
         else f"Create{template}TemplateInput",
     )
     _props = {"id": (graphene.String(required=True) if update else None)}
-    _props[template.lower()] = graphene.Field(_model, required=True)
+    _props[template.lower()] = graphene.Field(_model, required=not update)
 
     _Base = type("Base", (), _props)
 

@@ -19,22 +19,23 @@ Django==3.2.9
 # -e ./sdk/extensions/usps_international
 
 
-purplship
+# purplship
 purplship.aramex
 purplship.australiapost
-purplship.canadapost
+# purplship.canadapost
 purplship.canpar
 purplship.dhl-express
-purplship.dhl-poland
+# purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
-purplship.fedex
+# purplship.fedex
+# purplship.generic
 purplship.purolator
 purplship.royalmail
 purplship.sendle
 purplship.sf-express
 purplship.tnt
-purplship.ups
+# purplship.ups
 purplship.usps
 purplship.usps_international
 purplship.yanwen
