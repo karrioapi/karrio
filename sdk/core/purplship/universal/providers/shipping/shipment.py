@@ -7,13 +7,21 @@ from purplship.core.models import (
 )
 from purplship.universal.providers.shipping.utils import ShippingMixinSettings
 from purplship.core.models import ServiceLabel
+from purplship.core.utils.transformer import to_multi_piece_shipment
 
 
 def parse_shipment_response(
-    response: Tuple[ServiceLabel, List[Message]], settings: ShippingMixinSettings
+    response: Tuple[List[Tuple[str, ServiceLabel]], List[Message]],
+    settings: ShippingMixinSettings,
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    service_label, errors = response
-    shipments = _extract_details(service_label, settings)
+    service_labels, errors = response
+    shipments = to_multi_piece_shipment(
+        [
+            (package_ref, _extract_details(service_label, settings))
+            for package_ref, service_label in service_labels
+        ],
+        label_format="PDF",
+    )
 
     return shipments, errors
 
