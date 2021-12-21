@@ -6,15 +6,25 @@ from purplship.core.models import (
     Message,
     ServiceLevel,
 )
-from purplship.universal.providers.rating.utils import RatingMixinSettings
+from purplship.universal.providers.rating.utils import (
+    RatingMixinSettings,
+    PackageServices,
+)
+from sdk.core.purplship.core.utils.transformer import to_multi_piece_rates
 
 
 def parse_rate_response(
-    response: Tuple[List[ServiceLevel], List[Message]], settings: RatingMixinSettings
+    response: Tuple[PackageServices, List[Message]], settings: RatingMixinSettings
 ) -> Tuple[List[RateDetails], List[Message]]:
-    services, errors = response
-    rates = [_extract_details(service, settings) for service in services]
-    return rates, errors
+    packages, messages = response
+    rates = to_multi_piece_rates(
+        [
+            (package_ref, [_extract_details(service, settings) for service in services])
+            for package_ref, services in packages
+        ]
+    )
+
+    return rates, messages
 
 
 def _extract_details(

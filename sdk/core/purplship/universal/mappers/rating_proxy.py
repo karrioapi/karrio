@@ -13,8 +13,9 @@ from purplship.core.units import (
     Weight,
     Dimension,
     Packages,
+    Package,
 )
-from purplship.universal.providers.rating import RatingMixinSettings
+from purplship.universal.providers.rating import RatingMixinSettings, PackageServices
 
 
 @attr.s(auto_attribs=True)
@@ -23,7 +24,7 @@ class RatingMixinProxy:
 
     def get_rates(
         self, request: Serializable[RateRequest]
-    ) -> Deserializable[Tuple[List[ServiceLevel], List[Message]]]:
+    ) -> Deserializable[Tuple[PackageServices, List[Message]]]:
         response = filter_service_level(request.serialize(), self.settings)
 
         return Deserializable(response)
@@ -31,9 +32,9 @@ class RatingMixinProxy:
 
 def filter_service_level(
     request: RateRequest, settings: RatingMixinSettings
-) -> Tuple[List[ServiceLevel], List[Message]]:
+) -> Tuple[PackageServices, List[Message]]:
     errors: List[Message] = []
-    package = Packages(request.parcels).single
+    packages = Packages(request.parcels)
     has_origin = any(
         [
             request.shipper.country_code,
@@ -46,7 +47,7 @@ def filter_service_level(
     )
     is_international = not is_domicile
 
-    def match_requirements(service: ServiceLevel) -> bool:
+    def match_requirements(package: Package, service: ServiceLevel) -> bool:
         # Check if service requested
         explicitly_requested = service.service_code in request.services
         implicitly_requested = len(request.services or []) == 0
@@ -166,6 +167,16 @@ def filter_service_level(
             and match_weight_requirements
         )
 
-    services = [service for service in settings.services if match_requirements(service)]
+    services = [
+        (
+            f'{getattr(pkg, "id", index)}',
+            [
+                service
+                for service in settings.services
+                if match_requirements(pkg, service)
+            ],
+        )
+        for index, pkg in enumerate(packages, 1)
+    ]
 
     return services, errors
