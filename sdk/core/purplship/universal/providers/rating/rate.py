@@ -10,7 +10,7 @@ from purplship.universal.providers.rating.utils import (
     RatingMixinSettings,
     PackageServices,
 )
-from sdk.core.purplship.core.utils.transformer import to_multi_piece_rates
+from purplship.core.utils.transformer import to_multi_piece_rates
 
 
 def parse_rate_response(

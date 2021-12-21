@@ -367,4 +367,5 @@ class ServiceLabel:
     label: str
     label_type: str
     service_name: str
+    service_code: str
     tracking_number: str = None

@@ -3,6 +3,8 @@ from typing import Dict, List, Optional, Tuple
 from purplship.core.models import RateDetails
 from purplship.core.models import ChargeDetails
 from purplship.core.utils import NF
+from purplship.core.models import ShipmentDetails
+from purplship.core.utils.helpers import bundle_base64
 
 
 def to_multi_piece_rates(
@@ -80,3 +82,36 @@ def to_multi_piece_rates(
             )
 
     return multi_piece_rates
+
+
+def to_multi_piece_shipment(
+    package_shipments: List[Tuple[str, ShipmentDetails]], label_format: str = "PDF"
+) -> ShipmentDetails:
+    master_shipment = next((shipment for _, shipment in package_shipments), None)
+
+    if master_shipment is None or len(package_shipments) == 1:
+        return master_shipment
+
+    labels = []
+    tracking_numbers = set()
+    tracking_identifiers = set()
+
+    for _, shipment in package_shipments:
+        labels.append(shipment.label)
+        if shipment.tracking_number:
+            tracking_numbers.add(shipment.tracking_number)
+        if shipment.shipment_identifier:
+            tracking_identifiers.add(shipment.shipment_identifier)
+
+    return ShipmentDetails(
+        carrier_name=master_shipment.carrier_name,
+        carrier_id=master_shipment.carrier_id,
+        tracking_number=master_shipment.tracking_number,
+        shipment_identifier=master_shipment.shipment_identifier,
+        label=bundle_base64(labels, label_format),
+        meta={
+            **master_shipment.meta,
+            "tracking_numbers": list(tracking_numbers),
+            "tracking_identifiers": list(tracking_identifiers),
+        },
+    )
