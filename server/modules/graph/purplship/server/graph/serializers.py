@@ -2,6 +2,7 @@ import typing
 from django.db import transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from purplship.server.serializers.abstract import exclude_id_field
 
 from purplship.core.utils import DP
 from purplship.server.serializers import (
@@ -73,6 +74,8 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
 @owned_model_serializer
 class CommodityModelSerializer(ModelSerializer):
     weight_unit = serializers.CharField()
+    value_currency = serializers.CharField(required=False)
+    origin_country = serializers.CharField(required=False)
 
     class Meta:
         model = manager.Commodity
@@ -263,6 +266,13 @@ class ServiceLevelModelSerializer(ModelSerializer):
         exclude = ["created_at", "updated_at", "created_by"]
 
 
+@owned_model_serializer
+class LabelTemplateModelSerializer(ModelSerializer):
+    class Meta:
+        model = providers.LabelTemplate
+        exclude = ["created_at", "updated_at", "created_by"]
+
+
 def create_carrier_model_serializers(partial: bool = False):
     def _create_model_serializer(carrier_model):
         _name = f"{carrier_model.__name__}"
@@ -270,23 +280,42 @@ def create_carrier_model_serializers(partial: bool = False):
         _extra_exclude = []
 
         if hasattr(carrier_model, "account_country_code"):
+            required = (
+                False
+                if partial
+                else not (
+                    carrier_model.account_country_code.field.blank
+                    or carrier_model.account_country_code.field.null
+                )
+            )
             _extra_fields.update(
-                account_country_code=serializers.CharField(required=not partial)
+                account_country_code=serializers.CharField(required=required)
             )
 
         if hasattr(carrier_model, "services"):
             _service_serializer = (
                 make_fields_optional(ServiceLevelModelSerializer)
                 if partial
-                else ServiceLevelModelSerializer
+                else exclude_id_field(ServiceLevelModelSerializer)
             )
             _extra_fields.update(
                 services=_service_serializer(many=True, allow_null=True, required=False)
             )
 
+        if hasattr(carrier_model, "label_template"):
+            _template_serializer = (
+                make_fields_optional(LabelTemplateModelSerializer)
+                if partial
+                else exclude_id_field(LabelTemplateModelSerializer)
+            )
+            _extra_fields.update(
+                label_template=_template_serializer(allow_null=True, required=False)
+            )
+
         class Meta:
             model = carrier_model
             exclude = (
+                "id",
                 "created_at",
                 "updated_at",
                 "created_by",
@@ -335,15 +364,24 @@ class ConnectionModelSerializerBase(ModelSerializer):
     def create(self, validated_data: dict, context: Context, **kwargs):
         name = next((k for k in validated_data.keys() if "settings" in k), "")
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+        settings_data = validated_data.get(name, {})
         payload = {
             key: value
-            for key, value in validated_data.get(name, {}).items()
-            if key not in ["services"]
+            for key, value in settings_data.items()
+            if key not in ["services", "label_template"]
         }
+        label_template = save_one_to_one_data(
+            "label_template",
+            LabelTemplateModelSerializer,
+            payload=settings_data,
+            context=context,
+        )
+
         settings = save_one_to_one_data(
             name, serializer, payload={name: payload}, context=context
         )
-        services = validated_data.get(name, {}).get("services") or getattr(
+
+        services = settings_data.get("services") or getattr(
             settings, "default_services", []
         )
         if any(services):
@@ -354,16 +392,37 @@ class ConnectionModelSerializerBase(ModelSerializer):
                 payload=dict(services=services),
                 context=context,
             )
+        if label_template:
+            settings.label_template = label_template
+            settings.save()
 
         return getattr(settings, "carrier_ptr", None)
 
     @transaction.atomic
-    def update(self, instance, validated_data: dict, **kwargs):
+    def update(self, instance, validated_data: dict, context: Context, **kwargs):
         name = next((k for k in validated_data.keys() if "settings" in k), "")
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+
+        payload = {
+            key: value
+            for key, value in validated_data.get(name, {}).items()
+            if key not in ["services", "label_template"]
+        }
+
         settings = save_one_to_one_data(
-            name, serializer, instance, payload=validated_data
+            name, serializer, instance, payload={name: payload}
         )
+
+        template = validated_data.get(name, {}).get("label_template")
+        if template:
+            settings.label_template = save_one_to_one_data(
+                "label_template",
+                LabelTemplateModelSerializer,
+                settings,
+                payload=dict(label_template=template),
+                context=context,
+            )
+            settings.save()
 
         return getattr(settings, "carrier_ptr", None)
 
