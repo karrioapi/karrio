@@ -1,5 +1,8 @@
 -f https://git.io/purplship
 --extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/purplship%2Fcloud/packages/pypi/simple
+
+Django<=3.2.9
+
 purplship
 purplship.server
 purplship.server.core

@@ -9,43 +9,73 @@ from purplship.core import units, utils
 from purplship.server.core import dataunits, datatypes
 
 logger = logging.getLogger(__name__)
-DIMENSIONS = ["width", "height", "length", "dimension_unit"]
+DIMENSIONS = ["width", "height", "length"]
 
 
 def dimensions_required_together(value):
     any_dimension_specified = any(value.get(dim) is not None for dim in DIMENSIONS)
     has_any_dimension_undefined = any(value.get(dim) is None for dim in DIMENSIONS)
+    dimension_unit_is_undefined = value.get("dimension_unit") is None
 
     if any_dimension_specified and has_any_dimension_undefined:
         raise serializers.ValidationError(
-            "When one dimension is specified, all must be specified with a dimension_unit"
+            {
+                "dimensions": "When one dimension is specified, all must be specified with a dimension_unit"
+            }
         )
 
-
-def valid_time_format(value):
-
-    try:
-        datetime.strptime(value, "%H:%M")
-    except Exception:
-        raise serializers.ValidationError("The time format must match HH:HM")
-
-
-def valid_date_format(value):
-
-    try:
-        datetime.strptime(value, "%Y-%m-%d")
-    except Exception:
-        raise serializers.ValidationError("The date format must match YYYY-MM-DD")
-
-
-def valid_datetime_format(value):
-
-    try:
-        datetime.strptime(value, "%Y-%m-%d")
-    except Exception:
+    if (
+        any_dimension_specified
+        and not has_any_dimension_undefined
+        and dimension_unit_is_undefined
+    ):
         raise serializers.ValidationError(
-            "The datetime format must match YYYY-MM-DD HH:HM"
+            {
+                "dimension_unit": "dimension_unit is required when dimensions are specified"
+            }
         )
+
+
+def valid_time_format(prop: str):
+    def validate(value):
+
+        try:
+            datetime.strptime(value, "%H:%M")
+        except Exception:
+            raise serializers.ValidationError(
+                {prop: "The time format must match HH:HM"},
+                code="invalid",
+            )
+
+    return validate
+
+
+def valid_date_format(prop: str):
+    def validate(value):
+
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+        except Exception:
+            raise serializers.ValidationError(
+                {prop: "The date format must match YYYY-MM-DD"},
+                code="invalid",
+            )
+
+    return validate
+
+
+def valid_datetime_format(prop: str):
+    def validate(value):
+
+        try:
+            datetime.strptime(value, "%Y-%m-%d %H:%M")
+        except Exception:
+            raise serializers.ValidationError(
+                {prop: "The datetime format must match YYYY-MM-DD HH:HM"},
+                code="invalid",
+            )
+
+    return validate
 
 
 class PresetSerializer(serializers.Serializer):

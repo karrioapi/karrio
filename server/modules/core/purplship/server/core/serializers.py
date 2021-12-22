@@ -383,7 +383,11 @@ class Payment(Serializer):
         help_text="The payor type",
     )
     currency = ChoiceField(
-        required=False, choices=CURRENCIES, help_text="The payment amount currency"
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        choices=CURRENCIES,
+        help_text="The payment amount currency",
     )
     account_number = CharField(
         required=False,
@@ -431,7 +435,7 @@ class Duty(Serializer):
 class CustomsData(Serializer):
 
     commodities = Commodity(
-        many=True, required=True, help_text="The parcel content items"
+        many=True, allow_empty=False, help_text="The parcel content items"
     )
     duty = Duty(
         required=False,
@@ -461,7 +465,7 @@ class CustomsData(Serializer):
         required=False,
         allow_null=True,
         allow_blank=True,
-        validators=[valid_date_format],
+        validators=[valid_date_format("invoice_date")],
         help_text="The invoice date",
     )
     commercial_invoice = BooleanField(
@@ -576,7 +580,11 @@ class RateRequest(Serializer):
     Destination address (ship to) for the **recipient**
     """,
     )
-    parcels = ParcelData(many=True, required=True, help_text="The shipment's parcels")
+    parcels = ParcelData(
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
+    )
 
     services = StringListField(
         required=False,
@@ -658,7 +666,7 @@ class PickupRequest(Serializer):
 
     pickup_date = CharField(
         required=True,
-        validators=[valid_date_format],
+        validators=[valid_date_format("pickup_date")],
         help_text="""
     The expected pickup date
 
@@ -667,14 +675,13 @@ class PickupRequest(Serializer):
     )
     address = AddressData(required=True, help_text="The pickup address")
     parcels = ParcelData(
-        required=True,
         many=True,
-        allow_null=True,
+        allow_empty=False,
         help_text="The shipment parcels to pickup.",
     )
     ready_time = CharField(
         required=True,
-        validators=[valid_time_format],
+        validators=[valid_time_format("ready_time")],
         help_text="""
     The ready time for pickup.
 
@@ -683,7 +690,7 @@ class PickupRequest(Serializer):
     )
     closing_time = CharField(
         required=True,
-        validators=[valid_time_format],
+        validators=[valid_time_format("closing_time")],
         help_text="""
     The closing or late time of the pickup
 
@@ -734,9 +741,8 @@ class PickupUpdateRequest(Serializer):
     )
     address = Address(required=True, help_text="The pickup address")
     parcels = Parcel(
-        required=True,
         many=True,
-        allow_null=True,
+        allow_empty=False,
         help_text="The shipment parcels to pickup.",
     )
     confirmation_number = CharField(
@@ -744,7 +750,7 @@ class PickupUpdateRequest(Serializer):
     )
     ready_time = CharField(
         required=True,
-        validators=[valid_time_format],
+        validators=[(valid_time_format("ready_time"))],
         help_text="""
     The ready time for pickup.
 
@@ -753,7 +759,7 @@ class PickupUpdateRequest(Serializer):
     )
     closing_time = CharField(
         required=True,
-        validators=[valid_time_format],
+        validators=[valid_time_format("closing_time")],
         help_text="""
     The closing or late time of the pickup
 
@@ -816,9 +822,8 @@ class PickupDetails(Serializer):
 class Pickup(PickupDetails, PickupRequest):
     address = Address(required=True, help_text="The pickup address")
     parcels = Parcel(
-        required=True,
         many=True,
-        allow_null=True,
+        allow_empty=False,
         help_text="The shipment parcels to pickup.",
     )
     test_mode = BooleanField(
@@ -840,7 +845,7 @@ class PickupCancelRequest(Serializer):
     pickup_date = CharField(
         required=False,
         allow_null=True,
-        validators=[valid_date_format],
+        validators=[valid_date_format("pickup_date")],
         help_text="""
     The pickup date
 
@@ -917,7 +922,7 @@ class Rate(EntitySerializer):
     )
     extra_charges = Charge(
         many=True,
-        required=False,
+        allow_empty=True,
         default=[],
         help_text="list of the rate's additional charges",
     )
@@ -948,6 +953,7 @@ class TrackingDetails(Serializer):
         many=True,
         required=False,
         allow_null=True,
+        allow_empty=True,
         help_text="The tracking details events",
     )
     delivered = BooleanField(
@@ -1005,7 +1011,9 @@ class ShippingData(Serializer):
     Destination address (ship to) for the **recipient**
     """,
     )
-    parcels = ParcelData(many=True, required=True, help_text="The shipment's parcels")
+    parcels = ParcelData(
+        many=True, allow_empty=False, help_text="The shipment's parcels"
+    )
     options = PlainDictField(
         required=False,
         allow_null=True,
@@ -1031,7 +1039,7 @@ class ShippingData(Serializer):
     </details>
     """,
     )
-    payment = Payment(required=False, allow_null=True, help_text="The payment details")
+    payment = Payment(required=False, default={}, help_text="The payment details")
     customs = CustomsData(
         required=False,
         allow_null=True,
@@ -1057,7 +1065,6 @@ class ShippingData(Serializer):
 class ShippingRequest(ShippingData):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
     rates = Rate(many=True, help_text="The list for shipment rates fetched previously")
-    payment = Payment(required=True, help_text="The payment details")
 
 
 class ShipmentData(ShippingData):
@@ -1174,7 +1181,7 @@ class ShipmentContent(Serializer):
     Destination address (ship to) for the **recipient**
     """,
     )
-    parcels = Parcel(many=True, required=True, help_text="The shipment's parcels")
+    parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
 
     services = StringListField(
         required=False,

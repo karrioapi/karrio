@@ -9,56 +9,69 @@ from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplShipApiException
-from purplship.server.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address, Operation
-from purplship.server.manager.serializers import AddressSerializer, reset_related_shipment_rates
+from purplship.server.core.exceptions import PurplshipAPIException
+from purplship.server.core.serializers import (
+    ShipmentStatus,
+    ErrorResponse,
+    AddressData,
+    Address,
+    Operation,
+)
+from purplship.server.manager.serializers import (
+    AddressSerializer,
+    reset_related_shipment_rates,
+)
 from purplship.server.manager.router import router
 from purplship.server.manager import models
 
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-Addresses = PaginatedResult('AddressList', Address)
+Addresses = PaginatedResult("AddressList", Address)
 
 
 class AddressList(GenericAPIView):
     queryset = models.Address.objects
-    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    pagination_class = type(
+        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
+    )
 
     @swagger_auto_schema(
-        tags=['Addresses'],
+        tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all addresses",
         responses={200: Addresses(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request GET \\
                   --url '/v1/addresses' \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def get(self, request: Request):
         """
         Retrieve all addresses.
         """
-        addresses = models.Address.access_by(request).filter(shipper=None, recipient=None)
+        addresses = models.Address.access_by(request).filter(
+            shipper=None, recipient=None
+        )
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
     @swagger_auto_schema(
-        tags=['Addresses'],
+        tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request POST \\
                   --url /v1/addresses \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -74,35 +87,38 @@ class AddressList(GenericAPIView):
                     "residential": false,
                     "state_code": "NB"
                 }'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def post(self, request: Request):
         """
         Create a new address.
         """
-        address = SerializerDecorator[AddressSerializer](data=request.data, context=request).save().instance
+        address = (
+            SerializerDecorator[AddressSerializer](data=request.data, context=request)
+            .save()
+            .instance
+        )
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
 class AddressDetail(APIView):
-
     @swagger_auto_schema(
-        tags=['Addresses'],
+        tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an address",
         responses={200: Address(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request GET \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def get(self, request: Request, pk: str):
         """
@@ -112,15 +128,15 @@ class AddressDetail(APIView):
         return Response(Address(address).data)
 
     @swagger_auto_schema(
-        tags=['Addresses'],
+        tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request PATCH \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -128,9 +144,9 @@ class AddressDetail(APIView):
                   --data '{
                     "city": "Pierrefonds"
                 }'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def patch(self, request: Request, pk: str):
         """
@@ -139,10 +155,10 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         shipment = address.shipper.first() or address.recipient.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
-            raise PurplShipApiException(
+            raise PurplshipAPIException(
                 "The shipment related to this address has been 'purchased' and can no longer be modified",
                 status_code=status.HTTP_409_CONFLICT,
-                code='state_error'
+                code="state_error",
             )
 
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
@@ -150,20 +166,20 @@ class AddressDetail(APIView):
         return Response(Address(address).data)
 
     @swagger_auto_schema(
-        tags=['Addresses'],
+        tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Discard an address",
         responses={200: Operation(), 400: ErrorResponse()},
         code_examples=[
             {
-                'lang': 'bash',
-                'source': '''
+                "lang": "bash",
+                "source": """
                 curl --request DELETE \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>'
-                '''
+                """,
             }
-        ]
+        ],
     )
     def delete(self, request: Request, pk: str):
         """
@@ -172,10 +188,10 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         shipment = address.shipper.first() or address.recipient.first()
         if shipment is not None:
-            raise PurplShipApiException(
+            raise PurplshipAPIException(
                 "This address is linked to a shipment and cannot be removed",
                 status_code=status.HTTP_409_CONFLICT,
-                code='state_error'
+                code="state_error",
             )
 
         address.delete(keep_parents=True)
@@ -183,5 +199,7 @@ class AddressDetail(APIView):
         return Response(serializer.data)
 
 
-router.urls.append(path('addresses', AddressList.as_view(), name="address-list"))
-router.urls.append(path('addresses/<str:pk>', AddressDetail.as_view(), name="address-details"))
+router.urls.append(path("addresses", AddressList.as_view(), name="address-list"))
+router.urls.append(
+    path("addresses/<str:pk>", AddressDetail.as_view(), name="address-details")
+)

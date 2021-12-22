@@ -90,7 +90,7 @@ class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType)
         )
 
     def resolve_enabled(self, info):
-        if hasattr(self, "org"):
+        if hasattr(self, "active_orgs"):
             return self.active_orgs.filter(id=info.context.org.id).exists()
 
         return self.active_users.filter(id=info.context.user.id).exists()

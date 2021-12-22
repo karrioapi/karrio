@@ -64,6 +64,11 @@ class ShipmentSerializer(ShipmentData):
             carrier_ids=carrier_ids,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
+        payment = validated_data.get("payment") or DP.to_dict(
+            datatypes.Payment(
+                currency=(validated_data.get("options") or {}).get("currency")
+            )
+        )
 
         # Get live rates
         rate_response: datatypes.RateResponse = (
@@ -92,6 +97,7 @@ class ShipmentSerializer(ShipmentData):
         shipment = models.Shipment.objects.create(
             **{
                 **shipment_data,
+                "payment": payment,
                 "rates": DP.to_dict(rate_response.rates),
                 "messages": DP.to_dict(rate_response.messages),
                 "test_mode": all([r.test_mode for r in rate_response.rates]),
