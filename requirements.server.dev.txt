@@ -18,6 +18,8 @@ Django==3.2.9
 # -e ./sdk/extensions/usps
 # -e ./sdk/extensions/usps_international
 
+-e ./insiders/sdk/generic
+
 
 # purplship
 purplship.aramex

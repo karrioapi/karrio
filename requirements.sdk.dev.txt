@@ -15,7 +15,6 @@
 -e ./sdk/extensions/dicom
 -e ./sdk/vendors/eshipper
 -e ./sdk/extensions/fedex
--e ./sdk/extensions/generic
 -e ./sdk/vendors/freightcom
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/royalmail
@@ -27,6 +26,8 @@
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
+
+-e ./insiders/sdk/generic
 
 # Extenstions in Development
 -e ./sdk/extensions/ics_courier
