@@ -18,6 +18,9 @@ Help us out… If you love open source and great software, give us a star! 🌟
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
+- **Customizable Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) as a point of start to customize your dedicated shipping app.
+
+<picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
 
 ## Try it now
 
