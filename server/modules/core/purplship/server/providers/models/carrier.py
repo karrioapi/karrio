@@ -119,7 +119,7 @@ class Carrier(OwnedEntity):
 
     @property
     def gateway(self) -> Gateway:
-        return gateway[self.settings.carrier_name].create({**self.data.dict()})
+        return gateway[self.settings.carrier_name].create({**self.data.to_dict()})
 
 
 class ServiceLevel(OwnedEntity):

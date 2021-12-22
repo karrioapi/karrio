@@ -48,20 +48,28 @@ class CarrierSettings:
         self.id = id
 
         for name, value in kwargs.items():
-            if name not in ["carrier_ptr", "created_by"]:
+            if name not in ["carrier_ptr", "created_by", "active_users", "active_orgs"]:
                 self.__setattr__(name, value)
 
     # TODO: rename this to avoid confusion
-    def dict(self):
+    def to_dict(self):
         return {
             name: value
             for name, value in self.__dict__.items()
-            if name not in ["carrier_name", "created_by", "active", "capabilities"]
+            if name
+            not in [
+                "carrier_name",
+                "created_by",
+                "active",
+                "capabilities",
+                "active_users",
+                "active_orgs",
+            ]
         }
 
     @classmethod
-    def create(cls, data: object):
-        return cls(**DP.to_dict(data))
+    def create(cls, data: dict):
+        return cls(**data)
 
 
 @attr.s(auto_attribs=True)
