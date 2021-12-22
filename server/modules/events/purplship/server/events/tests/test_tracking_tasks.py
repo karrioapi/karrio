@@ -192,34 +192,27 @@ RETURNED_UPDATED_VALUE = (
 
 UPDATED_TRACKERS_LIST = {
     "count": 2,
-    "next": ANY,
-    "previous": ANY,
+    "next": None,
+    "previous": None,
     "results": [
         {
             "id": ANY,
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
-            "estimated_delivery": None,
             "events": [
-                {
-                    "date": "2021-03-02",
-                    "description": "JESSICA",
-                    "location": "Oderweg 2, AMSTERDAM",
-                    "code": "pre-transit",
-                    "time": "07:53",
-                },
                 {
                     "date": "2021-01-11",
                     "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
                     "location": "BONN",
                     "code": "pre-transit",
                     "time": "20:34",
-                },
+                }
             ],
             "delivered": False,
             "test_mode": True,
             "status": "in-transit",
+            "estimated_delivery": None,
             "messages": [],
         },
         {
@@ -227,7 +220,6 @@ UPDATED_TRACKERS_LIST = {
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
-            "estimated_delivery": None,
             "events": [
                 {
                     "date": "2012-10-04",
@@ -240,6 +232,7 @@ UPDATED_TRACKERS_LIST = {
             "delivered": False,
             "test_mode": True,
             "status": "in-transit",
+            "estimated_delivery": None,
             "messages": [],
         },
     ],
