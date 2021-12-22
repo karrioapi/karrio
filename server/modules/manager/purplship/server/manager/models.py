@@ -80,6 +80,7 @@ class Parcel(OwnedEntity):
     dimension_unit = models.CharField(
         max_length=2, choices=DIMENSION_UNIT, null=True, blank=True
     )
+    items = models.ManyToManyField("Commodity", blank=True, related_name="parcels")
 
 
 class Commodity(OwnedEntity):
@@ -109,6 +110,16 @@ class Commodity(OwnedEntity):
     )
     origin_country = models.CharField(
         max_length=3, choices=COUNTRIES, null=True, blank=True
+    )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children",
+    )
+    references = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
     )
 
 

@@ -52,6 +52,8 @@ class Commodity:
     value_currency: str = None
     origin_country: str = None
 
+    references: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class Parcel:
