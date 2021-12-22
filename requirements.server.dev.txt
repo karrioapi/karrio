@@ -5,14 +5,14 @@ Django==3.2.9
 
 # Carrier Extenstions in Development
 # -e ./sdk/core
--e ./sdk/extensions/canadapost
+# -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
--e ./sdk/extensions/fedex
+# -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
--e ./sdk/extensions/ups
+# -e ./sdk/extensions/ups
 # -e ./sdk/extensions/usps
 # -e ./sdk/extensions/usps_international
 
