@@ -276,7 +276,7 @@ class CommodityData(Serializer):
     )
     quantity = IntegerField(
         required=False,
-        allow_null=True,
+        default=1,
         help_text="The commodity's quantity (number or item)",
     )
     sku = CharField(
@@ -299,6 +299,26 @@ class CommodityData(Serializer):
         allow_blank=True,
         allow_null=True,
         help_text="The origin or manufacture country",
+    )
+    references = PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""
+    <details>
+    <summary>Commodity references.</summary>
+
+    ```
+    {
+        "part_number": "5218487281",
+        "reference1": "# ref 1",
+        "reference2": "# ref 2",
+        "reference3": "# ref 3",
+        "reference4": "# ref 4",
+        ...
+    }
+    ```
+    </details>
+    """,
     )
 
 

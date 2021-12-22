@@ -21,6 +21,7 @@ purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex
+purplship.generic
 purplship.purolator
 purplship.royalmail
 purplship.sendle
