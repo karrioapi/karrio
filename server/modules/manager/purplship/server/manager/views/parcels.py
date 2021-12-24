@@ -55,7 +55,7 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.access_by(request).filter(shipment_parcels=None)
+        parcels = models.Parcel.access_by(request).filter(shipment__isnull=True)
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -145,7 +145,7 @@ class ParcelDetail(APIView):
         modify an existing parcel's details.
         """
         parcel = models.Parcel.access_by(request).get(pk=pk)
-        shipment = parcel.shipment_parcels.first()
+        shipment = parcel.shipment.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
                 "The shipment related to this parcel has been 'purchased' and can no longer be modified",

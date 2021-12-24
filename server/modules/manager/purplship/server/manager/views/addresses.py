@@ -57,7 +57,7 @@ class AddressList(GenericAPIView):
         Retrieve all addresses.
         """
         addresses = models.Address.access_by(request).filter(
-            shipper=None, recipient=None
+            shipper_shipment__isnull=True, recipient_shipment__isnull=True
         )
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
@@ -153,7 +153,9 @@ class AddressDetail(APIView):
         update an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = address.shipper.first() or address.recipient.first()
+        shipment = (
+            address.shipper_shipment.first() or address.recipient_shipment.first()
+        )
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
                 "The shipment related to this address has been 'purchased' and can no longer be modified",
@@ -186,7 +188,9 @@ class AddressDetail(APIView):
         Discard an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = address.shipper.first() or address.recipient.first()
+        shipment = (
+            address.shipper_shipment.first() or address.recipient_shipment.first()
+        )
         if shipment is not None:
             raise PurplshipAPIException(
                 "This address is linked to a shipment and cannot be removed",

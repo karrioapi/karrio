@@ -183,7 +183,9 @@ class Customs(OwnedEntity):
 
     # System Reference fields
 
-    commodities = models.ManyToManyField("Commodity", blank=True)
+    commodities = models.ManyToManyField(
+        "Commodity", blank=True, related_name="customs"
+    )
 
     def delete(self, *args, **kwargs):
         self.commodities.all().delete()
@@ -393,10 +395,10 @@ class Shipment(OwnedEntity):
     )
 
     recipient = models.ForeignKey(
-        "Address", on_delete=models.CASCADE, related_name="recipient"
+        "Address", on_delete=models.CASCADE, related_name="recipient_shipment"
     )
     shipper = models.ForeignKey(
-        "Address", on_delete=models.CASCADE, related_name="shipper"
+        "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
 
@@ -408,7 +410,11 @@ class Shipment(OwnedEntity):
     reference = models.CharField(max_length=100, null=True, blank=True)
 
     customs = models.ForeignKey(
-        "Customs", on_delete=models.SET_NULL, blank=True, null=True
+        "Customs",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="shipment",
     )
 
     selected_rate = models.JSONField(blank=True, null=True)
@@ -429,14 +435,14 @@ class Shipment(OwnedEntity):
     # System Reference fields
 
     rates = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
-    parcels = models.ManyToManyField("Parcel", related_name="shipment_parcels")
+    parcels = models.ManyToManyField("Parcel", related_name="shipment")
     carriers = models.ManyToManyField(
-        Carrier, blank=True, related_name="rating_carriers"
+        Carrier, blank=True, related_name="related_shipments"
     )
     selected_rate_carrier = models.ForeignKey(
         Carrier,
         on_delete=models.CASCADE,
-        related_name="selected_rate_carrier",
+        related_name="shipments",
         blank=True,
         null=True,
     )

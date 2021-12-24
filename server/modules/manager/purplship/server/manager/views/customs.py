@@ -57,7 +57,7 @@ class CustomsList(GenericAPIView):
         """
         Retrieve all stored customs declarations.
         """
-        customs_info = models.Customs.access_by(request).filter(shipment=None)
+        customs_info = models.Customs.access_by(request).filter(shipment__isnull=True)
         serializer = Customs(customs_info, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -169,7 +169,7 @@ class CustomsDetail(APIView):
         modify an existing customs declaration.
         """
         customs = models.Customs.access_by(request).get(pk=pk)
-        shipment = customs.shipment_set.first()
+        shipment = customs.shipment.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
                 "The shipment related to this customs info has been 'purchased' and can no longer be modified",
@@ -204,7 +204,7 @@ class CustomsDetail(APIView):
         Discard a customs declaration.
         """
         customs = models.Customs.access_by(request).get(pk=pk)
-        shipment = customs.shipment_set.first()
+        shipment = customs.shipment.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
                 "The shipment related to this customs info has been 'purchased' and cannot be discarded",
@@ -252,7 +252,7 @@ class CustomsCommodities(APIView):
         Add a customs commodity.
         """
         customs = models.Customs.access_by(request).get(pk=pk)
-        shipment = customs.shipment_set.first()
+        shipment = customs.shipment.first()
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
@@ -292,7 +292,7 @@ class DiscardCommodities(APIView):
         Discard a customs commodity.
         """
         customs = models.Customs.access_by(request).get(pk=pk)
-        shipment = customs.shipment_set.first()
+        shipment = customs.shipment.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplshipAPIException(
                 "The shipment related to this customs info has been 'purchased' and cannot be modified",
