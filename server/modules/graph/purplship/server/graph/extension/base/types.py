@@ -210,7 +210,7 @@ class RateType(graphene.ObjectType):
 class CommodityType(graphene_django.DjangoObjectType):
     class Meta:
         model = manager.Commodity
-        exclude = ("customs_set",)
+        exclude = ("customs",)
 
 
 class AddressType(graphene_django.DjangoObjectType):
@@ -218,14 +218,14 @@ class AddressType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Address
-        exclude = ("pickup_set", "recipient", "shipper", "template")
+        exclude = ("pickup_set", "recipient_shipment", "shipper_shipment", "template")
 
 
 class ParcelType(graphene_django.DjangoObjectType):
     class Meta:
         model = manager.Parcel
         exclude = (
-            "shipment_parcels",
+            "shipment",
             "template",
         )
 
@@ -246,7 +246,7 @@ class CustomsType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Customs
-        exclude = ("shipment_set", "template")
+        exclude = ("shipment", "template")
 
     def resolve_commodities(self, info):
         return self.commodities.all()
