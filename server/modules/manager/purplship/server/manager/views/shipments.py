@@ -98,7 +98,7 @@ class ShipmentMode(serializers.Serializer):
         required=False,
         allow_null=True,
         default=None,
-        help_text="Create shipment in test or prod mode",
+        help_text="Create shipment in test or live mode",
     )
 
 
