@@ -18,7 +18,7 @@ Help us out… If you love open source and great software, give us a star! 🌟
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
-- **Customizable Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) as a point of start to customize your dedicated shipping app.
+- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics operations.
 
 <picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
 
@@ -289,7 +289,7 @@ print(rates)
 
 This repository contains both OSS-licensed and non-OSS-licensed files. We maintain one repository rather than two separate repositories mainly for development convenience.
 
-All files in the `/insiders` fall under [Purplship LICENSE](/insiders/LICENSE).
+All files in the `/insiders` fall under the [Purplship LICENSE](/insiders/LICENSE).
 
 The remaining files fall under the [Apache 2 license](LICENSE). Purplship OSS is built only from the Apache-licensed files in this repository.
 

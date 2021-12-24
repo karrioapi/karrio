@@ -202,12 +202,19 @@ UPDATED_TRACKERS_LIST = {
             "tracking_number": "00340434292135100124",
             "events": [
                 {
+                    "date": "2021-03-02",
+                    "description": "JESSICA",
+                    "location": "Oderweg 2, AMSTERDAM",
+                    "code": "pre-transit",
+                    "time": "07:53",
+                },
+                {
                     "date": "2021-01-11",
                     "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
                     "location": "BONN",
                     "code": "pre-transit",
                     "time": "20:34",
-                }
+                },
             ],
             "delivered": False,
             "test_mode": True,

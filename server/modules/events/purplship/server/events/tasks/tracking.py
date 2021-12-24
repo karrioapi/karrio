@@ -75,9 +75,7 @@ def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatch
             request: IRequestFrom = purplship.Tracking.fetch(
                 datatypes.TrackingRequest(tracking_numbers=tracking_numbers)
             )
-            gateway: Gateway = purplship.gateway[carrier.data.carrier_name].create(
-                carrier.data.dict()
-            )
+            gateway: Gateway = carrier.gateway
 
             batches.append((gateway, request, delay, batch_trackers))
 
