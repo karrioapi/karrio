@@ -59,7 +59,7 @@ class Carriers:
         elif list_filter.get("system_only") is True:
             query += (Q(created_by__isnull=True, active=True),)
 
-        # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
+        # Check if the test filter is specified then set it otherwise return all carriers live and test mode
         if list_filter.get("test") is not None:
             query += (Q(test=list_filter["test"]),)
 
