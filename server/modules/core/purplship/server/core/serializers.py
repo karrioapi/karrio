@@ -347,7 +347,7 @@ class ParcelData(PresetSerializer):
 
     values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
 
-    For specific carriers packaging type, please consult [the reference](#operation/references).
+    For specific carriers packaging type, please consult the reference.
     """,
     )
     package_preset = CharField(
@@ -357,7 +357,7 @@ class ParcelData(PresetSerializer):
         help_text="""
     The parcel's package preset.
 
-    For specific carriers package preset, please consult [the reference](#operation/references).
+    For specific carriers package preset, please consult the reference.
     """,
     )
     description = CharField(
@@ -611,7 +611,7 @@ class RateRequest(Serializer):
         allow_null=True,
         help_text="""
     The requested carrier service for the shipment.<br/>
-    Please consult [the reference](#operation/references) for specific carriers services.
+    Please consult the reference for specific carriers services.
 
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
@@ -1050,7 +1050,7 @@ class ShippingData(Serializer):
         "dangerous_good": true,
         "declared_value": 150.00,
         "email_notification": true,
-        "email_notification_to": shipper@mail.com,
+        "email_notification_to": "shipper@mail.com",
         "signature_confirmation": true,
     }
     ```
@@ -1095,7 +1095,7 @@ class ShipmentData(ShippingData):
         help_text="""
     The requested carrier service for the shipment.
 
-    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Please consult the reference for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
     )
@@ -1210,7 +1210,7 @@ class ShipmentContent(Serializer):
         help_text="""
     The carriers services requested for the shipment.
 
-    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Please consult the reference for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
     )

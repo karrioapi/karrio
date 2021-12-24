@@ -1,4 +1,5 @@
 from functools import partial
+from typing import Dict
 
 from django.db import models
 from django.conf import settings
@@ -101,7 +102,7 @@ class Carrier(OwnedEntity):
 
     @property
     def data(self) -> CarrierSettings:
-        _extra = dict()
+        _extra: Dict = dict()
 
         if hasattr(self.settings, "services"):
             _extra.update(
