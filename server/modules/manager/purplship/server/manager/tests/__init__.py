@@ -1,3 +1,7 @@
+import logging
+
+logging.disable(logging.CRITICAL)
+
 from purplship.server.manager.tests.test_addresses import *
 from purplship.server.manager.tests.test_parcels import *
 from purplship.server.manager.tests.test_shipments import *

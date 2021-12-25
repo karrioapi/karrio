@@ -63,5 +63,6 @@ jobs:
             purplship test --failfast purplship.server.manager.tests &&
             purplship test --failfast purplship.server.events.tests &&
             purplship test --failfast purplship.server.graph.tests &&
-            purplship test --failfast purplship.server.orgs.tests
+            purplship test --failfast purplship.server.orgs.tests &&
+            purplship test --failfast purplship.server.orders.tests
           '

@@ -70,7 +70,7 @@ class OrderCommodityData(CommodityData):
 
 class OrderParcel(ParcelData):
     items = OrderCommodityData(
-        many=True, allow_empty=False, help_text="The parcel items."
+        required=True, many=True, allow_empty=False, help_text="The parcel items."
     )
 
 

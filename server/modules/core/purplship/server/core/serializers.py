@@ -392,11 +392,11 @@ class ParcelData(PresetSerializer):
         choices=DIMENSION_UNIT,
         help_text="The parcel's dimension unit",
     )
-    items = CommodityData(many=True, allow_empty=True, help_text="The parcel items.")
+    items = CommodityData(required=False, many=True, help_text="The parcel items.")
 
 
 class Parcel(EntitySerializer, ParcelData):
-    items = Commodity(many=True, allow_empty=True, help_text="The parcel items.")
+    items = Commodity(required=False, many=True, help_text="The parcel items.")
 
 
 class Payment(Serializer):
