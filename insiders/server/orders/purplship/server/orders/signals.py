@@ -29,22 +29,17 @@ def shipment_updated(
     if not instance.shipment_order.exists():
         return
 
-    changes = update_fields or {}
-
-    if created or "status" not in changes:
-        return
-    elif instance.status == serializers.ShipmentStatus.purchased.value:
-        event = EventTypes.shipment_purchased.value
-    elif instance.status == serializers.ShipmentStatus.transit.value:
-        event = EventTypes.shipment_fulfilled.value
-    elif instance.status == serializers.ShipmentStatus.cancelled.value:
-        event = EventTypes.shipment_cancelled.value
-    else:
-        return
-
-    order = instance.shipment_order.first()
-    order.status = compute_order_status(order)
-    order.save()
+    if instance.status in [
+        serializers.ShipmentStatus.purchased.value,
+        serializers.ShipmentStatus.transit.value,
+        serializers.ShipmentStatus.cancelled.value,
+    ]:
+        order = instance.shipment_order.first()
+        status = compute_order_status(order)
+        if status != order.status:
+            order.status = status
+            order.save(update_fields=["status"])
+            logger.info("shipment's related order successfully updated")
 
 
 def order_updated(
@@ -54,7 +49,7 @@ def order_updated(
     - order created
     - order status changed (in-transit, delivered or blocked)
     """
-    changes = update_fields or {}
+    changes = update_fields or []
 
     if created:
         event = EventTypes.order_created.value

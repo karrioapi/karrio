@@ -4,8 +4,6 @@ from django.db import models
 
 from purplship.server.core.utils import identity
 from purplship.server.core.models import OwnedEntity, uuid
-import purplship.server.manager.models as manager
-import purplship.server.orgs.models as orgs
 
 from purplship.server.orders.serializers.base import (
     ORDER_STATUS,
@@ -26,7 +24,14 @@ class OrderManager(models.Manager):
 
 
 class Order(OwnedEntity):
-    DIRECT_PROPS = ["order_id", "source", "status", "options", "test_mode"]
+    DIRECT_PROPS = [
+        "order_id",
+        "source",
+        "status",
+        "options",
+        "test_mode",
+        "created_by",
+    ]
     objects = OrderManager()
 
     class Meta:
@@ -47,10 +52,10 @@ class Order(OwnedEntity):
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
     )
     shipping_address = models.ForeignKey(
-        manager.Address, on_delete=models.CASCADE, related_name="address_order"
+        "manager.Address", on_delete=models.CASCADE, related_name="address_order"
     )
     line_items = models.ManyToManyField(
-        manager.Commodity, related_name="order", through="OrderLineItemLink"
+        "manager.Commodity", related_name="order", through="OrderLineItemLink"
     )
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
@@ -64,14 +69,8 @@ class Order(OwnedEntity):
     # System Reference fields
 
     shipments = models.ManyToManyField(
-        manager.Shipment, blank=True, related_name="shipment_order"
+        "manager.Shipment", blank=True, related_name="shipment_order"
     )
-
-    # Computed properties
-
-    @property
-    def shipment_ids(self) -> List[str]:
-        return [shipment.id for shipment in self.shipments.all()]
 
 
 """Models orders linking (for reverse OneToMany relations)"""
@@ -82,7 +81,7 @@ class OrderLineItemLink(models.Model):
         Order, on_delete=models.CASCADE, related_name="line_item_links"
     )
     item = models.OneToOneField(
-        manager.Commodity, on_delete=models.CASCADE, related_name="line_item_link"
+        "manager.Commodity", on_delete=models.CASCADE, related_name="line_item_link"
     )
 
 

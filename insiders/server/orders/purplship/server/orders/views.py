@@ -15,7 +15,7 @@ from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.orders.router import router
 from purplship.server.orders.serializers import (
-    FlagField,
+    TestFilters,
     OrderStatus,
     ErrorResponse,
     Order,
@@ -23,7 +23,10 @@ from purplship.server.orders.serializers import (
     ShipmentSerializer,
     OrderShipmentData,
 )
-from purplship.server.orders.serializers.order import OrderSerializer
+from purplship.server.orders.serializers.order import (
+    OrderSerializer,
+    shipment_has_order_line_items,
+)
 import purplship.server.orders.models as models
 
 logger = logging.getLogger(__name__)
@@ -64,15 +67,6 @@ class OrderFilters(filters.FilterSet):
         fields = ["test_mode", "status"]
 
 
-class OrderMode(serializers.Serializer):
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="Create order in test or live mode",
-    )
-
-
 class OrderList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
@@ -103,16 +97,15 @@ class OrderList(GenericAPIView):
         operation_summary="Create an order",
         responses={200: Order(), 400: ErrorResponse()},
         request_body=OrderData(),
-        query_serializer=OrderMode(),
+        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         """
         Create a new order object.
         """
-        mode_filter = SerializerDecorator[OrderMode](data=request.query_params).data
         order = (
             SerializerDecorator[OrderSerializer](data=request.data, context=request)
-            .save(mode_filter=mode_filter)
+            .save(mode_filter=request.query_params)
             .instance
         )
 
@@ -146,7 +139,7 @@ class OrderDetail(APIView):
         """
         order = models.Order.access_by(request).get(pk=pk)
 
-        if order.status not in [
+        if order.status in [
             OrderStatus.delivered.value,
             OrderStatus.cancelled.value,
         ]:
@@ -156,8 +149,18 @@ class OrderDetail(APIView):
                 status_code=status.HTTP_409_CONFLICT,
             )
 
+        if order.status in [
+            OrderStatus.fulfilled.value,
+            OrderStatus.partially_fulfilled.value,
+        ]:
+            raise PurplshipAPIException(
+                f"The order is '{order.status}' please cancel all related shipments before...",
+                code="state_error",
+                status_code=status.HTTP_409_CONFLICT,
+            )
+
         order.status = OrderStatus.cancelled.value
-        order.save()
+        order.save(update_fields=["status"])
 
         return Response(Order(order).data)
 
@@ -187,22 +190,27 @@ class OrderShipments(APIView):
                 status_code=status.HTTP_409_CONFLICT,
             )
 
-        shipment = (
-            SerializerDecorator[ShipmentSerializer](
-                context=request,
-                data={
-                    **dict(recipient=Order(order).data["shipping_address"]),
-                    **SerializerDecorator[OrderShipmentData](data=request.data).data,
-                },
-            )
-            .save(carrier_filter=dict(test=order.test_mode))
-            .instance
+        serializer = SerializerDecorator[ShipmentSerializer](
+            context=request,
+            data={
+                **dict(recipient=Order(order).data["shipping_address"]),
+                **SerializerDecorator[OrderShipmentData](data=request.data).data,
+            },
         )
 
+        if not shipment_has_order_line_items(order, serializer.data):
+            raise PurplshipAPIException(
+                f"The shipment does not contain any line items from the targetted order.",
+                code="invalid",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        shipment = serializer.save(carrier_filter=dict(test=order.test_mode))
+
         # Update order state
-        SerializerDecorator[ShipmentSerializer](
-            order, data=dict(shipments=[shipment]), context=request
-        ).save()
+        SerializerDecorator[OrderSerializer](order, data={}, context=request).save(
+            shipments=[shipment.instance]
+        )
 
         return Response(Order(order).data)
 
