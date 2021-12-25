@@ -212,7 +212,7 @@ class OrderShipments(APIView):
             shipments=[shipment.instance]
         )
 
-        return Response(Order(order).data)
+        return Response(Order(order).data, status=status.HTTP_201_CREATED)
 
 
 router.urls.append(path("orders", OrderList.as_view(), name="order-list"))

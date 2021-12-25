@@ -51,6 +51,7 @@ CUSTOMS_RESPONSE = {
             "description": "cn",
             "id": ANY,
             "origin_country": None,
+            "parent_id": None,
             "quantity": 1,
             "references": {},
             "sku": "cc",

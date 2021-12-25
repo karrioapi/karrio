@@ -201,6 +201,7 @@ PICKUP_RESPONSE = {
                 "description": None,
                 "content": None,
                 "is_document": True,
+                "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
             }
@@ -254,6 +255,7 @@ PICKUP_UPDATE_RESPONSE = {
                 "description": None,
                 "content": None,
                 "is_document": True,
+                "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
             }

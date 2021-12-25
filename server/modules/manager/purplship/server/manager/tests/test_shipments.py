@@ -93,7 +93,8 @@ class TestShipments(APITestCase):
 class TestShipmentDetails(TestShipmentFixture):
     def test_add_shipment_option(self):
         url = reverse(
-            "purplship.server.manager:shipment-options", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-options",
+            kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_OPTIONS
 
@@ -149,7 +150,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_purchase_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-purchase", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_PURCHASE_DATA
 
@@ -170,7 +172,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
         )
 
         with patch("purplship.server.core.gateway.identity") as mock:
@@ -183,7 +186,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_purchased_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
         )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
@@ -331,6 +335,7 @@ SHIPMENT_RESPONSE = {
             "description": None,
             "content": None,
             "is_document": False,
+            "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
         }
@@ -482,6 +487,7 @@ PURCHASED_SHIPMENT = {
             "description": None,
             "content": None,
             "is_document": False,
+            "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
         }
