@@ -1,4 +1,5 @@
 import logging
+from typing import List
 from django.db import transaction
 
 from purplship.server.serializers import (
@@ -23,14 +24,15 @@ class OrderSerializer(OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
         mode_filter = validated_data.get("mode_filter") or {}
+        test_mode = "test" in mode_filter and mode_filter.get("test") is not False
 
         order_data = {
-            **mode_filter,
             **{
                 key: value
                 for key, value in validated_data.items()
                 if key in models.Order.DIRECT_PROPS and value is not None
             },
+            "test_mode": test_mode,
             "shipping_address": save_one_to_one_data(
                 "shipping_address",
                 AddressSerializer,
@@ -59,20 +61,13 @@ class OrderSerializer(OrderData):
         data = validated_data.copy()
 
         for key, val in data.items():
-            if key in models.Shipment.DIRECT_PROPS:
+            if key in models.Order.DIRECT_PROPS:
                 setattr(instance, key, val)
                 changes.append(key)
                 validated_data.pop(key)
 
-        if "shipments" in validated_data:
-            changes.append("shipments")
-            save_many_to_many_data(
-                "shipments",
-                CommoditySerializer,
-                instance,
-                payload=validated_data,
-                context=context,
-            )
+        for shipment in validated_data.get("shipments") or []:
+            instance.shipments.add(shipment)
 
         status = compute_order_status(instance)
         if status != instance.status:
@@ -98,7 +93,7 @@ def compute_order_status(order: models.Order) -> str:
     The remaining statuses ("created", "cancelled") are self explanatory and should never be computed.
     """
 
-    if not order.shipments.filter(status=ShipmentStatus.cancelled.value).exists():
+    if not order.shipments.exclude(status=ShipmentStatus.cancelled.value).exists():
         return OrderStatus.created.value
 
     line_items_are_fulfilled = True
@@ -118,7 +113,7 @@ def compute_order_status(order: models.Order) -> str:
             sum([item.quantity for item in shipment_items]) >= line_item.quantity
         )
 
-        if any(shipment_items) and not fulfilled:
+        if any(shipment_items) and fulfilled and not line_items_are_partially_fulfilled:
             line_items_are_partially_fulfilled = True
 
         if not fulfilled:
@@ -134,3 +129,14 @@ def compute_order_status(order: models.Order) -> str:
         return OrderStatus.partially_fulfilled.value
 
     return OrderStatus.created.value
+
+
+def shipment_has_order_line_items(order: models.Order, shipment_payload: dict):
+    line_items_ids = [item.id for item in order.line_items.all()]
+    shipment_parcel_items: List[dict] = sum(
+        [parcel.get("items") or [] for parcel in shipment_payload.get("parcels")], []
+    )
+
+    return any(
+        [item.get("parent_id") in line_items_ids for item in shipment_parcel_items]
+    )

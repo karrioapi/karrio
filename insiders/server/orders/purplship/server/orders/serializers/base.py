@@ -1,12 +1,15 @@
 from enum import Enum
 from rest_framework import fields
 from purplship.server.core.serializers import (
+    Address,
     AddressData,
+    Commodity,
     CommodityData,
     ParcelData,
     PlainDictField,
     Serializer,
     EntitySerializer,
+    Shipment,
     ShipmentData,
     StringListField,
     allow_model_id,
@@ -59,6 +62,27 @@ class OrderData(Serializer):
     )
 
 
+class OrderCommodityData(CommodityData):
+    parent_id = fields.CharField(
+        required=True, help_text="The id of the related order line item."
+    )
+
+
+class OrderParcel(ParcelData):
+    items = OrderCommodityData(
+        many=True, allow_empty=False, help_text="The parcel items."
+    )
+
+
+class OrderShipmentData(ShipmentData):
+    recipient = None
+    parcels = OrderParcel(
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
+    )
+
+
 class Order(EntitySerializer):
     order_id = fields.CharField(required=True, help_text="The source' order id.")
     source = fields.CharField(required=False, help_text="The order's source.")
@@ -67,11 +91,11 @@ class Order(EntitySerializer):
         default=OrderStatus.created.value,
         help_text="The order status.",
     )
-    shipping_address = AddressData(
+    shipping_address = Address(
         required=True,
         help_text="The customer address for the order.",
     )
-    line_items = CommodityData(
+    line_items = Commodity(
         many=True, allow_empty=False, help_text="The order line items."
     )
     options = PlainDictField(
@@ -91,9 +115,10 @@ class Order(EntitySerializer):
     </details>
     """,
     )
-    shipment_ids = StringListField(
+    shipments = Shipment(
+        many=True,
         required=False,
-        help_text="The shipment ids associated with the order.",
+        help_text="The shipments associated with the order.",
     )
     test_mode = fields.BooleanField(
         required=True,
@@ -106,25 +131,4 @@ class Order(EntitySerializer):
 
     Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
     """,
-    )
-
-
-class OrderCommodityData(CommodityData):
-    parent_id = fields.CharField(
-        required=True, help_text="The id of the related order line item."
-    )
-
-
-class OrderParcel(ParcelData):
-    items = OrderCommodityData(
-        many=True, allow_empty=False, help_text="The parcel items."
-    )
-
-
-class OrderShipmentData(ShipmentData):
-    recipient = None
-    parcels = OrderParcel(
-        many=True,
-        allow_empty=False,
-        help_text="The shipment's parcels",
     )

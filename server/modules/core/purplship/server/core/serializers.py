@@ -300,6 +300,9 @@ class CommodityData(Serializer):
         allow_null=True,
         help_text="The origin or manufacture country",
     )
+    parent_id = CharField(
+        required=False, help_text="The id of the related order line item."
+    )
     references = PlainDictField(
         required=False,
         allow_null=True,
@@ -389,10 +392,11 @@ class ParcelData(PresetSerializer):
         choices=DIMENSION_UNIT,
         help_text="The parcel's dimension unit",
     )
+    items = CommodityData(many=True, allow_empty=True, help_text="The parcel items.")
 
 
 class Parcel(EntitySerializer, ParcelData):
-    pass
+    items = Commodity(many=True, allow_empty=True, help_text="The parcel items.")
 
 
 class Payment(Serializer):
