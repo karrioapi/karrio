@@ -345,9 +345,10 @@ class ParcelData(PresetSerializer):
 
     **Note that the packaging is optional when using a package preset**
 
-    values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
+    values: <br/>
+    {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
 
-    For specific carriers packaging type, please consult the reference.
+    For carrier specific packaging types, please consult the reference.
     """,
     )
     package_preset = CharField(
@@ -357,7 +358,7 @@ class ParcelData(PresetSerializer):
         help_text="""
     The parcel's package preset.
 
-    For specific carriers package preset, please consult the reference.
+    For carrier specific package presets, please consult the reference.
     """,
     )
     description = CharField(
