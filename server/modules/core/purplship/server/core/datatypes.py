@@ -189,6 +189,8 @@ class ShipmentRequest(BaseShipmentRequest):
     label_type: str = None
     id: str = None
 
+    metadata: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class Shipment:
@@ -217,6 +219,8 @@ class Shipment:
     status: str = ""
     meta: dict = None
     id: str = None
+
+    metadata: Dict = {}
     created_at: str = None
     test_mode: bool = None
     messages: List[Message] = JList[Message]

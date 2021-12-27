@@ -297,6 +297,7 @@ SHIPPING_RESPONSE = {
     "created_at": ANY,
     "test_mode": True,
     "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "metadata": {},
     "messages": [],
 }
 

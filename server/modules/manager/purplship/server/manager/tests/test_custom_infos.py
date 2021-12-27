@@ -53,7 +53,7 @@ CUSTOMS_RESPONSE = {
             "origin_country": None,
             "parent_id": None,
             "quantity": 1,
-            "references": {},
+            "metadata": {},
             "sku": "cc",
             "value_amount": None,
             "value_currency": None,

@@ -4466,11 +4466,11 @@
                         "type": "string",
                         "description": "The id of the related order line item."
                     },
-                    "references": {
-                        "title": "References",
+                    "metadata": {
+                        "title": "Metadata",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                        "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                         "nullable": true
                     }
                 },
@@ -4941,11 +4941,11 @@
                         "type": "string",
                         "description": "The id of the related order line item."
                     },
-                    "references": {
-                        "title": "References",
+                    "metadata": {
+                        "title": "Metadata",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                        "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                         "nullable": true
                     }
                 }
@@ -5339,9 +5339,7 @@
                         "nullable": true
                     }
                 },
-                "description": "The payment details",
-                "nullable": true,
-                "x-nullable": true
+                "description": "The payment details"
             },
             "Shipment": {
                 "required": [
@@ -5516,6 +5514,12 @@
                         "description": "provider specific metadata",
                         "nullable": true
                     },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the shipment"
+                    },
                     "messages": {
                         "type": "array",
                         "description": "The list of note or warning messages",
@@ -5583,6 +5587,12 @@
                         "properties": {},
                         "description": "\n<details>\n<summary>The options available for the order shipments.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n}\n```\n\nPlease check the docs for shipment specific options.\n</details>\n",
                         "nullable": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the order."
                     },
                     "shipments": {
                         "type": "array",
@@ -5666,6 +5676,12 @@
                         "properties": {},
                         "description": "\n<details>\n<summary>The options available for the order shipments.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n}\n```\n\nPlease check the docs for shipment specific options.\n</details>\n",
                         "nullable": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the order."
                     }
                 }
             },
@@ -5732,11 +5748,11 @@
                         "type": "string",
                         "description": "The id of the related order line item."
                     },
-                    "references": {
-                        "title": "References",
+                    "metadata": {
+                        "title": "Metadata",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                        "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                         "nullable": true
                     }
                 },
@@ -5878,6 +5894,12 @@
                             "PDF",
                             "ZPL"
                         ]
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the shipment"
                     },
                     "services": {
                         "type": "array",
@@ -6614,6 +6636,12 @@
                             "ZPL"
                         ]
                     },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the shipment"
+                    },
                     "selected_rate_id": {
                         "title": "Selected rate id",
                         "minLength": 1,
@@ -7007,6 +7035,12 @@
                             "PDF",
                             "ZPL"
                         ]
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the shipment"
                     },
                     "services": {
                         "type": "array",

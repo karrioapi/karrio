@@ -52,7 +52,7 @@ class Commodity:
     value_currency: str = None
     origin_country: str = None
 
-    references: Dict = {}
+    metadata: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -134,6 +134,8 @@ class ShipmentRequest:
     options: Dict = {}
     reference: str = ""
     label_type: str = None
+
+    metadata: Dict = {}
 
 
 @attr.s(auto_attribs=True)

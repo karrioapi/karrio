@@ -2805,7 +2805,7 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "references",
+              "name": "metadata",
               "type": {
                 "kind": "SCALAR",
                 "name": "JSONString",
@@ -8352,6 +8352,18 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSONString",
                 "ofType": null
               }
             },
@@ -25388,7 +25400,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "references",
+              "name": "metadata",
               "type": {
                 "kind": "SCALAR",
                 "name": "JSONString",
@@ -26713,7 +26725,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "references",
+              "name": "metadata",
               "type": {
                 "kind": "SCALAR",
                 "name": "JSONString",

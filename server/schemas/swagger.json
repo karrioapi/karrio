@@ -3812,9 +3812,9 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "references": {
-                    "title": "References",
-                    "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -4286,9 +4286,9 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "references": {
-                    "title": "References",
-                    "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -4692,7 +4692,11 @@
                     "x-nullable": true
                 }
             },
-            "x-nullable": true
+            "default": {
+                "paid_by": "sender",
+                "currency": null,
+                "account_number": null
+            }
         },
         "Shipment": {
             "description": "The shipments associated with the order.",
@@ -4871,6 +4875,13 @@
                     "additionalProperties": true,
                     "x-nullable": true
                 },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
                 "messages": {
                     "description": "The list of note or warning messages",
                     "type": "array",
@@ -4938,6 +4949,13 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the order.",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 },
                 "shipments": {
                     "description": "The shipments associated with the order.",
@@ -5021,6 +5039,13 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the order.",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 }
             }
         },
@@ -5089,9 +5114,9 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "references": {
-                    "title": "References",
-                    "description": "\n<details>\n<summary>Commodity references.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -5234,6 +5259,13 @@
                         "ZPL"
                     ],
                     "default": "PDF"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 },
                 "services": {
                     "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
@@ -5972,6 +6004,13 @@
                     ],
                     "default": "PDF"
                 },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
                 "selected_rate_id": {
                     "title": "Selected rate id",
                     "description": "The shipment selected rate.",
@@ -6365,6 +6404,13 @@
                         "ZPL"
                     ],
                     "default": "PDF"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 },
                 "services": {
                     "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",

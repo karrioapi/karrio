@@ -303,12 +303,12 @@ class CommodityData(Serializer):
     parent_id = CharField(
         required=False, help_text="The id of the related order line item."
     )
-    references = PlainDictField(
+    metadata = PlainDictField(
         required=False,
         allow_null=True,
         help_text="""
     <details>
-    <summary>Commodity references.</summary>
+    <summary>Commodity user references metadata.</summary>
 
     ```
     {
@@ -1085,6 +1085,9 @@ class ShippingData(Serializer):
         default=LabelType.PDF.name,
         help_text="The shipment label file type.",
     )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the shipment"
+    )
 
 
 class ShippingRequest(ShippingData):
@@ -1245,7 +1248,7 @@ class ShipmentContent(Serializer):
     """,
     )
 
-    payment = Payment(required=False, allow_null=True, help_text="The payment details")
+    payment = Payment(required=False, default={}, help_text="The payment details")
     customs = Customs(
         required=False,
         allow_null=True,
@@ -1297,6 +1300,9 @@ class ShipmentContent(Serializer):
     )
     meta = PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
+    )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the shipment"
     )
     messages = Message(
         required=False,

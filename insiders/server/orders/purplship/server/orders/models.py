@@ -29,6 +29,7 @@ class Order(OwnedEntity):
         "source",
         "status",
         "options",
+        "metadata",
         "test_mode",
         "created_by",
     ]
@@ -65,6 +66,9 @@ class Order(OwnedEntity):
     org = models.ManyToManyField(
         "orgs.Organization", related_name="orders", through="OrderLink"
     )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
@@ -81,7 +85,7 @@ class OrderLineItemLink(models.Model):
         Order, on_delete=models.CASCADE, related_name="line_item_links"
     )
     item = models.OneToOneField(
-        "manager.Commodity", on_delete=models.CASCADE, related_name="line_item_link"
+        "manager.Commodity", on_delete=models.CASCADE, related_name="order_link"
     )
 
 

@@ -60,6 +60,9 @@ class OrderData(Serializer):
     </details>
     """,
     )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the order."
+    )
 
 
 class OrderCommodityData(CommodityData):
@@ -114,6 +117,9 @@ class Order(EntitySerializer):
     Please check the docs for shipment specific options.
     </details>
     """,
+    )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the order."
     )
     shipments = Shipment(
         many=True,

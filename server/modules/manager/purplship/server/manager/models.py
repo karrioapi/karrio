@@ -118,7 +118,7 @@ class Commodity(OwnedEntity):
         blank=True,
         related_name="children",
     )
-    references = models.JSONField(
+    metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
 
@@ -372,6 +372,7 @@ class Shipment(OwnedEntity):
         "messages",
         "rates",
         "payment",
+        "metadata",
         "created_by",
         "reference",
     ]
@@ -431,6 +432,9 @@ class Shipment(OwnedEntity):
         blank=True, null=True, default=partial(identity, value=[])
     )
     meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
