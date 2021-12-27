@@ -6,7 +6,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.server.core.serializers import PlainDictField, CharField, BooleanField
+from purplship.server.core.serializers import CharField, BooleanField
 from purplship.server.core import dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -17,6 +17,7 @@ class Metadata(Serializer):
     APP_VERSION = CharField()
     APP_WEBSITE = CharField()
     MULTI_ORGANIZATIONS = BooleanField()
+    ORDERS_MANAGEMENT = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()

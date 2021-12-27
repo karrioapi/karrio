@@ -11,6 +11,7 @@ METADATA = {
     "APP_VERSION": getattr(settings, "VERSION"),
     "APP_WEBSITE": getattr(settings, "APP_WEBSITE", "https://purplship.com"),
     "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
+    "ORDERS_MANAGEMENT": getattr(settings, "ORDERS_MANAGEMENT", False),
 }
 
 REFERENCE_MODELS = {

@@ -105,6 +105,7 @@ PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
+ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
 
 
 # components path settings
