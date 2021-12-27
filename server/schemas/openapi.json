@@ -3388,7 +3388,8 @@
                     "APP_WEBSITE",
                     "GRAPHQL",
                     "MULTI_ORGANIZATIONS",
-                    "OPENAPI"
+                    "OPENAPI",
+                    "ORDERS_MANAGEMENT"
                 ],
                 "type": "object",
                 "properties": {
@@ -3409,6 +3410,10 @@
                     },
                     "MULTI_ORGANIZATIONS": {
                         "title": "Multi organizations",
+                        "type": "boolean"
+                    },
+                    "ORDERS_MANAGEMENT": {
+                        "title": "Orders management",
                         "type": "boolean"
                     },
                     "ADMIN": {
@@ -6826,6 +6831,7 @@
                     "GRAPHQL",
                     "MULTI_ORGANIZATIONS",
                     "OPENAPI",
+                    "ORDERS_MANAGEMENT",
                     "carrier_capabilities",
                     "carriers",
                     "countries",
@@ -6861,6 +6867,10 @@
                     },
                     "MULTI_ORGANIZATIONS": {
                         "title": "Multi organizations",
+                        "type": "boolean"
+                    },
+                    "ORDERS_MANAGEMENT": {
+                        "title": "Orders management",
                         "type": "boolean"
                     },
                     "ADMIN": {

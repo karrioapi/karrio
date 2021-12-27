@@ -208,9 +208,20 @@ class RateType(graphene.ObjectType):
 
 
 class CommodityType(graphene_django.DjangoObjectType):
+    parent_id = graphene.String()
+    metadata = generic.GenericScalar()
+
     class Meta:
         model = manager.Commodity
-        exclude = ("customs",)
+        exclude = (
+            "customs",
+            "parcels",
+            "children",
+            "parent",
+        )
+
+    def resolve_parent_id(self, info):
+        return self.parent_id
 
 
 class AddressType(graphene_django.DjangoObjectType):
@@ -396,6 +407,10 @@ class ShipmentFilter(django_filters.FilterSet):
         field_name="options",
         method="option_value_filter",
     )
+    metadata_value = django_filters.CharFilter(
+        field_name="metadata",
+        method="metadata_value_filter",
+    )
     test_mode = django_filters.BooleanFilter(field_name="test_mode")
 
     class Meta:
@@ -424,6 +439,9 @@ class ShipmentFilter(django_filters.FilterSet):
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(Q(options__values__contains=value))
 
+    def metadata_value_filter(self, queryset, name, value):
+        return queryset.filter(Q(metadata__values__contains=value))
+
     def service_filter(self, queryset, name, values):
         return queryset.filter(Q(selected_rate__service__in=values))
 
@@ -449,6 +467,7 @@ class ShipmentType(graphene_django.DjangoObjectType):
     carrier_ids = graphene.List(graphene.String)
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
+    metadata = generic.GenericScalar()
     tracker_id = graphene.String()
 
     status = graphene.Enum.from_enum(serializers.ShipmentStatus)(required=True)

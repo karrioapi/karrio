@@ -2731,6 +2731,7 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
+                "ORDERS_MANAGEMENT",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL"
@@ -2754,6 +2755,10 @@
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
+                    "type": "boolean"
+                },
+                "ORDERS_MANAGEMENT": {
+                    "title": "Orders management",
                     "type": "boolean"
                 },
                 "ADMIN": {
@@ -6191,6 +6196,7 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
+                "ORDERS_MANAGEMENT",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL",
@@ -6230,6 +6236,10 @@
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
+                    "type": "boolean"
+                },
+                "ORDERS_MANAGEMENT": {
+                    "title": "Orders management",
                     "type": "boolean"
                 },
                 "ADMIN": {
