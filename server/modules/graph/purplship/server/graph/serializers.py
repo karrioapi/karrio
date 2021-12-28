@@ -2,7 +2,6 @@ import typing
 from django.db import transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from purplship.server.serializers.abstract import exclude_id_field
 
 from purplship.core.utils import DP
 from purplship.server.serializers import (
@@ -296,7 +295,7 @@ def create_carrier_model_serializers(partial: bool = False):
             _service_serializer = (
                 make_fields_optional(ServiceLevelModelSerializer)
                 if partial
-                else exclude_id_field(ServiceLevelModelSerializer)
+                else ServiceLevelModelSerializer
             )
             _extra_fields.update(
                 services=_service_serializer(many=True, allow_null=True, required=False)
@@ -306,7 +305,7 @@ def create_carrier_model_serializers(partial: bool = False):
             _template_serializer = (
                 make_fields_optional(LabelTemplateModelSerializer)
                 if partial
-                else exclude_id_field(LabelTemplateModelSerializer)
+                else LabelTemplateModelSerializer
             )
             _extra_fields.update(
                 label_template=_template_serializer(allow_null=True, required=False)
