@@ -129,7 +129,7 @@ class TestOrderShipments(TestOrderFixture):
                             "sku": None,
                             "value_amount": 129.99,
                             "value_currency": "USD",
-                            "references": {"id": 1071823172},
+                            "metadata": {"id": 1071823172},
                         },
                     ],
                 }
@@ -191,7 +191,7 @@ ORDER_DATA = {
             "sku": None,
             "value_amount": 129.99,
             "value_currency": "USD",
-            "references": {"id": 1071823172},
+            "metadata": {"id": 1071823172},
         },
         {
             "weight": 0.75,
@@ -201,7 +201,7 @@ ORDER_DATA = {
             "sku": None,
             "value_amount": 85.95,
             "value_currency": "USD",
-            "references": {"id": 1071823173},
+            "metadata": {"id": 1071823173},
         },
     ],
 }
@@ -242,7 +242,7 @@ ORDER_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823173},
+            "metadata": {"id": 1071823173},
         },
         {
             "id": ANY,
@@ -255,16 +255,17 @@ ORDER_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823172},
+            "metadata": {"id": 1071823172},
         },
     ],
     "options": {},
+    "metadata": {},
     "shipments": [],
     "test_mode": False,
     "created_at": ANY,
 }
 
-RETURNED_RATES_VALUE = (
+RETURNED_RATES_VALUE = [
     [
         RateDetails(
             carrier_id="canadapost",
@@ -283,7 +284,7 @@ RETURNED_RATES_VALUE = (
         )
     ],
     [],
-)
+]
 
 SHIPMENT_DATA = {
     "shipper": {
@@ -315,7 +316,7 @@ SHIPMENT_DATA = {
                     "quantity": 1,
                     "value_amount": 85.95,
                     "value_currency": "USD",
-                    "references": {"id": 1071823173},
+                    "metadata": {"id": 1071823173},
                 }
             ],
         }
@@ -360,7 +361,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823173},
+            "metadata": {"id": 1071823173},
         },
         {
             "id": ANY,
@@ -373,10 +374,11 @@ ORDER_SHIPMENTS_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823172},
+            "metadata": {"id": 1071823172},
         },
     ],
     "options": {},
+    "metadata": {},
     "shipments": [
         {
             "id": ANY,
@@ -478,7 +480,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                             "value_currency": "USD",
                             "origin_country": None,
                             "parent_id": ANY,
-                            "references": {"id": 1071823173},
+                            "metadata": {"id": 1071823173},
                         }
                     ],
                 }
@@ -494,6 +496,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "created_at": ANY,
             "test_mode": False,
             "meta": {},
+            "metadata": {},
             "messages": [],
         }
     ],
@@ -537,7 +540,7 @@ FULFILLED_ORDER_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823173},
+            "metadata": {"id": 1071823173},
         },
         {
             "id": ANY,
@@ -550,10 +553,11 @@ FULFILLED_ORDER_RESPONSE = {
             "value_currency": "USD",
             "origin_country": None,
             "parent_id": None,
-            "references": {"id": 1071823172},
+            "metadata": {"id": 1071823172},
         },
     ],
     "options": {},
+    "metadata": {},
     "shipments": [
         {
             "id": ANY,
@@ -655,7 +659,7 @@ FULFILLED_ORDER_RESPONSE = {
                             "value_currency": "USD",
                             "origin_country": None,
                             "parent_id": ANY,
-                            "references": {"id": 1071823172},
+                            "metadata": {"id": 1071823172},
                         },
                         {
                             "id": ANY,
@@ -668,7 +672,7 @@ FULFILLED_ORDER_RESPONSE = {
                             "value_currency": "USD",
                             "origin_country": None,
                             "parent_id": ANY,
-                            "references": {"id": 1071823173},
+                            "metadata": {"id": 1071823173},
                         },
                     ],
                 }
@@ -684,6 +688,7 @@ FULFILLED_ORDER_RESPONSE = {
             "created_at": ANY,
             "test_mode": False,
             "meta": {},
+            "metadata": {},
             "messages": [],
         }
     ],
