@@ -11,8 +11,10 @@ from purplship.providers.generic.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
+class _Settings:
     """Generic connection settings."""
+
+    name: str  # noqa
 
     id: str = None
     test: bool = False
@@ -21,3 +23,10 @@ class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
 
     label_template: LabelTemplate = JStruct[LabelTemplate]
     services: List[ServiceLevel] = JList[ServiceLevel, not REQUIRED, dict(default=DEFAULT_SERVICES)]  # type: ignore
+
+
+@attr.s(auto_attribs=True)
+class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings, _Settings):
+    """Generic connection settings."""
+
+    pass

@@ -19,8 +19,7 @@ def parse_shipment_response(
         [
             (package_ref, _extract_details(service_label, settings))
             for package_ref, service_label in service_labels
-        ],
-        label_format="PDF",
+        ]
     )
 
     return shipments, errors
@@ -33,6 +32,7 @@ def _extract_details(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         label=service_label.label,
+        label_type=service_label.label_type,
         tracking_number=service_label.tracking_number,
         shipment_identifier=service_label.tracking_number,
         meta=dict(service_name=service_label.service_name),

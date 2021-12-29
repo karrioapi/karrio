@@ -10,6 +10,7 @@ from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from typing import List, TypeVar, Callable, Optional, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from purplship.core.utils.dict import DICTPARSE
 
 logger = logging.getLogger(__name__)
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -85,6 +86,28 @@ def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
         image.save(result, format)
 
     return base64.b64encode(result.getvalue()).decode("utf-8")
+
+
+def convert_label(label: str, label_type: str, template_type: str, **kwargs) -> str:
+    """Return a base64 string from a label."""
+
+    if template_type == "SVG" and label_type == "PDF":
+        pass
+
+    elif template_type == "ZPL" and label_type == "PDF":
+        width, height = kwargs.get("width"), kwargs.get("height")
+        data = DICTPARSE.jsonify(dict(file=label))
+        return request(
+            url=f"http://api.labelary.com/v1/printers/12dpmm/labels/{width}x{height}/0/",
+            data=bytearray(data, "utf-8"),
+            headers={"Accept": "application/pdf"},
+            decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
+        )
+
+    elif template_type == "SVG" and label_type == "ZPL":
+        pass
+
+    return base64.b64encode(label.encode("utf-8")).decode("utf-8")
 
 
 def decode_bytes(byte):

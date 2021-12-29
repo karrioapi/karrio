@@ -300,6 +300,7 @@ class ShipmentDetails:
     tracking_number: str
     shipment_identifier: str
     selected_rate: RateDetails = JStruct[RateDetails]
+    label_type: str = None
     meta: dict = None
     id: str = None
 
@@ -362,9 +363,13 @@ class ServiceLevel:
 class LabelTemplate:
     """Purplship unified label template data type."""
 
-    name: str
+    alias: str
     template: str
     description: str = ""
+    template_type: str = "ZPL"  # ZPL, SVG
+    width: int = 4
+    height: int = 6
+
     id: str = None
 
 

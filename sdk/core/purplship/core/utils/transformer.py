@@ -85,7 +85,7 @@ def to_multi_piece_rates(
 
 
 def to_multi_piece_shipment(
-    package_shipments: List[Tuple[str, ShipmentDetails]], label_format: str = "PDF"
+    package_shipments: List[Tuple[str, ShipmentDetails]]
 ) -> ShipmentDetails:
     master_shipment = next((shipment for _, shipment in package_shipments), None)
 
@@ -95,6 +95,7 @@ def to_multi_piece_shipment(
     labels = []
     tracking_numbers = set()
     tracking_identifiers = set()
+    label_type = master_shipment.label_type
 
     for _, shipment in package_shipments:
         labels.append(shipment.label)
@@ -108,7 +109,8 @@ def to_multi_piece_shipment(
         carrier_id=master_shipment.carrier_id,
         tracking_number=master_shipment.tracking_number,
         shipment_identifier=master_shipment.shipment_identifier,
-        label=bundle_base64(labels, label_format),
+        label=bundle_base64(labels, label_type),
+        label_type=label_type,
         meta={
             **master_shipment.meta,
             "tracking_numbers": list(tracking_numbers),

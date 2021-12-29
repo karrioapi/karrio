@@ -8,6 +8,10 @@ from purplship.universal.mappers.shipping_proxy import (
 )
 from purplship.universal.providers.shipping.shipment import parse_shipment_response
 
+import logging
+
+logging.disable(logging.CRITICAL)
+
 
 class TestUniversalShipping(unittest.TestCase):
     def setUp(self):
@@ -39,7 +43,7 @@ class TestUniversalShipping(unittest.TestCase):
         )
         response_data = self.proxy.create_shipment(ShipmentRequestData)
         shipment = parse_shipment_response(response_data.deserialize(), self.settings)
-
+        print(shipment[0].label)
         self.assertListEqual(
             DP.to_dict(shipment),
             ParsedMultiPieceShipmentResponse,
@@ -78,8 +82,26 @@ settings_data = {
 
 shipment_request_data = {
     "service": "carrier_premium",
-    "shipper": {"postal_code": "H8Z 2Z3", "country_code": "CA"},
-    "recipient": {"postal_code": "h8z2V4", "country_code": "CA"},
+    "label_type": "ZPL",
+    "shipper": {
+        "company_name": "CGI",
+        "address_line1": "502 MAIN ST N",
+        "city": "MONTREAL",
+        "postal_code": "H2B1A0",
+        "country_code": "CA",
+        "person_name": "Bob",
+        "phone_number": "1 (450) 823-8432",
+        "state_code": "QC",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "K1K4T3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
     "parcels": [
         {
             "height": 3.0,
@@ -88,14 +110,35 @@ shipment_request_data = {
             "weight": 4.0,
             "dimension_unit": "IN",
             "weight_unit": "LB",
+            "items": [
+                {
+                    "weight": 1.0,
+                    "weight_unit": "LB",
+                    "quantity": 1,
+                    "description": "Item 1",
+                    "sku": "SKU-1",
+                },
+            ],
         }
     ],
+    "metadata": {
+        "RFF_CN": "037-2332855",
+        "BGM": "040000000000016256",
+        "RFF_ON": "5424560",
+        "DEPT": "DBR128",
+        "CTL": "11253678",
+        "XXNC": "138039C01",
+        "NAD_UD": "570162",
+        "RFF_AJY": "907",
+        "RFF_AEM": "3901L",
+    },
 }
 
 ParsedShipmentResponse = [
     {
         "carrier_id": "universal",
         "label": ANY,
+        "label_type": "ZPL",
         "meta": {"service_name": "Premium"},
     },
     [],
@@ -105,6 +148,7 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_id": "universal",
         "label": ANY,
+        "label_type": "ZPL",
         "meta": {"service_name": "Premium"},
     },
     [],
