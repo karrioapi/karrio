@@ -26,6 +26,7 @@ phonenumbers = ""
 Pillow = ""
 PyPDF2 = ""
 simple_zpl2 = ""
+python-barcode = ""
 
 [tool.poetry.dev-dependencies]
 

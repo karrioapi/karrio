@@ -4,6 +4,8 @@
 
 # SDK extentions
 -e ./sdk/core
+-e ./insiders/sdk/addons
+
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/boxknight

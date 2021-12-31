@@ -9,7 +9,7 @@ from purplship.core.models import ServiceLabel, ShipmentRequest, Message
 from purplship.universal.providers.shipping import (
     ShippingMixinSettings,
 )
-from purplship.core.utils.label import generate_label
+from purplship.addons.label import generate_label
 
 
 @attr.s(auto_attribs=True)

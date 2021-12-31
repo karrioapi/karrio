@@ -1,3 +1,7 @@
 import purplship
 
-gateway = purplship.gateway["generic"].create({})
+gateway = purplship.gateway["generic"].create(
+    {
+        "name": "Custom Carrier",
+    }
+)

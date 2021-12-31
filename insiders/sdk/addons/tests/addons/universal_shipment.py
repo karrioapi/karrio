@@ -43,7 +43,7 @@ class TestUniversalShipping(unittest.TestCase):
         )
         response_data = self.proxy.create_shipment(ShipmentRequestData)
         shipment = parse_shipment_response(response_data.deserialize(), self.settings)
-        print(shipment[0].label)
+
         self.assertListEqual(
             DP.to_dict(shipment),
             ParsedMultiPieceShipmentResponse,
