@@ -69,6 +69,3 @@ class OrderType(graphene_django.DjangoObjectType):
 
     def resolve_line_items(self, info):
         return self.line_items.all()
-
-    def resolve_shipments(self, info):
-        return self.shipments.all()

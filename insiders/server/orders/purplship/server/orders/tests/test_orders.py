@@ -9,6 +9,7 @@ from purplship.core.models import (
     ChargeDetails,
 )
 from purplship.server.core.tests import APITestCase
+import purplship.server.manager.models as manager
 import purplship.server.orders.models as models
 
 
@@ -87,86 +88,74 @@ class TestOrderDetails(TestOrderFixture):
 
 
 class TestOrderShipments(TestOrderFixture):
-    def test_add_shipment(self):
+    def test_linked_shipment(self):
         _, order = self.create_order()
 
-        url = reverse(
-            "purplship.server.orders:order-shipments", kwargs=dict(pk=order["id"])
-        )
-        data = SHIPMENT_DATA
-        data["parcels"][0]["items"][0]["parent_id"] = order["line_items"][0]["id"]
-
+        # Create shipment
         with patch("purplship.server.core.gateway.identity") as mock:
+            shipment_url = reverse("purplship.server.manager:shipment-list")
+            data = SHIPMENT_DATA
+            data["parcels"][0]["items"][0]["parent_id"] = order["line_items"][0]["id"]
             mock.return_value = RETURNED_RATES_VALUE
-            response = self.client.post(url, data)
-            response_data = json.loads(response.content)
+            self.client.post(shipment_url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Fetch related order
+        url = reverse(
+            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+        )
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, ORDER_SHIPMENTS_RESPONSE)
 
     def test_fulfilled_order_when_all_items_are_shipped(self):
         _, order = self.create_order()
 
-        url = reverse(
-            "purplship.server.orders:order-shipments", kwargs=dict(pk=order["id"])
-        )
-        data = {
-            **SHIPMENT_DATA,
-            "parcels": [
-                {
-                    **SHIPMENT_DATA["parcels"][0],
-                    "items": [
-                        {
-                            **SHIPMENT_DATA["parcels"][0]["items"][0],
-                            "parent_id": order["line_items"][0]["id"],
-                        },
-                        {
-                            "parent_id": order["line_items"][1]["id"],
-                            "weight": 1.7,
-                            "weight_unit": "KG",
-                            "description": "Red Leather Coat",
-                            "quantity": 1,
-                            "sku": None,
-                            "value_amount": 129.99,
-                            "value_currency": "USD",
-                            "metadata": {"id": 1071823172},
-                        },
-                    ],
-                }
-            ],
-        }
-
+        # Create shipment and change status to purchased
         with patch("purplship.server.core.gateway.identity") as mock:
+            shipment_url = reverse("purplship.server.manager:shipment-list")
+            data = {
+                **SHIPMENT_DATA,
+                "parcels": [
+                    {
+                        **SHIPMENT_DATA["parcels"][0],
+                        "items": [
+                            {
+                                **SHIPMENT_DATA["parcels"][0]["items"][0],
+                                "parent_id": order["line_items"][0]["id"],
+                            },
+                            {
+                                "parent_id": order["line_items"][1]["id"],
+                                "weight": 1.7,
+                                "weight_unit": "KG",
+                                "description": "Red Leather Coat",
+                                "quantity": 1,
+                                "sku": None,
+                                "value_amount": 129.99,
+                                "value_currency": "USD",
+                                "metadata": {"id": 1071823172},
+                            },
+                        ],
+                    }
+                ],
+            }
             mock.return_value = RETURNED_RATES_VALUE
-            response = self.client.post(url, data)
-            response_data = json.loads(response.content)
+            shipment_response = self.client.post(shipment_url, data)
+            shipment_data = json.loads(shipment_response.content)
+            shipment = manager.Shipment.objects.get(pk=shipment_data["id"])
+            shipment.status = "purchased"
+            shipment.save()
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Fetch related order
+        url = reverse(
+            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+        )
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, FULFILLED_ORDER_RESPONSE)
-
-    def test_add_unrelated_shipment(self):
-        _, order = self.create_order()
-
-        url = reverse(
-            "purplship.server.orders:order-shipments", kwargs=dict(pk=order["id"])
-        )
-        data = SHIPMENT_DATA
-        response = self.client.post(url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_reject_add_shipment_on_fulfilled_order(self):
-        _, data = self.create_order()
-        order = models.Order.objects.get(pk=data["id"])
-        order.status = "fulfilled"
-        order.save()
-
-        url = reverse(
-            "purplship.server.orders:order-shipments", kwargs=dict(pk=order.id)
-        )
-        response = self.client.post(url, SHIPMENT_DATA)
-
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
 
 ORDER_DATA = {
@@ -298,6 +287,16 @@ SHIPMENT_DATA = {
         "residential": True,
         "address_line1": "5840 Oak St",
     },
+    "recipient": {
+        "postal_code": "E1C4Z8",
+        "city": "Moncton",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "country_code": "CA",
+        "phone_number": "+1 514-000-0000",
+        "state_code": "NB",
+        "address_line1": "125 Church St",
+    },
     "parcels": [
         {
             "weight": 2,
@@ -329,7 +328,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "id": ANY,
     "order_id": "1073459962",
     "source": "shopify",
-    "status": "partially_fulfilled",
+    "status": "created",
     "shipping_address": {
         "id": ANY,
         "postal_code": "E1C4Z8",
@@ -487,7 +486,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             ],
             "services": [],
             "options": {"currency": "CAD"},
-            "payment": {"paid_by": "sender", "currency": None, "account_number": None},
+            "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "reference": None,
             "label_type": "PDF",
@@ -561,7 +560,7 @@ FULFILLED_ORDER_RESPONSE = {
     "shipments": [
         {
             "id": ANY,
-            "status": "created",
+            "status": "purchased",
             "carrier_name": None,
             "carrier_id": None,
             "label": None,
@@ -679,7 +678,7 @@ FULFILLED_ORDER_RESPONSE = {
             ],
             "services": [],
             "options": {"currency": "CAD"},
-            "payment": {"paid_by": "sender", "currency": None, "account_number": None},
+            "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "reference": None,
             "label_type": "PDF",
@@ -690,7 +689,7 @@ FULFILLED_ORDER_RESPONSE = {
             "meta": {},
             "metadata": {},
             "messages": [],
-        }
+        },
     ],
     "test_mode": False,
     "created_at": ANY,

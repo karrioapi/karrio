@@ -11,6 +11,7 @@ import purplship.server.providers.models as providers
 import purplship.server.pricing.models as pricing
 import purplship.server.manager.models as manager
 import purplship.server.events.models as events
+import purplship.server.orders.models as orders
 import purplship.server.graph.models as graph
 import purplship.server.core.models as core
 import purplship.server.user.models as auth
@@ -62,6 +63,10 @@ class Organization(AbstractOrganization):
     )
     events = models.ManyToManyField(
         events.Event, related_name="org", through="EventLink"
+    )
+
+    orders = models.ManyToManyField(
+        orders.Order, related_name="org", through="OrderLink"
     )
 
     logs = models.ManyToManyField(core.APILog, related_name="org", through="LogLink")
@@ -202,4 +207,13 @@ class TokenLink(models.Model):
     )
     item = models.OneToOneField(
         auth.Token, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class OrderLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="order_links"
+    )
+    item = models.OneToOneField(
+        orders.Order, on_delete=models.CASCADE, related_name="link"
     )

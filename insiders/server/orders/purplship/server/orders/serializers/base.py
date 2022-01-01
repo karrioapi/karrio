@@ -5,13 +5,10 @@ from purplship.server.core.serializers import (
     AddressData,
     Commodity,
     CommodityData,
-    ParcelData,
     PlainDictField,
     Serializer,
     EntitySerializer,
     Shipment,
-    ShipmentData,
-    StringListField,
     allow_model_id,
 )
 
@@ -62,27 +59,6 @@ class OrderData(Serializer):
     )
     metadata = PlainDictField(
         required=False, default={}, help_text="User metadata for the order."
-    )
-
-
-class OrderCommodityData(CommodityData):
-    parent_id = fields.CharField(
-        required=True, help_text="The id of the related order line item."
-    )
-
-
-class OrderParcel(ParcelData):
-    items = OrderCommodityData(
-        required=True, many=True, allow_empty=False, help_text="The parcel items."
-    )
-
-
-class OrderShipmentData(ShipmentData):
-    recipient = None
-    parcels = OrderParcel(
-        many=True,
-        allow_empty=False,
-        help_text="The shipment's parcels",
     )
 
 

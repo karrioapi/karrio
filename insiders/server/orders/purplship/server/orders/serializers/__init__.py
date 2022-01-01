@@ -9,5 +9,4 @@ from purplship.server.orders.serializers.base import (
     OrderStatus,
     OrderData,
     Order,
-    OrderShipmentData,
 )

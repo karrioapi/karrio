@@ -9,6 +9,7 @@ class GenericSettings(Carrier):
         verbose_name = "Custom Carrier Settings"
         verbose_name_plural = "Custom Carrier Settings"
 
+    name = models.CharField(max_length=50)
     services = models.ManyToManyField("ServiceLevel", blank=True)
     label_template = models.ForeignKey(
         "LabelTemplate", null=True, on_delete=models.CASCADE

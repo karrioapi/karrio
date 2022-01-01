@@ -267,6 +267,8 @@ class ServiceLevelModelSerializer(ModelSerializer):
 
 @owned_model_serializer
 class LabelTemplateModelSerializer(ModelSerializer):
+    template_type = serializers.CharField(required=False)
+
     class Meta:
         model = providers.LabelTemplate
         exclude = ["created_at", "updated_at", "created_by"]

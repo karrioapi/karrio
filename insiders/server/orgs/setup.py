@@ -19,6 +19,7 @@ setup(
         "django-organizations",
         "purplship.server.core",
         "purplship.server.graph",
+        "purplship.server.orders",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

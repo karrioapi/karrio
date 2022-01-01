@@ -26,7 +26,7 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
-    if not instance.shipment_order.exists():
+    if not instance.parcels.filter(items__parent__order__isnull=False).exists():
         return
 
     if instance.status in [
@@ -34,12 +34,15 @@ def shipment_updated(
         serializers.ShipmentStatus.transit.value,
         serializers.ShipmentStatus.cancelled.value,
     ]:
-        order = instance.shipment_order.first()
-        status = compute_order_status(order)
-        if status != order.status:
-            order.status = status
-            order.save(update_fields=["status"])
-            logger.info("shipment's related order successfully updated")
+        # Retrieve all orders associated with this shipment and update their status if needed
+        for order in models.Order.objects.filter(
+            line_items__children__parcels__shipment__id=instance.id
+        ):
+            status = compute_order_status(order)
+            if status != order.status:
+                order.status = status
+                order.save(update_fields=["status"])
+                logger.info("shipment's related order successfully updated")
 
 
 def order_updated(

@@ -1,9 +1,9 @@
 from functools import partial
-from typing import List
 from django.db import models
 
 from purplship.server.core.utils import identity
 from purplship.server.core.models import OwnedEntity, uuid
+from purplship.server.manager import models as manager
 
 from purplship.server.orders.serializers.base import (
     ORDER_STATUS,
@@ -17,8 +17,8 @@ class OrderManager(models.Manager):
             .get_queryset()
             .prefetch_related(
                 "shipping_address",
-                "shipments",
                 "line_items",
+                "line_items__children__parcels__shipment",
             )
         )
 
@@ -62,19 +62,17 @@ class Order(OwnedEntity):
         blank=True, null=True, default=partial(identity, value={})
     )
     test_mode = models.BooleanField()
-
-    org = models.ManyToManyField(
-        "orgs.Organization", related_name="orders", through="OrderLink"
-    )
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
 
-    # System Reference fields
+    # computed fields
 
-    shipments = models.ManyToManyField(
-        "manager.Shipment", blank=True, related_name="shipment_order"
-    )
+    @property
+    def shipments(self):
+        return manager.Shipment.objects.filter(
+            parcels__items__parent_id__in=self.line_items.values_list("id", flat=True)
+        ).distinct()
 
 
 """Models orders linking (for reverse OneToMany relations)"""
@@ -87,10 +85,3 @@ class OrderLineItemLink(models.Model):
     item = models.OneToOneField(
         "manager.Commodity", on_delete=models.CASCADE, related_name="order_link"
     )
-
-
-class OrderLink(models.Model):
-    org = models.ForeignKey(
-        "orgs.Organization", on_delete=models.CASCADE, related_name="order_links"
-    )
-    item = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="link")

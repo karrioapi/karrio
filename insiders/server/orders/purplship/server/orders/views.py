@@ -3,7 +3,7 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status, serializers
+from rest_framework import status
 
 from drf_yasg import openapi
 from django.urls import path
@@ -20,12 +20,9 @@ from purplship.server.orders.serializers import (
     ErrorResponse,
     Order,
     OrderData,
-    ShipmentSerializer,
-    OrderShipmentData,
 )
 from purplship.server.orders.serializers.order import (
     OrderSerializer,
-    shipment_has_order_line_items,
 )
 import purplship.server.orders.models as models
 
@@ -165,58 +162,5 @@ class OrderDetail(APIView):
         return Response(Order(order).data)
 
 
-class OrderShipments(APIView):
-    @swagger_auto_schema(
-        tags=["Orders"],
-        operation_id=f"{ENDPOINT_ID}add_shipment",
-        operation_summary="Add a shipment",
-        responses={200: Order(), 400: ErrorResponse()},
-        request_body=OrderShipmentData(),
-    )
-    def post(self, request: Request, pk: str):
-        """
-        Add a shipment to an order.
-        """
-        order = (
-            models.Order.access_by(request)
-            .exclude(status=OrderStatus.cancelled.value)
-            .get(pk=pk)
-        )
-
-        if order.status == OrderStatus.fulfilled.value:
-            raise PurplshipAPIException(
-                f"The order is '{order.status}', no additional shipment can be added.",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        serializer = SerializerDecorator[ShipmentSerializer](
-            context=request,
-            data={
-                **dict(recipient=Order(order).data["shipping_address"]),
-                **SerializerDecorator[OrderShipmentData](data=request.data).data,
-            },
-        )
-
-        if not shipment_has_order_line_items(order, serializer.data):
-            raise PurplshipAPIException(
-                f"The shipment does not contain any line items from the targetted order.",
-                code="invalid",
-                status_code=status.HTTP_400_BAD_REQUEST,
-            )
-
-        shipment = serializer.save(carrier_filter=dict(test=order.test_mode))
-
-        # Update order state
-        SerializerDecorator[OrderSerializer](order, data={}, context=request).save(
-            shipments=[shipment.instance]
-        )
-
-        return Response(Order(order).data, status=status.HTTP_201_CREATED)
-
-
 router.urls.append(path("orders", OrderList.as_view(), name="order-list"))
 router.urls.append(path("orders/<str:pk>", OrderDetail.as_view(), name="order-detail"))
-router.urls.append(
-    path("orders/<str:pk>/shipments", OrderShipments.as_view(), name="order-shipments")
-)

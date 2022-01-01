@@ -66,9 +66,6 @@ class OrderSerializer(OrderData):
                 changes.append(key)
                 validated_data.pop(key)
 
-        for shipment in validated_data.get("shipments") or []:
-            instance.shipments.add(shipment)
-
         status = compute_order_status(instance)
         if status != instance.status:
             instance.status = status
@@ -107,7 +104,10 @@ def compute_order_status(order: models.Order) -> str:
 
     for line_item in order.line_items.all():
         shipment_items = line_item.children.exclude(
-            parcels__shipment__status=ShipmentStatus.cancelled.value
+            parcels__shipment__status__in=[
+                ShipmentStatus.cancelled.value,
+                ShipmentStatus.created.value,
+            ]
         )
         fulfilled = (
             sum([item.quantity for item in shipment_items]) >= line_item.quantity

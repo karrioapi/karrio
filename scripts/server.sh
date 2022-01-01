@@ -28,7 +28,7 @@ if [[ "$*" == *gen:graph* ]]; then
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
-    docker rm -f swagger
+    docker rm -f swagger 2> /dev/null
 	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/server/schemas/swagger.json"
 	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
 	sleep 5 &&
