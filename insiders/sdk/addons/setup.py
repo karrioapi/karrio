@@ -8,6 +8,7 @@ setup(
     packages=find_namespace_packages(exclude="tests*"),
     install_requires=[
         "purplship",
+        "Jinja2",
     ],
     zip_safe=False,
     include_package_data=True,
