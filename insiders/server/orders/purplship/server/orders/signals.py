@@ -13,10 +13,26 @@ logger = logging.getLogger(__name__)
 
 
 def register_signals():
+    signals.post_delete.connect(commodity_mutated, sender=manager.Commodity)
+    signals.post_save.connect(commodity_mutated, sender=manager.Commodity)
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
     signals.post_save.connect(order_updated, sender=models.Order)
 
     logger.info("order webhooks signals registered...")
+
+
+def commodity_mutated(sender, instance, *args, **kwargs):
+    """Commodity mutations (added or removed)"""
+    if instance.parent is None or instance.parent.order.exists() is False:
+        return
+
+    # Retrieve all orders associated with this commodity and update their status if needed
+    for order in models.Order.objects.filter(line_items__id=instance.parent_id):
+        status = compute_order_status(order)
+        if status != order.status:
+            order.status = status
+            order.save(update_fields=["status"])
+            logger.info("shipment's related order successfully updated")
 
 
 def shipment_updated(
@@ -29,11 +45,7 @@ def shipment_updated(
     if not instance.parcels.filter(items__parent__order__isnull=False).exists():
         return
 
-    if instance.status in [
-        serializers.ShipmentStatus.purchased.value,
-        serializers.ShipmentStatus.transit.value,
-        serializers.ShipmentStatus.cancelled.value,
-    ]:
+    if instance.status != serializers.ShipmentStatus.created.value:
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
             line_items__children__parcels__shipment__id=instance.id
