@@ -187,6 +187,9 @@ class ShipmentPurchaseData(Serializer):
         allow_null=True,
         help_text="The shipment reference",
     )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
+    )
 
 
 @owned_model_serializer
@@ -215,6 +218,9 @@ class ShipmentRateData(Serializer):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment reference",
+    )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
     )
 
 
