@@ -113,7 +113,7 @@ def collect_references() -> dict:
             for name, value in services.items()
         },
         "service_levels": {
-            key: mapper.get("service_levels")
+            key: DP.to_dict(mapper.get("service_levels"))
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get("service_levels") is not None
         },

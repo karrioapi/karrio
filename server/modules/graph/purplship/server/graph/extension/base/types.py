@@ -577,6 +577,13 @@ class LabelTemplateType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
+class ConnectionType(graphene.Interface, BaseConnectionType):
+    id = graphene.String(required=True)
+
+    def resolve_id(self, info):
+        return self.id
+
+
 def setup_carrier_model(model_type):
     _extra_fields = {}
 
@@ -600,6 +607,7 @@ def setup_carrier_model(model_type):
     class Meta:
         model = model_type
         exclude = ("carrier_ptr",)
+        interfaces = (ConnectionType,)
 
     return type(
         model_type.__name__,
@@ -608,9 +616,4 @@ def setup_carrier_model(model_type):
     )
 
 
-class ConnectionType(graphene.Union):
-    class Meta:
-        types = tuple(
-            setup_carrier_model(carrier_model)
-            for carrier_model in providers.MODELS.values()
-        )
+[setup_carrier_model(carrier_model) for carrier_model in providers.MODELS.values()]

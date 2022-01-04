@@ -10,6 +10,7 @@ from purplship.server.serializers import (
     save_many_to_many_data,
     owned_model_serializer,
     make_fields_optional,
+    exclude_id_field,
     Context,
 )
 import purplship.server.core.serializers as serializers
@@ -297,7 +298,7 @@ def create_carrier_model_serializers(partial: bool = False):
             _service_serializer = (
                 make_fields_optional(ServiceLevelModelSerializer)
                 if partial
-                else ServiceLevelModelSerializer
+                else exclude_id_field(ServiceLevelModelSerializer)
             )
             _extra_fields.update(
                 services=_service_serializer(many=True, allow_null=True, required=False)
@@ -369,7 +370,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
         payload = {
             key: value
             for key, value in settings_data.items()
-            if key not in ["services", "label_template"]
+            if key not in ["id", "services", "label_template"]
         }
         label_template = save_one_to_one_data(
             "label_template",
@@ -407,7 +408,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
         payload = {
             key: value
             for key, value in validated_data.get(name, {}).items()
-            if key not in ["services", "label_template"]
+            if key not in ["id", "services", "label_template"]
         }
 
         settings = save_one_to_one_data(
@@ -430,7 +431,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
 
 ConnectionModelSerializer = type(
     "ConnectionModelSerializer",
-    (ConnectionModelSerializerBase,),
+    (exclude_id_field(ConnectionModelSerializerBase),),
     {
         _name: _serializer(required=False)
         for _name, _serializer in CARRIER_MODEL_SERIALIZERS.items()
