@@ -7,10 +7,11 @@ from graphene.types import generic
 from graphene.types.scalars import Scalar
 from rest_framework import exceptions
 from django.db.models import Q
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from purplship.core.utils import DP
+from purplship.core.utils import DP, Enum
 from purplship.server.events.serializers import EventTypes
 import purplship.server.core.serializers as serializers
 import purplship.server.core.models as core
@@ -617,3 +618,18 @@ def setup_carrier_model(model_type):
 
 
 [setup_carrier_model(carrier_model) for carrier_model in providers.MODELS.values()]
+
+
+def metadata_object_types() -> Enum:
+    _types = [("commodity", manager.Commodity), ("shipment", manager.Shipment)]
+
+    if settings.ORDERS_MANAGEMENT:
+        import purplship.server.orders.models as orders
+
+        _types.append(("order", orders.Order))
+
+    return Enum("MetadataObjectType", _types)
+
+
+MetadataObjectType = metadata_object_types()
+MetadataObjectTypeEnum = graphene.Enum.from_enum(MetadataObjectType)

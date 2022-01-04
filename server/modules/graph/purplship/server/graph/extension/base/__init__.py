@@ -176,3 +176,5 @@ class Mutation:
     delete_template = mutations.create_delete_mutation(
         "DeleteTemplate", graph.Template
     ).Field()
+
+    mutate_metadata = mutations.MutateMetadata.Field()

@@ -6192,6 +6192,12 @@
                     "description": "The shipment reference",
                     "type": "string",
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -6221,6 +6227,12 @@
                     "description": "The shipment reference",
                     "type": "string",
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },

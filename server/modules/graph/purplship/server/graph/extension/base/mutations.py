@@ -1,11 +1,14 @@
 import logging
+import typing
 import graphene
+from graphene.types import generic
 from graphene_django.types import ErrorType
 from graphene_django.rest_framework import mutation
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import ValidationError
+from purplship.core.utils import DP
 
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
 from purplship.server.user.serializers import TokenSerializer, Token
@@ -313,3 +316,39 @@ def create_delete_mutation(name: str, model, **filter):
             return cls(id=id)
 
     return type(name, (DeleteItem, graphene.relay.ClientIDMutation), {})
+
+
+class MutateMetadata(graphene.relay.ClientIDMutation):
+    id = graphene.String()
+    metadata = generic.GenericScalar()
+    errors = graphene.List(
+        ErrorType, description="May contain more than one error for same field."
+    )
+
+    class Input:
+        id = graphene.String(required=True)
+        object_type = types.MetadataObjectTypeEnum(required=True)
+        added_values = generic.GenericScalar(required=False)
+        discarded_keys = graphene.List(graphene.String, required=False)
+
+    @classmethod
+    @types.login_required
+    def mutate_and_get_payload(
+        cls,
+        root,
+        info,
+        id: str,
+        object_type: typing.Any,
+        added_values: dict = {},
+        discarded_keys: list = [],
+    ):
+        instance = object_type.access_by(info.context).get(id=id)
+        instance.metadata = {
+            key: value
+            for key, value in (instance.metadata or {}).items()
+            if key not in discarded_keys
+        }
+        instance.metadata.update(added_values)
+        instance.save(update_fields=["metadata"])
+
+        return cls(id=id, errors=None, metadata=instance.metadata)
