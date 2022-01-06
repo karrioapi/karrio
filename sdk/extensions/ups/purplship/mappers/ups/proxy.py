@@ -62,7 +62,7 @@ class Proxy(BaseProxy):
         return Deserializable(
             responses,
             lambda res: [
-                (num, DP.to_dict(track)) for num, track in res if any(track.strip())
+                (num, DP.to_dict(track)) for num, track in res if track is not None and any(track.strip())
             ],
         )
 
