@@ -8,7 +8,6 @@ from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import ValidationError
-from purplship.core.utils import DP
 
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
 from purplship.server.user.serializers import TokenSerializer, Token
@@ -44,6 +43,15 @@ class SerializerMutation(mutation.SerializerMutation):
             }
 
         return {"data": data, "partial": False, "context": info.context}
+
+
+class ClientMutation(graphene.relay.ClientIDMutation):
+    class Meta:
+        abstract = True
+
+    errors = graphene.List(
+        ErrorType, description="May contain more than one error for same field."
+    )
 
 
 class CreateConnection(SerializerMutation):
@@ -92,13 +100,16 @@ def create_template_mutation(template: str, update: bool = False):
         if update
         else f"Create{template}TemplateInput",
     )
-    _props = {"id": (graphene.String(required=True) if update else None)}
-    _props[template.lower()] = graphene.Field(_model, required=not update)
+    _Base = type(
+        "Base",
+        (),
+        {
+            "id": (graphene.String(required=True) if update else None),
+            f"{template.lower()}": graphene.Field(_model, required=not update),
+        },
+    )
 
-    _Base = type("Base", (), _props)
-
-    class Mutation:
-        errors = graphene.List(ErrorType)
+    class _Mutation:
         template = graphene.Field(_type)
 
         class Input(_Base):
@@ -139,30 +150,25 @@ def create_template_mutation(template: str, update: bool = False):
                     template=None, errors=ErrorType.from_errors(serializer.errors)
                 )
 
-            try:
-                template = (
-                    SerializerDecorator[serializers.TemplateModelSerializer](
-                        instance, data=data, context=info.context
-                    )
-                    .save()
-                    .instance
+            template = (
+                SerializerDecorator[serializers.TemplateModelSerializer](
+                    instance, data=data, context=info.context
                 )
-                serializers.ensure_unique_default_related_data(
-                    data, context=info.context
-                )
-                return cls(template=template)
-            except Exception as e:
-                return cls(errors=ErrorType.from_errors(e))
+                .save()
+                .instance
+            )
+            serializers.ensure_unique_default_related_data(data, context=info.context)
+            return cls(template=template)
 
-    return type(_model.__name__, (Mutation, graphene.relay.ClientIDMutation), {})
+    return type(_model.__name__, (_Mutation, ClientMutation), {})
 
 
-class SystemCarrierMutation(graphene.relay.ClientIDMutation):
+class SystemCarrierMutation(ClientMutation):
+    carrier = graphene.Field(types.SystemConnectionType)
+
     class Input:
         id = graphene.String(required=True)
         enable = graphene.Boolean(required=True)
-
-    carrier = graphene.Field(types.SystemConnectionType)
 
     @classmethod
     @types.login_required
@@ -183,11 +189,11 @@ class SystemCarrierMutation(graphene.relay.ClientIDMutation):
         return SystemCarrierMutation(carrier=carrier)
 
 
-class TokenMutation(graphene.relay.ClientIDMutation):
+class TokenMutation(ClientMutation):
+    token = graphene.Field(types.TokenType)
+
     class Input:
         refresh = graphene.Boolean()
-
-    token = graphene.Field(types.TokenType)
 
     @classmethod
     @types.login_required
@@ -230,20 +236,16 @@ class RegisterUser(DjangoFormMutation):
         return cls(errors=[], user=user, **form.cleaned_data)
 
 
-class ConfirmEmail(graphene.relay.ClientIDMutation):
+class ConfirmEmail(ClientMutation):
+    success = graphene.Boolean(required=True)
+
     class Input:
         token = graphene.String(required=True)
 
-    success = graphene.Boolean(required=True)
-
     @classmethod
     def mutate_and_get_payload(cls, root, info, token: str = None):
-        try:
-            success, _ = email_verification.verify_token(token)
-            return cls(success=success)
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        success, _ = email_verification.verify_token(token)
+        return cls(success=success)
 
 
 class ChangePassword(DjangoFormMutation):
@@ -301,11 +303,11 @@ class ConfirmPasswordReset(DjangoFormMutation):
 
 
 def create_delete_mutation(name: str, model, **filter):
-    class DeleteItem:
+    class _DeleteMutation:
+        id = graphene.String()
+
         class Input:
             id = graphene.String(required=True)
-
-        id = graphene.String()
 
         @classmethod
         @types.login_required
@@ -315,15 +317,12 @@ def create_delete_mutation(name: str, model, **filter):
 
             return cls(id=id)
 
-    return type(name, (DeleteItem, graphene.relay.ClientIDMutation), {})
+    return type(name, (_DeleteMutation, ClientMutation), {})
 
 
-class MutateMetadata(graphene.relay.ClientIDMutation):
+class MutateMetadata(ClientMutation):
     id = graphene.String()
     metadata = generic.GenericScalar()
-    errors = graphene.List(
-        ErrorType, description="May contain more than one error for same field."
-    )
 
     class Input:
         id = graphene.String(required=True)

@@ -79,7 +79,7 @@ class CommodityModelSerializer(ModelSerializer):
 
     class Meta:
         model = manager.Commodity
-        exclude = ["created_at", "updated_at", "created_by"]
+        exclude = ["created_at", "updated_at", "created_by", "parent"]
 
 
 @owned_model_serializer

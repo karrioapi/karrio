@@ -1,10 +1,10 @@
-import functools
+import typing
 import graphene
+import functools
 import django_filters
 import graphene_django
 import rest_framework.status as http_status
 from graphene.types import generic
-from graphene.types.scalars import Scalar
 from rest_framework import exceptions
 from django.db.models import Q
 from django.conf import settings
@@ -14,16 +14,22 @@ from django.utils.translation import gettext_lazy as _
 from purplship.core.utils import DP, Enum
 from purplship.server.events.serializers import EventTypes
 import purplship.server.core.serializers as serializers
-import purplship.server.core.models as core
 import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
 import purplship.server.events.models as events
 import purplship.server.graph.models as graph
 import purplship.server.user.models as auth
+import purplship.server.core.models as core
 
 User = get_user_model()
 CARRIER_NAMES = list(providers.MODELS.keys())
 HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
+CountryCodeEnum = graphene.Enum.from_enum(serializers.Country)
+CurrencyCodeEnum = graphene.Enum.from_enum(serializers.Currency)
+DimensionUnitEnum = graphene.Enum.from_enum(serializers.DimensionUnit)
+WeightUnitEnum = graphene.Enum.from_enum(serializers.WeightUnit)
+CustomsContentTypeEnum = graphene.Enum.from_enum(serializers.CustomsContentType)
+IncotermCodeEnum = graphene.Enum.from_enum(serializers.Incoterm)
 
 
 def login_required(func):
@@ -40,14 +46,23 @@ def login_required(func):
     return wrapper
 
 
+def metadata_object_types() -> Enum:
+    _types = [("commodity", manager.Commodity), ("shipment", manager.Shipment)]
+
+    if settings.ORDERS_MANAGEMENT:
+        import purplship.server.orders.models as orders
+
+        _types.append(("order", orders.Order))
+
+    return Enum("MetadataObjectType", _types)
+
+
+MetadataObjectType = metadata_object_types()
+MetadataObjectTypeEnum = graphene.Enum.from_enum(MetadataObjectType)
+
+
 class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
     pass
-
-
-class ObjectType(Scalar):
-    @staticmethod
-    def serialize(data):
-        return data
 
 
 class CustomNode(graphene.Node):
@@ -126,7 +141,7 @@ class LogFilter(django_filters.FilterSet):
 
     class Meta:
         model = core.APILog
-        fields = []
+        fields: typing.List[str] = []
 
     def status_filter(self, queryset, name, value):
         if value == "succeeded":
@@ -297,14 +312,10 @@ class ParcelTemplateType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
-class TemplateType(graphene_django.DjangoObjectType):
-    address = graphene.Field(AddressType)
-    customs = graphene.Field(CustomsType)
-    parcel = graphene.Field(ParcelType)
-
-    class Meta:
-        model = graph.Template
-        interfaces = (CustomNode,)
+class DefaultTemplatesType(graphene.ObjectType):
+    address_template = graphene.Field(AddressTemplateType, required=False)
+    customs_template = graphene.Field(CustomsTemplateType, required=False)
+    parcel_template = graphene.Field(ParcelTemplateType, required=False)
 
 
 class TrackingEventType(graphene.ObjectType):
@@ -334,7 +345,7 @@ class TrackerFilter(django_filters.FilterSet):
 
     class Meta:
         model = manager.Tracking
-        fields = []
+        fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
@@ -416,7 +427,7 @@ class ShipmentFilter(django_filters.FilterSet):
 
     class Meta:
         model = manager.Shipment
-        fields = []
+        fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
@@ -513,7 +524,7 @@ class WebhookFilter(django_filters.FilterSet):
 
     class Meta:
         model = events.Webhook
-        fields = []
+        fields: typing.List[str] = []
 
     def events_filter(self, queryset, name, values):
         return queryset.filter(
@@ -544,7 +555,7 @@ class EventFilter(django_filters.FilterSet):
 
     class Meta:
         model = events.Event
-        fields = []
+        fields: typing.List[str] = []
 
     def entity_filter(self, queryset, name, value):
         try:
@@ -617,19 +628,5 @@ def setup_carrier_model(model_type):
     )
 
 
-[setup_carrier_model(carrier_model) for carrier_model in providers.MODELS.values()]
-
-
-def metadata_object_types() -> Enum:
-    _types = [("commodity", manager.Commodity), ("shipment", manager.Shipment)]
-
-    if settings.ORDERS_MANAGEMENT:
-        import purplship.server.orders.models as orders
-
-        _types.append(("order", orders.Order))
-
-    return Enum("MetadataObjectType", _types)
-
-
-MetadataObjectType = metadata_object_types()
-MetadataObjectTypeEnum = graphene.Enum.from_enum(MetadataObjectType)
+for carrier_model in providers.MODELS.values():
+    setup_carrier_model(carrier_model)

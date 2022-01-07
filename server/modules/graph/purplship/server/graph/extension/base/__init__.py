@@ -7,7 +7,6 @@ import purplship.server.core.gateway as gateway
 import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
 import purplship.server.events.models as events
-import purplship.server.graph.serializers as serializers
 import purplship.server.graph.models as graph
 import purplship.server.graph.extension.base.mutations as mutations
 import purplship.server.graph.extension.base.types as types
@@ -24,7 +23,7 @@ class Query:
         types.SystemConnectionType, test=graphene.Boolean(required=False)
     )
 
-    default_templates = types.generic.GenericScalar()
+    default_templates = graphene.Field(types.DefaultTemplatesType)
     address_templates = django_filter.DjangoFilterConnectionField(
         types.AddressTemplateType
     )
@@ -82,10 +81,12 @@ class Query:
     @types.login_required
     def resolve_default_templates(self, info, **kwargs):
         templates = graph.Template.access_by(info.context).filter(is_default=True)
-        return [
-            serializers.DefaultTemplateSerializer(template).data
-            for template in templates
-        ]
+
+        return dict(
+            address_template=templates.filter(address__isnull=False).first(),
+            customs_template=templates.filter(customs__isnull=False).first(),
+            parcel_template=templates.filter(parcel__isnull=False).first(),
+        )
 
     @types.login_required
     def resolve_address_templates(self, info, **kwargs):
@@ -141,6 +142,7 @@ class Query:
 
 
 class Mutation:
+    # User related mutations
     update_user = mutations.UpdateUser.Field()
     register_user = mutations.RegisterUser.Field()
     confirm_email = mutations.ConfirmEmail.Field()
@@ -149,10 +151,7 @@ class Mutation:
     request_password_reset = mutations.RequestPasswordReset.Field()
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
 
-    discard_commodity = mutations.create_delete_mutation(
-        "DiscardCommodity", manager.Commodity, customs__template__isnull=False
-    ).Field()
-
+    # Carrier connection related mutations
     create_connection = mutations.CreateConnection.Field()
     update_connection = mutations.UpdateConnection.Field()
     delete_connection = mutations.create_delete_mutation(
@@ -160,21 +159,40 @@ class Mutation:
     ).Field()
     mutate_system_connection = mutations.SystemCarrierMutation.Field()
 
+    # Template related mutations
     create_address_template = mutations.create_template_mutation("Address").Field()
+    create_customs_template = mutations.create_template_mutation("Customs").Field()
+    create_parcel_template = mutations.create_template_mutation("Parcel").Field()
     update_address_template = mutations.create_template_mutation(
         "Address", True
     ).Field()
-
-    create_customs_template = mutations.create_template_mutation("Customs").Field()
     update_customs_template = mutations.create_template_mutation(
         "Customs", True
     ).Field()
-
-    create_parcel_template = mutations.create_template_mutation("Parcel").Field()
     update_parcel_template = mutations.create_template_mutation("Parcel", True).Field()
-
     delete_template = mutations.create_delete_mutation(
         "DeleteTemplate", graph.Template
     ).Field()
+
+    # Shipment related mutations
+    # shipment updated can be used to add/update address, customs and parcels
+    # partial_shipment_update = mutations.PartialShipmentUpdate.Field()
+
+    # Commodity related mutations
+    discard_commodity = mutations.create_delete_mutation(
+        "DiscardCommodity", manager.Commodity
+    ).Field()
+
+    # Customs related mutations
+    # customs update can also be used to add/update customs' commodities
+    # discard_customs = mutations.create_delete_mutation(
+    #     "DiscardCustoms", manager.Customs
+    # ).Field()
+
+    # Customs related mutations
+    # parcel update can also be used to add/update parcel' items (commodities)
+    # discard_parcel = mutations.create_delete_mutation(
+    #     "DiscardParcel", manager.Parcel
+    # ).Field()
 
     mutate_metadata = mutations.MutateMetadata.Field()

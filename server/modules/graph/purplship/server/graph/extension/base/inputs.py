@@ -18,10 +18,32 @@ def create_address_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
     return type(
-        f"{_method}AddressTemplate",
+        f"{_method}Address",
         (serializer_to_input(_type),),
         dict(
+            country_code=types.CountryCodeEnum(required=False),
             validation=types.generic.GenericScalar(),
+        ),
+    )
+
+
+def create_commodity_input(optional: bool = False) -> graphene.InputObjectType:
+    _method = "Partial" if optional else ""
+    _type = (
+        make_fields_optional(model_serializers.CommodityModelSerializer)
+        if optional
+        else exclude_id_field(model_serializers.CommodityModelSerializer)
+    )
+
+    return type(
+        f"{_method}Commodity",
+        (serializer_to_input(_type),),
+        dict(
+            parent_id=graphene.String(required=False),
+            weight_unit=types.WeightUnitEnum(required=False),
+            origin_country=types.CountryCodeEnum(required=False),
+            value_currency=types.CurrencyCodeEnum(required=False),
+            metadata=types.generic.GenericScalar(),
         ),
     )
 
@@ -33,17 +55,14 @@ def create_customs_input(optional: bool = False) -> graphene.InputObjectType:
         if optional
         else model_serializers.CustomsModelSerializer
     )
-    _commodities = serializer_to_input(
-        make_fields_optional(model_serializers.CommodityModelSerializer)
-        if optional
-        else exclude_id_field(model_serializers.CommodityModelSerializer)
-    )
 
     return type(
-        f"{_method}CustomsTemplate",
+        f"{_method}Customs",
         (serializer_to_input(_type),),
         dict(
-            commodities=graphene.List(_commodities),
+            commodities=graphene.List(create_commodity_input(optional)),
+            incoterm=types.IncotermCodeEnum(required=False),
+            content_type=types.CustomsContentTypeEnum(required=False),
             duty=graphene.Field(serializer_to_input(serializers.Duty)),
             options=types.generic.GenericScalar(),
         ),
@@ -59,15 +78,27 @@ def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
     return type(
-        f"{_method}ParcelTemplate",
+        f"{_method}Parcel",
         (serializer_to_input(_type),),
-        dict(),
+        dict(
+            weight_unit=types.WeightUnitEnum(required=False),
+            dimension_unit=types.DimensionUnitEnum(required=False),
+        ),
     )
 
 
-CreateAddressTemplateInput = create_address_input()
-UpdateAddressTemplateInput = create_address_input(optional=True)
-CreateCustomsTemplateInput = create_customs_input()
-UpdateCustomsTemplateInput = create_customs_input(optional=True)
-CreateParcelTemplateInput = create_parcel_input()
-UpdateParcelTemplateInput = create_parcel_input(optional=True)
+CreateCommodityInput = create_commodity_input()
+UpdateCommodityInput = create_commodity_input(optional=True)
+CreateAddressInput = create_address_input()
+UpdateAddressInput = create_address_input(optional=True)
+CreateCustomsInput = create_customs_input()
+UpdateCustomsInput = create_customs_input(optional=True)
+CreateParcelInput = create_parcel_input()
+UpdateParcelInput = create_parcel_input(optional=True)
+
+CreateAddressTemplateInput = type("CreateAddressTemplate", (CreateAddressInput,), {})
+UpdateAddressTemplateInput = type("UpdateAddressTemplate", (UpdateAddressInput,), {})
+CreateCustomsTemplateInput = type("CreateCustomsTemplate", (CreateCustomsInput,), {})
+UpdateCustomsTemplateInput = type("UpdateCustomsTemplate", (UpdateCustomsInput,), {})
+CreateParcelTemplateInput = type("CreateParcelTemplate", (CreateParcelInput,), {})
+UpdateParcelTemplateInput = type("UpdateParcelTemplate", (UpdateParcelInput,), {})
