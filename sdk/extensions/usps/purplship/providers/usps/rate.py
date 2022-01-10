@@ -89,7 +89,7 @@ def rate_request(
 
     if (
         payload.recipient.country_code is not None
-        and payload.recipient.country_code == Country.US.name
+        and payload.recipient.country_code != Country.US.name
     ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
