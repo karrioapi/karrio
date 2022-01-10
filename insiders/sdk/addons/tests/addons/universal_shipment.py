@@ -60,7 +60,7 @@ settings_data = {
         {
             "service_name": "Standard",
             "service_code": "carrier_standard",
-            "cost": "10.00",
+            "cost": 10.00,
             "currency": "USD",
             "max_weight": 5.0,
             "weight_unit": "LB",
@@ -70,7 +70,7 @@ settings_data = {
         {
             "service_name": "Premium",
             "service_code": "carrier_premium",
-            "cost": "15.00",
+            "cost": 15.00,
             "currency": "USD",
             "max_weight": 8.0,
             "weight_unit": "LB",
@@ -117,21 +117,21 @@ shipment_request_data = {
                     "quantity": 1,
                     "description": "Item 1",
                     "sku": "SKU-1",
+                    "metadata": {
+                        "RFF_CN": "037-2332855",
+                        "BGM": "040000000000016256",
+                        "RFF_ON": "5424560",
+                        "DEPT": "DBR128",
+                        "CTL": "11253678",
+                        "XXNC": "138039C01",
+                        "NAD_UD": "570162",
+                        "RFF_AJY": "907",
+                        "RFF_AEM": "3901L",
+                    },
                 },
             ],
         }
     ],
-    "metadata": {
-        "RFF_CN": "037-2332855",
-        "BGM": "040000000000016256",
-        "RFF_ON": "5424560",
-        "DEPT": "DBR128",
-        "CTL": "11253678",
-        "XXNC": "138039C01",
-        "NAD_UD": "570162",
-        "RFF_AJY": "907",
-        "RFF_AEM": "3901L",
-    },
 }
 
 ParsedShipmentResponse = [

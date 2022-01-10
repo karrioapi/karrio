@@ -40,7 +40,7 @@ def generate_service_label(
 
     for index, package in enumerate(packages, start=1):
         label_type = shipment.label_type or "PDF"
-        label = generate_label(shipment, package, settings, index)
+        label = generate_label(shipment, package, service_name, settings, index)
         ref = f"{package.parcel.id or index}"
 
         service_label = ServiceLabel(
