@@ -13,16 +13,22 @@ from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetai
 from purplship.core.units import Packages, Currency, Options, Services, Country
 
 from purplship.providers.usps.units import (
-    ShipmentService, ShipmentOption, PackagingType, ServiceClassID, FirstClassMailType, SortLevelType
+    ShipmentService,
+    ShipmentOption,
+    PackagingType,
+    ServiceClassID,
+    FirstClassMailType,
+    SortLevelType,
 )
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps.utils import Settings
 
 
-def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_rate_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     rates: List[RateDetails] = [
-        _extract_details(package, settings)
-        for package in XP.find("Postage", response)
+        _extract_details(package, settings) for package in XP.find("Postage", response)
     ]
     return rates, parse_error_response(response, settings)
 
@@ -31,10 +37,18 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     postage: PostageType = XP.to_object(PostageType, postage_node)
 
     service = ServiceClassID.map(str(postage.CLASSID))
-    charges: List[SpecialServiceType] = getattr(postage.SpecialServices, 'SpecialService', [])
-    rate = NF.decimal(XP.find('Rate', postage_node, first=True).text)
-    estimated_date = DF.date(getattr(XP.find('CommitmentDate', postage_node, first=True), 'text', None))
-    transit = ((estimated_date.date() - datetime.now().date()).days if estimated_date is not None else None)
+    charges: List[SpecialServiceType] = getattr(
+        postage.SpecialServices, "SpecialService", []
+    )
+    rate = NF.decimal(XP.find("Rate", postage_node, first=True).text)
+    estimated_date = DF.date(
+        getattr(XP.find("CommitmentDate", postage_node, first=True), "text", None)
+    )
+    transit = (
+        (estimated_date.date() - datetime.now().date()).days
+        if estimated_date is not None
+        else None
+    )
 
     return RateDetails(
         carrier_name=settings.carrier_name,
@@ -52,11 +66,13 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
             )
             for charge in charges
         ],
-        meta=dict(service_name=(service.name or postage.MailService))
+        meta=dict(service_name=(service.name or postage.MailService)),
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV4Request]:
+def rate_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[RateV4Request]:
     """Create the appropriate USPS rate request depending on the destination
 
     :param payload: Purplship unified API rate request data
@@ -65,21 +81,44 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
 
-    if payload.shipper.country_code is not None and payload.shipper.country_code != Country.US.name:
+    if (
+        payload.shipper.country_code is not None
+        and payload.shipper.country_code != Country.US.name
+    ):
         raise OriginNotServicedError(payload.shipper.country_code)
 
-    if payload.recipient.country_code is not None and payload.recipient.country_code == Country.US.name:
+    if (
+        payload.recipient.country_code is not None
+        and payload.recipient.country_code != Country.US.name
+    ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
     package = Packages(payload.parcels).single
     options = Options(payload.options, ShipmentOption)
-    service = (Services(payload.services, ShipmentService).first or ShipmentService.usps_all)
-    special_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
-    insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
+    service = (
+        Services(payload.services, ShipmentService).first or ShipmentService.usps_all
+    )
+    special_services = [
+        getattr(option, "value", option)
+        for key, option in options
+        if "usps_option" not in key
+    ]
+    insurance = next(
+        (option.value for key, option in options if "usps_insurance" in key),
+        options.insurance,
+    )
 
     container = PackagingType[package.packaging_type or "your_packaging"]
-    sort_level = (SortLevelType[container.name].value if service.value in ["All", "Online"] else None)
-    mail_type = (FirstClassMailType[container.name].value if 'first_class' in service.value else None)
+    sort_level = (
+        SortLevelType[container.name].value
+        if service.value in ["All", "Online"]
+        else None
+    )
+    mail_type = (
+        FirstClassMailType[container.name].value
+        if "first_class" in service.value
+        else None
+    )
 
     request = RateV4Request(
         USERID=settings.username,
@@ -102,7 +141,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
                 AmountToCollect=options.cash_on_delivery,
                 SpecialServices=(
                     SpecialServicesType(SpecialService=[s for s in special_services])
-                    if any(special_services) else None
+                    if any(special_services)
+                    else None
                 ),
                 Content=None,
                 GroundOnly=options.usps_option_ground_only,
@@ -110,10 +150,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
                 Machinable=(options.usps_option_machinable_item or False),
                 ReturnLocations=options.usps_option_return_service_info,
                 ReturnServiceInfo=options.usps_option_return_service_info,
-                DropOffTime=('13:30' if options.shipment_date is not None else None),
+                DropOffTime=("13:30" if options.shipment_date is not None else None),
                 ShipDate=(
                     ShipDateType(valueOf_=DF.fdate(options.shipment_date))
-                    if options.shipment_date is not None else None
+                    if options.shipment_date is not None
+                    else None
                 ),
             )
         ],

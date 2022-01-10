@@ -2,7 +2,7 @@
 
 # Setup DB and static files
 purplship migrate || exit
-purplship collectstatic --clear --noinput 2>&1 || exit
+purplship collectstatic --noinput 1> /dev/null || exit
 
 # Setup Default super admin
 (echo "
