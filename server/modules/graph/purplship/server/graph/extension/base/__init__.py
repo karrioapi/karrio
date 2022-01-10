@@ -8,6 +8,7 @@ import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
 import purplship.server.events.models as events
 import purplship.server.graph.models as graph
+import purplship.server.manager.serializers as manager_serializers
 import purplship.server.graph.extension.base.mutations as mutations
 import purplship.server.graph.extension.base.types as types
 
@@ -175,24 +176,26 @@ class Mutation:
     ).Field()
 
     # Shipment related mutations
-    # shipment updated can be used to add/update address, customs and parcels
-    # partial_shipment_update = mutations.PartialShipmentUpdate.Field()
+    # shipment update can be used to add/update address, customs and parcels
+    partial_shipment_update = mutations.PartialShipmentUpdate.Field()
 
     # Commodity related mutations
     discard_commodity = mutations.create_delete_mutation(
-        "DiscardCommodity", manager.Commodity
+        "DiscardCommodity",
+        manager.Commodity,
+        validator=manager_serializers.can_mutate_commodity,
     ).Field()
 
     # Customs related mutations
-    # customs update can also be used to add/update customs' commodities
-    # discard_customs = mutations.create_delete_mutation(
-    #     "DiscardCustoms", manager.Customs
-    # ).Field()
+    discard_customs = mutations.create_delete_mutation(
+        "DiscardCustoms",
+        manager.Customs,
+        validator=manager_serializers.can_mutate_customs,
+    ).Field()
 
     # Customs related mutations
-    # parcel update can also be used to add/update parcel' items (commodities)
-    # discard_parcel = mutations.create_delete_mutation(
-    #     "DiscardParcel", manager.Parcel
-    # ).Field()
+    discard_parcel = mutations.create_delete_mutation(
+        "DiscardParcel", manager.Parcel, validator=manager_serializers.can_mutate_parcel
+    ).Field()
 
     mutate_metadata = mutations.MutateMetadata.Field()

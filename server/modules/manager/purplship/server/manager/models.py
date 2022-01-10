@@ -80,7 +80,11 @@ class Parcel(OwnedEntity):
     dimension_unit = models.CharField(
         max_length=2, choices=DIMENSION_UNIT, null=True, blank=True
     )
-    items = models.ManyToManyField("Commodity", blank=True, related_name="parcels")
+    items = models.ManyToManyField("Commodity", blank=True, related_name="parcel")
+
+    def delete(self, *args, **kwargs):
+        self.items.all().delete()
+        return super().delete(*args, **kwargs)
 
 
 class Commodity(OwnedEntity):
@@ -121,6 +125,10 @@ class Commodity(OwnedEntity):
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
+
+    def delete(self, *args, **kwargs):
+        self.children.all().delete()
+        return super().delete(*args, **kwargs)
 
 
 class CustomsManager(models.Manager):

@@ -30,6 +30,9 @@ DimensionUnitEnum = graphene.Enum.from_enum(serializers.DimensionUnit)
 WeightUnitEnum = graphene.Enum.from_enum(serializers.WeightUnit)
 CustomsContentTypeEnum = graphene.Enum.from_enum(serializers.CustomsContentType)
 IncotermCodeEnum = graphene.Enum.from_enum(serializers.Incoterm)
+PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
+ShipmentStatusEnum = graphene.Enum.from_enum(serializers.ShipmentStatus)
+TrackerStatusEnum = graphene.Enum.from_enum(serializers.TrackerStatus)
 
 
 def login_required(func):
@@ -224,6 +227,9 @@ class RateType(graphene.ObjectType):
 
 
 class CommodityType(graphene_django.DjangoObjectType):
+    weight_unit = WeightUnitEnum()
+    origin_country = CountryCodeEnum()
+    value_currency = CurrencyCodeEnum()
     parent_id = graphene.String()
     metadata = generic.GenericScalar()
 
@@ -231,7 +237,7 @@ class CommodityType(graphene_django.DjangoObjectType):
         model = manager.Commodity
         exclude = (
             "customs",
-            "parcels",
+            "parcel",
             "children",
             "parent",
         )
@@ -258,8 +264,8 @@ class ParcelType(graphene_django.DjangoObjectType):
 
 
 class DutyType(graphene.ObjectType):
-    paid_by = graphene.String()
-    currency = graphene.String()
+    paid_by = PaidByEnum()
+    currency = CurrencyCodeEnum()
     account_number = graphene.String()
     declared_value = graphene.Float()
     bill_to = graphene.Field(AddressType)
@@ -366,7 +372,7 @@ class TrackerType(graphene_django.DjangoObjectType):
 
     events = graphene.List(TrackingEventType, required=True)
     messages = graphene.List(MessageType, required=True)
-    status = graphene.Enum.from_enum(serializers.TrackerStatus)(required=True)
+    status = TrackerStatusEnum(required=True)
 
     class Meta:
         model = manager.Tracking
@@ -381,8 +387,8 @@ class TrackerType(graphene_django.DjangoObjectType):
 
 
 class PaymentType(graphene.ObjectType):
-    paid_by = graphene.String()
-    currency = graphene.String()
+    paid_by = PaidByEnum(required=False)
+    currency = CurrencyCodeEnum(required=False)
     account_number = graphene.String()
     id = graphene.String()
 
@@ -482,7 +488,7 @@ class ShipmentType(graphene_django.DjangoObjectType):
     metadata = generic.GenericScalar()
     tracker_id = graphene.String()
 
-    status = graphene.Enum.from_enum(serializers.ShipmentStatus)(required=True)
+    status = ShipmentStatusEnum(required=True)
 
     class Meta:
         model = manager.Shipment
@@ -596,18 +602,18 @@ class ConnectionType(graphene.Interface, BaseConnectionType):
         return self.id
 
 
-def setup_carrier_model(model_type):
-    _extra_fields = {}
+for carrier_model in providers.MODELS.values():
+    _extra_fields: dict = dict()
 
-    if hasattr(model_type, "account_country_code"):
+    if hasattr(carrier_model, "account_country_code"):
         _extra_fields.update(account_country_code=graphene.String(required=True))
 
-    if hasattr(model_type, "label_template"):
+    if hasattr(carrier_model, "label_template"):
         _extra_fields.update(
             label_template=graphene.Field(LabelTemplateType),
         )
 
-    if hasattr(model_type, "services"):
+    if hasattr(carrier_model, "services"):
 
         def resolve_services(self, info):
             return self.services.all()
@@ -617,16 +623,12 @@ def setup_carrier_model(model_type):
         )
 
     class Meta:
-        model = model_type
+        model = carrier_model
         exclude = ("carrier_ptr",)
         interfaces = (ConnectionType,)
 
-    return type(
-        model_type.__name__,
+    type(
+        carrier_model.__name__,
         (graphene_django.DjangoObjectType, BaseConnectionType),
         {"Meta": Meta, **_extra_fields},
     )
-
-
-for carrier_model in providers.MODELS.values():
-    setup_carrier_model(carrier_model)

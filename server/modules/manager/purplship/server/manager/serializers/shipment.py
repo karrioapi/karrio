@@ -1,11 +1,13 @@
 import logging
 from typing import Optional, Any
 from django.db import transaction
+from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 from purplship.core.utils import DP, DF
 from purplship.server.core.gateway import Shipments, Carriers
+from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
@@ -192,6 +194,50 @@ class ShipmentPurchaseData(Serializer):
     )
 
 
+class ShipmentUpdateData(Serializer):
+    label_type = ChoiceField(
+        required=False,
+        choices=LABEL_TYPES,
+        default=LabelType.PDF.name,
+        help_text="The shipment label file type.",
+    )
+    payment = Payment(required=False, help_text="The payment details")
+    options = PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""
+    <details>
+    <summary>The options available for the shipment.</summary>
+
+    ```
+    {
+        "currency": "USD",
+        "insurance": 100.00,
+        "cash_on_delivery": 30.00,
+        "shipment_date": "2020-01-01",
+        "dangerous_good": true,
+        "declared_value": 150.00,
+        "email_notification": true,
+        "email_notification_to": shipper@mail.com,
+        "signature_confirmation": true,
+    }
+    ```
+
+    Please check the docs for carrier specific options.
+    </details>
+    """,
+    )
+    reference = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment reference",
+    )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
+    )
+
+
 @owned_model_serializer
 class ShipmentRateData(Serializer):
     services = StringListField(
@@ -277,6 +323,47 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.rates = []
         shipment.messages = []
         shipment.save()
+
+
+def can_mutate_shipment(
+    shipment: models.Shipment,
+    update: bool = False,
+    delete: bool = False,
+    purchase: bool = False,
+):
+    if purchase and shipment.status == ShipmentStatus.purchased.value:
+        raise PurplshipAPIException(
+            f"The shipment is '{shipment.status}' and cannot be purchased again",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if update and shipment.status != ShipmentStatus.created.value:
+        raise PurplshipAPIException(
+            f"Shipment is {shipment.status} and cannot be updated anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and shipment.status not in [
+        ShipmentStatus.purchased.value,
+        ShipmentStatus.created.value,
+    ]:
+        raise PurplshipAPIException(
+            f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and shipment.pickup_shipments.exists():
+        raise PurplshipAPIException(
+            (
+                f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
+                "Please cancel this shipment pickup before."
+            ),
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
 
 
 def remove_shipment_tracker(shipment: models.Shipment):

@@ -11,7 +11,6 @@ from purplship.server.core.views.api import GenericAPIView, APIView
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.core.serializers import (
-    ShipmentStatus,
     ErrorResponse,
     AddressData,
     Address,
@@ -19,6 +18,7 @@ from purplship.server.core.serializers import (
 )
 from purplship.server.manager.serializers import (
     AddressSerializer,
+    can_mutate_address,
     reset_related_shipment_rates,
 )
 from purplship.server.manager.router import router
@@ -153,18 +153,13 @@ class AddressDetail(APIView):
         update an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = (
-            address.shipper_shipment.first() or address.recipient_shipment.first()
-        )
-        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "The shipment related to this address has been 'purchased' and can no longer be modified",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_address(address, update=True)
 
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
-        reset_related_shipment_rates(shipment)
+        reset_related_shipment_rates(
+            address.shipper_shipment.first() or address.recipient_shipment.first()
+        )
+
         return Response(Address(address).data)
 
     @swagger_auto_schema(
@@ -188,19 +183,11 @@ class AddressDetail(APIView):
         Discard an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = (
-            address.shipper_shipment.first() or address.recipient_shipment.first()
-        )
-        if shipment is not None:
-            raise PurplshipAPIException(
-                "This address is linked to a shipment and cannot be removed",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_address(address, update=True, delete=True)
 
         address.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Discard address", success=True))
-        return Response(serializer.data)
+
+        return Response(Operation(dict(operation="Discard address", success=True)).data)
 
 
 router.urls.append(path("addresses", AddressList.as_view(), name="address-list"))

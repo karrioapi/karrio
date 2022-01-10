@@ -954,7 +954,6 @@ class Rate(EntitySerializer):
     meta = PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
-
     carrier_ref = CharField(
         required=False,
         allow_blank=True,

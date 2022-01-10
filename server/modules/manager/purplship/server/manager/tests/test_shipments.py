@@ -91,9 +91,9 @@ class TestShipments(APITestCase):
 
 
 class TestShipmentDetails(TestShipmentFixture):
-    def test_add_shipment_option(self):
+    def test_add_shipment_options(self):
         url = reverse(
-            "purplship.server.manager:shipment-options",
+            "purplship.server.manager:shipment-details",
             kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_OPTIONS
@@ -102,7 +102,9 @@ class TestShipmentDetails(TestShipmentFixture):
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data.get("options"), SHIPMENT_OPTIONS)
+        self.assertDictEqual(
+            response_data.get("options"), SHIPMENT_OPTIONS.get("options")
+        )
 
     def test_shipment_rates(self):
         url = reverse(
@@ -353,7 +355,7 @@ SHIPMENT_RESPONSE = {
     "messages": [],
 }
 
-SHIPMENT_OPTIONS = {"insurance": 54, "currency": "CAD"}
+SHIPMENT_OPTIONS = {"options": {"insurance": 54, "currency": "CAD"}}
 
 RETURNED_RATES_VALUE = (
     [

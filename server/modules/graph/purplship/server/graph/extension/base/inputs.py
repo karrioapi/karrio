@@ -22,7 +22,6 @@ def create_address_input(optional: bool = False) -> graphene.InputObjectType:
         (serializer_to_input(_type),),
         dict(
             country_code=types.CountryCodeEnum(required=False),
-            validation=types.generic.GenericScalar(),
         ),
     )
 
@@ -48,6 +47,28 @@ def create_commodity_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
 
+def create_payment_input() -> graphene.InputObjectType:
+    return type(
+        "PartialPayment",
+        (serializer_to_input(serializers.Payment),),
+        dict(
+            paid_by=types.PaidByEnum(required=False),
+        ),
+    )
+
+
+def create_duty_input() -> graphene.InputObjectType:
+    return type(
+        "PartialDuty",
+        (serializer_to_input(serializers.Duty),),
+        dict(
+            paid_by=types.PaidByEnum(required=False),
+            currency=types.CurrencyCodeEnum(required=False),
+            bill_to=graphene.Field(UpdateAddressInput, required=False),
+        ),
+    )
+
+
 def create_customs_input(optional: bool = False) -> graphene.InputObjectType:
     _method = "Partial" if optional else ""
     _type = (
@@ -60,10 +81,12 @@ def create_customs_input(optional: bool = False) -> graphene.InputObjectType:
         f"{_method}Customs",
         (serializer_to_input(_type),),
         dict(
-            commodities=graphene.List(create_commodity_input(optional)),
+            commodities=graphene.List(
+                UpdateCommodityInput if optional else CreateCommodityInput
+            ),
             incoterm=types.IncotermCodeEnum(required=False),
             content_type=types.CustomsContentTypeEnum(required=False),
-            duty=graphene.Field(serializer_to_input(serializers.Duty)),
+            duty=graphene.Field(DutyInput, required=False),
             options=types.generic.GenericScalar(),
         ),
     )
@@ -87,10 +110,12 @@ def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
 
+PaymentInput = create_payment_input()
 CreateCommodityInput = create_commodity_input()
 UpdateCommodityInput = create_commodity_input(optional=True)
 CreateAddressInput = create_address_input()
 UpdateAddressInput = create_address_input(optional=True)
+DutyInput = create_duty_input()
 CreateCustomsInput = create_customs_input()
 UpdateCustomsInput = create_customs_input(optional=True)
 CreateParcelInput = create_parcel_input()

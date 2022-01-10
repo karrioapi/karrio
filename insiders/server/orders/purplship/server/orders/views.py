@@ -10,6 +10,7 @@ from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
 
+from purplship.core.utils import DP
 from purplship.server.core.views.api import GenericAPIView, APIView
 from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
@@ -23,6 +24,8 @@ from purplship.server.orders.serializers import (
 )
 from purplship.server.orders.serializers.order import (
     OrderSerializer,
+    OrderUpdateData,
+    can_mutate_order,
 )
 import purplship.server.orders.models as models
 
@@ -126,6 +129,28 @@ class OrderDetail(APIView):
 
     @swagger_auto_schema(
         tags=["Orders"],
+        operation_id=f"{ENDPOINT_ID}update",
+        operation_summary="Update an order",
+        responses={200: Order(), 400: ErrorResponse()},
+        request_body=OrderUpdateData(),
+    )
+    def put(self, request: Request, pk: str):
+        """
+        This operation allows for updating properties of an order including `options` and `metadata`.
+        It is not for editing the line items of an order.
+        """
+        order = models.Order.access_by(request).get(pk=pk)
+        can_mutate_order(order, update=True)
+
+        serializer = SerializerDecorator[OrderUpdateData](data=request.data).data
+        SerializerDecorator[OrderSerializer](
+            order, context=request, data=DP.to_dict(serializer.data)
+        ).save()
+
+        return Response(Order(order).data)
+
+    @swagger_auto_schema(
+        tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel an order",
         responses={200: Order(), 400: ErrorResponse()},
@@ -135,26 +160,7 @@ class OrderDetail(APIView):
         Cancel an order.
         """
         order = models.Order.access_by(request).get(pk=pk)
-
-        if order.status in [
-            OrderStatus.delivered.value,
-            OrderStatus.cancelled.value,
-        ]:
-            raise PurplshipAPIException(
-                f"The order is '{order.status}' and can not be cancelled anymore...",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        if order.status in [
-            OrderStatus.fulfilled.value,
-            OrderStatus.partially_fulfilled.value,
-        ]:
-            raise PurplshipAPIException(
-                f"The order is '{order.status}' please cancel all related shipments before...",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
+        can_mutate_order(order, delete=True)
 
         order.status = OrderStatus.cancelled.value
         order.save(update_fields=["status"])

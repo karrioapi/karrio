@@ -1,26 +1,21 @@
 import logging
-from typing import List
 from django.db import transaction
+from rest_framework import status
 
+from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import (
     owned_model_serializer,
     save_one_to_one_data,
 )
 from purplship.server.serializers.abstract import save_many_to_many_data
-from purplship.server.orders.serializers import (
-    OrderData,
-    OrderStatus,
-    ShipmentStatus,
-    AddressSerializer,
-    CommoditySerializer,
-)
+import purplship.server.orders.serializers as serializers
 import purplship.server.orders.models as models
 
 logger = logging.getLogger(__name__)
 
 
 @owned_model_serializer
-class OrderSerializer(OrderData):
+class OrderSerializer(serializers.OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
         mode_filter = validated_data.get("mode_filter") or {}
@@ -35,7 +30,7 @@ class OrderSerializer(OrderData):
             "test_mode": test_mode,
             "shipping_address": save_one_to_one_data(
                 "shipping_address",
-                AddressSerializer,
+                serializers.AddressSerializer,
                 payload=validated_data,
                 context=context,
             ),
@@ -45,7 +40,7 @@ class OrderSerializer(OrderData):
 
         save_many_to_many_data(
             "line_items",
-            CommoditySerializer,
+            serializers.CommoditySerializer,
             order,
             payload=validated_data,
             context=context,
@@ -76,6 +71,24 @@ class OrderSerializer(OrderData):
         return instance
 
 
+class OrderUpdateData(serializers.Serializer):
+    label_type = serializers.ChoiceField(
+        required=False,
+        choices=serializers.LABEL_TYPES,
+        default=serializers.LabelType.PDF.name,
+        help_text="The shipment label file type.",
+    )
+    payment = serializers.Payment(required=False, help_text="The payment details")
+    options = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="The order options",
+    )
+    metadata = serializers.PlainDictField(
+        required=False, help_text="User metadata for the shipment"
+    )
+
+
 def compute_order_status(order: models.Order) -> str:
     """
     Compute the order status based on the shipments and line_items statuses
@@ -90,14 +103,16 @@ def compute_order_status(order: models.Order) -> str:
     The remaining statuses ("created", "cancelled") are self explanatory and should never be computed.
     """
 
-    if not order.shipments.exclude(status=ShipmentStatus.cancelled.value).exists():
-        return OrderStatus.created.value
+    if not order.shipments.exclude(
+        status=serializers.ShipmentStatus.cancelled.value
+    ).exists():
+        return serializers.OrderStatus.created.value
 
     line_items_are_fulfilled = True
     line_items_are_partially_fulfilled = False
     shipments_are_delivered = all(
         [
-            shipment.status == ShipmentStatus.delivered.value
+            shipment.status == serializers.ShipmentStatus.delivered.value
             for shipment in order.shipments.all()
         ]
     )
@@ -105,8 +120,8 @@ def compute_order_status(order: models.Order) -> str:
     for line_item in order.line_items.all():
         shipment_items = line_item.children.exclude(
             parcels__shipment__status__in=[
-                ShipmentStatus.cancelled.value,
-                ShipmentStatus.created.value,
+                serializers.ShipmentStatus.cancelled.value,
+                serializers.ShipmentStatus.created.value,
             ]
         )
         fulfilled = (
@@ -120,23 +135,49 @@ def compute_order_status(order: models.Order) -> str:
             line_items_are_fulfilled = False
 
     if line_items_are_fulfilled and shipments_are_delivered:
-        return OrderStatus.delivered.value
+        return serializers.OrderStatus.delivered.value
 
     if line_items_are_fulfilled:
-        return OrderStatus.fulfilled.value
+        return serializers.OrderStatus.fulfilled.value
 
     if line_items_are_partially_fulfilled:
-        return OrderStatus.partially_fulfilled.value
+        return serializers.OrderStatus.partially_fulfilled.value
 
-    return OrderStatus.created.value
+    return serializers.OrderStatus.created.value
 
 
-def shipment_has_order_line_items(order: models.Order, shipment_payload: dict):
-    line_items_ids = [item.id for item in order.line_items.all()]
-    shipment_parcel_items: List[dict] = sum(
-        [parcel.get("items") or [] for parcel in shipment_payload.get("parcels")], []
-    )
+def can_mutate_order(
+    order: models.Order,
+    update: bool = False,
+    delete: bool = False,
+):
 
-    return any(
-        [item.get("parent_id") in line_items_ids for item in shipment_parcel_items]
-    )
+    if update and order.status in [
+        serializers.OrderStatus.delivered.value,
+        serializers.OrderStatus.fulfilled.value,
+    ]:
+        raise PurplshipAPIException(
+            f"The order is '{order.status}' and cannot be updated anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and order.status in [
+        serializers.OrderStatus.delivered.value,
+        serializers.OrderStatus.cancelled.value,
+    ]:
+        raise PurplshipAPIException(
+            f"The order is '{order.status}' and can not be cancelled anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and order.status in [
+        serializers.OrderStatus.fulfilled.value,
+        serializers.OrderStatus.partially_fulfilled.value,
+    ]:
+        raise PurplshipAPIException(
+            f"The order is '{order.status}' please cancel all related shipments before...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )

@@ -9,11 +9,14 @@ from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import ValidationError
 
+from purplship.core.utils import DP
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
 from purplship.server.user.serializers import TokenSerializer, Token
-from purplship.server.providers import models as providers
-from purplship.server.graph import models as graph
+import purplship.server.manager.serializers as manager_serializers
 import purplship.server.graph.forms as forms
+import purplship.server.graph.models as graph
+import purplship.server.manager.models as manager
+import purplship.server.providers.models as providers
 import purplship.server.graph.serializers as serializers
 import purplship.server.graph.extension.base.types as types
 import purplship.server.graph.extension.base.inputs as inputs
@@ -302,7 +305,9 @@ class ConfirmPasswordReset(DjangoFormMutation):
         return user
 
 
-def create_delete_mutation(name: str, model, **filter):
+def create_delete_mutation(
+    name: str, model, validator: typing.Callable = None, **filter
+):
     class _DeleteMutation:
         id = graphene.String()
 
@@ -313,7 +318,14 @@ def create_delete_mutation(name: str, model, **filter):
         @types.login_required
         def mutate_and_get_payload(cls, root, info, id: str = None):
             instance = model.access_by(info.context).get(id=id, **filter)
-            instance.delete()
+            validator(instance) if validator else None
+
+            instance.delete(keep_parents=True)
+
+            if hasattr(instance, "shipment"):
+                serializers.manager.reset_related_shipment_rates(
+                    instance.shipment.first()
+                )
 
             return cls(id=id)
 
@@ -351,3 +363,36 @@ class MutateMetadata(ClientMutation):
         instance.save(update_fields=["metadata"])
 
         return cls(id=id, errors=None, metadata=instance.metadata)
+
+
+class PartialShipmentUpdate(ClientMutation):
+    shipment = graphene.Field(types.ShipmentType)
+
+    class Input:
+        id = graphene.String(required=True)
+        shipper = graphene.Field(inputs.UpdateAddressInput, required=False)
+        recipient = graphene.Field(inputs.UpdateAddressInput, required=False)
+        customs = graphene.Field(inputs.UpdateCustomsInput, required=False)
+        parcels = graphene.List(inputs.UpdateParcelInput, required=False)
+        payment = graphene.Field(inputs.PaymentInput, required=False)
+        options = generic.GenericScalar(required=False)
+        reference = graphene.String(required=False)
+        metadata = generic.GenericScalar(required=False)
+
+    @classmethod
+    @types.login_required
+    def mutate_and_get_payload(cls, root, info, id: str, **inputs):
+        shipment = manager.Shipment.access_by(info.context).get(id=id)
+        manager_serializers.can_mutate_shipment(shipment, update=True)
+
+        SerializerDecorator[manager_serializers.ShipmentSerializer](
+            shipment,
+            context=info.context,
+            data=DP.to_dict(
+                SerializerDecorator[manager_serializers.ShipmentUpdateData](
+                    data=inputs
+                ).data
+            ),
+        ).save()
+
+        return cls(errors=None, shipment=shipment)

@@ -1,4 +1,7 @@
-from purplship.server.core.serializers import ParcelData
+from rest_framework import status
+
+from purplship.server.core.exceptions import PurplshipAPIException
+from purplship.server.core.serializers import ParcelData, ShipmentStatus
 from purplship.server.serializers import owned_model_serializer, save_many_to_many_data
 
 from purplship.server.manager.serializers.commodity import CommoditySerializer
@@ -44,3 +47,26 @@ class ParcelSerializer(ParcelData):
 
         instance.save()
         return instance
+
+
+def can_mutate_parcel(
+    parcel: models.Parcel, update: bool = False, delete: bool = False
+):
+    shipment = parcel.shipment.first()
+
+    if shipment is None:
+        return
+
+    if update and shipment.status != ShipmentStatus.created.value:
+        raise PurplshipAPIException(
+            f"Operation not permitted. The related shipment is '{shipment.status}'.",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )
+
+    if delete and len(shipment.parcels.all()) == 1:
+        raise PurplshipAPIException(
+            f"Operation not permitted. The related shipment needs at least one parcel.",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )

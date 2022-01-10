@@ -68,7 +68,7 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
                 key: {"read_only": False} for key in ["validate_location", "validation"]
             },
         }
-        exclude = ["id", "created_at", "updated_at", "created_by"]
+        exclude = ["id", "created_at", "updated_at", "created_by", "validation"]
 
 
 @owned_model_serializer
@@ -241,14 +241,6 @@ def ensure_unique_default_related_data(
         for template in default_templates:
             template.is_default = False
             template.save()
-
-
-class DefaultTemplateSerializer(serializers.EntitySerializer):
-    label = serializers.CharField()
-    is_default = serializers.BooleanField()
-    address = serializers.AddressData(required=False)
-    customs = serializers.CustomsData(required=False)
-    parcel = serializers.ParcelData(required=False)
 
 
 @owned_model_serializer

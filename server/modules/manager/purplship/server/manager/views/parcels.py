@@ -19,6 +19,7 @@ from purplship.server.core.serializers import (
 )
 from purplship.server.manager.serializers import (
     ParcelSerializer,
+    can_mutate_parcel,
     reset_related_shipment_rates,
 )
 from purplship.server.manager.router import router
@@ -145,16 +146,11 @@ class ParcelDetail(APIView):
         modify an existing parcel's details.
         """
         parcel = models.Parcel.access_by(request).get(pk=pk)
-        shipment = parcel.shipment.first()
-        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "The shipment related to this parcel has been 'purchased' and can no longer be modified",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_parcel(parcel, update=True)
 
         SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
-        reset_related_shipment_rates(shipment)
+        reset_related_shipment_rates(parcel.shipment.first())
+
         return Response(Parcel(parcel).data)
 
     @swagger_auto_schema(
@@ -178,23 +174,12 @@ class ParcelDetail(APIView):
         Remove a parcel.
         """
         parcel = models.Parcel.access_by(request).get(pk=pk)
-        shipment = parcel.shipment_parcels.first()
-
-        if shipment is not None and (
-            shipment.status == ShipmentStatus.purchased.value
-            or len(shipment.shipment_parcels.all()) == 1
-        ):
-            raise PurplshipAPIException(
-                "A shipment attached to this parcel is purchased or has only one parcel. The parcel cannot be removed!",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_parcel(parcel, update=True, delete=True)
 
         parcel.delete(keep_parents=True)
-        shipment.shipment_parcels.set(shipment.shipment_parcels.exclude(id=parcel.id))
-        serializer = Operation(dict(operation="Remove parcel", success=True))
-        reset_related_shipment_rates(shipment)
-        return Response(serializer.data)
+        reset_related_shipment_rates(parcel.shipment.first())
+
+        return Response(Operation(dict(operation="Remove parcel", success=True)).data)
 
 
 router.urls.append(path("parcels", ParcelList.as_view(), name="parcel-list"))

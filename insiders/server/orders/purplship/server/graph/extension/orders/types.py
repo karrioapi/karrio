@@ -8,6 +8,8 @@ import purplship.server.orders.serializers as serializers
 import purplship.server.graph.extension.base.types as basetypes
 import purplship.server.orders.models as models
 
+OrderStatusEnum = graphene.Enum.from_enum(serializers.OrderStatus)
+
 
 class OrderFilter(django_filters.FilterSet):
     address = django_filters.CharFilter(
@@ -39,7 +41,7 @@ class OrderFilter(django_filters.FilterSet):
 
     class Meta:
         model = models.Order
-        fields = []
+        fields: list = []
 
     def option_key_filter(self, queryset, name, value):
         return queryset.filter(Q(options__has_key=value))
@@ -60,7 +62,7 @@ class OrderType(graphene_django.DjangoObjectType):
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
 
-    status = graphene.Enum.from_enum(serializers.OrderStatus)(required=True)
+    status = OrderStatusEnum(required=True)
 
     class Meta:
         model = models.Order

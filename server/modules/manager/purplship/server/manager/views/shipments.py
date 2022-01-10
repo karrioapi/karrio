@@ -14,7 +14,6 @@ from django_filters import rest_framework as filters
 from purplship.core.utils import DP
 from purplship.server.core.gateway import Carriers
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.core.serializers import (
     MODELS,
@@ -26,20 +25,18 @@ from purplship.server.core.serializers import (
     RateResponse,
     Rate,
     OperationResponse,
-    CustomsData,
-    ParcelData,
 )
 from purplship.server.manager.router import router
 from purplship.server.manager.serializers import (
-    reset_related_shipment_rates,
     create_shipment_tracker,
+    can_mutate_shipment,
     ShipmentSerializer,
     ShipmentRateData,
+    ShipmentUpdateData,
     ShipmentPurchaseData,
     ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     RateSerializer,
-    ParcelSerializer,
 )
 import purplship.server.manager.models as models
 
@@ -185,6 +182,29 @@ class ShipmentDetail(APIView):
 
     @swagger_auto_schema(
         tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}update",
+        operation_summary="Update a shipment",
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ShipmentUpdateData(),
+    )
+    def put(self, request: Request, pk: str):
+        """
+        This operation allows for updating properties of a shipment including `label_type`, `reference`, `payment`, `options` and `metadata`.
+        It is not for editing the parcels of a shipment.
+        """
+        shipment = models.Shipment.access_by(request).get(pk=pk)
+
+        can_mutate_shipment(shipment, update=True)
+
+        serializer = SerializerDecorator[ShipmentUpdateData](data=request.data).data
+        SerializerDecorator[ShipmentSerializer](
+            shipment, context=request, data=DP.to_dict(serializer.data)
+        ).save()
+
+        return Response(Shipment(shipment).data)
+
+    @swagger_auto_schema(
+        tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a shipment",
         responses={200: OperationResponse(), 400: ErrorResponse()},
@@ -195,25 +215,7 @@ class ShipmentDetail(APIView):
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
 
-        if shipment.status not in [
-            ShipmentStatus.purchased.value,
-            ShipmentStatus.created.value,
-        ]:
-            raise PurplshipAPIException(
-                f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        if shipment.pickup_shipments.exists():
-            raise PurplshipAPIException(
-                (
-                    f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
-                    "Please cancel this shipment pickup before."
-                ),
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
+        can_mutate_shipment(shipment, delete=True)
 
         confirmation = SerializerDecorator[ShipmentCancelSerializer](
             shipment, data={}, context=request
@@ -235,11 +237,9 @@ class ShipmentRates(APIView):
         """
         Refresh the list of the shipment rates
         """
-        shipment = (
-            models.Shipment.access_by(request)
-            .exclude(status=ShipmentStatus.cancelled.value)
-            .get(pk=pk)
-        )
+        shipment = models.Shipment.access_by(request).get(pk=pk)
+
+        can_mutate_shipment(shipment, update=True)
 
         rate_payload = SerializerDecorator[ShipmentRateData](data=request.data).data
         carrier_ids = (
@@ -277,134 +277,6 @@ class ShipmentRates(APIView):
         return Response(Shipment(shipment).data)
 
 
-class ShipmentOptions(APIView):
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}set_options",
-        operation_summary="Add shipment options",
-        responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=openapi.Schema(
-            title="options",
-            type=openapi.TYPE_OBJECT,
-            additional_properties=True,
-        ),
-    )
-    def post(self, request: Request, pk: str):
-        """
-        Add one or many options to your shipment.<br/>
-        **eg:**<br/>
-        - add shipment **insurance**
-        - specify the preferred transaction **currency**
-        - setup a **cash collected on delivery** option
-
-        ```json
-        {
-            "insurance": 120,
-            "currency": "USD"
-        }
-        ```
-
-        And many more, check additional options available in the [reference](#operation/all_references).
-        """
-        shipment = (
-            models.Shipment.access_by(request)
-            .exclude(status=ShipmentStatus.cancelled.value)
-            .get(pk=pk)
-        )
-
-        if shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "Shipment already 'purchased'",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        payload: dict = dict(
-            options=DP.to_dict(request.data), shipment_rates=[], messages=[]
-        )
-
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
-
-        return Response(Shipment(shipment).data)
-
-
-class ShipmentCustoms(APIView):
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}add_customs",
-        operation_summary="Add a customs declaration",
-        responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=CustomsData(),
-    )
-    def post(self, request: Request, pk: str):
-        """
-        Add the customs declaration for the shipment if non existent.
-        """
-        shipment = (
-            models.Shipment.access_by(request)
-            .exclude(status=ShipmentStatus.cancelled.value)
-            .get(pk=pk)
-        )
-
-        if shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "Shipment already 'purchased'",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        if shipment.customs is not None:
-            raise PurplshipAPIException(
-                "Shipment customs declaration already defined",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        payload: dict = dict(
-            customs=DP.to_dict(request.data), shipment_rates=[], messages=[]
-        )
-
-        SerializerDecorator[ShipmentSerializer](
-            shipment, data=payload, context=request
-        ).save()
-        return Response(Shipment(shipment).data)
-
-
-class ShipmentParcels(APIView):
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}add_parcel",
-        operation_summary="Add a shipment parcel",
-        responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=ParcelData(),
-    )
-    def post(self, request: Request, pk: str):
-        """
-        Add a parcel to an existing shipment for a multi-parcel shipment.
-        """
-        shipment = (
-            models.Shipment.access_by(request)
-            .exclude(status=ShipmentStatus.cancelled.value)
-            .get(pk=pk)
-        )
-
-        if shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "Shipment already 'purchased'",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
-
-        parcel = (
-            SerializerDecorator[ParcelSerializer](data=request.data, context=request)
-            .save()
-            .instance
-        )
-        shipment.shipment_parcels.add(parcel)
-        reset_related_shipment_rates(shipment)
-        return Response(Shipment(shipment).data)
-
-
 class ShipmentPurchase(APIView):
     @swagger_auto_schema(
         tags=["Shipments"],
@@ -417,18 +289,9 @@ class ShipmentPurchase(APIView):
         """
         Select your preferred rates to buy a shipment label.
         """
-        shipment = (
-            models.Shipment.access_by(request)
-            .exclude(status=ShipmentStatus.cancelled.value)
-            .get(pk=pk)
-        )
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
-        if shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                f"The shipment is '{shipment.status}' and cannot be purchased again",
-                code="state_error",
-                status_code=status.HTTP_409_CONFLICT,
-            )
+        can_mutate_shipment(shipment, purchase=True, update=True)
 
         # Submit shipment to carriers
         response: Shipment = (
@@ -458,21 +321,6 @@ router.urls.append(
 )
 router.urls.append(
     path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates")
-)
-router.urls.append(
-    path(
-        "shipments/<str:pk>/options", ShipmentOptions.as_view(), name="shipment-options"
-    )
-)
-router.urls.append(
-    path(
-        "shipments/<str:pk>/customs", ShipmentCustoms.as_view(), name="shipment-customs"
-    )
-)
-router.urls.append(
-    path(
-        "shipments/<str:pk>/parcels", ShipmentParcels.as_view(), name="shipment-parcels"
-    )
 )
 router.urls.append(
     path(
