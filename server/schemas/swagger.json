@@ -626,99 +626,6 @@
                 }
             ]
         },
-        "/v1/customs_info/{id}/commodities": {
-            "post": {
-                "operationId": "$$add_commodity",
-                "summary": "Add a commodity",
-                "description": "Add a customs commodity.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CommodityData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Customs"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Customs"
-                ],
-                "x-code-samples": [
-                    {
-                        "lang": "bash",
-                        "source": "\ncurl --request POST \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"weight\": 1,\n    \"weight_unit\": \"KG\",\n    \"quantity\": 1,\n    \"sku\": \"XXXXX0000123\",\n    \"value_amount\": 25,\n    \"value_currency\": \"USD\",\n    \"origin_country\": \"CA\"\n  }'\n"
-                    }
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/customs_info/{id}/commodities/{ck}": {
-            "delete": {
-                "operationId": "$$discard_commodity",
-                "summary": "Discard a commodity",
-                "description": "Discard a customs commodity.",
-                "parameters": [],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Operation"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Customs"
-                ],
-                "x-code-samples": [
-                    {
-                        "lang": "bash",
-                        "source": "\ncurl --request DELETE \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities/<COMMODITY_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
-                    }
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "ck",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                },
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
         "/v1/orders": {
             "get": {
                 "operationId": "&&&&list",
@@ -838,6 +745,38 @@
                 "summary": "Retrieve an order",
                 "description": "Retrieve an order.",
                 "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Order"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Orders"
+                ]
+            },
+            "put": {
+                "operationId": "&&&&update",
+                "summary": "Update an order",
+                "description": "This operation allows for updating properties of an order including `options` and `metadata`.\nIt is not for editing the line items of an order.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/OrderUpdateData"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -1986,6 +1925,38 @@
                     "Shipments"
                 ]
             },
+            "put": {
+                "operationId": "$$$$$update",
+                "summary": "Update a shipment",
+                "description": "This operation allows for updating properties of a shipment including `label_type`, `reference`, `payment`, `options` and `metadata`.\nIt is not for editing the parcels of a shipment.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ShipmentUpdateData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Shipment"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Shipments"
+                ]
+            },
             "delete": {
                 "operationId": "$$$$$cancel",
                 "summary": "Cancel a shipment",
@@ -1996,134 +1967,6 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/OperationResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/customs": {
-            "post": {
-                "operationId": "$$$$$add_customs",
-                "summary": "Add a customs declaration",
-                "description": "Add the customs declaration for the shipment if non existent.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CustomsData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/options": {
-            "post": {
-                "operationId": "$$$$$set_options",
-                "summary": "Add shipment options",
-                "description": "Add one or many options to your shipment.<br/>\n**eg:**<br/>\n- add shipment **insurance**\n- specify the preferred transaction **currency**\n- setup a **cash collected on delivery** option\n\n```json\n{\n    \"insurance\": 120,\n    \"currency\": \"USD\"\n}\n```\n\nAnd many more, check additional options available in the [reference](#operation/all_references).",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "title": "options",
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/parcels": {
-            "post": {
-                "operationId": "$$$$$add_parcel",
-                "summary": "Add a shipment parcel",
-                "description": "Add a parcel to an existing shipment for a multi-parcel shipment.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ParcelData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
                         }
                     },
                     "400": {
@@ -4186,78 +4029,6 @@
                 }
             }
         },
-        "CommodityData": {
-            "required": [
-                "weight",
-                "weight_unit"
-            ],
-            "type": "object",
-            "properties": {
-                "weight": {
-                    "title": "Weight",
-                    "description": "The commodity's weight",
-                    "type": "number"
-                },
-                "weight_unit": {
-                    "title": "Weight unit",
-                    "description": "The commodity's weight unit",
-                    "type": "string",
-                    "enum": [
-                        "KG",
-                        "LB"
-                    ]
-                },
-                "description": {
-                    "title": "Description",
-                    "description": "A description of the commodity",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "quantity": {
-                    "title": "Quantity",
-                    "description": "The commodity's quantity (number or item)",
-                    "type": "integer",
-                    "default": 1
-                },
-                "sku": {
-                    "title": "Sku",
-                    "description": "The commodity's sku number",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "value_amount": {
-                    "title": "Value amount",
-                    "description": "The monetary value of the commodity",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "value_currency": {
-                    "title": "Value currency",
-                    "description": "The currency of the commodity value amount",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "origin_country": {
-                    "title": "Origin country",
-                    "description": "The origin or manufacture country",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "parent_id": {
-                    "title": "Parent id",
-                    "description": "The id of the related order line item.",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "metadata": {
-                    "title": "Metadata",
-                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
-                    "type": "object",
-                    "additionalProperties": true,
-                    "x-nullable": true
-                }
-            }
-        },
         "Charge": {
             "description": "list of the rate's additional charges",
             "type": "object",
@@ -4966,6 +4737,79 @@
                 }
             }
         },
+        "CommodityData": {
+            "description": "The order line items.",
+            "required": [
+                "weight",
+                "weight_unit"
+            ],
+            "type": "object",
+            "properties": {
+                "weight": {
+                    "title": "Weight",
+                    "description": "The commodity's weight",
+                    "type": "number"
+                },
+                "weight_unit": {
+                    "title": "Weight unit",
+                    "description": "The commodity's weight unit",
+                    "type": "string",
+                    "enum": [
+                        "KG",
+                        "LB"
+                    ]
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "A description of the commodity",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "quantity": {
+                    "title": "Quantity",
+                    "description": "The commodity's quantity (number or item)",
+                    "type": "integer",
+                    "default": 1
+                },
+                "sku": {
+                    "title": "Sku",
+                    "description": "The commodity's sku number",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "value_amount": {
+                    "title": "Value amount",
+                    "description": "The monetary value of the commodity",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "value_currency": {
+                    "title": "Value currency",
+                    "description": "The currency of the commodity value amount",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "origin_country": {
+                    "title": "Origin country",
+                    "description": "The origin or manufacture country",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "parent_id": {
+                    "title": "Parent id",
+                    "description": "The id of the related order line item.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                }
+            }
+        },
         "OrderData": {
             "required": [
                 "order_id",
@@ -5009,6 +4853,24 @@
                     "type": "object",
                     "additionalProperties": true,
                     "default": {}
+                }
+            }
+        },
+        "OrderUpdateData": {
+            "type": "object",
+            "properties": {
+                "options": {
+                    "title": "Options",
+                    "description": "The order options",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -6159,6 +6021,43 @@
                     },
                     "default": [],
                     "x-nullable": true
+                }
+            }
+        },
+        "ShipmentUpdateData": {
+            "type": "object",
+            "properties": {
+                "label_type": {
+                    "title": "Label type",
+                    "description": "The shipment label file type.",
+                    "type": "string",
+                    "enum": [
+                        "PDF",
+                        "ZPL"
+                    ],
+                    "default": "PDF"
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },

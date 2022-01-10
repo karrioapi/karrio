@@ -12,7 +12,6 @@ from django_filters import rest_framework as filters
 
 from purplship.core.utils import DP
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
 from purplship.server.orders.router import router
 from purplship.server.orders.serializers import (

@@ -2,12 +2,12 @@ import logging
 from django.db.models import signals
 
 from purplship.server.core.utils import failsafe
+from purplship.server.events.serializers import EventTypes
+from purplship.server.orders.serializers.order import compute_order_status
 import purplship.server.orders.serializers as serializers
 import purplship.server.manager.models as manager
-from purplship.server.orders.serializers.order import compute_order_status
 import purplship.server.orders.models as models
 import purplship.server.events.tasks as tasks
-from purplship.server.events.serializers import EventTypes
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ def register_signals():
 
 def commodity_mutated(sender, instance, *args, **kwargs):
     """Commodity mutations (added or removed)"""
-    if instance.parent is None or instance.parent.order.exists() is False:
+    if getattr(instance, "parent", None) is None or instance.parent.order.exists() is False:
         return
 
     # Retrieve all orders associated with this commodity and update their status if needed
@@ -48,7 +48,7 @@ def shipment_updated(
     if instance.status != serializers.ShipmentStatus.created.value:
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
-            line_items__children__parcels__shipment__id=instance.id
+            line_items__children__parcel__shipment__id=instance.id
         ):
             status = compute_order_status(order)
             if status != order.status:

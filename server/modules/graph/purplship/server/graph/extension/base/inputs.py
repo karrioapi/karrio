@@ -21,7 +21,7 @@ def create_address_input(optional: bool = False) -> graphene.InputObjectType:
         f"{_method}Address",
         (serializer_to_input(_type),),
         dict(
-            country_code=types.CountryCodeEnum(required=False),
+            country_code=types.CountryCodeEnum(required=not optional),
         ),
     )
 
@@ -97,13 +97,18 @@ def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     _type = (
         model_serializers.ParcelModelSerializer
         if optional
-        else make_fields_optional(model_serializers.ParcelModelSerializer)
+        else make_fields_optional(
+            exclude_id_field(model_serializers.ParcelModelSerializer)
+        )
     )
 
     return type(
         f"{_method}Parcel",
         (serializer_to_input(_type),),
         dict(
+            items=graphene.List(
+                UpdateCommodityInput if optional else CreateCommodityInput
+            ),
             weight_unit=types.WeightUnitEnum(required=False),
             dimension_unit=types.DimensionUnitEnum(required=False),
         ),

@@ -68,7 +68,7 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
                 key: {"read_only": False} for key in ["validate_location", "validation"]
             },
         }
-        exclude = ["id", "created_at", "updated_at", "created_by", "validation"]
+        exclude = ["created_at", "updated_at", "created_by", "validation"]
 
 
 @owned_model_serializer
@@ -93,7 +93,7 @@ class CustomsModelSerializer(ModelSerializer):
 
     class Meta:
         model = manager.Customs
-        exclude = ["id", "created_at", "updated_at", "created_by"]
+        exclude = ["created_at", "updated_at", "created_by"]
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict):
@@ -153,7 +153,7 @@ class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
 
     class Meta:
         model = manager.Parcel
-        exclude = ["id", "created_at", "updated_at", "created_by"]
+        exclude = ["created_at", "updated_at", "created_by"]
 
 
 @owned_model_serializer
@@ -219,28 +219,22 @@ class TemplateModelSerializer(ModelSerializer):
 def ensure_unique_default_related_data(
     data: dict = None, instance: typing.Optional[graph.Template] = None, context=None
 ):
-
-    if (data or {}).get(
-        "is_default", getattr(instance, "is_default", None)
-    ) is not True:
+    _get = lambda key: data.get(key, getattr(instance, key, None))
+    if _get("is_default") is not True:
         return
 
-    if getattr(instance, "address", None) is not None:
+    if _get("address") is not None:
         query = dict(address__isnull=False, is_default=True)
-    elif getattr(instance, "customs", None) is not None:
+    elif _get("customs") is not None:
         query = dict(customs__isnull=False, is_default=True)
-    elif getattr(instance, "parcel", None) is not None:
+    elif _get("parcel") is not None:
         query = dict(parcel__isnull=False, is_default=True)
     else:
         return
 
-    default_templates = graph.Template.access_by(context or instance.created_by).filter(
-        **query
-    )
-    if any([template for template in default_templates if template.id != instance.id]):
-        for template in default_templates:
-            template.is_default = False
-            template.save()
+    graph.Template.access_by(context or instance.created_by).exclude(
+        id=_get("id")
+    ).filter(**query).update(is_default=False)
 
 
 @owned_model_serializer

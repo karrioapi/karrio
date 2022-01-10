@@ -196,7 +196,7 @@ class ShipmentDetail(APIView):
 
         can_mutate_shipment(shipment, update=True)
 
-        serializer = SerializerDecorator[ShipmentUpdateData](data=request.data).data
+        serializer = SerializerDecorator[ShipmentUpdateData](data=request.data)
         SerializerDecorator[ShipmentSerializer](
             shipment, context=request, data=DP.to_dict(serializer.data)
         ).save()

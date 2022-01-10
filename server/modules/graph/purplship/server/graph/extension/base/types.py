@@ -24,12 +24,14 @@ import purplship.server.core.models as core
 User = get_user_model()
 CARRIER_NAMES = list(providers.MODELS.keys())
 HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
-CountryCodeEnum = graphene.Enum.from_enum(serializers.Country)
-CurrencyCodeEnum = graphene.Enum.from_enum(serializers.Currency)
-DimensionUnitEnum = graphene.Enum.from_enum(serializers.DimensionUnit)
-WeightUnitEnum = graphene.Enum.from_enum(serializers.WeightUnit)
-CustomsContentTypeEnum = graphene.Enum.from_enum(serializers.CustomsContentType)
-IncotermCodeEnum = graphene.Enum.from_enum(serializers.Incoterm)
+CountryCodeEnum = graphene.Enum("CountryCodeEnum", serializers.COUNTRIES)
+CurrencyCodeEnum = graphene.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
+DimensionUnitEnum = graphene.Enum("DimensionUnitEnum", serializers.DIMENSION_UNIT)
+WeightUnitEnum = graphene.Enum("WeightUnitEnum", serializers.WEIGHT_UNIT)
+CustomsContentTypeEnum = graphene.Enum(
+    "CustomsContentTypeEnum", serializers.CUSTOMS_CONTENT_TYPE
+)
+IncotermCodeEnum = graphene.Enum("IncotermCodeEnum", serializers.INCOTERMS)
 PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
 ShipmentStatusEnum = graphene.Enum.from_enum(serializers.ShipmentStatus)
 TrackerStatusEnum = graphene.Enum.from_enum(serializers.TrackerStatus)
@@ -208,22 +210,23 @@ class MessageType(graphene.ObjectType):
 class ChargeType(graphene.ObjectType):
     name = graphene.String()
     amount = graphene.Float()
-    currency = graphene.String()
+    currency = CurrencyCodeEnum()
 
 
 class RateType(graphene.ObjectType):
-    carrier_name = graphene.String()
-    carrier_id = graphene.String()
-    currency = graphene.String()
+    id = graphene.String(required=True)
+    carrier_name = graphene.String(required=True)
+    carrier_id = graphene.String(required=True)
+    currency = CurrencyCodeEnum()
     transit_days = graphene.Int()
-    service = graphene.String()
+    service = graphene.String(required=True)
     discount = graphene.Float()
-    base_charge = graphene.Float()
-    total_charge = graphene.Float()
+    base_charge = graphene.Float(required=True)
+    total_charge = graphene.Float(required=True)
     duties_and_taxes = graphene.Float()
     extra_charges = graphene.List(ChargeType)
+    test_mode = graphene.Boolean(required=True)
     meta = generic.GenericScalar()
-    id = graphene.String()
 
 
 class CommodityType(graphene_django.DjangoObjectType):
@@ -319,9 +322,9 @@ class ParcelTemplateType(graphene_django.DjangoObjectType):
 
 
 class DefaultTemplatesType(graphene.ObjectType):
-    address_template = graphene.Field(AddressTemplateType, required=False)
-    customs_template = graphene.Field(CustomsTemplateType, required=False)
-    parcel_template = graphene.Field(ParcelTemplateType, required=False)
+    default_address = graphene.Field(AddressTemplateType, required=False)
+    default_customs = graphene.Field(CustomsTemplateType, required=False)
+    default_parcel = graphene.Field(ParcelTemplateType, required=False)
 
 
 class TrackingEventType(graphene.ObjectType):
@@ -472,17 +475,16 @@ class ShipmentType(graphene_django.DjangoObjectType):
     recipient = graphene.Field(AddressType, required=True)
     customs = graphene.Field(CustomsType)
     parcels = graphene.List(ParcelType, required=True)
-    payment = graphene.Field(PaymentType)
+    payment = graphene.Field(PaymentType, required=True)
 
     service = graphene.String()
-    services = graphene.List(graphene.String)
-    carrier_ids = graphene.List(graphene.String)
-    messages = graphene.List(MessageType)
+    services = graphene.List(graphene.String, required=True)
+    carrier_ids = graphene.List(graphene.String, required=True)
+    messages = graphene.List(MessageType, required=True)
     selected_rate_id = graphene.String()
     selected_rate = graphene.Field(RateType)
     rates = graphene.List(RateType, required=True)
 
-    carrier_ids = graphene.List(graphene.String)
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
     metadata = generic.GenericScalar()

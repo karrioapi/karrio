@@ -4,10 +4,10 @@ from rest_framework import status
 
 from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import (
+    save_many_to_many_data,
     owned_model_serializer,
     save_one_to_one_data,
 )
-from purplship.server.serializers.abstract import save_many_to_many_data
 import purplship.server.orders.serializers as serializers
 import purplship.server.orders.models as models
 
@@ -72,13 +72,6 @@ class OrderSerializer(serializers.OrderData):
 
 
 class OrderUpdateData(serializers.Serializer):
-    label_type = serializers.ChoiceField(
-        required=False,
-        choices=serializers.LABEL_TYPES,
-        default=serializers.LabelType.PDF.name,
-        help_text="The shipment label file type.",
-    )
-    payment = serializers.Payment(required=False, help_text="The payment details")
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
@@ -119,7 +112,7 @@ def compute_order_status(order: models.Order) -> str:
 
     for line_item in order.line_items.all():
         shipment_items = line_item.children.exclude(
-            parcels__shipment__status__in=[
+            parcel__shipment__status__in=[
                 serializers.ShipmentStatus.cancelled.value,
                 serializers.ShipmentStatus.created.value,
             ]

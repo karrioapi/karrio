@@ -4,9 +4,9 @@ import graphene.types.generic as generic
 import graphene_django
 from django.db.models import Q
 
-import purplship.server.orders.serializers as serializers
-import purplship.server.graph.extension.base.types as basetypes
+from purplship.server.graph.extension.base.types import *
 import purplship.server.orders.models as models
+import purplship.server.orders.serializers as serializers
 
 OrderStatusEnum = graphene.Enum.from_enum(serializers.OrderStatus)
 
@@ -25,7 +25,7 @@ class OrderFilter(django_filters.FilterSet):
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.OrderStatus)],
     )
-    option_key = basetypes.CharInFilter(
+    option_key = CharInFilter(
         field_name="options",
         method="option_key_filter",
     )
@@ -54,20 +54,19 @@ class OrderFilter(django_filters.FilterSet):
 
 
 class OrderType(graphene_django.DjangoObjectType):
-    shipping_address = graphene.Field(basetypes.AddressType, required=True)
-    line_items = graphene.List(basetypes.CommodityType, required=True)
-    shipments = graphene.List(basetypes.ShipmentType, required=True)
+    shipping_address = graphene.Field(AddressType)
+    line_items = graphene.List(CommodityType)
+    shipments = graphene.List(ShipmentType)
 
     metadata = generic.GenericScalar()
     options = generic.GenericScalar()
-    meta = generic.GenericScalar()
 
     status = OrderStatusEnum(required=True)
 
     class Meta:
         model = models.Order
         exclude = ("org",)
-        interfaces = (basetypes.CustomNode,)
+        interfaces = (CustomNode,)
 
     def resolve_line_items(self, info):
         return self.line_items.all()

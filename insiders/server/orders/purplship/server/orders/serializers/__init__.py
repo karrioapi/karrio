@@ -1,3 +1,4 @@
+from purplship.server.serializers import *
 from purplship.server.core.serializers import *
 from purplship.server.manager.serializers import (
     ShipmentSerializer,

@@ -153,14 +153,17 @@ def create_template_mutation(template: str, update: bool = False):
                     template=None, errors=ErrorType.from_errors(serializer.errors)
                 )
 
-            template = (
-                SerializerDecorator[serializers.TemplateModelSerializer](
-                    instance, data=data, context=info.context
+            try:
+                template = (
+                    SerializerDecorator[serializers.TemplateModelSerializer](
+                        instance, data=data, context=info.context
+                    )
+                    .save()
+                    .instance
                 )
-                .save()
-                .instance
-            )
-            serializers.ensure_unique_default_related_data(data, context=info.context)
+            except Exception as e:
+                raise e
+
             return cls(template=template)
 
     return type(_model.__name__, (_Mutation, ClientMutation), {})
@@ -370,8 +373,8 @@ class PartialShipmentUpdate(ClientMutation):
 
     class Input:
         id = graphene.String(required=True)
-        shipper = graphene.Field(inputs.UpdateAddressInput, required=False)
         recipient = graphene.Field(inputs.UpdateAddressInput, required=False)
+        shipper = graphene.Field(inputs.UpdateAddressInput, required=False)
         customs = graphene.Field(inputs.UpdateCustomsInput, required=False)
         parcels = graphene.List(inputs.UpdateParcelInput, required=False)
         payment = graphene.Field(inputs.PaymentInput, required=False)
@@ -388,11 +391,7 @@ class PartialShipmentUpdate(ClientMutation):
         SerializerDecorator[manager_serializers.ShipmentSerializer](
             shipment,
             context=info.context,
-            data=DP.to_dict(
-                SerializerDecorator[manager_serializers.ShipmentUpdateData](
-                    data=inputs
-                ).data
-            ),
+            data=DP.to_dict(inputs),
         ).save()
 
         return cls(errors=None, shipment=shipment)

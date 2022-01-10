@@ -91,14 +91,14 @@ class TestShipments(APITestCase):
 
 
 class TestShipmentDetails(TestShipmentFixture):
-    def test_add_shipment_options(self):
+    def test_update_shipment_options(self):
         url = reverse(
             "purplship.server.manager:shipment-details",
             kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_OPTIONS
 
-        response = self.client.post(url, data)
+        response = self.client.put(url, data)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

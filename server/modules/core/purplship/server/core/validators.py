@@ -160,7 +160,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
             except Exception as e:
                 logger.warning(e)
                 raise serializers.ValidationError(
-                    {"postal_code": "Invalid phone number format"}
+                    {"phone_number": "Invalid phone number format"}
                 )
 
         return data

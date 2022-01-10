@@ -18,7 +18,7 @@ class OrderManager(models.Manager):
             .prefetch_related(
                 "shipping_address",
                 "line_items",
-                "line_items__children__parcels__shipment",
+                "line_items__children__parcel__shipment",
             )
         )
 
@@ -53,7 +53,7 @@ class Order(OwnedEntity):
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
     )
     shipping_address = models.ForeignKey(
-        "manager.Address", on_delete=models.CASCADE, related_name="address_order"
+        "manager.Address", on_delete=models.CASCADE, related_name="order"
     )
     line_items = models.ManyToManyField(
         "manager.Commodity", related_name="order", through="OrderLineItemLink"

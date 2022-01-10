@@ -9,7 +9,7 @@ class TestAddressTemplate(GraphTestCase):
     def _create_address_template(self):
         return self.query(
             """
-            mutation create_address_template($data: AddressTemplateInput!) {
+            mutation create_address_template($data: CreateAddressTemplateInput!) {
               create_address_template(input: $data) {
                 template {
                   id
@@ -53,7 +53,7 @@ class TestAddressTemplate(GraphTestCase):
         template = json.loads(self._create_address_template().content)
         response = self.query(
             """
-            mutation update_address_template($data: PartialAddressTemplateInput!) {
+            mutation update_address_template($data: UpdateAddressTemplateInput!) {
               update_address_template(input: $data) {
                 template {
                   id
@@ -123,7 +123,7 @@ class TestParcelTemplate(GraphTestCase):
     def _create_parcel_template(self):
         return self.query(
             """
-            mutation create_parcel_template($data: ParcelTemplateInput!) {
+            mutation create_parcel_template($data: CreateParcelTemplateInput!) {
               create_parcel_template(input: $data) {
                 template {
                   id
@@ -162,7 +162,7 @@ class TestParcelTemplate(GraphTestCase):
         template = json.loads(self._create_parcel_template().content)
         response = self.query(
             """
-            mutation update_parcel_template($data: PartialParcelTemplateInput!) {
+            mutation update_parcel_template($data: UpdateParcelTemplateInput!) {
               update_parcel_template(input: $data) {
                 template {
                   id
@@ -227,7 +227,7 @@ class TestCustomsTemplate(GraphTestCase):
     def _create_customs_info_template(self):
         return self.query(
             """
-            mutation create_customs_template($data: CustomsTemplateInput!) {
+            mutation create_customs_template($data: CreateCustomsTemplateInput!) {
               create_customs_template(input: $data) {
                 template {
                   id
@@ -311,7 +311,7 @@ class TestCustomsTemplate(GraphTestCase):
 
         response = self.query(
             """
-            mutation update_customs_template($data: PartialCustomsTemplateInput!) {
+            mutation update_customs_template($data: UpdateCustomsTemplateInput!) {
               update_customs_template(input: $data) {
                 template {
                   id
@@ -624,7 +624,7 @@ CUSTOMS_TEMPLATE_UPDATE_DATA = {
                     "weight_unit": "LB",
                 }
             ],
-            "duty": {"paid_by": "SENDER"},
+            "duty": {"paid_by": "sender"},
         }
     }
 }
