@@ -156,6 +156,7 @@ class Rate:
     meta: dict = None
     carrier_ref: str = None
     test_mode: bool = None
+    object_type: str = "rate"
 
 
 @attr.s(auto_attribs=True)

@@ -52,7 +52,11 @@ def login_required(func):
 
 
 def metadata_object_types() -> Enum:
-    _types = [("commodity", manager.Commodity), ("shipment", manager.Shipment)]
+    _types = [
+        ("commodity", manager.Commodity),
+        ("shipment", manager.Shipment),
+        ("tracker", manager.Tracking),
+    ]
 
     if settings.ORDERS_MANAGEMENT:
         import purplship.server.orders.models as orders
@@ -79,7 +83,17 @@ class CustomNode(graphene.Node):
         return id
 
 
-class UserType(graphene_django.DjangoObjectType):
+class BaseObjectType(graphene_django.DjangoObjectType):
+    class Meta:
+        abstract = True
+
+    object_type = graphene.String(required=True)
+
+    def resolve_object_type(self, info):
+        return getattr(self, "object_type", "")
+
+
+class UserType(BaseObjectType):
     class Meta:
         model = User
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
@@ -92,7 +106,7 @@ class BaseConnectionType:
         return getattr(self, "settings", self).carrier_name
 
 
-class SystemConnectionType(graphene_django.DjangoObjectType, BaseConnectionType):
+class SystemConnectionType(BaseConnectionType, BaseObjectType):
     enabled = graphene.Boolean(required=True)
 
     class Meta:
@@ -160,7 +174,7 @@ class LogFilter(django_filters.FilterSet):
         return queryset.filter(response__icontains=value)
 
 
-class LogType(graphene_django.DjangoObjectType):
+class LogType(BaseObjectType):
     data = generic.GenericScalar()
     response = generic.GenericScalar()
     query_params = generic.GenericScalar()
@@ -193,7 +207,7 @@ class LogType(graphene_django.DjangoObjectType):
             return self.query_params
 
 
-class TokenType(graphene_django.DjangoObjectType):
+class TokenType(BaseObjectType):
     class Meta:
         model = auth.Token
         exclude = ("user",)
@@ -229,7 +243,7 @@ class RateType(graphene.ObjectType):
     meta = generic.GenericScalar()
 
 
-class CommodityType(graphene_django.DjangoObjectType):
+class CommodityType(BaseObjectType):
     weight_unit = WeightUnitEnum()
     origin_country = CountryCodeEnum()
     value_currency = CurrencyCodeEnum()
@@ -249,7 +263,7 @@ class CommodityType(graphene_django.DjangoObjectType):
         return self.parent_id
 
 
-class AddressType(graphene_django.DjangoObjectType):
+class AddressType(BaseObjectType):
     validation = generic.GenericScalar()
 
     class Meta:
@@ -257,7 +271,7 @@ class AddressType(graphene_django.DjangoObjectType):
         exclude = ("pickup_set", "recipient_shipment", "shipper_shipment", "template")
 
 
-class ParcelType(graphene_django.DjangoObjectType):
+class ParcelType(BaseObjectType):
     class Meta:
         model = manager.Parcel
         exclude = (
@@ -275,7 +289,7 @@ class DutyType(graphene.ObjectType):
     id = graphene.String()
 
 
-class CustomsType(graphene_django.DjangoObjectType):
+class CustomsType(BaseObjectType):
     commodities = graphene.List(CommodityType)
     duty = graphene.Field(DutyType)
     options = generic.GenericScalar()
@@ -288,7 +302,7 @@ class CustomsType(graphene_django.DjangoObjectType):
         return self.commodities.all()
 
 
-class AddressTemplateType(graphene_django.DjangoObjectType):
+class AddressTemplateType(BaseObjectType):
     address = graphene.Field(AddressType, required=True)
 
     class Meta:
@@ -301,7 +315,7 @@ class AddressTemplateType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
-class CustomsTemplateType(graphene_django.DjangoObjectType):
+class CustomsTemplateType(BaseObjectType):
     customs = graphene.Field(CustomsType, required=True)
 
     class Meta:
@@ -311,7 +325,7 @@ class CustomsTemplateType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
-class ParcelTemplateType(graphene_django.DjangoObjectType):
+class ParcelTemplateType(BaseObjectType):
     parcel = graphene.Field(ParcelType, required=True)
 
     class Meta:
@@ -369,13 +383,14 @@ class TrackerFilter(django_filters.FilterSet):
         return queryset.filter(query)
 
 
-class TrackerType(graphene_django.DjangoObjectType):
+class TrackerType(BaseObjectType):
     carrier_id = graphene.String(required=True)
     carrier_name = graphene.String(required=True)
 
     events = graphene.List(TrackingEventType, required=True)
     messages = graphene.List(MessageType, required=True)
     status = TrackerStatusEnum(required=True)
+    metadata = generic.GenericScalar()
 
     class Meta:
         model = manager.Tracking
@@ -467,7 +482,7 @@ class ShipmentFilter(django_filters.FilterSet):
         return queryset.filter(Q(selected_rate__service__in=values))
 
 
-class ShipmentType(graphene_django.DjangoObjectType):
+class ShipmentType(BaseObjectType):
     carrier_id = graphene.String()
     carrier_name = graphene.String()
 
@@ -540,7 +555,7 @@ class WebhookFilter(django_filters.FilterSet):
         )
 
 
-class WebhookType(graphene_django.DjangoObjectType):
+class WebhookType(BaseObjectType):
     class Meta:
         model = events.Webhook
         exclude = ("failure_streak_count",)
@@ -575,7 +590,7 @@ class EventFilter(django_filters.FilterSet):
         return queryset.filter(Q(type__in=values))
 
 
-class EventType(graphene_django.DjangoObjectType):
+class EventType(BaseObjectType):
     data = generic.GenericScalar()
 
     class Meta:
@@ -583,14 +598,14 @@ class EventType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
-class ServiceLevelType(graphene_django.DjangoObjectType):
+class ServiceLevelType(BaseObjectType):
     class Meta:
         model = providers.ServiceLevel
         exclude = ("dhlpolandsettings_set",)
         interfaces = (CustomNode,)
 
 
-class LabelTemplateType(graphene_django.DjangoObjectType):
+class LabelTemplateType(BaseObjectType):
     class Meta:
         model = providers.LabelTemplate
         exclude = ("genericsettings_set",)
@@ -631,6 +646,9 @@ for carrier_model in providers.MODELS.values():
 
     type(
         carrier_model.__name__,
-        (graphene_django.DjangoObjectType, BaseConnectionType),
+        (
+            BaseConnectionType,
+            BaseObjectType,
+        ),
         {"Meta": Meta, **_extra_fields},
     )

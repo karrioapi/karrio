@@ -3,14 +3,16 @@ from django.db.models import Q
 from rest_framework import status
 
 from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import Commodity, ShipmentStatus
+from purplship.server.core.serializers import CommodityData, ShipmentStatus
 from purplship.server.serializers import owned_model_serializer
 import purplship.server.manager.models as models
 
 
 @owned_model_serializer
-class CommoditySerializer(Commodity):
-    def create(self, validated_data: dict, **kwargs) -> Commodity:
+class CommoditySerializer(CommodityData):
+    object_type = None
+
+    def create(self, validated_data: dict, **kwargs) -> models.Commodity:
         return models.Commodity.objects.create(**validated_data)
 
     def update(

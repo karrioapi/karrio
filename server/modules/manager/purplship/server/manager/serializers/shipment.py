@@ -147,16 +147,13 @@ class ShipmentSerializer(ShipmentData):
                 changes.append(key)
                 validated_data.pop(key)
 
-            if key in models.Shipment.RELATIONAL_PROPS:
-                changes.append(key)
-
-                if val is None:
-                    prop = getattr(instance, key)
-                    # Delete related data from database if payload set to null
-                    if hasattr(prop, "delete"):
-                        prop.delete()
-                        setattr(instance, key, None)
-                        validated_data.pop(key)
+            if key in models.Shipment.RELATIONAL_PROPS and val is None:
+                prop = getattr(instance, key)
+                # Delete related data from database if payload set to null
+                if hasattr(prop, "delete"):
+                    prop.delete()
+                    setattr(instance, key, None)
+                    validated_data.pop(key)
 
         save_one_to_one_data(
             "shipper",

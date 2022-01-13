@@ -121,6 +121,7 @@ TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
+            "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
@@ -138,9 +139,11 @@ TRACKERS_LIST = {
             "status": "in-transit",
             "test_mode": True,
             "messages": [],
+            "metadata": {},
         },
         {
             "id": ANY,
+            "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
@@ -158,6 +161,7 @@ TRACKERS_LIST = {
             "status": "in-transit",
             "test_mode": True,
             "messages": [],
+            "metadata": {},
         },
     ],
 }
@@ -197,6 +201,7 @@ UPDATED_TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
+            "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
@@ -221,9 +226,11 @@ UPDATED_TRACKERS_LIST = {
             "status": "in-transit",
             "estimated_delivery": None,
             "messages": [],
+            "metadata": {},
         },
         {
             "id": ANY,
+            "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
@@ -241,6 +248,7 @@ UPDATED_TRACKERS_LIST = {
             "status": "in-transit",
             "estimated_delivery": None,
             "messages": [],
+            "metadata": {},
         },
     ],
 }

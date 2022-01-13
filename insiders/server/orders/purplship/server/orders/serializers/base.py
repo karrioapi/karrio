@@ -63,6 +63,9 @@ class OrderData(Serializer):
 
 
 class Order(EntitySerializer):
+    object_type = fields.CharField(
+        default="order", help_text="Specifies the object type"
+    )
     order_id = fields.CharField(required=True, help_text="The source' order id.")
     source = fields.CharField(required=False, help_text="The order's source.")
     status = fields.ChoiceField(

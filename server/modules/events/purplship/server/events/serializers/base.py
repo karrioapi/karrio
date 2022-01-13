@@ -47,6 +47,9 @@ class WebhookData(serializers.Serializer):
 
 
 class Webhook(WebhookData, EntitySerializer):
+    object_type = serializers.CharField(
+        default="webhook", help_text="Specifies the object type"
+    )
     last_event_at = serializers.DateTimeField(
         required=False,
         allow_null=True,

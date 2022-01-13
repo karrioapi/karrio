@@ -28,3 +28,7 @@ class LabelTemplate(OwnedEntity):
     template_type = models.CharField(max_length=3, choices=LABEL_TEMPLATE_TYPES)
     width = models.IntegerField(null=True, blank=True)
     height = models.IntegerField(null=True, blank=True)
+
+    @property
+    def object_type(self):
+        return "label_template"

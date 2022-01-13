@@ -122,6 +122,7 @@ class CarrierSettings(Serializer):
     The active flag indicates whether the carrier account is active or not.
     """,
     )
+    object_type = CharField(default="carrier", help_text="Specifies the object type")
 
 
 class TestFilters(FlagsSerializer):
@@ -257,6 +258,7 @@ class AddressData(AugmentedAddressSerializer):
 
 
 class Address(EntitySerializer, AddressData):
+    object_type = CharField(default="address", help_text="Specifies the object type")
     validation = AddressValidation(
         required=False, allow_null=True, help_text="Specify address validation result"
     )
@@ -326,7 +328,7 @@ class CommodityData(Serializer):
 
 
 class Commodity(EntitySerializer, CommodityData):
-    pass
+    object_type = CharField(default="commodity", help_text="Specifies the object type")
 
 
 class ParcelData(PresetSerializer):
@@ -396,6 +398,7 @@ class ParcelData(PresetSerializer):
 
 
 class Parcel(EntitySerializer, ParcelData):
+    object_type = CharField(default="parcel", help_text="Specifies the object type")
     items = Commodity(required=False, many=True, help_text="The parcel items.")
 
 
@@ -459,7 +462,7 @@ class Duty(Serializer):
 )
 class CustomsData(Serializer):
 
-    commodities = Commodity(
+    commodities = CommodityData(
         many=True, allow_empty=False, help_text="The parcel content items"
     )
     duty = Duty(
@@ -530,7 +533,12 @@ class CustomsData(Serializer):
 
 
 class Customs(EntitySerializer, CustomsData):
-    pass
+    object_type = CharField(
+        default="customs_info", help_text="Specifies the object type"
+    )
+    commodities = Commodity(
+        required=False, many=True, help_text="The parcel content items"
+    )
 
 
 class COD(Serializer):
@@ -819,8 +827,8 @@ class PickupUpdateRequest(Serializer):
 
 
 class PickupDetails(Serializer):
-
     id = CharField(required=False, help_text="A unique pickup identifier")
+    object_type = CharField(default="pickup", help_text="Specifies the object type")
     carrier_name = CharField(required=True, help_text="The pickup carrier")
     carrier_id = CharField(
         required=True, help_text="The pickup carrier configured name"
@@ -850,6 +858,9 @@ class Pickup(PickupDetails, PickupRequest):
         many=True,
         allow_empty=False,
         help_text="The shipment parcels to pickup.",
+    )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the pickup"
     )
     test_mode = BooleanField(
         required=True,
@@ -904,7 +915,7 @@ class TrackingEvent(Serializer):
 
 
 class Rate(EntitySerializer):
-
+    object_type = CharField(default="rate", help_text="Specifies the object type")
     carrier_name = CharField(required=True, help_text="The rate's carrier")
     carrier_id = CharField(
         required=True, help_text="The targeted carrier's name (unique identifier)"
@@ -1000,6 +1011,10 @@ class TrackingDetails(Serializer):
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
+    object_type = CharField(default="tracker", help_text="Specifies the object type")
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the tracker"
+    )
     messages = Message(
         required=False,
         many=True,
@@ -1084,9 +1099,6 @@ class ShippingData(Serializer):
         default=LabelType.PDF.name,
         help_text="The shipment label file type.",
     )
-    metadata = PlainDictField(
-        required=False, default={}, help_text="User metadata for the shipment"
-    )
 
 
 class ShippingRequest(ShippingData):
@@ -1116,19 +1128,18 @@ class ShipmentData(ShippingData):
     *Note that the request will be sent to all carriers in nothing is specified*
     """,
     )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the shipment"
+    )
 
 
-class ShipmentContent(Serializer):
-
-    # Process result properties
-
+class ShipmentDetails(Serializer):
     status = ChoiceField(
         required=False,
         default=ShipmentStatus.created.value,
         choices=SHIPMENT_STATUS,
         help_text="The current Shipment status",
     )
-
     carrier_name = CharField(
         required=False,
         allow_blank=True,
@@ -1162,18 +1173,21 @@ class ShipmentContent(Serializer):
     selected_rate = Rate(
         required=False, allow_null=True, help_text="The shipment selected rate"
     )
+    meta = PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
+    )
 
+    service = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The selected service",
+    )
     selected_rate_id = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         help_text="The shipment selected rate.",
-    )
-    rates = Rate(
-        many=True,
-        required=False,
-        default=[],
-        help_text="The list for shipment rates fetched previously",
     )
     tracking_url = URLField(
         required=False,
@@ -1181,15 +1195,13 @@ class ShipmentContent(Serializer):
         allow_null=True,
         help_text="The shipment tracking url",
     )
-    service = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The selected service",
+    test_mode = BooleanField(
+        required=True,
+        help_text="Specified whether it was created with a carrier in test mode",
     )
 
-    # Request properties
 
+class ShipmentContent(Serializer):
     shipper = Address(
         required=True,
         help_text="""
@@ -1256,6 +1268,12 @@ class ShipmentContent(Serializer):
     Note that this is required for the shipment of an international Dutiable parcel.
     """,
     )
+    rates = Rate(
+        many=True,
+        required=False,
+        default=[],
+        help_text="The list for shipment rates fetched previously",
+    )
     reference = CharField(
         required=False,
         allow_blank=True,
@@ -1293,13 +1311,6 @@ class ShipmentContent(Serializer):
     Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
     """,
     )
-    test_mode = BooleanField(
-        required=True,
-        help_text="Specified whether it was created with a carrier in test mode",
-    )
-    meta = PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
     metadata = PlainDictField(
         required=False, default={}, help_text="User metadata for the shipment"
     )
@@ -1311,8 +1322,8 @@ class ShipmentContent(Serializer):
     )
 
 
-class Shipment(EntitySerializer, ShipmentContent):
-    pass
+class Shipment(EntitySerializer, ShipmentContent, ShipmentDetails):
+    object_type = CharField(default="shipment", help_text="Specifies the object type")
 
 
 class ShipmentCancelRequest(Serializer):

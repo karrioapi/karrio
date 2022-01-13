@@ -10,6 +10,8 @@ import purplship.server.manager.models as models
 
 @owned_model_serializer
 class ParcelSerializer(ParcelData):
+    object_type = None
+
     def __init__(self, instance: models.Address = None, **kwargs):
         data = kwargs.get("data") or {}
 

@@ -80,6 +80,14 @@ class Carrier(OwnedEntity):
     def __str__(self):
         return self.carrier_id
 
+    @property
+    def object_type(self):
+        return "carrier"
+
+    @property
+    def carrier_name(self):
+        return self.settings.carrier_name
+
     def _linked_settings(self):
         from purplship.server.providers.models import MODELS
 
@@ -95,10 +103,6 @@ class Carrier(OwnedEntity):
     @property
     def settings(self):
         return self._linked_settings()
-
-    @property
-    def carrier_name(self):
-        return self.settings.carrier_name
 
     @property
     def data(self) -> CarrierSettings:
@@ -159,3 +163,7 @@ class ServiceLevel(OwnedEntity):
 
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)
+
+    @property
+    def object_type(self):
+        return "service_level"

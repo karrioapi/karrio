@@ -50,6 +50,7 @@ CUSTOMS_RESPONSE = {
         {
             "description": "cn",
             "id": ANY,
+            "object_type": "commodity",
             "origin_country": None,
             "parent_id": None,
             "quantity": 1,
@@ -65,6 +66,7 @@ CUSTOMS_RESPONSE = {
     "content_type": None,
     "duty": None,
     "id": ANY,
+    "object_type": "customs_info",
     "incoterm": "DDU",
     "invoice": None,
     "invoice_date": None,
@@ -82,6 +84,7 @@ CUSTOMS_UPDATE_RESPONSE = {
     "content_type": None,
     "duty": None,
     "id": ANY,
+    "object_type": "customs_info",
     "incoterm": "DDP",
     "invoice": None,
     "invoice_date": None,

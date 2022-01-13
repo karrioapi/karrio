@@ -46,6 +46,7 @@ TRACKING_RESPONSE = {
     "messages": [],
     "tracking": {
         "id": ANY,
+        "object_type": "tracker",
         "carrier_id": "ups_package",
         "carrier_name": "ups",
         "delivered": None,
@@ -60,6 +61,7 @@ TRACKING_RESPONSE = {
             }
         ],
         "messages": [],
+        "metadata": {},
         "status": "in-transit",
         "test_mode": True,
         "tracking_number": "1Z12345E6205277936",

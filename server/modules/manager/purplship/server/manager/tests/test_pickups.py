@@ -170,6 +170,7 @@ CANCEL_RETURNED_VALUE = (
 
 PICKUP_RESPONSE = {
     "id": ANY,
+    "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "confirmation_number": "27241",
@@ -180,6 +181,7 @@ PICKUP_RESPONSE = {
     "test_mode": True,
     "address": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -200,6 +202,7 @@ PICKUP_RESPONSE = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -217,10 +220,12 @@ PICKUP_RESPONSE = {
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",
     "options": {},
+    "metadata": {},
 }
 
 PICKUP_UPDATE_RESPONSE = {
     "id": ANY,
+    "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "confirmation_number": "00110215",
@@ -231,6 +236,7 @@ PICKUP_UPDATE_RESPONSE = {
     "test_mode": True,
     "address": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -251,6 +257,7 @@ PICKUP_UPDATE_RESPONSE = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -268,6 +275,7 @@ PICKUP_UPDATE_RESPONSE = {
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall next to the distributor",
     "options": {},
+    "metadata": {},
 }
 
 PICKUP_CANCEL_RESPONSE = {

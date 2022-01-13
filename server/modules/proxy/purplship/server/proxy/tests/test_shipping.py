@@ -162,6 +162,7 @@ RETURNED_FAILED_CANCEL_VALUE = (
 
 SHIPPING_RESPONSE = {
     "id": ANY,
+    "object_type": "shipment",
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
@@ -171,6 +172,7 @@ SHIPPING_RESPONSE = {
     "shipment_identifier": "123456789012",
     "selected_rate": {
         "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
+        "object_type": "rate",
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "currency": "CAD",
@@ -192,6 +194,7 @@ SHIPPING_RESPONSE = {
     "rates": [
         {
             "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
+            "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
@@ -211,6 +214,7 @@ SHIPPING_RESPONSE = {
         },
         {
             "id": "prx_9290e4a2c8e34c8d8c73ab990b029f3d",
+            "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
@@ -234,6 +238,7 @@ SHIPPING_RESPONSE = {
     "service": "canadapost_priority",
     "shipper": {
         "id": None,
+        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -253,6 +258,7 @@ SHIPPING_RESPONSE = {
     },
     "recipient": {
         "id": None,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -273,6 +279,7 @@ SHIPPING_RESPONSE = {
     "parcels": [
         {
             "id": None,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": 42.0,
             "height": 32.0,

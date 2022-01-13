@@ -57,6 +57,7 @@ PARCEL_DATA = {
 
 PARCEL_RESPONSE = {
     "id": ANY,
+    "object_type": "parcel",
     "weight": 1.0,
     "width": 20.0,
     "height": 10.0,
@@ -81,6 +82,7 @@ PARCEL_UPDATE_DATA = {
 
 PARCEL_UPDATE_RESPONSE = {
     "id": ANY,
+    "object_type": "parcel",
     "weight": 1.0,
     "width": 5.0,
     "height": 4.5,

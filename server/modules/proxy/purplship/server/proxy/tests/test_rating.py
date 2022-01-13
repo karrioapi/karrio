@@ -74,6 +74,7 @@ RATING_RESPONSE = {
     "rates": [
         {
             "id": ANY,
+            "object_type": "rate",
             "meta": None,
             "carrier_ref": ANY,
             "base_charge": 101.83,

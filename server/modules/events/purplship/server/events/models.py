@@ -33,6 +33,10 @@ class Webhook(OwnedEntity):
     def __str__(self):
         return f"{self.id} + {self.url}"
 
+    @property
+    def object_type(self):
+        return "webhook"
+
 
 class Event(OwnedEntity):
     class Meta:
@@ -52,3 +56,7 @@ class Event(OwnedEntity):
     data = models.JSONField(default=partial(identity, value={}))
     test_mode = models.BooleanField(null=False)
     pending_webhooks = models.IntegerField(default=0)
+
+    @property
+    def object_type(self):
+        return "event"

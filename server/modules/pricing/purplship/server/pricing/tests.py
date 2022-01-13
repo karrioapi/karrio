@@ -147,6 +147,7 @@ RATING_RESPONSE = {
                 {"amount": -2.19, "currency": "CAD", "name": "SMB Savings"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST EXPEDITED PARCEL",
@@ -169,6 +170,7 @@ RATING_RESPONSE = {
                 {"amount": -4.55, "currency": "CAD", "name": "SMB Savings"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST XPRESSPOST",
@@ -192,6 +194,7 @@ RATING_RESPONSE = {
                 {"amount": 1.0, "currency": "CAD", "name": "brokerage"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
@@ -220,6 +223,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"amount": -2.19, "currency": "CAD", "name": "SMB Savings"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST EXPEDITED PARCEL",
@@ -242,6 +246,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"amount": -4.55, "currency": "CAD", "name": "SMB Savings"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST XPRESSPOST",
@@ -265,6 +270,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"amount": 2.28, "currency": "CAD", "name": "brokerage"},
             ],
             "id": ANY,
+            "object_type": "rate",
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",

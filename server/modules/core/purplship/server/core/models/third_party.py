@@ -8,3 +8,6 @@ class APILog(APIRequestLog, ControlledAccessModel):
         ordering = ["-requested_at"]
         proxy = True
 
+    @property
+    def object_type(self):
+        return "log"

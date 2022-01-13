@@ -53,7 +53,7 @@ class OrderFilter(django_filters.FilterSet):
         return queryset.filter(Q(metadata__values__contains=value))
 
 
-class OrderType(graphene_django.DjangoObjectType):
+class OrderType(BaseObjectType):
     shipping_address = graphene.Field(AddressType)
     line_items = graphene.List(CommodityType)
     shipments = graphene.List(ShipmentType)

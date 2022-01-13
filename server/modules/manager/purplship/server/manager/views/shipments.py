@@ -36,6 +36,7 @@ from purplship.server.manager.serializers import (
     ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     RateSerializer,
+    ShipmentDetails,
 )
 import purplship.server.manager.models as models
 
@@ -289,17 +290,14 @@ class ShipmentPurchase(APIView):
         Select your preferred rates to buy a shipment label.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-
         can_mutate_shipment(shipment, purchase=True, update=True)
 
+        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
         # Submit shipment to carriers
         response: Shipment = (
             SerializerDecorator[ShipmentPurchaseSerializer](
                 context=request,
-                data={
-                    **Shipment(shipment).data,
-                    **SerializerDecorator[ShipmentPurchaseData](data=request.data).data,
-                },
+                data={**Shipment(shipment).data, **payload},
             )
             .save()
             .instance
@@ -307,7 +305,12 @@ class ShipmentPurchase(APIView):
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](
-            shipment, data=DP.to_dict(response), context=request
+            shipment,
+            context=request,
+            data={
+                **payload,
+                **ShipmentDetails(response).data,
+            },
         ).save()
         create_shipment_tracker(shipment, context=request)
 

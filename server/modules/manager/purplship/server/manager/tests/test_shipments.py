@@ -249,6 +249,7 @@ SHIPMENT_RATES = {
     "rates": [
         {
             "id": ANY,
+            "object_type": "rate",
             "carrier_ref": ANY,
             "base_charge": 101.83,
             "carrier_id": "canadapost",
@@ -274,6 +275,7 @@ SHIPMENT_RATES = {
 
 SHIPMENT_RESPONSE = {
     "id": ANY,
+    "object_type": "shipment",
     "status": "created",
     "carrier_name": None,
     "carrier_id": None,
@@ -290,6 +292,7 @@ SHIPMENT_RESPONSE = {
     "tracker_id": None,
     "shipper": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -309,6 +312,7 @@ SHIPMENT_RESPONSE = {
     },
     "recipient": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -329,6 +333,7 @@ SHIPMENT_RESPONSE = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": 42.0,
             "height": 32.0,
@@ -382,6 +387,7 @@ SHIPMENT_PURCHASE_DATA = {"selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed9
 
 SELECTED_RATE = {
     "id": ANY,
+    "object_type": "rate",
     "carrier_ref": ANY,
     "base_charge": 101.83,
     "carrier_id": "canadapost",
@@ -426,6 +432,7 @@ RETURNED_CANCEL_VALUE = (
 
 PURCHASED_SHIPMENT = {
     "id": ANY,
+    "object_type": "shipment",
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
@@ -443,6 +450,7 @@ PURCHASED_SHIPMENT = {
     "tracker_id": ANY,
     "shipper": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -462,6 +470,7 @@ PURCHASED_SHIPMENT = {
     },
     "recipient": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -482,6 +491,7 @@ PURCHASED_SHIPMENT = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": None,
             "height": None,

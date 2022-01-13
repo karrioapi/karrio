@@ -197,11 +197,13 @@ ORDER_DATA = {
 
 ORDER_RESPONSE = {
     "id": ANY,
+    "object_type": "order",
     "order_id": "1073459962",
     "source": "shopify",
     "status": "created",
     "shipping_address": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -222,6 +224,7 @@ ORDER_RESPONSE = {
     "line_items": [
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 0.75,
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
@@ -235,6 +238,7 @@ ORDER_RESPONSE = {
         },
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 1.7,
             "weight_unit": "KG",
             "description": "Red Leather Coat",
@@ -326,11 +330,13 @@ SHIPMENT_DATA = {
 
 ORDER_SHIPMENTS_RESPONSE = {
     "id": ANY,
+    "object_type": "order",
     "order_id": "1073459962",
     "source": "shopify",
     "status": "created",
     "shipping_address": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -351,6 +357,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "line_items": [
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 0.75,
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
@@ -364,6 +371,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         },
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 1.7,
             "weight_unit": "KG",
             "description": "Red Leather Coat",
@@ -381,6 +389,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "shipments": [
         {
             "id": ANY,
+            "object_type": "shipment",
             "status": "created",
             "carrier_name": None,
             "carrier_id": None,
@@ -392,6 +401,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "rates": [
                 {
                     "id": ANY,
+                    "object_type": "rate",
                     "carrier_name": "canadapost",
                     "carrier_id": "canadapost",
                     "currency": "CAD",
@@ -417,6 +427,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "service": None,
             "shipper": {
                 "id": ANY,
+                "object_type": "address",
                 "postal_code": "V6M2V9",
                 "city": "Vancouver",
                 "federal_tax_id": None,
@@ -436,6 +447,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             },
             "recipient": {
                 "id": ANY,
+                "object_type": "address",
                 "postal_code": "E1C4Z8",
                 "city": "Moncton",
                 "federal_tax_id": None,
@@ -456,6 +468,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "parcels": [
                 {
                     "id": ANY,
+                    "object_type": "parcel",
                     "weight": 2.0,
                     "width": 46.0,
                     "height": 38.0,
@@ -470,6 +483,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                     "items": [
                         {
                             "id": ANY,
+                            "object_type": "commodity",
                             "weight": 0.75,
                             "weight_unit": "KG",
                             "description": "Blue Suede Shoes",
@@ -505,11 +519,13 @@ ORDER_SHIPMENTS_RESPONSE = {
 
 FULFILLED_ORDER_RESPONSE = {
     "id": ANY,
+    "object_type": "order",
     "order_id": "1073459962",
     "source": "shopify",
     "status": "fulfilled",
     "shipping_address": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -530,6 +546,7 @@ FULFILLED_ORDER_RESPONSE = {
     "line_items": [
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 0.75,
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
@@ -543,6 +560,7 @@ FULFILLED_ORDER_RESPONSE = {
         },
         {
             "id": ANY,
+            "object_type": "commodity",
             "weight": 1.7,
             "weight_unit": "KG",
             "description": "Red Leather Coat",
@@ -560,6 +578,7 @@ FULFILLED_ORDER_RESPONSE = {
     "shipments": [
         {
             "id": ANY,
+            "object_type": "shipment",
             "status": "purchased",
             "carrier_name": None,
             "carrier_id": None,
@@ -571,6 +590,7 @@ FULFILLED_ORDER_RESPONSE = {
             "rates": [
                 {
                     "id": ANY,
+                    "object_type": "rate",
                     "carrier_name": "canadapost",
                     "carrier_id": "canadapost",
                     "currency": "CAD",
@@ -596,6 +616,7 @@ FULFILLED_ORDER_RESPONSE = {
             "service": None,
             "shipper": {
                 "id": ANY,
+                "object_type": "address",
                 "postal_code": "V6M2V9",
                 "city": "Vancouver",
                 "federal_tax_id": None,
@@ -615,6 +636,7 @@ FULFILLED_ORDER_RESPONSE = {
             },
             "recipient": {
                 "id": ANY,
+                "object_type": "address",
                 "postal_code": "E1C4Z8",
                 "city": "Moncton",
                 "federal_tax_id": None,
@@ -635,6 +657,7 @@ FULFILLED_ORDER_RESPONSE = {
             "parcels": [
                 {
                     "id": ANY,
+                    "object_type": "parcel",
                     "weight": 2.0,
                     "width": 46.0,
                     "height": 38.0,
@@ -649,6 +672,7 @@ FULFILLED_ORDER_RESPONSE = {
                     "items": [
                         {
                             "id": ANY,
+                            "object_type": "commodity",
                             "weight": 1.7,
                             "weight_unit": "KG",
                             "description": "Red Leather Coat",
@@ -662,6 +686,7 @@ FULFILLED_ORDER_RESPONSE = {
                         },
                         {
                             "id": ANY,
+                            "object_type": "commodity",
                             "weight": 0.75,
                             "weight_unit": "KG",
                             "description": "Blue Suede Shoes",

@@ -50,6 +50,10 @@ class Address(OwnedEntity):
     validate_location = models.BooleanField(null=True)
     validation = models.JSONField(blank=True, null=True)
 
+    @property
+    def object_type(self):
+        return "address"
+
 
 class Parcel(OwnedEntity):
     class Meta:
@@ -85,6 +89,10 @@ class Parcel(OwnedEntity):
     def delete(self, *args, **kwargs):
         self.items.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "parcel"
 
 
 class Commodity(OwnedEntity):
@@ -129,6 +137,10 @@ class Commodity(OwnedEntity):
     def delete(self, *args, **kwargs):
         self.children.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "commodity"
 
 
 class CustomsManager(models.Manager):
@@ -199,6 +211,10 @@ class Customs(OwnedEntity):
         self.commodities.all().delete()
         return super().delete(*args, **kwargs)
 
+    @property
+    def object_type(self):
+        return "customs_info"
+
 
 class PickupManager(models.Manager):
     def get_queryset(self):
@@ -224,6 +240,7 @@ class Pickup(OwnedEntity):
         "test_mode",
         "pickup_charge",
         "created_by",
+        "metadata",
     ]
     objects = PickupManager()
 
@@ -254,6 +271,9 @@ class Pickup(OwnedEntity):
     address = models.ForeignKey(
         "Address", on_delete=models.CASCADE, blank=True, null=True
     )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
@@ -263,6 +283,10 @@ class Pickup(OwnedEntity):
     def delete(self, *args, **kwargs):
         handle = self.address or super()
         return handle.delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "pickup"
 
     # Computed properties
 
@@ -323,6 +347,9 @@ class Tracking(OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=partial(identity, value=[])
     )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
@@ -346,6 +373,10 @@ class Tracking(OwnedEntity):
         return len(self.events) == 0 or (
             len(self.events) == 1 and self.events[0].get("code") == "CREATED"
         )
+
+    @property
+    def object_type(self):
+        return "tracker"
 
 
 class ShipmentManager(models.Manager):
@@ -463,6 +494,10 @@ class Shipment(OwnedEntity):
         self.parcels.all().delete()
         self.customs and self.customs.delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "shipment"
 
     # Computed properties
 

@@ -66,6 +66,10 @@ class Order(OwnedEntity):
         blank=True, null=True, default=partial(identity, value={})
     )
 
+    @property
+    def object_type(self):
+        return "order"
+
     # computed fields
 
     @property

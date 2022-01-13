@@ -209,9 +209,9 @@ class Shipments:
 
         return datatypes.Shipment(
             **{
+                "id": f"shp_{uuid.uuid4().hex}",
                 **payload,
                 **DP.to_dict(shipment),
-                "id": f"shp_{uuid.uuid4().hex}",
                 "test_mode": carrier.test,
                 "selected_rate": shipment_rate,
                 "service": shipment_rate["service"],
