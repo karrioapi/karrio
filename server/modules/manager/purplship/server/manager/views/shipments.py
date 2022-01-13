@@ -14,8 +14,10 @@ from django_filters import rest_framework as filters
 from purplship.core.utils import DP
 from purplship.server.core.gateway import Carriers
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.serializers import (
+from purplship.server.manager.router import router
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     MODELS,
     FlagField,
     ShipmentStatus,
@@ -25,9 +27,6 @@ from purplship.server.core.serializers import (
     RateResponse,
     Rate,
     OperationResponse,
-)
-from purplship.server.manager.router import router
-from purplship.server.manager.serializers import (
     create_shipment_tracker,
     can_mutate_shipment,
     ShipmentSerializer,

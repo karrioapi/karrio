@@ -1,10 +1,9 @@
-from rest_framework import status
 from django.conf import settings
 from django.db.models import Q
-
+from rest_framework import status
 
 from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import Commodity, CommodityData, ShipmentStatus
+from purplship.server.core.serializers import Commodity, ShipmentStatus
 from purplship.server.serializers import owned_model_serializer
 import purplship.server.manager.models as models
 

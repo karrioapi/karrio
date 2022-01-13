@@ -8,19 +8,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import (
-    ShipmentStatus,
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     ErrorResponse,
     ParcelData,
     Parcel,
     Operation,
-)
-from purplship.server.manager.serializers import (
     ParcelSerializer,
     can_mutate_parcel,
-    reset_related_shipment_rates,
 )
 from purplship.server.manager.router import router
 import purplship.server.manager.models as models
@@ -149,7 +145,6 @@ class ParcelDetail(APIView):
         can_mutate_parcel(parcel, update=True)
 
         SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
-        reset_related_shipment_rates(parcel.shipment.first())
 
         return Response(Parcel(parcel).data)
 
@@ -177,7 +172,6 @@ class ParcelDetail(APIView):
         can_mutate_parcel(parcel, update=True, delete=True)
 
         parcel.delete(keep_parents=True)
-        reset_related_shipment_rates(parcel.shipment.first())
 
         return Response(Operation(dict(operation="Remove parcel", success=True)).data)
 

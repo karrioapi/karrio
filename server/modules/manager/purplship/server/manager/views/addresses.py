@@ -8,18 +8,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import (
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     ErrorResponse,
     AddressData,
     Address,
     Operation,
-)
-from purplship.server.manager.serializers import (
     AddressSerializer,
     can_mutate_address,
-    reset_related_shipment_rates,
 )
 from purplship.server.manager.router import router
 from purplship.server.manager import models
@@ -156,9 +153,6 @@ class AddressDetail(APIView):
         can_mutate_address(address, update=True)
 
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
-        reset_related_shipment_rates(
-            address.shipper_shipment.first() or address.recipient_shipment.first()
-        )
 
         return Response(Address(address).data)
 

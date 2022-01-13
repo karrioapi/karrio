@@ -8,21 +8,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import (
-    ShipmentStatus,
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     ErrorResponse,
     CustomsData,
     Customs,
     Operation,
-)
-from purplship.server.manager.serializers import (
     CustomsSerializer,
-    CommodityData,
-    CommoditySerializer,
     can_mutate_customs,
-    reset_related_shipment_rates,
 )
 from purplship.server.manager.router import router
 import purplship.server.manager.models as models
@@ -175,7 +169,6 @@ class CustomsDetail(APIView):
         SerializerDecorator[CustomsSerializer](
             customs, data=request.data, context=request
         ).save()
-        reset_related_shipment_rates(customs.shipment.first())
 
         return Response(Customs(customs).data)
 
@@ -203,7 +196,6 @@ class CustomsDetail(APIView):
         can_mutate_customs(customs)
 
         customs.delete(keep_parents=True)
-        reset_related_shipment_rates(customs.shipment.first())
 
         return Response(
             Operation(dict(operation="Discard customs info", success=True)).data

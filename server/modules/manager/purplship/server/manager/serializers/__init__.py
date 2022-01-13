@@ -1,20 +1,18 @@
+from purplship.server.serializers import *
+from purplship.server.core.serializers import *
 from purplship.server.manager.serializers.address import (
-    AddressData,
     AddressSerializer,
     can_mutate_address,
 )
 from purplship.server.manager.serializers.parcel import (
-    ParcelData,
     ParcelSerializer,
     can_mutate_parcel,
 )
 from purplship.server.manager.serializers.customs import (
-    CustomsData,
     CustomsSerializer,
     can_mutate_customs,
 )
 from purplship.server.manager.serializers.commodity import (
-    CommodityData,
     CommoditySerializer,
     can_mutate_commodity,
 )
