@@ -1,8 +1,8 @@
 import pydoc
 import logging
-import importlib
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple
 from django.db import models
+from django.conf import settings
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
@@ -112,13 +112,13 @@ def owned_model_serializer(serializer: Type[Serializer]):
     class MetaSerializer(serializer):
         def __init__(self, *args, **kwargs):
             if "context" in kwargs:
-                context = kwargs.get("context")
-                user = getattr(context, "user", None)
-                org = getattr(context, "org", None)
+                context = kwargs.get("context") or {}
+                user = (
+                    context.get("user") if isinstance(context, dict) else context.user
+                )
+                org = context.get("org") if isinstance(context, dict) else context.org
 
-                if (importlib.util.find_spec("purplship.server.orgs") is not None) and (
-                    org is None
-                ):
+                if settings.MULTI_ORGANIZATIONS and org is None:
                     import purplship.server.orgs.models as orgs
 
                     org = orgs.Organization.objects.filter(
@@ -128,6 +128,7 @@ def owned_model_serializer(serializer: Type[Serializer]):
                 self.__context: Context = Context(user, org)
             else:
                 self.__context: Context = getattr(self, "__context", None)
+                kwargs.update({"context": self.__context})
 
             super().__init__(*args, **kwargs)
 

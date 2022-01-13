@@ -35,10 +35,13 @@ class AddressSerializer(AddressData):
     def update(
         self, instance: models.Address, validated_data: dict, **kwargs
     ) -> models.Address:
+        changes = []
         for key, val in validated_data.items():
-            setattr(instance, key, val)
+            if getattr(instance, key) != val:
+                changes.append(key)
+                setattr(instance, key, val)
 
-        instance.save()
+        instance.save(update_fields=changes)
         return instance
 
 

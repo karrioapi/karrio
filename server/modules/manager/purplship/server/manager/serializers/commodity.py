@@ -17,8 +17,12 @@ class CommoditySerializer(Commodity):
     def update(
         self, instance: models.Commodity, validated_data: dict, **kwargs
     ) -> models.Commodity:
+        changes = []
+
         for key, val in validated_data.items():
-            setattr(instance, key, val)
+            if getattr(instance, key) != val:
+                changes.append(key)
+                setattr(instance, key, val)
 
         instance.save()
         return instance
@@ -28,7 +32,7 @@ def can_mutate_commodity(
     commodity: models.Commodity, update: bool = False, delete: bool = False
 ):
     shipment = models.Shipment.objects.filter(
-        Q(customs__commodities__id=commodity.id) | Q(parcel__items__id=commodity.id)
+        Q(customs__commodities__id=commodity.id) | Q(parcels__items__id=commodity.id)
     ).first()
     order = commodity.order.first() if settings.ORDERS_MANAGEMENT else None
 

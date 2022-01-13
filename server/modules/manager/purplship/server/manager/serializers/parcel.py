@@ -14,12 +14,13 @@ class ParcelSerializer(ParcelData):
         data = kwargs.get("data") or {}
 
         if ("items" in data) and (instance is not None):
+            context = getattr(self, "__context", None) or kwargs.get("context")
             save_many_to_many_data(
                 "items",
                 CommoditySerializer,
                 instance,
                 payload=data,
-                context=getattr(self, "__context", None),
+                context=context,
             )
 
         super().__init__(instance, **kwargs)
@@ -42,10 +43,14 @@ class ParcelSerializer(ParcelData):
     def update(
         self, instance: models.Parcel, validated_data: dict, **kwargs
     ) -> models.Parcel:
-        for key, val in validated_data.items():
-            setattr(instance, key, val)
+        changes = []
 
-        instance.save()
+        for key, val in validated_data.items():
+            if getattr(instance, key) != val:
+                changes.append(key)
+                setattr(instance, key, val)
+
+        instance.save(update_fields=changes)
         return instance
 
 

@@ -57,6 +57,21 @@ class ShipmentSerializer(ShipmentData):
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
 
+    def __init__(self, instance: models.Shipment = None, **kwargs):
+        data = kwargs.get("data") or {}
+
+        if ("parcels" in data) and (instance is not None):
+            context = getattr(self, "__context", None) or kwargs.get("context")
+            save_many_to_many_data(
+                "parcels",
+                ParcelSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
+
+        super().__init__(instance, **kwargs)
+
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
         carrier_filter = validated_data.get("carrier_filter") or {}
@@ -127,29 +142,43 @@ class ShipmentSerializer(ShipmentData):
         carriers = validated_data.get("carriers") or []
 
         for key, val in data.items():
-            if key in models.Shipment.DIRECT_PROPS:
+            if key in models.Shipment.DIRECT_PROPS and getattr(instance, key) != val:
                 setattr(instance, key, val)
                 changes.append(key)
                 validated_data.pop(key)
 
-            if key in models.Shipment.RELATIONAL_PROPS and val is None:
-                prop = getattr(instance, key)
+            if key in models.Shipment.RELATIONAL_PROPS:
                 changes.append(key)
-                # Delete related data from database if payload set to null
-                if hasattr(prop, "delete"):
-                    prop.delete()
-                    setattr(instance, key, None)
-                    validated_data.pop(key)
 
-        if validated_data.get("customs") is not None:
-            changes.append("customs")
-            save_one_to_one_data(
-                "customs",
-                CustomsSerializer,
-                instance,
-                payload=validated_data,
-                context=context,
-            )
+                if val is None:
+                    prop = getattr(instance, key)
+                    # Delete related data from database if payload set to null
+                    if hasattr(prop, "delete"):
+                        prop.delete()
+                        setattr(instance, key, None)
+                        validated_data.pop(key)
+
+        save_one_to_one_data(
+            "shipper",
+            AddressSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
+        save_one_to_one_data(
+            "recipient",
+            AddressSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
+        save_one_to_one_data(
+            "customs",
+            CustomsSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
@@ -218,7 +247,7 @@ class ShipmentUpdateData(Serializer):
         "dangerous_good": true,
         "declared_value": 150.00,
         "email_notification": true,
-        "email_notification_to": shipper@mail.com,
+        "email_notification_to": "shipper@mail.com",
         "signature_confirmation": true,
     }
     ```

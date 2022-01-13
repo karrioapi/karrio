@@ -15,12 +15,13 @@ class CustomsSerializer(CustomsData):
         data = kwargs.get("data") or {}
 
         if ("commodities" in data) and (instance is not None):
+            context = getattr(self, "__context", None) or kwargs.get("context")
             save_many_to_many_data(
                 "commodities",
                 CommoditySerializer,
                 instance,
                 payload=data,
-                context=getattr(self, "__context", None),
+                context=context,
             )
 
         super().__init__(instance, **kwargs)
@@ -49,12 +50,14 @@ class CustomsSerializer(CustomsData):
     def update(
         self, instance: models.Customs, validated_data: dict, **kwargs
     ) -> models.Customs:
+        changes = []
 
         for key, val in validated_data.items():
-            if key in models.Customs.DIRECT_PROPS:
+            if key in models.Customs.DIRECT_PROPS and getattr(instance, key) != val:
+                changes.append(key)
                 setattr(instance, key, val)
 
-        instance.save()
+        instance.save(update_fields=changes)
         return instance
 
 
