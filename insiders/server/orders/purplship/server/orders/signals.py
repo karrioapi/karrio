@@ -23,7 +23,16 @@ def register_signals():
 
 def commodity_mutated(sender, instance, *args, **kwargs):
     """Commodity mutations (added or removed)"""
-    if getattr(instance, "parent", None) is None or instance.parent.order.exists() is False:
+
+    try:
+        parent = getattr(instance, "parent", None)
+    except Exception as e:
+        return
+
+    if parent is None:
+        return
+
+    if parent.order.exists() is False:
         return
 
     # Retrieve all orders associated with this commodity and update their status if needed
