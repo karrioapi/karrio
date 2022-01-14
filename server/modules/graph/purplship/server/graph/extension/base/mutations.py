@@ -149,20 +149,9 @@ def create_template_mutation(template: str, update: bool = False):
             )
 
             if not serializer.is_valid():
-                return cls(
-                    template=None, errors=ErrorType.from_errors(serializer.errors)
-                )
+                return cls(errors=ErrorType.from_errors(serializer.errors))
 
-            try:
-                template = (
-                    SerializerDecorator[serializers.TemplateModelSerializer](
-                        instance, data=data, context=info.context
-                    )
-                    .save()
-                    .instance
-                )
-            except Exception as e:
-                raise e
+            template = serializer.save().instance
 
             return cls(template=template)
 

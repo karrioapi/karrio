@@ -619,7 +619,7 @@ class ConnectionType(graphene.Interface, BaseConnectionType):
         return self.id
 
 
-for carrier_model in providers.MODELS.values():
+def CreateCarrierSettingTypes(carrier_model):
     _extra_fields: dict = dict()
 
     if hasattr(carrier_model, "account_country_code"):
@@ -652,3 +652,8 @@ for carrier_model in providers.MODELS.values():
         ),
         {"Meta": Meta, **_extra_fields},
     )
+
+
+CarrierSettings = {
+    name: CreateCarrierSettingTypes(model) for name, model in providers.MODELS.items()
+}
