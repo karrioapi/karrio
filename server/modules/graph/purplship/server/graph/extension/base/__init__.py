@@ -18,46 +18,69 @@ class Query:
     token = graphene.Field(types.TokenType, org_id=graphene.String(required=False))
 
     user_connections = graphene.List(
-        types.ConnectionType, required=True, test=graphene.Boolean(required=False)
+        graphene.NonNull(types.ConnectionType),
+        required=True,
+        default_value=[],
+        test=graphene.Boolean(required=False),
     )
     system_connections = graphene.List(
-        types.SystemConnectionType, required=True, test=graphene.Boolean(required=False)
+        graphene.NonNull(types.SystemConnectionType),
+        required=True,
+        default_value=[],
+        test=graphene.Boolean(required=False),
     )
 
-    default_templates = graphene.Field(types.DefaultTemplatesType, required=True)
+    default_templates = graphene.Field(
+        types.DefaultTemplatesType, required=True, default_value={}
+    )
     address_templates = django_filter.DjangoFilterConnectionField(
-        types.AddressTemplateType, required=True
+        types.AddressTemplateType, required=True, default_value=[]
     )
     customs_templates = django_filter.DjangoFilterConnectionField(
-        types.CustomsTemplateType, required=True
+        types.CustomsTemplateType, required=True, default_value=[]
     )
     parcel_templates = django_filter.DjangoFilterConnectionField(
-        types.ParcelTemplateType, required=True
+        types.ParcelTemplateType, required=True, default_value=[]
     )
 
     log = graphene.Field(types.LogType, id=graphene.Int(required=True))
     logs = django_filter.DjangoFilterConnectionField(
-        types.LogType, required=True, filterset_class=types.LogFilter
+        types.LogType,
+        required=True,
+        default_value=[],
+        filterset_class=types.LogFilter,
     )
 
     shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
     shipments = django_filter.DjangoFilterConnectionField(
-        types.ShipmentType, required=True, filterset_class=types.ShipmentFilter
+        types.ShipmentType,
+        required=True,
+        default_value=[],
+        filterset_class=types.ShipmentFilter,
     )
 
     tracker = graphene.Field(types.TrackerType, id=graphene.String(required=True))
     trackers = django_filter.DjangoFilterConnectionField(
-        types.TrackerType, required=True, filterset_class=types.TrackerFilter
+        types.TrackerType,
+        required=True,
+        default_value=[],
+        filterset_class=types.TrackerFilter,
     )
 
     webhook = graphene.Field(types.WebhookType, id=graphene.String(required=True))
     webhooks = django_filter.DjangoFilterConnectionField(
-        types.WebhookType, required=True, filterset_class=types.WebhookFilter
+        types.WebhookType,
+        required=True,
+        default_value=[],
+        filterset_class=types.WebhookFilter,
     )
 
     event = graphene.Field(types.EventType, id=graphene.String(required=True))
     events = django_filter.DjangoFilterConnectionField(
-        types.EventType, required=True, filterset_class=types.EventFilter
+        types.EventType,
+        required=True,
+        default_value=[],
+        filterset_class=types.EventFilter,
     )
 
     @types.login_required

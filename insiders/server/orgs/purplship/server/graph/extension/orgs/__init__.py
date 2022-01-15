@@ -11,6 +11,7 @@ class Query:
         types.OrganizationType,
         required=True,
         is_active=graphene.Boolean(required=False),
+        default_value=[],
     )
     organization = graphene.Field(
         types.OrganizationType, id=graphene.String(required=True)

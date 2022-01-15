@@ -12,7 +12,7 @@ class Proxy(ShippingMixinProxy, RatingMixinProxy, BaseProxy):
     settings: Settings
 
     def get_rates(self, request: Serializable) -> Deserializable:
-        return super().get_rates(request)
+        return super(RatingMixinProxy, self).get_rates(request)
 
     def create_shipment(self, request: Serializable) -> Deserializable:
-        return super().create_shipment(request)
+        return super(ShippingMixinProxy, self).create_shipment(request)

@@ -6,6 +6,7 @@ from purplship.providers.purolator.utils import Settings as BaseSettings
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings):
     """Purolator connection settings."""
+
     username: str
     password: str
     account_number: str

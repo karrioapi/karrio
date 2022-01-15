@@ -151,7 +151,7 @@ def create_template_mutation(template: str, update: bool = False):
             if not serializer.is_valid():
                 return cls(errors=ErrorType.from_errors(serializer.errors))
 
-            template = serializer.save().instance
+            template = serializer.save()
 
             return cls(template=template)
 
@@ -374,13 +374,21 @@ class PartialShipmentUpdate(ClientMutation):
     @classmethod
     @types.login_required
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
-        shipment = manager.Shipment.access_by(info.context).get(id=id)
-        manager_serializers.can_mutate_shipment(shipment, update=True)
+        try:
+            shipment = manager.Shipment.access_by(info.context).get(id=id)
+            manager_serializers.can_mutate_shipment(shipment, update=True)
 
-        SerializerDecorator[manager_serializers.ShipmentSerializer](
-            shipment,
-            context=info.context,
-            data=DP.to_dict(inputs),
-        ).save()
+            data = SerializerDecorator[manager_serializers.Shipment](
+                shipment, data=inputs
+            ).data
 
-        return cls(errors=None, shipment=shipment)
+            SerializerDecorator[manager_serializers.ShipmentSerializer](
+                shipment,
+                context=info.context,
+                data=DP.to_dict(data),
+            ).save()
+
+            return cls(errors=None, shipment=shipment)
+        except Exception as e:
+            logger.exception(e)
+            raise e

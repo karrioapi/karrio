@@ -48,7 +48,7 @@ class ParcelSerializer(ParcelData):
         changes = []
 
         for key, val in validated_data.items():
-            if getattr(instance, key) != val:
+            if getattr(instance, key) != val and key != "items":
                 changes.append(key)
                 setattr(instance, key, val)
 

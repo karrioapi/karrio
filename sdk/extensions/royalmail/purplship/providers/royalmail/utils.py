@@ -17,8 +17,4 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://api.royalmail.net"
-            if self.test
-            else "https://api.royalmail.net"
-        )
+        return "https://api.royalmail.net" if self.test else "https://api.royalmail.net"

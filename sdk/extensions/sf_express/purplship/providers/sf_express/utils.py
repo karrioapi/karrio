@@ -33,15 +33,17 @@ class Settings(BaseSettings):
         timestamp = str(int(time.time()))
         serialized_data = urllib.parse.quote_plus(data + timestamp + self.check_word)
         m = hashlib.md5()
-        m.update(serialized_data.encode('utf-8'))
+        m.update(serialized_data.encode("utf-8"))
         md5_str = m.digest()
-        msg_digest = base64.b64encode(md5_str).decode('utf-8')
+        msg_digest = base64.b64encode(md5_str).decode("utf-8")
 
-        return DP.jsonify({
-            "partnerID": self.partner_id,
-            "requestID": str(uuid.uuid1()),
-            "serviceCode": service_code,
-            "timestamp": timestamp,
-            "msgDigest": msg_digest,
-            "msgData": data
-        })
+        return DP.jsonify(
+            {
+                "partnerID": self.partner_id,
+                "requestID": str(uuid.uuid1()),
+                "serviceCode": service_code,
+                "timestamp": timestamp,
+                "msgDigest": msg_digest,
+                "msgData": data,
+            }
+        )

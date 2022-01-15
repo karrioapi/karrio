@@ -26,7 +26,7 @@ def generate_label(
             metadata=next((item.metadata or {} for item in package.parcel.items), {}),
             total_quantity=sum(item.quantity for item in package.parcel.items) or 1,
             shipment=shipment,
-            carrier_name=f"{getattr(settings, 'name', settings.carrier_id)}".upper(),
+            carrier=settings,
             service_name=service_name,
         )
     )
@@ -53,7 +53,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <line x1="450" y1="20" x2="450" y2="270" stroke="black" stroke-width="3" />
 
-    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {{ carrier_name }}</text>
+    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {% filter upper %}{{ carrier['name'] }}{% endfilter %}</text>
     <text x="470" y="140" fill="black" style="font-size: 45; font-weight: bold">PRO#: {{ metadata.get('RFF_CN', '') }}</text>
     <text x="470" y="220" fill="black" style="font-size: 45; font-weight: bold">BOL#: {{ metadata.get('BGM', '') }}</text>
 
@@ -107,7 +107,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <text x="90" y="1300" fill="black" style="font-size: 35; font-weight: bold">(00) SERIAL SHIPPING CONTAINER</text>
 
-    <g data-type="barcode" data-value="({{ metadata.get('app_id', '00') }}){{ metadata.get('serial', '000999990002975565') }}" data-module-width="5" data-width-ratio="3" x="60"
+    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL', '000999990002975565') }}" data-module-width="5" data-width-ratio="3" x="60"
         y="1400" width="750" height="250" style="font-size: 65; font-weight: bold">
         <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ metadata.get('app_id', '00') }}){{ metadata.get('serial', '000999990002975565') }}</text>
         <rect x="60" y="1400" width="750" height="200" fill="transparent" stroke="black"></rect>
@@ -139,7 +139,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 
 ^FX Top Right section.
 ^CF0,50
-^FO540,30^FDCARR: {{ carrier_name }}^FS
+^FO540,30^FDCARR: {% filter upper %}{{ carrier['name'] }}{% endfilter %}^FS
 ^CF0,45
 ^FO540,120^FDPRO#: {{ metadata.get('RFF_CN', '') }}^FS
 ^FO540,200^FDBOL#: {{ metadata.get('BGM', '') }}^FS
@@ -193,7 +193,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^CF0,35
 ^FO90,1280^FD(00) SERIAL SHIPPING CONTAINER^FS
 ^BY5,3,200
-^FO60,1420^BCN,200,Y,Y,Y,D^FD({{ metadata.get('app_id', '00') }}){{ metadata.get('serial', '000999990002975565') }}^FS
+^FO60,1420^BCN,200,Y,Y,Y,D^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL', '000999990002975565') }}^FS
 
 ^CF0,30
 ^FO760,1720^FDxxxxxxxxxxxxxxxxxxxxxxxxx^FS

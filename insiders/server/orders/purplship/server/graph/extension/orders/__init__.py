@@ -9,7 +9,10 @@ import purplship.server.orders.models as models
 class Query:
     order = graphene.Field(types.OrderType, id=graphene.String(required=True))
     orders = django_filter.DjangoFilterConnectionField(
-        types.OrderType, required=True, filterset_class=types.OrderFilter
+        types.OrderType,
+        required=True,
+        filterset_class=types.OrderFilter,
+        default_value=[],
     )
 
     @types.login_required

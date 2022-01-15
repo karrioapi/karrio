@@ -33,6 +33,7 @@ CustomsContentTypeEnum = graphene.Enum(
 )
 IncotermCodeEnum = graphene.Enum("IncotermCodeEnum", serializers.INCOTERMS)
 PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
+LabelTypeEnum = graphene.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
 ShipmentStatusEnum = graphene.Enum.from_enum(serializers.ShipmentStatus)
 TrackerStatusEnum = graphene.Enum.from_enum(serializers.TrackerStatus)
 
@@ -238,7 +239,7 @@ class RateType(graphene.ObjectType):
     base_charge = graphene.Float(required=True)
     total_charge = graphene.Float(required=True)
     duties_and_taxes = graphene.Float()
-    extra_charges = graphene.List(ChargeType)
+    extra_charges = graphene.List(graphene.NonNull(ChargeType), default_value=[])
     test_mode = graphene.Boolean(required=True)
     meta = generic.GenericScalar()
 
@@ -265,6 +266,7 @@ class CommodityType(BaseObjectType):
 
 class AddressType(BaseObjectType):
     validation = generic.GenericScalar()
+    country_code = CountryCodeEnum(required=True)
 
     class Meta:
         model = manager.Address
@@ -272,6 +274,9 @@ class AddressType(BaseObjectType):
 
 
 class ParcelType(BaseObjectType):
+    weight_unit = WeightUnitEnum()
+    dimension_unit = DimensionUnitEnum()
+
     class Meta:
         model = manager.Parcel
         exclude = (
@@ -290,6 +295,8 @@ class DutyType(graphene.ObjectType):
 
 
 class CustomsType(BaseObjectType):
+    content_type = CustomsContentTypeEnum()
+    incoterm = IncotermCodeEnum()
     duty = graphene.Field(DutyType)
     options = generic.GenericScalar()
 
@@ -386,8 +393,8 @@ class TrackerType(BaseObjectType):
     carrier_id = graphene.String(required=True)
     carrier_name = graphene.String(required=True)
 
-    events = graphene.List(TrackingEventType, required=True)
-    messages = graphene.List(MessageType, required=True)
+    events = graphene.List(graphene.NonNull(TrackingEventType), default_value=[])
+    messages = graphene.List(graphene.NonNull(MessageType), default_value=[])
     status = TrackerStatusEnum(required=True)
     metadata = generic.GenericScalar()
 
@@ -488,22 +495,31 @@ class ShipmentType(BaseObjectType):
     shipper = graphene.Field(AddressType, required=True)
     recipient = graphene.Field(AddressType, required=True)
     customs = graphene.Field(CustomsType)
-    parcels = graphene.List(ParcelType, required=True)
-    payment = graphene.Field(PaymentType, required=True)
+    parcels = graphene.List(
+        graphene.NonNull(ParcelType), required=True, default_value=[]
+    )
+    payment = graphene.Field(PaymentType, default_value={})
 
     service = graphene.String()
-    services = graphene.List(graphene.String, required=True)
-    carrier_ids = graphene.List(graphene.String, required=True)
-    messages = graphene.List(MessageType, required=True)
+    services = graphene.List(
+        graphene.NonNull(graphene.String), required=True, default_value=[]
+    )
+    carrier_ids = graphene.List(
+        graphene.NonNull(graphene.String), required=True, default_value=[]
+    )
+    messages = graphene.List(
+        graphene.NonNull(MessageType), required=True, default_value=[]
+    )
     selected_rate_id = graphene.String()
     selected_rate = graphene.Field(RateType)
-    rates = graphene.List(RateType, required=True)
+    rates = graphene.List(graphene.NonNull(RateType), default_value=[])
 
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
-    metadata = generic.GenericScalar()
+    metadata = generic.GenericScalar(required=True, default_value={})
     tracker_id = graphene.String()
 
+    label_type = LabelTypeEnum()
     status = ShipmentStatusEnum(required=True)
 
     class Meta:
@@ -635,7 +651,10 @@ def CreateCarrierSettingTypes(carrier_model):
             return self.services.all()
 
         _extra_fields.update(
-            services=graphene.List(ServiceLevelType), resolve_services=resolve_services
+            services=graphene.List(
+                graphene.NonNull(ServiceLevelType), default_value=[]
+            ),
+            resolve_services=resolve_services,
         )
 
     class Meta:

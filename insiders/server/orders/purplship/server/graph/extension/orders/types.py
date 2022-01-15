@@ -1,7 +1,6 @@
 import graphene
 import django_filters
 import graphene.types.generic as generic
-import graphene_django
 from django.db.models import Q
 
 from purplship.server.graph.extension.base.types import *
@@ -55,8 +54,10 @@ class OrderFilter(django_filters.FilterSet):
 
 class OrderType(BaseObjectType):
     shipping_address = graphene.Field(AddressType)
-    line_items = graphene.List(CommodityType)
-    shipments = graphene.List(ShipmentType)
+    line_items = graphene.List(
+        graphene.NonNull(CommodityType), required=True, default_value=[]
+    )
+    shipments = graphene.List(graphene.NonNull(ShipmentType), default_value=[])
 
     metadata = generic.GenericScalar()
     options = generic.GenericScalar()

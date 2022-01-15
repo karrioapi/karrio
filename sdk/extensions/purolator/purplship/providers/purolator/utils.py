@@ -5,6 +5,7 @@ from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 
 class Settings(BaseSettings):
     """Purolator connection settings."""
+
     username: str
     password: str
     account_number: str
@@ -41,7 +42,7 @@ def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
 
-    for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_):
+    for node in envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_:
         apply_namespaceprefix(node, version)
 
     return XP.export(envelope, namespacedef_=namespacedef_)

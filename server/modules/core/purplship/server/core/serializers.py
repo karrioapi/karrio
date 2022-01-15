@@ -303,7 +303,9 @@ class CommodityData(Serializer):
         help_text="The origin or manufacture country",
     )
     parent_id = CharField(
-        required=False, help_text="The id of the related order line item."
+        required=False,
+        allow_null=True,
+        help_text="The id of the related order line item.",
     )
     metadata = PlainDictField(
         required=False,

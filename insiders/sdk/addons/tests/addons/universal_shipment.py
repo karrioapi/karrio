@@ -55,6 +55,7 @@ if __name__ == "__main__":
 
 
 settings_data = {
+    "name": "Custom Carrier",
     "carrier_id": "universal",
     "services": [
         {
@@ -78,6 +79,7 @@ settings_data = {
             "international": False,
         },
     ],
+    "metadata": {"APP_ID": "00", "SERIAL": "000999990002975565"},
 }
 
 shipment_request_data = {

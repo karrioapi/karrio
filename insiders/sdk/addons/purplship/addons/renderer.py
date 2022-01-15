@@ -102,7 +102,6 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
 
     for element in template:
         tag = element.tag if isinstance(element.tag, str) else ""
-        print(tag, "<<<<<<")
 
         if "g" in tag and element.get("data-type") == "barcode":
             x = int(element.get("x") or 0)
