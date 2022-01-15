@@ -98,15 +98,9 @@ class CustomsModelSerializer(ModelSerializer):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict):
         data = {
-            **{
-                name: value
-                for name, value in validated_data.items()
-                if name not in self.NESTED_FIELDS
-            },
-            "options": (
-                validated_data["options"] if "options" in validated_data else None
-            ),
-            "duty": (validated_data["duty"] if "duty" in validated_data else None),
+            name: value
+            for name, value in validated_data.items()
+            if name not in self.NESTED_FIELDS
         }
 
         instance = super().create(data)
@@ -126,17 +120,9 @@ class CustomsModelSerializer(ModelSerializer):
         self, instance: manager.Customs, validated_data: dict, **kwargs
     ) -> manager.Customs:
         data = {
-            **{
-                name: value
-                for name, value in validated_data.items()
-                if name not in self.NESTED_FIELDS
-            },
-            "options": DP.to_dict(validated_data["options"])
-            if "options" in validated_data
-            else instance.options,
-            "duty": DP.to_dict(validated_data["duty"])
-            if "duty" in validated_data
-            else instance.duty,
+            name: value
+            for name, value in validated_data.items()
+            if name not in self.NESTED_FIELDS
         }
 
         return super().update(instance, data)

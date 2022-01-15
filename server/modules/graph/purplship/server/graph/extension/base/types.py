@@ -290,7 +290,6 @@ class DutyType(graphene.ObjectType):
 
 
 class CustomsType(BaseObjectType):
-    commodities = graphene.List(CommodityType)
     duty = graphene.Field(DutyType)
     options = generic.GenericScalar()
 
