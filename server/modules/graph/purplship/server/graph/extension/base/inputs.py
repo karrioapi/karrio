@@ -115,6 +115,40 @@ def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
 
+def create_connection_input(optional: bool = False) -> graphene.InputObjectType:
+    _method = "Update" if optional else "Create"
+    _fields = dict()
+
+    for name, serializer in model_serializers.CARRIER_MODEL_SERIALIZERS.items():
+        _fields.update(
+            {
+                name: graphene.Field(
+                    type(
+                        f"{_method}{serializer.__name__}",
+                        (
+                            serializer_to_input(
+                                make_fields_optional(serializer)
+                                if optional
+                                else serializer
+                            ),
+                        ),
+                        dict(
+                            carrier_id=graphene.String(required=not optional),
+                            metadata=types.generic.GenericScalar(),
+                        ),
+                    ),
+                    required=False,
+                ),
+            }
+        )
+
+    return type(
+        f"Settings",
+        (object,),
+        _fields,
+    )
+
+
 PaymentInput = create_payment_input()
 CreateCommodityInput = create_commodity_input()
 UpdateCommodityInput = create_commodity_input(optional=True)
@@ -132,3 +166,6 @@ CreateCustomsTemplateInput = type("CreateCustomsTemplate", (CreateCustomsInput,)
 UpdateCustomsTemplateInput = type("UpdateCustomsTemplate", (UpdateCustomsInput,), {})
 CreateParcelTemplateInput = type("CreateParcelTemplate", (CreateParcelInput,), {})
 UpdateParcelTemplateInput = type("UpdateParcelTemplate", (UpdateParcelInput,), {})
+
+CreateConnectionInput = create_connection_input()
+UpdateConnectionInput = create_connection_input(optional=True)

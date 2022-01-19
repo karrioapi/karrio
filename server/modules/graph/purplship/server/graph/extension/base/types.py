@@ -54,6 +54,7 @@ def login_required(func):
 
 def metadata_object_types() -> Enum:
     _types = [
+        ("carrier", providers.Carrier),
         ("commodity", manager.Commodity),
         ("shipment", manager.Shipment),
         ("tracker", manager.Tracking),
@@ -635,7 +636,7 @@ class ConnectionType(graphene.Interface, BaseConnectionType):
 
 
 def CreateCarrierSettingTypes(carrier_model):
-    _extra_fields: dict = dict()
+    _extra_fields: dict = dict(metadata=generic.GenericScalar(default_value={}))
 
     if hasattr(carrier_model, "account_country_code"):
         _extra_fields.update(account_country_code=graphene.String(required=True))
@@ -662,7 +663,7 @@ def CreateCarrierSettingTypes(carrier_model):
         exclude = ("carrier_ptr",)
         interfaces = (ConnectionType,)
 
-    type(
+    return type(
         carrier_model.__name__,
         (
             BaseConnectionType,
@@ -673,5 +674,6 @@ def CreateCarrierSettingTypes(carrier_model):
 
 
 CarrierSettings = {
-    name: CreateCarrierSettingTypes(model) for name, model in providers.MODELS.items()
+    f"{model.__name__.lower()}": CreateCarrierSettingTypes(model)
+    for _, model in providers.MODELS.items()
 }

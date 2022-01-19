@@ -13365,6 +13365,22 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "May contain more than one error for same field.",
+              "isDeprecated": false,
+              "name": "errors",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ErrorType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "aramexsettings",
@@ -13629,22 +13645,6 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "May contain more than one error for same field.",
-              "isDeprecated": false,
-              "name": "errors",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ErrorType",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "clientMutationId",
@@ -13794,6 +13794,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -14077,6 +14089,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "api_key",
@@ -14300,6 +14324,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -14551,6 +14587,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "username",
@@ -14758,6 +14806,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -15003,6 +15063,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -16482,6 +16554,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "name",
@@ -16931,6 +17015,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "consumer_key",
@@ -17138,6 +17234,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -17373,6 +17481,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "username",
@@ -17580,6 +17700,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -17847,6 +17979,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "username",
@@ -18054,6 +18198,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -18301,6 +18457,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "client_id",
@@ -18508,6 +18676,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -18727,6 +18907,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "partner_id",
@@ -18934,6 +19126,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -19179,6 +19383,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -19446,6 +19662,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "username",
@@ -19689,6 +19917,18 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -19944,6 +20184,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "customer_number",
@@ -20157,6 +20409,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
               "name": "customer_number",
@@ -20242,7 +20506,7 @@
               "name": "aramexsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "AramexSettingsInput",
+                "name": "CreateAramexSettings",
                 "ofType": null
               }
             },
@@ -20252,7 +20516,7 @@
               "name": "australiapostsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "AustraliaPostSettingsInput",
+                "name": "CreateAustraliaPostSettings",
                 "ofType": null
               }
             },
@@ -20262,7 +20526,7 @@
               "name": "canadapostsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "CanadaPostSettingsInput",
+                "name": "CreateCanadaPostSettings",
                 "ofType": null
               }
             },
@@ -20272,7 +20536,7 @@
               "name": "canparsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "CanparSettingsInput",
+                "name": "CreateCanparSettings",
                 "ofType": null
               }
             },
@@ -20282,7 +20546,7 @@
               "name": "dhlexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "DHLExpressSettingsInput",
+                "name": "CreateDHLExpressSettings",
                 "ofType": null
               }
             },
@@ -20292,7 +20556,7 @@
               "name": "dhlpolandsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "DHLPolandSettingsInput",
+                "name": "CreateDHLPolandSettings",
                 "ofType": null
               }
             },
@@ -20302,7 +20566,7 @@
               "name": "dhluniversalsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "DHLUniversalSettingsInput",
+                "name": "CreateDHLUniversalSettings",
                 "ofType": null
               }
             },
@@ -20312,7 +20576,7 @@
               "name": "dicomsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "DicomSettingsInput",
+                "name": "CreateDicomSettings",
                 "ofType": null
               }
             },
@@ -20322,7 +20586,7 @@
               "name": "eshippersettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "EShipperSettingsInput",
+                "name": "CreateEShipperSettings",
                 "ofType": null
               }
             },
@@ -20332,7 +20596,7 @@
               "name": "fedexsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "FedexSettingsInput",
+                "name": "CreateFedexSettings",
                 "ofType": null
               }
             },
@@ -20342,7 +20606,7 @@
               "name": "freightcomsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "FreightcomSettingsInput",
+                "name": "CreateFreightcomSettings",
                 "ofType": null
               }
             },
@@ -20352,7 +20616,7 @@
               "name": "genericsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "GenericSettingsInput",
+                "name": "CreateGenericSettings",
                 "ofType": null
               }
             },
@@ -20362,7 +20626,7 @@
               "name": "purolatorsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PurolatorSettingsInput",
+                "name": "CreatePurolatorSettings",
                 "ofType": null
               }
             },
@@ -20372,7 +20636,7 @@
               "name": "royalmailsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RoyalMailSettingsInput",
+                "name": "CreateRoyalMailSettings",
                 "ofType": null
               }
             },
@@ -20382,7 +20646,7 @@
               "name": "sendlesettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "SendleSettingsInput",
+                "name": "CreateSendleSettings",
                 "ofType": null
               }
             },
@@ -20392,7 +20656,7 @@
               "name": "sfexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "SFExpressSettingsInput",
+                "name": "CreateSFExpressSettings",
                 "ofType": null
               }
             },
@@ -20402,7 +20666,7 @@
               "name": "tntsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "TNTSettingsInput",
+                "name": "CreateTNTSettings",
                 "ofType": null
               }
             },
@@ -20412,7 +20676,7 @@
               "name": "upssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "UPSSettingsInput",
+                "name": "CreateUPSSettings",
                 "ofType": null
               }
             },
@@ -20422,7 +20686,7 @@
               "name": "uspssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "USPSSettingsInput",
+                "name": "CreateUSPSSettings",
                 "ofType": null
               }
             },
@@ -20432,7 +20696,7 @@
               "name": "uspsinternationalsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "USPSInternationalSettingsInput",
+                "name": "CreateUSPSInternationalSettings",
                 "ofType": null
               }
             },
@@ -20442,7 +20706,7 @@
               "name": "yanwensettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "YanwenSettingsInput",
+                "name": "CreateYanwenSettings",
                 "ofType": null
               }
             },
@@ -20452,7 +20716,7 @@
               "name": "yunexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "YunExpressSettingsInput",
+                "name": "CreateYunExpressSettings",
                 "ofType": null
               }
             },
@@ -20522,6 +20786,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -20598,7 +20872,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "AramexSettingsInput",
+          "name": "CreateAramexSettings",
           "possibleTypes": null
         },
         {
@@ -20637,6 +20911,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -20685,7 +20969,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "AustraliaPostSettingsInput",
+          "name": "CreateAustraliaPostSettings",
           "possibleTypes": null
         },
         {
@@ -20724,6 +21008,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -20778,7 +21072,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "CanadaPostSettingsInput",
+          "name": "CreateCanadaPostSettings",
           "possibleTypes": null
         },
         {
@@ -20823,6 +21117,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "NON_NULL",
@@ -20851,7 +21155,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "CanparSettingsInput",
+          "name": "CreateCanparSettings",
           "possibleTypes": null
         },
         {
@@ -20906,6 +21210,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "site_id",
               "type": {
                 "kind": "NON_NULL",
@@ -20944,7 +21258,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "DHLExpressSettingsInput",
+          "name": "CreateDHLExpressSettings",
           "possibleTypes": null
         },
         {
@@ -21003,6 +21317,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "NON_NULL",
@@ -21041,7 +21365,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "DHLPolandSettingsInput",
+          "name": "CreateDHLPolandSettings",
           "possibleTypes": null
         },
         {
@@ -21255,6 +21579,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "consumer_key",
               "type": {
                 "kind": "NON_NULL",
@@ -21283,7 +21617,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "DHLUniversalSettingsInput",
+          "name": "CreateDHLUniversalSettings",
           "possibleTypes": null
         },
         {
@@ -21322,6 +21656,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -21370,7 +21714,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "DicomSettingsInput",
+          "name": "CreateDicomSettings",
           "possibleTypes": null
         },
         {
@@ -21415,6 +21759,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "NON_NULL",
@@ -21443,7 +21797,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "EShipperSettingsInput",
+          "name": "CreateEShipperSettings",
           "possibleTypes": null
         },
         {
@@ -21492,6 +21846,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -21550,7 +21914,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "FedexSettingsInput",
+          "name": "CreateFedexSettings",
           "possibleTypes": null
         },
         {
@@ -21595,6 +21959,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "NON_NULL",
@@ -21623,7 +21997,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "FreightcomSettingsInput",
+          "name": "CreateFreightcomSettings",
           "possibleTypes": null
         },
         {
@@ -21702,6 +22076,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "name",
               "type": {
                 "kind": "NON_NULL",
@@ -21716,7 +22100,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "GenericSettingsInput",
+          "name": "CreateGenericSettings",
           "possibleTypes": null
         },
         {
@@ -21850,6 +22234,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "NON_NULL",
@@ -21902,7 +22296,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PurolatorSettingsInput",
+          "name": "CreatePurolatorSettings",
           "possibleTypes": null
         },
         {
@@ -21941,6 +22335,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -21975,7 +22379,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RoyalMailSettingsInput",
+          "name": "CreateRoyalMailSettings",
           "possibleTypes": null
         },
         {
@@ -22014,6 +22418,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22048,7 +22462,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "SendleSettingsInput",
+          "name": "CreateSendleSettings",
           "possibleTypes": null
         },
         {
@@ -22093,6 +22507,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "partner_id",
               "type": {
                 "kind": "NON_NULL",
@@ -22121,7 +22545,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "SFExpressSettingsInput",
+          "name": "CreateSFExpressSettings",
           "possibleTypes": null
         },
         {
@@ -22174,6 +22598,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22222,7 +22656,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "TNTSettingsInput",
+          "name": "CreateTNTSettings",
           "possibleTypes": null
         },
         {
@@ -22271,6 +22705,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22333,7 +22777,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "UPSSettingsInput",
+          "name": "CreateUPSSettings",
           "possibleTypes": null
         },
         {
@@ -22372,6 +22816,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22436,7 +22890,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "USPSSettingsInput",
+          "name": "CreateUSPSSettings",
           "possibleTypes": null
         },
         {
@@ -22475,6 +22929,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22539,7 +23003,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "USPSInternationalSettingsInput",
+          "name": "CreateUSPSInternationalSettings",
           "possibleTypes": null
         },
         {
@@ -22578,6 +23042,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -22612,7 +23086,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "YanwenSettingsInput",
+          "name": "CreateYanwenSettings",
           "possibleTypes": null
         },
         {
@@ -22657,6 +23131,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "customer_number",
               "type": {
                 "kind": "NON_NULL",
@@ -22685,7 +23169,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "YunExpressSettingsInput",
+          "name": "CreateYunExpressSettings",
           "possibleTypes": null
         },
         {
@@ -22695,13 +23179,17 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": null,
+              "description": "May contain more than one error for same field.",
               "isDeprecated": false,
-              "name": "id",
+              "name": "errors",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ErrorType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -22971,22 +23459,6 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "May contain more than one error for same field.",
-              "isDeprecated": false,
-              "name": "errors",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ErrorType",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "clientMutationId",
@@ -23011,20 +23483,10 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "aramexsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialAramexSettingsInput",
+                "name": "UpdateAramexSettings",
                 "ofType": null
               }
             },
@@ -23034,7 +23496,7 @@
               "name": "australiapostsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialAustraliaPostSettingsInput",
+                "name": "UpdateAustraliaPostSettings",
                 "ofType": null
               }
             },
@@ -23044,7 +23506,7 @@
               "name": "canadapostsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialCanadaPostSettingsInput",
+                "name": "UpdateCanadaPostSettings",
                 "ofType": null
               }
             },
@@ -23054,7 +23516,7 @@
               "name": "canparsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialCanparSettingsInput",
+                "name": "UpdateCanparSettings",
                 "ofType": null
               }
             },
@@ -23064,7 +23526,7 @@
               "name": "dhlexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialDHLExpressSettingsInput",
+                "name": "UpdateDHLExpressSettings",
                 "ofType": null
               }
             },
@@ -23074,7 +23536,7 @@
               "name": "dhlpolandsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialDHLPolandSettingsInput",
+                "name": "UpdateDHLPolandSettings",
                 "ofType": null
               }
             },
@@ -23084,7 +23546,7 @@
               "name": "dhluniversalsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialDHLUniversalSettingsInput",
+                "name": "UpdateDHLUniversalSettings",
                 "ofType": null
               }
             },
@@ -23094,7 +23556,7 @@
               "name": "dicomsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialDicomSettingsInput",
+                "name": "UpdateDicomSettings",
                 "ofType": null
               }
             },
@@ -23104,7 +23566,7 @@
               "name": "eshippersettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialEShipperSettingsInput",
+                "name": "UpdateEShipperSettings",
                 "ofType": null
               }
             },
@@ -23114,7 +23576,7 @@
               "name": "fedexsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialFedexSettingsInput",
+                "name": "UpdateFedexSettings",
                 "ofType": null
               }
             },
@@ -23124,7 +23586,7 @@
               "name": "freightcomsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialFreightcomSettingsInput",
+                "name": "UpdateFreightcomSettings",
                 "ofType": null
               }
             },
@@ -23134,7 +23596,7 @@
               "name": "genericsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialGenericSettingsInput",
+                "name": "UpdateGenericSettings",
                 "ofType": null
               }
             },
@@ -23144,7 +23606,7 @@
               "name": "purolatorsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialPurolatorSettingsInput",
+                "name": "UpdatePurolatorSettings",
                 "ofType": null
               }
             },
@@ -23154,7 +23616,7 @@
               "name": "royalmailsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialRoyalMailSettingsInput",
+                "name": "UpdateRoyalMailSettings",
                 "ofType": null
               }
             },
@@ -23164,7 +23626,7 @@
               "name": "sendlesettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialSendleSettingsInput",
+                "name": "UpdateSendleSettings",
                 "ofType": null
               }
             },
@@ -23174,7 +23636,7 @@
               "name": "sfexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialSFExpressSettingsInput",
+                "name": "UpdateSFExpressSettings",
                 "ofType": null
               }
             },
@@ -23184,7 +23646,7 @@
               "name": "tntsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialTNTSettingsInput",
+                "name": "UpdateTNTSettings",
                 "ofType": null
               }
             },
@@ -23194,7 +23656,7 @@
               "name": "upssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialUPSSettingsInput",
+                "name": "UpdateUPSSettings",
                 "ofType": null
               }
             },
@@ -23204,7 +23666,7 @@
               "name": "uspssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialUSPSSettingsInput",
+                "name": "UpdateUSPSSettings",
                 "ofType": null
               }
             },
@@ -23214,7 +23676,7 @@
               "name": "uspsinternationalsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialUSPSInternationalSettingsInput",
+                "name": "UpdateUSPSInternationalSettings",
                 "ofType": null
               }
             },
@@ -23224,7 +23686,7 @@
               "name": "yanwensettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialYanwenSettingsInput",
+                "name": "UpdateYanwenSettings",
                 "ofType": null
               }
             },
@@ -23234,8 +23696,22 @@
               "name": "yunexpresssettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialYunExpressSettingsInput",
+                "name": "UpdateYunExpressSettings",
                 "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -23264,9 +23740,13 @@
               "description": null,
               "name": "account_country_code",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -23296,6 +23776,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -23352,7 +23842,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialAramexSettingsInput",
+          "name": "UpdateAramexSettings",
           "possibleTypes": null
         },
         {
@@ -23387,6 +23877,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -23423,7 +23923,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialAustraliaPostSettingsInput",
+          "name": "UpdateAustraliaPostSettings",
           "possibleTypes": null
         },
         {
@@ -23458,6 +23958,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -23504,7 +24014,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialCanadaPostSettingsInput",
+          "name": "UpdateCanadaPostSettings",
           "possibleTypes": null
         },
         {
@@ -23545,6 +24055,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "SCALAR",
@@ -23565,7 +24085,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialCanparSettingsInput",
+          "name": "UpdateCanparSettings",
           "possibleTypes": null
         },
         {
@@ -23616,6 +24136,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "site_id",
               "type": {
                 "kind": "SCALAR",
@@ -23646,7 +24176,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialDHLExpressSettingsInput",
+          "name": "UpdateDHLExpressSettings",
           "possibleTypes": null
         },
         {
@@ -23663,7 +24193,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PartialServiceLevelModelSerializerInput",
+                  "name": "ServiceLevelModelSerializerInput",
                   "ofType": null
                 }
               }
@@ -23701,6 +24231,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "SCALAR",
@@ -23731,178 +24271,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialDHLPolandSettingsInput",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "dimension_unit",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "weight_unit",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "currency",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "service_name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "service_code",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "active",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "cost",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "estimated_transit_days",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "max_weight",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "max_width",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "max_height",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "max_length",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "domicile",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "international",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PartialServiceLevelModelSerializerInput",
+          "name": "UpdateDHLPolandSettings",
           "possibleTypes": null
         },
         {
@@ -23937,6 +24306,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -23963,7 +24342,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialDHLUniversalSettingsInput",
+          "name": "UpdateDHLUniversalSettings",
           "possibleTypes": null
         },
         {
@@ -23998,6 +24377,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24034,7 +24423,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialDicomSettingsInput",
+          "name": "UpdateDicomSettings",
           "possibleTypes": null
         },
         {
@@ -24075,6 +24464,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "username",
               "type": {
                 "kind": "SCALAR",
@@ -24095,7 +24494,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialEShipperSettingsInput",
+          "name": "UpdateEShipperSettings",
           "possibleTypes": null
         },
         {
@@ -24140,6 +24539,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24186,7 +24595,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialFedexSettingsInput",
+          "name": "UpdateFedexSettings",
           "possibleTypes": null
         },
         {
@@ -24221,6 +24630,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24247,7 +24666,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialFreightcomSettingsInput",
+          "name": "UpdateFreightcomSettings",
           "possibleTypes": null
         },
         {
@@ -24274,7 +24693,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PartialServiceLevelModelSerializerInput",
+                  "name": "ServiceLevelModelSerializerInput",
                   "ofType": null
                 }
               }
@@ -24285,7 +24704,7 @@
               "name": "label_template",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialLabelTemplateModelSerializerInput",
+                "name": "LabelTemplateModelSerializerInput",
                 "ofType": null
               }
             },
@@ -24316,6 +24735,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24332,88 +24761,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialGenericSettingsInput",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "template_type",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "alias",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "template",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "width",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "height",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PartialLabelTemplateModelSerializerInput",
+          "name": "UpdateGenericSettings",
           "possibleTypes": null
         },
         {
@@ -24448,6 +24796,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24494,7 +24852,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialPurolatorSettingsInput",
+          "name": "UpdatePurolatorSettings",
           "possibleTypes": null
         },
         {
@@ -24529,6 +24887,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24555,7 +24923,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialRoyalMailSettingsInput",
+          "name": "UpdateRoyalMailSettings",
           "possibleTypes": null
         },
         {
@@ -24590,6 +24958,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24616,7 +24994,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialSendleSettingsInput",
+          "name": "UpdateSendleSettings",
           "possibleTypes": null
         },
         {
@@ -24651,6 +25029,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24677,7 +25065,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialSFExpressSettingsInput",
+          "name": "UpdateSFExpressSettings",
           "possibleTypes": null
         },
         {
@@ -24690,9 +25078,13 @@
               "description": null,
               "name": "account_country_code",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -24722,6 +25114,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24758,7 +25160,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialTNTSettingsInput",
+          "name": "UpdateTNTSettings",
           "possibleTypes": null
         },
         {
@@ -24803,6 +25205,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24849,7 +25261,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialUPSSettingsInput",
+          "name": "UpdateUPSSettings",
           "possibleTypes": null
         },
         {
@@ -24884,6 +25296,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -24940,7 +25362,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialUSPSSettingsInput",
+          "name": "UpdateUSPSSettings",
           "possibleTypes": null
         },
         {
@@ -24975,6 +25397,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -25031,7 +25463,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialUSPSInternationalSettingsInput",
+          "name": "UpdateUSPSInternationalSettings",
           "possibleTypes": null
         },
         {
@@ -25066,6 +25498,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             },
@@ -25092,7 +25534,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialYanwenSettingsInput",
+          "name": "UpdateYanwenSettings",
           "possibleTypes": null
         },
         {
@@ -25133,6 +25575,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "customer_number",
               "type": {
                 "kind": "SCALAR",
@@ -25153,7 +25605,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialYunExpressSettingsInput",
+          "name": "UpdateYunExpressSettings",
           "possibleTypes": null
         },
         {
@@ -28931,6 +29383,12 @@
         {
           "description": "An enumeration.",
           "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "carrier"
+            },
             {
               "deprecationReason": null,
               "description": null,

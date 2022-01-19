@@ -8,6 +8,7 @@ from typing import Callable, Union, List
 from purplship.api.proxy import Proxy
 from purplship.api.mapper import Mapper
 from purplship.core import Settings
+from purplship.core.utils import DP
 from purplship.core.models import Message
 from purplship.core.errors import ShippingSDKError
 from purplship.references import import_extensions, detect_capabilities
@@ -120,7 +121,7 @@ class GatewayInitializer:
                 """
                 try:
                     settings_value: Settings = (
-                        provider.Settings(**settings)
+                        DP.to_object(provider.Settings, settings)
                         if isinstance(settings, dict)
                         else settings
                     )

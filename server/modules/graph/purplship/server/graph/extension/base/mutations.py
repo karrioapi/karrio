@@ -8,6 +8,7 @@ from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import ValidationError
+from django.forms.models import model_to_dict
 
 from purplship.core.utils import DP
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
@@ -55,44 +56,6 @@ class ClientMutation(graphene.relay.ClientIDMutation):
     errors = graphene.List(
         ErrorType, description="May contain more than one error for same field."
     )
-
-
-class CreateConnection(SerializerMutation):
-    class Meta:
-        model_operations = ("create",)
-        convert_choices_to_enum = False
-        serializer_class = serializers.ConnectionModelSerializer
-
-
-class UpdateConnection(SerializerMutation):
-    class Meta:
-        model_operations = ("update",)
-        convert_choices_to_enum = False
-        serializer_class = serializers.PartialConnectionModelSerializer
-
-    @classmethod
-    def get_serializer_kwargs(cls, root, info, **input):
-        kwargs = super().get_serializer_kwargs(root, info, **input)
-
-        instance = kwargs.get("instance")
-        settings_name = next(
-            (k for k in kwargs.get("data", {}).keys() if "settings" in k), ""
-        )
-        settings_data = kwargs.get("data", {}).get(settings_name, {})
-
-        if "services" in settings_data and instance is not None:
-            services = settings_data.pop("services")
-            settings = getattr(instance, "settings", None)
-            extra = {"context": info.context}
-            save_many_to_many_data(
-                "services",
-                serializers.ServiceLevelModelSerializer,
-                settings,
-                payload=dict(services=services),
-                **extra,
-            )
-
-        return kwargs
 
 
 def create_template_mutation(template: str, update: bool = False):
@@ -374,21 +337,91 @@ class PartialShipmentUpdate(ClientMutation):
     @classmethod
     @types.login_required
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
-        try:
-            shipment = manager.Shipment.access_by(info.context).get(id=id)
-            manager_serializers.can_mutate_shipment(shipment, update=True)
+        shipment = manager.Shipment.access_by(info.context).get(id=id)
+        manager_serializers.can_mutate_shipment(shipment, update=True)
 
-            data = SerializerDecorator[manager_serializers.Shipment](
-                shipment, data=inputs
-            ).data
+        data = SerializerDecorator[manager_serializers.Shipment](
+            shipment, data=inputs
+        ).data
 
-            SerializerDecorator[manager_serializers.ShipmentSerializer](
-                shipment,
+        SerializerDecorator[manager_serializers.ShipmentSerializer](
+            shipment,
+            context=info.context,
+            data=DP.to_dict(data),
+        ).save()
+
+        # refetch the shipment to get the updated state with signals processed
+        updated = manager.Shipment.access_by(info.context).get(id=id)
+
+        return cls(errors=None, shipment=updated)
+
+
+class _CreateCarrierConnection:
+    class Input(inputs.CreateConnectionInput):
+        pass
+
+    @classmethod
+    @types.login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        data = input.copy()
+
+        serializer = serializers.ConnectionModelSerializer(
+            data=data,
+            context=info.context,
+        )
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        carrier = serializer.save()
+
+        return cls(**{carrier.settings.__class__.__name__.lower(): carrier.settings})
+
+
+CreateCarrierConnection = type(
+    "CreateConnection",
+    (_CreateCarrierConnection, ClientMutation),
+    {name: graphene.Field(type) for name, type in types.CarrierSettings.items()},
+)
+
+
+class _UpdateCarrierConnection:
+    class Input(inputs.UpdateConnectionInput):
+        id = graphene.String(required=True)
+
+    @classmethod
+    @types.login_required
+    def mutate_and_get_payload(cls, root, info, id: str, **data):
+        instance = providers.Carrier.access_by(info.context).get(id=id)
+        serializer = serializers.PartialConnectionModelSerializer(
+            instance,
+            data=data,
+            partial=True,
+            context=info.context,
+        )
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        settings_name: str = next((k for k in data.keys()))
+        settings_data = data.get(settings_name, {})
+
+        if "services" in settings_data:
+            save_many_to_many_data(
+                "services",
+                serializers.ServiceLevelModelSerializer,
+                instance.settings,
+                payload=settings_data,
                 context=info.context,
-                data=DP.to_dict(data),
-            ).save()
+            )
 
-            return cls(errors=None, shipment=shipment)
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        carrier = serializer.save()
+
+        return cls(**{carrier.settings.__class__.__name__.lower(): carrier.settings})
+
+
+UpdateCarrierConnection = type(
+    "UpdateConnection",
+    (_UpdateCarrierConnection, ClientMutation),
+    {name: graphene.Field(type) for name, type in types.CarrierSettings.items()},
+)

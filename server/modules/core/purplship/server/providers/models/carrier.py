@@ -74,6 +74,7 @@ class Carrier(OwnedEntity):
         default=CarrierCapabilities.get_capabilities,
         size=len(CAPABILITIES_CHOICES),
     )
+    metadata = models.JSONField(blank=True, null=True, default=dict)
 
     objects = CarrierManager()
 

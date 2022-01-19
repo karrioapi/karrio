@@ -176,8 +176,8 @@ class Mutation:
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
 
     # Carrier connection related mutations
-    create_connection = mutations.CreateConnection.Field()
-    update_connection = mutations.UpdateConnection.Field()
+    create_connection = mutations.CreateCarrierConnection.Field()
+    update_connection = mutations.UpdateCarrierConnection.Field()
     delete_connection = mutations.create_delete_mutation(
         "DeleteConnection", providers.Carrier
     ).Field()
