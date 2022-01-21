@@ -8,6 +8,8 @@ services:
       dockerfile: docker/dev.Dockerfile
     container_name: pship
     env_file: .env
+    environment:
+      DATABASE_HOST: "db"
     volumes:
       - .:/pship/app/
       - pshipstatics:/pship/static
@@ -25,6 +27,8 @@ services:
     image: purplship/dev
     container_name: worker
     env_file: .env
+    environment:
+      DATABASE_HOST: "db"
     volumes:
       - .:/pship/app/
       - pshipdata:/pship/data
@@ -68,7 +72,6 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
-
 
 volumes:
   redisdata:

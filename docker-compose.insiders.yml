@@ -8,6 +8,8 @@ services:
       dockerfile: docker/dev.insiders.Dockerfile
     container_name: pship
     env_file: .env
+    environment:
+      DATABASE_HOST: "db"
     volumes:
       - .:/pship/app/
       - pshipstatics:/pship/static
@@ -25,6 +27,8 @@ services:
     image: purplship/ee
     container_name: worker
     env_file: .env
+    environment:
+      DATABASE_HOST: "db"
     volumes:
       - .:/pship/app/
       - pshipdata:/pship/data
