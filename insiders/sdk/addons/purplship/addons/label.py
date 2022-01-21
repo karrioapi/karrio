@@ -55,7 +55,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <line x1="450" y1="20" x2="450" y2="270" stroke="black" stroke-width="3" />
 
-    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {% filter upper %}{{ carrier['name'] }}{% endfilter %}</text>
+    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {{ carrier.get('name', "").upper() }}</text>
     <text x="470" y="140" fill="black" style="font-size: 45; font-weight: bold">PRO#: {{ metadata.get('RFF_CN', '') }}</text>
     <text x="470" y="220" fill="black" style="font-size: 45; font-weight: bold">BOL#: {{ metadata.get('BGM', '') }}</text>
 
@@ -141,7 +141,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 
 ^FX Top Right section.
 ^CF0,50
-^FO540,30^FDCARR: {% filter upper %}{{ carrier['name'] }}{% endfilter %}^FS
+^FO540,30^FDCARR: {{ carrier.get('name', "").upper() }}^FS
 ^CF0,45
 ^FO540,120^FDPRO#: {{ metadata.get('RFF_CN', '') }}^FS
 ^FO540,200^FDBOL#: {{ metadata.get('BGM', '') }}^FS
