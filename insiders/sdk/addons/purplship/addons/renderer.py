@@ -172,7 +172,7 @@ def render_label(label: str, label_type: str, template_type: str, **kwargs) -> s
 
     if template_type == "SVG" and label_type == "PDF":
         pdf = generate_pdf_from_svg_label(label, **kwargs)
-        pdf.save(result, format)
+        pdf.save(result, label_type)
 
     elif template_type == "ZPL" and label_type == "PDF":
         width, height = kwargs.get("width"), kwargs.get("height")
