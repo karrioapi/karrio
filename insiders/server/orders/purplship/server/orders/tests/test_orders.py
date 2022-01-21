@@ -311,6 +311,7 @@ SHIPMENT_DATA = {
             "is_document": False,
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "reference_number": None,
             "items": [
                 {
                     "weight": 0.75,
@@ -480,6 +481,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                     "is_document": False,
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
+                    "reference_number": None,
                     "items": [
                         {
                             "id": ANY,
@@ -669,6 +671,7 @@ FULFILLED_ORDER_RESPONSE = {
                     "is_document": False,
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
+                    "reference_number": None,
                     "items": [
                         {
                             "id": ANY,

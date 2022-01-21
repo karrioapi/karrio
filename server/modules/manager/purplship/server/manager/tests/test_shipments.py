@@ -346,6 +346,7 @@ SHIPMENT_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "reference_number": None,
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -504,6 +505,7 @@ PURCHASED_SHIPMENT = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
+            "reference_number": None,
         }
     ],
     "services": [],

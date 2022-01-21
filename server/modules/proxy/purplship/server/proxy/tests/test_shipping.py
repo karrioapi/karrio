@@ -292,6 +292,7 @@ SHIPPING_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "reference_number": None,
         }
     ],
     "services": [],
