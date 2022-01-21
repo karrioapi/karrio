@@ -4257,7 +4257,8 @@
                         "title": "Parent id",
                         "minLength": 1,
                         "type": "string",
-                        "description": "The id of the related order line item."
+                        "description": "The id of the related order line item.",
+                        "nullable": true
                     },
                     "metadata": {
                         "title": "Metadata",
@@ -4650,7 +4651,8 @@
                         "title": "Parent id",
                         "minLength": 1,
                         "type": "string",
-                        "description": "The id of the related order line item."
+                        "description": "The id of the related order line item.",
+                        "nullable": true
                     },
                     "metadata": {
                         "title": "Metadata",
@@ -4847,6 +4849,13 @@
                         "items": {
                             "$ref": "#/components/schemas/Commodity"
                         }
+                    },
+                    "reference_number": {
+                        "title": "Reference number",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                        "nullable": true
                     },
                     "object_type": {
                         "title": "Object type",
@@ -5646,6 +5655,13 @@
                         "items": {
                             "$ref": "#/components/schemas/CommodityData"
                         }
+                    },
+                    "reference_number": {
+                        "title": "Reference number",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                        "nullable": true
                     }
                 }
             },

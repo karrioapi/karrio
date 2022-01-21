@@ -3630,7 +3630,8 @@
                     "title": "Parent id",
                     "description": "The id of the related order line item.",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "metadata": {
                     "title": "Metadata",
@@ -4023,7 +4024,8 @@
                     "title": "Parent id",
                     "description": "The id of the related order line item.",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "metadata": {
                     "title": "Metadata",
@@ -4220,6 +4222,13 @@
                     "items": {
                         "$ref": "#/definitions/Commodity"
                     }
+                },
+                "reference_number": {
+                    "title": "Reference number",
+                    "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "object_type": {
                     "title": "Object type",
@@ -5038,6 +5047,13 @@
                     "items": {
                         "$ref": "#/definitions/CommodityData"
                     }
+                },
+                "reference_number": {
+                    "title": "Reference number",
+                    "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
                 }
             }
         },

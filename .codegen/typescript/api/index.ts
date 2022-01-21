@@ -8,6 +8,7 @@ import { ProxyApi } from './generated/apis/ProxyApi';
 import { ShipmentsApi } from './generated/apis/ShipmentsApi';
 import { TrackersApi } from './generated/apis/TrackersApi';
 import { WebhooksApi } from './generated/apis/WebhooksApi';
+import { OrdersApi } from './generated/apis/OrdersApi';
 import { Configuration, ConfigurationParameters } from './generated/runtime';
 
 export * from './generated/runtime';
@@ -24,6 +25,7 @@ export interface PurplshipClientInterface {
   shipments: ShipmentsApi;
   trackers: TrackersApi;
   webhooks: WebhooksApi;
+  orders: OrdersApi;
   config: ConfigurationParameters;
 }
 
@@ -38,6 +40,7 @@ export class PurplshipClient implements PurplshipClientInterface {
   shipments: ShipmentsApi;
   trackers: TrackersApi;
   webhooks: WebhooksApi;
+  orders: OrdersApi;
   config: ConfigurationParameters;
 
   constructor(clientConfig: ConfigurationParameters) {
@@ -61,5 +64,6 @@ export class PurplshipClient implements PurplshipClientInterface {
     this.shipments = new ShipmentsApi(config);
     this.trackers = new TrackersApi(config);
     this.webhooks = new WebhooksApi(config);
+    this.orders = new OrdersApi(config);
   }
 }
