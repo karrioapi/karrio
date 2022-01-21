@@ -141,7 +141,11 @@ ParsedShipmentResponse = [
         "carrier_id": "universal",
         "label": ANY,
         "label_type": "ZPL",
-        "meta": {"service_name": "Premium"},
+        "shipment_identifier": ANY,
+        "tracking_number": ANY,
+        "meta": {
+            "service_name": "Premium",
+        },
     },
     [],
 ]
@@ -151,7 +155,13 @@ ParsedMultiPieceShipmentResponse = [
         "carrier_id": "universal",
         "label": ANY,
         "label_type": "ZPL",
-        "meta": {"service_name": "Premium"},
+        "shipment_identifier": ANY,
+        "tracking_number": ANY,
+        "meta": {
+            "service_name": "Premium",
+            "tracking_identifiers": [ANY, ANY],
+            "tracking_numbers": [ANY, ANY],
+        },
     },
     [],
 ]

@@ -75,6 +75,7 @@ class Parcel:
     content: str = None
 
     items: List[Commodity] = JList[Commodity]
+    reference_number: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -381,4 +382,4 @@ class ServiceLabel:
     label_type: str
     service_name: str
     service_code: str
-    tracking_number: str = None
+    tracking_number: str

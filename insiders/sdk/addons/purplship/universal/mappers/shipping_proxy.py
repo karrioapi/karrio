@@ -1,4 +1,5 @@
 import attr
+import uuid
 from typing import List, Tuple
 from purplship.core.utils import (
     Serializable,
@@ -39,8 +40,13 @@ def generate_service_label(
     )
 
     for index, package in enumerate(packages, start=1):
+        tracking_number = package.parcel.reference_number or str(
+            int(uuid.uuid4().hex[:10], base=16)
+        )
         label_type = shipment.label_type or "PDF"
-        label = generate_label(shipment, package, service_name, settings, index)
+        label = generate_label(
+            shipment, package, service_name, tracking_number, settings, index
+        )
         ref = f"{package.parcel.id or index}"
 
         service_label = ServiceLabel(
@@ -48,7 +54,7 @@ def generate_service_label(
             label_type=label_type,
             service_code=service,
             service_name=service_name,
-            tracking_number=options.tracking_number_reference,
+            tracking_number=tracking_number,
         )
 
         service_labels.append((ref, service_label))

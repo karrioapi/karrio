@@ -12,6 +12,7 @@ def generate_label(
     shipment: ShipmentRequest,
     package: Package,
     service_name: str,
+    tracking_number: str,
     settings: ShippingMixinSettings,
     index: int = 1,
 ) -> str:
@@ -28,6 +29,7 @@ def generate_label(
             shipment=shipment,
             carrier=settings,
             service_name=service_name,
+            tracking_number=tracking_number,
         )
     )
 
@@ -107,7 +109,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <text x="90" y="1300" fill="black" style="font-size: 35; font-weight: bold">(00) SERIAL SHIPPING CONTAINER</text>
 
-    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL', '000999990002975565') }}" data-module-width="5" data-width-ratio="3" x="60"
+    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:7] }}" data-module-width="5" data-width-ratio="3" x="60"
         y="1400" width="750" height="250" style="font-size: 65; font-weight: bold">
         <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ metadata.get('app_id', '00') }}){{ metadata.get('serial', '000999990002975565') }}</text>
         <rect x="60" y="1400" width="750" height="200" fill="transparent" stroke="black"></rect>
