@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import importlib
 from pathlib import Path
-from decouple import config
+from decouple import AutoConfig
 from datetime import timedelta
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 with open(BASE_DIR / "server" / "VERSION", "r") as v:
     VERSION = v.read().strip()
+
+
+config = AutoConfig(search_path=Path().resolve())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

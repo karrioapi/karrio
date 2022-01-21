@@ -2,24 +2,6 @@
 
 source "scripts/activate-env.sh" > /dev/null 2>&1
 
-# Export environment variables
-export DEBUG_MODE=True
-export DATABASE_PORT=5432
-export DATABASE_NAME=db
-export DATABASE_ENGINE=postgresql_psycopg2
-export DATABASE_USERNAME=postgres
-export DATABASE_PASSWORD=postgres
-export LOG_DIR="${ROOT:?}/.pship"
-export WORKER_DB_DIR="${ROOT:?}/.pship"
-export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
-
-if command -v docker-machine &> /dev/null
-then
-    export DATABASE_HOST=$(docker-machine ip)
-else
-    export DATABASE_HOST="0.0.0.0"
-fi
-
 
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
