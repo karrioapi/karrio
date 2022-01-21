@@ -397,6 +397,11 @@ class ParcelData(PresetSerializer):
         help_text="The parcel's dimension unit",
     )
     items = CommodityData(required=False, many=True, help_text="The parcel items.")
+    reference_number = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
+    )
 
 
 class Parcel(EntitySerializer, ParcelData):

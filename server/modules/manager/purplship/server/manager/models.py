@@ -85,6 +85,7 @@ class Parcel(OwnedEntity):
         max_length=2, choices=DIMENSION_UNIT, null=True, blank=True
     )
     items = models.ManyToManyField("Commodity", blank=True, related_name="parcel")
+    reference_number = models.CharField(max_length=100, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         self.items.all().delete()
