@@ -63,11 +63,18 @@ def filter_service_level(
         cover_international_shipment = (
             service.international is True and service.international == is_international
         )
+        cover_all_destination = (
+            service.domicile is None and service.international is None
+        )
         explicit_destination_covered = explicitly_requested and (
-            cover_domestic_shipment or cover_international_shipment
+            cover_domestic_shipment
+            or cover_international_shipment
+            or cover_all_destination
         )
         implicit_destination_covered = implicitly_requested and (
-            cover_domestic_shipment or cover_international_shipment
+            cover_domestic_shipment
+            or cover_international_shipment
+            or cover_all_destination
         )
 
         destination_covered = (
