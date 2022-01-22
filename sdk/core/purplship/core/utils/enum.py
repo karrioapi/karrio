@@ -20,6 +20,9 @@ class MetaEnum(EnumMeta):
 
         return EnumWrapper(key)
 
+    def as_dict(self):
+        return {name: enum.value for name, enum in self.__members__.items()}
+
 
 class Enum(BaseEnum, metaclass=MetaEnum):
     pass

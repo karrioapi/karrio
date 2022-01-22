@@ -1,6 +1,6 @@
 from jinja2 import Template
 from purplship.core.utils import DP
-from purplship.core.units import Package
+from purplship.core.units import Package, CountryISO
 from purplship.core.models import ShipmentRequest
 from purplship.addons.renderer import render_label
 from purplship.universal.providers.shipping import (
@@ -30,6 +30,9 @@ def generate_label(
             carrier=settings,
             service_name=service_name,
             tracking_number=tracking_number,
+            units=dict(
+                CountryISO=CountryISO.as_dict(),
+            ),
         )
     )
 
@@ -77,7 +80,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <g data-type="barcode" data-value="(421) 124{{ shipment.recipient.get('postal_code') }}" data-module-width="3" data-width-ratio="2" x="30" y="650"
         width="460" height="150" style="font-size: 60; font-weight: bold">
-        <text x="80" y="640" fill="black" style="font-size: 40; font-weight: bold">(421) 124{{ shipment.recipient.get('postal_code') }}</text>
+        <text x="80" y="640" fill="black" style="font-size: 40; font-weight: bold">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code') }}</text>
         <rect x="30" y="660" width="460" height="100" fill="transparent" stroke="black"></rect>
     </g>
 
@@ -162,7 +165,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^CF0,35
 ^FO100,600^FDSHIP TO POSTAL CODE^FS
 ^BY3,2,100
-^FO30,750^BCN,100,Y,Y,Y,D^FD(421) 124{{ shipment.recipient.get('postal_code') }}^FS
+^FO30,750^BCN,100,Y,Y,Y,D^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code') }}^FS
 
 ^FO580,560^GB4,340,4^FS
 
