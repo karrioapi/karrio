@@ -36,6 +36,7 @@ jobs:
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.dev.txt &&
             cd -
+            mkdir -p .pship
             purplship migrate &&
             purplship test --failfast purplship.server.proxy.tests &&
             purplship test --failfast purplship.server.pricing.tests &&
@@ -57,6 +58,7 @@ jobs:
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&
             cd -
+            mkdir -p .pship
             purplship migrate &&
             purplship test --failfast purplship.server.proxy.tests &&
             purplship test --failfast purplship.server.pricing.tests &&
