@@ -52,8 +52,8 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
     <!--  Part 1 -->
 
     <text x="30" y="60" fill="black" style="font-size: 50; font-weight: bold">FROM:</text>
-    <text x="30" y="110" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.shipper.get('company_name') }}</text>
-    <text x="30" y="160" fill="black" style="font-size: 30;">{{ shipment.shipper.get('address_line1') }}</text>
+    <text x="30" y="110" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.shipper.get('company_name', '').upper() }}</text>
+    <text x="30" y="160" fill="black" style="font-size: 30;">{{ shipment.shipper.get('address_line1').upper() }}</text>
     <text x="30" y="210" fill="black" style="font-size: 30;">{{ [shipment.shipper.city, [shipment.shipper.state_code, shipment.shipper.postal_code]|join(" ")]|join(", ") }}</text>
 
     <line x1="450" y1="20" x2="450" y2="270" stroke="black" stroke-width="3" />
@@ -66,19 +66,21 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <!--  Part 2 -->
 
-    <text x="30" y="320" fill="black" style="font-size: 50; font-weight: bold">TO: {{ shipment.recipient.get('address_line1') }}</text>
-    <text x="130" y="370" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.recipient.get('company_name') }}</text>
+    <text x="30" y="310" fill="black" style="font-size: 50; font-weight: bold">TO: {{ shipment.recipient.get('address_line1').upper() }}</text>
+    <text x="110" y="370" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.recipient.get('company_name', '').upper() }}</text>
 
 
-    <text x="130" y="480" fill="black" style="font-size: 40; font-weight: bold">{{ [shipment.recipient.get('city'), [shipment.recipient.get('state_code'), shipment.recipient.get('postal_code')]|join(" ")]|join(", ") }}</text>
+    <text x="110" y="470" fill="black" style="font-size: 40; font-weight: bold">{{ [shipment.recipient.get('city', '').upper(), [shipment.recipient.get('state_code', '').upper(), shipment.recipient.get('postal_code', '').upper()]|join(" ")]|join(", ") }}</text>
 
     <line x1="20" y1="500" x2="1170" y2="500" stroke="black" stroke-width="3" />
 
     <!--  Part 3 -->
 
-    <text x="60" y="550" fill="black" style="font-size: 35; font-weight: bold">SHIP TO POSTAL CODE</text>
+    <text x="100" y="550" fill="black" style="font-size: 35; font-weight: bold">SHIP TO POSTAL CODE</text>
 
-    <g data-type="barcode" data-value="(421) 124{{ shipment.recipient.get('postal_code') }}" data-module-width="3" data-width-ratio="2" x="30" y="650"
+    <text data-type="barcode-text" x="60" y="620" fill="black" style="font-size: 40">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}</text>
+    <g data-type="barcode" data-value="(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}"
+        data-module-width="3" data-width-ratio="2" x="30" y="660"
         width="460" height="150" style="font-size: 60; font-weight: bold">
         <text x="80" y="640" fill="black" style="font-size: 40; font-weight: bold">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code') }}</text>
         <rect x="30" y="660" width="460" height="100" fill="transparent" stroke="black"></rect>
@@ -86,15 +88,15 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <line x1="550" y1="500" x2="550" y2="840" stroke="black" stroke-width="3" />
 
-    <text x="570" y="580" fill="black" style="font-size: 80; font-weight: bold">PO#: {{ metadata.get('RFF_ON', '') }}</text>
-    <text x="570" y="680" fill="black" style="font-size: 45; font-weight: bold">DEPT#: {{ metadata.get('DEPT', '') }}</text>
-    <text x="570" y="760" fill="black" style="font-size: 45; font-weight: bold">CTL#: {{ metadata.get('CTL', '') }}</text>
+    <text x="600" y="570" fill="black" style="font-size: 75; font-weight: bold">PO#: {{ metadata.get('RFF_ON', '') }}</text>
+    <text x="600" y="700" fill="black" style="font-size: 35">DEPT#: {{ metadata.get('DEPT', '') }}</text>
+    <text x="600" y="780" fill="black" style="font-size: 35">CTL#: {{ metadata.get('CTL', '') }}</text>
 
     <line x1="20" y1="840" x2="1170" y2="840" stroke="black" stroke-width="3" />
 
     <!--  Part 4 -->
 
-    <text x="130" y="940" fill="black" style="font-size: 50; font-weight: bold">CARTON: {{ package_index }} OF {{ total_packages }}</text>
+    <text x="110" y="940" fill="black" style="font-size: 50; font-weight: bold">CARTON: {{ package_index }} OF {{ total_packages }}</text>
 
     <text x="30" y="1080" fill="black" style="font-size: 40; font-weight: bold">SKU: {% if is_multi_item %}{{ master_item.get('sku', '') }}{% else %}MIXED{% endif %}</text>
     <text x="30" y="1140" fill="black" style="font-size: 40; font-weight: bold">XXNC: {{ metadata.get('XXNC', '') }}</text>
@@ -110,11 +112,12 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <!--  Part 4 -->
 
-    <text x="90" y="1300" fill="black" style="font-size: 35; font-weight: bold">(00) SERIAL SHIPPING CONTAINER</text>
+    <text x="100" y="1300" fill="black" style="font-size: 35; font-weight: bold">(00) SERIAL SHIPPING CONTAINER</text>
 
-    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5" data-module-width="5" data-width-ratio="3" x="60"
-        y="1400" width="750" height="250" style="font-size: 65; font-weight: bold">
-        <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ metadata.get('app_id', '00') }}){{ metadata.get('serial', '000999990002975565') }}</text>
+    <text data-type="barcode-text" x="90" y="1360" fill="black" style="font-size: 45">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5</text>
+    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5"
+        data-module-width="5" data-width-ratio="3" x="60" y="1410" width="900" height="250" style="font-size: 65;">
+        <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5</text>
         <rect x="60" y="1400" width="750" height="200" fill="transparent" stroke="black"></rect>
     </g>
 
@@ -134,17 +137,17 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^CF0,50
 ^FO30,30^FDFROM:^FS
 ^CF0,40
-^FO30,90^FD{{ shipment.shipper.get('company_name') }}^FS
+^FO30,90^FD{{ shipment.shipper.get('company_name', '').upper() }}^FS
 
 ^CFA,30
-^FO30,150^FD{{ shipment.shipper.get('address_line1') }}^FS
+^FO30,150^FD{{ shipment.shipper.get('address_line1').upper() }}^FS
 ^FO30,200^FD{{ [shipment.shipper.city, [shipment.shipper.state_code, shipment.shipper.postal_code]|join(" ")]|join(", ") }}^FS
 
 ^FO520,20^GB4,260,4^FS
 
 ^FX Top Right section.
 ^CF0,50
-^FO540,30^FDCARR: {{ carrier.get('name', "").upper() }}^FS
+^FO540,30^FDCARR: {{ carrier.get('name', '').upper() }}^FS
 ^CF0,45
 ^FO540,120^FDPRO#: {{ metadata.get('RFF_CN', '') }}^FS
 ^FO540,200^FDBOL#: {{ metadata.get('BGM', '') }}^FS
@@ -155,23 +158,26 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^CF0,60
 ^FO30,320^FDTO: {{ shipment.recipient.get('address_line1') }}^FS
 ^CF0,50
-^FO130,380^FD{{ shipment.recipient.get('company_name') }}^FS
+^FO110,380^FD{{ shipment.recipient.get('company_name', '').upper() }}^FS
 
-^FO130,500^FD{{ [shipment.recipient.get('city'), [shipment.recipient.get('state_code'), shipment.recipient.get('postal_code')]|join(" ")]|join(", ") }}^FS
+^FO110,500^FD{{ [shipment.recipient.get('city', '').upper(), [shipment.recipient.get('state_code', '').upper(), shipment.recipient.get('postal_code', '').upper()]|join(" ")]|join(", ") }}^FS
 
 ^FO20,560^GB1170,4,4^FS
 
 ^FX Third section with bar code.
 ^CF0,35
 ^FO100,600^FDSHIP TO POSTAL CODE^FS
-^BY3,2,100
-^FO30,750^BCN,100,Y,Y,Y,D^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code') }}^FS
+
+^CFA,40
+^FO70,620^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}^FS
+^BY3,2,150
+^FO30,660^BCN,150,N,Y,Y,D^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}^FS
 
 ^FO580,560^GB4,340,4^FS
 
 ^CF0,90
 ^FO630,600^FDPO#: {{ metadata.get('RFF_ON', '') }}^FS
-^CF0,45
+^CF0,40
 ^FO630,740^FDDEPT#: {{ metadata.get('DEPT', '') }}^FS
 ^FO630,820^FDCTL#: {{ metadata.get('CTL', '') }}^FS
 
@@ -179,7 +185,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 
 ^FX Fourth section.
 ^CF0,60
-^FO130,940^FDCARTON: {{ package_index }} OF {{ total_packages }}^FS
+^FO110,940^FDCARTON: {{ package_index }} OF {{ total_packages }}^FS
 
 ^CF0,40
 ^FO30,1080^FDSKU: {% if is_multi_item %}{{ master_item.get('sku', '') }}{% else %}MIXED{% endif %}^FS
@@ -196,9 +202,12 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 
 ^FX Fifth section.
 ^CF0,35
-^FO90,1280^FD(00) SERIAL SHIPPING CONTAINER^FS
+^FO100,1280^FD(00) SERIAL SHIPPING CONTAINER^FS
+
+^CFA,45
+^FO80,1360^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5^FS
 ^BY5,3,200
-^FO60,1420^BCN,200,Y,Y,Y,D^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5^FS
+^FO60,1410^BCN,250,N,Y,Y,D^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('SERIAL') }}{{ tracking_number[:6] }}5^FS
 
 ^CF0,30
 ^FO760,1720^FDxxxxxxxxxxxxxxxxxxxxxxxxx^FS

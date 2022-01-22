@@ -9,7 +9,6 @@ from purplship.core.utils import DP, request
 
 FONTS_DIR = Path(__file__).resolve().parent / "fonts"
 LINE_SEPARATOR = """
-
 """
 
 
@@ -26,8 +25,8 @@ def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
         tag = element.tag if isinstance(element.tag, str) else ""
 
         if "g" in tag and element.get("data-type") == "barcode":
-            x = int(element.get("x") or 0) + 20
-            y = int(element.get("y") or 0) + 20
+            x = int(element.get("x") or 0)
+            y = int(element.get("y") or 0)
             width = int(element.get("width") or 0)
             height = int(element.get("height") or 0)
             value = element.get("data-value")
@@ -46,8 +45,7 @@ def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
                 writer_options=dict(
                     quiet_zone=1.0,
                     module_width=0.5,
-                    module_height=25.0,
-                    font_path="Roboto-Bold.ttf",
+                    module_height=30.0,
                     font_size=1,
                     text_distance=0.0,
                     dpi=300,
@@ -57,12 +55,6 @@ def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
             barcode.thumbnail((width, height))
 
             label.paste(barcode, (x, y))
-            draw.text(
-                (x + 10, y - font_size - 5),
-                value,
-                fill="black",
-                font=font(font_size, bold),
-            )
 
         if "line" in tag:
             fill = element.get("fill")
@@ -90,7 +82,16 @@ def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "10").replace("px", ""))
 
-            draw.text((x, y), text, fill=fill, font=font(font_size, bold))
+            if element.get("data-type") == "barcode-text":
+                for i, char in enumerate(text, 0):
+                    draw.text(
+                        (x + ((font_size * 0.66) * i), y),
+                        char,
+                        fill="black",
+                        font=font(font_size, False),
+                    )
+            else:
+                draw.text((x, y), text, fill=fill, font=font(font_size, bold))
 
     return label
 
@@ -105,9 +106,9 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
 
         if "g" in tag and element.get("data-type") == "barcode":
             x = int(element.get("x") or 0)
-            y = int(element.get("y") or 0) + 50
+            y = int(element.get("y") or 0)
             width = int(element.get("width") or 0)
-            height = int(element.get("height") or 0) - 50
+            height = int(element.get("height") or 0)
             module_width = int(element.get("data-module-width") or 3)
             width_ratio = int(element.get("data-width-ratio") or 2)
             value = element.get("data-value")
@@ -122,9 +123,11 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "40").replace("px", ""))
 
-            doc += concat(
+            doc = concat(
+                doc,
+                "",
                 f"^BY{module_width},{width_ratio},{height}",
-                f"^FO{x},{y}^BCN,{height},Y,Y,Y,D^FD{value}^FS",
+                f"^FO{x},{y}^BCN,{height},N,Y,Y,D^FD{value}^FS",
             )
 
         if "line" in tag:
@@ -137,7 +140,9 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
             width = x2 - x1 if x2 != x1 else stroke
             height = y2 - y1 if y2 != y1 else stroke
 
-            doc += concat(
+            doc = concat(
+                doc,
+                "",
                 f"^FO{x1},{y1}^GB{width},{height},{stroke}^FS",
             )
 
@@ -156,12 +161,18 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "10").replace("px", ""))
 
-            doc += concat(
+            doc = concat(
+                doc,
+                "",
                 f"^CF{'0' if bold else 'A'},{font_size}",
                 f"^FO{x},{y}^FD{text}^FS",
             )
 
-    doc += concat("^XZ")
+    doc = concat(
+        doc,
+        "",
+        "^XZ",
+    )
 
     return doc
 
@@ -172,7 +183,7 @@ def render_label(label: str, label_type: str, template_type: str, **kwargs) -> s
 
     if template_type == "SVG" and label_type == "PDF":
         pdf = generate_pdf_from_svg_label(label, **kwargs)
-        pdf.save(result, label_type)
+        pdf.save(result, label_type, resolution=300)
 
     elif template_type == "ZPL" and label_type == "PDF":
         width, height = kwargs.get("width"), kwargs.get("height")

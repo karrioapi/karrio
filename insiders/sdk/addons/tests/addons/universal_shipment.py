@@ -34,6 +34,7 @@ class TestUniversalShipping(unittest.TestCase):
             ShipmentRequest(
                 **{
                     **shipment_request_data,
+                    "label_type": "PDF",
                     "parcels": [
                         shipment_request_data["parcels"][0],
                         shipment_request_data["parcels"][0],
@@ -79,7 +80,7 @@ settings_data = {
             "international": False,
         },
     ],
-    "metadata": {"APP_ID": "00", "SERIAL": "000999990002975565"},
+    "metadata": {"APP_ID": "00", "SERIAL": "00099999000"},
 }
 
 shipment_request_data = {
@@ -154,14 +155,14 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_id": "universal",
         "label": ANY,
-        "label_type": "ZPL",
-        "shipment_identifier": ANY,
-        "tracking_number": ANY,
+        "label_type": "PDF",
         "meta": {
             "service_name": "Premium",
-            "tracking_identifiers": [ANY, ANY],
-            "tracking_numbers": [ANY, ANY],
+            "tracking_identifiers": ANY,
+            "tracking_numbers": ANY,
         },
+        "shipment_identifier": ANY,
+        "tracking_number": ANY,
     },
     [],
 ]
