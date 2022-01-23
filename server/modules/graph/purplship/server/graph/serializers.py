@@ -29,7 +29,7 @@ class UserModelSerializer(ModelSerializer):
         model = User
         extra_kwargs = {
             field: {"read_only": True}
-            for field in ["is_staff", "last_login", "date_joined"]
+            for field in ["id", "is_staff", "last_login", "date_joined"]
         }
         fields = [
             "email",
@@ -62,12 +62,7 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
 
     class Meta:
         model = manager.Address
-        extra_kwargs = {
-            **{key: {"required": True} for key in ["country_code"]},
-            **{
-                key: {"read_only": False} for key in ["validate_location", "validation"]
-            },
-        }
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "validation"]}
         exclude = ["created_at", "updated_at", "created_by", "validation"]
 
 
@@ -80,6 +75,7 @@ class CommodityModelSerializer(ModelSerializer):
     class Meta:
         model = manager.Commodity
         exclude = ["created_at", "updated_at", "created_by", "parent"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "parent"]}
 
 
 @owned_model_serializer
@@ -94,6 +90,7 @@ class CustomsModelSerializer(ModelSerializer):
     class Meta:
         model = manager.Customs
         exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict):
@@ -140,6 +137,7 @@ class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
     class Meta:
         model = manager.Parcel
         exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
 @owned_model_serializer
@@ -151,6 +149,7 @@ class TemplateModelSerializer(ModelSerializer):
     class Meta:
         model = graph.Template
         exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> graph.Template:
@@ -236,6 +235,7 @@ class ServiceLevelModelSerializer(ModelSerializer):
     class Meta:
         model = providers.ServiceLevel
         exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
 @owned_model_serializer
@@ -288,6 +288,7 @@ def create_carrier_model_serializers(partial: bool = False):
 
         class Meta:
             model = carrier_model
+            extra_kwargs = {field: {"read_only": True} for field in ["id"]}
             exclude = (
                 "id",
                 "created_at",
@@ -323,6 +324,7 @@ CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
 class ConnectionModelSerializerBase(ModelSerializer):
     class Meta:
         model = providers.Carrier
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
         exclude = [
             "created_at",
             "updated_at",

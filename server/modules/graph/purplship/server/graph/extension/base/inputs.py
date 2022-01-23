@@ -12,9 +12,9 @@ import purplship.server.graph.extension.base.types as types
 def create_address_input(optional: bool = False) -> graphene.InputObjectType:
     _method = "Partial" if optional else ""
     _type = (
-        model_serializers.AddressModelSerializer
+        make_fields_optional(model_serializers.AddressModelSerializer)
         if optional
-        else make_fields_optional(model_serializers.AddressModelSerializer)
+        else exclude_id_field(model_serializers.AddressModelSerializer)
     )
 
     return type(
@@ -95,11 +95,9 @@ def create_customs_input(optional: bool = False) -> graphene.InputObjectType:
 def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     _method = "Partial" if optional else ""
     _type = (
-        model_serializers.ParcelModelSerializer
+        make_fields_optional(exclude_id_field(model_serializers.ParcelModelSerializer))
         if optional
-        else make_fields_optional(
-            exclude_id_field(model_serializers.ParcelModelSerializer)
-        )
+        else exclude_id_field(model_serializers.ParcelModelSerializer)
     )
 
     return type(

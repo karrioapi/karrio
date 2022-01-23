@@ -3192,6 +3192,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "parent",
+              "type": {
+                "kind": "OBJECT",
+                "name": "CommodityType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "metadata",
@@ -25924,16 +25936,6 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "country_code",
               "type": {
                 "kind": "NON_NULL",
@@ -27425,16 +27427,6 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "weight_unit",
               "type": {
                 "kind": "ENUM",
@@ -27968,16 +27960,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": null,
               "description": null,

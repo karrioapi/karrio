@@ -258,7 +258,6 @@ class CommodityType(BaseObjectType):
             "customs",
             "parcel",
             "children",
-            "parent",
         )
 
     def resolve_parent_id(self, info):
