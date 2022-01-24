@@ -241,7 +241,7 @@ def shipment_request(
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
                         Description=item.description or "N/A",
-                        Value=((item.quantity or 1) * (item.value_amount or 0.0)),
+                        Value=item.value_amount or 0.0,
                         IsDomestic=None,
                         CommodityCode=item.sku,
                         ScheduleB=None,
