@@ -81,8 +81,8 @@ shipment_request_data = {
 
 ParsedShipmentResponse = [
     {
-        "carrier_id": "custom_carrier",
-        "carrier_name": "generic",
+        "carrier_id": "custom-carrier",
+        "carrier_name": "custom_carrier",
         "label": ANY,
         "label_type": "ZPL",
         "meta": {"service_name": "carrier_premium"},

@@ -14,11 +14,12 @@ from purplship.providers.generic.utils import Settings as BaseSettings
 class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
     """Generic connection settings."""
 
-    name: str  # noqa
+    verbose_name: str
+    custom_carrier_name: str
 
     id: str = None
     test: bool = False
-    carrier_id: str = "generic"
+    carrier_id: str = "custom-carrier"
     account_country_code: str = None
     metadata: dict = {}
 

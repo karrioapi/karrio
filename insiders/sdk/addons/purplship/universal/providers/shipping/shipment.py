@@ -29,7 +29,7 @@ def _extract_details(
     service_label: ServiceLabel, settings: ShippingMixinSettings
 ) -> ShipmentDetails:
     return ShipmentDetails(
-        carrier_name=settings.carrier_name,
+        carrier_name=settings.custom_carrier_name,
         carrier_id=settings.carrier_id,
         label=service_label.label,
         label_type=service_label.label_type,

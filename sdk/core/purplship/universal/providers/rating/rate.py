@@ -31,7 +31,6 @@ def _extract_details(
     service: ServiceLevel, settings: RatingMixinSettings
 ) -> RateDetails:
     return RateDetails(
-        carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=service.currency,
         transit_days=service.estimated_transit_days,
@@ -39,6 +38,7 @@ def _extract_details(
         base_charge=service.cost,
         total_charge=service.cost,
         meta=dict(service_name=service.service_name),
+        carrier_name=getattr(settings, "custom_carrier_name", settings.carrier_name),
     )
 
 

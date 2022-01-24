@@ -56,8 +56,7 @@ if __name__ == "__main__":
 
 
 settings_data = {
-    "name": "Custom Carrier",
-    "carrier_id": "universal",
+    "carrier_id": "custom-carrier",
     "services": [
         {
             "service_name": "Standard",
@@ -139,7 +138,8 @@ shipment_request_data = {
 
 ParsedShipmentResponse = [
     {
-        "carrier_id": "universal",
+        "carrier_id": "custom-carrier",
+        "carrier_name": "custom_carrier",
         "label": ANY,
         "label_type": "ZPL",
         "shipment_identifier": ANY,
@@ -153,7 +153,8 @@ ParsedShipmentResponse = [
 
 ParsedMultiPieceShipmentResponse = [
     {
-        "carrier_id": "universal",
+        "carrier_id": "custom-carrier",
+        "carrier_name": "custom_carrier",
         "label": ANY,
         "label_type": "PDF",
         "meta": {

@@ -43,8 +43,8 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 100.0,
-            "carrier_id": "custom_carrier",
-            "carrier_name": "generic",
+            "carrier_id": "custom-carrier",
+            "carrier_name": "custom_carrier",
             "currency": "USD",
             "meta": {"service_name": "Standard Service"},
             "service": "standard_service",

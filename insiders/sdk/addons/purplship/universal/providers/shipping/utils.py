@@ -11,7 +11,8 @@ from purplship.core.models import ServiceLevel
 class ShippingMixinSettings(BaseSettings):
     """Universal shipping mixin settings."""
 
-    name: str = ""
+    verbose_name: str = "Custom Carrier"
+    custom_carrier_name: str = "custom_carrier"
 
     # Additional properties
     services: List[ServiceLevel] = JList[ServiceLevel]

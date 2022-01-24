@@ -2,8 +2,9 @@ import purplship
 
 gateway = purplship.gateway["generic"].create(
     {
-        "name": "Custom Carrier",
-        "carrier_id": "custom_carrier",
+        "carrier_id": "custom-carrier",
+        "custom_carrier_name": "custom_carrier",
+        "verbose_name": "Custom Carrier",
         "services": [
             dict(
                 service_name="Standard Service",

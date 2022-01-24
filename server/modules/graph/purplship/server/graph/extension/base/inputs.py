@@ -95,7 +95,7 @@ def create_customs_input(optional: bool = False) -> graphene.InputObjectType:
 def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     _method = "Partial" if optional else ""
     _type = (
-        make_fields_optional(exclude_id_field(model_serializers.ParcelModelSerializer))
+        make_fields_optional(model_serializers.ParcelModelSerializer)
         if optional
         else exclude_id_field(model_serializers.ParcelModelSerializer)
     )
