@@ -16592,7 +16592,23 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "name",
+              "name": "verbose_name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "custom_carrier_name",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -22110,7 +22126,21 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "name",
+              "name": "verbose_name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "custom_carrier_name",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -24775,7 +24805,17 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "name",
+              "name": "verbose_name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "custom_carrier_name",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -27427,6 +27467,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "weight_unit",
               "type": {
                 "kind": "ENUM",
@@ -27960,6 +28010,16 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
             {
               "defaultValue": null,
               "description": null,
