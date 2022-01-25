@@ -3,7 +3,6 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from purplship.core.utils import DP
 from purplship.server.serializers import (
     ModelSerializer,
     save_one_to_one_data,
@@ -245,6 +244,7 @@ class LabelTemplateModelSerializer(ModelSerializer):
     class Meta:
         model = providers.LabelTemplate
         exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
 def create_carrier_model_serializers(partial: bool = False):

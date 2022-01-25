@@ -60,6 +60,10 @@ DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
+LABEL_TEMPLATE_TYPES = [
+    ("SVG", "SVG"),
+    ("ZPL", "ZPL"),
+]
 
 
 class StringListField(ListField):

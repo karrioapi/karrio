@@ -113,38 +113,81 @@ def create_parcel_input(optional: bool = False) -> graphene.InputObjectType:
     )
 
 
+def create_label_template_input(optional: bool = False) -> graphene.InputObjectType:
+    _method = "Partial" if optional else ""
+    _type = (
+        make_fields_optional(model_serializers.LabelTemplateModelSerializer)
+        if optional
+        else exclude_id_field(model_serializers.LabelTemplateModelSerializer)
+    )
+
+    return type(
+        f"{_method}LabelTemplate",
+        (serializer_to_input(_type),),
+        dict(
+            template_type=types.LabelTypeEnum(required=False),
+        ),
+    )
+
+
+def create_service_level_input(optional: bool = False) -> graphene.InputObjectType:
+    _method = "Partial" if optional else ""
+    _type = (
+        make_fields_optional(model_serializers.ServiceLevelModelSerializer)
+        if optional
+        else exclude_id_field(model_serializers.ServiceLevelModelSerializer)
+    )
+
+    return type(
+        f"{_method}ServiceLevel",
+        (serializer_to_input(_type),),
+        dict(
+            weight_unit=types.WeightUnitEnum(required=False),
+            dimension_unit=types.DimensionUnitEnum(required=False),
+        ),
+    )
+
+
 def create_connection_input(optional: bool = False) -> graphene.InputObjectType:
     _method = "Update" if optional else "Create"
     _fields = dict()
 
     for name, serializer in model_serializers.CARRIER_MODEL_SERIALIZERS.items():
+        _extra_fields = dict()
+        _serializer = make_fields_optional(serializer) if optional else serializer
+
+        if hasattr(_serializer.Meta.model, "label_template"):
+            _extra_fields["label_template"] = graphene.Field(
+                UpdateLabelTemplateInput if optional else CreateLabelTemplateInput,
+                required=False,
+            )
+
+        if hasattr(_serializer.Meta.model, "services"):
+            _extra_fields["services"] = graphene.List(
+                UpdateServiceLevelInput if optional else CreateServiceLevelInput,
+                required=False,
+            )
+
+        _input = type(
+            f"{_method}{_serializer.__name__}",
+            (serializer_to_input(_serializer),),
+            _extra_fields,
+        )
+        _field = type(
+            f"{_method}{serializer.__name__}",
+            (_input,),
+            dict(
+                carrier_id=graphene.String(required=not optional),
+                metadata=types.generic.GenericScalar(),
+            ),
+        )
         _fields.update(
             {
-                name: graphene.Field(
-                    type(
-                        f"{_method}{serializer.__name__}",
-                        (
-                            serializer_to_input(
-                                make_fields_optional(serializer)
-                                if optional
-                                else serializer
-                            ),
-                        ),
-                        dict(
-                            carrier_id=graphene.String(required=not optional),
-                            metadata=types.generic.GenericScalar(),
-                        ),
-                    ),
-                    required=False,
-                ),
+                name: graphene.Field(_field, required=False),
             }
         )
 
-    return type(
-        f"Settings",
-        (object,),
-        _fields,
-    )
+    return type("Settings", (object,), _fields)
 
 
 PaymentInput = create_payment_input()
@@ -164,6 +207,11 @@ CreateCustomsTemplateInput = type("CreateCustomsTemplate", (CreateCustomsInput,)
 UpdateCustomsTemplateInput = type("UpdateCustomsTemplate", (UpdateCustomsInput,), {})
 CreateParcelTemplateInput = type("CreateParcelTemplate", (CreateParcelInput,), {})
 UpdateParcelTemplateInput = type("UpdateParcelTemplate", (UpdateParcelInput,), {})
+
+CreateLabelTemplateInput = create_label_template_input()
+UpdateLabelTemplateInput = create_label_template_input(optional=True)
+CreateServiceLevelInput = create_service_level_input()
+UpdateServiceLevelInput = create_service_level_input(optional=True)
 
 CreateConnectionInput = create_connection_input()
 UpdateConnectionInput = create_connection_input(optional=True)

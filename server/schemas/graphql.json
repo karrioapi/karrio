@@ -21315,7 +21315,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ServiceLevelModelSerializerInput",
+                  "name": "ServiceLevel",
                   "ofType": null
                 }
               }
@@ -21418,8 +21418,8 @@
               "description": null,
               "name": "dimension_unit",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "DimensionUnitEnum",
                 "ofType": null
               }
             },
@@ -21428,8 +21428,8 @@
               "description": null,
               "name": "weight_unit",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "WeightUnitEnum",
                 "ofType": null
               }
             },
@@ -21574,7 +21574,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "ServiceLevelModelSerializerInput",
+          "name": "ServiceLevel",
           "possibleTypes": null
         },
         {
@@ -22064,7 +22064,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ServiceLevelModelSerializerInput",
+                  "name": "ServiceLevel",
                   "ofType": null
                 }
               }
@@ -22075,7 +22075,7 @@
               "name": "label_template",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "LabelTemplateModelSerializerInput",
+                "name": "LabelTemplate",
                 "ofType": null
               }
             },
@@ -22165,20 +22165,10 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "template_type",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "LabelTypeEnum",
                 "ofType": null
               }
             },
@@ -22243,7 +22233,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "LabelTemplateModelSerializerInput",
+          "name": "LabelTemplate",
           "possibleTypes": null
         },
         {
@@ -24247,7 +24237,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ServiceLevelModelSerializerInput",
+                  "name": "PartialServiceLevel",
                   "ofType": null
                 }
               }
@@ -24326,6 +24316,177 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "UpdateDHLPolandSettings",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "dimension_unit",
+              "type": {
+                "kind": "ENUM",
+                "name": "DimensionUnitEnum",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "weight_unit",
+              "type": {
+                "kind": "ENUM",
+                "name": "WeightUnitEnum",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "currency",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "service_name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "service_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "active",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "cost",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "estimated_transit_days",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "max_weight",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "max_width",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "max_height",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "max_length",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "domicile",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "international",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "PartialServiceLevel",
           "possibleTypes": null
         },
         {
@@ -24747,7 +24908,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ServiceLevelModelSerializerInput",
+                  "name": "PartialServiceLevel",
                   "ofType": null
                 }
               }
@@ -24758,7 +24919,7 @@
               "name": "label_template",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "LabelTemplateModelSerializerInput",
+                "name": "PartialLabelTemplate",
                 "ofType": null
               }
             },
@@ -24826,6 +24987,87 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "UpdateGenericSettings",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "template_type",
+              "type": {
+                "kind": "ENUM",
+                "name": "LabelTypeEnum",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "alias",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "template",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "width",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "height",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "PartialLabelTemplate",
           "possibleTypes": null
         },
         {
