@@ -215,6 +215,26 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "order_id",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "source",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "created_after",
                   "type": {
                     "kind": "SCALAR",
@@ -5915,9 +5935,13 @@
               "isDeprecated": false,
               "name": "shipping_address",
               "type": {
-                "kind": "OBJECT",
-                "name": "AddressType",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "AddressType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -6157,7 +6181,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "partially_fulfilled"
+              "name": "partial"
             }
           ],
           "fields": null,

@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import validate_slug
+from django.core.validators import RegexValidator
 from purplship.core.utils import DP
 from purplship.server.providers.models.carrier import Carrier, COUNTRIES
 
@@ -12,7 +12,7 @@ class GenericSettings(Carrier):
 
     verbose_name = models.CharField(max_length=50)
     custom_carrier_name = models.CharField(
-        max_length=50, unique=True, validators=[validate_slug]
+        max_length=50, unique=True, validators=[RegexValidator(r"^[a-z0-9_]+$")]
     )
     services = models.ManyToManyField("ServiceLevel", blank=True)
     label_template = models.ForeignKey(

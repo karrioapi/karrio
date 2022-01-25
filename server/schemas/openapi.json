@@ -792,7 +792,7 @@
                                 "cancelled",
                                 "fulfilled",
                                 "delivered",
-                                "partially_fulfilled"
+                                "partial"
                             ]
                         }
                     },
@@ -5408,7 +5408,7 @@
                             "cancelled",
                             "fulfilled",
                             "delivered",
-                            "partially_fulfilled"
+                            "partial"
                         ]
                     },
                     "shipping_address": {
@@ -5498,7 +5498,8 @@
                         "title": "Source",
                         "minLength": 1,
                         "type": "string",
-                        "description": "The order's source."
+                        "description": "\nThe order's source.\n\ne.g. API, POS, ERP, Shopify, Woocommerce, etc.\n",
+                        "default": "API"
                     },
                     "shipping_address": {
                         "$ref": "#/components/schemas/AddressData"

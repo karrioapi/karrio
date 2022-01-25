@@ -14,6 +14,8 @@ class OrderFilter(django_filters.FilterSet):
     address = django_filters.CharFilter(
         field_name="shipping_address__address_line1", lookup_expr="icontains"
     )
+    order_id = django_filters.CharFilter(field_name="order_id", lookup_expr="exact")
+    source = django_filters.CharFilter(field_name="source", lookup_expr="exact")
     created_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
@@ -53,7 +55,7 @@ class OrderFilter(django_filters.FilterSet):
 
 
 class OrderType(BaseObjectType):
-    shipping_address = graphene.Field(AddressType)
+    shipping_address = graphene.Field(graphene.NonNull(AddressType))
     line_items = graphene.List(
         graphene.NonNull(CommodityType), required=True, default_value=[]
     )

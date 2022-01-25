@@ -134,7 +134,7 @@ def compute_order_status(order: models.Order) -> str:
         return serializers.OrderStatus.fulfilled.value
 
     if line_items_are_partially_fulfilled:
-        return serializers.OrderStatus.partially_fulfilled.value
+        return serializers.OrderStatus.partial.value
 
     return serializers.OrderStatus.created.value
 
@@ -167,7 +167,7 @@ def can_mutate_order(
 
     if delete and order.status in [
         serializers.OrderStatus.fulfilled.value,
-        serializers.OrderStatus.partially_fulfilled.value,
+        serializers.OrderStatus.partial.value,
     ]:
         raise PurplshipAPIException(
             f"The order is '{order.status}' please cancel all related shipments before...",

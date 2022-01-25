@@ -69,7 +69,7 @@ def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
         if "text" in tag:
             x = int(element.get("x") or 0)
             y = int(element.get("y") or 0) - 20
-            text = element.text
+            text = element.text or ""
             fill = element.get("fill")
             style_text = element.get("style")
             style = dict(

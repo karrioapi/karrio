@@ -18,7 +18,7 @@ class OrderStatus(Enum):
     cancelled = "cancelled"
     fulfilled = "fulfilled"
     delivered = "delivered"
-    partially_fulfilled = "partially_fulfilled"
+    partial = "partial"
 
 
 ORDER_STATUS = [(c.value, c.value) for c in list(OrderStatus)]
@@ -32,7 +32,15 @@ ORDER_STATUS = [(c.value, c.value) for c in list(OrderStatus)]
 )
 class OrderData(Serializer):
     order_id = fields.CharField(required=True, help_text="The source' order id.")
-    source = fields.CharField(required=False, help_text="The order's source.")
+    source = fields.CharField(
+        required=False,
+        default="API",
+        help_text="""
+    The order's source.
+
+    e.g. API, POS, ERP, Shopify, Woocommerce, etc.
+    """,
+    )
     shipping_address = AddressData(
         required=True,
         help_text="The customer address for the order.",

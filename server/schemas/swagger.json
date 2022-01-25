@@ -646,7 +646,7 @@
                             "cancelled",
                             "fulfilled",
                             "delivered",
-                            "partially_fulfilled"
+                            "partial"
                         ]
                     },
                     {
@@ -4797,7 +4797,7 @@
                         "cancelled",
                         "fulfilled",
                         "delivered",
-                        "partially_fulfilled"
+                        "partial"
                     ],
                     "default": "created"
                 },
@@ -4887,8 +4887,9 @@
                 },
                 "source": {
                     "title": "Source",
-                    "description": "The order's source.",
+                    "description": "\nThe order's source.\n\ne.g. API, POS, ERP, Shopify, Woocommerce, etc.\n",
                     "type": "string",
+                    "default": "API",
                     "minLength": 1
                 },
                 "shipping_address": {
