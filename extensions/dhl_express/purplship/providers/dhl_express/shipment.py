@@ -208,7 +208,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 ExportLineItem=[
                     ExportLineItem(
                         LineNumber=index,
-                        Quantity=item.quantity,
+                        Quantity=item.quantity or 1,
                         QuantityUnit='PCS',
                         Description=item.description or 'N/A',
                         Value=item.value_amount or 0.0,
@@ -226,7 +226,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ),
                         License=None,
                         LicenseSymbol=None,
-                        ManufactureCountryCode=item.origin_country,
+                        ManufactureCountryCode=item.origin_country or recipient.country_code,
                         ManufactureCountryName=Location(item.origin_country).as_country_name,
                         ImportTaxManagedOutsideDhlExpress=None,
                         AdditionalInformation=None,
