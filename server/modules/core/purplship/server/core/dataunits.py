@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.urls import reverse
-from django.forms import model_to_dict
 from rest_framework.request import Request
 
 from purplship.references import collect_providers_data, collect_references

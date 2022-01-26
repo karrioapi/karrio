@@ -512,6 +512,65 @@
                 ]
             }
         },
+        "/v1/carriers/{carrier_name}/services": {
+            "get": {
+                "tags": [
+                    "Carriers"
+                ],
+                "summary": "Get carrier services",
+                "description": "Retrieve a carrier's services",
+                "operationId": "&&get_services",
+                "parameters": [
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_poland",
+                                "dhl_universal",
+                                "dicom",
+                                "eshipper",
+                                "fedex",
+                                "freightcom",
+                                "generic",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/customs_info": {
             "get": {
                 "tags": [

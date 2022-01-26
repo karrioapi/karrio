@@ -1,14 +1,18 @@
 import logging
 
+from drf_yasg import openapi
 from django.urls import path
-from purplship.server import serializers
+from rest_framework import status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
+from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
+from purplship.server import serializers
 from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.views.api import GenericAPIView
+from purplship.server.core.views.api import GenericAPIView, APIView
 from purplship.server.core.gateway import Carriers
+from purplship.server.core import dataunits
 from purplship.server.core.serializers import (
     CarrierSettings,
     ErrorResponse,
@@ -82,4 +86,42 @@ class CarrierList(GenericAPIView):
         return self.get_paginated_response(response)
 
 
+class CarrierServices(APIView):
+    @swagger_auto_schema(
+        tags=["Carriers"],
+        operation_id=f"{ENDPOINT_ID}get_services",
+        operation_summary="Get carrier services",
+        manual_parameters=[
+            openapi.Parameter(
+                "carrier_name",
+                openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                enum=[c for c, _ in CARRIERS],
+            )
+        ],
+        responses={
+            200: openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True)
+        },
+    )
+    def get(self, request: Request, carrier_name: str):
+        """
+        Retrieve a carrier's services
+        """
+        references = dataunits.contextual_reference(request)
+
+        if carrier_name not in references["carriers"]:
+            raise Exception(f"Unknown carrier: {carrier_name}")
+
+        services = references["services"].get(carrier_name, {})
+
+        return Response(services, status=status.HTTP_200_OK)
+
+
 router.urls.append(path("carriers", CarrierList.as_view()))
+router.urls.append(
+    path(
+        "carriers/<str:carrier_name>/services",
+        CarrierServices.as_view(),
+        name="carrier-services",
+    )
+)

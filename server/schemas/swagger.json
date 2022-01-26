@@ -435,6 +435,65 @@
             },
             "parameters": []
         },
+        "/v1/carriers/{carrier_name}/services": {
+            "get": {
+                "operationId": "&&get_services",
+                "summary": "Get carrier services",
+                "description": "Retrieve a carrier's services",
+                "parameters": [
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_poland",
+                            "dhl_universal",
+                            "dicom",
+                            "eshipper",
+                            "fedex",
+                            "freightcom",
+                            "generic",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress"
+                        ],
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                },
+                "tags": [
+                    "Carriers"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "carrier_name",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
         "/v1/customs_info": {
             "get": {
                 "operationId": "$$list",
