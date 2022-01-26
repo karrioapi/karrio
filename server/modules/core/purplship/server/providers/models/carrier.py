@@ -4,6 +4,7 @@ from typing import Dict
 from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.core.validators import RegexValidator
 
 from purplship import gateway
 from purplship.core.utils import Enum
@@ -142,7 +143,9 @@ class ServiceLevel(OwnedEntity):
         editable=False,
     )
     service_name = models.CharField(max_length=50)
-    service_code = models.CharField(max_length=50)
+    service_code = models.CharField(
+        max_length=50, validators=[RegexValidator(r"^[a-z0-9_]+$")]
+    )
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
