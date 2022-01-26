@@ -260,7 +260,9 @@ def shipment_request(
                         ),
                         License=None,
                         LicenseSymbol=None,
-                        ManufactureCountryCode=item.origin_country,
+                        ManufactureCountryCode=(
+                            item.origin_country or recipient.country_code
+                        ),
                         ManufactureCountryName=Location(
                             item.origin_country
                         ).as_country_name,
