@@ -169,13 +169,16 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
-        save_one_to_one_data(
-            "customs",
-            CustomsSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
+
+        if "customs" in validated_data:
+            changes.append("customs")
+            instance.customs = save_one_to_one_data(
+                "customs",
+                CustomsSerializer,
+                instance,
+                payload=validated_data,
+                context=context,
+            )
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})

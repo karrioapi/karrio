@@ -285,7 +285,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
                 <Weight>4</Weight>
                 <WeightUnit>K</WeightUnit>
             </GrossWeight>
-            <ManufactureCountryCode>BE</ManufactureCountryCode>
+            <ManufactureCountryCode>US</ManufactureCountryCode>
         </ExportLineItem>
         <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
         <ShipmentPurpose>PERSONAL</ShipmentPurpose>

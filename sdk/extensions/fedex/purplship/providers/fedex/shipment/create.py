@@ -34,6 +34,9 @@ from fedex_lib.ship_service_v26 import (
     CommercialInvoice,
     CustomerReference,
     CustomerReferenceType,
+    ShippingDocumentSpecification,
+    CommercialInvoiceDetail,
+    ShippingDocumentFormat,
 )
 from purplship.core.utils import (
     Serializable,
@@ -74,21 +77,41 @@ def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     details = XP.find("CompletedPackageDetails", response)
-    shipment = _extract_shipment(details, settings) if any(details) else None
+    documents = XP.find("ShipmentDocuments", response)
+
+    shipment = (
+        _extract_shipment((details, documents), settings) if len(details) > 0 else None
+    )
     return shipment, parse_error_response(response, settings)
 
 
-def _extract_shipment(pieces: List[Element], settings: Settings) -> ShipmentDetails:
+def _extract_shipment(
+    details: Tuple[List[Element], List[Element]], settings: Settings
+) -> ShipmentDetails:
+    pieces, docs = details
     tracking_numbers = [
         getattr(XP.find("TrackingNumber", piece, first=True), "text", None)
         for piece in pieces
     ]
+    [master_id, *_] = tracking_numbers
+
     labels = [
         getattr(XP.find("Image", piece, first=True), "text", None) for piece in pieces
     ]
     label_type = getattr(XP.find("ImageType", pieces[0], first=True), "text", None)
-    [master_id, *_] = tracking_numbers
+
+    invoices = [
+        getattr(XP.find("Image", doc, first=True), "text", None) for doc in docs
+    ]
+    doc_type = (
+        getattr(XP.find("ImageType", docs[0], first=True), "text", None)
+        if len(docs) > 0
+        else "PDF"
+    )
+
     label = labels[0] if len(labels) == 1 else bundle_base64(labels, label_type)
+    invoice = invoices[0] if len(invoices) == 1 else bundle_base64(invoices, doc_type)
+    # invoice = None
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -96,7 +119,10 @@ def _extract_shipment(pieces: List[Element], settings: Settings) -> ShipmentDeta
         tracking_number=master_id,
         shipment_identifier=master_id,
         label=label,
-        meta=dict(tracking_numbers=tracking_numbers),
+        meta={
+            "tracking_numbers": tracking_numbers,
+            **({"invoice": invoice} if invoice else {}),
+        },
     )
 
 
@@ -319,13 +345,13 @@ def shipment_request(
                                 Currency=(
                                     getattr(duty, "currency", options.currency) or "USD"
                                 ),
-                                Amount=getattr(
-                                    duty, "declared_value", options.declared_value
+                                Amount=(
+                                    getattr(
+                                        duty, "declared_value", options.declared_value
+                                    )
+                                    or 0.0
                                 ),
                             )
-                            if getattr(duty, "declared_value", options.declared_value)
-                            is not None
-                            else None
                         ),
                         FreightOnValue=None,
                         InsuranceCharges=None,
@@ -359,7 +385,9 @@ def shipment_request(
                                 NumberOfPieces=item.quantity,
                                 Description=item.description or "N/A",
                                 Purpose=None,
-                                CountryOfManufacture=item.origin_country,
+                                CountryOfManufacture=(
+                                    item.origin_country or shipper.country_code
+                                ),
                                 HarmonizedCode=None,
                                 Weight=FedexWeight(
                                     Units=package.weight_unit.value,
@@ -404,7 +432,34 @@ def shipment_request(
                     PrintedLabelOrigin=None,
                     CustomerSpecifiedDetail=None,
                 ),
-                ShippingDocumentSpecification=None,
+                ShippingDocumentSpecification=ShippingDocumentSpecification(
+                    ShippingDocumentTypes=["COMMERCIAL_INVOICE"],
+                    NotificationContentSpecification=None,
+                    CertificateOfOrigin=None,
+                    CommercialInvoiceDetail=CommercialInvoiceDetail(
+                        Format=ShippingDocumentFormat(
+                            Dispositions=None,
+                            TopOfPageOffset=None,
+                            ImageType="PDF",
+                            StockType="PAPER_LETTER",
+                            ProvideInstructions=None,
+                            OptionsRequested=None,
+                            Localization=None,
+                            CustomDocumentIdentifier=None,
+                        ),
+                        CustomerImageUsages=None,
+                        FormVersion=None,
+                    ),
+                    CustomPackageDocumentDetail=None,
+                    CustomShipmentDocumentDetail=None,
+                    ExportDeclarationDetail=None,
+                    GeneralAgencyAgreementDetail=None,
+                    NaftaCertificateOfOriginDetail=None,
+                    DangerousGoodsShippersDeclarationDetail=None,
+                    FreightAddressLabelDetail=None,
+                    FreightBillOfLadingDetail=None,
+                    ReturnInstructionsDetail=None,
+                ),
                 RateRequestTypes=None,
                 EdtRequestType=None,
                 MasterTrackingId=(

@@ -261,7 +261,7 @@ def shipment_request(
                         License=None,
                         LicenseSymbol=None,
                         ManufactureCountryCode=(
-                            item.origin_country or recipient.country_code
+                            item.origin_country or shipper.country_code
                         ),
                         ManufactureCountryName=Location(
                             item.origin_country
