@@ -154,7 +154,6 @@ class Rate:
     extra_charges: List[ChargeDetails] = []
     id: str = None
     meta: dict = None
-    carrier_ref: str = None
     test_mode: bool = None
     object_type: str = "rate"
 

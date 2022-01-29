@@ -976,12 +976,6 @@ class Rate(EntitySerializer):
     meta = PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
-    carrier_ref = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The system carrier configuration id",
-    )
     test_mode = BooleanField(
         required=True,
         help_text="Specified whether it was created with a carrier in test mode",

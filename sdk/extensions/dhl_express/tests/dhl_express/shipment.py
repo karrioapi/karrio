@@ -154,7 +154,7 @@ ParsedShipmentResponse = [
         "carrier_id": "carrier_id",
         "carrier_name": "dhl_express",
         "label": ANY,
-        "meta": {"custom_invoice": ANY},
+        "meta": {"invoice": ANY},
         "shipment_identifier": "0057714403",
         "tracking_number": "0057714403",
     },

@@ -84,7 +84,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
 
     label = encodebytes(label_image.OutputImage).decode("utf-8")
     meta = (
-        dict(custom_invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
+        dict(invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
         if invoice is not None
         else None
     )

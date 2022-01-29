@@ -189,7 +189,10 @@ class ShipmentSerializer(ShipmentData):
 
             instance.selected_rate = {
                 **selected_rate,
-                **({"carrier_ref": carrier.id} if carrier is not None else {}),
+                "meta": {
+                    **selected_rate.get("meta", {}),
+                    **({"carrier_connection_id": carrier.id} if carrier is not None else {}),
+                },
             }
             instance.selected_rate_carrier = carrier
             changes += ["selected_rate", "selected_rate_carrier"]

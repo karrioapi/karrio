@@ -497,9 +497,11 @@ class Rates:
                 **{
                     **DP.to_dict(rate),
                     "id": f"rat_{uuid.uuid4().hex}",
-                    "carrier_ref": carrier.id,
                     "test_mode": carrier.test,
-                    "meta": meta,
+                    "meta": {
+                        **meta,
+                        "carrier_connection_id": carrier.id,
+                    },
                 }
             )
 
