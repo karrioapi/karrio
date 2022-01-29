@@ -127,7 +127,6 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
-                "carrier_ref": carrier.pk,
                 "base_charge": 101.83,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
@@ -145,6 +144,7 @@ class TestShipmentPurchase(TestShipmentFixture):
                 "meta": {
                     "rate_provider": "canadapost",
                     "service_name": "CANADAPOST PRIORITY",
+                    "carrier_connection_id": carrier.pk,
                 },
             }
         ]
@@ -250,7 +250,6 @@ SHIPMENT_RATES = {
         {
             "id": ANY,
             "object_type": "rate",
-            "carrier_ref": ANY,
             "base_charge": 101.83,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
@@ -267,6 +266,7 @@ SHIPMENT_RATES = {
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
+                "carrier_connection_id": ANY,
             },
             "test_mode": True,
         }
@@ -389,7 +389,6 @@ SHIPMENT_PURCHASE_DATA = {"selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed9
 SELECTED_RATE = {
     "id": ANY,
     "object_type": "rate",
-    "carrier_ref": ANY,
     "base_charge": 101.83,
     "carrier_id": "canadapost",
     "carrier_name": "canadapost",
@@ -406,6 +405,7 @@ SELECTED_RATE = {
     "meta": {
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
+        "carrier_connection_id": ANY,
     },
     "test_mode": True,
 }

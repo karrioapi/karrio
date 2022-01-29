@@ -76,7 +76,6 @@ RATING_RESPONSE = {
             "id": ANY,
             "object_type": "rate",
             "meta": None,
-            "carrier_ref": ANY,
             "base_charge": 101.83,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
@@ -94,6 +93,7 @@ RATING_RESPONSE = {
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
+                        "carrier_connection_id": ANY,
             },
         }
     ],

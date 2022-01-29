@@ -186,8 +186,10 @@ SHIPPING_RESPONSE = {
             {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
             {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
         ],
-        "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
-        "carrier_ref": None,
+        "meta": {
+            "rate_provider": "canadapost",
+            "service_name": "CANADAPOST PRIORITY",
+        },
         "test_mode": True,
     },
     "selected_rate_id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
@@ -209,7 +211,6 @@ SHIPPING_RESPONSE = {
                 {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
             ],
             "meta": None,
-            "carrier_ref": None,
             "test_mode": True,
         },
         {
@@ -229,7 +230,6 @@ SHIPPING_RESPONSE = {
                 {"name": "SMB Savings", "amount": -3.77, "currency": "CAD"},
             ],
             "meta": None,
-            "carrier_ref": None,
             "test_mode": True,
         },
     ],

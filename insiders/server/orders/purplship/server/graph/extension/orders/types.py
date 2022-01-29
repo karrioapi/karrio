@@ -59,7 +59,7 @@ class OrderType(BaseObjectType):
     line_items = graphene.List(
         graphene.NonNull(CommodityType), required=True, default_value=[]
     )
-    shipments = graphene.List(graphene.NonNull(ShipmentType), default_value=[])
+    shipments = graphene.List(graphene.NonNull(ShipmentType), required=True, default_value=[])
 
     metadata = generic.GenericScalar()
     options = generic.GenericScalar()

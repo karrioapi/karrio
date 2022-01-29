@@ -456,8 +456,8 @@ ORDER_SHIPMENTS_RESPONSE = {
                     "meta": {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
+                        "carrier_connection_id": ANY,
                     },
-                    "carrier_ref": ANY,
                     "test_mode": False,
                 }
             ],
@@ -646,8 +646,8 @@ FULFILLED_ORDER_RESPONSE = {
                     "meta": {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
+                        "carrier_connection_id": ANY,
                     },
-                    "carrier_ref": ANY,
                     "test_mode": False,
                 }
             ],
@@ -919,8 +919,8 @@ PARTIAL_ORDER_RESPONSE = {
                     "meta": {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
+                        "carrier_connection_id": ANY,
                     },
-                    "carrier_ref": ANY,
                     "test_mode": False,
                 }
             ],
