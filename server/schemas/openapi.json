@@ -5212,12 +5212,6 @@
                         "description": "provider specific metadata",
                         "nullable": true
                     },
-                    "carrier_ref": {
-                        "title": "Carrier ref",
-                        "type": "string",
-                        "description": "The system carrier configuration id",
-                        "nullable": true
-                    },
                     "test_mode": {
                         "title": "Test mode",
                         "type": "boolean",

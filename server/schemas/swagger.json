@@ -4598,12 +4598,6 @@
                     "additionalProperties": true,
                     "x-nullable": true
                 },
-                "carrier_ref": {
-                    "title": "Carrier ref",
-                    "description": "The system carrier configuration id",
-                    "type": "string",
-                    "x-nullable": true
-                },
                 "test_mode": {
                     "title": "Test mode",
                     "description": "Specified whether it was created with a carrier in test mode",
