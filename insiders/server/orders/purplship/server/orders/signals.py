@@ -36,12 +36,14 @@ def commodity_mutated(sender, instance, *args, **kwargs):
         return
 
     # Retrieve all orders associated with this commodity and update their status if needed
-    for order in models.Order.objects.filter(line_items__id=instance.parent_id):
+    for order in models.Order.objects.filter(
+        line_items__id=instance.parent_id
+    ).distinct():
         status = compute_order_status(order)
         if status != order.status:
             order.status = status
             order.save(update_fields=["status"])
-            logger.info("shipment's related order successfully updated")
+            logger.info("commodity related order successfully updated")
 
 
 def shipment_updated(
@@ -58,12 +60,12 @@ def shipment_updated(
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
             line_items__children__parcel__shipment__id=instance.id
-        ):
+        ).distinct():
             status = compute_order_status(order)
             if status != order.status:
                 order.status = status
                 order.save(update_fields=["status"])
-                logger.info("shipment's related order successfully updated")
+                logger.info("shipment related order successfully updated")
 
 
 def order_updated(

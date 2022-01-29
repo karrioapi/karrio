@@ -116,7 +116,7 @@ def compute_order_status(order: models.Order) -> str:
                 serializers.ShipmentStatus.cancelled.value,
                 serializers.ShipmentStatus.created.value,
             ]
-        )
+        ).filter(parcel__isnull=False, customs__isnull=True)
         fulfilled = (
             sum([item.quantity for item in shipment_items]) >= line_item.quantity
         )
