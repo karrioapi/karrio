@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.orgs",
-    version="2021.11.5",
+    version="2022.1",
     description="Multi-carrier shipping API organization module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,6 +19,7 @@ setup(
         "django-organizations",
         "purplship.server.core",
         "purplship.server.graph",
+        "purplship.server.orders",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

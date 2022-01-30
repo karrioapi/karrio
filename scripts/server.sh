@@ -2,24 +2,6 @@
 
 source "scripts/activate-env.sh" > /dev/null 2>&1
 
-# Export environment variables
-export DEBUG_MODE=True
-export DATABASE_PORT=5432
-export DATABASE_NAME=db
-export DATABASE_ENGINE=postgresql_psycopg2
-export DATABASE_USERNAME=postgres
-export DATABASE_PASSWORD=postgres
-export LOG_DIR="${ROOT:?}/.pship"
-export WORKER_DB_DIR="${ROOT:?}/.pship"
-export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
-
-if command -v docker-machine &> /dev/null
-then
-    export DATABASE_HOST=$(docker-machine ip)
-else
-    export DATABASE_HOST="0.0.0.0"
-fi
-
 
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
@@ -28,7 +10,7 @@ if [[ "$*" == *gen:graph* ]]; then
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
-    docker rm -f swagger
+    docker rm -f swagger 2> /dev/null
 	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/server/schemas/swagger.json"
 	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
 	sleep 5 &&
@@ -100,6 +82,7 @@ elif [[ "$*" == *build:pkgs* ]]; then
 	cd -
 elif [[ "$*" == *build:insiders* ]]; then
 	cd "${ROOT:?}"
+    rm -rf "${EE_DIST}/*"
     sm=$(find "${ROOT:?}/insiders" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
     for module in ${sm}; do

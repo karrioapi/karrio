@@ -1,11 +1,13 @@
 import logging
 from typing import Optional, Any
 from django.db import transaction
+from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 from purplship.core.utils import DP, DF
 from purplship.server.core.gateway import Shipments, Carriers
+from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
@@ -54,6 +56,21 @@ class ShipmentSerializer(ShipmentData):
     test_mode = BooleanField(required=False)
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
+
+    def __init__(self, instance: models.Shipment = None, **kwargs):
+        data = kwargs.get("data") or {}
+
+        if ("parcels" in data) and (instance is not None):
+            context = getattr(self, "__context", None) or kwargs.get("context")
+            save_many_to_many_data(
+                "parcels",
+                ParcelSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
+
+        super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
@@ -125,23 +142,37 @@ class ShipmentSerializer(ShipmentData):
         carriers = validated_data.get("carriers") or []
 
         for key, val in data.items():
-            if key in models.Shipment.DIRECT_PROPS:
+            if key in models.Shipment.DIRECT_PROPS and getattr(instance, key) != val:
                 setattr(instance, key, val)
                 changes.append(key)
                 validated_data.pop(key)
 
             if key in models.Shipment.RELATIONAL_PROPS and val is None:
                 prop = getattr(instance, key)
-                changes.append(key)
                 # Delete related data from database if payload set to null
                 if hasattr(prop, "delete"):
                     prop.delete()
                     setattr(instance, key, None)
                     validated_data.pop(key)
 
-        if validated_data.get("customs") is not None:
+        save_one_to_one_data(
+            "shipper",
+            AddressSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
+        save_one_to_one_data(
+            "recipient",
+            AddressSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
+
+        if "customs" in validated_data:
             changes.append("customs")
-            save_one_to_one_data(
+            instance.customs = save_one_to_one_data(
                 "customs",
                 CustomsSerializer,
                 instance,
@@ -158,7 +189,10 @@ class ShipmentSerializer(ShipmentData):
 
             instance.selected_rate = {
                 **selected_rate,
-                **({"carrier_ref": carrier.id} if carrier is not None else {}),
+                "meta": {
+                    **selected_rate.get("meta", {}),
+                    **({"carrier_connection_id": carrier.id} if carrier is not None else {}),
+                },
             }
             instance.selected_rate_carrier = carrier
             changes += ["selected_rate", "selected_rate_carrier"]
@@ -186,6 +220,53 @@ class ShipmentPurchaseData(Serializer):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment reference",
+    )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
+    )
+
+
+class ShipmentUpdateData(Serializer):
+    label_type = ChoiceField(
+        required=False,
+        choices=LABEL_TYPES,
+        default=LabelType.PDF.name,
+        help_text="The shipment label file type.",
+    )
+    payment = Payment(required=False, help_text="The payment details")
+    options = PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""
+    <details>
+    <summary>The options available for the shipment.</summary>
+
+    ```
+    {
+        "currency": "USD",
+        "insurance": 100.00,
+        "cash_on_delivery": 30.00,
+        "shipment_date": "2020-01-01",
+        "dangerous_good": true,
+        "declared_value": 150.00,
+        "email_notification": true,
+        "email_notification_to": "shipper@mail.com",
+        "signature_confirmation": true,
+    }
+    ```
+
+    Please check the docs for carrier specific options.
+    </details>
+    """,
+    )
+    reference = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment reference",
+    )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
     )
 
 
@@ -215,6 +296,9 @@ class ShipmentRateData(Serializer):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment reference",
+    )
+    metadata = PlainDictField(
+        required=False, help_text="User metadata for the shipment"
     )
 
 
@@ -271,6 +355,47 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.rates = []
         shipment.messages = []
         shipment.save()
+
+
+def can_mutate_shipment(
+    shipment: models.Shipment,
+    update: bool = False,
+    delete: bool = False,
+    purchase: bool = False,
+):
+    if purchase and shipment.status == ShipmentStatus.purchased.value:
+        raise PurplshipAPIException(
+            f"The shipment is '{shipment.status}' and cannot be purchased again",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if update and shipment.status != ShipmentStatus.created.value:
+        raise PurplshipAPIException(
+            f"Shipment is {shipment.status} and cannot be updated anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and shipment.status not in [
+        ShipmentStatus.purchased.value,
+        ShipmentStatus.created.value,
+    ]:
+        raise PurplshipAPIException(
+            f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    if delete and shipment.pickup_shipments.exists():
+        raise PurplshipAPIException(
+            (
+                f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
+                "Please cancel this shipment pickup before."
+            ),
+            code="state_error",
+            status_code=status.HTTP_409_CONFLICT,
+        )
 
 
 def remove_shipment_tracker(shipment: models.Shipment):

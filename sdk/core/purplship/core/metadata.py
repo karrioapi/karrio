@@ -23,7 +23,7 @@ class Metadata:
     Settings: Type[Settings]
 
     # Data Units
-    services: Optional[str] = None
+    services: Optional[Type[Enum]] = None
     options: Optional[Type[Enum]] = None
     package_presets: Optional[Type[Enum]] = None
     packaging_types: Optional[Type[Enum]] = None

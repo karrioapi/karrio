@@ -4,6 +4,8 @@ source "scripts/activate-env.sh"
 
 echo "building wheel for" $1
 
+export POETRY_PYPI_TOKEN_PYPI=${REGISTRY_TOKEN}
+
 # access package
 cd "$1" || exit 1
 

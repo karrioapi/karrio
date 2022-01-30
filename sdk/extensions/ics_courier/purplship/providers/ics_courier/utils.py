@@ -20,9 +20,9 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            'http://www1.icscourier.ca/icsapiwebservice/service.asmx'
-            if self.test else
-            'http://www1.icscourier.ca/icsapicnswebservice/service.asmx'
+            "http://www1.icscourier.ca/icsapiwebservice/service.asmx"
+            if self.test
+            else "http://www1.icscourier.ca/icsapicnswebservice/service.asmx"
         )
 
     @staticmethod
@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
         prefixes = special_prefixes
 
-        for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_):
+        for node in envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_:
             apply_namespaceprefix(node, "", prefixes)
 
         return XP.export(envelope, namespacedef_=namespacedef_)

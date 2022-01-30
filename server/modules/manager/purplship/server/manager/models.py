@@ -50,6 +50,10 @@ class Address(OwnedEntity):
     validate_location = models.BooleanField(null=True)
     validation = models.JSONField(blank=True, null=True)
 
+    @property
+    def object_type(self):
+        return "address"
+
 
 class Parcel(OwnedEntity):
     class Meta:
@@ -80,6 +84,16 @@ class Parcel(OwnedEntity):
     dimension_unit = models.CharField(
         max_length=2, choices=DIMENSION_UNIT, null=True, blank=True
     )
+    items = models.ManyToManyField("Commodity", blank=True, related_name="parcel")
+    reference_number = models.CharField(max_length=100, null=True, blank=True)
+
+    def delete(self, *args, **kwargs):
+        self.items.all().delete()
+        return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "parcel"
 
 
 class Commodity(OwnedEntity):
@@ -110,6 +124,24 @@ class Commodity(OwnedEntity):
     origin_country = models.CharField(
         max_length=3, choices=COUNTRIES, null=True, blank=True
     )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children",
+    )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
+
+    def delete(self, *args, **kwargs):
+        self.children.all().delete()
+        return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "commodity"
 
 
 class CustomsManager(models.Manager):
@@ -172,11 +204,17 @@ class Customs(OwnedEntity):
 
     # System Reference fields
 
-    commodities = models.ManyToManyField("Commodity", blank=True)
+    commodities = models.ManyToManyField(
+        "Commodity", blank=True, related_name="customs"
+    )
 
     def delete(self, *args, **kwargs):
         self.commodities.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "customs_info"
 
 
 class PickupManager(models.Manager):
@@ -203,6 +241,7 @@ class Pickup(OwnedEntity):
         "test_mode",
         "pickup_charge",
         "created_by",
+        "metadata",
     ]
     objects = PickupManager()
 
@@ -233,6 +272,9 @@ class Pickup(OwnedEntity):
     address = models.ForeignKey(
         "Address", on_delete=models.CASCADE, blank=True, null=True
     )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
@@ -242,6 +284,10 @@ class Pickup(OwnedEntity):
     def delete(self, *args, **kwargs):
         handle = self.address or super()
         return handle.delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "pickup"
 
     # Computed properties
 
@@ -302,6 +348,9 @@ class Tracking(OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=partial(identity, value=[])
     )
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
@@ -325,6 +374,10 @@ class Tracking(OwnedEntity):
         return len(self.events) == 0 or (
             len(self.events) == 1 and self.events[0].get("code") == "CREATED"
         )
+
+    @property
+    def object_type(self):
+        return "tracker"
 
 
 class ShipmentManager(models.Manager):
@@ -359,6 +412,7 @@ class Shipment(OwnedEntity):
         "messages",
         "rates",
         "payment",
+        "metadata",
         "created_by",
         "reference",
     ]
@@ -382,10 +436,10 @@ class Shipment(OwnedEntity):
     )
 
     recipient = models.ForeignKey(
-        "Address", on_delete=models.CASCADE, related_name="recipient"
+        "Address", on_delete=models.CASCADE, related_name="recipient_shipment"
     )
     shipper = models.ForeignKey(
-        "Address", on_delete=models.CASCADE, related_name="shipper"
+        "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
 
@@ -397,7 +451,11 @@ class Shipment(OwnedEntity):
     reference = models.CharField(max_length=100, null=True, blank=True)
 
     customs = models.ForeignKey(
-        "Customs", on_delete=models.SET_NULL, blank=True, null=True
+        "Customs",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="shipment",
     )
 
     selected_rate = models.JSONField(blank=True, null=True)
@@ -414,18 +472,21 @@ class Shipment(OwnedEntity):
         blank=True, null=True, default=partial(identity, value=[])
     )
     meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    metadata = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     # System Reference fields
 
     rates = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
-    parcels = models.ManyToManyField("Parcel", related_name="shipment_parcels")
+    parcels = models.ManyToManyField("Parcel", related_name="shipment")
     carriers = models.ManyToManyField(
-        Carrier, blank=True, related_name="rating_carriers"
+        Carrier, blank=True, related_name="related_shipments"
     )
     selected_rate_carrier = models.ForeignKey(
         Carrier,
         on_delete=models.CASCADE,
-        related_name="selected_rate_carrier",
+        related_name="shipments",
         blank=True,
         null=True,
     )
@@ -434,6 +495,10 @@ class Shipment(OwnedEntity):
         self.parcels.all().delete()
         self.customs and self.customs.delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "shipment"
 
     # Computed properties
 

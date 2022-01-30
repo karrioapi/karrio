@@ -1,8 +1,10 @@
 from functools import partial
+from typing import Dict
 
 from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.core.validators import RegexValidator
 
 from purplship import gateway
 from purplship.core.utils import Enum
@@ -73,11 +75,20 @@ class Carrier(OwnedEntity):
         default=CarrierCapabilities.get_capabilities,
         size=len(CAPABILITIES_CHOICES),
     )
+    metadata = models.JSONField(blank=True, null=True, default=dict)
 
     objects = CarrierManager()
 
     def __str__(self):
         return self.carrier_id
+
+    @property
+    def object_type(self):
+        return "carrier"
+
+    @property
+    def carrier_name(self):
+        return self.settings.carrier_name
 
     def _linked_settings(self):
         from purplship.server.providers.models import MODELS
@@ -96,12 +107,8 @@ class Carrier(OwnedEntity):
         return self._linked_settings()
 
     @property
-    def carrier_name(self):
-        return self.settings.carrier_name
-
-    @property
     def data(self) -> CarrierSettings:
-        _extra = dict()
+        _extra: Dict = dict()
 
         if hasattr(self.settings, "services"):
             _extra.update(
@@ -136,7 +143,9 @@ class ServiceLevel(OwnedEntity):
         editable=False,
     )
     service_name = models.CharField(max_length=50)
-    service_code = models.CharField(max_length=50)
+    service_code = models.CharField(
+        max_length=50, validators=[RegexValidator(r"^[a-z0-9_]+$")]
+    )
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
@@ -158,3 +167,7 @@ class ServiceLevel(OwnedEntity):
 
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)
+
+    @property
+    def object_type(self):
+        return "service_level"

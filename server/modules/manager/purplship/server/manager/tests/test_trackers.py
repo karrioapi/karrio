@@ -63,6 +63,7 @@ RETURNED_VALUE = (
 
 TRACKING_RESPONSE = {
     "id": ANY,
+    "object_type": "tracker",
     "carrier_id": "ups_package",
     "carrier_name": "ups",
     "tracking_number": "1Z12345E6205277936",
@@ -80,4 +81,5 @@ TRACKING_RESPONSE = {
         }
     ],
     "messages": [],
+    "metadata": {},
 }

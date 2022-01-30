@@ -1,9 +1,9 @@
-from purplship.server.serializers import owned_model_serializer, ModelSerializer
-from purplship.server.events.models import Event
+import purplship.server.serializers as serializers
+import purplship.server.events.models as models
 
 
-@owned_model_serializer
-class EventSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class EventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Event
+        model = models.Event
         exclude = ["created_at", "updated_at", "created_by"]

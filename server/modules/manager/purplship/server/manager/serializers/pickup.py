@@ -15,6 +15,7 @@ from purplship.server.core.serializers import (
     PickupUpdateRequest,
     PickupCancelRequest,
     StringListField,
+    PlainDictField,
 )
 from purplship.server.manager.serializers import AddressSerializer
 import purplship.server.manager.models as models
@@ -73,6 +74,9 @@ class PickupSerializer(PickupRequest):
         required=True,
         validators=[shipment_exists],
         help_text="The list of shipments to be picked up",
+    )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the pickup"
     )
 
     def __init__(self, instance: models.Pickup = None, **kwargs):

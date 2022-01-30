@@ -2,11 +2,11 @@
     "swagger": "2.0",
     "info": {
         "title": "Purplship API",
-        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.11.2`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.1`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": "hello@purplship.com"
         },
-        "version": "2021.11.2"
+        "version": "2022.1"
     },
     "host": "app.purplship.com",
     "schemes": [
@@ -370,6 +370,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -385,7 +386,7 @@
                     {
                         "name": "test",
                         "in": "query",
-                        "description": "This flag filter out carriers in test or prod mode",
+                        "description": "This flag filter out carriers in test or live mode",
                         "required": false,
                         "type": "boolean",
                         "x-nullable": true
@@ -433,6 +434,65 @@
                 ]
             },
             "parameters": []
+        },
+        "/v1/carriers/{carrier_name}/services": {
+            "get": {
+                "operationId": "&&get_services",
+                "summary": "Get carrier services",
+                "description": "Retrieve a carrier's services",
+                "parameters": [
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_poland",
+                            "dhl_universal",
+                            "dicom",
+                            "eshipper",
+                            "fedex",
+                            "freightcom",
+                            "generic",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress"
+                        ],
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                },
+                "tags": [
+                    "Carriers"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "carrier_name",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
         },
         "/v1/customs_info": {
             "get": {
@@ -625,26 +685,104 @@
                 }
             ]
         },
-        "/v1/customs_info/{id}/commodities": {
+        "/v1/orders": {
+            "get": {
+                "operationId": "&&&&list",
+                "summary": "List all orders",
+                "description": "Retrieve all orders.",
+                "parameters": [
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "type": "string",
+                        "enum": [
+                            "created",
+                            "cancelled",
+                            "fulfilled",
+                            "delivered",
+                            "partial"
+                        ]
+                    },
+                    {
+                        "name": "created_after",
+                        "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    {
+                        "name": "created_before",
+                        "in": "query",
+                        "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "The initial index from which to return the results.",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/OrderList"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Orders"
+                ]
+            },
             "post": {
-                "operationId": "$$add_commodity",
-                "summary": "Add a commodity",
-                "description": "Add a customs commodity.",
+                "operationId": "&&&&create",
+                "summary": "Create an order",
+                "description": "Create a new order object.",
                 "parameters": [
                     {
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/CommodityData"
+                            "$ref": "#/definitions/OrderData"
                         }
+                    },
+                    {
+                        "name": "test",
+                        "in": "query",
+                        "description": "The test flag indicates whether to use a carrier configured for test.",
+                        "required": false,
+                        "type": "boolean",
+                        "default": false,
+                        "x-nullable": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Customs"
+                            "$ref": "#/definitions/Order"
                         }
                     },
                     "400": {
@@ -655,35 +793,22 @@
                     }
                 },
                 "tags": [
-                    "Customs"
-                ],
-                "x-code-samples": [
-                    {
-                        "lang": "bash",
-                        "source": "\ncurl --request POST \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"weight\": 1,\n    \"weight_unit\": \"KG\",\n    \"quantity\": 1,\n    \"sku\": \"XXXXX0000123\",\n    \"value_amount\": 25,\n    \"value_currency\": \"USD\",\n    \"origin_country\": \"CA\"\n  }'\n"
-                    }
+                    "Orders"
                 ]
             },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
+            "parameters": []
         },
-        "/v1/customs_info/{id}/commodities/{ck}": {
-            "delete": {
-                "operationId": "$$discard_commodity",
-                "summary": "Discard a commodity",
-                "description": "Discard a customs commodity.",
+        "/v1/orders/{id}": {
+            "get": {
+                "operationId": "&&&&retrieve",
+                "summary": "Retrieve an order",
+                "description": "Retrieve an order.",
                 "parameters": [],
                 "responses": {
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Operation"
+                            "$ref": "#/definitions/Order"
                         }
                     },
                     "400": {
@@ -694,22 +819,65 @@
                     }
                 },
                 "tags": [
-                    "Customs"
-                ],
-                "x-code-samples": [
+                    "Orders"
+                ]
+            },
+            "put": {
+                "operationId": "&&&&update",
+                "summary": "Update an order",
+                "description": "This operation allows for updating properties of an order including `options` and `metadata`.\nIt is not for editing the line items of an order.",
+                "parameters": [
                     {
-                        "lang": "bash",
-                        "source": "\ncurl --request DELETE \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities/<COMMODITY_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/OrderUpdateData"
+                        }
                     }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Order"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Orders"
+                ]
+            },
+            "delete": {
+                "operationId": "&&&&cancel",
+                "summary": "Cancel an order",
+                "description": "Cancel an order.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Order"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Orders"
                 ]
             },
             "parameters": [
-                {
-                    "name": "ck",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                },
                 {
                     "name": "id",
                     "in": "path",
@@ -1182,6 +1350,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1252,6 +1421,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1332,6 +1502,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1491,6 +1662,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1563,6 +1735,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1713,6 +1886,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -1760,7 +1934,7 @@
                     {
                         "name": "test",
                         "in": "query",
-                        "description": "Create shipment in test or prod mode",
+                        "description": "Create shipment in test or live mode",
                         "required": false,
                         "type": "boolean",
                         "x-nullable": true
@@ -1810,6 +1984,38 @@
                     "Shipments"
                 ]
             },
+            "put": {
+                "operationId": "$$$$$update",
+                "summary": "Update a shipment",
+                "description": "This operation allows for updating properties of a shipment including `label_type`, `reference`, `payment`, `options` and `metadata`.\nIt is not for editing the parcels of a shipment.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ShipmentUpdateData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Shipment"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Shipments"
+                ]
+            },
             "delete": {
                 "operationId": "$$$$$cancel",
                 "summary": "Cancel a shipment",
@@ -1820,134 +2026,6 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/OperationResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/customs": {
-            "post": {
-                "operationId": "$$$$$add_customs",
-                "summary": "Add a customs declaration",
-                "description": "Add the customs declaration for the shipment if non existent.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CustomsData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/options": {
-            "post": {
-                "operationId": "$$$$$set_options",
-                "summary": "Add shipment options",
-                "description": "Add one or many options to your shipment.<br/>\n**eg:**<br/>\n- add shipment **insurance**\n- specify the preferred transaction **currency**\n- setup a **cash collected on delivery** option\n\n```json\n{\n    \"insurance\": 120,\n    \"currency\": \"USD\"\n}\n```\n\nAnd many more, check additional options available in the [reference](#operation/all_references).",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "title": "options",
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                },
-                "tags": [
-                    "Shipments"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ]
-        },
-        "/v1/shipments/{id}/parcels": {
-            "post": {
-                "operationId": "$$$$$add_parcel",
-                "summary": "Add a shipment parcel",
-                "description": "Add a parcel to an existing shipment for a multi-parcel shipment.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ParcelData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Shipment"
                         }
                     },
                     "400": {
@@ -2125,6 +2203,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -2189,6 +2268,7 @@
                             "eshipper",
                             "fedex",
                             "freightcom",
+                            "generic",
                             "purolator",
                             "royalmail",
                             "sendle",
@@ -2511,6 +2591,7 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
+                "ORDERS_MANAGEMENT",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL"
@@ -2534,6 +2615,10 @@
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
+                    "type": "boolean"
+                },
+                "ORDERS_MANAGEMENT": {
+                    "title": "Orders management",
                     "type": "boolean"
                 },
                 "ADMIN": {
@@ -2995,6 +3080,13 @@
                     "type": "boolean",
                     "default": false,
                     "x-nullable": true
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "address",
+                    "minLength": 1
                 },
                 "validation": {
                     "$ref": "#/definitions/AddressValidation"
@@ -3465,6 +3557,7 @@
                         "eshipper",
                         "fedex",
                         "freightcom",
+                        "generic",
                         "purolator",
                         "royalmail",
                         "sendle",
@@ -3492,6 +3585,13 @@
                     "title": "Active",
                     "description": "\nThe active flag indicates whether the carrier account is active or not.\n",
                     "type": "boolean"
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "carrier",
+                    "minLength": 1
                 }
             }
         },
@@ -3559,7 +3659,7 @@
                     "title": "Quantity",
                     "description": "The commodity's quantity (number or item)",
                     "type": "integer",
-                    "x-nullable": true
+                    "default": 1
                 },
                 "sku": {
                     "title": "Sku",
@@ -3584,6 +3684,27 @@
                     "description": "The origin or manufacture country",
                     "type": "string",
                     "x-nullable": true
+                },
+                "parent_id": {
+                    "title": "Parent id",
+                    "description": "The id of the related order line item.",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "commodity",
+                    "minLength": 1
                 }
             }
         },
@@ -3772,9 +3893,6 @@
             "x-nullable": true
         },
         "Customs": {
-            "required": [
-                "commodities"
-            ],
             "type": "object",
             "properties": {
                 "id": {
@@ -3867,6 +3985,13 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "customs_info",
+                    "minLength": 1
                 }
             }
         },
@@ -3896,6 +4021,80 @@
                 }
             }
         },
+        "CommodityData": {
+            "description": "The parcel content items",
+            "required": [
+                "weight",
+                "weight_unit"
+            ],
+            "type": "object",
+            "properties": {
+                "weight": {
+                    "title": "Weight",
+                    "description": "The commodity's weight",
+                    "type": "number"
+                },
+                "weight_unit": {
+                    "title": "Weight unit",
+                    "description": "The commodity's weight unit",
+                    "type": "string",
+                    "enum": [
+                        "KG",
+                        "LB"
+                    ]
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "A description of the commodity",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "quantity": {
+                    "title": "Quantity",
+                    "description": "The commodity's quantity (number or item)",
+                    "type": "integer",
+                    "default": 1
+                },
+                "sku": {
+                    "title": "Sku",
+                    "description": "The commodity's sku number",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "value_amount": {
+                    "title": "Value amount",
+                    "description": "The monetary value of the commodity",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "value_currency": {
+                    "title": "Value currency",
+                    "description": "The currency of the commodity value amount",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "origin_country": {
+                    "title": "Origin country",
+                    "description": "The origin or manufacture country",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "parent_id": {
+                    "title": "Parent id",
+                    "description": "The id of the related order line item.",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "\n<details>\n<summary>Commodity user references metadata.</summary>\n\n```\n{\n    \"part_number\": \"5218487281\",\n    \"reference1\": \"# ref 1\",\n    \"reference2\": \"# ref 2\",\n    \"reference3\": \"# ref 3\",\n    \"reference4\": \"# ref 4\",\n    ...\n}\n```\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                }
+            }
+        },
         "CustomsData": {
             "required": [
                 "commodities"
@@ -3906,7 +4105,7 @@
                     "description": "The parcel content items",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Commodity"
+                        "$ref": "#/definitions/CommodityData"
                     }
                 },
                 "duty": {
@@ -3989,66 +4188,8 @@
                 }
             }
         },
-        "CommodityData": {
-            "required": [
-                "weight",
-                "weight_unit"
-            ],
-            "type": "object",
-            "properties": {
-                "weight": {
-                    "title": "Weight",
-                    "description": "The commodity's weight",
-                    "type": "number"
-                },
-                "weight_unit": {
-                    "title": "Weight unit",
-                    "description": "The commodity's weight unit",
-                    "type": "string",
-                    "enum": [
-                        "KG",
-                        "LB"
-                    ]
-                },
-                "description": {
-                    "title": "Description",
-                    "description": "A description of the commodity",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "quantity": {
-                    "title": "Quantity",
-                    "description": "The commodity's quantity (number or item)",
-                    "type": "integer",
-                    "x-nullable": true
-                },
-                "sku": {
-                    "title": "Sku",
-                    "description": "The commodity's sku number",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "value_amount": {
-                    "title": "Value amount",
-                    "description": "The monetary value of the commodity",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "value_currency": {
-                    "title": "Value currency",
-                    "description": "The currency of the commodity value amount",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "origin_country": {
-                    "title": "Origin country",
-                    "description": "The origin or manufacture country",
-                    "type": "string",
-                    "x-nullable": true
-                }
-            }
-        },
         "Parcel": {
+            "description": "The shipment's parcels",
             "required": [
                 "weight",
                 "weight_unit"
@@ -4086,13 +4227,13 @@
                 },
                 "packaging_type": {
                     "title": "Packaging type",
-                    "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/references).\n",
+                    "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>\n`envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`\n\nFor carrier specific packaging types, please consult the reference.\n",
                     "type": "string",
                     "x-nullable": true
                 },
                 "package_preset": {
                     "title": "Package preset",
-                    "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/references).\n",
+                    "description": "\nThe parcel's package preset.\n\nFor carrier specific package presets, please consult the reference.\n",
                     "type": "string",
                     "x-nullable": true
                 },
@@ -4133,6 +4274,718 @@
                         "IN"
                     ],
                     "x-nullable": true
+                },
+                "items": {
+                    "description": "The parcel items.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Commodity"
+                    }
+                },
+                "reference_number": {
+                    "title": "Reference number",
+                    "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "parcel",
+                    "minLength": 1
+                }
+            }
+        },
+        "Payment": {
+            "description": "The payment details",
+            "type": "object",
+            "properties": {
+                "paid_by": {
+                    "title": "Paid by",
+                    "description": "The payor type",
+                    "type": "string",
+                    "enum": [
+                        "sender",
+                        "recipient",
+                        "third_party"
+                    ],
+                    "default": "sender"
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The payment amount currency",
+                    "type": "string",
+                    "enum": [
+                        "EUR",
+                        "AED",
+                        "USD",
+                        "XCD",
+                        "AMD",
+                        "ANG",
+                        "AOA",
+                        "ARS",
+                        "AUD",
+                        "AWG",
+                        "AZN",
+                        "BAM",
+                        "BBD",
+                        "BDT",
+                        "XOF",
+                        "BGN",
+                        "BHD",
+                        "BIF",
+                        "BMD",
+                        "BND",
+                        "BOB",
+                        "BRL",
+                        "BSD",
+                        "BTN",
+                        "BWP",
+                        "BYN",
+                        "BZD",
+                        "CAD",
+                        "CDF",
+                        "XAF",
+                        "CHF",
+                        "NZD",
+                        "CLP",
+                        "CNY",
+                        "COP",
+                        "CRC",
+                        "CUC",
+                        "CVE",
+                        "CZK",
+                        "DJF",
+                        "DKK",
+                        "DOP",
+                        "DZD",
+                        "EGP",
+                        "ERN",
+                        "ETB",
+                        "FJD",
+                        "GBP",
+                        "GEL",
+                        "GHS",
+                        "GMD",
+                        "GNF",
+                        "GTQ",
+                        "GYD",
+                        "HKD",
+                        "HNL",
+                        "HRK",
+                        "HTG",
+                        "HUF",
+                        "IDR",
+                        "ILS",
+                        "INR",
+                        "IRR",
+                        "ISK",
+                        "JMD",
+                        "JOD",
+                        "JPY",
+                        "KES",
+                        "KGS",
+                        "KHR",
+                        "KMF",
+                        "KPW",
+                        "KRW",
+                        "KWD",
+                        "KYD",
+                        "KZT",
+                        "LAK",
+                        "LKR",
+                        "LRD",
+                        "LSL",
+                        "LYD",
+                        "MAD",
+                        "MDL",
+                        "MGA",
+                        "MKD",
+                        "MMK",
+                        "MNT",
+                        "MOP",
+                        "MRO",
+                        "MUR",
+                        "MVR",
+                        "MWK",
+                        "MXN",
+                        "MYR",
+                        "MZN",
+                        "NAD",
+                        "XPF",
+                        "NGN",
+                        "NIO",
+                        "NOK",
+                        "NPR",
+                        "OMR",
+                        "PEN",
+                        "PGK",
+                        "PHP",
+                        "PKR",
+                        "PLN",
+                        "PYG",
+                        "QAR",
+                        "RSD",
+                        "RUB",
+                        "RWF",
+                        "SAR",
+                        "SBD",
+                        "SCR",
+                        "SDG",
+                        "SEK",
+                        "SGD",
+                        "SHP",
+                        "SLL",
+                        "SOS",
+                        "SRD",
+                        "SSP",
+                        "STD",
+                        "SYP",
+                        "SZL",
+                        "THB",
+                        "TJS",
+                        "TND",
+                        "TOP",
+                        "TRY",
+                        "TTD",
+                        "TWD",
+                        "TZS",
+                        "UAH",
+                        "UYU",
+                        "UZS",
+                        "VEF",
+                        "VND",
+                        "VUV",
+                        "WST",
+                        "YER",
+                        "ZAR"
+                    ],
+                    "x-nullable": true
+                },
+                "account_number": {
+                    "title": "Account number",
+                    "description": "The payor account number",
+                    "type": "string",
+                    "x-nullable": true
+                }
+            },
+            "default": {
+                "paid_by": "sender",
+                "currency": null,
+                "account_number": null
+            }
+        },
+        "Charge": {
+            "description": "list of the rate's additional charges",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "description": "The charge description",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "amount": {
+                    "title": "Amount",
+                    "description": "The charge monetary value",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The charge amount currency",
+                    "type": "string",
+                    "x-nullable": true
+                }
+            },
+            "default": {
+                "name": null,
+                "amount": null,
+                "currency": null
+            }
+        },
+        "Rate": {
+            "description": "The list for shipment rates fetched previously",
+            "required": [
+                "carrier_name",
+                "carrier_id",
+                "currency",
+                "test_mode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "rate",
+                    "minLength": 1
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The rate's carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier's name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The rate monetary values currency code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "service": {
+                    "title": "Service",
+                    "description": "The carrier's rate (quote) service",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "discount": {
+                    "title": "Discount",
+                    "description": "The monetary amount of the discount on the rate",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "base_charge": {
+                    "title": "Base charge",
+                    "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n",
+                    "type": "number",
+                    "default": 0.0
+                },
+                "total_charge": {
+                    "title": "Total charge",
+                    "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n",
+                    "type": "number",
+                    "default": 0.0
+                },
+                "duties_and_taxes": {
+                    "title": "Duties and taxes",
+                    "description": "The monetary amount of the duties and taxes if applied",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "transit_days": {
+                    "title": "Transit days",
+                    "description": "The estimated delivery transit days",
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "extra_charges": {
+                    "description": "list of the rate's additional charges",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Charge"
+                    },
+                    "default": []
+                },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "test_mode": {
+                    "title": "Test mode",
+                    "description": "Specified whether it was created with a carrier in test mode",
+                    "type": "boolean"
+                }
+            }
+        },
+        "Shipment": {
+            "description": "The shipments associated with the order.",
+            "required": [
+                "shipper",
+                "recipient",
+                "parcels",
+                "created_at",
+                "test_mode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "shipper": {
+                    "$ref": "#/definitions/Address"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/Address"
+                },
+                "parcels": {
+                    "description": "The shipment's parcels",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Parcel"
+                    }
+                },
+                "services": {
+                    "description": "\nThe carriers services requested for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "default": [],
+                    "x-nullable": true
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "customs": {
+                    "$ref": "#/definitions/Customs"
+                },
+                "rates": {
+                    "description": "The list for shipment rates fetched previously",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rate"
+                    },
+                    "default": []
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "label_type": {
+                    "title": "Label type",
+                    "description": "The shipment label file type.",
+                    "type": "string",
+                    "enum": [
+                        "PDF",
+                        "ZPL"
+                    ],
+                    "x-nullable": true
+                },
+                "carrier_ids": {
+                    "description": "\nThe list of configured carriers you wish to get rates from.\n\n*Note that the request will be sent to all carriers in nothing is specified*\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "default": [],
+                    "x-nullable": true
+                },
+                "tracker_id": {
+                    "title": "Tracker id",
+                    "description": "The attached tracker id",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "created_at": {
+                    "title": "Created at",
+                    "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    },
+                    "default": []
+                },
+                "status": {
+                    "title": "Status",
+                    "description": "The current Shipment status",
+                    "type": "string",
+                    "enum": [
+                        "created",
+                        "purchased",
+                        "cancelled",
+                        "shipped",
+                        "in-transit",
+                        "delivered"
+                    ],
+                    "default": "created"
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The shipment carrier",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The shipment carrier configured identifier",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "label": {
+                    "title": "Label",
+                    "description": "The shipment label in base64 string",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "tracking_number": {
+                    "title": "Tracking number",
+                    "description": "The shipment tracking number",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "shipment_identifier": {
+                    "title": "Shipment identifier",
+                    "description": "The shipment carrier system identifier",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "selected_rate": {
+                    "$ref": "#/definitions/Rate"
+                },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "service": {
+                    "title": "Service",
+                    "description": "The selected service",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "selected_rate_id": {
+                    "title": "Selected rate id",
+                    "description": "The shipment selected rate.",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "tracking_url": {
+                    "title": "Tracking url",
+                    "description": "The shipment tracking url",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "test_mode": {
+                    "title": "Test mode",
+                    "description": "Specified whether it was created with a carrier in test mode",
+                    "type": "boolean"
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "shipment",
+                    "minLength": 1
+                }
+            }
+        },
+        "Order": {
+            "required": [
+                "order_id",
+                "shipping_address",
+                "line_items",
+                "test_mode",
+                "created_at"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "order",
+                    "minLength": 1
+                },
+                "order_id": {
+                    "title": "Order id",
+                    "description": "The source' order id.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "source": {
+                    "title": "Source",
+                    "description": "The order's source.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "status": {
+                    "title": "Status",
+                    "description": "The order status.",
+                    "type": "string",
+                    "enum": [
+                        "created",
+                        "cancelled",
+                        "fulfilled",
+                        "delivered",
+                        "partial"
+                    ],
+                    "default": "created"
+                },
+                "shipping_address": {
+                    "$ref": "#/definitions/Address"
+                },
+                "line_items": {
+                    "description": "The order line items.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Commodity"
+                    }
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>The options available for the order shipments.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n}\n```\n\nPlease check the docs for shipment specific options.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the order.",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
+                "shipments": {
+                    "description": "The shipments associated with the order.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shipment"
+                    }
+                },
+                "test_mode": {
+                    "title": "Test mode",
+                    "description": "Specify whether the order is in test mode or not.",
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "title": "Created at",
+                    "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "OrderList": {
+            "required": [
+                "results"
+            ],
+            "type": "object",
+            "properties": {
+                "next": {
+                    "title": "Next",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "previous": {
+                    "title": "Previous",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Order"
+                    }
+                }
+            }
+        },
+        "OrderData": {
+            "required": [
+                "order_id",
+                "shipping_address",
+                "line_items"
+            ],
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "title": "Order id",
+                    "description": "The source' order id.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "source": {
+                    "title": "Source",
+                    "description": "\nThe order's source.\n\ne.g. API, POS, ERP, Shopify, Woocommerce, etc.\n",
+                    "type": "string",
+                    "default": "API",
+                    "minLength": 1
+                },
+                "shipping_address": {
+                    "$ref": "#/definitions/AddressData"
+                },
+                "line_items": {
+                    "description": "The order line items.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CommodityData"
+                    }
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>The options available for the order shipments.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n}\n```\n\nPlease check the docs for shipment specific options.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the order.",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                }
+            }
+        },
+        "OrderUpdateData": {
+            "type": "object",
+            "properties": {
+                "options": {
+                    "title": "Options",
+                    "description": "The order options",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -4194,13 +5047,13 @@
                 },
                 "packaging_type": {
                     "title": "Packaging type",
-                    "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/references).\n",
+                    "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>\n`envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`\n\nFor carrier specific packaging types, please consult the reference.\n",
                     "type": "string",
                     "x-nullable": true
                 },
                 "package_preset": {
                     "title": "Package preset",
-                    "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/references).\n",
+                    "description": "\nThe parcel's package preset.\n\nFor carrier specific package presets, please consult the reference.\n",
                     "type": "string",
                     "x-nullable": true
                 },
@@ -4241,33 +5094,22 @@
                         "IN"
                     ],
                     "x-nullable": true
+                },
+                "items": {
+                    "description": "The parcel items.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CommodityData"
+                    }
+                },
+                "reference_number": {
+                    "title": "Reference number",
+                    "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
                 }
             }
-        },
-        "Charge": {
-            "description": "The pickup cost details",
-            "type": "object",
-            "properties": {
-                "name": {
-                    "title": "Name",
-                    "description": "The charge description",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "amount": {
-                    "title": "Amount",
-                    "description": "The charge monetary value",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "currency": {
-                    "title": "Currency",
-                    "description": "The charge amount currency",
-                    "type": "string",
-                    "x-nullable": true
-                }
-            },
-            "x-nullable": true
         },
         "Pickup": {
             "required": [
@@ -4284,6 +5126,13 @@
                     "title": "Id",
                     "description": "A unique pickup identifier",
                     "type": "string",
+                    "minLength": 1
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "pickup",
                     "minLength": 1
                 },
                 "carrier_name": {
@@ -4356,6 +5205,13 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the pickup",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 },
                 "test_mode": {
                     "title": "Test mode",
@@ -4446,6 +5302,13 @@
                         "type": "string",
                         "minLength": 1
                     }
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the pickup",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 }
             }
         },
@@ -4502,6 +5365,13 @@
                         "type": "string",
                         "minLength": 1
                     }
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the pickup",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 },
                 "confirmation_number": {
                     "title": "Confirmation number",
@@ -4763,7 +5633,7 @@
                     }
                 },
                 "services": {
-                    "description": "\nThe requested carrier service for the shipment.<br/>\nPlease consult [the reference](#operation/references) for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "description": "\nThe requested carrier service for the shipment.<br/>\nPlease consult the reference for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
                     "type": "array",
                     "items": {
                         "type": "string",
@@ -4773,7 +5643,7 @@
                 },
                 "options": {
                     "title": "Options",
-                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -4792,104 +5662,6 @@
                         "minLength": 1
                     },
                     "x-nullable": true
-                }
-            }
-        },
-        "Rate": {
-            "description": "The list of returned rates",
-            "required": [
-                "carrier_name",
-                "carrier_id",
-                "currency",
-                "test_mode"
-            ],
-            "type": "object",
-            "properties": {
-                "id": {
-                    "title": "Id",
-                    "description": "A unique identifier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "carrier_name": {
-                    "title": "Carrier name",
-                    "description": "The rate's carrier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "carrier_id": {
-                    "title": "Carrier id",
-                    "description": "The targeted carrier's name (unique identifier)",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "currency": {
-                    "title": "Currency",
-                    "description": "The rate monetary values currency code",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "service": {
-                    "title": "Service",
-                    "description": "The carrier's rate (quote) service",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "discount": {
-                    "title": "Discount",
-                    "description": "The monetary amount of the discount on the rate",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "base_charge": {
-                    "title": "Base charge",
-                    "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n",
-                    "type": "number",
-                    "default": 0.0
-                },
-                "total_charge": {
-                    "title": "Total charge",
-                    "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n",
-                    "type": "number",
-                    "default": 0.0
-                },
-                "duties_and_taxes": {
-                    "title": "Duties and taxes",
-                    "description": "The monetary amount of the duties and taxes if applied",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "transit_days": {
-                    "title": "Transit days",
-                    "description": "The estimated delivery transit days",
-                    "type": "integer",
-                    "x-nullable": true
-                },
-                "extra_charges": {
-                    "description": "list of the rate's additional charges",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Charge"
-                    },
-                    "default": []
-                },
-                "meta": {
-                    "title": "Meta",
-                    "description": "provider specific metadata",
-                    "type": "object",
-                    "additionalProperties": true,
-                    "x-nullable": true
-                },
-                "carrier_ref": {
-                    "title": "Carrier ref",
-                    "description": "The system carrier configuration id",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "test_mode": {
-                    "title": "Test mode",
-                    "description": "Specified whether it was created with a carrier in test mode",
-                    "type": "boolean"
                 }
             }
         },
@@ -4913,185 +5685,6 @@
                         "$ref": "#/definitions/Rate"
                     }
                 }
-            }
-        },
-        "Payment": {
-            "description": "The payment details",
-            "type": "object",
-            "properties": {
-                "paid_by": {
-                    "title": "Paid by",
-                    "description": "The payor type",
-                    "type": "string",
-                    "enum": [
-                        "sender",
-                        "recipient",
-                        "third_party"
-                    ],
-                    "default": "sender"
-                },
-                "currency": {
-                    "title": "Currency",
-                    "description": "The payment amount currency",
-                    "type": "string",
-                    "enum": [
-                        "EUR",
-                        "AED",
-                        "USD",
-                        "XCD",
-                        "AMD",
-                        "ANG",
-                        "AOA",
-                        "ARS",
-                        "AUD",
-                        "AWG",
-                        "AZN",
-                        "BAM",
-                        "BBD",
-                        "BDT",
-                        "XOF",
-                        "BGN",
-                        "BHD",
-                        "BIF",
-                        "BMD",
-                        "BND",
-                        "BOB",
-                        "BRL",
-                        "BSD",
-                        "BTN",
-                        "BWP",
-                        "BYN",
-                        "BZD",
-                        "CAD",
-                        "CDF",
-                        "XAF",
-                        "CHF",
-                        "NZD",
-                        "CLP",
-                        "CNY",
-                        "COP",
-                        "CRC",
-                        "CUC",
-                        "CVE",
-                        "CZK",
-                        "DJF",
-                        "DKK",
-                        "DOP",
-                        "DZD",
-                        "EGP",
-                        "ERN",
-                        "ETB",
-                        "FJD",
-                        "GBP",
-                        "GEL",
-                        "GHS",
-                        "GMD",
-                        "GNF",
-                        "GTQ",
-                        "GYD",
-                        "HKD",
-                        "HNL",
-                        "HRK",
-                        "HTG",
-                        "HUF",
-                        "IDR",
-                        "ILS",
-                        "INR",
-                        "IRR",
-                        "ISK",
-                        "JMD",
-                        "JOD",
-                        "JPY",
-                        "KES",
-                        "KGS",
-                        "KHR",
-                        "KMF",
-                        "KPW",
-                        "KRW",
-                        "KWD",
-                        "KYD",
-                        "KZT",
-                        "LAK",
-                        "LKR",
-                        "LRD",
-                        "LSL",
-                        "LYD",
-                        "MAD",
-                        "MDL",
-                        "MGA",
-                        "MKD",
-                        "MMK",
-                        "MNT",
-                        "MOP",
-                        "MRO",
-                        "MUR",
-                        "MVR",
-                        "MWK",
-                        "MXN",
-                        "MYR",
-                        "MZN",
-                        "NAD",
-                        "XPF",
-                        "NGN",
-                        "NIO",
-                        "NOK",
-                        "NPR",
-                        "OMR",
-                        "PEN",
-                        "PGK",
-                        "PHP",
-                        "PKR",
-                        "PLN",
-                        "PYG",
-                        "QAR",
-                        "RSD",
-                        "RUB",
-                        "RWF",
-                        "SAR",
-                        "SBD",
-                        "SCR",
-                        "SDG",
-                        "SEK",
-                        "SGD",
-                        "SHP",
-                        "SLL",
-                        "SOS",
-                        "SRD",
-                        "SSP",
-                        "STD",
-                        "SYP",
-                        "SZL",
-                        "THB",
-                        "TJS",
-                        "TND",
-                        "TOP",
-                        "TRY",
-                        "TTD",
-                        "TWD",
-                        "TZS",
-                        "UAH",
-                        "UYU",
-                        "UZS",
-                        "VEF",
-                        "VND",
-                        "VUV",
-                        "WST",
-                        "YER",
-                        "ZAR"
-                    ],
-                    "x-nullable": true
-                },
-                "account_number": {
-                    "title": "Account number",
-                    "description": "The payor account number",
-                    "type": "string",
-                    "x-nullable": true
-                }
-            },
-            "default": {
-                "paid_by": "sender",
-                "currency": null,
-                "account_number": null
             }
         },
         "ShippingRequest": {
@@ -5119,7 +5712,7 @@
                 },
                 "options": {
                     "title": "Options",
-                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -5158,192 +5751,6 @@
                     "items": {
                         "$ref": "#/definitions/Rate"
                     }
-                }
-            }
-        },
-        "Shipment": {
-            "required": [
-                "shipper",
-                "recipient",
-                "parcels",
-                "created_at",
-                "test_mode"
-            ],
-            "type": "object",
-            "properties": {
-                "id": {
-                    "title": "Id",
-                    "description": "A unique identifier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "status": {
-                    "title": "Status",
-                    "description": "The current Shipment status",
-                    "type": "string",
-                    "enum": [
-                        "created",
-                        "purchased",
-                        "cancelled",
-                        "shipped",
-                        "in-transit",
-                        "delivered"
-                    ],
-                    "default": "created"
-                },
-                "carrier_name": {
-                    "title": "Carrier name",
-                    "description": "The shipment carrier",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "carrier_id": {
-                    "title": "Carrier id",
-                    "description": "The shipment carrier configured identifier",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "label": {
-                    "title": "Label",
-                    "description": "The shipment label in base64 string",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "tracking_number": {
-                    "title": "Tracking number",
-                    "description": "The shipment tracking number",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "shipment_identifier": {
-                    "title": "Shipment identifier",
-                    "description": "The shipment carrier system identifier",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "selected_rate": {
-                    "$ref": "#/definitions/Rate"
-                },
-                "selected_rate_id": {
-                    "title": "Selected rate id",
-                    "description": "The shipment selected rate.",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "rates": {
-                    "description": "The list for shipment rates fetched previously",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Rate"
-                    },
-                    "default": []
-                },
-                "tracking_url": {
-                    "title": "Tracking url",
-                    "description": "The shipment tracking url",
-                    "type": "string",
-                    "format": "uri",
-                    "x-nullable": true
-                },
-                "service": {
-                    "title": "Service",
-                    "description": "The selected service",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "shipper": {
-                    "$ref": "#/definitions/Address"
-                },
-                "recipient": {
-                    "$ref": "#/definitions/Address"
-                },
-                "parcels": {
-                    "description": "The shipment's parcels",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Parcel"
-                    }
-                },
-                "services": {
-                    "description": "\nThe carriers services requested for the shipment.\n\nPlease consult [the reference](#operation/references) for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "default": [],
-                    "x-nullable": true
-                },
-                "options": {
-                    "title": "Options",
-                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                    "type": "object",
-                    "additionalProperties": true,
-                    "x-nullable": true
-                },
-                "payment": {
-                    "$ref": "#/definitions/Payment"
-                },
-                "customs": {
-                    "$ref": "#/definitions/Customs"
-                },
-                "reference": {
-                    "title": "Reference",
-                    "description": "The shipment reference",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "label_type": {
-                    "title": "Label type",
-                    "description": "The shipment label file type.",
-                    "type": "string",
-                    "enum": [
-                        "PDF",
-                        "ZPL"
-                    ],
-                    "x-nullable": true
-                },
-                "carrier_ids": {
-                    "description": "\nThe list of configured carriers you wish to get rates from.\n\n*Note that the request will be sent to all carriers in nothing is specified*\n",
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "default": [],
-                    "x-nullable": true
-                },
-                "tracker_id": {
-                    "title": "Tracker id",
-                    "description": "The attached tracker id",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "created_at": {
-                    "title": "Created at",
-                    "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "test_mode": {
-                    "title": "Test mode",
-                    "description": "Specified whether it was created with a carrier in test mode",
-                    "type": "boolean"
-                },
-                "meta": {
-                    "title": "Meta",
-                    "description": "provider specific metadata",
-                    "type": "object",
-                    "additionalProperties": true,
-                    "x-nullable": true
-                },
-                "messages": {
-                    "description": "The list of note or warning messages",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Message"
-                    },
-                    "default": []
                 }
             }
         },
@@ -5481,6 +5888,20 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "tracker",
+                    "minLength": 1
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the tracker",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
                 "messages": {
                     "description": "The list of note or warning messages",
                     "type": "array",
@@ -5512,6 +5933,7 @@
                 "APP_VERSION",
                 "APP_WEBSITE",
                 "MULTI_ORGANIZATIONS",
+                "ORDERS_MANAGEMENT",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL",
@@ -5551,6 +5973,10 @@
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
+                    "type": "boolean"
+                },
+                "ORDERS_MANAGEMENT": {
+                    "title": "Orders management",
                     "type": "boolean"
                 },
                 "ADMIN": {
@@ -5699,7 +6125,7 @@
                 },
                 "options": {
                     "title": "Options",
-                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": shipper@mail.com,\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
@@ -5727,7 +6153,7 @@
                     "default": "PDF"
                 },
                 "services": {
-                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult [the reference](#operation/references) for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
                     "type": "array",
                     "items": {
                         "type": "string",
@@ -5745,6 +6171,50 @@
                     },
                     "default": [],
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                }
+            }
+        },
+        "ShipmentUpdateData": {
+            "type": "object",
+            "properties": {
+                "label_type": {
+                    "title": "Label type",
+                    "description": "The shipment label file type.",
+                    "type": "string",
+                    "enum": [
+                        "PDF",
+                        "ZPL"
+                    ],
+                    "default": "PDF"
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -5778,6 +6248,12 @@
                     "description": "The shipment reference",
                     "type": "string",
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -5807,6 +6283,12 @@
                     "description": "The shipment reference",
                     "type": "string",
                     "x-nullable": true
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "User metadata for the shipment",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
@@ -5868,7 +6350,11 @@
                             "shipment.cancelled",
                             "shipment.fulfilled",
                             "tracker.created",
-                            "tracker.updated"
+                            "tracker.updated",
+                            "order.created",
+                            "order.fulfilled",
+                            "order.cancelled",
+                            "order.delivered"
                         ]
                     }
                 },
@@ -5887,6 +6373,13 @@
                     "title": "Id",
                     "description": "A unique identifier",
                     "type": "string",
+                    "minLength": 1
+                },
+                "object_type": {
+                    "title": "Object type",
+                    "description": "Specifies the object type",
+                    "type": "string",
+                    "default": "webhook",
                     "minLength": 1
                 },
                 "last_event_at": {
@@ -5956,7 +6449,11 @@
                             "shipment.cancelled",
                             "shipment.fulfilled",
                             "tracker.created",
-                            "tracker.updated"
+                            "tracker.updated",
+                            "order.created",
+                            "order.fulfilled",
+                            "order.cancelled",
+                            "order.delivered"
                         ]
                     }
                 },

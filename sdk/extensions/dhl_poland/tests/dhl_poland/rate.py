@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils import DP, Serializable
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from tests.dhl_poland.fixture import gateway
 
@@ -12,12 +12,11 @@ class TestDHLPolandRating(unittest.TestCase):
         self.RateRequest = RateRequest(**rate_request_data)
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
-            parsed_response = (
-                purplship.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+        parsed_response = (
+            purplship.Rating.fetch(self.RateRequest).from_(gateway).parse()
+        )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
+        self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
@@ -44,40 +43,40 @@ rate_request_data = {
 ParsedRateResponse = [
     [
         {
-            "base_charge": "0.00",
+            "base_charge": 0.0,
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
             "currency": "USD",
             "meta": {"service_name": "DHL Poland Premium"},
             "service": "dhl_poland_premium",
-            "total_charge": "0.00",
+            "total_charge": 0.0,
         },
         {
-            "base_charge": "0.00",
+            "base_charge": 0.0,
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
             "currency": "USD",
             "meta": {"service_name": "DHL Poland Polska"},
             "service": "dhl_poland_polska",
-            "total_charge": "0.00",
+            "total_charge": 0.0,
         },
         {
-            "base_charge": "0.00",
+            "base_charge": 0.0,
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
             "currency": "USD",
             "meta": {"service_name": "DHL Poland 09"},
             "service": "dhl_poland_09",
-            "total_charge": "0.00",
+            "total_charge": 0.0,
         },
         {
-            "base_charge": "0.00",
+            "base_charge": 0.0,
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
             "currency": "USD",
             "meta": {"service_name": "DHL Poland 12"},
             "service": "dhl_poland_12",
-            "total_charge": "0.00",
+            "total_charge": 0.0,
         },
     ],
     [],

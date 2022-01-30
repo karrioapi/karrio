@@ -52,6 +52,8 @@ class Commodity:
     value_currency: str = None
     origin_country: str = None
 
+    metadata: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class Parcel:
@@ -62,13 +64,18 @@ class Parcel:
     width: float = None
     height: float = None
     length: float = None
-    packaging_type: str = None
-    package_preset: str = None
-    description: str = None
-    content: str = None
-    is_document: bool = False
     weight_unit: str = None
     dimension_unit: str = None
+
+    packaging_type: str = None
+    package_preset: str = None
+
+    is_document: bool = False
+    description: str = None
+    content: str = None
+
+    items: List[Commodity] = JList[Commodity]
+    reference_number: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -128,6 +135,8 @@ class ShipmentRequest:
     options: Dict = {}
     reference: str = ""
     label_type: str = None
+
+    metadata: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -292,6 +301,7 @@ class ShipmentDetails:
     tracking_number: str
     shipment_identifier: str
     selected_rate: RateDetails = JStruct[RateDetails]
+    label_type: str = None
     meta: dict = None
     id: str = None
 
@@ -348,3 +358,28 @@ class ServiceLevel:
     # Destination supports
     domicile: bool = None
     international: bool = None
+
+
+@attr.s(auto_attribs=True)
+class LabelTemplate:
+    """Purplship unified label template data type."""
+
+    alias: str
+    template: str
+    description: str = ""
+    template_type: str = "SVG"  # ZPL, SVG
+    width: int = 4
+    height: int = 6
+
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ServiceLabel:
+    """Purplship unified service label data type."""
+
+    label: str
+    label_type: str
+    service_name: str
+    service_code: str
+    tracking_number: str

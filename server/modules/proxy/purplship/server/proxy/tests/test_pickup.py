@@ -162,6 +162,7 @@ PICKUP_RESPONSE = {
     "messages": [],
     "pickup": {
         "id": ANY,
+        "object_type": "pickup",
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "confirmation_number": "27241",
@@ -172,6 +173,7 @@ PICKUP_RESPONSE = {
         "test_mode": True,
         "address": {
             "id": None,
+            "object_type": "address",
             "postal_code": "E1C4Z8",
             "city": "Moncton",
             "federal_tax_id": None,
@@ -192,6 +194,7 @@ PICKUP_RESPONSE = {
         "parcels": [
             {
                 "id": None,
+                "object_type": "parcel",
                 "weight": 0.2,
                 "width": 10.0,
                 "height": 10.0,
@@ -201,13 +204,16 @@ PICKUP_RESPONSE = {
                 "description": None,
                 "content": None,
                 "is_document": True,
+                "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
+                "reference_number": None,
             }
         ],
         "instruction": "Should not be folded",
         "package_location": "At the main entrance hall",
         "options": {},
+        "metadata": {},
     },
 }
 
@@ -215,6 +221,7 @@ PICKUP_UPDATE_RESPONSE = {
     "messages": [],
     "pickup": {
         "id": None,
+        "object_type": "pickup",
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "confirmation_number": "27241",
@@ -225,6 +232,7 @@ PICKUP_UPDATE_RESPONSE = {
         "test_mode": True,
         "address": {
             "id": None,
+            "object_type": "address",
             "postal_code": "E1C4Z8",
             "city": "Moncton",
             "federal_tax_id": None,
@@ -245,6 +253,7 @@ PICKUP_UPDATE_RESPONSE = {
         "parcels": [
             {
                 "id": None,
+                "object_type": "parcel",
                 "weight": 0.2,
                 "width": 10.0,
                 "height": 10.0,
@@ -254,13 +263,16 @@ PICKUP_UPDATE_RESPONSE = {
                 "description": None,
                 "content": None,
                 "is_document": True,
+                "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
+                "reference_number": None,
             }
         ],
         "instruction": "Should not be folded",
         "package_location": "At the main entrance hall",
         "options": {},
+        "metadata": {},
     },
 }
 

@@ -1,7 +1,8 @@
-Django==3.2.9
+Django<=3.2.11
 
 # Carrier Schemas in Development
 # -e ./schemas/dhl_poland
+
 
 # Carrier Extenstions in Development
 # -e ./sdk/core
@@ -17,7 +18,7 @@ Django==3.2.9
 # -e ./sdk/extensions/usps_international
 
 
-purplship
+# purplship
 purplship.aramex
 purplship.australiapost
 purplship.canadapost

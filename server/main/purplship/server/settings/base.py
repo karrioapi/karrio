@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import importlib
 from pathlib import Path
-from decouple import config
+from decouple import AutoConfig
 from datetime import timedelta
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 with open(BASE_DIR / "server" / "VERSION", "r") as v:
     VERSION = v.read().strip()
+
+
+config = AutoConfig(search_path=Path().resolve())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -105,6 +108,7 @@ PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
+ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
 
 
 # components path settings
@@ -123,8 +127,8 @@ OPEN_API_PATH = "openapi/"
 
 BASE_APPS = [
     "purplship.server.user",
-    "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.auth",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -194,11 +198,10 @@ DATABASES = {
         "ENGINE": "django.db.backends.{}".format(DB_ENGINE),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
-        "HOST": config("DATABASE_HOST", default="db"),
+        "HOST": config("DATABASE_HOST", default="localhost"),
         "PORT": config("DATABASE_PORT", default="5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -272,8 +275,8 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=6),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

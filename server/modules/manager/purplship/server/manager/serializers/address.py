@@ -1,7 +1,11 @@
+from rest_framework import status
+from django.conf import settings
+
+from purplship.server.core.exceptions import PurplshipAPIException
 from purplship.server.serializers import owned_model_serializer
 from purplship.core import utils
 from purplship.server.core import gateway
-from purplship.server.core.serializers import AddressData
+from purplship.server.core.serializers import AddressData, ShipmentStatus
 from purplship.server.manager import models
 
 
@@ -9,15 +13,16 @@ from purplship.server.manager import models
 class AddressSerializer(AddressData):
     def validate(self, data):
         validated_data = super().validate(data)
-        should_validate = (
-            validated_data.get('validate_location') is True or
-            (self.instance is not None and self.instance.validate_location)
+        should_validate = validated_data.get("validate_location") is True or (
+            self.instance is not None and self.instance.validate_location
         )
 
         if should_validate:
             address = {
-                **(AddressData(self.instance).data if self.instance is not None else {}),
-                **validated_data
+                **(
+                    AddressData(self.instance).data if self.instance is not None else {}
+                ),
+                **validated_data,
             }
             validation = gateway.Address.validate(address)
             validated_data.update(dict(validation=utils.DP.to_dict(validation)))
@@ -27,9 +32,52 @@ class AddressSerializer(AddressData):
     def create(self, validated_data: dict, **kwargs) -> models.Address:
         return models.Address.objects.create(**validated_data)
 
-    def update(self, instance: models.Address, validated_data: dict, **kwargs) -> models.Address:
+    def update(
+        self, instance: models.Address, validated_data: dict, **kwargs
+    ) -> models.Address:
+        changes = []
         for key, val in validated_data.items():
-            setattr(instance, key, val)
+            if getattr(instance, key) != val:
+                changes.append(key)
+                setattr(instance, key, val)
 
-        instance.save()
+        instance.save(update_fields=changes)
         return instance
+
+
+def can_mutate_address(
+    address: models.Address, update: bool = False, delete: bool = False
+):
+    shipment = address.shipper_shipment.first() or address.recipient_shipment.first()
+    order = address.order.first() if settings.ORDERS_MANAGEMENT else None
+
+    if shipment is None and order is None:
+        return
+
+    if update and shipment and shipment.status != ShipmentStatus.created.value:
+        raise PurplshipAPIException(
+            f"Operation not permitted. The related shipment is '{shipment.status}'.",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )
+
+    if delete and shipment is not None:
+        raise PurplshipAPIException(
+            "This address is linked to a shipment and cannot be removed",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )
+
+    if update and order and order.status != ShipmentStatus.created.value:
+        raise PurplshipAPIException(
+            f"Operation not permitted. The related order is '{order.status}'.",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )
+
+    if delete and order is not None:
+        raise PurplshipAPIException(
+            "This address is linked to an order and cannot be removed",
+            status_code=status.HTTP_409_CONFLICT,
+            code="state_error",
+        )

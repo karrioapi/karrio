@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.dhl_express"
-version = "2021.11.1"
+version = "2022.1.1"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - DHL Express Shipping Extension"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.6"
+"purplship" = ""
 "carrier.dhl_express" = ""
 
 [tool.poetry.dev-dependencies]

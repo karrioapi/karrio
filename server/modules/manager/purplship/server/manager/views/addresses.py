@@ -8,18 +8,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import (
-    ShipmentStatus,
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     ErrorResponse,
     AddressData,
     Address,
     Operation,
-)
-from purplship.server.manager.serializers import (
     AddressSerializer,
-    reset_related_shipment_rates,
+    can_mutate_address,
 )
 from purplship.server.manager.router import router
 from purplship.server.manager import models
@@ -57,7 +54,7 @@ class AddressList(GenericAPIView):
         Retrieve all addresses.
         """
         addresses = models.Address.access_by(request).filter(
-            shipper=None, recipient=None
+            shipper_shipment__isnull=True, recipient_shipment__isnull=True
         )
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
@@ -153,16 +150,10 @@ class AddressDetail(APIView):
         update an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = address.shipper.first() or address.recipient.first()
-        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "The shipment related to this address has been 'purchased' and can no longer be modified",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_address(address, update=True)
 
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
-        reset_related_shipment_rates(shipment)
+
         return Response(Address(address).data)
 
     @swagger_auto_schema(
@@ -186,17 +177,11 @@ class AddressDetail(APIView):
         Discard an address.
         """
         address = models.Address.access_by(request).get(pk=pk)
-        shipment = address.shipper.first() or address.recipient.first()
-        if shipment is not None:
-            raise PurplshipAPIException(
-                "This address is linked to a shipment and cannot be removed",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_address(address, update=True, delete=True)
 
         address.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Discard address", success=True))
-        return Response(serializer.data)
+
+        return Response(Operation(dict(operation="Discard address", success=True)).data)
 
 
 router.urls.append(path("addresses", AddressList.as_view(), name="address-list"))

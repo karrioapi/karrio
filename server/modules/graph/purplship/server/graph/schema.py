@@ -4,7 +4,6 @@ import typing
 import graphene
 from graphene_django.debug import DjangoDebug
 
-from purplship import gateway
 import purplship.server.graph.extension as extensions
 
 logger = logging.getLogger(__name__)
@@ -16,15 +15,15 @@ MUTATIONS: typing.List[graphene.ObjectType] = []
 for _, name, _ in pkgutil.iter_modules(extensions.__path__):
     try:
         schema = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
-        hasattr(schema, 'Query') and QUERIES.append(schema.Query)
-        hasattr(schema, 'Mutation') and MUTATIONS.append(schema.Mutation)
+        hasattr(schema, "Query") and QUERIES.append(schema.Query)
+        hasattr(schema, "Mutation") and MUTATIONS.append(schema.Mutation)
     except Exception as e:
         logger.warning(f'Failed to register "{name}" schema')
         logger.exception(e)
 
 
 class Query(*QUERIES, graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name='_debug')
+    debug = graphene.Field(DjangoDebug, name="_debug")
 
 
 class Mutation(*MUTATIONS, graphene.ObjectType):

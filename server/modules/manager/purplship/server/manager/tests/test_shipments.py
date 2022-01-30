@@ -91,17 +91,20 @@ class TestShipments(APITestCase):
 
 
 class TestShipmentDetails(TestShipmentFixture):
-    def test_add_shipment_option(self):
+    def test_update_shipment_options(self):
         url = reverse(
-            "purplship.server.manager:shipment-options", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_OPTIONS
 
-        response = self.client.post(url, data)
+        response = self.client.put(url, data)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data.get("options"), SHIPMENT_OPTIONS)
+        self.assertDictEqual(
+            response_data.get("options"), SHIPMENT_OPTIONS.get("options")
+        )
 
     def test_shipment_rates(self):
         url = reverse(
@@ -124,7 +127,6 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
-                "carrier_ref": carrier.pk,
                 "base_charge": 101.83,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
@@ -142,6 +144,7 @@ class TestShipmentPurchase(TestShipmentFixture):
                 "meta": {
                     "rate_provider": "canadapost",
                     "service_name": "CANADAPOST PRIORITY",
+                    "carrier_connection_id": carrier.pk,
                 },
             }
         ]
@@ -149,7 +152,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_purchase_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-purchase", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_PURCHASE_DATA
 
@@ -170,7 +174,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
         )
 
         with patch("purplship.server.core.gateway.identity") as mock:
@@ -183,7 +188,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_purchased_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details", kwargs=dict(pk=self.shipment.pk)
+            "purplship.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
         )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
@@ -243,7 +249,7 @@ SHIPMENT_RATES = {
     "rates": [
         {
             "id": ANY,
-            "carrier_ref": ANY,
+            "object_type": "rate",
             "base_charge": 101.83,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
@@ -260,6 +266,7 @@ SHIPMENT_RATES = {
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
+                "carrier_connection_id": ANY,
             },
             "test_mode": True,
         }
@@ -268,12 +275,14 @@ SHIPMENT_RATES = {
 
 SHIPMENT_RESPONSE = {
     "id": ANY,
+    "object_type": "shipment",
     "status": "created",
     "carrier_name": None,
     "carrier_id": None,
     "label": None,
     "label_type": "PDF",
     "meta": {},
+    "metadata": {},
     "tracking_number": None,
     "shipment_identifier": None,
     "selected_rate": None,
@@ -283,6 +292,7 @@ SHIPMENT_RESPONSE = {
     "tracker_id": None,
     "shipper": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -302,6 +312,7 @@ SHIPMENT_RESPONSE = {
     },
     "recipient": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -322,6 +333,7 @@ SHIPMENT_RESPONSE = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": 42.0,
             "height": 32.0,
@@ -331,8 +343,10 @@ SHIPMENT_RESPONSE = {
             "description": None,
             "content": None,
             "is_document": False,
+            "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "reference_number": None,
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -347,7 +361,7 @@ SHIPMENT_RESPONSE = {
     "messages": [],
 }
 
-SHIPMENT_OPTIONS = {"insurance": 54, "currency": "CAD"}
+SHIPMENT_OPTIONS = {"options": {"insurance": 54, "currency": "CAD"}}
 
 RETURNED_RATES_VALUE = (
     [
@@ -374,7 +388,7 @@ SHIPMENT_PURCHASE_DATA = {"selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed9
 
 SELECTED_RATE = {
     "id": ANY,
-    "carrier_ref": ANY,
+    "object_type": "rate",
     "base_charge": 101.83,
     "carrier_id": "canadapost",
     "carrier_name": "canadapost",
@@ -391,6 +405,7 @@ SELECTED_RATE = {
     "meta": {
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
+        "carrier_connection_id": ANY,
     },
     "test_mode": True,
 }
@@ -418,12 +433,14 @@ RETURNED_CANCEL_VALUE = (
 
 PURCHASED_SHIPMENT = {
     "id": ANY,
+    "object_type": "shipment",
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "label": ANY,
     "label_type": "PDF",
     "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "metadata": {},
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
     "selected_rate": SELECTED_RATE,
@@ -434,6 +451,7 @@ PURCHASED_SHIPMENT = {
     "tracker_id": ANY,
     "shipper": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -453,6 +471,7 @@ PURCHASED_SHIPMENT = {
     },
     "recipient": {
         "id": ANY,
+        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -473,6 +492,7 @@ PURCHASED_SHIPMENT = {
     "parcels": [
         {
             "id": ANY,
+            "object_type": "parcel",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -482,8 +502,10 @@ PURCHASED_SHIPMENT = {
             "description": None,
             "content": None,
             "is_document": False,
+            "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
+            "reference_number": None,
         }
     ],
     "services": [],

@@ -84,7 +84,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
 
     label = encodebytes(label_image.OutputImage).decode("utf-8")
     meta = (
-        dict(custom_invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
+        dict(invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
         if invoice is not None
         else None
     )
@@ -241,7 +241,7 @@ def shipment_request(
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
                         Description=item.description or "N/A",
-                        Value=((item.quantity or 1) * (item.value_amount or 0.0)),
+                        Value=item.value_amount or 0.0,
                         IsDomestic=None,
                         CommodityCode=item.sku,
                         ScheduleB=None,
@@ -260,7 +260,9 @@ def shipment_request(
                         ),
                         License=None,
                         LicenseSymbol=None,
-                        ManufactureCountryCode=item.origin_country,
+                        ManufactureCountryCode=(
+                            item.origin_country or shipper.country_code
+                        ),
                         ManufactureCountryName=Location(
                             item.origin_country
                         ).as_country_name,

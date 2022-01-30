@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.royalmail"
-version = "2021.11"
+version = "2021.11.1"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Royal Mail Shipping Extension"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.6"
+"purplship" = ""
 "carrier.royalmail" = ""
 
 [tool.poetry.dev-dependencies]

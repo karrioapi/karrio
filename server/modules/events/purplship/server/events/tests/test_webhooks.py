@@ -91,6 +91,7 @@ WEBHOOK_RESPONSE = {
     "test_mode": True,
     "disabled": False,
     "id": ANY,
+    "object_type": "webhook",
     "last_event_at": None,
 }
 
@@ -106,6 +107,7 @@ WEBHOOK_UPDATED_RESPONSE = {
     "test_mode": True,
     "disabled": False,
     "id": ANY,
+    "object_type": "webhook",
     "last_event_at": None,
 }
 
@@ -116,5 +118,6 @@ WEBHOOK_NOTIFIED_RESPONSE = {
     "test_mode": True,
     "disabled": False,
     "id": ANY,
+    "object_type": "webhook",
     "last_event_at": NOTIFICATION_DATETIME.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
 }

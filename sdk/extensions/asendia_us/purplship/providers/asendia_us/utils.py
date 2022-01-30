@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://a1apiuat.asendiausa.com"
-            if self.test else
-            "https://a1api.asendiausa.com"
+            if self.test
+            else "https://a1api.asendiausa.com"
         )
 
     @property

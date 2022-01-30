@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.6"
+"purplship" = ""
 "carrier.asendia_us" = ""
 
 [tool.poetry.dev-dependencies]

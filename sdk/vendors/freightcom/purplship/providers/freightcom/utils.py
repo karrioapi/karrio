@@ -26,7 +26,9 @@ class Settings(BaseSettings):
 
 
 def standard_request_serializer(element) -> str:
-    return XP.export(element, namespacedef_='xmlns="http://www.freightcom.net/XMLSchema"')
+    return XP.export(
+        element, namespacedef_='xmlns="http://www.freightcom.net/XMLSchema"'
+    )
 
 
 def ceil(value: Optional[float]) -> Optional[int]:

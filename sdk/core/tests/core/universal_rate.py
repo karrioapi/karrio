@@ -1,21 +1,26 @@
 import unittest
 from purplship.core.utils import DP, Serializable
 from purplship.core.models import RateRequest
-from purplship.universal.mappers import Settings, Proxy
+from purplship.universal.mappers.rating_proxy import (
+    RatingMixinSettings,
+    RatingMixinProxy,
+)
+from purplship.universal.providers.rating.rate import parse_rate_response
 
 
-class TestCanadaPostRating(unittest.TestCase):
+class TestUniversalRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.settings = Settings(**settings_data)
-        self.proxy = Proxy(self.settings)
+        self.settings = RatingMixinSettings(**settings_data)
+        self.proxy = RatingMixinProxy(self.settings)
 
     def test_rate_without_service_selection_request(self):
         RateRequestWithoutSelection = Serializable(RateRequest(**rate_request_data))
         response_data = self.proxy.get_rates(RateRequestWithoutSelection)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
 
         self.assertListEqual(
-            DP.to_dict(response_data.deserialize()),
+            DP.to_dict(rates),
             ParsedRateResponseWithoutSelection,
         )
 
@@ -24,9 +29,10 @@ class TestCanadaPostRating(unittest.TestCase):
             RateRequest(**{**rate_request_data, "services": ["carrier_standard"]})
         )
         response_data = self.proxy.get_rates(RateRequestStandardService)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
 
         self.assertListEqual(
-            DP.to_dict(response_data.deserialize()),
+            DP.to_dict(rates),
             ParsedRateResponseStandardService,
         )
 
@@ -45,9 +51,10 @@ class TestCanadaPostRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(RateRequestHighWeight)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
 
         self.assertListEqual(
-            DP.to_dict(response_data.deserialize()),
+            DP.to_dict(rates),
             ParsedRateResponseHighWeightService,
         )
 
@@ -61,9 +68,10 @@ class TestCanadaPostRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(InternationalRateRequest)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
 
         self.assertListEqual(
-            DP.to_dict(response_data.deserialize()),
+            DP.to_dict(rates),
             ParsedInternationalRateResponseService,
         )
 
@@ -83,10 +91,31 @@ class TestCanadaPostRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(InternationalRateRequestHighWeight)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
 
         self.assertListEqual(
-            DP.to_dict(response_data.deserialize()),
+            DP.to_dict(rates),
             ParsedInternationalRateResponseHighWeightService,
+        )
+
+    def test_multi_piece_rate_request(self):
+        MultiPieceRateRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        rate_request_data["parcels"][0],
+                        rate_request_data["parcels"][0],
+                    ],
+                }
+            )
+        )
+        response_data = self.proxy.get_rates(MultiPieceRateRequest)
+        rates = parse_rate_response(response_data.deserialize(), self.settings)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedMultiPieceRateResponse,
         )
 
 
@@ -95,6 +124,7 @@ if __name__ == "__main__":
 
 
 settings_data = {
+    "carrier_id": "universal",
     "services": [
         {
             "service_name": "Standard",
@@ -126,7 +156,7 @@ settings_data = {
             "domicile": False,
             "international": True,
         },
-    ]
+    ],
 }
 
 rate_request_data = {
@@ -149,26 +179,20 @@ rate_request_data = {
 ParsedRateResponseWithoutSelection = [
     [
         {
-            "cost": "10.00",
+            "base_charge": 10.0,
+            "carrier_id": "universal",
             "currency": "USD",
-            "domicile": True,
-            "international": False,
-            "max_weight": 5.0,
-            "service_code": "carrier_standard",
-            "service_name": "Standard",
-            "weight_unit": "LB",
-            "active": True,
+            "meta": {"service_name": "Standard"},
+            "service": "carrier_standard",
+            "total_charge": 10.0,
         },
         {
-            "cost": "15.00",
+            "base_charge": 15.0,
+            "carrier_id": "universal",
             "currency": "USD",
-            "domicile": True,
-            "international": False,
-            "max_weight": 8.0,
-            "service_code": "carrier_premium",
-            "service_name": "Premium",
-            "weight_unit": "LB",
-            "active": True,
+            "meta": {"service_name": "Premium"},
+            "service": "carrier_premium",
+            "total_charge": 15.0,
         },
     ],
     [],
@@ -177,16 +201,13 @@ ParsedRateResponseWithoutSelection = [
 ParsedRateResponseStandardService = [
     [
         {
-            "cost": "10.00",
+            "base_charge": 10.0,
+            "carrier_id": "universal",
             "currency": "USD",
-            "domicile": True,
-            "international": False,
-            "max_weight": 5.0,
-            "service_code": "carrier_standard",
-            "service_name": "Standard",
-            "weight_unit": "LB",
-            "active": True,
-        },
+            "meta": {"service_name": "Standard"},
+            "service": "carrier_standard",
+            "total_charge": 10.0,
+        }
     ],
     [],
 ]
@@ -194,19 +215,17 @@ ParsedRateResponseStandardService = [
 ParsedRateResponseHighWeightService = [
     [
         {
-            "cost": "15.00",
+            "base_charge": 15.0,
+            "carrier_id": "universal",
             "currency": "USD",
-            "domicile": True,
-            "international": False,
-            "max_weight": 8.0,
-            "service_code": "carrier_premium",
-            "service_name": "Premium",
-            "weight_unit": "LB",
-            "active": True,
+            "meta": {"service_name": "Premium"},
+            "service": "carrier_premium",
+            "total_charge": 15.0,
         }
     ],
     [
         {
+            "carrier_id": "universal",
             "code": "invalid_weight",
             "message": "the weight exceeds service carrier_standard max weight",
         }
@@ -216,15 +235,12 @@ ParsedRateResponseHighWeightService = [
 ParsedInternationalRateResponseService = [
     [
         {
-            "cost": "25.00",
+            "base_charge": 25.0,
+            "carrier_id": "universal",
             "currency": "USD",
-            "domicile": False,
-            "international": True,
-            "max_weight": 5.0,
-            "service_code": "carrier_interational_parcel",
-            "service_name": "International Parcel",
-            "weight_unit": "LB",
-            "active": True,
+            "meta": {"service_name": "International Parcel"},
+            "service": "carrier_interational_parcel",
+            "total_charge": 25.0,
         }
     ],
     [],
@@ -234,8 +250,31 @@ ParsedInternationalRateResponseHighWeightService = [
     [],
     [
         {
+            "carrier_id": "universal",
             "code": "invalid_weight",
             "message": "the weight exceeds service carrier_interational_parcel max weight",
         }
     ],
+]
+
+ParsedMultiPieceRateResponse = [
+    [
+        {
+            "base_charge": 20.0,
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Standard"},
+            "service": "carrier_standard",
+            "total_charge": 20.0,
+        },
+        {
+            "base_charge": 30.0,
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Premium"},
+            "service": "carrier_premium",
+            "total_charge": 30.0,
+        },
+    ],
+    [],
 ]

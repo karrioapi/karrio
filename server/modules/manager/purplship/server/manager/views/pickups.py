@@ -11,16 +11,14 @@ from django.urls import path
 from django_filters import rest_framework as filters
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.core.serializers import (
-    FlagField,
+from purplship.server.manager.router import router
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     Pickup,
     ErrorResponse,
     OperationConfirmation,
     TestFilters,
-)
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.manager.router import router
-from purplship.server.manager.serializers import (
     PickupData,
     PickupUpdateData,
     PickupCancelData,

@@ -8,7 +8,6 @@ T = TypeVar("T")
 
 
 class DICTPARSE:
-
     @staticmethod
     def jsonify(entity: Union[dict, T]) -> str:
         """Return a JSON.
@@ -47,7 +46,9 @@ class DICTPARSE:
         """
         return json.loads(
             DICTPARSE.jsonify(entity) if not isinstance(entity, str) else entity,
-            object_hook=lambda d: {k: v for k, v in d.items() if v not in (None, [], "")},
+            object_hook=lambda d: {
+                k: v for k, v in d.items() if v not in (None, [], "")
+            },
         )
 
     @staticmethod

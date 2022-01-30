@@ -29,7 +29,7 @@ def gif_to_pdf(gif_str: str) -> str:
 
 
 def bundle_pdfs(base64_strings: List[str]) -> PdfFileMerger:
-    merger = PdfFileMerger()
+    merger = PdfFileMerger(strict=False)
 
     for b64_str in base64_strings:
         content = base64.b64decode(b64_str)

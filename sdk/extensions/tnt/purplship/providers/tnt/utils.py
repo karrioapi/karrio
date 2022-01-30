@@ -1,4 +1,3 @@
-
 from base64 import b64encode
 from purplship.core import Settings as BaseSettings
 

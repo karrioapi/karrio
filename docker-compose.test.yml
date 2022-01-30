@@ -8,6 +8,8 @@ services:
       dockerfile: docker/dev.test.Dockerfile
     container_name: pship
     env_file: .env
+    environment:
+      DATABASE_HOST: "db"
     volumes:
       - .:/pship/app/
     ports:
@@ -27,7 +29,6 @@ services:
     extends:
       file: docker-compose.yml
       service: db
-
 
 volumes:
   redisdata:

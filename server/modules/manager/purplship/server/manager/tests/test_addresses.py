@@ -64,6 +64,7 @@ ADDRESS_DATA = {
 
 ADDRESS_RESPONSE = {
     "id": ANY,
+    "object_type": "address",
     "postal_code": "H8Z2Z3",
     "city": "Montreal",
     "federal_tax_id": None,
@@ -91,6 +92,7 @@ ADDRESS_UPDATE_DATA = {
 
 ADDRESS_UPDATE_RESPONSE = {
     "id": ANY,
+    "object_type": "address",
     "postal_code": "H8Z2Z3",
     "city": "Montreal",
     "federal_tax_id": None,

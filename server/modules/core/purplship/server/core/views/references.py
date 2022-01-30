@@ -6,12 +6,12 @@ from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
-from django.urls import path, reverse
+from django.urls import path
 from django.conf import settings
 
 from purplship.server.core.router import router
 from purplship.server.core.serializers import PlainDictField, CharField, BooleanField
-from purplship.server.core import dataunits, validators
+from purplship.server.core import dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
@@ -22,6 +22,7 @@ class References(Serializer):
     APP_VERSION = CharField()
     APP_WEBSITE = CharField()
     MULTI_ORGANIZATIONS = BooleanField()
+    ORDERS_MANAGEMENT = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()
@@ -55,21 +56,7 @@ class References(Serializer):
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
-    is_authenticated = request.auth is not None
-    host = request.build_absolute_uri(
-        reverse("purplship.server.core:metadata", kwargs={})
-    )
-
-    references = {
-        **dataunits.METADATA,
-        "ADMIN": f"{host}admin/",
-        "OPENAPI": f"{host}openapi",
-        "GRAPHQL": f"{host}graphql",
-        "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
-        **dataunits.REFERENCE_MODELS,
-    }
-
-    return Response(references, status=status.HTTP_200_OK)
+    return Response(dataunits.contextual_reference(request), status=status.HTTP_200_OK)
 
 
 router.urls.append(path("references", references))

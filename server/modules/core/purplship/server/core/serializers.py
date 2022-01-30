@@ -60,6 +60,10 @@ DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
+LABEL_TEMPLATE_TYPES = [
+    ("SVG", "SVG"),
+    ("ZPL", "ZPL"),
+]
 
 
 class StringListField(ListField):
@@ -122,6 +126,7 @@ class CarrierSettings(Serializer):
     The active flag indicates whether the carrier account is active or not.
     """,
     )
+    object_type = CharField(default="carrier", help_text="Specifies the object type")
 
 
 class TestFilters(FlagsSerializer):
@@ -257,6 +262,7 @@ class AddressData(AugmentedAddressSerializer):
 
 
 class Address(EntitySerializer, AddressData):
+    object_type = CharField(default="address", help_text="Specifies the object type")
     validation = AddressValidation(
         required=False, allow_null=True, help_text="Specify address validation result"
     )
@@ -276,7 +282,7 @@ class CommodityData(Serializer):
     )
     quantity = IntegerField(
         required=False,
-        allow_null=True,
+        default=1,
         help_text="The commodity's quantity (number or item)",
     )
     sku = CharField(
@@ -300,10 +306,35 @@ class CommodityData(Serializer):
         allow_null=True,
         help_text="The origin or manufacture country",
     )
+    parent_id = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The id of the related order line item.",
+    )
+    metadata = PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""
+    <details>
+    <summary>Commodity user references metadata.</summary>
+
+    ```
+    {
+        "part_number": "5218487281",
+        "reference1": "# ref 1",
+        "reference2": "# ref 2",
+        "reference3": "# ref 3",
+        "reference4": "# ref 4",
+        ...
+    }
+    ```
+    </details>
+    """,
+    )
 
 
 class Commodity(EntitySerializer, CommodityData):
-    pass
+    object_type = CharField(default="commodity", help_text="Specifies the object type")
 
 
 class ParcelData(PresetSerializer):
@@ -325,9 +356,10 @@ class ParcelData(PresetSerializer):
 
     **Note that the packaging is optional when using a package preset**
 
-    values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
+    values: <br/>
+    {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
 
-    For specific carriers packaging type, please consult [the reference](#operation/references).
+    For carrier specific packaging types, please consult the reference.
     """,
     )
     package_preset = CharField(
@@ -337,7 +369,7 @@ class ParcelData(PresetSerializer):
         help_text="""
     The parcel's package preset.
 
-    For specific carriers package preset, please consult [the reference](#operation/references).
+    For carrier specific package presets, please consult the reference.
     """,
     )
     description = CharField(
@@ -368,10 +400,17 @@ class ParcelData(PresetSerializer):
         choices=DIMENSION_UNIT,
         help_text="The parcel's dimension unit",
     )
+    items = CommodityData(required=False, many=True, help_text="The parcel items.")
+    reference_number = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
+    )
 
 
 class Parcel(EntitySerializer, ParcelData):
-    pass
+    object_type = CharField(default="parcel", help_text="Specifies the object type")
+    items = Commodity(required=False, many=True, help_text="The parcel items.")
 
 
 class Payment(Serializer):
@@ -434,7 +473,7 @@ class Duty(Serializer):
 )
 class CustomsData(Serializer):
 
-    commodities = Commodity(
+    commodities = CommodityData(
         many=True, allow_empty=False, help_text="The parcel content items"
     )
     duty = Duty(
@@ -505,7 +544,12 @@ class CustomsData(Serializer):
 
 
 class Customs(EntitySerializer, CustomsData):
-    pass
+    object_type = CharField(
+        default="customs_info", help_text="Specifies the object type"
+    )
+    commodities = Commodity(
+        required=False, many=True, help_text="The parcel content items"
+    )
 
 
 class COD(Serializer):
@@ -591,7 +635,7 @@ class RateRequest(Serializer):
         allow_null=True,
         help_text="""
     The requested carrier service for the shipment.<br/>
-    Please consult [the reference](#operation/references) for specific carriers services.
+    Please consult the reference for specific carriers services.
 
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
@@ -612,7 +656,7 @@ class RateRequest(Serializer):
         "dangerous_good": true,
         "declared_value": 150.00,
         "email_notification": true,
-        "email_notification_to": shipper@mail.com,
+        "email_notification_to": "shipper@mail.com",
         "signature_confirmation": true,
     }
     ```
@@ -794,8 +838,8 @@ class PickupUpdateRequest(Serializer):
 
 
 class PickupDetails(Serializer):
-
     id = CharField(required=False, help_text="A unique pickup identifier")
+    object_type = CharField(default="pickup", help_text="Specifies the object type")
     carrier_name = CharField(required=True, help_text="The pickup carrier")
     carrier_id = CharField(
         required=True, help_text="The pickup carrier configured name"
@@ -825,6 +869,9 @@ class Pickup(PickupDetails, PickupRequest):
         many=True,
         allow_empty=False,
         help_text="The shipment parcels to pickup.",
+    )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the pickup"
     )
     test_mode = BooleanField(
         required=True,
@@ -879,7 +926,7 @@ class TrackingEvent(Serializer):
 
 
 class Rate(EntitySerializer):
-
+    object_type = CharField(default="rate", help_text="Specifies the object type")
     carrier_name = CharField(required=True, help_text="The rate's carrier")
     carrier_id = CharField(
         required=True, help_text="The targeted carrier's name (unique identifier)"
@@ -929,13 +976,6 @@ class Rate(EntitySerializer):
     meta = PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
-
-    carrier_ref = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The system carrier configuration id",
-    )
     test_mode = BooleanField(
         required=True,
         help_text="Specified whether it was created with a carrier in test mode",
@@ -976,6 +1016,10 @@ class TrackingDetails(Serializer):
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
+    object_type = CharField(default="tracker", help_text="Specifies the object type")
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the tracker"
+    )
     messages = Message(
         required=False,
         many=True,
@@ -1030,7 +1074,7 @@ class ShippingData(Serializer):
         "dangerous_good": true,
         "declared_value": 150.00,
         "email_notification": true,
-        "email_notification_to": shipper@mail.com,
+        "email_notification_to": "shipper@mail.com",
         "signature_confirmation": true,
     }
     ```
@@ -1075,7 +1119,7 @@ class ShipmentData(ShippingData):
         help_text="""
     The requested carrier service for the shipment.
 
-    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Please consult the reference for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
     )
@@ -1089,19 +1133,18 @@ class ShipmentData(ShippingData):
     *Note that the request will be sent to all carriers in nothing is specified*
     """,
     )
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the shipment"
+    )
 
 
-class ShipmentContent(Serializer):
-
-    # Process result properties
-
+class ShipmentDetails(Serializer):
     status = ChoiceField(
         required=False,
         default=ShipmentStatus.created.value,
         choices=SHIPMENT_STATUS,
         help_text="The current Shipment status",
     )
-
     carrier_name = CharField(
         required=False,
         allow_blank=True,
@@ -1135,18 +1178,21 @@ class ShipmentContent(Serializer):
     selected_rate = Rate(
         required=False, allow_null=True, help_text="The shipment selected rate"
     )
+    meta = PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
+    )
 
+    service = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The selected service",
+    )
     selected_rate_id = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         help_text="The shipment selected rate.",
-    )
-    rates = Rate(
-        many=True,
-        required=False,
-        default=[],
-        help_text="The list for shipment rates fetched previously",
     )
     tracking_url = URLField(
         required=False,
@@ -1154,15 +1200,13 @@ class ShipmentContent(Serializer):
         allow_null=True,
         help_text="The shipment tracking url",
     )
-    service = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The selected service",
+    test_mode = BooleanField(
+        required=True,
+        help_text="Specified whether it was created with a carrier in test mode",
     )
 
-    # Request properties
 
+class ShipmentContent(Serializer):
     shipper = Address(
         required=True,
         help_text="""
@@ -1190,7 +1234,7 @@ class ShipmentContent(Serializer):
         help_text="""
     The carriers services requested for the shipment.
 
-    Please consult [the reference](#operation/references) for specific carriers services.<br/>
+    Please consult the reference for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """,
     )
@@ -1210,7 +1254,7 @@ class ShipmentContent(Serializer):
         "dangerous_good": true,
         "declared_value": 150.00,
         "email_notification": true,
-        "email_notification_to": shipper@mail.com,
+        "email_notification_to": "shipper@mail.com",
         "signature_confirmation": true,
     }
     ```
@@ -1220,7 +1264,7 @@ class ShipmentContent(Serializer):
     """,
     )
 
-    payment = Payment(required=False, allow_null=True, help_text="The payment details")
+    payment = Payment(required=False, default={}, help_text="The payment details")
     customs = Customs(
         required=False,
         allow_null=True,
@@ -1228,6 +1272,12 @@ class ShipmentContent(Serializer):
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
     """,
+    )
+    rates = Rate(
+        many=True,
+        required=False,
+        default=[],
+        help_text="The list for shipment rates fetched previously",
     )
     reference = CharField(
         required=False,
@@ -1266,12 +1316,8 @@ class ShipmentContent(Serializer):
     Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
     """,
     )
-    test_mode = BooleanField(
-        required=True,
-        help_text="Specified whether it was created with a carrier in test mode",
-    )
-    meta = PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
+    metadata = PlainDictField(
+        required=False, default={}, help_text="User metadata for the shipment"
     )
     messages = Message(
         required=False,
@@ -1281,8 +1327,8 @@ class ShipmentContent(Serializer):
     )
 
 
-class Shipment(EntitySerializer, ShipmentContent):
-    pass
+class Shipment(EntitySerializer, ShipmentContent, ShipmentDetails):
+    object_type = CharField(default="shipment", help_text="Specifies the object type")
 
 
 class ShipmentCancelRequest(Serializer):

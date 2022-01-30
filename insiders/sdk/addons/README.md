@@ -1,0 +1,1 @@
+# Purplship Insiders SDK addons

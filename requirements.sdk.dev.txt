@@ -4,6 +4,8 @@
 
 # SDK extentions
 -e ./sdk/core
+-e ./insiders/sdk/addons
+
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/boxknight
@@ -26,6 +28,8 @@
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
+
+-e ./insiders/sdk/generic
 
 # Extenstions in Development
 -e ./sdk/extensions/ics_courier

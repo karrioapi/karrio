@@ -4,10 +4,11 @@
 ROOT="$( cd "$( dirname $0 )/../" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
+LOG_DIR=".pship"
 DIST="${ROOT:?}/${ENV_DIR}/dist"
 EE_DIST="${ROOT:?}/${ENV_DIR}/insiders-dist"
 
-mkdir -p "${DIST}" "${EE_DIST}"
+mkdir -p "${DIST}" "${EE_DIST}" "${LOG_DIR}"
 
 ## icon vars
 cross=$'\u274c'

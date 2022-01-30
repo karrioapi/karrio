@@ -8,18 +8,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import (
-    ShipmentStatus,
+from purplship.server.manager.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
     ErrorResponse,
     ParcelData,
     Parcel,
     Operation,
-)
-from purplship.server.manager.serializers import (
     ParcelSerializer,
-    reset_related_shipment_rates,
+    can_mutate_parcel,
 )
 from purplship.server.manager.router import router
 import purplship.server.manager.models as models
@@ -55,7 +52,7 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.access_by(request).filter(shipment_parcels=None)
+        parcels = models.Parcel.access_by(request).filter(shipment__isnull=True)
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -145,16 +142,10 @@ class ParcelDetail(APIView):
         modify an existing parcel's details.
         """
         parcel = models.Parcel.access_by(request).get(pk=pk)
-        shipment = parcel.shipment_parcels.first()
-        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
-            raise PurplshipAPIException(
-                "The shipment related to this parcel has been 'purchased' and can no longer be modified",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_parcel(parcel, update=True)
 
         SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
-        reset_related_shipment_rates(shipment)
+
         return Response(Parcel(parcel).data)
 
     @swagger_auto_schema(
@@ -178,23 +169,11 @@ class ParcelDetail(APIView):
         Remove a parcel.
         """
         parcel = models.Parcel.access_by(request).get(pk=pk)
-        shipment = parcel.shipment_parcels.first()
-
-        if shipment is not None and (
-            shipment.status == ShipmentStatus.purchased.value
-            or len(shipment.shipment_parcels.all()) == 1
-        ):
-            raise PurplshipAPIException(
-                "A shipment attached to this parcel is purchased or has only one parcel. The parcel cannot be removed!",
-                status_code=status.HTTP_409_CONFLICT,
-                code="state_error",
-            )
+        can_mutate_parcel(parcel, update=True, delete=True)
 
         parcel.delete(keep_parents=True)
-        shipment.shipment_parcels.set(shipment.shipment_parcels.exclude(id=parcel.id))
-        serializer = Operation(dict(operation="Remove parcel", success=True))
-        reset_related_shipment_rates(shipment)
-        return Response(serializer.data)
+
+        return Response(Operation(dict(operation="Remove parcel", success=True)).data)
 
 
 router.urls.append(path("parcels", ParcelList.as_view(), name="parcel-list"))

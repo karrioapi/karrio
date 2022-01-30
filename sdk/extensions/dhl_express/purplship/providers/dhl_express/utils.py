@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
-            if self.test else
-            "https://xmlpi-ea.dhl.com/XMLShippingServlet"
+            if self.test
+            else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
         )
 
     def Request(self, **kwargs) -> Request:
