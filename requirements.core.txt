@@ -1,5 +1,5 @@
 -f https://git.io/purplship
-Django<=3.2.10
+Django<=3.2.11
 
 purplship
 purplship.server
@@ -16,8 +16,10 @@ purplship.canpar
 purplship.dhl-express
 purplship.dhl-poland
 purplship.dhl-universal
+purplship.eshipper
 purplship.dicom
 purplship.fedex
+purplship.freightcom
 purplship.purolator
 purplship.royalmail
 purplship.sendle
@@ -28,5 +30,3 @@ purplship.usps
 purplship.usps_international
 purplship.yanwen
 purplship.yunexpress
-purplship.eshipper
-purplship.freightcom

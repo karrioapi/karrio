@@ -1,16 +1,16 @@
-Django==3.2.10
+Django<=3.2.11
 
 # Carrier Schemas in Development
 # -e ./schemas/dhl_poland
 
 
 # Carrier Extenstions in Development
--e ./sdk/core
+# -e ./sdk/core
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
--e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_poland
--e ./sdk/extensions/fedex
+# -e ./sdk/extensions/dhl_express
+# -e ./sdk/extensions/dhl_poland
+# -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/ups
@@ -23,11 +23,11 @@ purplship.aramex
 purplship.australiapost
 purplship.canadapost
 purplship.canpar
-# purplship.dhl-express
-# purplship.dhl-poland
+purplship.dhl-express
+purplship.dhl-poland
 purplship.dhl-universal
 purplship.dicom
-# purplship.fedex
+purplship.fedex
 purplship.purolator
 purplship.royalmail
 purplship.sendle

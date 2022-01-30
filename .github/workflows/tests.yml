@@ -51,9 +51,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run insiders Tests
+        env:
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+          REGISTRY_TOKEN_NAME: ${{ secrets.REGISTRY_TOKEN_NAME }}
         run: |
           sudo chown -R 1000 ./
-          docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+          docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN pship bash -c '
             cd app &&
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.sf_express"
-version = "2021.10"
+version = "2021.10.1"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - SF-Express Shipping Extension"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.6"
+"purplship" = ""
 "carrier.sf_express" = ""
 
 [tool.poetry.dev-dependencies]

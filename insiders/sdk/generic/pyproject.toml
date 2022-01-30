@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.generic"
-version = "2021.12"
+version = "2022.1"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Generic Shipping Extension"
@@ -14,6 +14,11 @@ classifiers=[
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
 ]
+
+[[tool.poetry.source]]
+name = "purplship"
+url = "https://gitlab.com/api/v4/projects/28001120/packages/pypi"
+secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.7"
