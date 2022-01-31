@@ -12,12 +12,12 @@ if importlib.util.find_spec("purplship.server.graph") is not None:
     from purplship.server.settings.graph import *
 
 
-if importlib.util.find_spec("purplship.server.orgs") is not None:
-    from purplship.server.settings.orgs import *
-
-
 if importlib.util.find_spec("purplship.server.orders") is not None:
     from purplship.server.settings.orders import *
+
+
+if importlib.util.find_spec("purplship.server.orgs") is not None:
+    from purplship.server.settings.orgs import *
 
 
 """ Warning:: This section need to be last for settings extensibility """

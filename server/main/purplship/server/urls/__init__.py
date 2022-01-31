@@ -28,6 +28,7 @@ admin.site.site_header = APP_NAME
 admin.site.site_title = f"{APP_NAME} shipping API"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
+admin.site.index_template = "purplship/admin.html"
 
 urlpatterns = [
     path(
