@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import GroupAdmin
 from django_tenants.admin import TenantAdminMixin
+from constance.admin import ConstanceAdmin, Config
 
 from purplship.server.user.admin import UserAdmin
 import purplship.server.tenants.models as models
@@ -15,11 +16,13 @@ class TenantsAdmin(AdminSite):
 
 
 class ClientAdmin(TenantAdminMixin, ModelAdmin):
-        list_display = ('name', )
+    list_display = ("name",)
 
 
-site = TenantsAdmin(name='system')
+site = TenantsAdmin(name="system")
 site.register(get_user_model(), UserAdmin)
 site.register(Group, GroupAdmin)
 site.register(models.Client, ClientAdmin)
 site.register(models.Domain)
+
+site.register([Config], ConstanceAdmin)

@@ -1,26 +1,30 @@
-from django.conf import settings
 from django.urls import reverse
 from rest_framework.request import Request
 
 from purplship.references import collect_providers_data, collect_references
 from purplship.server.core.serializers import CustomsContentType, Incoterm
+from purplship.server.conf import settings
 
 
 PACKAGE_MAPPERS = collect_providers_data()
-
-METADATA = {
-    "APP_NAME": getattr(settings, "APP_NAME", "purplship"),
-    "APP_VERSION": getattr(settings, "VERSION"),
-    "APP_WEBSITE": getattr(settings, "APP_WEBSITE", "https://purplship.com"),
-    "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
-    "ORDERS_MANAGEMENT": getattr(settings, "ORDERS_MANAGEMENT", False),
-}
 
 REFERENCE_MODELS = {
     **collect_references(),
     "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
     "incoterms": {c.name: c.value for c in list(Incoterm)},
 }
+
+
+def contextual_metadata(request: Request):
+    tenant = getattr(request, "tenant", None)
+
+    return {
+        "VERSION": getattr(settings, "VERSION"),
+        "APP_NAME": settings.get("APP_NAME", tenant),
+        "APP_WEBSITE": settings.get("APP_WEBSITE", tenant),
+        "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
+        "ORDERS_MANAGEMENT": getattr(settings, "ORDERS_MANAGEMENT", False),
+    }
 
 
 def contextual_reference(request: Request):
@@ -32,7 +36,7 @@ def contextual_reference(request: Request):
         reverse("purplship.server.core:metadata", kwargs={})
     )
     references = {
-        **METADATA,
+        **contextual_metadata(request),
         "ADMIN": f"{host}admin/",
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",

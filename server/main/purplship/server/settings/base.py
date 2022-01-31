@@ -109,6 +109,7 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
+MULTI_TENANTS = importlib.util.find_spec("purplship.server.tenants") is not None
 
 
 # components path settings
@@ -304,8 +305,8 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "LOGIN_URL": reverse_lazy("admin:login"),
     "LOGOUT_URL": "/admin/logout",
-    "DEFAULT_INFO": "purplship.server.urls.schema.swagger_info",
-    "DEFAULT_AUTO_SCHEMA_CLASS": "purplship.server.urls.schema.SwaggerAutoSchema",
+    "DEFAULT_INFO": "purplship.server.core.views.schema.swagger_info",
+    "DEFAULT_AUTO_SCHEMA_CLASS": "purplship.server.core.views.schema.SwaggerAutoSchema",
     "SECURITY_DEFINITIONS": {
         "Token": {
             "type": "apiKey",

@@ -2,8 +2,10 @@
 {% load i18n static %}
 {% load static %}
 
-{% block extrastyle %}
-    <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ APP_NAME|default:_('Purplship site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ APP_NAME|default:_('Purplship administration') }}</a></h1>
 {% endblock %}
 
 {% block userlinks %}

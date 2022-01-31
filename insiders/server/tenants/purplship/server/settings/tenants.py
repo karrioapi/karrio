@@ -1,4 +1,3 @@
-from pprint import pprint
 from django.conf.global_settings import CACHES
 from purplship.server.settings.base import *
 
