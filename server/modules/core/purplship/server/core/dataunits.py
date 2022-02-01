@@ -15,13 +15,11 @@ REFERENCE_MODELS = {
 }
 
 
-def contextual_metadata(request: Request):
-    tenant = getattr(request, "tenant", None)
-
+def contextual_metadata():
     return {
         "VERSION": getattr(settings, "VERSION"),
-        "APP_NAME": settings.get("APP_NAME", tenant),
-        "APP_WEBSITE": settings.get("APP_WEBSITE", tenant),
+        "APP_NAME": settings.APP_NAME,
+        "APP_WEBSITE": settings.APP_WEBSITE,
         "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
         "ORDERS_MANAGEMENT": getattr(settings, "ORDERS_MANAGEMENT", False),
     }
@@ -36,7 +34,7 @@ def contextual_reference(request: Request):
         reverse("purplship.server.core:metadata", kwargs={})
     )
     references = {
-        **contextual_metadata(request),
+        **contextual_metadata(),
         "ADMIN": f"{host}admin/",
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",

@@ -7,5 +7,6 @@ TEMPLATE_SETTINGS_ACCESS_LIST = (
 
 
 def get_settings(request):
-    tenant = getattr(request, "tenant", None)
-    return {name: settings.get(name, tenant) for name in TEMPLATE_SETTINGS_ACCESS_LIST}
+    return {
+        name: getattr(settings, name, None) for name in TEMPLATE_SETTINGS_ACCESS_LIST
+    }

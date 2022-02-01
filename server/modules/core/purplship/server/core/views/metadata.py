@@ -35,7 +35,7 @@ class Metadata(Serializer):
 @renderer_classes([JSONRenderer])
 def view(request: Request) -> Response:
     metadata = {
-        **dataunits.contextual_metadata(request),
+        **dataunits.contextual_metadata(),
         "ADMIN": f"{request.build_absolute_uri()}admin/",
         "OPENAPI": f"{request.build_absolute_uri()}openapi",
         "GRAPHQL": f"{request.build_absolute_uri()}graphql",

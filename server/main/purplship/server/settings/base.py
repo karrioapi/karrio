@@ -109,7 +109,9 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
-MULTI_TENANTS = importlib.util.find_spec("purplship.server.tenants") is not None
+MULTI_TENANTS = importlib.util.find_spec(
+    "purplship.server.tenants"
+) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
 
 
 # components path settings
@@ -186,7 +188,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Purplship Middleware
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.CreatorAccess'
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.WideAccess'
-DEFAULT_TRACKERS_UPDATE_INTERVAL = config("TRACKING_PULSE", default=7200, cast=int)
 
 
 # Database

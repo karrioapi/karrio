@@ -21,7 +21,7 @@ if importlib.util.find_spec("purplship.server.orgs") is not None:
 
 
 """ Warning:: This section need to be last for settings extensibility """
-if config("MULTI_TENANT_ENABLE", default=False, cast=bool):
+if MULTI_TENANTS:
     from purplship.server.settings.tenants import *
 
 if importlib.util.find_spec("purplship.server.settings.main") is not None:

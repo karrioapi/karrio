@@ -18,14 +18,23 @@ FALLBACK_VALUES = {
 
 
 class Settings:
-    def __init__(self):
-        self.tenant = connection.get_tenant() if base_settings.MULTI_TENANTS else None
-
     def __getattr__(self, item):
+        if item == "tenant":
+            return self._get_tenant()
+
+        if item == "schema":
+            return self._get_schema()
+
         if item == "APP_NAME":
-            return getattr(self.tenant, "name", FALLBACK_VALUES.get(item))
+            return getattr(self._get_tenant(), "name", FALLBACK_VALUES.get(item))
 
         return getattr(base_settings, item, FALLBACK_VALUES.get(item))
+
+    def _get_schema(self):
+        return connection.get_schema() if base_settings.MULTI_TENANTS else None
+
+    def _get_tenant(self):
+        return connection.get_tenant() if base_settings.MULTI_TENANTS else None
 
     def get(self, item, tenant=None):
         if tenant:

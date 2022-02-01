@@ -25,6 +25,7 @@ APP_VERSION = getattr(settings, "VERSION", "")
 APP_NAME = getattr(settings, "APP_NAME", "Purplship")
 BASE_PATH = getattr(settings, "BASE_PATH", "")
 
+admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 admin.site.index_template = "purplship/admin.html"
