@@ -58,8 +58,10 @@ class Carrier(OwnedEntity):
         max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
     )
-    test = models.BooleanField(default=True)
-    active = models.BooleanField(default=True)
+    test = models.BooleanField(default=True, help_text="Toggle carrier connection mode")
+    active = models.BooleanField(
+        default=True, help_text="Disable/Hide carrier from clients"
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True,
@@ -74,6 +76,7 @@ class Carrier(OwnedEntity):
         models.CharField(max_length=50, choices=CAPABILITIES_CHOICES),
         default=CarrierCapabilities.get_capabilities,
         size=len(CAPABILITIES_CHOICES),
+        help_text="Select the capabilities of the carrier that you want to enable",
     )
     metadata = models.JSONField(blank=True, null=True, default=dict)
 

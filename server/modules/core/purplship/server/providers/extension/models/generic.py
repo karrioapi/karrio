@@ -10,9 +10,12 @@ class GenericSettings(Carrier):
         verbose_name = "Custom Carrier Settings"
         verbose_name_plural = "Custom Carrier Settings"
 
-    verbose_name = models.CharField(max_length=50)
+    verbose_name = models.CharField(max_length=50, help_text="Carrier display name")
     custom_carrier_name = models.CharField(
-        max_length=50, unique=True, validators=[RegexValidator(r"^[a-z0-9_]+$")]
+        max_length=50,
+        unique=True,
+        validators=[RegexValidator(r"^[a-z0-9_]+$")],
+        help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
     )
     services = models.ManyToManyField("ServiceLevel", blank=True)
     label_template = models.ForeignKey(
