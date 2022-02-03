@@ -21,8 +21,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from constance.admin import Config
 
 
-APP_VERSION = getattr(settings, "VERSION", "")
-APP_NAME = getattr(settings, "APP_NAME", "Purplship")
 BASE_PATH = getattr(settings, "BASE_PATH", "")
 
 admin.site.site_header = "Administration"
