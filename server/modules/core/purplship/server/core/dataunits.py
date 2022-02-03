@@ -17,11 +17,11 @@ REFERENCE_MODELS = {
 
 def contextual_metadata():
     return {
-        "VERSION": getattr(settings, "VERSION"),
+        "VERSION": settings.VERSION,
         "APP_NAME": settings.APP_NAME,
-        "APP_WEBSITE": settings.APP_WEBSITE,
-        "MULTI_ORGANIZATIONS": getattr(settings, "MULTI_ORGANIZATIONS", False),
-        "ORDERS_MANAGEMENT": getattr(settings, "ORDERS_MANAGEMENT", False),
+        "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
+        "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
+        **({"APP_WEBSITE": settings.APP_WEBSITE} if settings.APP_WEBSITE else {}),
     }
 
 
@@ -42,7 +42,7 @@ def contextual_reference(request: Request):
         **REFERENCE_MODELS,
     }
 
-    if is_authenticated:
+    if is_authenticated and "generic" in MODELS:
         custom_carriers = [
             c.settings
             for c in gateway.Carriers.list(context=request, carrier_name="generic")

@@ -161,7 +161,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 "description": f"""
                 This is an object representing your a {APP_NAME} order.
 
-                You can create purplship orders to organize your shipments and ship line items separately.
+                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
             },
             {
