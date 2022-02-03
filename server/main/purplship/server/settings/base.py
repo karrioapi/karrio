@@ -42,7 +42,6 @@ Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
 USE_HTTPS = config("USE_HTTPS", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
-CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
