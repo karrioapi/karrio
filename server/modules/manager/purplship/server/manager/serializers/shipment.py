@@ -191,7 +191,11 @@ class ShipmentSerializer(ShipmentData):
                 **selected_rate,
                 "meta": {
                     **selected_rate.get("meta", {}),
-                    **({"carrier_connection_id": carrier.id} if carrier is not None else {}),
+                    **(
+                        {"carrier_connection_id": carrier.id}
+                        if carrier is not None
+                        else {}
+                    ),
                 },
             }
             instance.selected_rate_carrier = carrier
@@ -415,7 +419,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
             .first()
         )
 
-    if carrier is not None:
+    if carrier is not None and "get_tracking" in carrier.gateway.capabilities:
         try:
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,

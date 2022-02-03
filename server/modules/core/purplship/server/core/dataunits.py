@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework.request import Request
 
 from purplship.references import collect_providers_data, collect_references
-from purplship.server.core.serializers import CustomsContentType, Incoterm
+from purplship.server.core.serializers import CustomsContentType, Incoterm, MODELS
 from purplship.server.conf import settings
 
 
