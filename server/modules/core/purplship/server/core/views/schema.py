@@ -193,17 +193,21 @@ class SwaggerAutoSchema(inspectors.SwaggerAutoSchema):
         )
 
 
+swagger_info = openapi.Info(
+    title=f"{settings.APP_NAME} API",
+    default_version=VERSION,
+    description=render_schema_description(settings.APP_NAME),
+    contact=openapi.Contact(email=""),
+)
+
+
 view = views.get_schema_view(
-    openapi.Info(
-        title=f"{settings.APP_NAME} API",
-        default_version=VERSION,
-        description=render_schema_description(settings.APP_NAME),
-        contact=openapi.Contact(email=""),
-    ),
+    swagger_info,
     public=True,
     permission_classes=(permissions.AllowAny,),
     generator_class=OpenAPISchemaGenerator,
 )
+
 
 urlpatterns = [
     path(
