@@ -1,78 +1,90 @@
 from django.urls import path
-from django.conf import settings
-from drf_yasg import views, openapi, generators, inspectors
 from rest_framework import permissions
+from drf_yasg import views, openapi, generators, inspectors
 
-APP_VERSION = getattr(settings, "VERSION", "")
-APP_NAME = getattr(settings, "APP_NAME", "Purplship")
-EMAIL_SUPPORT = getattr(settings, "EMAIL_SUPPORT", "hello@purplship.com")
+from purplship.server.conf import settings
 
-SCHEMA_VIEW_DESCRIPTION = f"""
-## API Reference
-
-{APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
-
-The {APP_NAME} API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
-request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
-
-The {APP_NAME} API differs for every account as we release new versions.
-These docs are customized to your version of the API.
+VERSION = getattr(settings, "VERSION", "")
 
 
-## Versioning
+def render_schema_description(APP_NAME):
+    return f"""
+    ## API Reference
 
-When backwards-incompatible changes are made to the API, a new, dated version is released.
-The current version is `{settings.VERSION}`.
+    {APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
 
-Read our API changelog and to learn more about backwards compatibility.
+    The {APP_NAME} API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
+    request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
 
-As a precaution, use API versioning to check a new API version before committing to an upgrade.
-
-
-## Pagination
-
-All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses,
-list shipments, and list trackers. These list API methods share a common structure, taking at least these
-two parameters: limit, and offset.
-
-{APP_NAME} utilizes offset-based pagination via the offset and limit parameters.
-Both parameters take a number as value (see below) and return objects in reverse chronological order.
-The offset parameter returns objects listed after an index.
-The limit parameter take a limit on the number of objects to be returned from 1 to 100.
+    The {APP_NAME} API differs for every account as we release new versions.
+    These docs are customized to your version of the API.
 
 
-```json
-{{
-    "next": "/v1/shipments?limit=25&offset=25",
-    "previous": "/v1/shipments?limit=25&offset=25",
-    "results": [
-    ]
-}}
-```
+    ## Versioning
 
-## Environments
+    When backwards-incompatible changes are made to the API, a new, dated version is released.
+    The current version is `{VERSION}`.
 
-The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
-In development, it is therefore possible to add carrier connections, get live rates,
-buy labels, create trackers and schedule pickups in `test_mode`.
+    Read our API changelog and to learn more about backwards compatibility.
 
-"""
+    As a precaution, use API versioning to check a new API version before committing to an upgrade.
 
-AUTHENTICATION_DESCRIPTION = """
-For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
-The JWT tokens changes for every new session and have an expiration timestamp.
 
-To authenticate via JWT access key, use `-H "Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U"`.
-"""
+    ## Pagination
+
+    All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses,
+    list shipments, and list trackers. These list API methods share a common structure, taking at least these
+    two parameters: limit, and offset.
+
+    {APP_NAME} utilizes offset-based pagination via the offset and limit parameters.
+    Both parameters take a number as value (see below) and return objects in reverse chronological order.
+    The offset parameter returns objects listed after an index.
+    The limit parameter take a limit on the number of objects to be returned from 1 to 100.
+
+
+    ```json
+    {{
+        "next": "/v1/shipments?limit=25&offset=25",
+        "previous": "/v1/shipments?limit=25&offset=25",
+        "results": [
+        ]
+    }}
+    ```
+
+    ## Environments
+
+    The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
+    In development, it is therefore possible to add carrier connections, get live rates,
+    buy labels, create trackers and schedule pickups in `test_mode`.
+
+    """
 
 
 class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
     def get_schema(self, request=None, public=False):
         """Generate a :class:`.Swagger` object with custom tags"""
+        tenant = getattr(request, "tenant", None)
+        APP_NAME = settings.get("APP_NAME", tenant)
+
+        if tenant:
+            self.info = openapi.Info(
+                title=f"{APP_NAME} API",
+                default_version=VERSION,
+                description=render_schema_description(APP_NAME),
+                contact=openapi.Contact(email=""),
+            )
 
         swagger = super().get_schema(request, public)
         swagger.tags = [
-            {"name": "API", "description": AUTHENTICATION_DESCRIPTION},
+            {
+                "name": "API",
+                "description": """
+                For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
+                The JWT tokens changes for every new session and have an expiration timestamp.
+
+                To authenticate via JWT access key, use `-H "Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U"`.
+                """,
+            },
             {
                 "name": "Addresses",
                 "description": f"""
@@ -149,7 +161,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 "description": f"""
                 This is an object representing your a {APP_NAME} order.
 
-                You can create purplship orders to organize your shipments and ship line items separately.
+                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
             },
             {
@@ -177,33 +189,35 @@ class SwaggerAutoSchema(inspectors.SwaggerAutoSchema):
         return openapi.Operation(
             operation.operation_id,
             **{k: v for k, v in operation.items() if k != operation.operation_id},
-            **{"x-code-samples": self.overrides.get("code_examples")},
+            **{"x-codeSamples": self.overrides.get("code_examples")},
         )
 
 
 swagger_info = openapi.Info(
-    title=f"{APP_NAME} API",
-    default_version=APP_VERSION,
-    description=SCHEMA_VIEW_DESCRIPTION,
-    contact=openapi.Contact(email=EMAIL_SUPPORT),
+    title=f"{settings.APP_NAME} API",
+    default_version=VERSION,
+    description=render_schema_description(settings.APP_NAME),
+    contact=openapi.Contact(email=""),
 )
 
-schema_view = views.get_schema_view(
+
+view = views.get_schema_view(
     swagger_info,
     public=True,
     permission_classes=(permissions.AllowAny,),
     generator_class=OpenAPISchemaGenerator,
 )
 
+
 urlpatterns = [
     path(
         "shipping-openapi.json",
-        schema_view.without_ui(cache_timeout=0),
+        view.without_ui(cache_timeout=0),
         name="schema-json",
     ),
     path(
         settings.OPEN_API_PATH,
-        schema_view.with_ui("redoc", cache_timeout=0),
+        view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
 ]

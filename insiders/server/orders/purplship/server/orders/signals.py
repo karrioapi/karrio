@@ -1,6 +1,8 @@
 import logging
+from attr import has
 from django.db.models import signals
 
+from purplship.server.conf import settings
 from purplship.server.core.utils import failsafe
 from purplship.server.events.serializers import EventTypes
 from purplship.server.orders.serializers.order import compute_order_status
@@ -68,16 +70,15 @@ def shipment_updated(
                 logger.info("shipment related order successfully updated")
 
 
-def order_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def order_updated(sender, instance, *args, **kwargs):
     """Order related events:
     - order created
     - order status changed (in-transit, delivered or blocked)
     """
-    changes = update_fields or []
+    created = kwargs.get("created", False)
+    changes = kwargs.get("update_fields") or []
 
-    if created:
+    if created or "created_at" in changes:
         event = EventTypes.order_created.value
     elif "status" not in changes:
         return
@@ -95,7 +96,14 @@ def order_updated(
     test_mode = instance.test_mode
     context = dict(
         user_id=failsafe(lambda: instance.created_by.id),
-        org_id=getattr(getattr(instance, "org", None), "id", None),
+        org_id=failsafe(
+            lambda: instance.org.first().id if hasattr(instance, "org") else None
+        ),
     )
 
-    tasks.notify_webhooks(event, data, event_at, context, test_mode)
+    if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
+        return
+
+    tasks.notify_webhooks(
+        event, data, event_at, context, test_mode, schema=settings.schema
+    )

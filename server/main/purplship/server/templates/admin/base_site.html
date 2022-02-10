@@ -2,18 +2,8 @@
 {% load i18n static %}
 {% load static %}
 
-{% block extrastyle %}
-    <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
-{% endblock %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ APP_NAME|default:_('Site admin') }}{% endblock %}
 
-{% block userlinks %}
-    {% if site_url %}
-        <a href="{{ site_url }}">{% translate 'Health Status' %}</a> /
-    {% endif %}
-    <a href="{% url 'schema-redoc' %}">{% translate 'OpenAPI' %}</a> /
-    <a href="{% url 'purplship.server.graph:graphql' %}">{% translate 'GraphQL' %}</a> /
-    {% if user.has_usable_password %}
-    <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
-    {% endif %}
-    <a href="{% url 'admin:logout' %}">{% translate 'Log out' %}</a>
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ APP_NAME|default:_('Administration') }}</a></h1>
 {% endblock %}

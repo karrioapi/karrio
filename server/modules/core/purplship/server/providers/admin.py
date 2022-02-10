@@ -7,18 +7,20 @@ import purplship.server.providers.models as carriers
 
 def model_admin(model):
     class _Admin(admin.ModelAdmin):
-        list_display = ('__str__', 'test', 'active')
-        exclude = ['active_users']
+        list_display = ("__str__", "test", "active")
+        exclude = ["active_users", "metadata"]
         formfield_overrides = {
             models.CharField: {
-                'widget': forms.TextInput(attrs={
-                    'type': 'text',
-                    'readonly': 'true',
-                    'class': 'vTextField',
-                    'data - lpignore': 'true',
-                    'autocomplete': 'keep-off',
-                    'onfocus': "this.removeAttribute('readonly');"
-                })
+                "widget": forms.TextInput(
+                    attrs={
+                        "type": "text",
+                        "readonly": "true",
+                        "class": "vTextField",
+                        "data - lpignore": "true",
+                        "autocomplete": "keep-off",
+                        "onfocus": "this.removeAttribute('readonly');",
+                    }
+                )
             }
         }
 
@@ -26,7 +28,7 @@ def model_admin(model):
             query = super().get_queryset(request)
             return query.filter(created_by=None)
 
-    return type(f'{model.__class__.__name__}Admin', (_Admin, ), {})
+    return type(f"{model.__class__.__name__}Admin", (_Admin,), {})
 
 
 for name, model in carriers.MODELS.items():

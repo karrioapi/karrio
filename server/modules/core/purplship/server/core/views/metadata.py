@@ -15,7 +15,7 @@ ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make
 class Metadata(Serializer):
     APP_NAME = CharField()
     APP_VERSION = CharField()
-    APP_WEBSITE = CharField()
+    APP_WEBSITE = CharField(required=False, allow_null=True)
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     ADMIN = CharField()
@@ -35,7 +35,7 @@ class Metadata(Serializer):
 @renderer_classes([JSONRenderer])
 def view(request: Request) -> Response:
     metadata = {
-        **dataunits.METADATA,
+        **dataunits.contextual_metadata(),
         "ADMIN": f"{request.build_absolute_uri()}admin/",
         "OPENAPI": f"{request.build_absolute_uri()}openapi",
         "GRAPHQL": f"{request.build_absolute_uri()}graphql",

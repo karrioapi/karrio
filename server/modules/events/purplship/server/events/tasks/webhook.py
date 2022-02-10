@@ -18,7 +18,12 @@ User = get_user_model()
 
 
 def notify_webhook_subscribers(
-    event: str, data: dict, event_at: datetime, ctx: dict, test_mode: bool = None
+    event: str,
+    data: dict,
+    event_at: datetime,
+    ctx: dict,
+    test_mode: bool = None,
+    **kwargs,
 ):
     logger.info(f"> starting {event} subscribers notification")
     context = retrive_context(ctx)

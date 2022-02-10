@@ -1,6 +1,7 @@
 import logging
 from django.db.models import signals
 
+from purplship.server.conf import settings
 from purplship.server.core.utils import failsafe
 import purplship.server.core.serializers as serializers
 import purplship.server.manager.models as models
@@ -43,10 +44,17 @@ def shipment_updated(
     test_mode = instance.test_mode
     context = dict(
         user_id=failsafe(lambda: instance.created_by.id),
-        org_id=getattr(getattr(instance, "org", None), "id", None),
+        org_id=failsafe(
+            lambda: instance.org.first().id if hasattr(instance, "org") else None
+        ),
     )
 
-    tasks.notify_webhooks(event, data, event_at, context, test_mode)
+    if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
+        return
+
+    tasks.notify_webhooks(
+        event, data, event_at, context, test_mode, schema=settings.schema
+    )
 
 
 def shipment_cancelled(sender, instance, *args, **kwargs):
@@ -59,10 +67,17 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     test_mode = instance.test_mode
     context = dict(
         user_id=failsafe(lambda: instance.created_by.id),
-        org_id=getattr(getattr(instance, "org", None), "id", None),
+        org_id=failsafe(
+            lambda: instance.org.first().id if hasattr(instance, "org") else None
+        ),
     )
 
-    tasks.notify_webhooks(event, data, event_at, context, test_mode)
+    if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
+        return
+
+    tasks.notify_webhooks(
+        event, data, event_at, context, test_mode, schema=settings.schema
+    )
 
 
 def tracker_updated(
@@ -72,9 +87,11 @@ def tracker_updated(
     - tracker created (pending)
     - tracker status changed (in-transit, delivered or blocked)
     """
-    if created:
+    changes = update_fields or []
+
+    if created or "created_at" in changes:
         event = EventTypes.tracker_created.value
-    elif any(field in (update_fields or []) for field in ["status"]):
+    elif any(field in changes for field in ["status"]):
         event = EventTypes.tracker_updated.value
     else:
         return
@@ -84,7 +101,14 @@ def tracker_updated(
     test_mode = instance.test_mode
     context = dict(
         user_id=failsafe(lambda: instance.created_by.id),
-        org_id=getattr(getattr(instance, "org", None), "id", None),
+        org_id=failsafe(
+            lambda: instance.org.first().id if hasattr(instance, "org") else None
+        ),
     )
 
-    tasks.notify_webhooks(event, data, event_at, context, test_mode)
+    if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
+        return
+
+    tasks.notify_webhooks(
+        event, data, event_at, context, test_mode, schema=settings.schema
+    )

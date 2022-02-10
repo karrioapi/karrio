@@ -1,7 +1,7 @@
 import functools
 from typing import TypeVar, Union, Callable, Any, List, Optional
-from purplship.server.core import datatypes
-from purplship.server.core import serializers
+
+from purplship.server.core import datatypes, serializers
 
 T = TypeVar("T")
 

@@ -18,23 +18,26 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from constance.admin import Config
 
 
-APP_VERSION = getattr(settings, "VERSION", "")
-APP_NAME = getattr(settings, "APP_NAME", "Purplship")
 BASE_PATH = getattr(settings, "BASE_PATH", "")
 
-admin.site.site_header = APP_NAME
-admin.site.site_title = f"{APP_NAME} shipping API"
+admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
+admin.site.index_template = "purplship/admin.html"
+
+if getattr(settings, "MULTI_TENANTS", False):
+    admin.site.unregister([Config])
+    admin.autodiscover()
 
 urlpatterns = [
     path(
         BASE_PATH,
         include(
             [
-                path("", include("purplship.server.urls.schema")),
+                path("", include("purplship.server.core.views.schema")),
                 path(
                     "api/", include("rest_framework.urls", namespace="rest_framework")
                 ),

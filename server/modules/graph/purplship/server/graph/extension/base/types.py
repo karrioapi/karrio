@@ -623,7 +623,6 @@ class ServiceLevelType(BaseObjectType):
 class LabelTemplateType(BaseObjectType):
     class Meta:
         model = providers.LabelTemplate
-        exclude = ("genericsettings_set",)
         interfaces = (CustomNode,)
 
 

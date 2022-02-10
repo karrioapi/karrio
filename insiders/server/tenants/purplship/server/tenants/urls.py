@@ -13,10 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+from django.conf import settings
+from django.urls import path, include
 from purplship.server.tenants import admin as tenants_admin
 
 
+BASE_PATH = getattr(settings, "BASE_PATH", "")
 urlpatterns = [
-    path('', tenants_admin.site.urls, name='tenants_admin')
+    path(
+        BASE_PATH,
+        include([path("", tenants_admin.site.urls, name="tenants_admin")]),
+        name="purplship:tenats:index",
+    ),
 ]

@@ -42,7 +42,6 @@ Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
 USE_HTTPS = config("USE_HTTPS", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
-CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -109,6 +108,9 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
+MULTI_TENANTS = importlib.util.find_spec(
+    "purplship.server.tenants"
+) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
 
 
 # components path settings
@@ -185,7 +187,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Purplship Middleware
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.CreatorAccess'
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'purplship.server.core.middleware.WideAccess'
-DEFAULT_TRACKERS_UPDATE_INTERVAL = config("TRACKING_PULSE", default=7200, cast=int)
 
 
 # Database
@@ -275,8 +276,8 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=6),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=15),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -304,8 +305,8 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "LOGIN_URL": reverse_lazy("admin:login"),
     "LOGOUT_URL": "/admin/logout",
-    "DEFAULT_INFO": "purplship.server.urls.schema.swagger_info",
-    "DEFAULT_AUTO_SCHEMA_CLASS": "purplship.server.urls.schema.SwaggerAutoSchema",
+    "DEFAULT_INFO": "purplship.server.core.views.schema.swagger_info",
+    "DEFAULT_AUTO_SCHEMA_CLASS": "purplship.server.core.views.schema.SwaggerAutoSchema",
     "SECURITY_DEFINITIONS": {
         "Token": {
             "type": "apiKey",
