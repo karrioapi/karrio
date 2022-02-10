@@ -1,24 +1,25 @@
 # <a href="https://next.purplship.com" target="_blank"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
 
+**The Headless Shipping platform**
+
 [![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
 
-purplship is a multi-carrier shipping integartion platform.
 
 purplship makes shipping services simple and accessible.
 Help us out… If you love open source and great software, give us a star! 🌟
 
 **Features**
 
+- **Headless Shipping**: Access a network of traditional and modern shipping carrier services
 - **Multi-carrier SDK**: Integrate purplship once and connect to multiple shipping carrier APIs
 - **Extensible**: Use the purplship SDK Framework to integrate with custom carrier APIs.
-- **Headless shipping API**: Power up your application with access to a network of carrier services.
 - **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels.
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics operations.
+- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics automation.
 
 <picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
 
@@ -28,7 +29,7 @@ There are several ways to use Purplship:
 
 - [Purplship Cloud](https://cloud.purplship.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
 - [Purplship OSS](#purplship-oss) is an open-source version of purplship that provides the core functionality of purplship (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
-- [Purplship SDK](#purplship-sdk) is the core of the purplship abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration yourself.
+- [Purplship SDK](#purplship-sdk) is the core of the purplship abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
 
 > Source code for all editions is contained in this repository. See the [License section](#license) for more details.
 
@@ -70,7 +71,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/server:2021.11
+  danh91.docker.scarf.sh/purplship/server:2022.1.4
 ```
 
 </details>
@@ -95,7 +96,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/server:2021.11
+    image: danh91.docker.scarf.sh/purplship/server:2022.1.4
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -129,7 +130,7 @@ docker-compose up
 
 </details>
 
-Purplship should now be running at http://0.0.0.0:5002
+Purplship should now be running at http://localhost:5002
 
 **Default Login**
 
@@ -143,8 +144,6 @@ Purplship should now be running at http://0.0.0.0:5002
 - [PHP](https://github.com/purplship/purplship-php-client)
 - [Python](https://github.com/purplship/purplship-python-client)
 
-Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with
-our [OpenAPI References](./server/schemas)
 
 ## Purplship SDK
 
@@ -268,8 +267,6 @@ print(rates)
 #             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
 #             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
 #         ],
-#         meta=None,
-#         id=None,
 #     )
 # ]
 ```
