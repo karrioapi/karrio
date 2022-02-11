@@ -1,3 +1,5 @@
+import email
+from webbrowser import get
 import graphene
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
@@ -10,19 +12,36 @@ import purplship.server.graph.extension.base.types as types
 
 class OrganizationUserType(types.BaseObjectType):
     is_admin = graphene.Boolean(required=True)
+    is_owner = graphene.Boolean()
 
     class Meta:
         model = get_user_model()
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
 
 
+class OrganizationInvitationType(types.BaseObjectType):
+
+    class Meta:
+        model = models.OrganizationInvitation
+        fields = ("id", "guid", "invitee_identifier", "created", "modified", "invited_by", "invitee")
+
+class OrganizationMemberType(graphene.ObjectType):
+    email = graphene.String(required=True)
+    full_name = graphene.String(required=False)
+    is_admin = graphene.Boolean(required=True)
+    is_owner = graphene.Boolean()
+    invitation = graphene.Field(OrganizationInvitationType)
+    last_login = graphene.DateTime(required=False)
+
+
 class OrganizationType(types.BaseObjectType):
     token = graphene.String(required=True)
-    user = graphene.Field(OrganizationUserType, required=True)
+    current_user = graphene.Field(OrganizationUserType, required=True)
+    members = graphene.List(graphene.NonNull(OrganizationMemberType), default_value=[], required=True)
 
     class Meta:
         model = models.Organization
-        exclude = ("tokens",)
+        exclude = ("tokens", "users",)
 
     def resolve_token(self, info, **kwargs):
         return (
@@ -34,7 +53,8 @@ class OrganizationType(types.BaseObjectType):
             .instance
         )
 
-    def resolve_user(self, info):
+    def resolve_current_user(self, info):
+        owner = getattr(self, 'owner', None)
         user = info.context.user
         return OrganizationUserType(
             **{
@@ -42,18 +62,31 @@ class OrganizationType(types.BaseObjectType):
                 for k, v in model_to_dict(user).items()
                 if k in OrganizationUserType._meta.fields.keys()
             },
-            is_admin=self.organization_users.get(user=user).is_admin
+            is_admin=self.organization_users.get(user=user).is_admin,
+            is_owner=owner and self.is_owner(user),
         )
 
-    def resolve_users(self, info):
-        return [
-            OrganizationUserType(
-                **{
-                    k: v
-                    for k, v in model_to_dict(user).items()
-                    if k in OrganizationUserType._meta.fields.keys()
-                },
-                is_admin=self.organization_users.get(user=user)
+    def resolve_members(self, info):
+        owner = getattr(self, 'owner', None)
+        users = [
+            OrganizationMemberType(
+                email=user.email,
+                full_name=user.full_name,
+                is_admin=self.organization_users.get(user=user).is_admin,
+                is_owner=owner and self.is_owner(user),
+                last_login=user.last_login,
             )
             for user in self.users.all()
         ]
+        invites = [
+            OrganizationMemberType(
+                email=getattr(invite.invitee, 'email', invite.invitee_identifier),
+                full_name=getattr(invite.invitee, 'full_name', ""),
+                is_admin=False,
+                is_owner=False,
+                invitation=invite,
+            )
+            for invite in self.organization_invites.all()
+        ]
+
+        return users + invites

@@ -2304,7 +2304,7 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "users",
+              "name": "organization_invites",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -2316,7 +2316,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "OrganizationUserType",
+                      "name": "OrganizationInvitationType",
                       "ofType": null
                     }
                   }
@@ -2360,7 +2360,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "user",
+              "name": "current_user",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -2368,6 +2368,30 @@
                   "kind": "OBJECT",
                   "name": "OrganizationUserType",
                   "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "members",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "OrganizationMemberType",
+                      "ofType": null
+                    }
+                  }
                 }
               }
             }
@@ -2479,7 +2503,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -2495,7 +2519,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -2511,7 +2535,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -2980,6 +3004,18 @@
                   "name": "Boolean",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "is_owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
               }
             }
           ],
@@ -9866,6 +9902,242 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "guid",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The contact identifier for the invitee, email, phone number, social media handle, etc.",
+              "isDeprecated": false,
+              "name": "invitee_identifier",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "created",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "modified",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "invited_by",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "OrganizationUserType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "invitee",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OrganizationUserType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "object_type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "OrganizationInvitationType",
+          "possibleTypes": null
+        },
+        {
+          "description": "Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects\nin fields, resolvers and input.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "UUID",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "email",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "full_name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "is_admin",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "is_owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "invitation",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OrganizationInvitationType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "last_login",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "OrganizationMemberType",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "last_login",
               "type": {
                 "kind": "SCALAR",
@@ -13784,7 +14056,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -13800,7 +14072,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -13816,7 +14088,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -14073,7 +14345,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -14089,7 +14361,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -14105,7 +14377,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -14314,7 +14586,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -14330,7 +14602,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -14346,7 +14618,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -14571,7 +14843,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -14587,7 +14859,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -14603,7 +14875,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -14796,7 +15068,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -14812,7 +15084,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -14828,7 +15100,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -15053,7 +15325,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -15069,7 +15341,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -15085,7 +15357,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -16538,7 +16810,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -16554,7 +16826,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -16570,7 +16842,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -16618,7 +16890,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Carrier display name",
               "isDeprecated": false,
               "name": "verbose_name",
               "type": {
@@ -16634,7 +16906,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Unique carrier slug, lowercase alphanumeric characters and underscores only",
               "isDeprecated": false,
               "name": "custom_carrier_name",
               "type": {
@@ -16895,6 +17167,30 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "genericsettings_set",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "GenericSettings",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "object_type",
@@ -17015,7 +17311,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -17031,7 +17327,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -17047,7 +17343,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -17240,7 +17536,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -17256,7 +17552,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -17272,7 +17568,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -17481,7 +17777,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -17497,7 +17793,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -17513,7 +17809,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -17706,7 +18002,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -17722,7 +18018,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -17738,7 +18034,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -17979,7 +18275,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -17995,7 +18291,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -18011,7 +18307,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -18204,7 +18500,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -18220,7 +18516,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -18236,7 +18532,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -18457,7 +18753,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -18473,7 +18769,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -18489,7 +18785,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -18682,7 +18978,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -18698,7 +18994,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -18714,7 +19010,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -18907,7 +19203,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -18923,7 +19219,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -18939,7 +19235,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -19132,7 +19428,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -19148,7 +19444,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -19164,7 +19460,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -19389,7 +19685,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -19405,7 +19701,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -19421,7 +19717,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -19662,7 +19958,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -19678,7 +19974,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -19694,7 +19990,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -19923,7 +20219,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -19939,7 +20235,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -19955,7 +20251,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -20184,7 +20480,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -20200,7 +20496,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -20216,7 +20512,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -20409,7 +20705,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Toggle carrier connection mode",
               "isDeprecated": false,
               "name": "test",
               "type": {
@@ -20425,7 +20721,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Disable/Hide carrier from clients",
               "isDeprecated": false,
               "name": "active",
               "type": {
@@ -20441,7 +20737,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": "Select the capabilities of the carrier that you want to enable",
               "isDeprecated": false,
               "name": "capabilities",
               "type": {
@@ -20839,7 +21135,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -20849,7 +21145,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -20964,7 +21260,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -20974,7 +21270,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21061,7 +21357,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21071,7 +21367,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21164,7 +21460,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21174,7 +21470,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21257,7 +21553,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21267,7 +21563,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21364,7 +21660,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21374,7 +21670,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21626,7 +21922,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21636,7 +21932,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21709,7 +22005,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21719,7 +22015,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21806,7 +22102,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21816,7 +22112,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -21899,7 +22195,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -21909,7 +22205,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22006,7 +22302,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22016,7 +22312,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22123,7 +22419,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22133,7 +22429,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22153,7 +22449,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Carrier display name",
               "name": "verbose_name",
               "type": {
                 "kind": "NON_NULL",
@@ -22167,7 +22463,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Unique carrier slug, lowercase alphanumeric characters and underscores only",
               "name": "custom_carrier_name",
               "type": {
                 "kind": "NON_NULL",
@@ -22285,7 +22581,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22295,7 +22591,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22392,7 +22688,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22402,7 +22698,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22475,7 +22771,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22485,7 +22781,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22558,7 +22854,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22568,7 +22864,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22655,7 +22951,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22665,7 +22961,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22762,7 +23058,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22772,7 +23068,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22873,7 +23169,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22883,7 +23179,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -22986,7 +23282,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -22996,7 +23292,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -23099,7 +23395,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -23109,7 +23405,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -23182,7 +23478,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -23192,7 +23488,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -23833,7 +24129,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -23843,7 +24139,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -23934,7 +24230,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -23944,7 +24240,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24015,7 +24311,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24025,7 +24321,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24106,7 +24402,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24116,7 +24412,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24187,7 +24483,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24197,7 +24493,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24282,7 +24578,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24292,7 +24588,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24534,7 +24830,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24544,7 +24840,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24605,7 +24901,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24615,7 +24911,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24686,7 +24982,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24696,7 +24992,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24767,7 +25063,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24777,7 +25073,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24858,7 +25154,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24868,7 +25164,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24963,7 +25259,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -24973,7 +25269,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -24993,7 +25289,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Carrier display name",
               "name": "verbose_name",
               "type": {
                 "kind": "SCALAR",
@@ -25003,7 +25299,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Unique carrier slug, lowercase alphanumeric characters and underscores only",
               "name": "custom_carrier_name",
               "type": {
                 "kind": "SCALAR",
@@ -25115,7 +25411,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25125,7 +25421,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25206,7 +25502,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25216,7 +25512,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25277,7 +25573,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25287,7 +25583,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25348,7 +25644,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25358,7 +25654,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25433,7 +25729,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25443,7 +25739,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25524,7 +25820,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25534,7 +25830,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25615,7 +25911,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25625,7 +25921,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25716,7 +26012,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25726,7 +26022,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25817,7 +26113,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25827,7 +26123,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
@@ -25888,7 +26184,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Toggle carrier connection mode",
               "name": "test",
               "type": {
                 "kind": "SCALAR",
@@ -25898,7 +26194,7 @@
             },
             {
               "defaultValue": null,
-              "description": null,
+              "description": "Disable/Hide carrier from clients",
               "name": "active",
               "type": {
                 "kind": "SCALAR",
