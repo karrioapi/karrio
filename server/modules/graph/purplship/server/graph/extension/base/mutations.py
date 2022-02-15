@@ -3,12 +3,10 @@ import typing
 import graphene
 from graphene.types import generic
 from graphene_django.types import ErrorType
-from graphene_django.rest_framework import mutation
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import ValidationError
-from django.forms.models import model_to_dict
 
 from purplship.core.utils import DP
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
@@ -21,41 +19,9 @@ import purplship.server.providers.models as providers
 import purplship.server.graph.serializers as serializers
 import purplship.server.graph.extension.base.types as types
 import purplship.server.graph.extension.base.inputs as inputs
+import purplship.server.graph.utils as utils
 
 logger = logging.getLogger(__name__)
-
-
-class SerializerMutation(mutation.SerializerMutation):
-    class Meta:
-        abstract = True
-
-    @classmethod
-    @types.login_required
-    def get_serializer_kwargs(cls, root, info, **input):
-        data = input.copy()
-
-        if "id" in input:
-            instance = cls._meta.model_class.access_by(info.context).get(
-                id=data.pop("id")
-            )
-
-            return {
-                "instance": instance,
-                "data": data,
-                "partial": True,
-                "context": info.context,
-            }
-
-        return {"data": data, "partial": False, "context": info.context}
-
-
-class ClientMutation(graphene.relay.ClientIDMutation):
-    class Meta:
-        abstract = True
-
-    errors = graphene.List(
-        ErrorType, description="May contain more than one error for same field."
-    )
 
 
 def create_template_mutation(template: str, update: bool = False):
@@ -83,7 +49,7 @@ def create_template_mutation(template: str, update: bool = False):
             is_default = graphene.Boolean(default=False)
 
         @classmethod
-        @types.login_required
+        @utils.login_required
         def mutate_and_get_payload(cls, root, info, **input):
             data = input.copy()
             instance = (
@@ -118,10 +84,10 @@ def create_template_mutation(template: str, update: bool = False):
 
             return cls(template=template)
 
-    return type(_model.__name__, (_Mutation, ClientMutation), {})
+    return type(_model.__name__, (_Mutation, utils.ClientMutation), {})
 
 
-class SystemCarrierMutation(ClientMutation):
+class SystemCarrierMutation(utils.ClientMutation):
     carrier = graphene.Field(types.SystemConnectionType)
 
     class Input:
@@ -129,7 +95,7 @@ class SystemCarrierMutation(ClientMutation):
         enable = graphene.Boolean(required=True)
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
@@ -147,14 +113,14 @@ class SystemCarrierMutation(ClientMutation):
         return SystemCarrierMutation(carrier=carrier)
 
 
-class TokenMutation(ClientMutation):
+class TokenMutation(utils.ClientMutation):
     token = graphene.Field(types.TokenType)
 
     class Input:
         refresh = graphene.Boolean()
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(cls, root, info, refresh: bool = None):
         tokens = Token.access_by(info.context)
 
@@ -170,7 +136,7 @@ class TokenMutation(ClientMutation):
         return TokenMutation(token=token)
 
 
-class UpdateUser(SerializerMutation):
+class UpdateUser(utils.SerializerMutation):
     class Meta:
         model_operations = ("update",)
         serializer_class = serializers.UserModelSerializer
@@ -194,7 +160,7 @@ class RegisterUser(DjangoFormMutation):
         return cls(errors=[], user=user, **form.cleaned_data)
 
 
-class ConfirmEmail(ClientMutation):
+class ConfirmEmail(utils.ClientMutation):
     success = graphene.Boolean(required=True)
 
     class Input:
@@ -211,7 +177,7 @@ class ChangePassword(DjangoFormMutation):
         form_class = forms.PasswordChangeForm
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def perform_mutate(cls, form, info):
         return super().perform_mutate(form, info)
 
@@ -260,45 +226,18 @@ class ConfirmPasswordReset(DjangoFormMutation):
         return user
 
 
-def create_delete_mutation(
-    name: str, model, validator: typing.Callable = None, **filter
-):
-    class _DeleteMutation:
-        id = graphene.String()
-
-        class Input:
-            id = graphene.String(required=True)
-
-        @classmethod
-        @types.login_required
-        def mutate_and_get_payload(cls, root, info, id: str = None):
-            instance = model.access_by(info.context).get(id=id, **filter)
-            validator(instance) if validator else None
-
-            instance.delete(keep_parents=True)
-
-            if hasattr(instance, "shipment"):
-                serializers.manager.reset_related_shipment_rates(
-                    instance.shipment.first()
-                )
-
-            return cls(id=id)
-
-    return type(name, (_DeleteMutation, ClientMutation), {})
-
-
-class MutateMetadata(ClientMutation):
+class MutateMetadata(utils.ClientMutation):
     id = graphene.String()
     metadata = generic.GenericScalar()
 
     class Input:
         id = graphene.String(required=True)
-        object_type = types.MetadataObjectTypeEnum(required=True)
+        object_type = utils.MetadataObjectTypeEnum(required=True)
         added_values = generic.GenericScalar(required=False)
         discarded_keys = graphene.List(graphene.String, required=False)
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(
         cls,
         root,
@@ -320,7 +259,7 @@ class MutateMetadata(ClientMutation):
         return cls(id=id, errors=None, metadata=instance.metadata)
 
 
-class PartialShipmentUpdate(ClientMutation):
+class PartialShipmentUpdate(utils.ClientMutation):
     shipment = graphene.Field(types.ShipmentType)
 
     class Input:
@@ -335,7 +274,7 @@ class PartialShipmentUpdate(ClientMutation):
         metadata = generic.GenericScalar(required=False)
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         shipment = manager.Shipment.access_by(info.context).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
@@ -361,7 +300,7 @@ class _CreateCarrierConnection:
         pass
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(cls, root, info, **input):
         data = input.copy()
 
@@ -380,7 +319,7 @@ class _CreateCarrierConnection:
 
 CreateCarrierConnection = type(
     "CreateConnection",
-    (_CreateCarrierConnection, ClientMutation),
+    (_CreateCarrierConnection, utils.ClientMutation),
     {name: graphene.Field(type) for name, type in types.CarrierSettings.items()},
 )
 
@@ -390,7 +329,7 @@ class _UpdateCarrierConnection:
         id = graphene.String(required=True)
 
     @classmethod
-    @types.login_required
+    @utils.login_required
     def mutate_and_get_payload(cls, root, info, id: str, **data):
         instance = providers.Carrier.access_by(info.context).get(id=id)
         serializer = serializers.PartialConnectionModelSerializer(
@@ -422,6 +361,6 @@ class _UpdateCarrierConnection:
 
 UpdateCarrierConnection = type(
     "UpdateConnection",
-    (_UpdateCarrierConnection, ClientMutation),
+    (_UpdateCarrierConnection, utils.ClientMutation),
     {name: graphene.Field(type) for name, type in types.CarrierSettings.items()},
 )

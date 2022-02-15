@@ -1,16 +1,14 @@
-import email
-from webbrowser import get
 import graphene
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 
+import purplship.server.graph.utils as utils
 from purplship.server.serializers import SerializerDecorator, Context
 from purplship.server.user.serializers import TokenSerializer
 import purplship.server.orgs.models as models
-import purplship.server.graph.extension.base.types as types
 
 
-class OrganizationUserType(types.BaseObjectType):
+class OrganizationUserType(utils.BaseObjectType):
     is_admin = graphene.Boolean(required=True)
     is_owner = graphene.Boolean()
 
@@ -19,11 +17,12 @@ class OrganizationUserType(types.BaseObjectType):
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
 
 
-class OrganizationInvitationType(types.BaseObjectType):
+class OrganizationInvitationType(utils.BaseObjectType):
 
     class Meta:
         model = models.OrganizationInvitation
         fields = ("id", "guid", "invitee_identifier", "created", "modified", "invited_by", "invitee")
+
 
 class OrganizationMemberType(graphene.ObjectType):
     email = graphene.String(required=True)
@@ -34,7 +33,7 @@ class OrganizationMemberType(graphene.ObjectType):
     last_login = graphene.DateTime(required=False)
 
 
-class OrganizationType(types.BaseObjectType):
+class OrganizationType(utils.BaseObjectType):
     token = graphene.String(required=True)
     current_user = graphene.Field(OrganizationUserType, required=True)
     members = graphene.List(graphene.NonNull(OrganizationMemberType), default_value=[], required=True)

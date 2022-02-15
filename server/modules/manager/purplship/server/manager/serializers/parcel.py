@@ -57,7 +57,7 @@ class ParcelSerializer(ParcelData):
 
 
 def can_mutate_parcel(
-    parcel: models.Parcel, update: bool = False, delete: bool = False
+    parcel: models.Parcel, update: bool = False, delete: bool = False, **kwargs
 ):
     shipment = parcel.shipment.first()
 

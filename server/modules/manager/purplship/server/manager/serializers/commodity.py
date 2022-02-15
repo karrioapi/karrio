@@ -30,7 +30,7 @@ class CommoditySerializer(CommodityData):
 
 
 def can_mutate_commodity(
-    commodity: models.Commodity, update: bool = False, delete: bool = False
+    commodity: models.Commodity, update: bool = False, delete: bool = False, **kwargs
 ):
     shipment = models.Shipment.objects.filter(
         Q(customs__commodities__id=commodity.id) | Q(parcels__items__id=commodity.id)

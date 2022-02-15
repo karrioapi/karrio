@@ -61,7 +61,7 @@ class CustomsSerializer(CustomsData):
         return instance
 
 
-def can_mutate_customs(customs: models.Customs):
+def can_mutate_customs(customs: models.Customs, **kwargs):
     shipment = customs.shipment.first()
     if shipment is not None and shipment.status != ShipmentStatus.create.value:
         raise PurplshipAPIException(

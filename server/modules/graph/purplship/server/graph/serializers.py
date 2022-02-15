@@ -18,14 +18,12 @@ import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
 import purplship.server.graph.models as graph
 
-User = get_user_model()
-
 
 class UserModelSerializer(ModelSerializer):
     email = serializers.CharField(required=False)
 
     class Meta:
-        model = User
+        model = get_user_model()
         extra_kwargs = {
             field: {"read_only": True}
             for field in ["id", "is_staff", "last_login", "date_joined"]
