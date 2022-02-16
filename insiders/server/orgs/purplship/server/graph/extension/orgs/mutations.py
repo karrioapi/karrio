@@ -1,48 +1,59 @@
 import graphene
-from graphene_django.rest_framework import mutation
+from graphene_django.types import ErrorType
 
-from purplship.server.serializers import make_fields_optional
-import purplship.server.graph.utils as utils
+from purplship.server.orgs.utils import send_invitation_emails
 import purplship.server.graph.extension.orgs.types as types
 import purplship.server.orgs.serializers as serializers
 import purplship.server.orgs.models as models
-from purplship.server.orgs.utils import send_invitation_emails
-from pyparsing import empty
+import purplship.server.graph.utils as utils
 
 
-class SerializerMutation(mutation.SerializerMutation):
-    class Meta:
-        abstract = True
+class CreateOrganization(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
+
+    class Input:
+        name = graphene.String(required=True)
+        slug = graphene.String()
 
     @classmethod
-    def get_serializer_kwargs(cls, root, info, **input):
-        data = input.copy()
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, **data):
+        serializer = serializers.OrganizationModelSerializer(
+            data=data,
+            context=info.context,
+        )
 
-        if "id" in input:
-            org = cls._meta.model_class.objects.get(id=data.pop("id"))
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
 
-            return {
-                "instance": org,
-                "data": data,
-                "partial": True,
-                "context": info.context,
-            }
-
-        return {"data": data, "partial": False, "context": info.context}
+        return cls(organization=serializer.save())
 
 
-class CreateOrganization(SerializerMutation):
-    class Meta:
-        model_operations = ("create",)
-        convert_choices_to_enum = False
-        serializer_class = serializers.OrganizationModelSerializer
+class UpdateOrganization(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
 
+    class Input:
+        id = graphene.String(required=True)
+        name = graphene.String()
+        slug = graphene.String()
 
-class UpdateOrganization(SerializerMutation):
-    class Meta:
-        model_operations = ("update",)
-        convert_choices_to_enum = False
-        serializer_class = make_fields_optional(serializers.OrganizationModelSerializer)
+    @classmethod
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, id, **data):
+        instance = models.Organization.objects.get(
+            id=id, users__id=info.context.user.id
+        )
+        serializer = serializers.OrganizationModelSerializer(
+            instance,
+            data=data,
+            partial=True,
+            context=info.context,
+        )
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        return cls(organization=instance)
 
 
 class SendOrganizationInvites(utils.ClientMutation):

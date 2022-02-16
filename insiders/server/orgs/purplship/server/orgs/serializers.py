@@ -19,6 +19,7 @@ class OrganizationModelSerializer(ModelSerializer):
         org_user = org.add_user(created_by, is_admin=True)
         # Set as organization owner
         org.change_owner(org_user)
+        org.save()
 
         return org
 
