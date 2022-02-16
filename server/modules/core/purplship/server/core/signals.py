@@ -19,7 +19,6 @@ def update_settings(current):
     settings.EMAIL_HOST_PASSWORD = current.EMAIL_HOST_PASSWORD
     settings.EMAIL_HOST = current.EMAIL_HOST
     settings.EMAIL_PORT = current.EMAIL_PORT
-    settings.EMAIL_PAGE_DOMAIN = current.EMAIL_PAGE_DOMAIN
     settings.EMAIL_FROM_ADDRESS = current.EMAIL_FROM_ADDRESS
 
     settings.EMAIL_SERVER = current.EMAIL_HOST

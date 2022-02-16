@@ -12,6 +12,8 @@ from purplship.server.user.utils import send_email
 
 
 class SignUpForm(UserCreationForm):
+    redirect_url = forms.URLField(required=True)
+
     class Meta:
         model = get_user_model()
         fields = ("email", "full_name")
@@ -22,22 +24,7 @@ class SignUpForm(UserCreationForm):
 
         if commit and settings.EMAIL_ENABLED:
             user.is_active = False
-            send_email(user)
-
-        if commit and settings.MULTI_ORGANIZATIONS:
-            from purplship.server.orgs.models import Organization
-
-            org_name = user.full_name.split(" ")[0]
-            org = Organization.objects.create(
-                name=f"{org_name.capitalize()}'s Org",
-                slug=f"{org_name.lower()}_org".replace(" ", "").lower(),
-                is_active=not settings.EMAIL_ENABLED,
-            )
-            # Set as organization user
-            owner = org.add_user(user, is_admin=True)
-            # Set as organization owner
-            org.change_owner(owner)
-            org.save()
+            send_email(user, self.cleaned_data["redirect_url"])
 
         return user
 

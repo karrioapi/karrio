@@ -41,14 +41,8 @@ class UserModelSerializer(ModelSerializer):
     def update(self, instance, data: dict, **kwargs):
         user = super().update(instance, data)
 
-        # Set all organization where user is owner inactive
-        if data.get("is_active") == False and settings.MULTI_ORGANIZATIONS:
-            from purplship.server.orgs import models as orgs
-
-            user_orgs = orgs.Organization.objects.filter(
-                owner__organization_user__user__id=user.id
-            )
-            user_orgs.update(is_active=False)
+        if data.get("is_active") == False:
+            user.save(update_fields=["is_active"])
 
         return user
 

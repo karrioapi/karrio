@@ -17,6 +17,14 @@ class Query:
     organization = graphene.Field(
         types.OrganizationType, id=graphene.String(required=True)
     )
+    organization_invitation = graphene.Field(
+        types.OrganizationInvitationType,
+        id=graphene.String(required=False),
+        guid=graphene.String(required=False),
+    )
+
+    def resolve_organization_invitation(self, info, **kwargs):
+        return models.OrganizationInvitation.objects.get(**kwargs)
 
     @utils.login_required
     def resolve_organization(self, info, **kwargs):
@@ -34,6 +42,7 @@ class Mutation:
     update_organization = mutations.UpdateOrganization.Field()
 
     send_organization_invites = mutations.SendOrganizationInvites.Field()
+    accept_organization_invitation = mutations.AcceptOrganizationInvitation.Field()
     delete_organization_invitation = utils.create_delete_mutation(
         "DeleteOrganizationInvitation",
         models.OrganizationInvitation,

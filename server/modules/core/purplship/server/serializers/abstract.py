@@ -157,7 +157,7 @@ def link_org(entity: ModelSerializer, context: Context):
         entity.link = entity.__class__.link.related.related_model.objects.create(
             org=context.org, item=entity
         )
-        entity.save(update_fields=["created_at"])
+        entity.save(update_fields=(["created_at"] if hasattr(entity, "created_at") else []))
 
 
 def save_many_to_many_data(

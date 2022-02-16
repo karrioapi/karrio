@@ -18,10 +18,22 @@ class OrganizationUserType(utils.BaseObjectType):
 
 
 class OrganizationInvitationType(utils.BaseObjectType):
+    organization_name = graphene.String(required=True)
 
     class Meta:
         model = models.OrganizationInvitation
-        fields = ("id", "guid", "invitee_identifier", "created", "modified", "invited_by", "invitee")
+        fields = (
+            "id",
+            "guid",
+            "invitee_identifier",
+            "created",
+            "modified",
+            "invited_by",
+            "invitee",
+        )
+
+    def resolve_organization_name(self, info, **kwargs):
+        return self.organization.name
 
 
 class OrganizationMemberType(graphene.ObjectType):
@@ -36,11 +48,16 @@ class OrganizationMemberType(graphene.ObjectType):
 class OrganizationType(utils.BaseObjectType):
     token = graphene.String(required=True)
     current_user = graphene.Field(OrganizationUserType, required=True)
-    members = graphene.List(graphene.NonNull(OrganizationMemberType), default_value=[], required=True)
+    members = graphene.List(
+        graphene.NonNull(OrganizationMemberType), default_value=[], required=True
+    )
 
     class Meta:
         model = models.Organization
-        exclude = ("tokens", "users",)
+        exclude = (
+            "tokens",
+            "users",
+        )
 
     def resolve_token(self, info, **kwargs):
         return (
@@ -53,7 +70,7 @@ class OrganizationType(utils.BaseObjectType):
         )
 
     def resolve_current_user(self, info):
-        owner = getattr(self, 'owner', None)
+        owner = getattr(self, "owner", None)
         user = info.context.user
         return OrganizationUserType(
             **{
@@ -66,7 +83,7 @@ class OrganizationType(utils.BaseObjectType):
         )
 
     def resolve_members(self, info):
-        owner = getattr(self, 'owner', None)
+        owner = getattr(self, "owner", None)
         users = [
             OrganizationMemberType(
                 email=user.email,
@@ -75,12 +92,12 @@ class OrganizationType(utils.BaseObjectType):
                 is_owner=owner and self.is_owner(user),
                 last_login=user.last_login,
             )
-            for user in self.users.all()
+            for user in self.users.filter(is_active=True)
         ]
         invites = [
             OrganizationMemberType(
-                email=getattr(invite.invitee, 'email', invite.invitee_identifier),
-                full_name=getattr(invite.invitee, 'full_name', ""),
+                email=getattr(invite.invitee, "email", invite.invitee_identifier),
+                full_name=getattr(invite.invitee, "full_name", ""),
                 is_admin=False,
                 is_owner=False,
                 invitation=invite,

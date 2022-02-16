@@ -75,7 +75,6 @@ def send_invitation(
     html = render_to_string("purplship/invitation_email.html", context)
 
     logger.info(f"Sending invitation email to {invitation.invitee_identifier}")
-    logger.debug(context)
 
     msg = EmailMultiAlternatives(subject, text, sender, [invitation.invitee_identifier])
     msg.attach_alternative(html, "text/html")

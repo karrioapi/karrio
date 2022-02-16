@@ -64,3 +64,25 @@ class SendOrganizationInvites(utils.ClientMutation):
         send_invitation_emails(organization, emails, redirect_url, info.context.user)
 
         return cls(organization=models.Organization.objects.get(id=org_id))
+
+
+class AcceptOrganizationInvitation(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
+
+    class Input:
+        guid = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, guid, **kwargs):
+        invitation = models.OrganizationInvitation.objects.get(
+            guid=guid,
+            invitee__email=info.context.user.email,
+        )
+
+        invitation.organization.add_user(invitation.invitee)
+        invitation.organization.save()
+        organization = models.Organization.objects.get(id=invitation.organization.id)
+        invitation.delete(keep_parents=True)
+
+        return cls(organization=organization)
