@@ -136,16 +136,29 @@ class TokenMutation(utils.ClientMutation):
         return TokenMutation(token=token)
 
 
-class UpdateUser(utils.SerializerMutation):
-    class Meta:
-        model_operations = ("update",)
-        serializer_class = serializers.UserModelSerializer
+class UpdateUser(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        email = graphene.String()
+        full_name = graphene.String()
+        is_active = graphene.Boolean()
 
     @classmethod
-    def get_serializer_kwargs(cls, root, info, **data):
+    def mutate_and_get_payload(cls, root, info, **data):
         instance = cls._meta.model_class.objects.get(id=info.context.user.id)
 
-        return {"instance": instance, "data": data, "partial": True}
+        serializer = serializers.UserModelSerializer(
+            instance,
+            data=data,
+            partial=True,
+            context=info.context,
+        )
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        return cls(user=serializer.save())
 
 
 class RegisterUser(DjangoFormMutation):
@@ -279,20 +292,21 @@ class PartialShipmentUpdate(utils.ClientMutation):
         shipment = manager.Shipment.access_by(info.context).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
 
-        data = SerializerDecorator[manager_serializers.Shipment](
-            shipment, data=inputs
-        ).data
+        serializer = manager_serializers.Shipment(shipment, data=inputs, partial=True)
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
 
         SerializerDecorator[manager_serializers.ShipmentSerializer](
             shipment,
             context=info.context,
-            data=DP.to_dict(data),
+            data=DP.to_dict(serializer.validated_data),
         ).save()
 
         # refetch the shipment to get the updated state with signals processed
-        updated = manager.Shipment.access_by(info.context).get(id=id)
+        update = manager.Shipment.access_by(info.context).get(id=id)
 
-        return cls(errors=None, shipment=updated)
+        return cls(errors=None, shipment=update)
 
 
 class _CreateCarrierConnection:

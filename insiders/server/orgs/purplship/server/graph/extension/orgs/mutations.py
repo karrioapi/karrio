@@ -13,7 +13,6 @@ class CreateOrganization(utils.ClientMutation):
 
     class Input:
         name = graphene.String(required=True)
-        slug = graphene.String()
 
     @classmethod
     @utils.login_required
@@ -35,7 +34,6 @@ class UpdateOrganization(utils.ClientMutation):
     class Input:
         id = graphene.String(required=True)
         name = graphene.String()
-        slug = graphene.String()
 
     @classmethod
     @utils.login_required
@@ -53,7 +51,7 @@ class UpdateOrganization(utils.ClientMutation):
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(organization=instance)
+        return cls(organization=serializer.save())
 
 
 class SendOrganizationInvites(utils.ClientMutation):

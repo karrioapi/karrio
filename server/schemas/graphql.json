@@ -12235,16 +12235,6 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "slug",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "clientMutationId",
               "type": {
                 "kind": "SCALAR",
@@ -12332,16 +12322,6 @@
               "defaultValue": null,
               "description": null,
               "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "slug",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -13083,78 +13063,6 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "email",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "full_name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
-              "isDeprecated": false,
-              "name": "is_active",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "Designates whether the user can log into this admin site.",
-              "isDeprecated": false,
-              "name": "is_staff",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "last_login",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "date_joined",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
               "description": "May contain more than one error for same field.",
               "isDeprecated": false,
               "name": "errors",
@@ -13166,6 +13074,18 @@
                   "name": "ErrorType",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "user",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UserType",
+                "ofType": null
               }
             },
             {
@@ -13214,7 +13134,7 @@
             },
             {
               "defaultValue": null,
-              "description": "Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+              "description": null,
               "name": "is_active",
               "type": {
                 "kind": "SCALAR",

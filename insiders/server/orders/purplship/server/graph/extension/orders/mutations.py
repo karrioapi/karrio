@@ -1,8 +1,8 @@
 import graphene
 from graphene.types import generic
+from graphene_django.types import ErrorType
 
 from purplship.core.utils import DP
-
 import purplship.server.graph.utils as utils
 import purplship.server.orders.models as models
 import purplship.server.orders.serializers as serializers
@@ -30,10 +30,19 @@ class PartialOrderUpdate(utils.ClientMutation):
         order = models.Order.access_by(info.context).get(id=id)
         can_mutate_order(order, update=True)
 
-        serializers.SerializerDecorator[OrderSerializer](
+        serializer = OrderSerializer(
             order,
             context=info.context,
             data=DP.to_dict(inputs),
-        ).save()
+            partial=True,
+        )
 
-        return cls(errors=None, order=order)
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        serializer.save()
+
+        # refetch the shipment to get the updated state with signals processed
+        update = models.Order.access_by(info.context).get(id=id)
+
+        return cls(errors=None, order=update)

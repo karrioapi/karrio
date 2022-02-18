@@ -14,7 +14,12 @@ class OrganizationModelSerializer(ModelSerializer):
     @transaction.atomic
     def create(self, data: dict, **kwargs):
         created_by = data.pop("created_by")
-        org = super().create(data)
+        org = super().create(
+            {
+                "slug": f"{data.get('name').lower()}_org".replace(" ", "").lower(),
+                **data,
+            }
+        )
         # Set as organization user
         org_user = org.add_user(created_by, is_admin=True)
         # Set as organization owner
