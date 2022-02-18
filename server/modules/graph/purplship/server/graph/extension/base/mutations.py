@@ -118,14 +118,24 @@ class TokenMutation(utils.ClientMutation):
 
     class Input:
         refresh = graphene.Boolean()
+        password = graphene.String(help_text="Password required when refresh is True")
 
     @classmethod
     @utils.login_required
-    def mutate_and_get_payload(cls, root, info, refresh: bool = None):
+    def mutate_and_get_payload(
+        cls, root, info, refresh: bool = None, password: str = None
+    ):
         tokens = Token.access_by(info.context)
 
-        if refresh and any(tokens):
-            tokens.delete()
+        if refresh:
+            if len(password or "") == 0:
+                raise ValidationError("Password is required to refresh token")
+
+            if not info.context.user.check_password(password):
+                raise ValidationError("Invalid password")
+
+            if any(tokens):
+                tokens.delete()
 
         token = (
             SerializerDecorator[TokenSerializer](data={}, context=info.context)
