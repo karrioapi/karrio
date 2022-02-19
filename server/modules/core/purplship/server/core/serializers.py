@@ -162,6 +162,7 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=10,
         help_text="""
     The address postal code
 
@@ -172,6 +173,7 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""
     The address city.
 
@@ -182,18 +184,21 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="The party frederal tax id",
     )
     state_tax_id = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="The party state id",
     )
     person_name = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""
     attention to
 
@@ -204,10 +209,13 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="The company name if the party is a company",
     )
     country_code = ChoiceField(
-        required=True, choices=COUNTRIES, help_text="The address country code"
+        required=True,
+        choices=COUNTRIES,
+        help_text="The address country code",
     )
     email = CharField(
         required=False, allow_blank=True, allow_null=True, help_text="The party email"
@@ -216,6 +224,7 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="The party phone number.",
     )
 
@@ -223,12 +232,14 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=20,
         help_text="The address state code",
     )
     suburb = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=20,
         help_text="The address suburb if known",
     )
     residential = BooleanField(
@@ -242,6 +253,7 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=100,
         help_text="""
     The address line with street number <br/>
     **(required for shipment purchase)**
@@ -251,6 +263,7 @@ class AddressData(AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=100,
         help_text="The address line with suite number",
     )
     validate_location = BooleanField(
@@ -272,12 +285,15 @@ class CommodityData(Serializer):
 
     weight = FloatField(required=True, help_text="The commodity's weight")
     weight_unit = ChoiceField(
-        required=True, choices=WEIGHT_UNIT, help_text="The commodity's weight unit"
+        required=True,
+        choices=WEIGHT_UNIT,
+        help_text="The commodity's weight unit",
     )
     description = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=250,
         help_text="A description of the commodity",
     )
     quantity = IntegerField(
@@ -289,6 +305,7 @@ class CommodityData(Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=100,
         help_text="The commodity's sku number",
     )
     value_amount = FloatField(
@@ -298,12 +315,14 @@ class CommodityData(Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=3,
         help_text="The currency of the commodity value amount",
     )
     origin_country = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=3,
         help_text="The origin or manufacture country",
     )
     parent_id = CharField(
@@ -351,6 +370,7 @@ class ParcelData(PresetSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text=f"""
     The parcel's packaging type.
 
@@ -366,6 +386,7 @@ class ParcelData(PresetSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""
     The parcel's package preset.
 
@@ -376,12 +397,14 @@ class ParcelData(PresetSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=250,
         help_text="The parcel's description",
     )
     content = CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=100,
         help_text="The parcel's content description",
     )
     is_document = BooleanField(
@@ -404,6 +427,7 @@ class ParcelData(PresetSerializer):
     reference_number = CharField(
         required=False,
         allow_null=True,
+        max_length=100,
         help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
     )
 
@@ -498,6 +522,7 @@ class CustomsData(Serializer):
         required=False,
         allow_null=True,
         allow_blank=True,
+        max_length=50,
         help_text="The invoice reference number",
     )
     invoice_date = CharField(
@@ -517,7 +542,7 @@ class CustomsData(Serializer):
         allow_null=True,
         help_text="Indicate that signer certified confirmed all",
     )
-    signer = CharField(required=False, allow_blank=True, allow_null=True)
+    signer = CharField(required=False, max_length=50, allow_blank=True, allow_null=True)
     options = PlainDictField(
         required=False,
         allow_null=True,
@@ -1096,6 +1121,7 @@ class ShippingData(Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=100,
         help_text="The shipment reference",
     )
     label_type = ChoiceField(
