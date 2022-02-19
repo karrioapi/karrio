@@ -2,6 +2,7 @@ import logging
 from django.db.models import signals
 from django.contrib.auth import get_user_model
 
+from purplship.server.core import utils
 import purplship.server.orgs.models as models
 
 logger = logging.getLogger(__name__)
@@ -13,6 +14,7 @@ def register_all():
     logger.info("orgs webhooks signals registered...")
 
 
+@utils.disable_for_loaddata
 def user_updated(sender, instance, *args, **kwargs):
     """User related events:
     - user created (if signup create org when no invites are available)

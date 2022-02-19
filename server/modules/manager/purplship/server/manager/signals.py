@@ -1,6 +1,7 @@
 import logging
 from django.db.models import signals
 
+from purplship.server.core import utils
 import purplship.server.manager.models as models
 import purplship.server.manager.serializers as serializers
 
@@ -33,6 +34,7 @@ def register_signals():
     logger.info("purplship.manager signals registered...")
 
 
+@utils.disable_for_loaddata
 def address_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -45,6 +47,7 @@ def address_updated(
         )
 
 
+@utils.disable_for_loaddata
 def parcel_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -55,6 +58,7 @@ def parcel_updated(
         serializers.reset_related_shipment_rates(instance.shipment.first())
 
 
+@utils.disable_for_loaddata
 def parcel_deleted(sender, instance, *args, **kwargs):
     """ """
     serializers.reset_related_shipment_rates(instance.shipment.first())

@@ -1,7 +1,7 @@
 import logging
-from attr import has
 from django.db.models import signals
 
+from purplship.server.core import utils
 from purplship.server.conf import settings
 from purplship.server.core.utils import failsafe
 from purplship.server.events.serializers import EventTypes
@@ -23,6 +23,7 @@ def register_signals():
     logger.info("order webhooks signals registered...")
 
 
+@utils.disable_for_loaddata
 def commodity_mutated(sender, instance, *args, **kwargs):
     """Commodity mutations (added or removed)"""
 
@@ -48,6 +49,7 @@ def commodity_mutated(sender, instance, *args, **kwargs):
             logger.info("commodity related order successfully updated")
 
 
+@utils.disable_for_loaddata
 def shipment_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -70,6 +72,7 @@ def shipment_updated(
                 logger.info("shipment related order successfully updated")
 
 
+@utils.disable_for_loaddata
 def order_updated(sender, instance, *args, **kwargs):
     """Order related events:
     - order created
