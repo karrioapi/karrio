@@ -8,6 +8,10 @@ from purplship.server.settings.workers import *
 from purplship.server.settings.cache import *
 
 
+if importlib.util.find_spec("purplship.server.iam") is not None:
+    from purplship.server.settings.iam import *
+
+
 if importlib.util.find_spec("purplship.server.graph") is not None:
     from purplship.server.settings.graph import *
 

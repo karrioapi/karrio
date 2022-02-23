@@ -19,11 +19,9 @@ REFERENCE_EXCLUSIONS = [
     "weight_units",
     "dimension_units",
     "payment_types",
-    "service_names",
     "option_names",
     "customs_content_type",
     "options",
-    "services",
 ]
 
 

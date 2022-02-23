@@ -1,15 +1,23 @@
 """
 purplship server graph module urls
 """
+import pydoc
+import typing
+from django.conf import settings
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView as BaseGraphQLView
 from rest_framework import exceptions
 
-from purplship.server.core.authentication import AllAuthentication
+ACCESS_METHOD = getattr(
+    settings,
+    "SESSION_ACCESS_MIXIN",
+    "purplship.server.core.authentication.AccessMixin",
+)
+AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
 
-class GraphQLView(AllAuthentication, BaseGraphQLView):
+class GraphQLView(AccessMixin, BaseGraphQLView):
     @staticmethod
     def format_error(error):
         formatted_error = super(GraphQLView, GraphQLView).format_error(error)

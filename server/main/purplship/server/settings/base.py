@@ -126,6 +126,9 @@ LOGIN_REDIRECT_URL = "/admin/"
 LOGIN_URL = "/admin/login/"
 OPEN_API_PATH = "openapi/"
 
+NAMESPACED_URLS = [
+    ("api/", "rest_framework.urls", "rest_framework"),
+]
 
 BASE_APPS = [
     "purplship.server.user",
@@ -282,8 +285,8 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
