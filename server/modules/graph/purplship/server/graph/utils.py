@@ -69,30 +69,6 @@ class BaseObjectType(graphene_django.DjangoObjectType):
         return getattr(self, "object_type", "")
 
 
-class SerializerMutation(mutation.SerializerMutation):
-    class Meta:
-        abstract = True
-
-    @classmethod
-    @login_required
-    def get_serializer_kwargs(cls, root, info, **input):
-        data = input.copy()
-
-        if "id" in input:
-            instance = cls._meta.model_class.access_by(info.context).get(
-                id=data.pop("id")
-            )
-
-            return {
-                "instance": instance,
-                "data": data,
-                "partial": True,
-                "context": info.context,
-            }
-
-        return {"data": data, "partial": False, "context": info.context}
-
-
 class ClientMutation(graphene.relay.ClientIDMutation):
     class Meta:
         abstract = True

@@ -1,6 +1,4 @@
-import logging
 from django.contrib.auth import mixins
-from django.utils.translation import gettext_lazy as _
 from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication as BaseOAuth2Authentication,
 )

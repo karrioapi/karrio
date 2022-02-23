@@ -156,7 +156,7 @@ class UpdateUser(utils.ClientMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **data):
-        instance = cls._meta.model_class.objects.get(id=info.context.user.id)
+        instance = types.User.objects.get(id=info.context.user.id)
 
         serializer = serializers.UserModelSerializer(
             instance,
