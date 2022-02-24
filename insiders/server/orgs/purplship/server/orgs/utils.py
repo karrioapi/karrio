@@ -1,7 +1,12 @@
 import typing
 import logging
+import graphene
+import functools
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from purplship.server.core.utils import email_setup_required
+from rest_framework import exceptions
+from django.utils.translation import gettext_lazy as _
 from django_email_verification.confirm import (
     _get_validated_field,
     EmailMultiAlternatives,
@@ -16,6 +21,49 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+class OrganizationUserRole(graphene.Enum):
+    member = "member"
+    admin = "admin"
+    owner = "owner"
+
+
+def required_roles(roles: typing.List[OrganizationUserRole]):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            *a, info = args
+            user = info.context.user
+            org_id = kwargs.get("id") or kwargs.get("org_id")
+            org = (
+                models.Organization.objects.filter(id=org_id, is_active=True).first()
+                if org_id
+                else getattr(info.context, "org", None)
+            )
+            org_user = org.organization_users.filter(user=user).first() if org else None
+
+            if user.is_anonymous:
+                raise exceptions.NotAuthenticated()
+
+            if org is None:
+                raise exceptions.NotFound("No active organization found")
+
+            if not all(
+                [
+                    OrganizationUserRole[role] in getattr(org_user, "roles", [])
+                    for role in roles
+                ]
+            ):
+                raise exceptions.PermissionDenied()
+
+            kwargs.update({"org": org})
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 def admin_required(instance, context) -> models.Organization:
     organization = (
         instance.organization if hasattr(instance, "organization") else instance
@@ -23,11 +71,12 @@ def admin_required(instance, context) -> models.Organization:
     if not organization.organization_users.filter(
         is_admin=True, user__id=context.user.id
     ).exists():
-        raise Exception("User Not Authorized")
+        raise exceptions.PermissionDenied()
 
     return instance
 
 
+@email_setup_required
 def send_invitation_emails(
     organization: models.Organization,
     emails: typing.List[str],

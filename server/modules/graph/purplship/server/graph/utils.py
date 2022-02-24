@@ -8,7 +8,6 @@ from rest_framework import exceptions
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
-from graphene_django.rest_framework import mutation
 
 from purplship.core.utils import Enum
 import purplship.server.manager.models as manager
@@ -19,11 +18,25 @@ import purplship.server.core.serializers as serializers
 def login_required(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        *a, info = args
+        *__, info = args
         if info.context.user.is_anonymous:
             raise exceptions.AuthenticationFailed(
                 _("You are not authenticated"), code="login_required"
             )
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def password_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        *__, info = args
+        password = kwargs.get("password")
+
+        if not info.context.user.check_password(password):
+            raise exceptions.ValidationError({"password": "Invalid password"})
 
         return func(*args, **kwargs)
 

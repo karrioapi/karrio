@@ -16,7 +16,7 @@ FALLBACK_VALUES = {
 }
 
 
-class Settings:
+class _Settings:
     def __getattr__(self, item):
         if item == "tenant":
             return self._get_tenant()
@@ -42,4 +42,4 @@ class Settings:
         return getattr(self, item)
 
 
-settings = Settings()
+settings = _Settings()

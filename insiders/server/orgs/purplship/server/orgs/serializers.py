@@ -1,3 +1,4 @@
+from enum import Enum
 from django.db import transaction
 
 from purplship.server.serializers import ModelSerializer, owned_model_serializer

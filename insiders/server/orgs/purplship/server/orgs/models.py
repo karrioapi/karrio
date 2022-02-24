@@ -75,8 +75,26 @@ class Organization(AbstractOrganization):
 
     surcharges = models.ManyToManyField(pricing.Surcharge, related_name="org")
 
+    def is_owner(self, user):
+        owner = getattr(self, "owner", None)
+        return owner and super().is_owner(user)
+
 
 class OrganizationUser(AbstractOrganizationUser):
+    @property
+    def roles(self):
+        from purplship.server.orgs.utils import OrganizationUserRole
+
+        roles = [OrganizationUserRole.member]
+
+        if self.is_admin:
+            roles.append(OrganizationUserRole.admin)
+
+        if self.organization.is_owner(self.user):
+            roles.append(OrganizationUserRole.owner)
+
+        return roles
+
     def __str__(self):
         return f"{self.user.email} ({self.organization.name})"
 

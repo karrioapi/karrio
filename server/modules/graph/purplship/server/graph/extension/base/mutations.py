@@ -6,7 +6,8 @@ from graphene_django.types import ErrorType
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
-from django.core.exceptions import ValidationError
+from purplship.server.core.utils import ConfirmationToken, send_email
+from rest_framework import exceptions
 
 from purplship.core.utils import DP
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
@@ -129,10 +130,12 @@ class TokenMutation(utils.ClientMutation):
 
         if refresh:
             if len(password or "") == 0:
-                raise ValidationError("Password is required to refresh token")
+                raise exceptions.ValidationError(
+                    {"password": "Password is required to refresh token"}
+                )
 
             if not info.context.user.check_password(password):
-                raise ValidationError("Invalid password")
+                raise exceptions.ValidationError({"password": "Invalid password"})
 
             if any(tokens):
                 tokens.delete()
@@ -150,7 +153,6 @@ class UpdateUser(utils.ClientMutation):
     user = graphene.Field(types.UserType)
 
     class Input:
-        email = graphene.String()
         full_name = graphene.String()
         is_active = graphene.Boolean()
 
@@ -169,6 +171,59 @@ class UpdateUser(utils.ClientMutation):
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
         return cls(user=serializer.save())
+
+
+class RequestEmailChange(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+        redirect_url = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    @utils.password_required
+    def mutate_and_get_payload(
+        cls, root, info, email, password, redirect_url, **kwargs
+    ):
+        token = ConfirmationToken.for_data(
+            user=info.context.user,
+            data=dict(new_email=email),
+        )
+
+        send_email(
+            emails=[email],
+            subject="Confirm your new email address",
+            email_template="purplship/email_change_email.html",
+            context=dict(
+                token=token,
+                redirect_url=redirect_url,
+            ),
+        )
+
+        return cls(user=info.context.user.id)
+
+
+class ConfirmEmailChange(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        token = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, token, **kwargs):
+        validated_token = ConfirmationToken(token)
+        user = info.context.user
+
+        if user.id != validated_token.data["user_id"]:
+            raise exceptions.ValidationError({"token": "Token is invalid or expired"})
+
+        user.email = validated_token.data["new_email"]
+        user.save()
+
+        return cls(user=types.User.objects.get(id=validated_token.data["user_id"]))
 
 
 class RegisterUser(DjangoFormMutation):
@@ -243,7 +298,7 @@ class ConfirmPasswordReset(DjangoFormMutation):
             ValueError,
             OverflowError,
             types.User.DoesNotExist,
-            ValidationError,
+            exceptions.ValidationError,
         ):
             user = None
         return user
@@ -364,7 +419,9 @@ class _UpdateCarrierConnection:
         )
 
         if not serializer.is_valid():
-            return cls(errors=ErrorType.from_errors(serializer.errors))
+            return UpdateCarrierConnection(
+                errors=ErrorType.from_errors(serializer.errors)
+            )
 
         settings_name: str = next((k for k in data.keys()))
         settings_data = data.get(settings_name, {})

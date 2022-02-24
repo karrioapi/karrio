@@ -173,6 +173,8 @@ class Mutation:
     confirm_email = mutations.ConfirmEmail.Field()
     mutate_token = mutations.TokenMutation.Field()
     change_password = mutations.ChangePassword.Field()
+    request_email_change = mutations.RequestEmailChange.Field()
+    confirm_email_change = mutations.ConfirmEmailChange.Field()
     request_password_reset = mutations.RequestPasswordReset.Field()
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
 

@@ -1,7 +1,14 @@
 import graphene
 from graphene_django.types import ErrorType
+from purplship.server.conf import settings
+from purplship.server.core.utils import failsafe, send_email
+from rest_framework import exceptions
 
-from purplship.server.orgs.utils import send_invitation_emails
+from purplship.server.orgs.utils import (
+    OrganizationUserRole,
+    required_roles,
+    send_invitation_emails,
+)
 import purplship.server.graph.extension.orgs.types as types
 import purplship.server.orgs.serializers as serializers
 import purplship.server.orgs.models as models
@@ -36,7 +43,7 @@ class UpdateOrganization(utils.ClientMutation):
         name = graphene.String()
 
     @classmethod
-    @utils.login_required
+    @required_roles(["admin"])
     def mutate_and_get_payload(cls, root, info, id, **data):
         instance = models.Organization.objects.get(
             id=id, users__id=info.context.user.id
@@ -54,6 +61,85 @@ class UpdateOrganization(utils.ClientMutation):
         return cls(organization=serializer.save())
 
 
+class DeleteOrganization(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
+
+    class Input:
+        id = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    @classmethod
+    @utils.password_required
+    @required_roles(["owner"])
+    def mutate_and_get_payload(cls, **kwargs):
+        org = kwargs.get("org")
+
+        org.is_active = False
+        org.save()
+
+        # TODO: send email to all users
+
+        return cls(organization=org)
+
+
+class SetOrganizationUserRoles(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
+
+    class Input:
+        org_id = graphene.String(required=True)
+        user_id = graphene.String(required=True)
+        roles = graphene.List(graphene.NonNull(graphene.String), required=True)
+
+    @classmethod
+    @required_roles(["owner"])
+    def mutate_and_get_payload(cls, root, info, org_id, user_id, roles, **kwargs):
+        org = kwargs.get("org")
+        org_user = org.organization_users.get(user__id=user_id)
+
+        org_user.is_admin = OrganizationUserRole.admin.value in roles
+        org_user.save()
+
+        return cls(organization=models.Organization.objects.get(id=org_id))
+
+
+class ChangeOrganizationOwner(utils.ClientMutation):
+    organization = graphene.Field(types.OrganizationType)
+
+    class Input:
+        org_id = graphene.String(required=True)
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    @classmethod
+    @required_roles(["owner"])
+    def mutate_and_get_payload(
+        cls, root, info, org_id: str, email: str = None, password: str = None, **kwargs
+    ):
+        org = kwargs.get("org")
+        new_owner = org.organization_users.get(user__email=email)
+
+        if not info.context.user.check_password(password):
+            raise exceptions.ValidationError({"password": "Invalid password"})
+
+        org.change_owner(new_owner)
+        org.save()
+
+        failsafe(
+            lambda: send_email(
+                emails=[email],
+                subject=f"{settings.APP_NAME} organization ownership successfully transferred to you",
+                email_template="purplship/organization_ownership_email.html",
+                context=dict(
+                    organization_name=org.name,
+                    current_owner_email=info.context.user.email,
+                ),
+            ),
+            warning="Failed to send email to new owner",
+        )
+
+        return cls(organization=models.Organization.objects.get(id=org_id))
+
+
 class SendOrganizationInvites(utils.ClientMutation):
     organization = graphene.Field(types.OrganizationType)
 
@@ -63,12 +149,9 @@ class SendOrganizationInvites(utils.ClientMutation):
         redirect_url = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @required_roles(["admin"])
     def mutate_and_get_payload(cls, root, info, org_id, emails, redirect_url, **kwargs):
-        organization = serializers.admin_required(
-            models.Organization.objects.get(id=org_id, users__id=info.context.user.id),
-            info.context,
-        )
+        organization = kwargs.get("org")
 
         send_invitation_emails(organization, emails, redirect_url, info.context.user)
 

@@ -28,18 +28,24 @@ class Query:
 
     @utils.login_required
     def resolve_organization(self, info, **kwargs):
-        return models.Organization.objects.get(users__id=info.context.user.id, **kwargs)
+        return models.Organization.objects.get(
+            users__id=info.context.user.id, is_active=True, **kwargs
+        )
 
     @utils.login_required
     def resolve_organizations(self, info, **kwargs):
         return models.Organization.objects.filter(
-            users__id=info.context.user.id, **kwargs
+            users__id=info.context.user.id, is_active=True, **kwargs
         )
 
 
 class Mutation:
     create_organization = mutations.CreateOrganization.Field()
     update_organization = mutations.UpdateOrganization.Field()
+    delete_organization = mutations.DeleteOrganization.Field()
+
+    change_organization_owner = mutations.ChangeOrganizationOwner.Field()
+    set_organization_user_roles = mutations.SetOrganizationUserRoles.Field()
 
     send_organization_invites = mutations.SendOrganizationInvites.Field()
     accept_organization_invitation = mutations.AcceptOrganizationInvitation.Field()

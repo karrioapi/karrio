@@ -3,6 +3,7 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 
 import purplship.server.graph.utils as utils
+from purplship.server.orgs.utils import OrganizationUserRole
 from purplship.server.serializers import SerializerDecorator, Context
 from purplship.server.user.serializers import TokenSerializer
 import purplship.server.orgs.models as models
@@ -43,6 +44,7 @@ class OrganizationMemberType(graphene.ObjectType):
     is_owner = graphene.Boolean()
     invitation = graphene.Field(OrganizationInvitationType)
     last_login = graphene.DateTime(required=False)
+    roles = graphene.List(OrganizationUserRole, required=True)
 
 
 class OrganizationType(utils.BaseObjectType):
@@ -70,7 +72,6 @@ class OrganizationType(utils.BaseObjectType):
         )
 
     def resolve_current_user(self, info):
-        owner = getattr(self, "owner", None)
         user = info.context.user
         return OrganizationUserType(
             **{
@@ -79,18 +80,18 @@ class OrganizationType(utils.BaseObjectType):
                 if k in OrganizationUserType._meta.fields.keys()
             },
             is_admin=self.organization_users.get(user=user).is_admin,
-            is_owner=owner and self.is_owner(user),
+            is_owner=self.is_owner(user),
         )
 
     def resolve_members(self, info):
-        owner = getattr(self, "owner", None)
         users = [
             OrganizationMemberType(
                 email=user.email,
                 full_name=user.full_name,
-                is_admin=self.organization_users.get(user=user).is_admin,
-                is_owner=owner and self.is_owner(user),
                 last_login=user.last_login,
+                is_owner=self.is_owner(user),
+                is_admin=self.organization_users.get(user=user).is_admin,
+                roles=self.organization_users.get(user=user).roles,
             )
             for user in self.users.filter(is_active=True)
         ]
@@ -101,6 +102,7 @@ class OrganizationType(utils.BaseObjectType):
                 is_admin=False,
                 is_owner=False,
                 invitation=invite,
+                roles=[OrganizationUserRole.member],
             )
             for invite in self.organization_invites.all()
         ]
