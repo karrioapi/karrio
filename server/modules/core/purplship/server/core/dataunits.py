@@ -38,6 +38,7 @@ def contextual_metadata(request: Request):
         "GRAPHQL": f"{host}graphql",
         "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
+        "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
     }
 
 

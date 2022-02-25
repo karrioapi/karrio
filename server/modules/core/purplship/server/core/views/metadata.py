@@ -18,6 +18,7 @@ class Metadata(Serializer):
     APP_WEBSITE = CharField(required=False, allow_null=True)
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
+    APPS_MANAGEMENT = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()

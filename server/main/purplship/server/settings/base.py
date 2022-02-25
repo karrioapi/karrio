@@ -99,6 +99,7 @@ PURPLSHIP_CONF = [
             "urls": "purplship.server.events.urls",
         },
         {"app": "purplship.server.pricing", "module": "purplship.server.pricing"},
+        {"app": "purplship.server.apps", "module": "purplship.server.apps"},
     ]
     if importlib.util.find_spec(app["module"]) is not None
 ]
@@ -108,6 +109,7 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
+APPS_MANAGEMENT = importlib.util.find_spec("purplship.server.apps") is not None
 MULTI_TENANTS = importlib.util.find_spec(
     "purplship.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)

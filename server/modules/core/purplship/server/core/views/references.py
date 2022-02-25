@@ -23,6 +23,7 @@ class References(Serializer):
     APP_WEBSITE = CharField()
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
+    APPS_MANAGEMENT = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()
