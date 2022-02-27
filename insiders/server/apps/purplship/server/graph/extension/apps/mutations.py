@@ -1,4 +1,5 @@
 import graphene
+from django.db.models import Q
 from graphene.types import generic
 from graphene_django.types import ErrorType
 
@@ -17,13 +18,23 @@ class CreateApp(utils.ClientMutation):
         features = graphene.List(graphene.String)
         launch_url = graphene.String(required=True)
         is_embedded = graphene.Boolean(required=True)
+        redirect_uris = graphene.String(required=True)
+        is_public = graphene.Boolean(default_value=False)
         metadata = generic.GenericScalar()
 
     @classmethod
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, **data):
+        registration = models.Application.objects.create(
+            user=info.context.user,
+            name=data["display_name"],
+            redirect_uris=data["redirect_uris"],
+            algorithm=models.Application.RS256_ALGORITHM,
+            client_type=models.Application.CLIENT_PUBLIC,
+            authorization_grant_type=models.Application.GRANT_AUTHORIZATION_CODE,
+        )
         serializer = serializers.AppModelSerializer(
-            data=data,
+            data={**data, "registration": registration.pk},
             context=info.context,
         )
 
@@ -38,10 +49,13 @@ class UpdateApp(utils.ClientMutation):
 
     class Input:
         id = graphene.String(required=True)
-        display_name = graphene.String(required=True)
-        developer_name = graphene.String(required=True)
-        launch_url = graphene.String(required=True)
-        is_embedded = graphene.Boolean(required=True)
+        display_name = graphene.String()
+        developer_name = graphene.String()
+        features = graphene.List(graphene.String)
+        launch_url = graphene.String()
+        is_embedded = graphene.Boolean()
+        redirect_uris = graphene.String()
+        is_public = graphene.Boolean()
         metadata = generic.GenericScalar()
 
     @classmethod
@@ -58,6 +72,12 @@ class UpdateApp(utils.ClientMutation):
 
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        instance.registration.name = data.get("display_name") or instance.display_name
+        instance.registration.redirect_uris = (
+            data.get("redirect_uris") or instance.registration.redirect_uris
+        )
+        instance.registration.save()
 
         return cls(app=serializer.save())
 
@@ -89,7 +109,10 @@ class InstallApp(utils.ClientMutation):
     @classmethod
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, app_id, **inputs):
-        app = models.App.access_by(info.context).get(id=app_id)
+        app = models.App.objects.get(
+            Q(id=app_id, link__org=info.context.org)
+            | Q(id=app_id, is_public=True, is_published=True)
+        )
 
         if app.installations.filter(org=info.context.org).exists():
             return cls(
@@ -116,7 +139,7 @@ class UninstallApp(utils.ClientMutation):
     @classmethod
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, app_id, **inputs):
-        app = models.App.access_by(info.context).get(id=app_id)
+        app = models.App.objects.get(id=app_id)
 
         app.installations.filter(org=info.context.org).delete()
 

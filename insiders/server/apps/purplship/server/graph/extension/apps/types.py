@@ -72,15 +72,29 @@ class AppFilter(django_filters.FilterSet):
         return queryset.filter(Q(metadata__values__contains=value))
 
 
-class AppType(utils.BaseObjectType):
-    metadata = generic.GenericScalar()
+class PublicAppType(utils.BaseObjectType):
     features = graphene.List(graphene.String, default_value=[])
     installation = graphene.Field(AppInstallationType)
+    metadata = generic.GenericScalar()
 
     class Meta:
         model = models.App
-        exclude = ("installations", "org")
+        exclude = ("installations", "registration", "org")
         interfaces = (utils.CustomNode,)
 
     def resolve_installation(self, info):
         return self.installations.filter(org=info.context.org).first()
+
+
+class AppType(utils.BaseObjectType):
+    client_id = graphene.String(required=True)
+    client_secret = graphene.String(required=True)
+    features = graphene.List(graphene.String, default_value=[])
+    installation = graphene.Field(AppInstallationType)
+    redirect_uris = graphene.String(required=True)
+    metadata = generic.GenericScalar()
+
+    class Meta:
+        model = models.App
+        exclude = ("installations", "registration", "org")
+        interfaces = (utils.CustomNode,)

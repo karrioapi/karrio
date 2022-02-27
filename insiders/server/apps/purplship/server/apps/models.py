@@ -1,6 +1,6 @@
 from functools import partial
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from oauth2_provider.models import Application
 
 from purplship.server.core.utils import identity
 from purplship.server.core.models import OwnedEntity, uuid
@@ -24,6 +24,7 @@ class App(OwnedEntity):
     display_name = models.CharField(max_length=50)
     developer_name = models.CharField(max_length=50)
 
+    is_public = models.BooleanField(default=False)
     is_builtin = models.BooleanField(default=False)
     is_embedded = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
@@ -39,11 +40,26 @@ class App(OwnedEntity):
         blank=True, null=True, default=partial(identity, value={})
     )
 
+    registration = models.OneToOneField(
+        Application, on_delete=models.CASCADE, related_name="app"
+    )
     org = models.ManyToManyField(Organization, related_name="apps", through="AppLink")
 
     @property
     def object_type(self):
         return "app"
+
+    @property
+    def client_id(self):
+        return self.registration.client_id
+
+    @property
+    def client_secret(self):
+        return self.registration.client_secret
+
+    @property
+    def redirect_uris(self):
+        return self.registration.redirect_uris
 
 
 class AppInstallation(OwnedEntity):

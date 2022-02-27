@@ -15,6 +15,12 @@ class Query:
         filterset_class=types.AppFilter,
         default_value=[],
     )
+    public_apps = django_filter.DjangoFilterConnectionField(
+        types.PublicAppType,
+        required=True,
+        filterset_class=types.AppFilter,
+        default_value=[],
+    )
     installations = django_filter.DjangoFilterConnectionField(
         types.AppInstallationType,
         required=True,
@@ -29,6 +35,13 @@ class Query:
     @utils.login_required
     def resolve_apps(self, info, **kwargs):
         return models.App.access_by(info.context)
+
+    @utils.login_required
+    def resolve_public_apps(self, info, **kwargs):
+        return models.App.objects.filter(
+            is_public=True,
+            is_published=True,
+        )
 
     @utils.login_required
     def resolve_installations(self, info, **kwargs):

@@ -1,5 +1,4 @@
 from purplship.server.settings.base import *
-import os
 
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 
@@ -15,6 +14,7 @@ REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
 )
 
 SESSION_ACCESS_MIXIN = "purplship.server.iam.authentication.AccessMixin"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 
 OAUTH2_PROVIDER = {
     "OIDC_ENABLED": True,
