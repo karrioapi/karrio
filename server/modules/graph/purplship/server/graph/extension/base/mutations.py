@@ -187,20 +187,25 @@ class RequestEmailChange(utils.ClientMutation):
     def mutate_and_get_payload(
         cls, root, info, email, password, redirect_url, **kwargs
     ):
-        token = ConfirmationToken.for_data(
-            user=info.context.user,
-            data=dict(new_email=email),
-        )
+        try:
+            token = ConfirmationToken.for_data(
+                user=info.context.user,
+                data=dict(new_email=email),
+            )
 
-        send_email(
-            emails=[email],
-            subject="Confirm your new email address",
-            email_template="purplship/email_change_email.html",
-            context=dict(
-                token=token,
-                redirect_url=redirect_url,
-            ),
-        )
+            send_email(
+                emails=[email],
+                subject="Confirm your new email address",
+                email_template="purplship/email_change_email.html",
+                text_template="purplship/email_change_email.txt",
+                context=dict(
+                    token=token,
+                    link=redirect_url,
+                ),
+            )
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
         return cls(user=info.context.user.id)
 
@@ -217,13 +222,16 @@ class ConfirmEmailChange(utils.ClientMutation):
         validated_token = ConfirmationToken(token)
         user = info.context.user
 
-        if user.id != validated_token.data["user_id"]:
+        if user.id != validated_token["user_id"]:
             raise exceptions.ValidationError({"token": "Token is invalid or expired"})
 
-        user.email = validated_token.data["new_email"]
+        if user.email == validated_token["new_email"]:
+            raise exceptions.APIException("Email is already confirmed")
+
+        user.email = validated_token["new_email"]
         user.save()
 
-        return cls(user=types.User.objects.get(id=validated_token.data["user_id"]))
+        return cls(user=types.User.objects.get(id=validated_token["user_id"]))
 
 
 class RegisterUser(DjangoFormMutation):

@@ -154,8 +154,7 @@ def send_email(
     text_template: str = None,
 ):
     sender = _get_validated_field("EMAIL_FROM_ADDRESS")
-
-    html = render_to_string(text_template, context)
+    html = render_to_string(email_template, context)
     text = render_to_string(text_template or email_template, context)
 
     msg = EmailMultiAlternatives(subject, text, sender, emails)
@@ -165,7 +164,7 @@ def send_email(
 
 class ConfirmationToken(jwt.Token):
     token_type = "confirmation"
-    lifetime = timedelta(minutes=1)
+    lifetime = timedelta(hours=2)
 
     @classmethod
     def for_data(cls, user, data: dict) -> str:
