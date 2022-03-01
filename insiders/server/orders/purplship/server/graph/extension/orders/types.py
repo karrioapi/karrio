@@ -15,8 +15,14 @@ class OrderFilter(django_filters.FilterSet):
     address = django_filters.CharFilter(
         field_name="shipping_address__address_line1", lookup_expr="icontains"
     )
-    order_id = django_filters.CharFilter(field_name="order_id", lookup_expr="exact")
-    source = django_filters.CharFilter(field_name="source", lookup_expr="exact")
+    order_id = utils.CharInFilter(
+        field_name="order_id",
+        method="order_id_filter",
+    )
+    source = utils.CharInFilter(
+        field_name="source",
+        method="channel_filter",
+    )
     created_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
@@ -45,6 +51,12 @@ class OrderFilter(django_filters.FilterSet):
         model = models.Order
         fields: list = []
 
+    def order_id_filter(self, queryset, name, value):
+        return queryset.filter(Q(order_id__in=value))
+
+    def source_filter(self, queryset, name, value):
+        return queryset.filter(Q(source__in=value))
+
     def option_key_filter(self, queryset, name, value):
         return queryset.filter(Q(options__has_key=value))
 
@@ -60,7 +72,9 @@ class OrderType(utils.BaseObjectType):
     line_items = graphene.List(
         graphene.NonNull(types.CommodityType), required=True, default_value=[]
     )
-    shipments = graphene.List(graphene.NonNull(types.ShipmentType), required=True, default_value=[])
+    shipments = graphene.List(
+        graphene.NonNull(types.ShipmentType), required=True, default_value=[]
+    )
 
     metadata = generic.GenericScalar()
     options = generic.GenericScalar()
