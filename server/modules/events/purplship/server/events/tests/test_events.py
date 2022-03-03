@@ -81,7 +81,7 @@ TRACKER_VALUE = {
             "time": "13:58",
         }
     ],
-    "status": "in-transit",
+    "status": "in_transit",
 }
 
 EVENTS_RESPONSE = {
@@ -102,7 +102,7 @@ EVENTS_RESPONSE = {
                                     "description": "Order Processed: Ready for UPS",
                                 }
                             ],
-                            "status": "in-transit",
+                            "status": "in_transit",
                             "delivered": False,
                             "test_mode": True,
                             "tracking_number": "1Z12345E6205277936",
@@ -131,7 +131,7 @@ EVENT_RESPONSE = {
                         "description": "Order Processed: Ready for UPS",
                     }
                 ],
-                "status": "in-transit",
+                "status": "in_transit",
                 "delivered": False,
                 "test_mode": True,
                 "tracking_number": "1Z12345E6205277936",

@@ -48,8 +48,8 @@ class AddressSerializer(AddressData):
 def can_mutate_address(
     address: models.Address, update: bool = False, delete: bool = False
 ):
-    shipment = address.shipper_shipment.first() or address.recipient_shipment.first()
-    order = address.order.first() if settings.ORDERS_MANAGEMENT else None
+    shipment = address.shipment
+    order = address.order
 
     if shipment is None and order is None:
         return

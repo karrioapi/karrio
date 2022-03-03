@@ -26,7 +26,8 @@ ORDER_STATUS = [(c.value, c.value) for c in list(OrderStatus)]
 
 @allow_model_id(
     [
-        ("shipping_address", "purplship.server.manager.models.Address"),
+        ("shipping_to", "purplship.server.manager.models.Address"),
+        ("shipping_from", "purplship.server.manager.models.Address"),
         ("line_items", "purplship.server.manager.models.Commodity"),
     ]
 )
@@ -41,9 +42,14 @@ class OrderData(Serializer):
     e.g. API, POS, ERP, Shopify, Woocommerce, etc.
     """,
     )
-    shipping_address = AddressData(
+    shipping_to = AddressData(
         required=True,
-        help_text="The customer address for the order.",
+        help_text="The customer or recipient address for the order.",
+    )
+    shipping_from = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The origin or warehouse address of the order items.",
     )
     line_items = CommodityData(
         many=True, allow_empty=False, help_text="The order line items."
@@ -81,9 +87,14 @@ class Order(EntitySerializer):
         default=OrderStatus.created.value,
         help_text="The order status.",
     )
-    shipping_address = Address(
+    shipping_to = Address(
         required=True,
         help_text="The customer address for the order.",
+    )
+    shipping_from = Address(
+        required=False,
+        allow_null=True,
+        help_text="The origin or warehouse address of the order items.",
     )
     line_items = Commodity(
         many=True, allow_empty=False, help_text="The order line items."

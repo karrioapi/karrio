@@ -28,8 +28,14 @@ class OrderSerializer(serializers.OrderData):
                 if key in models.Order.DIRECT_PROPS and value is not None
             },
             "test_mode": test_mode,
-            "shipping_address": save_one_to_one_data(
-                "shipping_address",
+            "shipping_to": save_one_to_one_data(
+                "shipping_to",
+                serializers.AddressSerializer,
+                payload=validated_data,
+                context=context,
+            ),
+            "shipping_from": save_one_to_one_data(
+                "shipping_from",
                 serializers.AddressSerializer,
                 payload=validated_data,
                 context=context,
@@ -112,11 +118,11 @@ def compute_order_status(order: models.Order) -> str:
 
     for line_item in order.line_items.all():
         shipment_items = line_item.children.exclude(
-            parcel__shipment__status__in=[
+            commodity_parcel__parcel_shipment__status__in=[
                 serializers.ShipmentStatus.cancelled.value,
                 serializers.ShipmentStatus.created.value,
             ]
-        ).filter(parcel__isnull=False, customs__isnull=True)
+        ).filter(commodity_parcel__isnull=False, commodity_customs__isnull=True)
         fulfilled = (
             sum([item.quantity for item in shipment_items]) >= line_item.quantity
         )

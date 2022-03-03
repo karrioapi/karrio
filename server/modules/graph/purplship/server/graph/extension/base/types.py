@@ -148,11 +148,7 @@ class CommodityType(utils.BaseObjectType):
 
     class Meta:
         model = manager.Commodity
-        exclude = (
-            "customs",
-            "parcel",
-            "children",
-        )
+        exclude = (*manager.Commodity.HIDDEN_PROPS,)
 
     def resolve_parent_id(self, info):
         return self.parent_id
@@ -164,7 +160,7 @@ class AddressType(utils.BaseObjectType):
 
     class Meta:
         model = manager.Address
-        exclude = ("pickup_set", "recipient_shipment", "shipper_shipment", "template")
+        exclude = (*manager.Address.HIDDEN_PROPS, "template")
 
 
 class ParcelType(utils.BaseObjectType):
@@ -174,7 +170,7 @@ class ParcelType(utils.BaseObjectType):
     class Meta:
         model = manager.Parcel
         exclude = (
-            "shipment",
+            *manager.Parcel.HIDDEN_PROPS,
             "template",
         )
 
@@ -196,7 +192,7 @@ class CustomsType(utils.BaseObjectType):
 
     class Meta:
         model = manager.Customs
-        exclude = ("shipment", "template")
+        exclude = (*manager.Customs.HIDDEN_PROPS, "template")
 
     def resolve_commodities(self, info):
         return self.commodities.all()
@@ -207,7 +203,7 @@ class AddressTemplateType(utils.BaseObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ("customs", "parcel")
+        exclude = (*graph.Template.HIDDEN_PROPS, "customs", "parcel")
         filter_fields = {
             "label": ["icontains"],
             "address__address_line1": ["icontains"],
@@ -220,7 +216,7 @@ class CustomsTemplateType(utils.BaseObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ("address", "parcel")
+        exclude = (*graph.Template.HIDDEN_PROPS, "address", "parcel")
         filter_fields = {"label": ["icontains"]}
         interfaces = (utils.CustomNode,)
 
@@ -230,7 +226,7 @@ class ParcelTemplateType(utils.BaseObjectType):
 
     class Meta:
         model = graph.Template
-        exclude = ("address", "customs")
+        exclude = (*graph.Template.HIDDEN_PROPS, "address", "customs")
         filter_fields = {"label": ["icontains"]}
         interfaces = (utils.CustomNode,)
 
@@ -294,7 +290,7 @@ class TrackerType(utils.BaseObjectType):
 
     class Meta:
         model = manager.Tracking
-        filter_fields = ["tracking_carrier"]
+        exclude = (*manager.Tracking.HIDDEN_PROPS,)
         interfaces = (utils.CustomNode,)
 
     def resolve_carrier_id(self, info):
@@ -415,11 +411,11 @@ class ShipmentType(utils.BaseObjectType):
 
     label_type = utils.LabelTypeEnum()
     status = utils.ShipmentStatusEnum(required=True)
+    tracker = graphene.Field(TrackerType)
 
     class Meta:
         model = manager.Shipment
-        exclude = ("pickup_shipments", "selected_rate_carrier", "carriers")
-        filter_fields = ["status"]
+        exclude = (*manager.Shipment.HIDDEN_PROPS,)
         interfaces = (utils.CustomNode,)
 
     def resolve_parcels(self, info):
@@ -433,6 +429,9 @@ class ShipmentType(utils.BaseObjectType):
 
     def resolve_carrier_name(self, info):
         return getattr(self.selected_rate_carrier, "carrier_name", None)
+
+    def resolve_tracker(self, info):
+        return self.tracker
 
 
 class WebhookFilter(django_filters.FilterSet):

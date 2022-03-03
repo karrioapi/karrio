@@ -37,19 +37,19 @@ class ShipmentStatus(Enum):
     purchased = "purchased"
     cancelled = "cancelled"
     shipped = "shipped"
-    transit = "in-transit"
+    in_transit = "in_transit"
     delivered = "delivered"
 
 
 class TrackerStatus(Enum):
     pending = "pending"
-    in_transit = "in-transit"
+    in_transit = "in_transit"
     incident = "incident"
     delivered = "delivered"
 
 
-SHIPMENT_STATUS = [(c.value, c.value) for c in list(ShipmentStatus)]
-TRACKER_STATUS = [(c.value, c.value) for c in list(TrackerStatus)]
+SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
+TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(Incoterm)]
 CARRIERS = [(k, k) for k in sorted(MODELS.keys())]

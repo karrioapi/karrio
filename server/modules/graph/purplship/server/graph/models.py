@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from purplship.server.core.models import OwnedEntity, uuid
@@ -5,6 +6,8 @@ from purplship.server.manager.models import Customs, Parcel, Address
 
 
 class Template(OwnedEntity):
+    HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
+
     class Meta:
         db_table = "template"
         ordering = ["-is_default", "-created_by"]

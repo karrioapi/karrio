@@ -13,7 +13,7 @@ OrderStatusEnum = graphene.Enum.from_enum(serializers.OrderStatus)
 
 class OrderFilter(django_filters.FilterSet):
     address = django_filters.CharFilter(
-        field_name="shipping_address__address_line1", lookup_expr="icontains"
+        field_name="shipping_to__address_line1", lookup_expr="icontains"
     )
     order_id = utils.CharInFilter(
         field_name="order_id",
@@ -68,7 +68,8 @@ class OrderFilter(django_filters.FilterSet):
 
 
 class OrderType(utils.BaseObjectType):
-    shipping_address = graphene.Field(graphene.NonNull(types.AddressType))
+    shipping_to = graphene.Field(graphene.NonNull(types.AddressType))
+    shipping_from = graphene.Field(types.AddressType)
     line_items = graphene.List(
         graphene.NonNull(types.CommodityType), required=True, default_value=[]
     )
@@ -83,7 +84,7 @@ class OrderType(utils.BaseObjectType):
 
     class Meta:
         model = models.Order
-        exclude = ("org",)
+        exclude = (*models.Order.HIDDEN_PROPS,)
         interfaces = (utils.CustomNode,)
 
     def resolve_line_items(self, info):

@@ -54,7 +54,11 @@ class AddressList(GenericAPIView):
         Retrieve all addresses.
         """
         addresses = models.Address.access_by(request).filter(
-            shipper_shipment__isnull=True, recipient_shipment__isnull=True
+            **{
+                f"{prop}__isnull": True
+                for prop in models.Address.HIDDEN_PROPS
+                if prop != "org"
+            }
         )
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)

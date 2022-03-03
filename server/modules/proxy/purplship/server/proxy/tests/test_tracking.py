@@ -62,7 +62,7 @@ TRACKING_RESPONSE = {
         ],
         "messages": [],
         "metadata": {},
-        "status": "in-transit",
+        "status": "in_transit",
         "test_mode": True,
         "tracking_number": "1Z12345E6205277936",
     },

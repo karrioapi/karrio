@@ -42,9 +42,7 @@ def address_updated(
     changes = update_fields or []
 
     if any([change in RATE_RELATED_CHANGES for change in changes]):
-        serializers.reset_related_shipment_rates(
-            instance.shipper_shipment.first() or instance.recipient_shipment.first()
-        )
+        serializers.reset_related_shipment_rates(instance.shipment)
 
 
 @utils.disable_for_loaddata
@@ -55,10 +53,10 @@ def parcel_updated(
     changes = update_fields or []
 
     if any([change in RATE_RELATED_CHANGES for change in changes]):
-        serializers.reset_related_shipment_rates(instance.shipment.first())
+        serializers.reset_related_shipment_rates(instance.shipment)
 
 
 @utils.disable_for_loaddata
 def parcel_deleted(sender, instance, *args, **kwargs):
     """ """
-    serializers.reset_related_shipment_rates(instance.shipment.first())
+    serializers.reset_related_shipment_rates(instance.shipment)

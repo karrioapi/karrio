@@ -5,7 +5,6 @@ from graphene_django.types import ErrorType
 from purplship.core.utils import DP
 import purplship.server.graph.utils as utils
 import purplship.server.orders.models as models
-import purplship.server.orders.serializers as serializers
 import purplship.server.graph.extension.orders.types as types
 import purplship.server.graph.extension.base.inputs as inputs
 from purplship.server.orders.serializers.order import (
@@ -19,7 +18,8 @@ class PartialOrderUpdate(utils.ClientMutation):
 
     class Input:
         id = graphene.String(required=True)
-        shipping_address = graphene.Field(inputs.UpdateAddressInput, required=False)
+        shipping_to = graphene.Field(inputs.UpdateAddressInput, required=False)
+        shipping_from = graphene.Field(inputs.UpdateAddressInput, required=False)
         line_items = graphene.List(inputs.UpdateCommodityInput, required=False)
         options = generic.GenericScalar(required=False)
         metadata = generic.GenericScalar(required=False)

@@ -46,7 +46,7 @@ class WebhookData(serializers.Serializer):
     )
 
 
-class Webhook(WebhookData, EntitySerializer):
+class Webhook(EntitySerializer, WebhookData):
     object_type = serializers.CharField(
         default="webhook", help_text="Specifies the object type"
     )
@@ -55,3 +55,4 @@ class Webhook(WebhookData, EntitySerializer):
         allow_null=True,
         help_text="The datetime of the last event sent.",
     )
+    secret = serializers.CharField(help_text="Header signature secret")

@@ -56,6 +56,11 @@ def metadata_object_types() -> Enum:
 
         _types.append(("order", orders.Order))
 
+    if settings.APPS_MANAGEMENT:
+        import purplship.server.apps.models as apps
+
+        _types.append(("app", apps.App))
+
     return Enum("MetadataObjectType", _types)
 
 
@@ -137,8 +142,8 @@ CustomsContentTypeEnum = graphene.Enum(
 IncotermCodeEnum = graphene.Enum("IncotermCodeEnum", serializers.INCOTERMS)
 PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
 LabelTypeEnum = graphene.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
-ShipmentStatusEnum = graphene.Enum.from_enum(serializers.ShipmentStatus)
-TrackerStatusEnum = graphene.Enum.from_enum(serializers.TrackerStatus)
+ShipmentStatusEnum = graphene.Enum("ShipmentStatusEnum", serializers.SHIPMENT_STATUS)
+TrackerStatusEnum = graphene.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
 
 MetadataObjectType = metadata_object_types()
 MetadataObjectTypeEnum = graphene.Enum.from_enum(MetadataObjectType)

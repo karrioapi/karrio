@@ -52,7 +52,13 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.access_by(request).filter(shipment__isnull=True)
+        parcels = models.Parcel.access_by(request).filter(
+            **{
+                f"{prop}__isnull": True
+                for prop in models.Parcel.HIDDEN_PROPS
+                if prop != "org"
+            }
+        )
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)

@@ -35,7 +35,7 @@ def commodity_mutated(sender, instance, *args, **kwargs):
     if parent is None:
         return
 
-    if parent.order.exists() is False:
+    if parent.order is None:
         return
 
     # Retrieve all orders associated with this commodity and update their status if needed
@@ -57,13 +57,15 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
-    if not instance.parcels.filter(items__parent__order__isnull=False).exists():
+    if not instance.parcels.filter(
+        items__parent__commodity_order__isnull=False
+    ).exists():
         return
 
     if instance.status != serializers.ShipmentStatus.created.value:
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
-            line_items__children__parcel__shipment__id=instance.id
+            line_items__children__commodity_parcel__parcel_shipment__id=instance.id
         ).distinct():
             status = compute_order_status(order)
             if status != order.status:

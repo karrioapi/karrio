@@ -62,7 +62,12 @@ def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
     def notify_subscriber(webhook: models.Webhook):
         response = identity(
             lambda: requests.post(
-                webhook.url, json=payload, headers={"Content-type": "application/json"}
+                webhook.url,
+                json=payload,
+                headers={
+                    "Content-type": "application/json",
+                    "X-Event-Id": webhook.secret,
+                },
             )
         )
 

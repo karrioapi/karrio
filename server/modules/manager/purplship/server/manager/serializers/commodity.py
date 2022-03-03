@@ -32,10 +32,8 @@ class CommoditySerializer(CommodityData):
 def can_mutate_commodity(
     commodity: models.Commodity, update: bool = False, delete: bool = False, **kwargs
 ):
-    shipment = models.Shipment.objects.filter(
-        Q(customs__commodities__id=commodity.id) | Q(parcels__items__id=commodity.id)
-    ).first()
-    order = commodity.order.first() if settings.ORDERS_MANAGEMENT else None
+    shipment = commodity.shipment
+    order = commodity.order
 
     if shipment is None and order is None:
         return

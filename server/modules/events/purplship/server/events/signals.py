@@ -33,7 +33,7 @@ def shipment_updated(
         return
     elif instance.status == serializers.ShipmentStatus.purchased.value:
         event = EventTypes.shipment_purchased.value
-    elif instance.status == serializers.ShipmentStatus.transit.value:
+    elif instance.status == serializers.ShipmentStatus.in_transit.value:
         event = EventTypes.shipment_fulfilled.value
     elif instance.status == serializers.ShipmentStatus.cancelled.value:
         event = EventTypes.shipment_cancelled.value
@@ -88,7 +88,7 @@ def tracker_updated(
 ):
     """Tracking related events:
     - tracker created (pending)
-    - tracker status changed (in-transit, delivered or blocked)
+    - tracker status changed (in_transit, delivered or blocked)
     """
     changes = update_fields or []
 

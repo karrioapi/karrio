@@ -180,6 +180,8 @@ class TestOrderShipments(TestOrderFixture):
             mock.return_value = RETURNED_RATES_VALUE
             shipment_response = self.client.post(shipment_url, data)
             shipment_data = json.loads(shipment_response.content)
+
+            self.assertEqual(shipment_response.status_code, status.HTTP_201_CREATED)
             shipment = manager.Shipment.objects.get(pk=shipment_data["id"])
             shipment.status = "purchased"
             shipment.save()
@@ -198,7 +200,7 @@ class TestOrderShipments(TestOrderFixture):
 ORDER_DATA = {
     "order_id": "1073459962",
     "source": "shopify",
-    "shipping_address": {
+    "shipping_to": {
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "person_name": "John Doe",
@@ -238,7 +240,7 @@ ORDER_RESPONSE = {
     "order_id": "1073459962",
     "source": "shopify",
     "status": "created",
-    "shipping_address": {
+    "shipping_to": {
         "id": ANY,
         "object_type": "address",
         "postal_code": "E1C4Z8",
@@ -258,6 +260,7 @@ ORDER_RESPONSE = {
         "validate_location": False,
         "validation": None,
     },
+    "shipping_from": None,
     "line_items": [
         {
             "id": ANY,
@@ -372,7 +375,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "order_id": "1073459962",
     "source": "shopify",
     "status": "created",
-    "shipping_address": {
+    "shipping_to": {
         "id": ANY,
         "object_type": "address",
         "postal_code": "E1C4Z8",
@@ -392,6 +395,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         "validate_location": False,
         "validation": None,
     },
+    "shipping_from": None,
     "line_items": [
         {
             "id": ANY,
@@ -562,7 +566,7 @@ FULFILLED_ORDER_RESPONSE = {
     "order_id": "1073459962",
     "source": "shopify",
     "status": "fulfilled",
-    "shipping_address": {
+    "shipping_to": {
         "id": ANY,
         "object_type": "address",
         "postal_code": "E1C4Z8",
@@ -582,6 +586,7 @@ FULFILLED_ORDER_RESPONSE = {
         "validate_location": False,
         "validation": None,
     },
+    "shipping_from": None,
     "line_items": [
         {
             "id": ANY,
@@ -766,7 +771,7 @@ PARTIAL_ORDER_RESPONSE = {
     "order_id": "1073459962",
     "source": "shopify",
     "status": "partial",
-    "shipping_address": {
+    "shipping_to": {
         "id": ANY,
         "postal_code": "E1C4Z8",
         "city": "Moncton",
@@ -786,6 +791,7 @@ PARTIAL_ORDER_RESPONSE = {
         "object_type": "address",
         "validation": None,
     },
+    "shipping_from": None,
     "line_items": [
         {
             "id": ANY,

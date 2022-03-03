@@ -391,10 +391,10 @@ def can_mutate_shipment(
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if delete and shipment.pickup_shipments.exists():
+    if delete and shipment.shipment_pickup.exists():
         raise PurplshipAPIException(
             (
-                f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
+                f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
                 "Please cancel this shipment pickup before."
             ),
             code="state_error",
@@ -403,8 +403,8 @@ def can_mutate_shipment(
 
 
 def remove_shipment_tracker(shipment: models.Shipment):
-    if any(shipment.tracker.all()):
-        shipment.tracker.all().delete()
+    if any(shipment.shipment_tracker.all()):
+        shipment.shipment_tracker.all().delete()
 
 
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):

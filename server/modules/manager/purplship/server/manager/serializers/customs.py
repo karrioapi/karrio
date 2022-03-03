@@ -62,7 +62,8 @@ class CustomsSerializer(CustomsData):
 
 
 def can_mutate_customs(customs: models.Customs, **kwargs):
-    shipment = customs.shipment.first()
+    shipment = customs.shipment
+
     if shipment is not None and shipment.status != ShipmentStatus.create.value:
         raise PurplshipAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
