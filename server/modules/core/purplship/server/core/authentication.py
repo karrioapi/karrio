@@ -28,7 +28,7 @@ class TokenAuthentication(BaseTokenAuthentication):
         auth = super().authenticate(request)
         if auth is not None:
             user, token = auth
-            request.org = get_request_org(request, user) or token.organization
+            request.org = get_request_org(request, user, token.organization.id)
 
         return auth
 
@@ -43,38 +43,6 @@ class JWTAuthentication(BaseJWTAuthentication):
             request.org = get_request_org(request, user, validated_token.get("org_id"))
 
         return auth
-
-    def _get_organization(self, org_id, user):
-        """
-        Attempts to find and return an organization using the given validated token.
-        """
-        if settings.MULTI_ORGANIZATIONS:
-            try:
-                from purplship.server.orgs.models import Organization
-
-                orgs = Organization.objects.filter(users__id=user.id)
-                org = (
-                    orgs.filter(id=org_id).first()
-                    if org_id is not None
-                    else orgs.filter(is_active=True).first()
-                )
-
-                if org is not None and not org.is_active:
-                    raise exceptions.AuthenticationFailed(
-                        _("Organization is inactive"), code="organization_inactive"
-                    )
-
-                if org is None and org_id is not None:
-                    raise exceptions.AuthenticationFailed(
-                        _("No active organization found with the given credentials"),
-                        code="organization_invalid",
-                    )
-
-                return org
-            except ProgrammingError as e:
-                pass
-
-        return None
 
 
 class AccessMixin(mixins.AccessMixin):
