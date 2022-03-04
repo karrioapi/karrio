@@ -276,7 +276,7 @@ SHIPMENT_RATES = {
 SHIPMENT_RESPONSE = {
     "id": ANY,
     "object_type": "shipment",
-    "status": "created",
+    "status": "draft",
     "carrier_name": None,
     "carrier_id": None,
     "label": None,

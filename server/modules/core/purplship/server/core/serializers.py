@@ -33,7 +33,7 @@ from purplship.server.core.validators import (
 
 
 class ShipmentStatus(Enum):
-    created = "created"
+    draft = "draft"
     purchased = "purchased"
     cancelled = "cancelled"
     shipped = "shipped"
@@ -1167,7 +1167,7 @@ class ShipmentData(ShippingData):
 class ShipmentDetails(Serializer):
     status = ChoiceField(
         required=False,
-        default=ShipmentStatus.created.value,
+        default=ShipmentStatus.draft.value,
         choices=SHIPMENT_STATUS,
         help_text="The current Shipment status",
     )

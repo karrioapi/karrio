@@ -38,7 +38,7 @@ def can_mutate_commodity(
     if shipment is None and order is None:
         return
 
-    if update and shipment and shipment.status != ShipmentStatus.created.value:
+    if update and shipment and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,

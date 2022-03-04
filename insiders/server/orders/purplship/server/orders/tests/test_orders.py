@@ -239,7 +239,7 @@ ORDER_RESPONSE = {
     "object_type": "order",
     "order_id": "1073459962",
     "source": "shopify",
-    "status": "created",
+    "status": "unfulfilled",
     "shipping_to": {
         "id": ANY,
         "object_type": "address",
@@ -374,7 +374,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "object_type": "order",
     "order_id": "1073459962",
     "source": "shopify",
-    "status": "created",
+    "status": "unfulfilled",
     "shipping_to": {
         "id": ANY,
         "object_type": "address",
@@ -432,7 +432,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         {
             "id": ANY,
             "object_type": "shipment",
-            "status": "created",
+            "status": "unfulfilled",
             "carrier_name": None,
             "carrier_id": None,
             "label": None,

@@ -54,7 +54,7 @@ def can_mutate_address(
     if shipment is None and order is None:
         return
 
-    if update and shipment and shipment.status != ShipmentStatus.created.value:
+    if update and shipment and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
@@ -68,7 +68,7 @@ def can_mutate_address(
             code="state_error",
         )
 
-    if update and order and order.status != ShipmentStatus.created.value:
+    if update and order and order.status != "unfulfilled":
         raise PurplshipAPIException(
             f"Operation not permitted. The related order is '{order.status}'.",
             status_code=status.HTTP_409_CONFLICT,

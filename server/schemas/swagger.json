@@ -701,7 +701,7 @@
                         "in": "query",
                         "type": "string",
                         "enum": [
-                            "created",
+                            "unfulfilled",
                             "cancelled",
                             "fulfilled",
                             "delivered",
@@ -1819,7 +1819,7 @@
                         "in": "query",
                         "type": "string",
                         "enum": [
-                            "created",
+                            "draft",
                             "purchased",
                             "cancelled",
                             "shipped",
@@ -4768,14 +4768,14 @@
                     "description": "The current Shipment status",
                     "type": "string",
                     "enum": [
-                        "created",
+                        "draft",
                         "purchased",
                         "cancelled",
                         "shipped",
                         "in_transit",
                         "delivered"
                     ],
-                    "default": "created"
+                    "default": "draft"
                 },
                 "carrier_name": {
                     "title": "Carrier name",
@@ -4890,13 +4890,13 @@
                     "description": "The order status.",
                     "type": "string",
                     "enum": [
-                        "created",
+                        "unfulfilled",
                         "cancelled",
                         "fulfilled",
                         "delivered",
                         "partial"
                     ],
-                    "default": "created"
+                    "default": "unfulfilled"
                 },
                 "shipping_to": {
                     "$ref": "#/definitions/Address"
@@ -6384,10 +6384,17 @@
             "required": [
                 "url",
                 "enabled_events",
-                "test_mode"
+                "test_mode",
+                "secret"
             ],
             "type": "object",
             "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
                 "url": {
                     "title": "Url",
                     "description": "The URL of the webhook endpoint.",
@@ -6431,12 +6438,6 @@
                     "type": "boolean",
                     "x-nullable": true
                 },
-                "id": {
-                    "title": "Id",
-                    "description": "A unique identifier",
-                    "type": "string",
-                    "minLength": 1
-                },
                 "object_type": {
                     "title": "Object type",
                     "description": "Specifies the object type",
@@ -6450,6 +6451,12 @@
                     "type": "string",
                     "format": "date-time",
                     "x-nullable": true
+                },
+                "secret": {
+                    "title": "Secret",
+                    "description": "Header signature secret",
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },

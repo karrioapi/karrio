@@ -14,7 +14,7 @@ from purplship.server.core.serializers import (
 
 
 class OrderStatus(Enum):
-    created = "created"
+    unfulfilled = "unfulfilled"
     cancelled = "cancelled"
     fulfilled = "fulfilled"
     delivered = "delivered"
@@ -84,7 +84,7 @@ class Order(EntitySerializer):
     source = fields.CharField(required=False, help_text="The order's source.")
     status = fields.ChoiceField(
         choices=ORDER_STATUS,
-        default=OrderStatus.created.value,
+        default=OrderStatus.unfulfilled.value,
         help_text="The order status.",
     )
     shipping_to = Address(

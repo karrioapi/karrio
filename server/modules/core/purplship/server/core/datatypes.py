@@ -25,12 +25,6 @@ from purplship.core.models import (
 )
 
 
-class ShipmentStatus(Enum):
-    created = "created"
-    cancelled = "cancelled"
-    purchased = "purchased"
-
-
 class CarrierSettings:
     def __init__(
         self,

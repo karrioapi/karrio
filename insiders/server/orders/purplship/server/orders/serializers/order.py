@@ -99,13 +99,13 @@ def compute_order_status(order: models.Order) -> str:
     An order is considered to be "partially fulfilled" if some line_items are fulfilled and some are not.
     An order is considered to be "delivered" if all line_items are fulfilled and all shipments are delivered.
 
-    The remaining statuses ("created", "cancelled") are self explanatory and should never be computed.
+    The remaining statuses ("unfulfilled", "cancelled") are self explanatory and should never be computed.
     """
 
     if not order.shipments.exclude(
         status=serializers.ShipmentStatus.cancelled.value
     ).exists():
-        return serializers.OrderStatus.created.value
+        return serializers.OrderStatus.unfulfilled.value
 
     line_items_are_fulfilled = True
     line_items_are_partially_fulfilled = False
@@ -120,7 +120,7 @@ def compute_order_status(order: models.Order) -> str:
         shipment_items = line_item.children.exclude(
             commodity_parcel__parcel_shipment__status__in=[
                 serializers.ShipmentStatus.cancelled.value,
-                serializers.ShipmentStatus.created.value,
+                serializers.ShipmentStatus.is_draft.value,
             ]
         ).filter(commodity_parcel__isnull=False, commodity_customs__isnull=True)
         fulfilled = (
@@ -142,7 +142,7 @@ def compute_order_status(order: models.Order) -> str:
     if line_items_are_partially_fulfilled:
         return serializers.OrderStatus.partial.value
 
-    return serializers.OrderStatus.created.value
+    return serializers.OrderStatus.unfulfilled.value
 
 
 def can_mutate_order(

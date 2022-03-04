@@ -847,7 +847,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
-                                "created",
+                                "unfulfilled",
                                 "cancelled",
                                 "fulfilled",
                                 "delivered",
@@ -2221,7 +2221,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
-                                "created",
+                                "draft",
                                 "purchased",
                                 "cancelled",
                                 "shipped",
@@ -5376,9 +5376,9 @@
                         "title": "Status",
                         "type": "string",
                         "description": "The current Shipment status",
-                        "default": "created",
+                        "default": "draft",
                         "enum": [
-                            "created",
+                            "draft",
                             "purchased",
                             "cancelled",
                             "shipped",
@@ -5499,9 +5499,9 @@
                         "title": "Status",
                         "type": "string",
                         "description": "The order status.",
-                        "default": "created",
+                        "default": "unfulfilled",
                         "enum": [
-                            "created",
+                            "unfulfilled",
                             "cancelled",
                             "fulfilled",
                             "delivered",
@@ -6984,11 +6984,18 @@
             "Webhook": {
                 "required": [
                     "enabled_events",
+                    "secret",
                     "test_mode",
                     "url"
                 ],
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "title": "Id",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "A unique identifier"
+                    },
                     "url": {
                         "title": "Url",
                         "minLength": 1,
@@ -7032,12 +7039,6 @@
                         "description": "Indicates that the webhook is disabled",
                         "nullable": true
                     },
-                    "id": {
-                        "title": "Id",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "A unique identifier"
-                    },
                     "object_type": {
                         "title": "Object type",
                         "minLength": 1,
@@ -7051,6 +7052,12 @@
                         "description": "The datetime of the last event sent.",
                         "format": "date-time",
                         "nullable": true
+                    },
+                    "secret": {
+                        "title": "Secret",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Header signature secret"
                     }
                 }
             },

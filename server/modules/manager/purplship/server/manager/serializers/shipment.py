@@ -374,7 +374,7 @@ def can_mutate_shipment(
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if update and shipment.status != ShipmentStatus.created.value:
+    if update and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Shipment is {shipment.status} and cannot be updated anymore...",
             code="state_error",
@@ -383,7 +383,7 @@ def can_mutate_shipment(
 
     if delete and shipment.status not in [
         ShipmentStatus.purchased.value,
-        ShipmentStatus.created.value,
+        ShipmentStatus.draft.value,
     ]:
         raise PurplshipAPIException(
             f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
