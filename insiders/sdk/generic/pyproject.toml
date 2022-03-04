@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.generic"
-version = "2022.1"
+version = "2022.2"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Generic Shipping Extension"

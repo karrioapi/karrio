@@ -3,10 +3,10 @@
 -r ./requirements.server.dev.txt
 
 # purplship insider sdk extensions
-# -e ./insiders/sdk/addons
-purplship.addons
-# -e ./insiders/sdk/generic
-purplship.generic
+-e ./insiders/sdk/addons
+# purplship.addons
+-e ./insiders/sdk/generic
+# purplship.generic
 
 # purplship enterprise modules
 -e ./insiders/server/tenants

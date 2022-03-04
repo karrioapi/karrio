@@ -79,7 +79,12 @@ settings_data = {
             "international": False,
         },
     ],
-    "metadata": {"APP_ID": "00", "SERIAL": "00099999000"},
+    "metadata": {
+        "APP_ID": "00",
+        "EXTENSION_DIGIT": "0",
+        "GS1_PREFIX": "0099999000",
+        "CHECK_DIGIT": "5",
+    },
 }
 
 shipment_request_data = {

@@ -1,4 +1,5 @@
 import logging
+from django.conf import settings
 from django.db.models import signals
 
 from purplship.server.core import utils
@@ -51,6 +52,14 @@ def parcel_updated(
 ):
     """ """
     changes = update_fields or []
+
+    if instance.reference_number is None:
+        count = models.Parcel.objects.filter(
+            **({"org__id": instance.link.org.id} if hasattr(instance, "link") else {})
+        ).count()
+
+        instance.reference_number = str(count + 1).zfill(10)
+        instance.save()
 
     if any([change in RATE_RELATED_CHANGES for change in changes]):
         serializers.reset_related_shipment_rates(instance.shipment)

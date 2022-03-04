@@ -282,7 +282,6 @@ def create_carrier_model_serializers(partial: bool = False):
             model = carrier_model
             extra_kwargs = {field: {"read_only": True} for field in ["id"]}
             exclude = (
-                "id",
                 "created_at",
                 "updated_at",
                 "created_by",

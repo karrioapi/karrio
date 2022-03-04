@@ -19760,7 +19760,7 @@
               "deprecationReason": null,
               "description": "Carrier display name",
               "isDeprecated": false,
-              "name": "verbose_name",
+              "name": "display_name",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -19817,6 +19817,22 @@
                 "kind": "OBJECT",
                 "name": "LabelTemplateType",
                 "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "account_number",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -25318,7 +25334,7 @@
             {
               "defaultValue": null,
               "description": "Carrier display name",
-              "name": "verbose_name",
+              "name": "display_name",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -25341,6 +25357,16 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "account_number",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             }
           ],
@@ -28158,7 +28184,7 @@
             {
               "defaultValue": null,
               "description": "Carrier display name",
-              "name": "verbose_name",
+              "name": "display_name",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -28169,6 +28195,16 @@
               "defaultValue": null,
               "description": "Unique carrier slug, lowercase alphanumeric characters and underscores only",
               "name": "custom_carrier_name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "account_number",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

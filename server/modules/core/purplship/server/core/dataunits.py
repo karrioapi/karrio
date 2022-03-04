@@ -59,7 +59,7 @@ def contextual_reference(request: Request):
             for c in gateway.Carriers.list(context=request, carrier_name="generic")
         ]
         extra_carriers = {
-            c.custom_carrier_name: c.verbose_name for c in custom_carriers
+            c.custom_carrier_name: c.display_name for c in custom_carriers
         }
         extra_services = {
             c.custom_carrier_name: {
