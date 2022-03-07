@@ -114,10 +114,10 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <text x="100" y="1300" fill="black" style="font-size: 35; font-weight: bold">(00) SERIAL SHIPPING CONTAINER</text>
 
-    <text data-type="barcode-text" x="90" y="1360" fill="black" style="font-size: 45">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT') }}{{ carrier['metadata'].get('GS1_PREFIX') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}</text>
-    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT') }}{{ carrier['metadata'].get('GS1_PREFIX') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}"
+    <text data-type="barcode-text" x="90" y="1360" fill="black" style="font-size: 45">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT', '0') }}{{ carrier['metadata'].get('GS1_PREFIX', '0000000000') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}</text>
+    <g data-type="barcode" data-value="({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT', '0') }}{{ carrier['metadata'].get('GS1_PREFIX', '0000000000') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}"
         data-module-width="5" data-width-ratio="3" x="60" y="1410" width="900" height="250" style="font-size: 65;">
-        <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT') }}{{ carrier['metadata'].get('GS1_PREFIX') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}</text>
+        <text x="80" y="1380" fill="black" style="font-size: 60; font-weight: bold">({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT', '0') }}{{ carrier['metadata'].get('GS1_PREFIX', '0000000000') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}</text>
         <rect x="60" y="1400" width="750" height="200" fill="transparent" stroke="black"></rect>
     </g>
 
@@ -205,9 +205,9 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^FO100,1280^FD(00) SERIAL SHIPPING CONTAINER^FS
 
 ^CFA,45
-^FO80,1360^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT') }}{{ carrier['metadata'].get('GS1_PREFIX') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}^FS
+^FO80,1360^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT', '0') }}{{ carrier['metadata'].get('GS1_PREFIX', '0000000000') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}^FS
 ^BY5,3,200
-^FO60,1410^BCN,250,N,Y,Y,D^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT') }}{{ carrier['metadata'].get('GS1_PREFIX') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}^FS
+^FO60,1410^BCN,250,N,Y,Y,D^FD({{ carrier['metadata'].get('APP_ID', '00') }}){{ carrier['metadata'].get('EXTENSION_DIGIT', '0') }}{{ carrier['metadata'].get('GS1_PREFIX', '0000000000') }}{{ tracking_number[-6:] }}{{ carrier['metadata'].get('CHECK_DIGIT', 5) }}^FS
 
 ^CF0,30
 ^FO760,1720^FDxxxxxxxxxxxxxxxxxxxxxxxxx^FS
