@@ -13,7 +13,13 @@ from purplship.core.utils import DP
 
 from purplship.server.providers import models
 from purplship.server.core.models import get_access_filter
-from purplship.server.core import datatypes, serializers, exceptions, validators
+from purplship.server.core import (
+    datatypes,
+    dataunits,
+    serializers,
+    exceptions,
+    validators,
+)
 from purplship.server.core.utils import (
     identity,
     post_processing,
@@ -86,19 +92,37 @@ class Carriers:
         if any(list_filter.get("carrier_ids", [])):
             query += (Q(carrier_id__in=list_filter["carrier_ids"]),)
 
+        if any(list_filter.get("services", [])):
+            carrier_names = [
+                name.replace("_", "")
+                for name, services in dataunits.contextual_reference(context)[
+                    "services"
+                ].items()
+                if any(
+                    service in list_filter["services"] for service in services.keys()
+                )
+            ]
+
+            if len(carrier_names) > 0:
+                _queries = (Q(**{f"{carrier_names[0]}settings__isnull": False}),)
+                for carrier_name in carrier_names[1:]:
+                    _queries |= Q(**{f"{carrier_name}settings__isnull": False})
+
+                query += _queries
+
+            print(carrier_names, query)
+
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
+
             if carrier_name not in models.MODELS.keys():
                 raise NotFound(
                     f"No extension installed for the carrier: '{carrier_name}'"
                 )
 
-            carriers = [
-                setting.carrier_ptr
-                for setting in models.MODELS[carrier_name].objects.filter(*query)
-            ]
-        else:
-            carriers = models.Carrier.objects.filter(*query)
+            query += (Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False}),)
+
+        carriers = models.Carrier.objects.filter(*query)
 
         # Raise an error if no carrier is found
         if list_filter.get("raise_not_found") and len(carriers) == 0:
@@ -455,10 +479,16 @@ class Rates:
         payload: dict, carriers: List[models.Carrier] = None, **carrier_filters
     ) -> datatypes.RateResponse:
         carrier_ids = payload.get("carrier_ids", [])
+        services = payload.get("services", [])
         shipper_country_code = payload["shipper"].get("country_code")
         carriers = carriers or Carriers.list(
             **{
-                **dict(active=True, capability="rating", carrier_ids=carrier_ids),
+                **dict(
+                    active=True,
+                    capability="rating",
+                    carrier_ids=carrier_ids,
+                    services=services,
+                ),
                 **carrier_filters,
             }
         )

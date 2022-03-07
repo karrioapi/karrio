@@ -1,5 +1,6 @@
 import logging
 from typing import Optional, Any
+import typing
 from django.db import transaction
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -32,6 +33,7 @@ from purplship.server.core.serializers import (
     PlainDictField,
     StringListField,
     TrackerStatus,
+    ShipmentDetails,
 )
 from purplship.server.manager.serializers.address import AddressSerializer
 from purplship.server.manager.serializers.customs import CustomsSerializer
@@ -76,9 +78,12 @@ class ShipmentSerializer(ShipmentData):
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
         carrier_filter = validated_data.get("carrier_filter") or {}
         carrier_ids = validated_data.get("carrier_ids") or []
+        service = validated_data.get("service")
+        services = [service] if service is not None else validated_data.get("services")
         carriers = Carriers.list(
             context=context,
             carrier_ids=carrier_ids,
+            **({"services": services} if any(services) else {}),
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
         payment = validated_data.get("payment") or DP.to_dict(
@@ -86,10 +91,14 @@ class ShipmentSerializer(ShipmentData):
                 currency=(validated_data.get("options") or {}).get("currency")
             )
         )
+        rating_data = {
+            **validated_data,
+            **({"services": services} if any(services) else {}),
+        }
 
-        # Get live rates
+        # Get live rates.
         rate_response: datatypes.RateResponse = (
-            SerializerDecorator[RateSerializer](data=validated_data, context=context)
+            SerializerDecorator[RateSerializer](data=rating_data, context=context)
             .save(carriers=carriers)
             .instance
         )
@@ -130,6 +139,10 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
+
+        # Buy label if preferred service is already selected.
+        if service:
+            return buy_shipment_label(shipment, context, service=service)
 
         return shipment
 
@@ -351,6 +364,49 @@ class ShipmentCancelSerializer(Shipment):
         remove_shipment_tracker(instance)
 
         return response
+
+
+def buy_shipment_label(
+    shipment: models.Shipment,
+    context: typing.Any,
+    data: dict = dict(),
+    service: str = None,
+):
+    selected_rate_id = (
+        data.get("selected_rate_id")
+        if service is None
+        else next(
+            (rate["id"] for rate in shipment.rates if rate["service"] == service), None
+        )
+    )
+    payload = {**data, "selected_rate_id": selected_rate_id}
+
+    # Submit shipment to carriers
+    response: Shipment = (
+        SerializerDecorator[ShipmentPurchaseSerializer](
+            context=context,
+            data={**Shipment(shipment).data, **payload},
+        )
+        .save()
+        .instance
+    )
+
+    # Update shipment state
+    purchased_shipment = (
+        SerializerDecorator[ShipmentSerializer](
+            shipment,
+            context=context,
+            data={
+                **payload,
+                **ShipmentDetails(response).data,
+            },
+        )
+        .save()
+        .instance
+    )
+    create_shipment_tracker(purchased_shipment, context=context)
+
+    return purchased_shipment
 
 
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):

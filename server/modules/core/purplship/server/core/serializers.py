@@ -1138,6 +1138,12 @@ class ShippingRequest(ShippingData):
 
 
 class ShipmentData(ShippingData):
+    service = CharField(
+        required=False,
+        allow_blank=False,
+        allow_null=False,
+        help_text="**Specify a service to Buy a label in one call without rating.**",
+    )
     services = StringListField(
         required=False,
         allow_null=True,

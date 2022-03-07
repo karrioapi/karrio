@@ -1,3 +1,4 @@
+from attr import has
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -26,8 +27,10 @@ REFERENCE_EXCLUSIONS = [
 
 
 def contextual_metadata(request: Request):
-    host = request.build_absolute_uri(
-        reverse("purplship.server.core:metadata", kwargs={})
+    host = (
+        request.build_absolute_uri(reverse("purplship.server.core:metadata", kwargs={}))
+        if hasattr(request, "build_absolute_uri")
+        else ""
     )
     return {
         "VERSION": settings.VERSION,
@@ -46,7 +49,7 @@ def contextual_reference(request: Request):
     import purplship.server.core.validators as validators
     import purplship.server.core.gateway as gateway
 
-    is_authenticated = request.auth is not None
+    is_authenticated = getattr(request, "auth", None) is not None
     references = {
         **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),

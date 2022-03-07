@@ -6818,6 +6818,12 @@
                             "ZPL"
                         ]
                     },
+                    "service": {
+                        "title": "Service",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "**Specify a service to Buy a label in one call without rating.**"
+                    },
                     "services": {
                         "type": "array",
                         "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
