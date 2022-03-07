@@ -339,6 +339,10 @@ class ShipmentFilter(django_filters.FilterSet):
         field_name="options",
         method="option_value_filter",
     )
+    metadata_key = utils.CharInFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
+    )
     metadata_value = django_filters.CharFilter(
         field_name="metadata",
         method="metadata_value_filter",
@@ -370,6 +374,9 @@ class ShipmentFilter(django_filters.FilterSet):
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(Q(options__values__contains=value))
+
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(Q(options__has_key=value))
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(Q(metadata__values__contains=value))

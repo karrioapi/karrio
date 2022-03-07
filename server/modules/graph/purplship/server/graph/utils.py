@@ -3,6 +3,7 @@ import typing
 import graphene
 import django_filters
 import graphene_django
+from purplship.server.manager.serializers.shipment import reset_related_shipment_rates
 import rest_framework.status as http_status
 from rest_framework import exceptions
 from django.conf import settings
@@ -118,12 +119,11 @@ def create_delete_mutation(
             if validator:
                 validator(instance, context=info.context)
 
+            shipment = getattr(instance, "shipment", None)
             instance.delete(keep_parents=True)
 
-            if hasattr(instance, "shipment"):
-                serializers.manager.reset_related_shipment_rates(
-                    instance.shipment.first()
-                )
+            if shipment is not None:
+                reset_related_shipment_rates(shipment)
 
             return cls(id=id)
 

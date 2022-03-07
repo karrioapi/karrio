@@ -120,7 +120,7 @@ def compute_order_status(order: models.Order) -> str:
         shipment_items = line_item.children.exclude(
             commodity_parcel__parcel_shipment__status__in=[
                 serializers.ShipmentStatus.cancelled.value,
-                serializers.ShipmentStatus.is_draft.value,
+                serializers.ShipmentStatus.draft.value,
             ]
         ).filter(commodity_parcel__isnull=False, commodity_customs__isnull=True)
         fulfilled = (

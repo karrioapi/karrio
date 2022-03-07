@@ -62,7 +62,7 @@ def shipment_updated(
     ).exists():
         return
 
-    if instance.status != serializers.ShipmentStatus.is_draft.value:
+    if instance.status != serializers.ShipmentStatus.draft.value:
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
             line_items__children__commodity_parcel__parcel_shipment__id=instance.id
