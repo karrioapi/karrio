@@ -113,6 +113,7 @@ APPS_MANAGEMENT = importlib.util.find_spec("purplship.server.apps") is not None
 MULTI_TENANTS = importlib.util.find_spec(
     "purplship.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
+ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
 
 
 # components path settings

@@ -1360,7 +1360,20 @@ class ShipmentContent(Serializer):
 
 
 class Shipment(EntitySerializer, ShipmentContent, ShipmentDetails):
+    label = None
     object_type = CharField(default="shipment", help_text="Specifies the object type")
+    label_url = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment label URL",
+    )
+    tracking_url = URLField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment tracking url",
+    )
 
 
 class ShipmentCancelRequest(Serializer):

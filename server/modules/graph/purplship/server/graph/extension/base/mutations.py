@@ -6,10 +6,11 @@ from graphene_django.types import ErrorType
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
-from purplship.server.core.utils import ConfirmationToken, send_email
 from rest_framework import exceptions
 
 from purplship.core.utils import DP
+from purplship.server.conf import settings
+from purplship.server.core.utils import ConfirmationToken, send_email
 from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
 from purplship.server.user.serializers import TokenSerializer, Token
 import purplship.server.manager.serializers as manager_serializers
@@ -242,6 +243,12 @@ class RegisterUser(DjangoFormMutation):
 
     @classmethod
     def perform_mutate(cls, form, info):
+        if not settings.ALLOW_SIGNUP:
+            raise Exception(
+                "Signup is not allowed. "
+                "Please contact your administrator to create an account."
+            )
+
         user = form.save()
         return cls(errors=[], user=user, **form.cleaned_data)
 

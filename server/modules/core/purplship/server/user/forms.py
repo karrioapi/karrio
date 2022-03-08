@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (
@@ -8,6 +7,7 @@ from django.contrib.auth.forms import (
     ValidationError,
 )
 from django.utils.translation import gettext_lazy as _
+from purplship.server.conf import settings
 from purplship.server.user.utils import send_email
 
 
@@ -20,6 +20,12 @@ class SignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self, commit=True):
+        if not settings.ALLOW_SIGNUP:
+            raise Exception(
+                "Signup is not allowed. "
+                "Please contact your administrator to create an account."
+            )
+
         user = super().save(commit=commit)
 
         if commit and settings.EMAIL_ENABLED:
