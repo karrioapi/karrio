@@ -2,6 +2,7 @@ from functools import partial
 from typing import List, cast, Optional
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from purplship.server.core.utils import identity
 from purplship.server.providers.models import Carrier
@@ -498,6 +499,7 @@ class ShipmentManager(models.Manager):
                 "shipper",
                 "recipient",
                 "parcels",
+                "parcels__items",
                 "carriers",
                 "selected_rate_carrier",
                 "created_by",
@@ -653,3 +655,13 @@ class Shipment(OwnedEntity):
     @property
     def tracker(self):
         return self.shipment_tracker.first()
+
+    @property
+    def label_url(self) -> str:
+        if self.label is None:
+            return None
+
+        return reverse(
+            "purplship.server.manager:shipment-label",
+            kwargs={"pk": self.pk, "format": (self.label_type or "PDF").lower()},
+        )

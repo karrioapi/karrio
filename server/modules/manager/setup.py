@@ -16,6 +16,7 @@ setup(
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "purplship.server.core",
+        "django-downloadview",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,3 +1,5 @@
+import io
+import base64
 import logging
 
 from rest_framework.pagination import LimitOffsetPagination
@@ -6,10 +8,12 @@ from rest_framework.request import Request
 from rest_framework import status, serializers
 
 from drf_yasg import openapi
-from django.urls import path
+from django.urls import path, re_path
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
+from django.core.files.base import ContentFile
+from django_downloadview import VirtualDownloadView
 
 from purplship.core.utils import DP
 from purplship.server.core.gateway import Carriers
@@ -299,6 +303,33 @@ class ShipmentPurchase(APIView):
         return Response(Shipment(update).data)
 
 
+class ShipmentLabel(VirtualDownloadView):
+    @swagger_auto_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}label",
+        operation_summary="Retrieve a shipment label",
+        responses={400: ErrorResponse()},
+    )
+    def get(self, request: Request, pk: str, **kwargs):
+        """
+        Retrieve a shipment label.
+        """
+        self.shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+        self.attachment = False
+
+        return super(ShipmentLabel, self).get(request, pk, **kwargs)
+
+    def get_file(self):
+        content = base64.b64decode(self.shipment.label or "")
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        ext = self.shipment.label_type.lower()
+        name = f"label_{self.shipment.tracking_number}.{ext}"
+        print(name)
+        return ContentFile(buffer.getvalue(), name=name)
+
+
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
 router.urls.append(
     path("shipments/<str:pk>", ShipmentDetail.as_view(), name="shipment-details")
@@ -311,5 +342,12 @@ router.urls.append(
         "shipments/<str:pk>/purchase",
         ShipmentPurchase.as_view(),
         name="shipment-purchase",
+    )
+)
+router.urls.append(
+    re_path(
+        r"^shipments/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
+        ShipmentLabel.as_view(),
+        name="shipment-label",
     )
 )
