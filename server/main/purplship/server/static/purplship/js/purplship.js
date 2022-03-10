@@ -1461,6 +1461,20 @@
     }
 
     /* tslint:disable */
+    function DocumentsFromJSON(json) {
+        return DocumentsFromJSONTyped(json);
+    }
+    function DocumentsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'label': !exists(json, 'label') ? undefined : json['label'],
+            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
+        };
+    }
+
+    /* tslint:disable */
     function MessageFromJSON(json) {
         return MessageFromJSONTyped(json);
     }
@@ -1491,6 +1505,8 @@
             'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
+            'apps_management': json['APPS_MANAGEMENT'],
+            'allow_signup': json['ALLOW_SIGNUP'],
             'admin': json['ADMIN'],
             'openapi': json['OPENAPI'],
             'graphql': json['GRAPHQL'],
@@ -1501,9 +1517,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.1.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.1.3
+     * The version of the OpenAPI document: 2022.2
      *
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1527,9 +1543,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.1.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.1.3
+     * The version of the OpenAPI document: 2022.2
      *
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1886,11 +1902,11 @@
     */
     var ShipmentStatusEnum;
     (function (ShipmentStatusEnum) {
-        ShipmentStatusEnum["Created"] = "created";
+        ShipmentStatusEnum["Draft"] = "draft";
         ShipmentStatusEnum["Purchased"] = "purchased";
         ShipmentStatusEnum["Cancelled"] = "cancelled";
         ShipmentStatusEnum["Shipped"] = "shipped";
-        ShipmentStatusEnum["InTransit"] = "in-transit";
+        ShipmentStatusEnum["InTransit"] = "in_transit";
         ShipmentStatusEnum["Delivered"] = "delivered";
     })(ShipmentStatusEnum || (ShipmentStatusEnum = {}));
     function ShipmentFromJSON(json) {
@@ -1902,6 +1918,8 @@
         }
         return {
             'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
@@ -1920,16 +1938,15 @@
             'status': !exists(json, 'status') ? undefined : json['status'],
             'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
             'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
-            'label': !exists(json, 'label') ? undefined : json['label'],
             'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
             'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
             'selected_rate': !exists(json, 'selected_rate') ? undefined : RateFromJSON(json['selected_rate']),
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'service': !exists(json, 'service') ? undefined : json['service'],
             'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
-            'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
             'test_mode': json['test_mode'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'label_url': !exists(json, 'label_url') ? undefined : json['label_url'],
+            'invoice_url': !exists(json, 'invoice_url') ? undefined : json['invoice_url'],
         };
     }
 
@@ -1940,7 +1957,7 @@
     */
     var OrderStatusEnum;
     (function (OrderStatusEnum) {
-        OrderStatusEnum["Created"] = "created";
+        OrderStatusEnum["Unfulfilled"] = "unfulfilled";
         OrderStatusEnum["Cancelled"] = "cancelled";
         OrderStatusEnum["Fulfilled"] = "fulfilled";
         OrderStatusEnum["Delivered"] = "delivered";
@@ -1959,7 +1976,8 @@
             'order_id': json['order_id'],
             'source': !exists(json, 'source') ? undefined : json['source'],
             'status': !exists(json, 'status') ? undefined : json['status'],
-            'shipping_address': AddressFromJSON(json['shipping_address']),
+            'shipping_to': AddressFromJSON(json['shipping_to']),
+            'shipping_from': !exists(json, 'shipping_from') ? undefined : AddressFromJSON(json['shipping_from']),
             'line_items': (json['line_items'].map(CommodityFromJSON)),
             'options': !exists(json, 'options') ? undefined : json['options'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
@@ -1980,7 +1998,8 @@
         return {
             'order_id': value.order_id,
             'source': value.source,
-            'shipping_address': AddressDataToJSON(value.shipping_address),
+            'shipping_to': AddressDataToJSON(value.shipping_to),
+            'shipping_from': AddressDataToJSON(value.shipping_from),
             'line_items': (value.line_items.map(CommodityDataToJSON)),
             'options': value.options,
             'metadata': value.metadata,
@@ -2280,9 +2299,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.1.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.1.3
+     * The version of the OpenAPI document: 2022.2
      *
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2302,6 +2321,8 @@
             'app_website': json['APP_WEBSITE'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
+            'apps_management': json['APPS_MANAGEMENT'],
+            'allow_signup': json['ALLOW_SIGNUP'],
             'admin': json['ADMIN'],
             'openapi': json['OPENAPI'],
             'graphql': json['GRAPHQL'],
@@ -2365,6 +2386,7 @@
             'customs': CustomsDataToJSON(value.customs),
             'reference': value.reference,
             'label_type': value.label_type,
+            'service': value.service,
             'services': value.services,
             'carrier_ids': value.carrier_ids,
             'metadata': value.metadata,
@@ -2486,6 +2508,68 @@
     }
 
     /* tslint:disable */
+    /**
+    * @export
+    * @enum {string}
+    */
+    var ShippingResponseLabelTypeEnum;
+    (function (ShippingResponseLabelTypeEnum) {
+        ShippingResponseLabelTypeEnum["Pdf"] = "PDF";
+        ShippingResponseLabelTypeEnum["Zpl"] = "ZPL";
+    })(ShippingResponseLabelTypeEnum || (ShippingResponseLabelTypeEnum = {})); /**
+    * @export
+    * @enum {string}
+    */
+    var ShippingResponseStatusEnum;
+    (function (ShippingResponseStatusEnum) {
+        ShippingResponseStatusEnum["Draft"] = "draft";
+        ShippingResponseStatusEnum["Purchased"] = "purchased";
+        ShippingResponseStatusEnum["Cancelled"] = "cancelled";
+        ShippingResponseStatusEnum["Shipped"] = "shipped";
+        ShippingResponseStatusEnum["InTransit"] = "in_transit";
+        ShippingResponseStatusEnum["Delivered"] = "delivered";
+    })(ShippingResponseStatusEnum || (ShippingResponseStatusEnum = {}));
+    function ShippingResponseFromJSON(json) {
+        return ShippingResponseFromJSONTyped(json);
+    }
+    function ShippingResponseFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
+            'shipper': AddressFromJSON(json['shipper']),
+            'recipient': AddressFromJSON(json['recipient']),
+            'parcels': (json['parcels'].map(ParcelFromJSON)),
+            'services': !exists(json, 'services') ? undefined : json['services'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
+            'customs': !exists(json, 'customs') ? undefined : CustomsFromJSON(json['customs']),
+            'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
+            'reference': !exists(json, 'reference') ? undefined : json['reference'],
+            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
+            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
+            'tracker_id': !exists(json, 'tracker_id') ? undefined : json['tracker_id'],
+            'created_at': json['created_at'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'status': !exists(json, 'status') ? undefined : json['status'],
+            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
+            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+            'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
+            'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
+            'selected_rate': !exists(json, 'selected_rate') ? undefined : RateFromJSON(json['selected_rate']),
+            'docs': !exists(json, 'docs') ? undefined : DocumentsFromJSON(json['docs']),
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'service': !exists(json, 'service') ? undefined : json['service'],
+            'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
+            'test_mode': json['test_mode'],
+        };
+    }
+
+    /* tslint:disable */
     function TokenObtainPairToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2504,9 +2588,9 @@
     /* eslint-disable */
     /**
      * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.1.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.1.3
+     * The version of the OpenAPI document: 2022.2
      *
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2578,7 +2662,7 @@
     var TrackingStatusStatusEnum;
     (function (TrackingStatusStatusEnum) {
         TrackingStatusStatusEnum["Pending"] = "pending";
-        TrackingStatusStatusEnum["InTransit"] = "in-transit";
+        TrackingStatusStatusEnum["InTransit"] = "in_transit";
         TrackingStatusStatusEnum["Incident"] = "incident";
         TrackingStatusStatusEnum["Delivered"] = "delivered";
     })(TrackingStatusStatusEnum || (TrackingStatusStatusEnum = {}));
@@ -2660,14 +2744,15 @@
             return json;
         }
         return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
             'url': json['url'],
             'description': !exists(json, 'description') ? undefined : json['description'],
             'enabled_events': json['enabled_events'],
             'test_mode': json['test_mode'],
             'disabled': !exists(json, 'disabled') ? undefined : json['disabled'],
-            'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'last_event_at': !exists(json, 'last_event_at') ? undefined : (json['last_event_at'] === null ? null : new Date(json['last_event_at'])),
+            'secret': json['secret'],
         };
     }
 
@@ -4293,7 +4378,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShippingResponseFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -5209,11 +5294,11 @@
         */
     var ListStatusEnum$2;
     (function (ListStatusEnum) {
-        ListStatusEnum["Created"] = "created";
+        ListStatusEnum["Draft"] = "draft";
         ListStatusEnum["Purchased"] = "purchased";
         ListStatusEnum["Cancelled"] = "cancelled";
         ListStatusEnum["Shipped"] = "shipped";
-        ListStatusEnum["InTransit"] = "in-transit";
+        ListStatusEnum["InTransit"] = "in_transit";
         ListStatusEnum["Delivered"] = "delivered";
     })(ListStatusEnum$2 || (ListStatusEnum$2 = {}));
     /**
@@ -5517,7 +5602,7 @@
     var ListStatusEnum$1;
     (function (ListStatusEnum) {
         ListStatusEnum["Pending"] = "pending";
-        ListStatusEnum["InTransit"] = "in-transit";
+        ListStatusEnum["InTransit"] = "in_transit";
         ListStatusEnum["Incident"] = "incident";
         ListStatusEnum["Delivered"] = "delivered";
     })(ListStatusEnum$1 || (ListStatusEnum$1 = {}));
@@ -6164,7 +6249,7 @@
         */
     var ListStatusEnum;
     (function (ListStatusEnum) {
-        ListStatusEnum["Created"] = "created";
+        ListStatusEnum["Unfulfilled"] = "unfulfilled";
         ListStatusEnum["Cancelled"] = "cancelled";
         ListStatusEnum["Fulfilled"] = "fulfilled";
         ListStatusEnum["Delivered"] = "delivered";

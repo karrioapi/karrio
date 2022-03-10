@@ -177,7 +177,7 @@ def shipment_request(
             references=ReferencesType(
                 cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=getattr(payload, "id", None),
+                customer_ref_2=None,
             ),
             customs=(
                 CustomsType(

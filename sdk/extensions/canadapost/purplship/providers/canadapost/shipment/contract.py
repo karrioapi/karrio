@@ -230,7 +230,7 @@ def shipment_request(
             references=ReferencesType(
                 cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=getattr(payload, "id", None),
+                customer_ref_2=None,
             ),
             settlement_info=SettlementInfoType(
                 paid_by_customer=(
