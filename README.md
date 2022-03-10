@@ -6,20 +6,19 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
 
-
 purplship makes shipping services simple and accessible.
 Help us out… If you love open source and great software, give us a star! 🌟
 
 **Features**
 
-- **Headless Shipping**: Access a network of traditional and modern shipping carrier services
+- **Headless Shipping**: Access a network of traditional and modern shipping carrier API-first
 - **Multi-carrier SDK**: Integrate purplship once and connect to multiple shipping carrier APIs
 - **Extensible**: Use the purplship SDK Framework to integrate with custom carrier APIs.
 - **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels.
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics automation.
+- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics operations.
 
 <picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
 
@@ -37,10 +36,10 @@ There are several ways to use Purplship:
 
 - [x] Alpha: We are testing purplship with a closed set of customers
 - [x] Public Alpha: Anyone can sign up over at [cloud.purplship.com](cloud.purplship.com). But go easy on us, there are a few kinks
-- [ ] Public Beta: Stable enough for most non-enterprise use-cases
+- [x] Public Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready
 
-We are currently in Public Alpha. Watch "releases" of this repo to get notified of major updates.
+We are currently in Public Beta. Watch "releases" of this repo to get notified of major updates.
 
 ## Self-hosted installation
 
@@ -71,7 +70,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/server:2022.1.4
+  danh91.docker.scarf.sh/purplship/server:2022.2
 ```
 
 </details>
@@ -96,7 +95,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/server:2022.1.4
+    image: danh91.docker.scarf.sh/purplship/server:2022.2
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -130,7 +129,7 @@ docker-compose up
 
 </details>
 
-Purplship should now be running at http://localhost:5002
+Purplship should now be running at <http://localhost:5002>
 
 **Default Login**
 
@@ -143,7 +142,6 @@ Purplship should now be running at http://localhost:5002
 - [Node](https://github.com/purplship/purplship-node)
 - [PHP](https://github.com/purplship/purplship-php-client)
 - [Python](https://github.com/purplship/purplship-python-client)
-
 
 ## Purplship SDK
 
