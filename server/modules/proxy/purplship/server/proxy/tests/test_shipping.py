@@ -131,9 +131,9 @@ RETURNED_VALUE = (
     ShipmentDetails(
         carrier_name="canadapost",
         carrier_id="canadapost",
-        label="==apodifjoefr",
         tracking_number="123456789012",
         shipment_identifier="123456789012",
+        docs=dict(label="==apodifjoefr"),
     ),
     [],
 )
@@ -166,10 +166,10 @@ SHIPPING_RESPONSE = {
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
-    "label": "==apodifjoefr",
     "label_type": "PDF",
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
+    "docs": {"invoice": None, "label": ANY},
     "selected_rate": {
         "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
         "object_type": "rate",
@@ -292,7 +292,7 @@ SHIPPING_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
-            "reference_number": None,
+            "reference_number": ANY,
         }
     ],
     "services": [],

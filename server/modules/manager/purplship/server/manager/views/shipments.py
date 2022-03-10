@@ -303,31 +303,40 @@ class ShipmentPurchase(APIView):
         return Response(Shipment(update).data)
 
 
-class ShipmentLabel(VirtualDownloadView):
+class ShipmentDocs(VirtualDownloadView):
     @swagger_auto_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}label",
         operation_summary="Retrieve a shipment label",
         responses={400: ErrorResponse()},
     )
-    def get(self, request: Request, pk: str, **kwargs):
+    def get(
+        self,
+        request: Request,
+        pk: str,
+        doc: str = "label",
+        format: str = "pdf",
+        **kwargs,
+    ):
         """
         Retrieve a shipment label.
         """
-        self.shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+        shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+
+        self.document = getattr(shipment, doc, None)
+        self.name = f"{doc}_{shipment.tracking_number}.{format}"
         self.attachment = False
 
-        return super(ShipmentLabel, self).get(request, pk, **kwargs)
+        response = super(ShipmentDocs, self).get(request, pk, doc, format, **kwargs)
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
 
     def get_file(self):
-        content = base64.b64decode(self.shipment.label or "")
+        content = base64.b64decode(self.document or "")
         buffer = io.BytesIO()
         buffer.write(content)
 
-        ext = self.shipment.label_type.lower()
-        name = f"label_{self.shipment.tracking_number}.{ext}"
-        print(name)
-        return ContentFile(buffer.getvalue(), name=name)
+        return ContentFile(buffer.getvalue(), name=self.name)
 
 
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
@@ -346,8 +355,8 @@ router.urls.append(
 )
 router.urls.append(
     re_path(
-        r"^shipments/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
-        ShipmentLabel.as_view(),
-        name="shipment-label",
+        r"^shipments/(?P<pk>\w+)/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        ShipmentDocs.as_view(),
+        name="shipment-docs",
     )
 )

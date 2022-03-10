@@ -417,6 +417,8 @@ class ShipmentType(utils.BaseObjectType):
     tracker_id = graphene.String()
 
     label_type = utils.LabelTypeEnum()
+    label_url = graphene.String()
+    invoice_url = graphene.String()
     status = utils.ShipmentStatusEnum(required=True)
     tracker = graphene.Field(TrackerType)
 

@@ -48,7 +48,13 @@ from purplship.core.utils import (
     DF,
 )
 from purplship.core.units import Options, Packages, CompleteAddress, Weight
-from purplship.core.models import Duty, ShipmentDetails, Message, ShipmentRequest
+from purplship.core.models import (
+    Documents,
+    Duty,
+    ShipmentDetails,
+    Message,
+    ShipmentRequest,
+)
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 from purplship.providers.fedex.units import (
@@ -111,18 +117,17 @@ def _extract_shipment(
 
     label = labels[0] if len(labels) == 1 else bundle_base64(labels, label_type)
     invoice = invoices[0] if len(invoices) == 1 else bundle_base64(invoices, doc_type)
-    # invoice = None
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=master_id,
         shipment_identifier=master_id,
-        label=label,
-        meta={
-            "tracking_numbers": tracking_numbers,
+        docs=Documents(
+            label=label,
             **({"invoice": invoice} if invoice else {}),
-        },
+        ),
+        meta=dict(tracking_numbers=tracking_numbers),
     )
 
 

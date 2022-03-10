@@ -1988,7 +1988,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Shipment"
+                                    "$ref": "#/components/schemas/ShippingResponse"
                                 }
                             }
                         }
@@ -3216,6 +3216,7 @@
             "Metadata": {
                 "required": [
                     "ADMIN",
+                    "ALLOW_SIGNUP",
                     "APPS_MANAGEMENT",
                     "APP_NAME",
                     "APP_VERSION",
@@ -3252,6 +3253,10 @@
                     },
                     "APPS_MANAGEMENT": {
                         "title": "Apps management",
+                        "type": "boolean"
+                    },
+                    "ALLOW_SIGNUP": {
+                        "title": "Allow signup",
                         "type": "boolean"
                     },
                     "ADMIN": {
@@ -5280,6 +5285,20 @@
                         "type": "string",
                         "description": "A unique identifier"
                     },
+                    "object_type": {
+                        "title": "Object type",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Specifies the object type",
+                        "default": "shipment"
+                    },
+                    "tracking_url": {
+                        "title": "Tracking url",
+                        "type": "string",
+                        "description": "The shipment tracking url",
+                        "format": "uri",
+                        "nullable": true
+                    },
                     "shipper": {
                         "$ref": "#/components/schemas/Address"
                     },
@@ -5398,12 +5417,6 @@
                         "description": "The shipment carrier configured identifier",
                         "nullable": true
                     },
-                    "label": {
-                        "title": "Label",
-                        "type": "string",
-                        "description": "The shipment label in base64 string",
-                        "nullable": true
-                    },
                     "tracking_number": {
                         "title": "Tracking number",
                         "type": "string",
@@ -5438,24 +5451,24 @@
                         "description": "The shipment selected rate.",
                         "nullable": true
                     },
-                    "tracking_url": {
-                        "title": "Tracking url",
-                        "type": "string",
-                        "description": "The shipment tracking url",
-                        "format": "uri",
-                        "nullable": true
-                    },
                     "test_mode": {
                         "title": "Test mode",
                         "type": "boolean",
                         "description": "Specified whether it was created with a carrier in test mode"
                     },
-                    "object_type": {
-                        "title": "Object type",
-                        "minLength": 1,
+                    "label_url": {
+                        "title": "Label url",
                         "type": "string",
-                        "description": "Specifies the object type",
-                        "default": "shipment"
+                        "description": "The shipment label URL",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "invoice_url": {
+                        "title": "Invoice url",
+                        "type": "string",
+                        "description": "The shipment invoice URL",
+                        "format": "uri",
+                        "nullable": true
                     }
                 },
                 "description": "The shipments associated with the order."
@@ -6415,6 +6428,218 @@
                     }
                 }
             },
+            "Documents": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "title": "Label",
+                        "type": "string",
+                        "description": "The shipment label in base64 string",
+                        "nullable": true
+                    },
+                    "invoice": {
+                        "title": "Invoice",
+                        "type": "string",
+                        "description": "The shipment invoice in base64 string",
+                        "nullable": true
+                    }
+                },
+                "description": "The shipment documents",
+                "nullable": true,
+                "x-nullable": true
+            },
+            "ShippingResponse": {
+                "required": [
+                    "created_at",
+                    "parcels",
+                    "recipient",
+                    "shipper",
+                    "test_mode"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "A unique identifier"
+                    },
+                    "object_type": {
+                        "title": "Object type",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Specifies the object type",
+                        "default": "shipment"
+                    },
+                    "tracking_url": {
+                        "title": "Tracking url",
+                        "type": "string",
+                        "description": "The shipment tracking url",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "shipper": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "recipient": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "parcels": {
+                        "type": "array",
+                        "description": "The shipment's parcels",
+                        "items": {
+                            "$ref": "#/components/schemas/Parcel"
+                        }
+                    },
+                    "services": {
+                        "type": "array",
+                        "description": "\nThe carriers services requested for the shipment.\n\nPlease consult the reference for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                        "nullable": true,
+                        "items": {
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    },
+                    "options": {
+                        "title": "Options",
+                        "type": "object",
+                        "properties": {},
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
+                        "nullable": true
+                    },
+                    "payment": {
+                        "$ref": "#/components/schemas/Payment"
+                    },
+                    "customs": {
+                        "$ref": "#/components/schemas/Customs"
+                    },
+                    "rates": {
+                        "type": "array",
+                        "description": "The list for shipment rates fetched previously",
+                        "items": {
+                            "$ref": "#/components/schemas/Rate"
+                        }
+                    },
+                    "reference": {
+                        "title": "Reference",
+                        "type": "string",
+                        "description": "The shipment reference",
+                        "nullable": true
+                    },
+                    "label_type": {
+                        "title": "Label type",
+                        "type": "string",
+                        "description": "The shipment label file type.",
+                        "nullable": true,
+                        "enum": [
+                            "PDF",
+                            "ZPL"
+                        ]
+                    },
+                    "carrier_ids": {
+                        "type": "array",
+                        "description": "\nThe list of configured carriers you wish to get rates from.\n\n*Note that the request will be sent to all carriers in nothing is specified*\n",
+                        "nullable": true,
+                        "items": {
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    },
+                    "tracker_id": {
+                        "title": "Tracker id",
+                        "type": "string",
+                        "description": "The attached tracker id",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "title": "Created at",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "\nThe shipment creation datetime\n\nDate Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n"
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "properties": {},
+                        "description": "User metadata for the shipment"
+                    },
+                    "messages": {
+                        "type": "array",
+                        "description": "The list of note or warning messages",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "The current Shipment status",
+                        "default": "draft",
+                        "enum": [
+                            "draft",
+                            "purchased",
+                            "cancelled",
+                            "shipped",
+                            "in_transit",
+                            "delivered"
+                        ]
+                    },
+                    "carrier_name": {
+                        "title": "Carrier name",
+                        "type": "string",
+                        "description": "The shipment carrier",
+                        "nullable": true
+                    },
+                    "carrier_id": {
+                        "title": "Carrier id",
+                        "type": "string",
+                        "description": "The shipment carrier configured identifier",
+                        "nullable": true
+                    },
+                    "tracking_number": {
+                        "title": "Tracking number",
+                        "type": "string",
+                        "description": "The shipment tracking number",
+                        "nullable": true
+                    },
+                    "shipment_identifier": {
+                        "title": "Shipment identifier",
+                        "type": "string",
+                        "description": "The shipment carrier system identifier",
+                        "nullable": true
+                    },
+                    "selected_rate": {
+                        "$ref": "#/components/schemas/Rate"
+                    },
+                    "docs": {
+                        "$ref": "#/components/schemas/Documents"
+                    },
+                    "meta": {
+                        "title": "Meta",
+                        "type": "object",
+                        "properties": {},
+                        "description": "provider specific metadata",
+                        "nullable": true
+                    },
+                    "service": {
+                        "title": "Service",
+                        "type": "string",
+                        "description": "The selected service",
+                        "nullable": true
+                    },
+                    "selected_rate_id": {
+                        "title": "Selected rate id",
+                        "type": "string",
+                        "description": "The shipment selected rate.",
+                        "nullable": true
+                    },
+                    "test_mode": {
+                        "title": "Test mode",
+                        "type": "boolean",
+                        "description": "Specified whether it was created with a carrier in test mode"
+                    }
+                }
+            },
             "ShipmentCancelRequest": {
                 "required": [
                     "shipment_identifier"
@@ -6591,6 +6816,7 @@
                 "required": [
                     "ADDRESS_AUTO_COMPLETE",
                     "ADMIN",
+                    "ALLOW_SIGNUP",
                     "APPS_MANAGEMENT",
                     "APP_NAME",
                     "APP_VERSION",
@@ -6642,6 +6868,10 @@
                     },
                     "APPS_MANAGEMENT": {
                         "title": "Apps management",
+                        "type": "boolean"
+                    },
+                    "ALLOW_SIGNUP": {
+                        "title": "Allow signup",
                         "type": "boolean"
                     },
                     "ADMIN": {

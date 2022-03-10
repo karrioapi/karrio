@@ -28,7 +28,8 @@ class TokenAuthentication(BaseTokenAuthentication):
         auth = super().authenticate(request)
         if auth is not None:
             user, token = auth
-            request.org = get_request_org(request, user, token.organization.id)
+            org_id = getattr(token.organization, "id", None)
+            request.org = get_request_org(request, user, org_id)
 
         return auth
 
@@ -64,7 +65,6 @@ class AccessMixin(mixins.AccessMixin):
 
 class AuthenticationMiddleware(BaseAuthenticationMiddleware):
     def process_response(self, request, response):
-        # response["X-Frame-Options"] = "ALLOWALL"
         if getattr(request, "org", None) is not None:
             response.set_cookie("org_id", getattr(request.org, "id", None))
             response["X-Org-Id"] = getattr(request.org, "id", None)

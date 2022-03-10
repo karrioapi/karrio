@@ -13,6 +13,7 @@ from dicom_lib.shipments import (
 from purplship.core.units import Packages
 from purplship.core.utils import Serializable, DP
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
@@ -25,17 +26,19 @@ from purplship.providers.dicom.units import (
     Service,
     Option,
     PaymentType,
-    Purpose
+    Purpose,
 )
 from purplship.providers.dicom.error import parse_error_response
 from purplship.providers.dicom.utils import Settings
 
 
-def parse_shipment_response(response: dict, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
+def parse_shipment_response(
+    response: dict, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     details = (
         _extract_details(response, settings)
-        if all(key in response for key in ['label', 'shipment'])
+        if all(key in response for key in ["label", "shipment"])
         else None
     )
 
@@ -43,29 +46,32 @@ def parse_shipment_response(response: dict, settings: Settings) -> Tuple[Shipmen
 
 
 def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
-    label: str = response['label']
-    shipment = DP.to_object(ShipmentResponse, response['shipment'])
+    label: str = response["label"]
+    shipment = DP.to_object(ShipmentResponse, response["shipment"])
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        label=label,
         tracking_number=shipment.trackingNumber,
         shipment_identifier=shipment.ID,
+        docs=Documents(label=label),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[DicomShipmentRequest]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[DicomShipmentRequest]:
     packages = Packages(payload.parcels)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    broker_info = payload.options.get('dicom_broker_info', {})
+    broker_info = payload.options.get("dicom_broker_info", {})
     importer_info = (
-        Address(**payload.options.get('importer_info'))
-        if 'importer_info' in payload.options else None
+        Address(**payload.options.get("importer_info"))
+        if "importer_info" in payload.options
+        else None
     )
     delivery_type = Service[payload.service].value
     options = {
-        key: (value if Option[key].value in ['DCV', 'COD'] else None)
+        key: (value if Option[key].value in ["DCV", "COD"] else None)
         for key, value in payload.options
         if key in Option.__members__
     }
@@ -84,8 +90,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             contact=Contact(
                 fullName=payload.shipper.person_name,
                 email=payload.shipper.email,
-                telephone=payload.shipper.phone_number
-            )
+                telephone=payload.shipper.phone_number,
+            ),
         ),
         consignee=DicomAddress(
             city=payload.recipient.city,
@@ -98,8 +104,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             contact=Contact(
                 fullName=payload.recipient.person_name,
                 email=payload.recipient.email,
-                telephone=payload.recipient.phone_number
-            )
+                telephone=payload.recipient.phone_number,
+            ),
         ),
         parcels=[
             Parcel(
@@ -124,46 +130,56 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         deliveryType=delivery_type,
         trackingNumber=None,
         unitOfMeasurement=UnitOfMeasurement.KC.value,
-        surcharges=[
-            Surcharge(type=key, value=value) for key, value in options.items()
-        ],
+        surcharges=[Surcharge(type=key, value=value) for key, value in options.items()],
         promoCodes=None,
         references=None,
         returnAddress=None,
         appointment=None,
-        internationalDetails=(InternationalDetails(
-            isDicomBroker=(broker_info is not None),
-            descriptionOfGoods=payload.customs.content_description,
-            dutyBilling=payload.customs.duty.paid_by,
-            importerOfRecord=(DicomAddress(
-                city=importer_info.city,
-                provinceCode=importer_info.state_code,
-                postalCode=importer_info.postal_code,
-                countryCode=importer_info.country_code,
-                customerName=importer_info.company_name,
-                addressLine1=importer_info.address_line1,
-                addressLine2=importer_info.address_line2,
-                contact=Contact(
-                    fullName=importer_info.person_name,
-                    email=importer_info.email,
-                    telephone=importer_info.phone_number
-                )
-            ) if importer_info is not None else None),
-            broker=(Broker(
-                id=broker_info.get("id"),
-                CSA_BusinessNumber=broker_info.get("CSA_BusinessNumber"),
-                otherBroker=broker_info.get("otherBroker")
-            ) if broker_info is not None else None),
-            purpose=(
-                Purpose[payload.customs.content_type].value
-                if payload.customs.content_type is not None else
-                None
-            ),
-            products=[
-                Product(id=index, Quantity=product.quantity)
-                for index, product in enumerate(payload.customs.commodities, 1)
-            ]
-        ) if is_international and payload.customs is not None else None),
+        internationalDetails=(
+            InternationalDetails(
+                isDicomBroker=(broker_info is not None),
+                descriptionOfGoods=payload.customs.content_description,
+                dutyBilling=payload.customs.duty.paid_by,
+                importerOfRecord=(
+                    DicomAddress(
+                        city=importer_info.city,
+                        provinceCode=importer_info.state_code,
+                        postalCode=importer_info.postal_code,
+                        countryCode=importer_info.country_code,
+                        customerName=importer_info.company_name,
+                        addressLine1=importer_info.address_line1,
+                        addressLine2=importer_info.address_line2,
+                        contact=Contact(
+                            fullName=importer_info.person_name,
+                            email=importer_info.email,
+                            telephone=importer_info.phone_number,
+                        ),
+                    )
+                    if importer_info is not None
+                    else None
+                ),
+                broker=(
+                    Broker(
+                        id=broker_info.get("id"),
+                        CSA_BusinessNumber=broker_info.get("CSA_BusinessNumber"),
+                        otherBroker=broker_info.get("otherBroker"),
+                    )
+                    if broker_info is not None
+                    else None
+                ),
+                purpose=(
+                    Purpose[payload.customs.content_type].value
+                    if payload.customs.content_type is not None
+                    else None
+                ),
+                products=[
+                    Product(id=index, Quantity=product.quantity)
+                    for index, product in enumerate(payload.customs.commodities, 1)
+                ],
+            )
+            if is_international and payload.customs is not None
+            else None
+        ),
     )
 
     return Serializable(request)

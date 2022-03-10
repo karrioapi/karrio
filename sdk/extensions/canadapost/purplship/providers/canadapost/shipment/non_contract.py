@@ -21,6 +21,7 @@ from canadapost_lib.ncshipment import (
 from purplship.core.units import Currency, CustomsInfo, WeightUnit, Options, Packages
 from purplship.core.utils import Serializable, Element, SF, XP, NF
 from purplship.core.models import (
+    Documents,
     Message,
     ShipmentDetails,
     ShipmentRequest,
@@ -61,7 +62,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=label,
+        docs=Documents(label=label),
     )
 
 

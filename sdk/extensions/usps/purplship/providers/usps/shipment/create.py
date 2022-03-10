@@ -19,6 +19,7 @@ from purplship.core.units import (
 )
 from purplship.core.utils import Serializable, Element, Location, XP
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     ChargeDetails,
@@ -53,9 +54,9 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        label=shipment.LabelImage,
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
+        docs=Documents(label=shipment.LabelImage),
     )
 
 

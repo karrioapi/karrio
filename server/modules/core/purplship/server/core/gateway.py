@@ -110,8 +110,6 @@ class Carriers:
 
                 query += _queries
 
-            print(carrier_names, query)
-
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
 
@@ -173,8 +171,9 @@ class Shipments:
         carrier = carrier or models.Carrier.objects.get(
             carrier_id=selected_rate.carrier_id
         )
-        request = datatypes.ShipmentRequest(
-            **{**DP.to_dict(payload), "service": selected_rate.service}
+        request = DP.to_object(
+            datatypes.ShipmentRequest,
+            {**DP.to_dict(payload), "service": selected_rate.service},
         )
 
         # The request is wrapped in identity to simplify mocking in tests
@@ -229,10 +228,28 @@ class Shipments:
 
             return ""
 
+        def process_parcel_refs(parcels: List[dict]) -> list:
+            references = (shipment.meta or {}).get("tracking_numbers") or [
+                shipment.tracking_number
+            ]
+
+            return [
+                {
+                    **DP.to_dict(parcel),
+                    "reference_number": (
+                        references[index]
+                        if len(references) > index
+                        else parcel.get("reference_number")
+                    ),
+                }
+                for index, parcel in enumerate(parcels)
+            ]
+
         shipment_rate = process_selected_rate()
 
-        return datatypes.Shipment(
-            **{
+        return DP.to_object(
+            datatypes.Shipment,
+            {
                 "id": f"shp_{uuid.uuid4().hex}",
                 **payload,
                 **DP.to_dict(shipment),
@@ -240,12 +257,13 @@ class Shipments:
                 "selected_rate": shipment_rate,
                 "service": shipment_rate["service"],
                 "selected_rate_id": shipment_rate["id"],
+                "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.purchased.value,
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
-                "messages": messages,
                 "meta": process_meta(shipment),
-            }
+                "messages": messages,
+            },
         )
 
     @staticmethod
@@ -307,7 +325,7 @@ class Shipments:
             raise NotFound("No active carrier connection found to process the request")
 
         request = purplship.Tracking.fetch(
-            datatypes.TrackingRequest(**DP.to_dict(payload))
+            DP.to_object(datatypes.TrackingRequest, payload)
         )
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -500,7 +518,7 @@ class Rates:
         if len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
+        request = purplship.Rating.fetch(DP.to_object(datatypes.RateRequest, payload))
 
         # The request call is wrapped in identity to simplify mocking in tests
         rates, messages = identity(lambda: request.from_(*gateways).parse())
@@ -539,4 +557,6 @@ class Rates:
             map(process_rate, rates), key=lambda rate: rate.total_charge
         )
 
-        return datatypes.RateResponse(rates=formated_rates, messages=messages)
+        return DP.to_object(
+            datatypes.RateResponse, dict(rates=formated_rates, messages=messages)
+        )

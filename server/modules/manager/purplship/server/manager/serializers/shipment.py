@@ -20,12 +20,12 @@ import purplship.server.core.datatypes as datatypes
 from purplship.server.providers.models import Carrier, MODELS
 from purplship.server.core.serializers import (
     SHIPMENT_STATUS,
+    Documents,
     ShipmentStatus,
     ShipmentData,
     Shipment,
     Payment,
     Rate,
-    ShippingRequest,
     ShipmentCancelRequest,
     LABEL_TYPES,
     LabelType,
@@ -40,6 +40,7 @@ from purplship.server.manager.serializers.customs import CustomsSerializer
 from purplship.server.manager.serializers.parcel import ParcelSerializer
 from purplship.server.manager.serializers.rate import RateSerializer
 import purplship.server.manager.models as models
+from uritemplate import partial
 
 logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: Any = dict(active=True, capability="shipping")
@@ -56,6 +57,7 @@ class ShipmentSerializer(ShipmentData):
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
     test_mode = BooleanField(required=False)
+    docs = Documents(required=False)
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
 
@@ -70,6 +72,7 @@ class ShipmentSerializer(ShipmentData):
                 instance,
                 payload=data,
                 context=context,
+                partial=True,
             )
 
         super().__init__(instance, **kwargs)
@@ -192,6 +195,11 @@ class ShipmentSerializer(ShipmentData):
                 payload=validated_data,
                 context=context,
             )
+
+        if "docs" in validated_data:
+            changes.append("label")
+            instance.label = validated_data["docs"].get("label") or instance.label
+            instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
@@ -327,7 +335,7 @@ class ShipmentPurchaseSerializer(Shipment):
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(
-            ShippingRequest(validated_data).data,
+            Shipment(validated_data).data,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
                     "purplship.server.manager:shipment-tracker",
@@ -391,6 +399,11 @@ def buy_shipment_label(
         .instance
     )
 
+    parcels = [
+        {"id": parcel.id, "reference_number": parcel.reference_number}
+        for parcel in response.parcels
+    ]
+
     # Update shipment state
     purchased_shipment = (
         SerializerDecorator[ShipmentSerializer](
@@ -399,11 +412,13 @@ def buy_shipment_label(
             data={
                 **payload,
                 **ShipmentDetails(response).data,
+                "parcels": parcels,
             },
         )
         .save()
         .instance
     )
+
     create_shipment_tracker(purchased_shipment, context=context)
 
     return purchased_shipment

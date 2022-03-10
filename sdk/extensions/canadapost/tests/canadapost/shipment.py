@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import purplship
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
@@ -126,9 +126,7 @@ class TestCanadaPostShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_cancel_response(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
@@ -228,9 +226,9 @@ ParsedShipmentResponse = [
     {
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
-        "label": LabelResponse,
         "tracking_number": "123456789012",
         "shipment_identifier": "123456789012",
+        "docs": {"label": ANY},
     },
     [],
 ]

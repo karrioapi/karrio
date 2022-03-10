@@ -145,10 +145,10 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "custom-carrier",
         "carrier_name": "custom_carrier",
-        "label": ANY,
         "label_type": "ZPL",
         "shipment_identifier": ANY,
         "tracking_number": ANY,
+        "docs": {"label": ANY},
         "meta": {
             "service_name": "Premium",
         },
@@ -160,8 +160,8 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_id": "custom-carrier",
         "carrier_name": "custom_carrier",
-        "label": ANY,
         "label_type": "PDF",
+        "docs": {"label": ANY},
         "meta": {
             "service_name": "Premium",
             "tracking_identifiers": ANY,

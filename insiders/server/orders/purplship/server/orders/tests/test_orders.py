@@ -432,10 +432,9 @@ ORDER_SHIPMENTS_RESPONSE = {
         {
             "id": ANY,
             "object_type": "shipment",
-            "status": "unfulfilled",
+            "status": "draft",
             "carrier_name": None,
             "carrier_id": None,
-            "label": None,
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,
@@ -522,7 +521,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                     "is_document": False,
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
-                    "reference_number": None,
+                    "reference_number": ANY,
                     "items": [
                         {
                             "id": ANY,
@@ -547,6 +546,8 @@ ORDER_SHIPMENTS_RESPONSE = {
             "customs": None,
             "reference": None,
             "label_type": "PDF",
+            "label_url": None,
+            "invoice_url": None,
             "carrier_ids": ["canadapost"],
             "tracker_id": None,
             "created_at": ANY,
@@ -626,7 +627,7 @@ FULFILLED_ORDER_RESPONSE = {
             "status": "purchased",
             "carrier_name": None,
             "carrier_id": None,
-            "label": None,
+            "invoice_url": None,
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,
@@ -713,7 +714,7 @@ FULFILLED_ORDER_RESPONSE = {
                     "is_document": False,
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
-                    "reference_number": None,
+                    "reference_number": ANY,
                     "items": [
                         {
                             "id": ANY,
@@ -752,6 +753,7 @@ FULFILLED_ORDER_RESPONSE = {
             "customs": None,
             "reference": None,
             "label_type": "PDF",
+            "label_url": None,
             "carrier_ids": ["canadapost"],
             "tracker_id": None,
             "created_at": ANY,
@@ -897,7 +899,7 @@ PARTIAL_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         }
                     ],
-                    "reference_number": None,
+                    "reference_number": ANY,
                     "object_type": "parcel",
                 }
             ],
@@ -940,7 +942,8 @@ PARTIAL_ORDER_RESPONSE = {
             "status": "purchased",
             "carrier_name": None,
             "carrier_id": None,
-            "label": None,
+            "label_url": None,
+            "invoice_url": None,
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,

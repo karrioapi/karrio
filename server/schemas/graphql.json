@@ -8718,18 +8718,6 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "label",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "",
-              "isDeprecated": false,
               "name": "tracking_url",
               "type": {
                 "kind": "SCALAR",
@@ -9027,6 +9015,30 @@
               "description": null,
               "isDeprecated": false,
               "name": "tracker_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "label_url",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "invoice_url",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

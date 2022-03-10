@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.aramex"
-version = "2021.10.1"
+version = "2021.2"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Purplship - Aramex Shipping Extension"

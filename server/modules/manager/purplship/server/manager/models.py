@@ -495,6 +495,7 @@ class ShipmentManager(models.Manager):
         return (
             super()
             .get_queryset()
+            .defer("label", "invoice")
             .prefetch_related(
                 "shipper",
                 "recipient",
@@ -510,7 +511,6 @@ class ShipmentManager(models.Manager):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        "label",
         "options",
         "services",
         "status",
@@ -530,6 +530,8 @@ class Shipment(OwnedEntity):
     RELATIONAL_PROPS = ["shipper", "recipient", "parcels", "customs", "selected_rate"]
     HIDDEN_PROPS = (
         "carriers",
+        "label",
+        "invoice",
         "shipment_pickup",
         "shipment_tracker",
         "selected_rate_carrier",
@@ -563,7 +565,6 @@ class Shipment(OwnedEntity):
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
-    label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     reference = models.CharField(max_length=100, null=True, blank=True)
@@ -575,6 +576,9 @@ class Shipment(OwnedEntity):
         null=True,
         related_name="customs_shipment",
     )
+
+    label = models.TextField(max_length=None, null=True, blank=True)
+    invoice = models.TextField(max_length=None, null=True, blank=True)
 
     selected_rate = models.JSONField(blank=True, null=True)
     payment = models.JSONField(
@@ -662,6 +666,18 @@ class Shipment(OwnedEntity):
             return None
 
         return reverse(
-            "purplship.server.manager:shipment-label",
-            kwargs={"pk": self.pk, "format": (self.label_type or "PDF").lower()},
+            "purplship.server.manager:shipment-docs",
+            kwargs=dict(
+                pk=self.pk, doc="label", format=(self.label_type or "PDF").lower()
+            ),
+        )
+
+    @property
+    def invoice_url(self) -> str:
+        if self.invoice is None:
+            return None
+
+        return reverse(
+            "purplship.server.manager:shipment-docs",
+            kwargs=dict(pk=self.pk, doc="invoice", format="pdf"),
         )

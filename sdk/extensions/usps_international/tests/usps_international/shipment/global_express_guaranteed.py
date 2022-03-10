@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import purplship
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest
@@ -31,9 +31,7 @@ class TestUSPSGXGShipment(unittest.TestCase):
             parsed_response = (
                 purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
 
 if __name__ == "__main__":
@@ -108,9 +106,9 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "usps_international",
         "carrier_name": "usps_international",
-        "label": "SUkqAAgAAAASAP4ABAAB...",
         "shipment_identifier": "8300100690",
         "tracking_number": "8300100690",
+        "docs": {"label": ANY},
     },
     [],
 ]

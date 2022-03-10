@@ -5,6 +5,7 @@ from asendia_us_lib.shipping_response import PackageLabel
 from purplship.core.units import CustomsInfo, Packages, Options, Weight
 from purplship.core.utils import Serializable, DP
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
@@ -42,9 +43,9 @@ def _extract_details(response: Tuple[str, dict], settings: Settings) -> Shipment
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        label=label,
         tracking_number=shipment.trackingNumber,
         shipment_identifier=shipment.packageId,
+        docs=Documents(label=label),
     )
 
 

@@ -1,6 +1,7 @@
 from typing import Tuple, List
 from purplship.core.utils import Serializable
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
@@ -31,11 +32,11 @@ def _extract_details(
     return ShipmentDetails(
         carrier_name=settings.custom_carrier_name,
         carrier_id=settings.carrier_id,
-        label=service_label.label,
         label_type=service_label.label_type,
         tracking_number=service_label.tracking_number,
         shipment_identifier=service_label.tracking_number,
         meta=dict(service_name=service_label.service_name),
+        docs=Documents(label=service_label.label),
     )
 
 

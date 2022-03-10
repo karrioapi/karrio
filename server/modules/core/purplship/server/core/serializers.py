@@ -1170,6 +1170,21 @@ class ShipmentData(ShippingData):
     )
 
 
+class Documents(Serializer):
+    label = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment label in base64 string",
+    )
+    invoice = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment invoice in base64 string",
+    )
+
+
 class ShipmentDetails(Serializer):
     status = ChoiceField(
         required=False,
@@ -1189,12 +1204,6 @@ class ShipmentDetails(Serializer):
         allow_null=True,
         help_text="The shipment carrier configured identifier",
     )
-    label = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The shipment label in base64 string",
-    )
     tracking_number = CharField(
         required=False,
         allow_blank=True,
@@ -1209,6 +1218,11 @@ class ShipmentDetails(Serializer):
     )
     selected_rate = Rate(
         required=False, allow_null=True, help_text="The shipment selected rate"
+    )
+    docs = Documents(
+        required=False,
+        allow_null=True,
+        help_text="The shipment documents",
     )
     meta = PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
@@ -1239,6 +1253,13 @@ class ShipmentDetails(Serializer):
 
 
 class ShipmentContent(Serializer):
+    object_type = CharField(default="shipment", help_text="Specifies the object type")
+    tracking_url = URLField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment tracking url",
+    )
     shipper = Address(
         required=True,
         help_text="""
@@ -1360,19 +1381,18 @@ class ShipmentContent(Serializer):
 
 
 class Shipment(EntitySerializer, ShipmentContent, ShipmentDetails):
-    label = None
-    object_type = CharField(default="shipment", help_text="Specifies the object type")
-    label_url = CharField(
+    docs = None
+    label_url = URLField(
         required=False,
         allow_blank=True,
         allow_null=True,
         help_text="The shipment label URL",
     )
-    tracking_url = URLField(
+    invoice_url = URLField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The shipment tracking url",
+        help_text="The shipment invoice URL",
     )
 
 

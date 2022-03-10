@@ -157,7 +157,9 @@ def link_org(entity: ModelSerializer, context: Context):
         entity.link = entity.__class__.link.related.related_model.objects.create(
             org=context.org, item=entity
         )
-        entity.save(update_fields=(["created_at"] if hasattr(entity, "created_at") else []))
+        entity.save(
+            update_fields=(["created_at"] if hasattr(entity, "created_at") else [])
+        )
 
 
 def save_many_to_many_data(
@@ -188,7 +190,7 @@ def save_many_to_many_data(
         else:
             item = (
                 SerializerDecorator[serializer](
-                    instance=item_instance, data=data, partial=True, **kwargs
+                    instance=item_instance, data=data, **{**kwargs, "partial": True}
                 )
                 .save()
                 .instance

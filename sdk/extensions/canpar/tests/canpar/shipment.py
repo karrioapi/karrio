@@ -1,7 +1,7 @@
 import re
 import unittest
 import time
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import purplship
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
@@ -85,9 +85,7 @@ class TestCanparShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_void_shipment_response(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
@@ -148,7 +146,6 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "canpar",
         "carrier_name": "canpar",
-        "label": "...ENCODED INFORMATION...",
         "selected_rate": {
             "base_charge": 7.57,
             "carrier_id": "canpar",
@@ -171,6 +168,7 @@ ParsedShipmentResponse = [
         },
         "tracking_number": "D999999990000000461001",
         "shipment_identifier": "10000696",
+        "docs": {"label": ANY},
     },
     [],
 ]
