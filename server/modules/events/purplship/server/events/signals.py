@@ -1,12 +1,12 @@
 import logging
 from django.db.models import signals
 
+from purplship.server.core import utils
 from purplship.server.conf import settings
-from purplship.server.core.utils import failsafe
+from purplship.server.events.serializers import EventTypes
 import purplship.server.core.serializers as serializers
 import purplship.server.manager.models as models
 import purplship.server.events.tasks as tasks
-from purplship.server.events.serializers import EventTypes
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ def register_signals():
     logger.info("webhooks signals registered...")
 
 
+@utils.disable_for_loaddata
 def shipment_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -32,7 +33,7 @@ def shipment_updated(
         return
     elif instance.status == serializers.ShipmentStatus.purchased.value:
         event = EventTypes.shipment_purchased.value
-    elif instance.status == serializers.ShipmentStatus.transit.value:
+    elif instance.status == serializers.ShipmentStatus.in_transit.value:
         event = EventTypes.shipment_fulfilled.value
     elif instance.status == serializers.ShipmentStatus.cancelled.value:
         event = EventTypes.shipment_cancelled.value
@@ -43,8 +44,8 @@ def shipment_updated(
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=failsafe(lambda: instance.created_by.id),
-        org_id=failsafe(
+        user_id=utils.failsafe(lambda: instance.created_by.id),
+        org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
     )
@@ -57,6 +58,7 @@ def shipment_updated(
     )
 
 
+@utils.disable_for_loaddata
 def shipment_cancelled(sender, instance, *args, **kwargs):
     """Shipment related events:
     - shipment cancelled/deleted (label voided)
@@ -66,8 +68,8 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=failsafe(lambda: instance.created_by.id),
-        org_id=failsafe(
+        user_id=utils.failsafe(lambda: instance.created_by.id),
+        org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
     )
@@ -80,12 +82,13 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     )
 
 
+@utils.disable_for_loaddata
 def tracker_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
     """Tracking related events:
     - tracker created (pending)
-    - tracker status changed (in-transit, delivered or blocked)
+    - tracker status changed (in_transit, delivered or blocked)
     """
     changes = update_fields or []
 
@@ -100,8 +103,8 @@ def tracker_updated(
     event_at = instance.updated_at
     test_mode = instance.test_mode
     context = dict(
-        user_id=failsafe(lambda: instance.created_by.id),
-        org_id=failsafe(
+        user_id=utils.failsafe(lambda: instance.created_by.id),
+        org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
     )

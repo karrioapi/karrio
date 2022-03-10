@@ -10,10 +10,10 @@ from tests.dhl_express.fixture import gateway
 
 class TestDHLShipment(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
-        self.maxDiff = None
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         # remove MessageTime, Date for testing purpose
@@ -153,10 +153,9 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "carrier_id",
         "carrier_name": "dhl_express",
-        "label": ANY,
-        "meta": {"invoice": ANY},
         "shipment_identifier": "0057714403",
         "tracking_number": "0057714403",
+        "docs": {"label": ANY, "invoice": ANY},
     },
     [],
 ]

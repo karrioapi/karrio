@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.manager",
-    version="2022.1.3",
+    version="2022.2",
     description="Multi-carrier shipping API Shipments manager module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,6 +16,7 @@ setup(
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "purplship.server.core",
+        "django-downloadview",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

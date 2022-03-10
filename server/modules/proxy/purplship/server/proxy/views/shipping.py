@@ -12,13 +12,17 @@ from purplship.server.proxy.router import router
 from purplship.server.serializers import SerializerDecorator
 from purplship.server.core.gateway import Shipments
 from purplship.server.core.serializers import (
-    CharField, ChoiceField, COUNTRIES, MODELS,
-
+    CharField,
+    ChoiceField,
+    COUNTRIES,
+    MODELS,
+    EntitySerializer,
     ShippingRequest,
     ShipmentCancelRequest,
+    ShipmentContent,
+    ShipmentDetails,
     OperationResponse,
     Address as BaseAddress,
-    Shipment,
     ErrorResponse,
     TestFilters,
 )
@@ -31,23 +35,34 @@ CARRIER_NAMES = list(MODELS.keys())
 class Address(BaseAddress):
     city = CharField(required=True, help_text="The address city")
     person_name = CharField(required=True, help_text="attention to")
-    country_code = ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
-    address_line1 = CharField(required=True, help_text="The address line with street number")
+    country_code = ChoiceField(
+        required=True, choices=COUNTRIES, help_text="The address country code"
+    )
+    address_line1 = CharField(
+        required=True, help_text="The address line with street number"
+    )
 
 
 class ShippingRequestValidation(ShippingRequest):
-    shipper = Address(required=True, help_text="The origin address of the shipment (address from)")
-    recipient = Address(required=True, help_text="The shipment destination address (address to)")
+    shipper = Address(
+        required=True, help_text="The origin address of the shipment (address from)"
+    )
+    recipient = Address(
+        required=True, help_text="The shipment destination address (address to)"
+    )
+
+
+class ShippingResponse(EntitySerializer, ShipmentContent, ShipmentDetails):
+    object_type = CharField(default="shipment", help_text="Specifies the object type")
 
 
 class ShippingDetails(APIView):
-
     @swagger_auto_schema(
-        tags=['Proxy'],
+        tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
         operation_summary="Buy a shipment label",
         request_body=ShippingRequest(),
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={200: ShippingResponse(), 400: ErrorResponse()},
     )
     def post(self, request: Request):
         """
@@ -61,25 +76,31 @@ class ShippingDetails(APIView):
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
                     "purplship.server.proxy:shipment-tracking",
-                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name)
+                    kwargs=dict(
+                        tracking_number=tracking_number, carrier_name=carrier_name
+                    ),
                 )
-            )
+            ),
         )
 
-        return Response(Shipment(response).data, status=status.HTTP_201_CREATED)
+        return Response(ShippingResponse(response).data, status=status.HTTP_201_CREATED)
 
 
 class ShippingCancel(APIView):
-
     @swagger_auto_schema(
-        tags=['Proxy'],
+        tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
         operation_summary="Void a shipment label",
         query_serializer=TestFilters(),
         request_body=ShipmentCancelRequest(),
         responses={200: OperationResponse(), 400: ErrorResponse()},
         manual_parameters=[
-            openapi.Parameter('carrier_name', in_=openapi.IN_PATH, type=openapi.TYPE_STRING, enum=CARRIER_NAMES),
+            openapi.Parameter(
+                "carrier_name",
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                enum=CARRIER_NAMES,
+            ),
         ],
     )
     def post(self, request: Request, carrier_name: str):
@@ -89,10 +110,22 @@ class ShippingCancel(APIView):
         test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(payload, context=request, carrier_name=carrier_name, **test_filter)
+        response = Shipments.cancel(
+            payload, context=request, carrier_name=carrier_name, **test_filter
+        )
 
-        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
+        return Response(
+            OperationResponse(response).data, status=status.HTTP_202_ACCEPTED
+        )
 
 
-router.urls.append(path('proxy/shipping', ShippingDetails.as_view(), name="shipping-request"))
-router.urls.append(path('proxy/shipping/<carrier_name>/cancel', ShippingCancel.as_view(), name="shipping-cancel"))
+router.urls.append(
+    path("proxy/shipping", ShippingDetails.as_view(), name="shipping-request")
+)
+router.urls.append(
+    path(
+        "proxy/shipping/<carrier_name>/cancel",
+        ShippingCancel.as_view(),
+        name="shipping-cancel",
+    )
+)

@@ -99,6 +99,7 @@ PURPLSHIP_CONF = [
             "urls": "purplship.server.events.urls",
         },
         {"app": "purplship.server.pricing", "module": "purplship.server.pricing"},
+        {"app": "purplship.server.apps", "module": "purplship.server.apps"},
     ]
     if importlib.util.find_spec(app["module"]) is not None
 ]
@@ -108,9 +109,11 @@ PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("purplship.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("purplship.server.orders") is not None
+APPS_MANAGEMENT = importlib.util.find_spec("purplship.server.apps") is not None
 MULTI_TENANTS = importlib.util.find_spec(
     "purplship.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
+ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
 
 
 # components path settings
@@ -126,6 +129,9 @@ LOGIN_REDIRECT_URL = "/admin/"
 LOGIN_URL = "/admin/login/"
 OPEN_API_PATH = "openapi/"
 
+NAMESPACED_URLS = [
+    ("api/", "rest_framework.urls", "rest_framework"),
+]
 
 BASE_APPS = [
     "purplship.server.user",
@@ -259,6 +265,12 @@ REST_FRAMEWORK = {
         "purplship.server.core.authentication.TokenAuthentication",
         "purplship.server.core.authentication.JWTAuthentication",
     ),
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
     "DEFAULT_THROTTLE_CLASSES": (
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
@@ -276,8 +288,8 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

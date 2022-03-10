@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}You're receiving this email because you requested an email change for your user account at {{ APP_NAME }}.{% endblocktrans %}
+<br /><br />
+{% trans "Please open the following link to confirm:" %}<br />
+{% block change_link %}
+{{ link }}?token={{ token }}
+{% endblock %}
+<br /><br />
+{% trans "Thanks for using our platform!" %}
+<br />
+{% blocktrans %}The {{ APP_NAME }} team{% endblocktrans %}
+
+{% endautoescape %}

@@ -1,6 +1,6 @@
 from functools import reduce
 from typing import Dict, List, Optional, Tuple
-from purplship.core.models import RateDetails
+from purplship.core.models import Documents, RateDetails
 from purplship.core.models import ChargeDetails
 from purplship.core.utils import NF
 from purplship.core.models import ShipmentDetails
@@ -98,7 +98,7 @@ def to_multi_piece_shipment(
     label_type = master_shipment.label_type
 
     for _, shipment in package_shipments:
-        labels.append(shipment.label)
+        labels.append(shipment.docs.label)
         if shipment.tracking_number:
             tracking_numbers.add(shipment.tracking_number)
         if shipment.shipment_identifier:
@@ -109,8 +109,8 @@ def to_multi_piece_shipment(
         carrier_id=master_shipment.carrier_id,
         tracking_number=master_shipment.tracking_number,
         shipment_identifier=master_shipment.shipment_identifier,
-        label=bundle_base64(labels, label_type),
         label_type=label_type,
+        docs=Documents(label=bundle_base64(labels, label_type)),
         meta={
             **master_shipment.meta,
             "tracking_numbers": list(tracking_numbers),

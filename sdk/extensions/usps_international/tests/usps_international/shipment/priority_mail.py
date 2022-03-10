@@ -1,6 +1,6 @@
 import unittest
 import urllib.parse
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import purplship
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
@@ -50,9 +50,7 @@ class TestUSPSPriorityMailShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.usps_international.proxy.http") as mocks:
@@ -144,9 +142,9 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "usps_international",
         "carrier_name": "usps_international",
-        "label": "SUkqAAgAAAASAP4ABAAB...",
         "shipment_identifier": "HE200448219US",
         "tracking_number": "HE200448219US",
+        "docs": {"label": ANY},
     },
     [],
 ]

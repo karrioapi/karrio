@@ -34,11 +34,11 @@ def shipment_exists(value):
             f"Shipment with the tracking numbers: {invalids} not found", code="invalid"
         )
 
-    if any(val.first().pickup_shipments.exists() for val in validation.values()):
+    if any(val.first().shipment_pickup.exists() for val in validation.values()):
         scheduled = [
             key
             for key, val in validation.items()
-            if val.first().pickup_shipments.exists() is True
+            if val.first().shipment_pickup.exists() is True
         ]
         raise serializers.ValidationError(
             f"The following shipments {scheduled} are already scheduled for pickups",

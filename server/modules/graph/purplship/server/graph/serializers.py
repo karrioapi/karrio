@@ -18,14 +18,12 @@ import purplship.server.providers.models as providers
 import purplship.server.manager.models as manager
 import purplship.server.graph.models as graph
 
-User = get_user_model()
-
 
 class UserModelSerializer(ModelSerializer):
     email = serializers.CharField(required=False)
 
     class Meta:
-        model = User
+        model = get_user_model()
         extra_kwargs = {
             field: {"read_only": True}
             for field in ["id", "is_staff", "last_login", "date_joined"]
@@ -43,14 +41,8 @@ class UserModelSerializer(ModelSerializer):
     def update(self, instance, data: dict, **kwargs):
         user = super().update(instance, data)
 
-        # Set all organization where user is owner inactive
-        if data.get("is_active") == False and settings.MULTI_ORGANIZATIONS:
-            from purplship.server.orgs import models as orgs
-
-            user_orgs = orgs.Organization.objects.filter(
-                owner__organization_user__user__id=user.id
-            )
-            user_orgs.update(is_active=False)
+        if data.get("is_active") == False:
+            user.save(update_fields=["is_active"])
 
         return user
 
@@ -290,7 +282,6 @@ def create_carrier_model_serializers(partial: bool = False):
             model = carrier_model
             extra_kwargs = {field: {"read_only": True} for field in ["id"]}
             exclude = (
-                "id",
                 "created_at",
                 "updated_at",
                 "created_by",

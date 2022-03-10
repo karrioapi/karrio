@@ -1,4 +1,5 @@
 from functools import partial
+from django.conf import settings
 from django.db import models
 
 from purplship.server.core.utils import identity
@@ -16,14 +17,16 @@ class OrderManager(models.Manager):
             super()
             .get_queryset()
             .prefetch_related(
-                "shipping_address",
+                "shipping_to",
+                "shipping_from",
                 "line_items",
-                "line_items__children__parcel__shipment",
+                "line_items__children__commodity_parcel__parcel_shipment",
             )
         )
 
 
 class Order(OwnedEntity):
+    HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [
         "order_id",
         "source",
@@ -52,11 +55,17 @@ class Order(OwnedEntity):
     status = models.CharField(
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
     )
-    shipping_address = models.ForeignKey(
-        "manager.Address", on_delete=models.CASCADE, related_name="order"
+    shipping_to = models.ForeignKey(
+        "manager.Address", on_delete=models.CASCADE, related_name="recipient_order"
+    )
+    shipping_from = models.OneToOneField(
+        "manager.Address",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="shipper_order",
     )
     line_items = models.ManyToManyField(
-        "manager.Commodity", related_name="order", through="OrderLineItemLink"
+        "manager.Commodity", related_name="commodity_order", through="OrderLineItemLink"
     )
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})

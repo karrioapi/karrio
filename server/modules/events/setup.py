@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="purplship.server.events",
-    version="2022.1.3",
+    version="2022.2",
     description="Multi-carrier shipping API Events module",
     long_description=long_description,
     long_description_content_type="text/markdown",

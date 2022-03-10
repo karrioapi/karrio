@@ -4,6 +4,7 @@ from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
 from purplship.core.utils import DP
 from purplship.core.models import (
+    Documents,
     Parcel,
     Message,
     Address as BaseAddress,
@@ -23,12 +24,6 @@ from purplship.core.models import (
     TrackingEvent,
     TrackingDetails,
 )
-
-
-class ShipmentStatus(Enum):
-    created = "created"
-    cancelled = "cancelled"
-    purchased = "purchased"
 
 
 class CarrierSettings:
@@ -198,7 +193,6 @@ class Shipment:
     carrier_name: str
     tracking_number: str
     shipment_identifier: str
-    label: str
     service: str
     selected_rate_id: str
 
@@ -207,6 +201,7 @@ class Shipment:
     parcels: List[Parcel] = JList[Parcel, REQUIRED]
     rates: List[Rate] = JList[Rate, REQUIRED]
     selected_rate: Rate = JStruct[Rate, REQUIRED]
+    docs: Documents = JStruct[Documents, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]

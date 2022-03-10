@@ -1,17 +1,12 @@
 import typing
 import graphene
-import functools
 import django_filters
-import graphene_django
-import rest_framework.status as http_status
 from graphene.types import generic
-from rest_framework import exceptions
 from django.db.models import Q
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from purplship.core.utils import DP, Enum
+from purplship.core.utils import DP
 from purplship.server.events.serializers import EventTypes
 import purplship.server.core.serializers as serializers
 import purplship.server.providers.models as providers
@@ -20,116 +15,15 @@ import purplship.server.events.models as events
 import purplship.server.graph.models as graph
 import purplship.server.user.models as auth
 import purplship.server.core.models as core
+import purplship.server.graph.utils as utils
 
 User = get_user_model()
-CARRIER_NAMES = list(providers.MODELS.keys())
-HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
-CountryCodeEnum = graphene.Enum("CountryCodeEnum", serializers.COUNTRIES)
-CurrencyCodeEnum = graphene.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
-DimensionUnitEnum = graphene.Enum("DimensionUnitEnum", serializers.DIMENSION_UNIT)
-WeightUnitEnum = graphene.Enum("WeightUnitEnum", serializers.WEIGHT_UNIT)
-CustomsContentTypeEnum = graphene.Enum(
-    "CustomsContentTypeEnum", serializers.CUSTOMS_CONTENT_TYPE
-)
-IncotermCodeEnum = graphene.Enum("IncotermCodeEnum", serializers.INCOTERMS)
-PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
-LabelTypeEnum = graphene.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
-ShipmentStatusEnum = graphene.Enum.from_enum(serializers.ShipmentStatus)
-TrackerStatusEnum = graphene.Enum.from_enum(serializers.TrackerStatus)
 
 
-def login_required(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        *a, info = args
-        if info.context.user.is_anonymous:
-            raise exceptions.AuthenticationFailed(
-                _("You are not authenticated"), code="login_required"
-            )
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def metadata_object_types() -> Enum:
-    _types = [
-        ("carrier", providers.Carrier),
-        ("commodity", manager.Commodity),
-        ("shipment", manager.Shipment),
-        ("tracker", manager.Tracking),
-    ]
-
-    if settings.ORDERS_MANAGEMENT:
-        import purplship.server.orders.models as orders
-
-        _types.append(("order", orders.Order))
-
-    return Enum("MetadataObjectType", _types)
-
-
-MetadataObjectType = metadata_object_types()
-MetadataObjectTypeEnum = graphene.Enum.from_enum(MetadataObjectType)
-
-
-class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
-    pass
-
-
-class CustomNode(graphene.Node):
-    class Meta:
-        name = "CustomNode"
-
-    @classmethod
-    def to_global_id(cls, type, id):
-        return id
-
-
-class BaseObjectType(graphene_django.DjangoObjectType):
-    class Meta:
-        abstract = True
-
-    object_type = graphene.String(required=True)
-
-    def resolve_object_type(self, info):
-        return getattr(self, "object_type", "")
-
-
-class UserType(BaseObjectType):
+class UserType(utils.BaseObjectType):
     class Meta:
         model = User
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
-
-
-class BaseConnectionType:
-    carrier_name = graphene.String(required=True)
-
-    def resolve_carrier_name(self, info):
-        return getattr(self, "settings", self).carrier_name
-
-
-class SystemConnectionType(BaseConnectionType, BaseObjectType):
-    enabled = graphene.Boolean(required=True)
-
-    class Meta:
-        model = providers.Carrier
-        fields = (
-            "created_at",
-            "updated_at",
-            "id",
-            "test",
-            "carrier_id",
-            "carrier_name",
-            "active",
-            "test",
-            "capabilities",
-        )
-
-    def resolve_enabled(self, info):
-        if hasattr(self, "active_orgs"):
-            return self.active_orgs.filter(id=info.context.org.id).exists()
-
-        return self.active_users.filter(id=info.context.user.id).exists()
 
 
 class LogFilter(django_filters.FilterSet):
@@ -157,7 +51,7 @@ class LogFilter(django_filters.FilterSet):
     status_code = django_filters.TypedMultipleChoiceFilter(
         coerce=int,
         field_name="status_code",
-        choices=[(s, s) for s in HTTP_STATUS],
+        choices=[(s, s) for s in utils.HTTP_STATUS],
     )
 
     class Meta:
@@ -176,7 +70,7 @@ class LogFilter(django_filters.FilterSet):
         return queryset.filter(response__icontains=value)
 
 
-class LogType(BaseObjectType):
+class LogType(utils.BaseObjectType):
     data = generic.GenericScalar()
     response = generic.GenericScalar()
     query_params = generic.GenericScalar()
@@ -188,7 +82,7 @@ class LogType(BaseObjectType):
             "view",
             "view_method",
         )
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
     def resolve_response(self, info):
         try:
@@ -209,7 +103,7 @@ class LogType(BaseObjectType):
             return self.query_params
 
 
-class TokenType(BaseObjectType):
+class TokenType(utils.BaseObjectType):
     class Meta:
         model = auth.Token
         exclude = ("user",)
@@ -226,14 +120,14 @@ class MessageType(graphene.ObjectType):
 class ChargeType(graphene.ObjectType):
     name = graphene.String()
     amount = graphene.Float()
-    currency = CurrencyCodeEnum()
+    currency = utils.CurrencyCodeEnum()
 
 
 class RateType(graphene.ObjectType):
     id = graphene.String(required=True)
     carrier_name = graphene.String(required=True)
     carrier_id = graphene.String(required=True)
-    currency = CurrencyCodeEnum()
+    currency = utils.CurrencyCodeEnum()
     transit_days = graphene.Int()
     service = graphene.String(required=True)
     discount = graphene.Float()
@@ -245,100 +139,96 @@ class RateType(graphene.ObjectType):
     meta = generic.GenericScalar()
 
 
-class CommodityType(BaseObjectType):
-    weight_unit = WeightUnitEnum()
-    origin_country = CountryCodeEnum()
-    value_currency = CurrencyCodeEnum()
+class CommodityType(utils.BaseObjectType):
+    weight_unit = utils.WeightUnitEnum()
+    origin_country = utils.CountryCodeEnum()
+    value_currency = utils.CurrencyCodeEnum()
     parent_id = graphene.String()
     metadata = generic.GenericScalar()
 
     class Meta:
         model = manager.Commodity
-        exclude = (
-            "customs",
-            "parcel",
-            "children",
-        )
+        exclude = (*manager.Commodity.HIDDEN_PROPS,)
 
     def resolve_parent_id(self, info):
         return self.parent_id
 
 
-class AddressType(BaseObjectType):
+class AddressType(utils.BaseObjectType):
     validation = generic.GenericScalar()
-    country_code = CountryCodeEnum(required=True)
+    country_code = utils.CountryCodeEnum(required=True)
 
     class Meta:
         model = manager.Address
-        exclude = ("pickup_set", "recipient_shipment", "shipper_shipment", "template")
+        exclude = (*manager.Address.HIDDEN_PROPS, "template")
 
 
-class ParcelType(BaseObjectType):
-    weight_unit = WeightUnitEnum()
-    dimension_unit = DimensionUnitEnum()
+class ParcelType(utils.BaseObjectType):
+    weight_unit = utils.WeightUnitEnum()
+    dimension_unit = utils.DimensionUnitEnum()
 
     class Meta:
         model = manager.Parcel
         exclude = (
-            "shipment",
+            *manager.Parcel.HIDDEN_PROPS,
             "template",
         )
 
 
 class DutyType(graphene.ObjectType):
-    paid_by = PaidByEnum()
-    currency = CurrencyCodeEnum()
+    paid_by = utils.PaidByEnum()
+    currency = utils.CurrencyCodeEnum()
     account_number = graphene.String()
     declared_value = graphene.Float()
     bill_to = graphene.Field(AddressType)
     id = graphene.String()
 
 
-class CustomsType(BaseObjectType):
-    content_type = CustomsContentTypeEnum()
-    incoterm = IncotermCodeEnum()
+class CustomsType(utils.BaseObjectType):
+    content_type = utils.CustomsContentTypeEnum()
+    incoterm = utils.IncotermCodeEnum()
     duty = graphene.Field(DutyType)
     options = generic.GenericScalar()
 
     class Meta:
         model = manager.Customs
-        exclude = ("shipment", "template")
+        exclude = (*manager.Customs.HIDDEN_PROPS, "template")
 
     def resolve_commodities(self, info):
         return self.commodities.all()
 
 
-class AddressTemplateType(BaseObjectType):
+class AddressTemplateType(utils.BaseObjectType):
     address = graphene.Field(AddressType, required=True)
 
     class Meta:
         model = graph.Template
-        exclude = ("customs", "parcel")
+        exclude = (*graph.Template.HIDDEN_PROPS, "customs", "parcel")
         filter_fields = {
             "label": ["icontains"],
             "address__address_line1": ["icontains"],
         }
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
-class CustomsTemplateType(BaseObjectType):
+class CustomsTemplateType(utils.BaseObjectType):
     customs = graphene.Field(CustomsType, required=True)
 
     class Meta:
         model = graph.Template
-        exclude = ("address", "parcel")
+        exclude = (*graph.Template.HIDDEN_PROPS, "address", "parcel")
         filter_fields = {"label": ["icontains"]}
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
-class ParcelTemplateType(BaseObjectType):
+class ParcelTemplateType(utils.BaseObjectType):
     parcel = graphene.Field(ParcelType, required=True)
 
     class Meta:
         model = graph.Template
-        exclude = ("address", "customs")
+        exclude = (*graph.Template.HIDDEN_PROPS, "address", "customs")
         filter_fields = {"label": ["icontains"]}
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
 class DefaultTemplatesType(graphene.ObjectType):
@@ -364,7 +254,7 @@ class TrackerFilter(django_filters.FilterSet):
     )
     carrier_name = django_filters.MultipleChoiceFilter(
         method="carrier_filter",
-        choices=[(c, c) for c in CARRIER_NAMES],
+        choices=[(c, c) for c in utils.CARRIER_NAMES],
     )
     status = django_filters.MultipleChoiceFilter(
         field_name="status",
@@ -389,19 +279,19 @@ class TrackerFilter(django_filters.FilterSet):
         return queryset.filter(query)
 
 
-class TrackerType(BaseObjectType):
+class TrackerType(utils.BaseObjectType):
     carrier_id = graphene.String(required=True)
     carrier_name = graphene.String(required=True)
 
     events = graphene.List(graphene.NonNull(TrackingEventType), default_value=[])
     messages = graphene.List(graphene.NonNull(MessageType), default_value=[])
-    status = TrackerStatusEnum(required=True)
+    status = utils.TrackerStatusEnum(required=True)
     metadata = generic.GenericScalar()
 
     class Meta:
         model = manager.Tracking
-        filter_fields = ["tracking_carrier"]
-        interfaces = (CustomNode,)
+        exclude = (*manager.Tracking.HIDDEN_PROPS,)
+        interfaces = (utils.CustomNode,)
 
     def resolve_carrier_id(self, info):
         return getattr(self.tracking_carrier, "carrier_id", None)
@@ -411,8 +301,8 @@ class TrackerType(BaseObjectType):
 
 
 class PaymentType(graphene.ObjectType):
-    paid_by = PaidByEnum(required=False)
-    currency = CurrencyCodeEnum(required=False)
+    paid_by = utils.PaidByEnum(required=False)
+    currency = utils.CurrencyCodeEnum(required=False)
     account_number = graphene.String()
     id = graphene.String()
 
@@ -429,25 +319,29 @@ class ShipmentFilter(django_filters.FilterSet):
     )
     carrier_name = django_filters.MultipleChoiceFilter(
         method="carrier_filter",
-        choices=[(c, c) for c in CARRIER_NAMES],
+        choices=[(c, c) for c in utils.CARRIER_NAMES],
     )
     reference = django_filters.CharFilter(
         field_name="reference", lookup_expr="icontains"
     )
-    service = CharInFilter(
+    service = utils.CharInFilter(
         method="service_filter", field_name="selected_rate__service", lookup_expr="in"
     )
     status = django_filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
     )
-    option_key = CharInFilter(
+    option_key = utils.CharInFilter(
         field_name="options",
         method="option_key_filter",
     )
     option_value = django_filters.CharFilter(
         field_name="options",
         method="option_value_filter",
+    )
+    metadata_key = utils.CharInFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
     )
     metadata_value = django_filters.CharFilter(
         field_name="metadata",
@@ -481,6 +375,9 @@ class ShipmentFilter(django_filters.FilterSet):
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(Q(options__values__contains=value))
 
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(Q(options__has_key=value))
+
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(Q(metadata__values__contains=value))
 
@@ -488,7 +385,7 @@ class ShipmentFilter(django_filters.FilterSet):
         return queryset.filter(Q(selected_rate__service__in=values))
 
 
-class ShipmentType(BaseObjectType):
+class ShipmentType(utils.BaseObjectType):
     carrier_id = graphene.String()
     carrier_name = graphene.String()
 
@@ -519,14 +416,16 @@ class ShipmentType(BaseObjectType):
     metadata = generic.GenericScalar(required=True, default_value={})
     tracker_id = graphene.String()
 
-    label_type = LabelTypeEnum()
-    status = ShipmentStatusEnum(required=True)
+    label_type = utils.LabelTypeEnum()
+    label_url = graphene.String()
+    invoice_url = graphene.String()
+    status = utils.ShipmentStatusEnum(required=True)
+    tracker = graphene.Field(TrackerType)
 
     class Meta:
         model = manager.Shipment
-        exclude = ("pickup_shipments", "selected_rate_carrier", "carriers")
-        filter_fields = ["status"]
-        interfaces = (CustomNode,)
+        exclude = (*manager.Shipment.HIDDEN_PROPS,)
+        interfaces = (utils.CustomNode,)
 
     def resolve_parcels(self, info):
         return self.parcels.all()
@@ -539,6 +438,9 @@ class ShipmentType(BaseObjectType):
 
     def resolve_carrier_name(self, info):
         return getattr(self.selected_rate_carrier, "carrier_name", None)
+
+    def resolve_tracker(self, info):
+        return self.tracker
 
 
 class WebhookFilter(django_filters.FilterSet):
@@ -570,11 +472,11 @@ class WebhookFilter(django_filters.FilterSet):
         )
 
 
-class WebhookType(BaseObjectType):
+class WebhookType(utils.BaseObjectType):
     class Meta:
         model = events.Webhook
         exclude = ("failure_streak_count",)
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
 class EventFilter(django_filters.FilterSet):
@@ -605,25 +507,56 @@ class EventFilter(django_filters.FilterSet):
         return queryset.filter(Q(type__in=values))
 
 
-class EventType(BaseObjectType):
+class EventType(utils.BaseObjectType):
     data = generic.GenericScalar()
 
     class Meta:
         model = events.Event
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
-class ServiceLevelType(BaseObjectType):
+class ServiceLevelType(utils.BaseObjectType):
     class Meta:
         model = providers.ServiceLevel
         exclude = ("dhlpolandsettings_set",)
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
 
 
-class LabelTemplateType(BaseObjectType):
+class LabelTemplateType(utils.BaseObjectType):
     class Meta:
         model = providers.LabelTemplate
-        interfaces = (CustomNode,)
+        interfaces = (utils.CustomNode,)
+
+
+class BaseConnectionType:
+    carrier_name = graphene.String(required=True)
+
+    def resolve_carrier_name(self, info):
+        return getattr(self, "settings", self).carrier_name
+
+
+class SystemConnectionType(BaseConnectionType, utils.BaseObjectType):
+    enabled = graphene.Boolean(required=True)
+
+    class Meta:
+        model = providers.Carrier
+        fields = (
+            "created_at",
+            "updated_at",
+            "id",
+            "test",
+            "carrier_id",
+            "carrier_name",
+            "active",
+            "test",
+            "capabilities",
+        )
+
+    def resolve_enabled(self, info):
+        if hasattr(self, "active_orgs"):
+            return self.active_orgs.filter(id=info.context.org.id).exists()
+
+        return self.active_users.filter(id=info.context.user.id).exists()
 
 
 class ConnectionType(graphene.Interface, BaseConnectionType):
@@ -665,7 +598,7 @@ def CreateCarrierSettingTypes(carrier_model):
         carrier_model.__name__,
         (
             BaseConnectionType,
-            BaseObjectType,
+            utils.BaseObjectType,
         ),
         {"Meta": Meta, **_extra_fields},
     )

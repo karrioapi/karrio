@@ -22,6 +22,7 @@ from eshipper_lib.shipping_reply import (
 )
 from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     RateDetails,
@@ -46,11 +47,13 @@ from purplship.providers.eshipper.error import parse_error_response
 
 
 def parse_shipping_reply(
-        response: Element, settings: Settings
+    response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     shipping_node = XP.find("ShippingReply", response, first=True)
     shipment = (
-        _extract_shipment(shipping_node, settings) if shipping_node is not None else None
+        _extract_shipment(shipping_node, settings)
+        if shipping_node is not None
+        else None
     )
 
     return shipment, parse_error_response(response, settings)
@@ -60,7 +63,9 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipping = XP.build(ShippingReplyType, node)
     quote: QuoteType = shipping.Quote
 
-    tracking_number = getattr(next(iter(shipping.Package), None), 'trackingNumber', None)
+    tracking_number = getattr(
+        next(iter(shipping.Package), None), "trackingNumber", None
+    )
     rate_provider, service, service_name = Service.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
@@ -78,7 +83,8 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
             currency=quote.currency,
             amount=NF.decimal(quote.fuelSurcharge),
         )
-        if quote.fuelSurcharge is not None else None
+        if quote.fuelSurcharge is not None
+        else None
     )
 
     return ShipmentDetails(
@@ -86,7 +92,6 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
         shipment_identifier=shipping.Order.id,
-        label=shipping.Labels,
         selected_rate=(
             RateDetails(
                 carrier_name=settings.carrier_name,
@@ -97,29 +102,33 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
                 total_charge=NF.decimal(quote.totalCharge),
                 transit_days=quote.transitDays,
                 extra_charges=([fuel_surcharge] + surcharges),
-                meta=dict(
-                    rate_provider=rate_provider,
-                    service_name=service_name
-                )
-            ) if quote is not None else None
+                meta=dict(rate_provider=rate_provider, service_name=service_name),
+            )
+            if quote is not None
+            else None
         ),
+        docs=Documents(label=shipping.Labels),
         meta=dict(
             rate_provider=rate_provider,
             service_name=service_name,
-            tracking_url=shipping.TrackingURL
-        )
+            tracking_url=shipping.TrackingURL,
+        ),
     )
 
 
 def shipping_request(
-        payload: ShipmentRequest, settings: Settings
+    payload: ShipmentRequest, settings: Settings
 ) -> Serializable[EShipper]:
-    packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
+    packages = Packages(
+        payload.parcels, required=["weight", "height", "width", "length"]
+    )
     options = Options(payload.options, Option)
 
     service = Service.map(payload.service).value_or_key
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
-    packaging = ("Pallet" if packaging_type in [PackagingType.pallet.value] else "Package")
+    packaging = (
+        "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
+    )
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
         if payload.options.get("freight_class") in FreightClass
@@ -131,11 +140,15 @@ def shipping_request(
     item = next(
         iter(payload.customs.commodities if payload.customs is not None else []), None
     )
-    payer: Address = {
-        PaymentType.sender: payload.shipper,
-        PaymentType.recipient: payload.recipient,
-        PaymentType.third_party: payload.recipient,
-    }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
+    payer: Address = (
+        {
+            PaymentType.sender: payload.shipper,
+            PaymentType.recipient: payload.recipient,
+            PaymentType.third_party: payload.recipient,
+        }.get(PaymentType[payload.payment.paid_by])
+        if payload.payment
+        else None
+    )
 
     request = EShipper(
         username=settings.username,
@@ -203,14 +216,17 @@ def shipping_request(
                     CODReturnAddress=CODReturnAddressType(
                         codCompany=payload.recipient.company_name,
                         codName=payload.recipient.person_name,
-                        codAddress1=SF.concat_str(payload.recipient.address_line1, join=True),
+                        codAddress1=SF.concat_str(
+                            payload.recipient.address_line1, join=True
+                        ),
                         codCity=payload.recipient.city,
                         codStateCode=payload.recipient.state_code,
                         codZip=payload.recipient.postal_code,
                         codCountry=payload.recipient.country_code,
                     ),
                 )
-                if options.cash_on_delivery is not None else None
+                if options.cash_on_delivery is not None
+                else None
             ),
             Packages=PackagesType(
                 Package=[
@@ -232,11 +248,13 @@ def shipping_request(
             ),
             Payment=(
                 RequestPaymentType(type_=payment_type)
-                if payload.payment is not None else None
+                if payload.payment is not None
+                else None
             ),
             Reference=(
                 [ReferenceType(name="REF", code=payload.reference)]
-                if payload.reference != "" else None
+                if payload.reference != ""
+                else None
             ),
             CustomsInvoice=(
                 CustomsInvoiceType(
@@ -249,7 +267,9 @@ def shipping_request(
                         zip=payer.postal_code,
                         country=payer.country_code,
                     ),
-                    Contact=ContactType(name=payer.person_name, phone=payer.phone_number),
+                    Contact=ContactType(
+                        name=payer.person_name, phone=payer.phone_number
+                    ),
                     Item=ItemType(
                         code=item.sku,
                         description=item.description,
@@ -258,7 +278,8 @@ def shipping_request(
                         unitPrice=item.value_amount,
                     ),
                 )
-                if all([payload.customs, payer]) else None
+                if all([payload.customs, payer])
+                else None
             ),
         ),
     )

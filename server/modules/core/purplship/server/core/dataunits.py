@@ -1,3 +1,4 @@
+from attr import has
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -13,15 +14,35 @@ REFERENCE_MODELS = {
     "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
     "incoterms": {c.name: c.value for c in list(Incoterm)},
 }
+REFERENCE_EXCLUSIONS = [
+    "currencies",
+    "incoterms",
+    "weight_units",
+    "dimension_units",
+    "payment_types",
+    "option_names",
+    "customs_content_type",
+    "options",
+]
 
 
-def contextual_metadata():
+def contextual_metadata(request: Request):
+    host = (
+        request.build_absolute_uri(reverse("purplship.server.core:metadata", kwargs={}))
+        if hasattr(request, "build_absolute_uri")
+        else ""
+    )
     return {
         "VERSION": settings.VERSION,
         "APP_NAME": settings.APP_NAME,
+        **({"APP_WEBSITE": settings.APP_WEBSITE} if settings.APP_WEBSITE else {}),
+        "ADMIN": f"{host}admin/",
+        "OPENAPI": f"{host}openapi",
+        "GRAPHQL": f"{host}graphql",
         "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
-        **({"APP_WEBSITE": settings.APP_WEBSITE} if settings.APP_WEBSITE else {}),
+        "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
+        "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
     }
 
 
@@ -29,17 +50,11 @@ def contextual_reference(request: Request):
     import purplship.server.core.validators as validators
     import purplship.server.core.gateway as gateway
 
-    is_authenticated = request.auth is not None
-    host = request.build_absolute_uri(
-        reverse("purplship.server.core:metadata", kwargs={})
-    )
+    is_authenticated = getattr(request, "auth", None) is not None
     references = {
-        **contextual_metadata(),
-        "ADMIN": f"{host}admin/",
-        "OPENAPI": f"{host}openapi",
-        "GRAPHQL": f"{host}graphql",
+        **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
-        **REFERENCE_MODELS,
+        **{k: v for k, v in REFERENCE_MODELS.items() if k not in REFERENCE_EXCLUSIONS},
     }
 
     if is_authenticated and "generic" in MODELS:
@@ -48,7 +63,7 @@ def contextual_reference(request: Request):
             for c in gateway.Carriers.list(context=request, carrier_name="generic")
         ]
         extra_carriers = {
-            c.custom_carrier_name: c.verbose_name for c in custom_carriers
+            c.custom_carrier_name: c.display_name for c in custom_carriers
         }
         extra_services = {
             c.custom_carrier_name: {

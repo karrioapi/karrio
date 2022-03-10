@@ -1,5 +1,6 @@
 import logging
 from typing import Optional, Any
+import typing
 from django.db import transaction
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -19,12 +20,12 @@ import purplship.server.core.datatypes as datatypes
 from purplship.server.providers.models import Carrier, MODELS
 from purplship.server.core.serializers import (
     SHIPMENT_STATUS,
+    Documents,
     ShipmentStatus,
     ShipmentData,
     Shipment,
     Payment,
     Rate,
-    ShippingRequest,
     ShipmentCancelRequest,
     LABEL_TYPES,
     LabelType,
@@ -32,12 +33,14 @@ from purplship.server.core.serializers import (
     PlainDictField,
     StringListField,
     TrackerStatus,
+    ShipmentDetails,
 )
 from purplship.server.manager.serializers.address import AddressSerializer
 from purplship.server.manager.serializers.customs import CustomsSerializer
 from purplship.server.manager.serializers.parcel import ParcelSerializer
 from purplship.server.manager.serializers.rate import RateSerializer
 import purplship.server.manager.models as models
+from uritemplate import partial
 
 logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: Any = dict(active=True, capability="shipping")
@@ -54,6 +57,7 @@ class ShipmentSerializer(ShipmentData):
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
     test_mode = BooleanField(required=False)
+    docs = Documents(required=False)
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
 
@@ -68,6 +72,7 @@ class ShipmentSerializer(ShipmentData):
                 instance,
                 payload=data,
                 context=context,
+                partial=True,
             )
 
         super().__init__(instance, **kwargs)
@@ -76,9 +81,12 @@ class ShipmentSerializer(ShipmentData):
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
         carrier_filter = validated_data.get("carrier_filter") or {}
         carrier_ids = validated_data.get("carrier_ids") or []
+        service = validated_data.get("service")
+        services = [service] if service is not None else validated_data.get("services")
         carriers = Carriers.list(
             context=context,
             carrier_ids=carrier_ids,
+            **({"services": services} if any(services) else {}),
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
         payment = validated_data.get("payment") or DP.to_dict(
@@ -86,10 +94,14 @@ class ShipmentSerializer(ShipmentData):
                 currency=(validated_data.get("options") or {}).get("currency")
             )
         )
+        rating_data = {
+            **validated_data,
+            **({"services": services} if any(services) else {}),
+        }
 
-        # Get live rates
+        # Get live rates.
         rate_response: datatypes.RateResponse = (
-            SerializerDecorator[RateSerializer](data=validated_data, context=context)
+            SerializerDecorator[RateSerializer](data=rating_data, context=context)
             .save(carriers=carriers)
             .instance
         )
@@ -130,6 +142,10 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
+
+        # Buy label if preferred service is already selected.
+        if service:
+            return buy_shipment_label(shipment, context, service=service)
 
         return shipment
 
@@ -179,6 +195,11 @@ class ShipmentSerializer(ShipmentData):
                 payload=validated_data,
                 context=context,
             )
+
+        if "docs" in validated_data:
+            changes.append("label")
+            instance.label = validated_data["docs"].get("label") or instance.label
+            instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
@@ -314,7 +335,7 @@ class ShipmentPurchaseSerializer(Shipment):
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(
-            ShippingRequest(validated_data).data,
+            Shipment(validated_data).data,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
                     "purplship.server.manager:shipment-tracker",
@@ -353,6 +374,56 @@ class ShipmentCancelSerializer(Shipment):
         return response
 
 
+def buy_shipment_label(
+    shipment: models.Shipment,
+    context: typing.Any,
+    data: dict = dict(),
+    service: str = None,
+):
+    selected_rate_id = (
+        data.get("selected_rate_id")
+        if service is None
+        else next(
+            (rate["id"] for rate in shipment.rates if rate["service"] == service), None
+        )
+    )
+    payload = {**data, "selected_rate_id": selected_rate_id}
+
+    # Submit shipment to carriers
+    response: Shipment = (
+        SerializerDecorator[ShipmentPurchaseSerializer](
+            context=context,
+            data={**Shipment(shipment).data, **payload},
+        )
+        .save()
+        .instance
+    )
+
+    parcels = [
+        {"id": parcel.id, "reference_number": parcel.reference_number}
+        for parcel in response.parcels
+    ]
+
+    # Update shipment state
+    purchased_shipment = (
+        SerializerDecorator[ShipmentSerializer](
+            shipment,
+            context=context,
+            data={
+                **payload,
+                **ShipmentDetails(response).data,
+                "parcels": parcels,
+            },
+        )
+        .save()
+        .instance
+    )
+
+    create_shipment_tracker(purchased_shipment, context=context)
+
+    return purchased_shipment
+
+
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
     if shipment is not None:
         shipment.selected_rate = None
@@ -374,7 +445,7 @@ def can_mutate_shipment(
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if update and shipment.status != ShipmentStatus.created.value:
+    if update and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Shipment is {shipment.status} and cannot be updated anymore...",
             code="state_error",
@@ -383,7 +454,7 @@ def can_mutate_shipment(
 
     if delete and shipment.status not in [
         ShipmentStatus.purchased.value,
-        ShipmentStatus.created.value,
+        ShipmentStatus.draft.value,
     ]:
         raise PurplshipAPIException(
             f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
@@ -391,10 +462,10 @@ def can_mutate_shipment(
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if delete and shipment.pickup_shipments.exists():
+    if delete and shipment.shipment_pickup.exists():
         raise PurplshipAPIException(
             (
-                f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
+                f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
                 "Please cancel this shipment pickup before."
             ),
             code="state_error",
@@ -403,8 +474,8 @@ def can_mutate_shipment(
 
 
 def remove_shipment_tracker(shipment: models.Shipment):
-    if any(shipment.tracker.all()):
-        shipment.tracker.all().delete()
+    if any(shipment.shipment_tracker.all()):
+        shipment.shipment_tracker.all().delete()
 
 
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):

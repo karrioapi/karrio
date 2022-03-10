@@ -30,17 +30,15 @@ class CommoditySerializer(CommodityData):
 
 
 def can_mutate_commodity(
-    commodity: models.Commodity, update: bool = False, delete: bool = False
+    commodity: models.Commodity, update: bool = False, delete: bool = False, **kwargs
 ):
-    shipment = models.Shipment.objects.filter(
-        Q(customs__commodities__id=commodity.id) | Q(parcels__items__id=commodity.id)
-    ).first()
-    order = commodity.order.first() if settings.ORDERS_MANAGEMENT else None
+    shipment = commodity.shipment
+    order = commodity.order
 
     if shipment is None and order is None:
         return
 
-    if update and shipment and shipment.status != ShipmentStatus.created.value:
+    if update and shipment and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,

@@ -119,7 +119,7 @@ def update_shipment_tracker(tracker: models.Tracking):
         elif tracker == TrackerStatus.pending.value:
             status = tracker.shipment.status
         else:
-            status = ShipmentStatus.transit.value
+            status = ShipmentStatus.in_transit.value
 
         if tracker.shipment is not None and tracker.shipment.status != status:
             tracker.shipment.status = status

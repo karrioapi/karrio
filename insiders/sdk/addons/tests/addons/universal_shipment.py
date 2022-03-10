@@ -79,7 +79,12 @@ settings_data = {
             "international": False,
         },
     ],
-    "metadata": {"APP_ID": "00", "SERIAL": "00099999000"},
+    "metadata": {
+        "APP_ID": "00",
+        "EXTENSION_DIGIT": "0",
+        "GS1_PREFIX": "0099999000",
+        "CHECK_DIGIT": "5",
+    },
 }
 
 shipment_request_data = {
@@ -140,10 +145,10 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "custom-carrier",
         "carrier_name": "custom_carrier",
-        "label": ANY,
         "label_type": "ZPL",
         "shipment_identifier": ANY,
         "tracking_number": ANY,
+        "docs": {"label": ANY},
         "meta": {
             "service_name": "Premium",
         },
@@ -155,8 +160,8 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_id": "custom-carrier",
         "carrier_name": "custom_carrier",
-        "label": ANY,
         "label_type": "PDF",
+        "docs": {"label": ANY},
         "meta": {
             "service_name": "Premium",
             "tracking_identifiers": ANY,

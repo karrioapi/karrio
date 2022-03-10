@@ -17,8 +17,14 @@ class PurplshipLoggingMixin(LoggingMixin):
             if "query_params" not in self.log
             else DP.jsonify(self.log["query_params"])
         )
+        response = None if "response" not in self.log else DP.jsonify(self.log["response"])
 
-        log = APILog(**{**self.log, "data": data, "query_params": query_params})
+        log = APILog(**{
+            **self.log,
+            "data": data,
+            "response": response,
+            "query_params": query_params
+        })
         log.save()
 
         if (importlib.util.find_spec("purplship.server.orgs") is not None) and (

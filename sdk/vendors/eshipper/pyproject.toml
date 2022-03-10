@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.eshipper"
-version = "2021.10.1"
+version = "2022.2"
 homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/eshipper"
 repository="https://github.com/purplship/purplship"
 description = "eShipper purplship extension"

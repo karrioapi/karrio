@@ -24,6 +24,7 @@ from canadapost_lib.shipment import (
 from purplship.core.units import Currency, WeightUnit, Options, Packages
 from purplship.core.utils import Serializable, Element, XP, SF
 from purplship.core.models import (
+    Documents,
     Duty,
     Message,
     ShipmentDetails,
@@ -62,7 +63,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=getattr(label, "text", None),
+        docs=Documents(label=getattr(label, "text", None)),
     )
 
 
@@ -229,7 +230,7 @@ def shipment_request(
             references=ReferencesType(
                 cost_centre=payload.reference,
                 customer_ref_1=payload.reference,
-                customer_ref_2=getattr(payload, "id", None),
+                customer_ref_2=None,
             ),
             settlement_info=SettlementInfoType(
                 paid_by_customer=(

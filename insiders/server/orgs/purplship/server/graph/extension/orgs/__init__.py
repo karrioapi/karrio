@@ -1,9 +1,10 @@
 import graphene
 
-from purplship.server.graph.extension.base.types import login_required
+import purplship.server.graph.utils as utils
 import purplship.server.graph.extension.orgs.types as types
 import purplship.server.graph.extension.orgs.mutations as mutations
 import purplship.server.orgs.models as models
+from purplship.server.orgs.utils import admin_required
 
 
 class Query:
@@ -16,18 +17,40 @@ class Query:
     organization = graphene.Field(
         types.OrganizationType, id=graphene.String(required=True)
     )
+    organization_invitation = graphene.Field(
+        types.OrganizationInvitationType,
+        id=graphene.String(required=False),
+        guid=graphene.String(required=False),
+    )
 
-    @login_required
+    def resolve_organization_invitation(self, info, **kwargs):
+        return models.OrganizationInvitation.objects.get(**kwargs)
+
+    @utils.login_required
     def resolve_organization(self, info, **kwargs):
-        return models.Organization.objects.get(users__id=info.context.user.id, **kwargs)
+        return models.Organization.objects.get(
+            users__id=info.context.user.id, is_active=True, **kwargs
+        )
 
-    @login_required
+    @utils.login_required
     def resolve_organizations(self, info, **kwargs):
         return models.Organization.objects.filter(
-            users__id=info.context.user.id, **kwargs
+            users__id=info.context.user.id, is_active=True, **kwargs
         )
 
 
 class Mutation:
     create_organization = mutations.CreateOrganization.Field()
     update_organization = mutations.UpdateOrganization.Field()
+    delete_organization = mutations.DeleteOrganization.Field()
+
+    change_organization_owner = mutations.ChangeOrganizationOwner.Field()
+    set_organization_user_roles = mutations.SetOrganizationUserRoles.Field()
+
+    send_organization_invites = mutations.SendOrganizationInvites.Field()
+    accept_organization_invitation = mutations.AcceptOrganizationInvitation.Field()
+    delete_organization_invitation = utils.create_delete_mutation(
+        "DeleteOrganizationInvitation",
+        models.OrganizationInvitation,
+        validator=admin_required,
+    ).Field()

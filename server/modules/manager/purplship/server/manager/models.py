@@ -1,6 +1,8 @@
 from functools import partial
 from typing import List, cast, Optional
+from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from purplship.server.core.utils import identity
 from purplship.server.providers.models import Carrier
@@ -17,6 +19,17 @@ from purplship.server.core.serializers import (
 
 
 class Address(OwnedEntity):
+    HIDDEN_PROPS = (
+        "shipper_shipment",
+        "recipient_shipment",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+        *(
+            ("shipper_order", "recipient_order")
+            if settings.ORDERS_MANAGEMENT
+            else tuple()
+        ),
+    )
+
     class Meta:
         db_table = "address"
         verbose_name = "Address"
@@ -54,8 +67,43 @@ class Address(OwnedEntity):
     def object_type(self):
         return "address"
 
+    @property
+    def shipment(self):
+        if hasattr(self, "shipper_shipment"):
+            return self.shipper_shipment.first()
+        if hasattr(self, "recipient_shipment"):
+            return self.recipient_shipment.first()
+
+        return None
+
+    @property
+    def order(self):
+        if hasattr(self, "shipper_order"):
+            return self.shipper_order.first()
+        if hasattr(self, "recipient_order"):
+            return self.recipient_order.first()
+
+        return None
+
+
+class ParcelManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "items",
+            )
+        )
+
 
 class Parcel(OwnedEntity):
+    HIDDEN_PROPS = (
+        "parcel_shipment",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+    )
+    objects = ParcelManager()
+
     class Meta:
         db_table = "parcel"
         verbose_name = "Parcel"
@@ -84,7 +132,9 @@ class Parcel(OwnedEntity):
     dimension_unit = models.CharField(
         max_length=2, choices=DIMENSION_UNIT, null=True, blank=True
     )
-    items = models.ManyToManyField("Commodity", blank=True, related_name="parcel")
+    items = models.ManyToManyField(
+        "Commodity", blank=True, related_name="commodity_parcel"
+    )
     reference_number = models.CharField(max_length=100, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
@@ -95,8 +145,26 @@ class Parcel(OwnedEntity):
     def object_type(self):
         return "parcel"
 
+    @property
+    def shipment(self):
+        return self.parcel_shipment.first()
+
 
 class Commodity(OwnedEntity):
+    HIDDEN_PROPS = (
+        "children",
+        "commodity_parcel",
+        "commodity_customs",
+        *(
+            (
+                "org",
+                "commodity_order",
+            )
+            if settings.MULTI_ORGANIZATIONS
+            else tuple()
+        ),
+    )
+
     class Meta:
         db_table = "commodity"
         verbose_name = "Commodity"
@@ -143,6 +211,29 @@ class Commodity(OwnedEntity):
     def object_type(self):
         return "commodity"
 
+    @property
+    def parcel(self):
+        return self.commodity_parcel.first()
+
+    @property
+    def customs(self):
+        return self.commodity_customs.first()
+
+    @property
+    def shipment(self):
+        related = self.customs or self.parcel
+
+        getattr(related, "shipment", None)
+
+    @property
+    def order(self):
+        if self.commodity_order.exists():
+            return self.commodity_order.first()
+        if self.parent is not None:
+            return self.parent.order
+
+        return None
+
 
 class CustomsManager(models.Manager):
     def get_queryset(self):
@@ -171,6 +262,10 @@ class Customs(OwnedEntity):
         "options",
     ]
     RELATIONAL_PROPS = ["commodities"]
+    HIDDEN_PROPS = (
+        "customs_shipment",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+    )
     objects = CustomsManager()
 
     class Meta:
@@ -205,7 +300,7 @@ class Customs(OwnedEntity):
     # System Reference fields
 
     commodities = models.ManyToManyField(
-        "Commodity", blank=True, related_name="customs"
+        "Commodity", blank=True, related_name="commodity_customs"
     )
 
     def delete(self, *args, **kwargs):
@@ -215,6 +310,13 @@ class Customs(OwnedEntity):
     @property
     def object_type(self):
         return "customs_info"
+
+    @property
+    def shipment(self):
+        if hasattr(self, "customs_shipment"):
+            return self.customs_shipment
+
+        return None
 
 
 class PickupManager(models.Manager):
@@ -270,7 +372,11 @@ class Pickup(OwnedEntity):
     )
     pickup_charge = models.JSONField(blank=True, null=True)
     address = models.ForeignKey(
-        "Address", on_delete=models.CASCADE, blank=True, null=True
+        "Address",
+        on_delete=models.CASCADE,
+        related_name="address_pickup",
+        blank=True,
+        null=True,
     )
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
@@ -279,7 +385,7 @@ class Pickup(OwnedEntity):
     # System Reference fields
 
     pickup_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    shipments = models.ManyToManyField("Shipment", related_name="pickup_shipments")
+    shipments = models.ManyToManyField("Shipment", related_name="shipment_pickup")
 
     def delete(self, *args, **kwargs):
         handle = self.address or super()
@@ -320,6 +426,10 @@ class TrackingManager(models.Manager):
 
 
 class Tracking(OwnedEntity):
+    HIDDEN_PROPS = (
+        "tracking_carrier",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+    )
     objects = TrackingManager()
 
     class Meta:
@@ -356,7 +466,7 @@ class Tracking(OwnedEntity):
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
     shipment = models.ForeignKey(
-        "Shipment", on_delete=models.CASCADE, related_name="tracker", null=True
+        "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
 
     # Computed properties
@@ -385,21 +495,22 @@ class ShipmentManager(models.Manager):
         return (
             super()
             .get_queryset()
+            .defer("label", "invoice")
             .prefetch_related(
                 "shipper",
                 "recipient",
                 "parcels",
+                "parcels__items",
                 "carriers",
                 "selected_rate_carrier",
                 "created_by",
-                "tracker",
+                "shipment_tracker",
             )
         )
 
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        "label",
         "options",
         "services",
         "status",
@@ -417,6 +528,15 @@ class Shipment(OwnedEntity):
         "reference",
     ]
     RELATIONAL_PROPS = ["shipper", "recipient", "parcels", "customs", "selected_rate"]
+    HIDDEN_PROPS = (
+        "carriers",
+        "label",
+        "invoice",
+        "shipment_pickup",
+        "shipment_tracker",
+        "selected_rate_carrier",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+    )
     objects = ShipmentManager()
 
     class Meta:
@@ -435,28 +555,30 @@ class Shipment(OwnedEntity):
         max_length=50, choices=SHIPMENT_STATUS, default=SHIPMENT_STATUS[0][0]
     )
 
-    recipient = models.ForeignKey(
+    recipient = models.OneToOneField(
         "Address", on_delete=models.CASCADE, related_name="recipient_shipment"
     )
-    shipper = models.ForeignKey(
+    shipper = models.OneToOneField(
         "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
-    label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     reference = models.CharField(max_length=100, null=True, blank=True)
 
-    customs = models.ForeignKey(
+    customs = models.OneToOneField(
         "Customs",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name="shipment",
+        related_name="customs_shipment",
     )
+
+    label = models.TextField(max_length=None, null=True, blank=True)
+    invoice = models.TextField(max_length=None, null=True, blank=True)
 
     selected_rate = models.JSONField(blank=True, null=True)
     payment = models.JSONField(
@@ -479,14 +601,14 @@ class Shipment(OwnedEntity):
     # System Reference fields
 
     rates = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
-    parcels = models.ManyToManyField("Parcel", related_name="shipment")
+    parcels = models.ManyToManyField("Parcel", related_name="parcel_shipment")
     carriers = models.ManyToManyField(
         Carrier, blank=True, related_name="related_shipments"
     )
     selected_rate_carrier = models.ForeignKey(
         Carrier,
         on_delete=models.CASCADE,
-        related_name="shipments",
+        related_name="carrier_shipments",
         blank=True,
         null=True,
     )
@@ -532,4 +654,30 @@ class Shipment(OwnedEntity):
             cast(dict, self.selected_rate).get("service")
             if self.selected_rate is not None
             else None
+        )
+
+    @property
+    def tracker(self):
+        return self.shipment_tracker.first()
+
+    @property
+    def label_url(self) -> str:
+        if self.label is None:
+            return None
+
+        return reverse(
+            "purplship.server.manager:shipment-docs",
+            kwargs=dict(
+                pk=self.pk, doc="label", format=(self.label_type or "PDF").lower()
+            ),
+        )
+
+    @property
+    def invoice_url(self) -> str:
+        if self.invoice is None:
+            return None
+
+        return reverse(
+            "purplship.server.manager:shipment-docs",
+            kwargs=dict(pk=self.pk, doc="invoice", format="pdf"),
         )

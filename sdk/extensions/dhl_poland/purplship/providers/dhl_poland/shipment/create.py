@@ -24,6 +24,7 @@ from dhl_poland_lib.services import (
     CreateShipmentResponse,
 )
 from purplship.core.models import (
+    Documents,
     Message,
     Payment,
     ShipmentRequest,
@@ -79,8 +80,10 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_name=settings.carrier_name,
         tracking_number=shipment.shipmentNotificationNumber,
         shipment_identifier=shipment.shipmentTrackingNumber,
-        label=shipment.label.labelContent,
-        meta=dict(invoice=shipment.label.fvProformaContent),
+        docs=Documents(
+            label=shipment.label.labelContent,
+            invoice=shipment.label.fvProformaContent,
+        ),
     )
 
 

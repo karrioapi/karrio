@@ -57,14 +57,14 @@ class ParcelSerializer(ParcelData):
 
 
 def can_mutate_parcel(
-    parcel: models.Parcel, update: bool = False, delete: bool = False
+    parcel: models.Parcel, update: bool = False, delete: bool = False, **kwargs
 ):
-    shipment = parcel.shipment.first()
+    shipment = parcel.shipment
 
     if shipment is None:
         return
 
-    if update and shipment.status != ShipmentStatus.created.value:
+    if update and shipment.status != ShipmentStatus.draft.value:
         raise PurplshipAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,

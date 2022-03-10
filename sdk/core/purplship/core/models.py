@@ -292,14 +292,22 @@ class TrackingDetails:
 
 
 @attr.s(auto_attribs=True)
+class Documents:
+    """Purplship unified shipment details data type."""
+
+    label: str
+    invoice: str = None
+
+
+@attr.s(auto_attribs=True)
 class ShipmentDetails:
     """Purplship unified shipment details data type."""
 
     carrier_name: str
     carrier_id: str
-    label: str
     tracking_number: str
     shipment_identifier: str
+    docs: Documents = JStruct[Documents, REQUIRED]
     selected_rate: RateDetails = JStruct[RateDetails]
     label_type: str = None
     meta: dict = None

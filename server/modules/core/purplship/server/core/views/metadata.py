@@ -18,6 +18,8 @@ class Metadata(Serializer):
     APP_WEBSITE = CharField(required=False, allow_null=True)
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
+    APPS_MANAGEMENT = BooleanField()
+    ALLOW_SIGNUP = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()
@@ -34,10 +36,4 @@ class Metadata(Serializer):
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def view(request: Request) -> Response:
-    metadata = {
-        **dataunits.contextual_metadata(),
-        "ADMIN": f"{request.build_absolute_uri()}admin/",
-        "OPENAPI": f"{request.build_absolute_uri()}openapi",
-        "GRAPHQL": f"{request.build_absolute_uri()}graphql",
-    }
-    return Response(metadata)
+    return Response(dataunits.contextual_metadata(request))

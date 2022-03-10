@@ -43,7 +43,13 @@ from purplship.core.utils import (
     SF,
 )
 from purplship.core.units import Options, Packages, PaymentType, CompleteAddress
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
+from purplship.core.models import (
+    Documents,
+    ShipmentRequest,
+    ShipmentDetails,
+    Message,
+    Payment,
+)
 from purplship.providers.ups_ground.units import (
     PackagingType,
     ServiceCode,
@@ -73,7 +79,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
-        label=None,
+        docs=Documents(label=""),
     )
 
 

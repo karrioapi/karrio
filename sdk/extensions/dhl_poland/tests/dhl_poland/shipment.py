@@ -156,10 +156,9 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "dhl_poland",
         "carrier_name": "dhl_poland",
-        "label": ANY,
-        "meta": {"invoice": "string"},
         "shipment_identifier": "string",
         "tracking_number": "string",
+        "docs": {"invoice": "string", "label": ANY},
     },
     [],
 ]

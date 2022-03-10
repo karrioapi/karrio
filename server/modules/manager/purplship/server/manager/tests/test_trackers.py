@@ -69,7 +69,7 @@ TRACKING_RESPONSE = {
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
     "delivered": False,
-    "status": "in-transit",
+    "status": "in_transit",
     "estimated_delivery": None,
     "events": [
         {

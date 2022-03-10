@@ -1,7 +1,7 @@
 import logging
-from attr import has
 from django.db.models import signals
 
+from purplship.server.core import utils
 from purplship.server.conf import settings
 from purplship.server.core.utils import failsafe
 from purplship.server.events.serializers import EventTypes
@@ -23,6 +23,7 @@ def register_signals():
     logger.info("order webhooks signals registered...")
 
 
+@utils.disable_for_loaddata
 def commodity_mutated(sender, instance, *args, **kwargs):
     """Commodity mutations (added or removed)"""
 
@@ -34,7 +35,7 @@ def commodity_mutated(sender, instance, *args, **kwargs):
     if parent is None:
         return
 
-    if parent.order.exists() is False:
+    if parent.order is None:
         return
 
     # Retrieve all orders associated with this commodity and update their status if needed
@@ -48,6 +49,7 @@ def commodity_mutated(sender, instance, *args, **kwargs):
             logger.info("commodity related order successfully updated")
 
 
+@utils.disable_for_loaddata
 def shipment_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -55,13 +57,15 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
-    if not instance.parcels.filter(items__parent__order__isnull=False).exists():
+    if not instance.parcels.filter(
+        items__parent__commodity_order__isnull=False
+    ).exists():
         return
 
-    if instance.status != serializers.ShipmentStatus.created.value:
+    if instance.status != serializers.ShipmentStatus.draft.value:
         # Retrieve all orders associated with this shipment and update their status if needed
         for order in models.Order.objects.filter(
-            line_items__children__parcel__shipment__id=instance.id
+            line_items__children__commodity_parcel__parcel_shipment__id=instance.id
         ).distinct():
             status = compute_order_status(order)
             if status != order.status:
@@ -70,6 +74,7 @@ def shipment_updated(
                 logger.info("shipment related order successfully updated")
 
 
+@utils.disable_for_loaddata
 def order_updated(sender, instance, *args, **kwargs):
     """Order related events:
     - order created

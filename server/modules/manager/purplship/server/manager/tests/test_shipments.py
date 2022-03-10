@@ -276,11 +276,12 @@ SHIPMENT_RATES = {
 SHIPMENT_RESPONSE = {
     "id": ANY,
     "object_type": "shipment",
-    "status": "created",
+    "status": "draft",
     "carrier_name": None,
     "carrier_id": None,
-    "label": None,
     "label_type": "PDF",
+    "label_url": None,
+    "invoice_url": None,
     "meta": {},
     "metadata": {},
     "tracking_number": None,
@@ -346,7 +347,7 @@ SHIPMENT_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
-            "reference_number": None,
+            "reference_number": ANY,
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -403,9 +404,9 @@ SELECTED_RATE = {
     "total_charge": 106.71,
     "transit_days": 2,
     "meta": {
+        "carrier_connection_id": ANY,
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
-        "carrier_connection_id": ANY,
     },
     "test_mode": True,
 }
@@ -414,9 +415,9 @@ CREATED_SHIPMENT_RESPONSE = (
     ShipmentDetails(
         carrier_id="canadapost",
         carrier_name="canadapost",
-        label="==apodifjoefr",
         tracking_number="123456789012",
         shipment_identifier="123456789012",
+        docs=dict(label="==apodifjoefr"),
     ),
     [],
 )
@@ -437,7 +438,8 @@ PURCHASED_SHIPMENT = {
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
-    "label": ANY,
+    "label_url": ANY,
+    "invoice_url": None,
     "label_type": "PDF",
     "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
     "metadata": {},
@@ -448,7 +450,7 @@ PURCHASED_SHIPMENT = {
     "service": "canadapost_priority",
     "rates": [SELECTED_RATE],
     "tracking_url": "/v1/trackers/canadapost/123456789012?test",
-    "tracker_id": ANY,
+    "tracker_id": None,
     "shipper": {
         "id": ANY,
         "object_type": "address",
@@ -505,7 +507,7 @@ PURCHASED_SHIPMENT = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
-            "reference_number": None,
+            "reference_number": ANY,
         }
     ],
     "services": [],

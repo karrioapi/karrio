@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.addons"
-version = "2022.1"
+version = "2022.2"
 homepage="https://next.purplship.com/docs/guides/sdk"
 repository="https://github.com/purplship/purplship"
 description = "Multi-carrier shipping API integration with python"

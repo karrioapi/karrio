@@ -83,8 +83,8 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "custom-carrier",
         "carrier_name": "custom_carrier",
-        "label": ANY,
         "label_type": "ZPL",
+        "docs": {"label": ANY},
         "meta": {"service_name": "carrier_premium"},
         "shipment_identifier": "2975565",
         "tracking_number": "2975565",

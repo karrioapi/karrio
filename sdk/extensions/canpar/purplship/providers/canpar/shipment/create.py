@@ -9,6 +9,7 @@ from canpar_lib.CanshipBusinessService import (
     Package,
 )
 from purplship.core.models import (
+    Documents,
     Message,
     ShipmentRequest,
     ShipmentDetails,
@@ -30,37 +31,46 @@ from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, 
 from purplship.providers.canpar.rate import _extract_rate_details
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
+def parse_shipment_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
     shipment = XP.to_object(
-        Shipment, next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
+        Shipment,
+        next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None),
     )
-    success = (shipment is not None and shipment.id is not None)
+    success = shipment is not None and shipment.id is not None
     shipment_details = _extract_details(response, settings) if success else None
 
     return shipment_details, parse_error_response(response, settings)
 
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
-    label = next(iter(response.xpath(".//*[local-name() = $name]", name="labels")), None)
+    shipment_node = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None
+    )
+    label = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="labels")), None
+    )
     shipment = XP.to_object(Shipment, shipment_node)
     tracking_number = next(iter(shipment.packages), Package()).barcode
 
     return ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        label=str(label.text),
         tracking_number=tracking_number,
         shipment_identifier=str(shipment.id),
         selected_rate=_extract_rate_details(shipment_node, settings),
+        docs=Documents(label=str(label.text)),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Pipeline]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[Pipeline]:
 
     request: Pipeline = Pipeline(
         process=lambda *_: _process_shipment(payload, settings),
-        get_label=partial(_get_label, settings=settings)
+        get_label=partial(_get_label, settings=settings),
     )
 
     return Serializable(request)
@@ -71,14 +81,23 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     options = Options(payload.options, Option)
     service_type = Service.map(payload.service).value_or_key
 
-    premium: Optional[bool] = next((True for option, _ in options if option in [
-        Option.canpar_ten_am.value,
-        Option.canpar_noon.value,
-        Option.canpar_saturday.value,
-    ]), None)
+    premium: Optional[bool] = next(
+        (
+            True
+            for option, _ in options
+            if option
+            in [
+                Option.canpar_ten_am.value,
+                Option.canpar_noon.value,
+                Option.canpar_saturday.value,
+            ]
+        ),
+        None,
+    )
     shipping_date = DF.fdatetime(
-        options.shipment_date or time.strftime('%Y-%m-%d'),
-        current_format='%Y-%m-%d', output_format='%Y-%m-%dT%H:%M:%S'
+        options.shipment_date or time.strftime("%Y-%m-%d"),
+        current_format="%Y-%m-%d",
+        output_format="%Y-%m-%dT%H:%M:%S",
     )
 
     request = create_envelope(
@@ -108,7 +127,10 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                     handling=None,
                     handling_type=None,
                     instruction=None,
-                    nsr=(options.canpar_no_signature_required or options.canpar_not_no_signature_required),
+                    nsr=(
+                        options.canpar_no_signature_required
+                        or options.canpar_not_no_signature_required
+                    ),
                     packages=[
                         Package(
                             alternative_reference=None,
@@ -122,8 +144,9 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=('canpar_extra_care' in options) or None
-                        ) for pkg in packages
+                            xc=("canpar_extra_care" in options) or None,
+                        )
+                        for pkg in packages
                     ],
                     pickup_address=Address(
                         address_line_1=payload.shipper.address_line1,
@@ -154,17 +177,18 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                     total_with_handling=None,
                     user_id=None,
                 ),
-                user_id=settings.username
+                user_id=settings.username,
             )
         )
     )
 
     data = Serializable(
-        request, partial(
+        request,
+        partial(
             settings.serialize,
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
-            special_prefixes=dict(shipment_children='xsd1')
-        )
+            special_prefixes=dict(shipment_children="xsd1"),
+        ),
     )
     return Job(id="process", data=data)
 
@@ -172,13 +196,14 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 def _get_label(shipment_response: str, settings: Settings) -> Job:
     response = XP.to_xml(shipment_response)
     shipment = XP.to_object(
-        Shipment, next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
+        Shipment,
+        next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None),
     )
-    success = (shipment is not None and shipment.id is not None)
+    success = shipment is not None and shipment.id is not None
     data = (
         get_label_request(LabelRequest(shipment_id=shipment.id), settings)
-        if success else
-        None
+        if success
+        else None
     )
 
     return Job(id="get_label", data=data, fallback=("" if not success else None))

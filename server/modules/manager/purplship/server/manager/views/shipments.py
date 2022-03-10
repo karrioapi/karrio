@@ -1,3 +1,5 @@
+import io
+import base64
 import logging
 
 from rest_framework.pagination import LimitOffsetPagination
@@ -6,10 +8,12 @@ from rest_framework.request import Request
 from rest_framework import status, serializers
 
 from drf_yasg import openapi
-from django.urls import path
+from django.urls import path, re_path
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
+from django.core.files.base import ContentFile
+from django_downloadview import VirtualDownloadView
 
 from purplship.core.utils import DP
 from purplship.server.core.gateway import Carriers
@@ -27,16 +31,14 @@ from purplship.server.manager.serializers import (
     RateResponse,
     Rate,
     OperationResponse,
-    create_shipment_tracker,
+    buy_shipment_label,
     can_mutate_shipment,
     ShipmentSerializer,
     ShipmentRateData,
     ShipmentUpdateData,
     ShipmentPurchaseData,
-    ShipmentPurchaseSerializer,
     ShipmentCancelSerializer,
     RateSerializer,
-    ShipmentDetails,
 )
 import purplship.server.manager.models as models
 
@@ -292,29 +294,49 @@ class ShipmentPurchase(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, purchase=True, update=True)
 
-        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
-        # Submit shipment to carriers
-        response: Shipment = (
-            SerializerDecorator[ShipmentPurchaseSerializer](
-                context=request,
-                data={**Shipment(shipment).data, **payload},
-            )
-            .save()
-            .instance
-        )
-
-        # Update shipment state
-        SerializerDecorator[ShipmentSerializer](
+        update = buy_shipment_label(
             shipment,
             context=request,
-            data={
-                **payload,
-                **ShipmentDetails(response).data,
-            },
-        ).save()
-        create_shipment_tracker(shipment, context=request)
+            data=SerializerDecorator[ShipmentPurchaseData](data=request.data).data,
+        )
 
-        return Response(Shipment(shipment).data)
+        return Response(Shipment(update).data)
+
+
+class ShipmentDocs(VirtualDownloadView):
+    @swagger_auto_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}label",
+        operation_summary="Retrieve a shipment label",
+        responses={400: ErrorResponse()},
+    )
+    def get(
+        self,
+        request: Request,
+        pk: str,
+        doc: str = "label",
+        format: str = "pdf",
+        **kwargs,
+    ):
+        """
+        Retrieve a shipment label.
+        """
+        shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+
+        self.document = getattr(shipment, doc, None)
+        self.name = f"{doc}_{shipment.tracking_number}.{format}"
+        self.attachment = False
+
+        response = super(ShipmentDocs, self).get(request, pk, doc, format, **kwargs)
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
+
+    def get_file(self):
+        content = base64.b64decode(self.document or "")
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        return ContentFile(buffer.getvalue(), name=self.name)
 
 
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
@@ -329,5 +351,12 @@ router.urls.append(
         "shipments/<str:pk>/purchase",
         ShipmentPurchase.as_view(),
         name="shipment-purchase",
+    )
+)
+router.urls.append(
+    re_path(
+        r"^shipments/(?P<pk>\w+)/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        ShipmentDocs.as_view(),
+        name="shipment-docs",
     )
 )

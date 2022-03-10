@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
@@ -47,9 +47,7 @@ class TestFreightcomShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
@@ -106,7 +104,6 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "freightcom",
         "carrier_name": "freightcom",
-        "label": "[base-64 encoded String]",
         "meta": {
             "rate_provider": "Freightcom",
             "service_name": "central_transport",
@@ -130,6 +127,7 @@ ParsedShipmentResponse = [
         },
         "shipment_identifier": "181004",
         "tracking_number": "052800410000484",
+        "docs": {"label": ANY},
     },
     [],
 ]

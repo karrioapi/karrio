@@ -1,6 +1,7 @@
 import graphene
 import graphene_django.filter as django_filter
 
+import purplship.server.graph.utils as utils
 import purplship.server.graph.extension.orders.mutations as mutations
 import purplship.server.graph.extension.orders.types as types
 import purplship.server.orders.models as models
@@ -15,11 +16,11 @@ class Query:
         default_value=[],
     )
 
-    @types.login_required
+    @utils.login_required
     def resolve_order(self, info, **kwargs):
         return models.Order.access_by(info.context).filter(**kwargs).first()
 
-    @types.login_required
+    @utils.login_required
     def resolve_orders(self, info, **kwargs):
         return models.Order.access_by(info.context)
 

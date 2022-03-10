@@ -7,10 +7,10 @@ from ics_courier_lib.services import (
     PackageInfo,
     PieceInfo,
     ArrayOfString,
-    CreateShipmentResponse
-    
+    CreateShipmentResponse,
 )
 from purplship.core.models import (
+    Documents,
     Message,
     ShipmentRequest,
     ShipmentDetails,
@@ -28,12 +28,15 @@ from purplship.providers.ics_courier.utils import Settings
 from purplship.providers.ics_courier.units import Service, Option
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
+def parse_shipment_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
     package = XP.find("PackageID", response, ArrayOfString, first=True)
     label = XP.find("label", response, first=True)
     details = (
         _extract_details((package.string[0], str(label.text)), settings)
-        if getattr(package, 'string', [None])[0] is not None else None
+        if getattr(package, "string", [None])[0] is not None
+        else None
     )
 
     return details, parse_error_response(response, settings)
@@ -45,13 +48,15 @@ def _extract_details(response: Tuple[str, str], settings: Settings) -> ShipmentD
     return ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        label=label,
         tracking_number=package_id,
         shipment_identifier=package_id,
+        docs=Documents(label=label),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Envelope]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[Envelope]:
     packages = Packages(payload.parcels)
     options = Options(payload.options, Option)
     product = Service.map(payload.service).value_or_key
@@ -93,19 +98,24 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 CostCenter=options.ics_courier_cost_center,
                 Refereces=(
                     ArrayOfString(string=[payload.reference])
-                    if payload.reference is not None 
+                    if payload.reference is not None
                     else payload.reference
                 ),
                 NotificationEmail=(
                     options.email_notification_to or payload.recipient.email_address
-                    if options.email_notification and any(
-                        [options.email_notification_to or payload.recipient.email_address]
-                    ) else None
+                    if options.email_notification
+                    and any(
+                        [
+                            options.email_notification_to
+                            or payload.recipient.email_address
+                        ]
+                    )
+                    else None
                 ),
                 SpecialInstruction=options.ics_courier_special_instruction,
                 NoSignatureRequired=options.ics_courier_no_signature_required,
                 ShipDate=options.ship_date,
-            )
+            ),
         ),
     )
 

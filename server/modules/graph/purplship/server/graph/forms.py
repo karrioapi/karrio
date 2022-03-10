@@ -3,6 +3,7 @@ from django.contrib.auth import forms as auth
 from django.core.exceptions import ValidationError
 from django.contrib.auth.tokens import default_token_generator
 
+from purplship.server.conf import settings
 from purplship.server.user.forms import SignUpForm
 
 
@@ -38,7 +39,8 @@ class ResetPasswordRequestForm(auth.PasswordResetForm):
             **{
                 **kwargs,
                 "extra_email_context": dict(
-                    redirect_url=self.cleaned_data["redirect_url"]
+                    app_name=settings.app_name,
+                    redirect_url=self.cleaned_data["redirect_url"],
                 ),
                 "email_template_name": "purplship/password_reset_email.html",
             }

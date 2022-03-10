@@ -156,9 +156,9 @@ NegotiatedParsedShipmentResponse = [
     {
         "carrier_name": "ups",
         "carrier_id": "ups",
-        "label": ANY,
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
+        "docs": {"label": ANY},
     },
     [],
 ]
@@ -167,9 +167,9 @@ ParsedShipmentResponse = [
     {
         "carrier_name": "ups",
         "carrier_id": "ups",
-        "label": ANY,
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
+        "docs": {"label": ANY},
     },
     [],
 ]

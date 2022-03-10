@@ -11,6 +11,7 @@ from usps_lib.evs_first_class_mail_intl_request import (
 from purplship.core.utils import Serializable, Element, XP, DF, Location
 from purplship.core.units import CustomsInfo, Packages, Options, Weight, WeightUnit
 from purplship.core.models import (
+    Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
@@ -40,9 +41,9 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        label=shipment.LabelImage,
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
+        docs=Documents(label=shipment.LabelImage),
     )
 
 

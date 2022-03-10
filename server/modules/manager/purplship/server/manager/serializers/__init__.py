@@ -31,6 +31,7 @@ from purplship.server.manager.serializers.shipment import (
     create_shipment_tracker,
     reset_related_shipment_rates,
     can_mutate_shipment,
+    buy_shipment_label,
 )
 from purplship.server.manager.serializers.pickup import (
     PickupData,

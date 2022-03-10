@@ -183,10 +183,10 @@ ParsedShipmentResponse = [
     {
         "carrier_name": "fedex",
         "carrier_id": "carrier_id",
-        "label": ANY,
         "tracking_number": "794604790138",
         "shipment_identifier": "794604790138",
-        "meta": {"tracking_numbers": ["794604790138"], "invoice": ANY},
+        "meta": {"tracking_numbers": ["794604790138"]},
+        "docs": {"label": ANY, "invoice": ANY},
     },
     [],
 ]
@@ -195,10 +195,10 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_name": "fedex",
         "carrier_id": "carrier_id",
-        "label": ANY,
         "tracking_number": "794604790138",
         "shipment_identifier": "794604790138",
-        "meta": {"tracking_numbers": ["794604790138", "794604790138"], "invoice": ANY},
+        "meta": {"tracking_numbers": ["794604790138", "794604790138"]},
+        "docs": {"label": ANY, "invoice": ANY},
     },
     [],
 ]
