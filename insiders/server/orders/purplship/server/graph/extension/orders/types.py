@@ -15,6 +15,10 @@ class OrderFilter(django_filters.FilterSet):
     address = django_filters.CharFilter(
         field_name="shipping_to__address_line1", lookup_expr="icontains"
     )
+    id = utils.CharInFilter(
+        field_name="id",
+        method="id_filter",
+    )
     order_id = utils.CharInFilter(
         field_name="order_id",
         method="order_id_filter",
@@ -50,6 +54,9 @@ class OrderFilter(django_filters.FilterSet):
     class Meta:
         model = models.Order
         fields: list = []
+
+    def id_filter(self, queryset, name, value):
+        return queryset.filter(Q(id__in=value))
 
     def order_id_filter(self, queryset, name, value):
         return queryset.filter(Q(order_id__in=value))
