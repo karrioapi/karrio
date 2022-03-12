@@ -628,6 +628,20 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "id",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "order_id",
                   "type": {
                     "kind": "LIST",
