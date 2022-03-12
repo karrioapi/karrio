@@ -168,8 +168,10 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier = carrier or models.Carrier.objects.get(
-            carrier_id=selected_rate.carrier_id
+        carrier = carrier or Carriers.first(
+            carrier_name=selected_rate.carrier_name,
+            carrier_id=selected_rate.carrier_id,
+            test_mode=selected_rate.test_mode,
         )
         request = DP.to_object(
             datatypes.ShipmentRequest,
