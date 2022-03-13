@@ -1,6 +1,4 @@
 import graphene
-from django.db.models import Q
-from graphene.types import generic
 from graphene_django.types import ErrorType
 
 import purplship.server.graph.utils as utils
@@ -10,7 +8,7 @@ import purplship.server.graph.extension.documents.types as types
 
 
 class CreateDocumentTemplate(utils.ClientMutation):
-    document = graphene.Field(types.DocumentTemplateType)
+    template = graphene.Field(types.DocumentTemplateType)
 
     class Input:
         slug = graphene.String(required=True)
@@ -30,11 +28,11 @@ class CreateDocumentTemplate(utils.ClientMutation):
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(document=serializer.save())
+        return cls(template=serializer.save())
 
 
 class UpdateDocumentTemplate(utils.ClientMutation):
-    document = graphene.Field(types.DocumentTemplateType)
+    template = graphene.Field(types.DocumentTemplateType)
 
     class Input:
         id = graphene.String(required=True)
@@ -59,7 +57,7 @@ class UpdateDocumentTemplate(utils.ClientMutation):
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(document=serializer.save())
+        return cls(template=serializer.save())
 
 
 class DeleteDocumentTemplate(utils.ClientMutation):
@@ -71,8 +69,8 @@ class DeleteDocumentTemplate(utils.ClientMutation):
     @classmethod
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, id, **kwargs):
-        document = models.DocumentTemplate.access_by(info.context).get(id=id)
+        template = models.DocumentTemplate.access_by(info.context).get(id=id)
 
-        document.delete(keep_parents=True)
+        template.delete(keep_parents=True)
 
         return cls(id=id)

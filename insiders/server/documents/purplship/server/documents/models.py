@@ -1,6 +1,7 @@
 from functools import partial
 from django.db import models
 from django.contrib.postgres import fields
+from django.core.validators import RegexValidator
 
 from purplship.server.orgs.models import Organization
 from purplship.server.core.models import OwnedEntity, uuid
@@ -19,7 +20,7 @@ class DocumentTemplate(OwnedEntity):
         default=partial(uuid, prefix="doc_"),
         editable=False,
     )
-    slug = models.CharField(max_length=20, unique=True)
+    slug = models.SlugField(max_length=20, unique=True)
     name = models.CharField(max_length=50)
     template = models.TextField()
     description = models.CharField(max_length=50, null=True, blank=True)
