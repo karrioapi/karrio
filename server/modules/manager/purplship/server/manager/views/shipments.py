@@ -322,10 +322,11 @@ class ShipmentDocs(VirtualDownloadView):
         Retrieve a shipment label.
         """
         shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+        query_params = request.GET.dict()
 
         self.document = getattr(shipment, doc, None)
         self.name = f"{doc}_{shipment.tracking_number}.{format}"
-        self.attachment = False
+        self.attachment = query_params.get("download", False)
 
         response = super(ShipmentDocs, self).get(request, pk, doc, format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"

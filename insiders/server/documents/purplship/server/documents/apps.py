@@ -6,3 +6,8 @@ class DocumentsConfig(AppConfig):
     name = "purplship.server.documents"
     verbose_name = _("Documents")
     default_auto_field = "django.db.models.BigAutoField"
+
+    def ready(self):
+        from purplship.server.documents import signals
+
+        signals.register_all()

@@ -20,8 +20,8 @@ class DocumentTemplate(OwnedEntity):
         default=partial(uuid, prefix="doc_"),
         editable=False,
     )
-    slug = models.SlugField(max_length=20, unique=True)
     name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=20, validators=[RegexValidator(r"^[a-z0-9_]+$")])
     template = models.TextField()
     description = models.CharField(max_length=50, null=True, blank=True)
     related_objects = fields.ArrayField(models.CharField(max_length=25), blank=False)

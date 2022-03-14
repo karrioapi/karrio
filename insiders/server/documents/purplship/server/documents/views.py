@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import re_path
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
 
@@ -10,18 +10,19 @@ class DocumentGenerator(VirtualDownloadView):
     def get(
         self,
         request,
+        pk: str,
         slug: str,
         **kwargs,
     ):
         """Generate a document."""
-        template = models.DocumentTemplate.access_by(request).get(slug=slug)
-        data = request.GET.dict()
+        template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
+        query_params = request.GET.dict()
 
-        self.document = Documents.generate(template, data, context=request)
+        self.document = Documents.generate(template, query_params, context=request)
         self.name = f"{slug}.pdf"
-        self.attachment = False
+        self.attachment = query_params.get("download", False)
 
-        response = super(DocumentGenerator, self).get(request, slug, **kwargs)
+        response = super(DocumentGenerator, self).get(request, pk, slug, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -30,8 +31,8 @@ class DocumentGenerator(VirtualDownloadView):
 
 
 urlpatterns = [
-    path(
-        "documents/<str:slug>",
+    re_path(
+        r"^documents/(?P<pk>\w+).(?P<slug>\w+)",
         DocumentGenerator.as_view(),
         name="documents-generator",
     )

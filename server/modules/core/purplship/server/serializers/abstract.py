@@ -3,6 +3,7 @@ import logging
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple
 from django.db import models
 from django.conf import settings
+from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
@@ -132,6 +133,7 @@ def owned_model_serializer(serializer: Type[Serializer]):
 
             super().__init__(*args, **kwargs)
 
+        @transaction.atomic
         def create(self, data: dict, **kwargs):
             payload = {"created_by": self.__context.user, **data}
 

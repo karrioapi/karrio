@@ -2192,7 +2192,7 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "slug",
+              "name": "name",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -2208,7 +2208,7 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "name",
+              "name": "slug",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
