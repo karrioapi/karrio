@@ -1,4 +1,4 @@
-# <a href="https://next.karrio.com" target="_blank"><img alt="Karrio" src="/karrio/karrio/raw/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
+# <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="/karrio/karrio/raw/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
 
 [![puprlship-tests](https://github.com/karrio/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
@@ -146,9 +146,9 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://next.karrio.com/docs)
+- [**Documentation**](https://karrio.io/docs)
 - [**Community Discussions**](https://github.com/karrio/karrio/discussions)
 - [**Issue Tracker**](https://github.com/karrio/karrio/issues)
-- [**Blog**](https://next.karrio.com/blog)
+- [**Blog**](https://karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)

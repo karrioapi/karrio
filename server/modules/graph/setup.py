@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.graph",
-    version="2022.3",
+    version="2022.4",
     description="Multi-carrier shipping API Graph module",
     long_description=long_description,
     long_description_content_type="text/markdown",

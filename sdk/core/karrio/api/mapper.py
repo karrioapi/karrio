@@ -4,7 +4,7 @@ import attr
 from abc import ABC
 from typing import List, Tuple
 from karrio.core.settings import Settings
-from karriore.models import (
+from karrio.core.models import (
     Message,
     RateRequest,
     TrackingRequest,
@@ -21,8 +21,8 @@ from karriore.models import (
     AddressValidationRequest,
     AddressValidationDetails
 )
-from karriore.errors import MethodNotSupportedError
-from karriore.utils.serializable import Deserializable, Serializable
+from karrio.core.errors import MethodNotSupportedError
+from karrio.core.utils.serializable import Deserializable, Serializable
 
 
 @attr.s(auto_attribs=True)

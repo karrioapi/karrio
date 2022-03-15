@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.orders",
-    version="2022.2.1",
+    version="2022.4",
     description="Multi-carrier shipping API orders module",
     long_description=long_description,
     long_description_content_type="text/markdown",

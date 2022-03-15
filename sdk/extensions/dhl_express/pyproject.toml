@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "karrio.dhl_express"
-version = "2022.2"
-homepage="https://next.karrio.com/docs/guides/sdk"
+version = "2022.4"
+homepage="https://karrio.io/docs/guides/sdk"
 repository="https://github.com/karrio/karrio"
 description = "Karrio - DHL Express Shipping Extension"
 authors = ["Karrio <hello@karrio.com>"]

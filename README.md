@@ -1,4 +1,4 @@
-# <a href="https://next.karrio.com" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Karrio" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
+# <a href="https://karrio.io" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Karrio" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
 
 **The Headless Shipping platform**
 
@@ -273,10 +273,10 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://next.karrio.com/docs)
+- [**Documentation**](https://karrio.io/docs)
 - [**Community Discussions**](https://github.com/karrio/karrio/discussions)
 - [**Issue Tracker**](https://github.com/karrio/karrio/issues)
-- [**Blog**](https://next.karrio.com/blog)
+- [**Blog**](https://karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
 

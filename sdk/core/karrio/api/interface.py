@@ -5,9 +5,9 @@ import logging
 import functools
 from typing import Callable, TypeVar, Union, List, Tuple
 from karrio.api.gateway import Gateway
-from karriore.utils import Serializable, Deserializable, DP, exec_async
-from karriore.errors import ShippingSDKDetailedError
-from karriore.models import (
+from karrio.core.utils import Serializable, Deserializable, DP, exec_async
+from karrio.core.errors import ShippingSDKDetailedError
+from karrio.core.models import (
     AddressValidationRequest,
     RateRequest,
     ShipmentRequest,

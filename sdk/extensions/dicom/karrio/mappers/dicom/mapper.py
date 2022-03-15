@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from karrio.core.utils.serializable import Serializable, Deserializable
-from karrioi.mapper import Mapper as BaseMapper
-from karriore.models import (
+from karrio.api.mapper import Mapper as BaseMapper
+from karrio.core.models import (
     # ShipmentCancelRequest,
     # PickupUpdateRequest,
     # PickupCancelRequest,
@@ -17,7 +17,7 @@ from karriore.models import (
     # RateDetails,
     Message,
 )
-from karriooviders.dicom import (
+from karrio.providers.dicom import (
     # parse_shipment_cancel_response,
     # parse_pickup_update_response,
     # parse_pickup_cancel_response,
@@ -34,7 +34,7 @@ from karriooviders.dicom import (
     # pickup_request,
     # rate_request,
 )
-from karrioppers.dicom.settings import Settings
+from karrio.mappers.dicom.settings import Settings
 
 
 class Mapper(BaseMapper):
