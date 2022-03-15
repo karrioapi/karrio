@@ -20,7 +20,7 @@ class DocumentGenerator(VirtualDownloadView):
 
         self.document = Documents.generate(template, query_params, context=request)
         self.name = f"{slug}.pdf"
-        self.attachment = query_params.get("download", False)
+        self.attachment = "download" in query_params
 
         response = super(DocumentGenerator, self).get(request, pk, slug, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"

@@ -13,7 +13,7 @@ class TemplateRelatedObject(graphene.Enum):
 
 class DocumentTemplateFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
-    related_objects = django_filters.CharFilter(
+    related_objects = utils.CharInFilter(
         field_name="related_objects",
         method="related_objects_filter",
     )

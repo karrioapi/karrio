@@ -14,3 +14,4 @@
 -e ./insiders/server/orgs
 -e ./insiders/server/iam
 -e ./insiders/server/apps
+-e ./insiders/server/documents
