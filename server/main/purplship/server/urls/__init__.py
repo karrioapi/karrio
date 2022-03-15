@@ -44,7 +44,7 @@ urlpatterns = [
                 ],
                 path("", include("karrio.server.urls.jwt")),
                 path("", include("karrio.server.user.urls")),
-                *[path("", include(urls)) for urls in settings.PURPLSHIP_URLS],
+                *[path("", include(urls)) for urls in settings.KARRIO_URLS],
                 path("admin/", admin.site.urls, name="app_admin"),
                 *staticfiles_urlpatterns(),
             ]

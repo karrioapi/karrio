@@ -65,7 +65,7 @@ if USE_HTTPS is True:
 
 
 # karrio packages settings
-PURPLSHIP_CONF = [
+KARRIO_CONF = [
     app
     for app in [
         {
@@ -109,8 +109,8 @@ PURPLSHIP_CONF = [
     if importlib.util.find_spec(app["module"]) is not None
 ]
 
-PURPLSHIP_APPS = [cfg["app"] for cfg in PURPLSHIP_CONF]
-PURPLSHIP_URLS = [cfg["urls"] for cfg in PURPLSHIP_CONF if "urls" in cfg]
+KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
+KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
 MULTI_ORGANIZATIONS = importlib.util.find_spec("karrio.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("karrio.server.orders") is not None
@@ -153,7 +153,7 @@ BASE_APPS = [
 
 INSTALLED_APPS = [
     "constance",
-    *PURPLSHIP_APPS,
+    *KARRIO_APPS,
     *BASE_APPS,
     "rest_framework",
     "django_email_verification",
@@ -199,8 +199,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
 # Karrio Middleware
-# PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
-# PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
+# KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
+# KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 
 
 # Database

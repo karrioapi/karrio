@@ -5,7 +5,7 @@ from django.conf import settings
 
 ACCESS_METHOD = getattr(
     settings,
-    "PURPLSHIP_ENTITY_ACCESS_METHOD",
+    "KARRIO_ENTITY_ACCESS_METHOD",
     "karrio.server.core.middleware.WideAccess",
 )
 get_access_filter = pydoc.locate(ACCESS_METHOD)()

@@ -1,14 +1,14 @@
 from karrio.server.settings.base import *
 
 
-PURPLSHIP_URLS += ['karrio.server.orgs.urls']
+KARRIO_URLS += ['karrio.server.orgs.urls']
 
 INSTALLED_APPS += [
     'django_extensions',
     'karrio.server.orgs',
 ]
 
-PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.orgs.middleware.OrganizationAccess'
+KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.orgs.middleware.OrganizationAccess'
 
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
 INVITATION_BACKEND = 'karrio.server.orgs.backends.KarrioInvitationsBackend'
