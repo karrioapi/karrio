@@ -2,8 +2,8 @@ import attr
 from typing import List, Tuple
 from jstruct import JList
 
-from purplship.core.settings import Settings as BaseSettings
-from purplship.core.models import ServiceLevel
+from karrio.core.settings import Settings as BaseSettings
+from karrio.core.models import ServiceLevel
 
 PackageServices = List[Tuple[str, List[ServiceLevel]]]
 

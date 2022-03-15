@@ -3,8 +3,8 @@ from django.db import models
 from django.contrib.postgres import fields
 from django.core.validators import RegexValidator
 
-from purplship.server.orgs.models import Organization
-from purplship.server.core.models import OwnedEntity, uuid
+from karrio.server.orgs.models import Organization
+from karrio.server.core.models import OwnedEntity, uuid
 
 
 class DocumentTemplate(OwnedEntity):

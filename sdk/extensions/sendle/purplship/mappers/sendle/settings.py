@@ -1,7 +1,7 @@
 """Purplship Sendle settings."""
 
 import attr
-from purplship.providers.sendle.utils import Settings as BaseSettings
+from karrio.providers.sendle.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

@@ -32,8 +32,8 @@ from purolator_lib.shipping_service_2_1_3 import (
     ContentDetail,
     ArrayOfContentDetail,
 )
-from purplship.core.units import Options, Packages, Phone
-from purplship.core.utils import (
+from karrio.core.units import Options, Packages, Phone
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
@@ -43,14 +43,14 @@ from purplship.core.utils import (
     XP,
     SF,
 )
-from purplship.core.models import Documents, ShipmentRequest, ShipmentDetails, Message
+from karrio.core.models import Documents, ShipmentRequest, ShipmentDetails, Message
 
-from purplship.providers.purolator.shipment.documents import (
+from karrio.providers.purolator.shipment.documents import (
     get_shipping_documents_request,
 )
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
-from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.units import (
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.error import parse_error_response
+from karrio.providers.purolator.units import (
     Product,
     Service,
     PackagePresets,

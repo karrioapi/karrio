@@ -3,10 +3,10 @@ from django.db.models import Q
 from graphene.types import generic
 from graphene_django.types import ErrorType
 
-import purplship.server.graph.utils as utils
-import purplship.server.apps.models as models
-import purplship.server.apps.serializers as serializers
-import purplship.server.graph.extension.apps.types as types
+import karrio.server.graph.utils as utils
+import karrio.server.apps.models as models
+import karrio.server.apps.serializers as serializers
+import karrio.server.graph.extension.apps.types as types
 
 
 class CreateApp(utils.ClientMutation):

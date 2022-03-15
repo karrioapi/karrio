@@ -9,16 +9,16 @@ from fedex_lib.track_service_v19 import (
     TrackPackageIdentifier,
     TrackingDateOrTimestamp,
 )
-from purplship.core.utils import Serializable, Element, XP, DF
-from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Element, XP, DF
+from karrio.core.utils.soap import create_envelope, apply_namespaceprefix
+from karrio.core.models import (
     TrackingRequest,
     TrackingDetails,
     TrackingEvent,
     Message,
 )
-from purplship.providers.fedex.error import parse_error_response
-from purplship.providers.fedex.utils import Settings
+from karrio.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.utils import Settings
 
 estimated_date_formats = [
     "%Y-%m-%dT%H:%M:%S%z",

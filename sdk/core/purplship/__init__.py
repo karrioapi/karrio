@@ -11,10 +11,10 @@ Example:
     sections. Sections support any reStructuredText formatting, including
     literal blocks::
 
-        >>> import purplship
-        >>> from purplship.core.utils import DP
-        >>> from purplship.core.models import Address, Parcel, RateRequest
-        >>> canadapost = purplship.gateway["canadapost"].create(
+        >>> import karrio
+        >>> from karrio.core.utils import DP
+        >>> from karrio.core.models import Address, Parcel, RateRequest
+        >>> canadapost = karrio.gateway["canadapost"].create(
         ...     {
         ...         "username": "username",
         ...         "password": "password",
@@ -43,7 +43,7 @@ Example:
         ...     width= 3.0,
         ...     weight= 0.5
         ... )
-        >>> request = purplship.Rating.fetch(
+        >>> request = karrio.Rating.fetch(
         ...     RateRequest(
         ...         shipper=shipper,
         ...         recipient=recipient,
@@ -81,8 +81,8 @@ Attributes:
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from pathlib import Path
-from purplship.api.gateway import GatewayInitializer
-from purplship.api.interface import Pickup, Rating, Shipment, Tracking, Address
+from karrio.api.gateway import GatewayInitializer
+from karrio.api.interface import Pickup, Rating, Shipment, Tracking, Address
 
 VERSION = "2021.1"
 gateway = GatewayInitializer.get_instance()

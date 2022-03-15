@@ -6,11 +6,11 @@ from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from purplship.server.core.views.api import APIView
-from purplship.server.proxy.router import router
-from purplship.server.serializers import SerializerDecorator
-from purplship.server.core.gateway import Pickups
-from purplship.server.core.serializers import (
+from karrio.server.core.views.api import APIView
+from karrio.server.proxy.router import router
+from karrio.server.serializers import SerializerDecorator
+from karrio.server.core.gateway import Pickups
+from karrio.server.core.serializers import (
     PickupCancelRequest,
     PickupUpdateRequest,
     OperationResponse,

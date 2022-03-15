@@ -2,16 +2,16 @@ import base64
 import time
 from typing import List
 from canadapost_lib.rating import mailing_scenario
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.core.errors import ShippingSDKError
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.core.utils.pipeline import Pipeline, Job
-from purplship.core.utils import (
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.core.errors import ShippingSDKError
+from karrio.core.utils.serializable import Serializable, Deserializable
+from karrio.core.utils.pipeline import Pipeline, Job
+from karrio.core.utils import (
     request as http,
     exec_async,
     XP,
 )
-from purplship.mappers.canadapost.settings import Settings
+from karrio.mappers.canadapost.settings import Settings
 
 
 class Proxy(BaseProxy):

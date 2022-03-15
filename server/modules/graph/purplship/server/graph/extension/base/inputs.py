@@ -4,10 +4,10 @@ from graphene_django.rest_framework.serializer_converter import (
     convert_serializer_to_input_type as serializer_to_input,
 )
 
-from purplship.server.core import serializers
-from purplship.server.serializers import make_fields_optional, exclude_id_field
-import purplship.server.graph.serializers as model_serializers
-import purplship.server.graph.utils as utils
+from karrio.server.core import serializers
+from karrio.server.serializers import make_fields_optional, exclude_id_field
+import karrio.server.graph.serializers as model_serializers
+import karrio.server.graph.utils as utils
 
 
 def create_address_input(partial: bool = False) -> graphene.InputObjectType:

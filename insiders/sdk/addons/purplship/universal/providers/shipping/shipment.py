@@ -1,14 +1,14 @@
 from typing import Tuple, List
-from purplship.core.utils import Serializable
-from purplship.core.models import (
+from karrio.core.utils import Serializable
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
 )
-from purplship.universal.providers.shipping.utils import ShippingMixinSettings
-from purplship.core.models import ServiceLabel
-from purplship.core.utils.transformer import to_multi_piece_shipment
+from karrio.universal.providers.shipping.utils import ShippingMixinSettings
+from karrio.core.models import ServiceLabel
+from karrio.core.utils.transformer import to_multi_piece_shipment
 
 
 def parse_shipment_response(

@@ -12,11 +12,11 @@ from tnt_lib.label_request import (
     pieceType,
     measurementsType,
 )
-from purplship.core.utils import Serializable
-from purplship.core.units import Packages
-from purplship.core.models import ShipmentRequest, Payment
-from purplship.providers.tnt.units import PaymentType, ShipmentOption, ShipmentService
-from purplship.providers.tnt.utils import Settings
+from karrio.core.utils import Serializable
+from karrio.core.units import Packages
+from karrio.core.models import ShipmentRequest, Payment
+from karrio.providers.tnt.units import PaymentType, ShipmentOption, ShipmentService
+from karrio.providers.tnt.utils import Settings
 
 
 def create_label_request(activity: document, payload: ShipmentRequest, settings: Settings) -> Serializable[labelRequest]:

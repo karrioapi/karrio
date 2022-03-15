@@ -20,7 +20,7 @@ class TokenAuthentication(BaseTokenAuthentication):
     def get_model(self):
         if self.model is not None:
             return self.model
-        from purplship.server.user.models import Token
+        from karrio.server.user.models import Token
 
         return Token
 
@@ -83,7 +83,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
         """
         if settings.MULTI_ORGANIZATIONS:
             try:
-                from purplship.server.orgs.models import Organization
+                from karrio.server.orgs.models import Organization
 
                 org_id = request.META.get("HTTP_X_ORG_ID")
                 orgs = Organization.objects.filter(users__id=request.user.id)
@@ -120,7 +120,7 @@ def get_request_org(request, user, default_org_id: str = None):
     """
     if settings.MULTI_ORGANIZATIONS:
         try:
-            from purplship.server.orgs.models import Organization
+            from karrio.server.orgs.models import Organization
 
             org_id = request.META.get("HTTP_X_ORG_ID") or default_org_id
             orgs = Organization.objects.filter(users__id=user.id)

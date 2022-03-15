@@ -1,13 +1,13 @@
 from typing import Tuple, List
-from purplship.core.utils import Serializable
-from purplship.core.models import (
+from karrio.core.utils import Serializable
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
 
-from purplship.providers.dicom.error import parse_error_response
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.error import parse_error_response
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_shipment_cancel_response(response: dict, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

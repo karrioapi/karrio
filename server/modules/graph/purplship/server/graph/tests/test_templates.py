@@ -1,8 +1,8 @@
 import json
 from unittest.mock import ANY
-from purplship.server.graph.tests.base import GraphTestCase
-import purplship.server.manager.models as manager
-import purplship.server.graph.models as graph
+from karrio.server.graph.tests.base import GraphTestCase
+import karrio.server.manager.models as manager
+import karrio.server.graph.models as graph
 
 
 class TestAddressTemplate(GraphTestCase):

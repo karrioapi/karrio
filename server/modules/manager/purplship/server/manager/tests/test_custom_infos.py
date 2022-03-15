@@ -2,13 +2,13 @@ import json
 from unittest.mock import ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.server.core.tests import APITestCase
-from purplship.server.manager.models import Customs
+from karrio.server.core.tests import APITestCase
+from karrio.server.manager.models import Customs
 
 
 class TestCustomsInfo(APITestCase):
     def test_create_customs(self):
-        url = reverse("purplship.server.manager:customs-list")
+        url = reverse("karrio.server.manager:customs-list")
         data = CUSTOMS_DATA
 
         response = self.client.post(url, data)
@@ -25,7 +25,7 @@ class TestCustomsInfoDetails(APITestCase):
 
     def test_update_customs(self):
         url = reverse(
-            "purplship.server.manager:customs-details", kwargs=dict(pk=self.customs.pk)
+            "karrio.server.manager:customs-details", kwargs=dict(pk=self.customs.pk)
         )
         data = CUSTOMS_UPDATE_DATA
 

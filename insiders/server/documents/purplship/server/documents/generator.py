@@ -3,12 +3,12 @@ import typing
 from jinja2 import Template
 from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
-from purplship.server.documents import models
-from purplship.server.manager.models import Shipment
-from purplship.server.orders.models import Order
-from purplship.server.orders.serializers import Order as OrderSerializer
-from purplship.server.core.serializers import Shipment as ShipmentSerializer
-from purplship.server.documents.utils import ORDER_SAMPLE, SHIPMENT_SAMPLE
+from karrio.server.documents import models
+from karrio.server.manager.models import Shipment
+from karrio.server.orders.models import Order
+from karrio.server.orders.serializers import Order as OrderSerializer
+from karrio.server.core.serializers import Shipment as ShipmentSerializer
+from karrio.server.documents.utils import ORDER_SAMPLE, SHIPMENT_SAMPLE
 
 font_config = FontConfiguration()
 PAGE_SEPARATOR = '<p style="page-break-before: always"></p>'

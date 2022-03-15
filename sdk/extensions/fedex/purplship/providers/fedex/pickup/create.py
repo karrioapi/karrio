@@ -19,9 +19,9 @@ from fedex_lib.pickup_service_v22 import (
     CreatePickupReply,
     NotificationSeverityType,
 )
-from purplship.core.models import PickupRequest, PickupDetails, Message
-from purplship.core.units import Packages
-from purplship.core.utils import (
+from karrio.core.models import PickupRequest, PickupDetails, Message
+from karrio.core.units import Packages
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     apply_namespaceprefix,
@@ -33,10 +33,10 @@ from purplship.core.utils import (
     DF,
     XP,
 )
-from purplship.providers.fedex.pickup.availability import pickup_availability_request
-from purplship.providers.fedex.utils import Settings
-from purplship.providers.fedex.units import PackagePresets
-from purplship.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.pickup.availability import pickup_availability_request
+from karrio.providers.fedex.utils import Settings
+from karrio.providers.fedex.units import PackagePresets
+from karrio.providers.fedex.error import parse_error_response
 
 
 def parse_pickup_response(

@@ -2,9 +2,9 @@
 
 import attr
 from abc import ABC
-from purplship.core.settings import Settings
-from purplship.core.errors import MethodNotSupportedError
-from purplship.core.utils.serializable import Deserializable, Serializable
+from karrio.core.settings import Settings
+from karrio.core.errors import MethodNotSupportedError
+from karrio.core.utils.serializable import Deserializable, Serializable
 
 
 @attr.s(auto_attribs=True)

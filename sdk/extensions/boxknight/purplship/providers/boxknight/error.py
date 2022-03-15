@@ -1,4 +1,4 @@
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_error_response(response: dict, settings: Settings):

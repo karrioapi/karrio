@@ -2,9 +2,9 @@ from typing import Dict, Type
 
 from rest_framework.serializers import ModelSerializer, Serializer, ChoiceField
 
-from purplship.server.serializers import SerializerDecorator
-from purplship.server.core.serializers import CARRIERS, PlainDictField
-from purplship.server.providers.models import MODELS, Carrier
+from karrio.server.serializers import SerializerDecorator
+from karrio.server.core.serializers import CARRIERS, PlainDictField
+from karrio.server.providers.models import MODELS, Carrier
 
 
 CarrierName = str

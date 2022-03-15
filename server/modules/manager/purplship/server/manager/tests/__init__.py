@@ -2,9 +2,9 @@ import logging
 
 logging.disable(logging.CRITICAL)
 
-from purplship.server.manager.tests.test_addresses import *
-from purplship.server.manager.tests.test_parcels import *
-from purplship.server.manager.tests.test_shipments import *
-from purplship.server.manager.tests.test_trackers import *
-from purplship.server.manager.tests.test_custom_infos import *
-from purplship.server.manager.tests.test_pickups import *
+from karrio.server.manager.tests.test_addresses import *
+from karrio.server.manager.tests.test_parcels import *
+from karrio.server.manager.tests.test_shipments import *
+from karrio.server.manager.tests.test_trackers import *
+from karrio.server.manager.tests.test_custom_infos import *
+from karrio.server.manager.tests.test_pickups import *

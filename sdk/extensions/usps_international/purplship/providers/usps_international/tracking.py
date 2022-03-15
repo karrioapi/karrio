@@ -1,15 +1,15 @@
 from typing import List, Tuple
 from usps_lib.track_field_request import TrackFieldRequest, TrackIDType
 from usps_lib.track_response import TrackInfoType, TrackDetailType
-from purplship.core.utils import Serializable, Element, XP, DF, SF
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Element, XP, DF, SF
+from karrio.core.models import (
     TrackingRequest,
     Message,
     TrackingDetails,
     TrackingEvent,
 )
-from purplship.providers.usps_international.error import parse_error_response
-from purplship.providers.usps_international import Settings
+from karrio.providers.usps_international.error import parse_error_response
+from karrio.providers.usps_international import Settings
 
 
 def parse_tracking_response(

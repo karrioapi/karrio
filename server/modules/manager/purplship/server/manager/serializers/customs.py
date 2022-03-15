@@ -1,12 +1,12 @@
 from django.db import transaction
 from rest_framework import status
 
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.serializers import save_many_to_many_data, owned_model_serializer
-from purplship.server.core.serializers import CustomsData, ShipmentStatus
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.serializers import save_many_to_many_data, owned_model_serializer
+from karrio.server.core.serializers import CustomsData, ShipmentStatus
 
-from purplship.server.manager.serializers.commodity import CommoditySerializer
-import purplship.server.manager.models as models
+from karrio.server.manager.serializers.commodity import CommoditySerializer
+import karrio.server.manager.models as models
 
 
 @owned_model_serializer

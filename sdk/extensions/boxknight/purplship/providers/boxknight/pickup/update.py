@@ -1,15 +1,15 @@
 from typing import Tuple, List
 from boxknight_lib.pickups import PickupUpdateRequest as BoxKnightPickupUpdateRequest
-from purplship.core.utils import Serializable
-from purplship.core.models import (
+from karrio.core.utils import Serializable
+from karrio.core.models import (
     ShipmentDetails,
     PickupUpdateRequest,
     PickupDetails,
     Message
 )
 
-from purplship.providers.boxknight.error import parse_error_response
-from purplship.providers.boxknight.utils import Settings
+from karrio.providers.boxknight.error import parse_error_response
+from karrio.providers.boxknight.utils import Settings
 
 
 def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

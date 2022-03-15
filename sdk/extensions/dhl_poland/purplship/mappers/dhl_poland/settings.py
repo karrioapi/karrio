@@ -3,10 +3,10 @@
 from typing import List
 import attr
 from jstruct.types import JList
-from purplship.core.models import ServiceLevel
-from purplship.universal.mappers.rating_proxy import RatingMixinSettings
-from purplship.providers.dhl_poland.units import DEFAULT_SERVICES
-from purplship.providers.dhl_poland.utils import Settings as BaseSettings
+from karrio.core.models import ServiceLevel
+from karrio.universal.mappers.rating_proxy import RatingMixinSettings
+from karrio.providers.dhl_poland.units import DEFAULT_SERVICES
+from karrio.providers.dhl_poland.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

@@ -1,5 +1,5 @@
-import purplship.server.serializers as serializers
-import purplship.server.documents.models as models
+import karrio.server.serializers as serializers
+import karrio.server.documents.models as models
 
 
 @serializers.owned_model_serializer

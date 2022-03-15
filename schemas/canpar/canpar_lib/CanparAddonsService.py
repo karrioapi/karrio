@@ -13,7 +13,7 @@
 #   ./schemas/CanparAddonsService.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanparAddonsService.py" ./schemas/CanparAddonsService.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanparAddonsService.py" ./schemas/CanparAddonsService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-canpar

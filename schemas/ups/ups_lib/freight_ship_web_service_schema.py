@@ -13,7 +13,7 @@
 #   ./schemas/FreightShipWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_ship_web_service_schema.py" ./schemas/FreightShipWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_ship_web_service_schema.py" ./schemas/FreightShipWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

@@ -1,7 +1,7 @@
 from typing import List
 from royalmail_lib.error import ErrorResponse
-from purplship.core.models import Message
-from purplship.providers.royalmail import Settings
+from karrio.core.models import Message
+from karrio.providers.royalmail import Settings
 
 
 def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:

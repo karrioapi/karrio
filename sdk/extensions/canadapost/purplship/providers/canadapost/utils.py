@@ -1,7 +1,7 @@
 """Purplship Canada post client settings."""
 
 from base64 import b64encode
-from purplship.core.settings import Settings as BaseSettings
+from karrio.core.settings import Settings as BaseSettings
 
 
 class Settings(BaseSettings):

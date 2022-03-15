@@ -1,7 +1,7 @@
 """Purplship Dicom client settings."""
 
 import attr
-from purplship.providers.dicom.utils import Settings as BaseSettings
+from karrio.providers.dicom.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

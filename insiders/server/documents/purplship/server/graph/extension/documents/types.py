@@ -2,8 +2,8 @@ import graphene
 import django_filters
 from django.db.models import Q
 
-import purplship.server.graph.utils as utils
-import purplship.server.documents.models as models
+import karrio.server.graph.utils as utils
+import karrio.server.documents.models as models
 
 
 class TemplateRelatedObject(graphene.Enum):

@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.purolator.mapper import Mapper
-from purplship.mappers.purolator.proxy import Proxy
-from purplship.mappers.purolator.settings import Settings
-import purplship.providers.purolator.units as units
+from karrio.mappers.purolator.mapper import Mapper
+from karrio.mappers.purolator.proxy import Proxy
+from karrio.mappers.purolator.settings import Settings
+import karrio.providers.purolator.units as units
 
 
 METADATA = Metadata(

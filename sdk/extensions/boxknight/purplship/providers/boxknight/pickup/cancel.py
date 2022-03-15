@@ -1,13 +1,13 @@
 from typing import Tuple, List
-from purplship.core.utils import Serializable
-from purplship.core.models import (
+from karrio.core.utils import Serializable
+from karrio.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
     Message
 )
 
-from purplship.providers.boxknight.error import parse_error_response
-from purplship.providers.boxknight.utils import Settings
+from karrio.providers.boxknight.error import parse_error_response
+from karrio.providers.boxknight.utils import Settings
 
 
 def parse_pickup_cancel_response(response: dict, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

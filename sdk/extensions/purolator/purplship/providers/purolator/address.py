@@ -6,10 +6,10 @@ from purolator_lib.service_availability_service_2_0_2 import (
     ShortAddress,
     RequestContext,
 )
-from purplship.core.utils import Serializable, Element, create_envelope, Envelope, XP
-from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
-from purplship.providers.purolator.error import parse_error_response
+from karrio.core.utils import Serializable, Element, create_envelope, Envelope, XP
+from karrio.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:

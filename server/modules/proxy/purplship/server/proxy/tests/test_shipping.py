@@ -2,16 +2,16 @@ import json
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import ShipmentDetails, ConfirmationDetails, Message
-from purplship.server.core.tests import APITestCase
+from karrio.core.models import ShipmentDetails, ConfirmationDetails, Message
+from karrio.server.core.tests import APITestCase
 
 
 class TestShipping(APITestCase):
     def test_shipping_request(self):
-        url = reverse("purplship.server.proxy:shipping-request")
+        url = reverse("karrio.server.proxy:shipping-request")
         data = SHIPPING_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -21,12 +21,12 @@ class TestShipping(APITestCase):
 
     def test_shipping_cancel(self):
         url = reverse(
-            "purplship.server.proxy:shipping-cancel",
+            "karrio.server.proxy:shipping-cancel",
             kwargs=dict(carrier_name="canadapost"),
         )
         data = SHIPPING_CANCEL_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_SUCCESS_CANCEL_VALUE
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)
@@ -36,12 +36,12 @@ class TestShipping(APITestCase):
 
     def test_shipping_failed_cancel(self):
         url = reverse(
-            "purplship.server.proxy:shipping-cancel",
+            "karrio.server.proxy:shipping-cancel",
             kwargs=dict(carrier_name="canadapost"),
         )
         data = SHIPPING_CANCEL_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_FAILED_CANCEL_VALUE
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)

@@ -1,5 +1,5 @@
 """
-purplship server graph module urls
+karrio server graph module urls
 """
 import pydoc
 import typing
@@ -12,7 +12,7 @@ from rest_framework import exceptions
 ACCESS_METHOD = getattr(
     settings,
     "SESSION_ACCESS_MIXIN",
-    "purplship.server.core.authentication.AccessMixin",
+    "karrio.server.core.authentication.AccessMixin",
 )
 AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
@@ -37,7 +37,7 @@ class GraphQLView(AccessMixin, BaseGraphQLView):
         return formatted_error
 
 
-app_name = "purplship.server.graph"
+app_name = "karrio.server.graph"
 urlpatterns = [
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
 ]

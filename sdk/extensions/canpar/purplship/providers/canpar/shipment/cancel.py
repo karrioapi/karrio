@@ -3,19 +3,19 @@ from canpar_lib.CanshipBusinessService import (
     voidShipment,
     VoidShipmentRq,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Envelope,
     Element,
     Serializable,
 )
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

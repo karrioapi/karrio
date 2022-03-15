@@ -15,7 +15,7 @@ from canadapost_lib.pickuprequest import (
     PickupRequestHeaderType,
     PickupTypeType as PickupType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     Job,
@@ -25,17 +25,17 @@ from purplship.core.utils import (
     NF,
     XP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupRequest,
     PickupDetails,
     Message,
     ChargeDetails,
     PickupUpdateRequest,
 )
-from purplship.core.units import Packages
-from purplship.providers.canadapost.units import PackagePresets
-from purplship.providers.canadapost.utils import Settings
-from purplship.providers.canadapost.error import parse_error_response
+from karrio.core.units import Packages
+from karrio.providers.canadapost.units import PackagePresets
+from karrio.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.error import parse_error_response
 
 PickupRequestDetails = Union[PickupRequestDetailsType, PickupRequestUpdateDetailsType]
 

@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.sendle.mapper import Mapper
-from purplship.mappers.sendle.proxy import Proxy
-from purplship.mappers.sendle.settings import Settings
-# import purplship.providers.sendle.units as units
+from karrio.mappers.sendle.mapper import Mapper
+from karrio.mappers.sendle.proxy import Proxy
+from karrio.mappers.sendle.settings import Settings
+# import karrio.providers.sendle.units as units
 
 
 METADATA = Metadata(

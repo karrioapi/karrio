@@ -1,6 +1,6 @@
 from django.db import models
-from purplship.core.utils import DP
-from purplship.server.providers.models.carrier import Carrier
+from karrio.core.utils import DP
+from karrio.server.providers.models.carrier import Carrier
 
 
 class DHLPolandSettings(Carrier):
@@ -20,7 +20,7 @@ class DHLPolandSettings(Carrier):
 
     @property
     def default_services(self):
-        from purplship.mappers.dhl_poland import DEFAULT_SERVICES
+        from karrio.mappers.dhl_poland import DEFAULT_SERVICES
 
         return DP.to_dict(DEFAULT_SERVICES)
 

@@ -1,10 +1,10 @@
 from functools import reduce
 from typing import Dict, List, Optional, Tuple
-from purplship.core.models import Documents, RateDetails
-from purplship.core.models import ChargeDetails
-from purplship.core.utils import NF
-from purplship.core.models import ShipmentDetails
-from purplship.core.utils.helpers import bundle_base64
+from karrio.core.models import Documents, RateDetails
+from karrio.core.models import ChargeDetails
+from karrio.core.utils import NF
+from karrio.core.models import ShipmentDetails
+from karrio.core.utils.helpers import bundle_base64
 
 
 def to_multi_piece_rates(

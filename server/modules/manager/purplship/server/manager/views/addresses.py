@@ -7,8 +7,8 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.manager.serializers import (
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.manager.serializers import (
     SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
@@ -18,8 +18,8 @@ from purplship.server.manager.serializers import (
     AddressSerializer,
     can_mutate_address,
 )
-from purplship.server.manager.router import router
-from purplship.server.manager import models
+from karrio.server.manager.router import router
+from karrio.server.manager import models
 
 
 logger = logging.getLogger(__name__)

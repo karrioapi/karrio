@@ -1,7 +1,7 @@
-from purplship.core.utils import request as http, XP
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.freightcom.settings import Settings
-from purplship.core.utils.serializable import Serializable, Deserializable
+from karrio.core.utils import request as http, XP
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.freightcom.settings import Settings
+from karrio.core.utils.serializable import Serializable, Deserializable
 
 
 class Proxy(BaseProxy):

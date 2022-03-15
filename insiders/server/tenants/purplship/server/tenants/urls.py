@@ -1,4 +1,4 @@
-"""purplship.server tenant module URL Configuration
+"""karrio.server tenant module URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.urls import path, include
-from purplship.server.tenants import admin as tenants_admin
+from karrio.server.tenants import admin as tenants_admin
 
 
 BASE_PATH = getattr(settings, "BASE_PATH", "")
@@ -23,6 +23,6 @@ urlpatterns = [
     path(
         BASE_PATH,
         include([path("", tenants_admin.site.urls, name="tenants_admin")]),
-        name="purplship:tenats:index",
+        name="karrio:tenats:index",
     ),
 ]

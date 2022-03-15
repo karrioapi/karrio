@@ -1,4 +1,4 @@
-"""purplship.server URL Configuration
+"""karrio.server URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -26,7 +26,7 @@ BASE_PATH = getattr(settings, "BASE_PATH", "")
 admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
-admin.site.index_template = "purplship/admin.html"
+admin.site.index_template = "karrio/admin.html"
 
 if getattr(settings, "MULTI_TENANTS", False):
     admin.site.unregister([Config])
@@ -37,18 +37,18 @@ urlpatterns = [
         BASE_PATH,
         include(
             [
-                path("", include("purplship.server.core.views.schema")),
+                path("", include("karrio.server.core.views.schema")),
                 *[
                     path(subpath, include(urls, namespace=namespace))
                     for (subpath, urls, namespace) in settings.NAMESPACED_URLS
                 ],
-                path("", include("purplship.server.urls.jwt")),
-                path("", include("purplship.server.user.urls")),
+                path("", include("karrio.server.urls.jwt")),
+                path("", include("karrio.server.user.urls")),
                 *[path("", include(urls)) for urls in settings.PURPLSHIP_URLS],
                 path("admin/", admin.site.urls, name="app_admin"),
                 *staticfiles_urlpatterns(),
             ]
         ),
-        name="purplship:index",
+        name="karrio:index",
     ),
 ]

@@ -3,8 +3,8 @@ from django.db.models import Q
 import graphene
 import graphene.types.generic as generic
 
-import purplship.server.graph.utils as utils
-import purplship.server.apps.models as models
+import karrio.server.graph.utils as utils
+import karrio.server.apps.models as models
 
 
 class AppInstallationFilter(django_filters.FilterSet):

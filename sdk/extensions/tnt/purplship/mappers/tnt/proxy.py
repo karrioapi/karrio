@@ -1,7 +1,7 @@
 import urllib.parse
-from purplship.core.utils import XP, request as http, Serializable, Deserializable, Job, Pipeline
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.tnt.settings import Settings
+from karrio.core.utils import XP, request as http, Serializable, Deserializable, Job, Pipeline
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.tnt.settings import Settings
 
 
 class Proxy(BaseProxy):

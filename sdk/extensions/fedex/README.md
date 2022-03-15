@@ -1,6 +1,6 @@
-# purplship.fedex
+# karrio.fedex
 
-This package is a FedEx extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a FedEx extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a FedEx extension of the [purplship](https://pypi.org/project/pu
 ## Installation
 
 ```bash
-pip install purplship.fedex
+pip install karrio.fedex
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.fedex.settings import Settings
+import karrio
+from karrio.mappers.fedex.settings import Settings
 
 
 # Initialize a carrier gateway
-fedex = purplship.gateway["fedex"].create(
+fedex = karrio.gateway["fedex"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch, ANY
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canadapost.fixture import gateway, LabelResponse
 
 
@@ -27,7 +27,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(request.data.serialize(), ShipmentRequestWithPackagePresetXML)
 
     def test_create_non_contract_shipment_request(self):
-        non_contract_gateway = purplship.gateway["canadapost"].create(
+        non_contract_gateway = karrio.gateway["canadapost"].create(
             dict(username="username", password="password", customer_number="2004381")
         )
         requests = non_contract_gateway.mapper.create_shipment_request(
@@ -73,9 +73,9 @@ class TestCanadaPostShipment(unittest.TestCase):
         )
 
     def test_create_shipment(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = ["<a></a>", ""]
-            purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             create_call, _ = mocks.call_args_list
             self.assertEqual(
@@ -84,14 +84,14 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_cancel_shipment(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [
                 NonSubmittedShipmentResponseXML,
                 NonSubmittedShipmentResponseXML,
                 "",
             ]
 
-            purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             info_call, cancel_call = mocks.call_args_list
             self.assertEqual(
@@ -104,10 +104,10 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_cancel_transmitted_shipment(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML, ""]
 
-            purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             info_call, refund_call = mocks.call_args_list
             self.assertEqual(
@@ -120,19 +120,19 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_cancel_response(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML]
             parsed_response = (
-                purplship.Shipment.cancel(self.ShipmentCancelRequest)
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
                 .parse()
             )

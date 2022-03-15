@@ -1,2 +1,2 @@
 
-default_app_config = 'purplship.server.tenants.apps.TenantsConfig'
+default_app_config = 'karrio.server.tenants.apps.TenantsConfig'

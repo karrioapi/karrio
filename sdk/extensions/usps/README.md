@@ -1,6 +1,6 @@
-# purplship.usps
+# karrio.usps
 
-This package is a USPS extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a USPS extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a USPS extension of the [purplship](https://pypi.org/project/pur
 ## Installation
 
 ```bash
-pip install purplship.usps
+pip install karrio.usps
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.usps.settings import Settings
+import karrio
+from karrio.mappers.usps.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["usps"].create(
+canadapost = karrio.gateway["usps"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

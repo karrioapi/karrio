@@ -5,13 +5,13 @@ from canpar_lib.CanparAddonsService import (
     TrackingResult,
     TrackingEvent as CanparTrackingEvent,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Message,
     TrackingRequest,
     TrackingDetails,
     TrackingEvent,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
@@ -20,8 +20,8 @@ from purplship.core.utils import (
     XP,
     SF,
 )
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
 
 
 def parse_tracking_response(

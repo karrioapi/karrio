@@ -4,8 +4,8 @@ from ups_lib.freight_pickup_web_service_schema import (
     FreightPickupRequest,
     FreightPickupResponse,
 )
-from purplship.core.units import Packages
-from purplship.core.utils import (
+from karrio.core.units import Packages
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     Envelope,
@@ -17,15 +17,15 @@ from purplship.core.utils import (
     DF,
     SF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupRequest,
     PickupDetails,
     Message,
     ChargeDetails,
 )
-from purplship.providers.ups_ground.error import parse_error_response
-from purplship.providers.ups_ground.units import PackagePresets
-from purplship.providers.ups_ground.utils import (
+from karrio.providers.ups_ground.error import parse_error_response
+from karrio.providers.ups_ground.units import PackagePresets
+from karrio.providers.ups_ground.utils import (
     Settings,
     default_request_serializer,
 )

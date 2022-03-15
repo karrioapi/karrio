@@ -1,1 +1,1 @@
-default_app_config = 'purplship.server.manager.apps.ManagerConfig'
+default_app_config = 'karrio.server.manager.apps.ManagerConfig'

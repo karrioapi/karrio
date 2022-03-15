@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship"
+name = "karrio"
 version = "2022.2"
-homepage="https://next.purplship.com/docs/guides/sdk"
-repository="https://github.com/purplship/purplship"
+homepage="https://next.karrio.com/docs/guides/sdk"
+repository="https://github.com/karrio/karrio"
 description = "Multi-carrier shipping API integration with python"
-authors = ["Purplship <hello@purplship.com>"]
+authors = ["Purplship <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "purplship" }]
+packages = [{ include = "karrio" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",

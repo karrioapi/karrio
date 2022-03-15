@@ -1,7 +1,7 @@
 """Purplship Asendia US settings."""
 
 import attr
-from purplship.providers.asendia_us.utils import Settings as BaseSettings
+from karrio.providers.asendia_us.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

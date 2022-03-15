@@ -1,7 +1,7 @@
-"""purplship ICS Courier client settings."""
+"""karrio ICS Courier client settings."""
 
-from purplship.core.settings import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, XP, Header
+from karrio.core.settings import Settings as BaseSettings
+from karrio.core.utils import Envelope, apply_namespaceprefix, XP, Header
 
 
 class Settings(BaseSettings):

@@ -6,21 +6,21 @@ from tnt_lib.track_request_v3_1 import (
     LevelOfDetailType,
     CompleteType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Element,
     Serializable,
     XP,
     SF,
     DF
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.tnt.utils import Settings
-from purplship.providers.tnt.error import parse_error_response
+from karrio.providers.tnt.utils import Settings
+from karrio.providers.tnt.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

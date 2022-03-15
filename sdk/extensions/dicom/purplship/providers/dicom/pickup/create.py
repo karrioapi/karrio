@@ -7,15 +7,15 @@ from dicom_lib.pickups import (
     Contact,
     Pickup,
 )
-from purplship.core.utils import Serializable, Pipeline, Job, DP, SF
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Pipeline, Job, DP, SF
+from karrio.core.models import (
     PickupRequest,
     PickupDetails,
     Message
 )
 
-from purplship.providers.dicom.error import parse_error_response
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.error import parse_error_response
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

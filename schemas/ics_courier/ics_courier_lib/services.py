@@ -13,7 +13,7 @@
 #   ./schemas/services.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./ics_courier_lib/services.py" ./schemas/services.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./ics_courier_lib/services.py" ./schemas/services.xsd
 #
 # Current working directory (os.getcwd()):
 #   ics_courier

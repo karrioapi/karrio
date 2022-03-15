@@ -31,12 +31,12 @@ from purolator_lib.estimate_service_2_1_2 import (
     ArrayOfOptionIDValuePair,
     OptionIDValuePair,
 )
-from purplship.core.units import Currency, Packages, Options, Phone, Services
-from purplship.core.utils import Serializable, Element, SF, NF, XP, create_envelope
-from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
-from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.units import (
+from karrio.core.units import Currency, Packages, Options, Phone, Services
+from karrio.core.utils import Serializable, Element, SF, NF, XP, create_envelope
+from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.error import parse_error_response
+from karrio.providers.purolator.units import (
     Product, PackagePresets, DutyPaymentType, MeasurementOptions, Service, NON_OFFICIAL_SERVICES
 )
 

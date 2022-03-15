@@ -5,14 +5,14 @@ from purolator_lib.shipping_service_2_1_3 import (
     RequestContext,
     PIN,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message,
 )
-from purplship.core.utils import Serializable, create_envelope, Envelope, Element, XP
-from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.core.utils import Serializable, create_envelope, Envelope, Element, XP
+from karrio.providers.purolator.error import parse_error_response
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
 
 
 def parse_shipment_cancel_response(

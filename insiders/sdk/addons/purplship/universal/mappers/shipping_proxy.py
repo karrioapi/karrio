@@ -1,16 +1,16 @@
 import attr
 import uuid
 from typing import List, Tuple
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Deserializable,
 )
-from purplship.core.units import Packages, Options
-from purplship.core.models import ServiceLabel, ShipmentRequest, Message
-from purplship.universal.providers.shipping import (
+from karrio.core.units import Packages, Options
+from karrio.core.models import ServiceLabel, ShipmentRequest, Message
+from karrio.universal.providers.shipping import (
     ShippingMixinSettings,
 )
-from purplship.addons.label import generate_label
+from karrio.addons.label import generate_label
 
 
 @attr.s(auto_attribs=True)

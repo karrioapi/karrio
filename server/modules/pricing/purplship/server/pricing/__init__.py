@@ -1,1 +1,1 @@
-default_app_config = 'purplship.server.pricing.apps.PricingConfig'
+default_app_config = 'karrio.server.pricing.apps.PricingConfig'

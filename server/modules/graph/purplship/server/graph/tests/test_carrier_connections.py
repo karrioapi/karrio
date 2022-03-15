@@ -1,6 +1,6 @@
 import json
 from unittest.mock import ANY
-from purplship.server.graph.tests.base import GraphTestCase
+from karrio.server.graph.tests.base import GraphTestCase
 
 
 class TestSystemConnections(GraphTestCase):

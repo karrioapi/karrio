@@ -1,9 +1,9 @@
 from enum import Enum
 from django.db import transaction
 
-from purplship.server.serializers import ModelSerializer, owned_model_serializer
-from purplship.server.orgs.utils import admin_required
-from purplship.server.orgs import models
+from karrio.server.serializers import ModelSerializer, owned_model_serializer
+from karrio.server.orgs.utils import admin_required
+from karrio.server.orgs import models
 
 
 @owned_model_serializer

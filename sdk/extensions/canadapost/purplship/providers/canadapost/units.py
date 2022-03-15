@@ -1,5 +1,5 @@
-from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import MeasurementOptionsType, PackagePreset
+from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.units import MeasurementOptionsType, PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 

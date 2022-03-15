@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-      name='purplship.asendia_us',
+      name='karrio.asendia_us',
       version='0.0.0-dev',
       license='LGPLv3',
       packages=find_namespace_packages(),
-      install_requires=['purplship', 'carrier.asendia_us'],
+      install_requires=['karrio', 'carrier.asendia_us'],
       zip_safe=False,
 )

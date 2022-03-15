@@ -1,15 +1,15 @@
 import time
 from typing import Tuple, List
 from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
-from purplship.core.utils import XP,  Serializable
-from purplship.core.models import (
+from karrio.core.utils import XP,  Serializable
+from karrio.core.models import (
     PickupCancelRequest,
     Message,
     ConfirmationDetails,
 )
-from purplship.providers.dhl_express.utils import Settings, reformat_time
-from purplship.providers.dhl_express.error import parse_error_response
-from purplship.providers.dhl_express.units import CountryRegion
+from karrio.providers.dhl_express.utils import Settings, reformat_time
+from karrio.providers.dhl_express.error import parse_error_response
+from karrio.providers.dhl_express.units import CountryRegion
 
 
 def parse_pickup_cancel_response(

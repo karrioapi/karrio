@@ -1,9 +1,9 @@
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship import Tracking
-from purplship.core.models import TrackingRequest
+from karrio.core.utils import DP
+from karrio import Tracking
+from karrio.core.models import TrackingRequest
 from tests.dhl_poland.fixture import gateway
 
 
@@ -18,7 +18,7 @@ class TestDHLPolandTracking(unittest.TestCase):
         self.assertEqual(request.serialize()[TRACKING_PAYLOAD[0]], TrackingRequestXML)
 
     def test_get_tracking(self):
-        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -32,7 +32,7 @@ class TestDHLPolandTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -43,7 +43,7 @@ class TestDHLPolandTracking(unittest.TestCase):
             )
 
     def test_parse_error_response(self):
-        with patch("purplship.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
             mock.return_value = ErrorResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

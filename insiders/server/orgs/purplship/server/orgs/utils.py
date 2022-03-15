@@ -4,7 +4,7 @@ import graphene
 import functools
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from purplship.server.core.utils import email_setup_required
+from karrio.server.core.utils import email_setup_required
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 from django_email_verification.confirm import (
@@ -13,9 +13,9 @@ from django_email_verification.confirm import (
     render_to_string,
 )
 
-from purplship.core.utils import exec_parrallel
-from purplship.server.conf import settings
-import purplship.server.orgs.models as models
+from karrio.core.utils import exec_parrallel
+from karrio.server.conf import settings
+import karrio.server.orgs.models as models
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -120,8 +120,8 @@ def send_invitation(
         "owner_email": getattr(owner, "email", invitation.invited_by.email),
     }
 
-    text = render_to_string("purplship/invitation_email.html", context)
-    html = render_to_string("purplship/invitation_email.html", context)
+    text = render_to_string("karrio/invitation_email.html", context)
+    html = render_to_string("karrio/invitation_email.html", context)
 
     logger.info(f"Sending invitation email to {invitation.invitee_identifier}")
 

@@ -1,4 +1,4 @@
-from purplship.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag, Spec
 
 
 class Service(Enum):

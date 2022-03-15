@@ -7,24 +7,24 @@ from dicom_lib.rates import (
     Rate,
     RateResponse,
 )
-from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, DP, NF
-from purplship.core.models import (
+from karrio.core.units import Packages, Services, Options
+from karrio.core.utils import Serializable, DP, NF
+from karrio.core.models import (
     ChargeDetails,
     RateRequest,
     RateDetails,
     Message
 )
 
-from purplship.providers.dicom.units import (
+from karrio.providers.dicom.units import (
     UnitOfMeasurement,
     ParcelType,
     Service,
     Option,
     PaymentType
 )
-from purplship.providers.dicom.error import parse_error_response
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.error import parse_error_response
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:

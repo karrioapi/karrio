@@ -1,13 +1,13 @@
 from functools import partial
 from typing import Tuple, List
 
-from purplship.core.utils import Element, XP, Serializable
-from purplship.core.utils.pipeline import Pipeline, Job
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
+from karrio.core.utils import Element, XP, Serializable
+from karrio.core.utils.pipeline import Pipeline, Job
+from karrio.core.models import ShipmentRequest, ShipmentDetails, Message
 
-from purplship.providers.canadapost.utils import Settings
-import purplship.providers.canadapost.shipment.contract as contract
-import purplship.providers.canadapost.shipment.non_contract as non_contract
+from karrio.providers.canadapost.utils import Settings
+import karrio.providers.canadapost.shipment.contract as contract
+import karrio.providers.canadapost.shipment.non_contract as non_contract
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:

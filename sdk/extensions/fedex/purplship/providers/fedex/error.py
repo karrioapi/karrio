@@ -1,8 +1,8 @@
 from typing import List, Optional
 from fedex_lib.rate_service_v28 import Notification
-from purplship.core.models import Message
-from purplship.core.utils import Element, extract_fault, XP
-from purplship.providers.fedex.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, extract_fault, XP
+from karrio.providers.fedex.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

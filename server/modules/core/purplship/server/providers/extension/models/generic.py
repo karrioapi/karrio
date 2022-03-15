@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from purplship.core.utils import DP
-from purplship.server.providers.models.carrier import Carrier, COUNTRIES
+from karrio.core.utils import DP
+from karrio.server.providers.models.carrier import Carrier, COUNTRIES
 
 
 class GenericSettings(Carrier):
@@ -31,7 +31,7 @@ class GenericSettings(Carrier):
 
     @property
     def default_services(self):
-        from purplship.mappers.generic import DEFAULT_SERVICES
+        from karrio.mappers.generic import DEFAULT_SERVICES
 
         return DP.to_dict(DEFAULT_SERVICES)
 

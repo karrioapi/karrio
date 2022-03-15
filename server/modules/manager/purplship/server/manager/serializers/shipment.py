@@ -6,19 +6,19 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from purplship.core.utils import DP, DF
-from purplship.server.core.gateway import Shipments, Carriers
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.serializers import (
+from karrio.core.utils import DP, DF
+from karrio.server.core.gateway import Shipments, Carriers
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
     link_org,
 )
-import purplship.server.core.datatypes as datatypes
-from purplship.server.providers.models import Carrier, MODELS
-from purplship.server.core.serializers import (
+import karrio.server.core.datatypes as datatypes
+from karrio.server.providers.models import Carrier, MODELS
+from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
     Documents,
     ShipmentStatus,
@@ -35,11 +35,11 @@ from purplship.server.core.serializers import (
     TrackerStatus,
     ShipmentDetails,
 )
-from purplship.server.manager.serializers.address import AddressSerializer
-from purplship.server.manager.serializers.customs import CustomsSerializer
-from purplship.server.manager.serializers.parcel import ParcelSerializer
-from purplship.server.manager.serializers.rate import RateSerializer
-import purplship.server.manager.models as models
+from karrio.server.manager.serializers.address import AddressSerializer
+from karrio.server.manager.serializers.customs import CustomsSerializer
+from karrio.server.manager.serializers.parcel import ParcelSerializer
+from karrio.server.manager.serializers.rate import RateSerializer
+import karrio.server.manager.models as models
 from uritemplate import partial
 
 logger = logging.getLogger(__name__)
@@ -338,7 +338,7 @@ class ShipmentPurchaseSerializer(Shipment):
             Shipment(validated_data).data,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
-                    "purplship.server.manager:shipment-tracker",
+                    "karrio.server.manager:shipment-tracker",
                     kwargs=dict(
                         tracking_number=tracking_number, carrier_name=carrier_name
                     ),

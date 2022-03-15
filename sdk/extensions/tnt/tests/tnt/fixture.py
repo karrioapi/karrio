@@ -1,5 +1,5 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["tnt"].create(
+gateway = karrio.gateway["tnt"].create(
     dict(username="username", password="password", account_number="3230493849304")
 )

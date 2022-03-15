@@ -2,9 +2,9 @@ from attr import has
 from django.urls import reverse
 from rest_framework.request import Request
 
-from purplship.references import collect_providers_data, collect_references
-from purplship.server.core.serializers import CustomsContentType, Incoterm, MODELS
-from purplship.server.conf import settings
+from karrio.references import collect_providers_data, collect_references
+from karrio.server.core.serializers import CustomsContentType, Incoterm, MODELS
+from karrio.server.conf import settings
 
 
 PACKAGE_MAPPERS = collect_providers_data()
@@ -28,7 +28,7 @@ REFERENCE_EXCLUSIONS = [
 
 def contextual_metadata(request: Request):
     host = (
-        request.build_absolute_uri(reverse("purplship.server.core:metadata", kwargs={}))
+        request.build_absolute_uri(reverse("karrio.server.core:metadata", kwargs={}))
         if hasattr(request, "build_absolute_uri")
         else ""
     )
@@ -48,8 +48,8 @@ def contextual_metadata(request: Request):
 
 
 def contextual_reference(request: Request):
-    import purplship.server.core.validators as validators
-    import purplship.server.core.gateway as gateway
+    import karrio.server.core.validators as validators
+    import karrio.server.core.gateway as gateway
 
     is_authenticated = getattr(request, "auth", None) is not None
     references = {

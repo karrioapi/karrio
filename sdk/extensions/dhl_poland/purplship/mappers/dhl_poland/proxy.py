@@ -1,14 +1,14 @@
 from typing import Any
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Deserializable,
     request as http,
     XP,
 )
-from purplship.universal.mappers.rating_proxy import RatingMixinProxy
-from purplship.core.utils.helpers import exec_async
-from purplship.mappers.dhl_poland.settings import Settings
-from purplship.api.proxy import Proxy as BaseProxy
+from karrio.universal.mappers.rating_proxy import RatingMixinProxy
+from karrio.core.utils.helpers import exec_async
+from karrio.mappers.dhl_poland.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
 
 
 class Proxy(RatingMixinProxy, BaseProxy):

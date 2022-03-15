@@ -5,13 +5,13 @@ import logging
 import warnings
 from typing import Callable, Union, List
 
-from purplship.api.proxy import Proxy
-from purplship.api.mapper import Mapper
-from purplship.core import Settings
-from purplship.core.utils import DP
-from purplship.core.models import Message
-from purplship.core.errors import ShippingSDKError
-from purplship.references import import_extensions, detect_capabilities
+from karrio.api.proxy import Proxy
+from karrio.api.mapper import Mapper
+from karrio.core import Settings
+from karrio.core.utils import DP
+from karrio.core.models import Message
+from karrio.core.errors import ShippingSDKError
+from karrio.references import import_extensions, detect_capabilities
 
 logger = logging.getLogger(__name__)
 

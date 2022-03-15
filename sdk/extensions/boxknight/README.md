@@ -1,6 +1,6 @@
-# purplship.boxknight
+# karrio.boxknight
 
-This package is a BoxKnight extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a BoxKnight extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a BoxKnight extension of the [purplship](https://pypi.org/projec
 ## Installation
 
 ```bash
-pip install purplship.boxknight
+pip install karrio.boxknight
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.boxknight.settings import Settings
+import karrio
+from karrio.mappers.boxknight.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["boxknight"].create(
+canadapost = karrio.gateway["boxknight"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

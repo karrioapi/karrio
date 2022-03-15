@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import AddressValidationRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import AddressValidationRequest
 from tests.ups.fixture import gateway
 
 
@@ -21,9 +21,9 @@ class TestUPSAddressValidation(unittest.TestCase):
         self.assertEqual(request.serialize(), AddressValidationRequestXML)
 
     def test_validate_address(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Address.validate(self.AddressValidationRequest).from_(gateway)
+            karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -31,10 +31,10 @@ class TestUPSAddressValidation(unittest.TestCase):
             )
 
     def test_parse_address_validation_response(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
-                purplship.Address.validate(self.AddressValidationRequest)
+                karrio.Address.validate(self.AddressValidationRequest)
                 .from_(gateway)
                 .parse()
             )

@@ -1,6 +1,6 @@
-# purplship.asendia_us
+# karrio.asendia_us
 
-This package is a Asendia US extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Asendia US extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Asendia US extension of the [purplship](https://pypi.org/proje
 ## Installation
 
 ```bash
-pip install purplship.asendia_us
+pip install karrio.asendia_us
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.asendia_us.settings import Settings
+import karrio
+from karrio.mappers.asendia_us.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["asendia_us"].create(
+canadapost = karrio.gateway["asendia_us"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

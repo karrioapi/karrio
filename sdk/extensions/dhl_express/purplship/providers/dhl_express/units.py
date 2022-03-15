@@ -1,7 +1,7 @@
 """ DHL Native Types """
 
-from purplship.core.utils import Enum, Flag, Spec
-from purplship.core import units
+from karrio.core.utils import Enum, Flag, Spec
+from karrio.core import units
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 

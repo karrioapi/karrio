@@ -1,7 +1,7 @@
 from typing import List, Tuple
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.api.mapper import Mapper as BaseMapper
-from purplship.core.models import (
+from karrio.core.utils.serializable import Serializable, Deserializable
+from karrioi.mapper import Mapper as BaseMapper
+from karriore.models import (
     # AddressValidationRequest,
     # ShipmentCancelRequest,
     # PickupUpdateRequest,
@@ -19,7 +19,7 @@ from purplship.core.models import (
     # RateDetails,
     Message,
 )
-from purplship.providers.sendle import (
+from karriooviders.sendle import (
     # parse_address_validation_response,
     # parse_shipment_cancel_response,
     # parse_pickup_update_response,
@@ -38,7 +38,7 @@ from purplship.providers.sendle import (
     # pickup_request,
     # rate_request,
 )
-from purplship.mappers.sendle.settings import Settings
+from karrioppers.sendle.settings import Settings
 
 
 class Mapper(BaseMapper):
@@ -80,7 +80,7 @@ class Mapper(BaseMapper):
     ) -> Serializable:
         return tracking_request(payload, self.settings)
 
-    
+
 
 
     # def parse_address_validation_response(

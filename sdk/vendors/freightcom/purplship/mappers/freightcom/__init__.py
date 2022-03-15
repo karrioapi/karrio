@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.freightcom.mapper import Mapper
-from purplship.mappers.freightcom.proxy import Proxy
-from purplship.mappers.freightcom.settings import Settings
-import purplship.providers.freightcom.units as units
+from karrio.mappers.freightcom.mapper import Mapper
+from karrio.mappers.freightcom.proxy import Proxy
+from karrio.mappers.freightcom.settings import Settings
+import karrio.providers.freightcom.units as units
 
 
 METADATA = Metadata(

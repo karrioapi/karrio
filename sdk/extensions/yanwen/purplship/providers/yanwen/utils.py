@@ -1,4 +1,4 @@
-from purplship.core import Settings as BaseSettings
+from karrio.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):

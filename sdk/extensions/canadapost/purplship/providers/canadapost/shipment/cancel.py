@@ -1,19 +1,19 @@
 from typing import List, Tuple
 from canadapost_lib.shipment import ShipmentRefundRequestType, ShipmentInfoType
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Element,
     Serializable,
     Pipeline,
     Job,
     XP,
 )
-from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.error import parse_error_response
+from karrio.providers.canadapost.utils import Settings
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

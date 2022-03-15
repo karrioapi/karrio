@@ -1,7 +1,7 @@
 """PurplShip freightcom connection settings."""
 
 import attr
-from purplship.providers.freightcom.utils import Settings as BaseSettings
+from karrio.providers.freightcom.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

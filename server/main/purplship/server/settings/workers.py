@@ -1,7 +1,7 @@
 import os
 import decouple
 from huey import SqliteHuey
-from purplship.server.settings import base as settings
+from karrio.server.settings import base as settings
 
 # Purplship Server Background jobs interval config
 DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 Hour

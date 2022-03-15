@@ -13,7 +13,7 @@
 #   ./schemas/CanshipBusinessService.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanshipBusinessService.py" ./schemas/CanshipBusinessService.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanshipBusinessService.py" ./schemas/CanshipBusinessService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-canpar

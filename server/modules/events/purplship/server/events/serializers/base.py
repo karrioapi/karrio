@@ -1,7 +1,7 @@
 from enum import Enum
-from purplship.server import serializers
+from karrio.server import serializers
 
-from purplship.server.core.serializers import EntitySerializer
+from karrio.server.core.serializers import EntitySerializer
 
 
 class EventTypes(Enum):

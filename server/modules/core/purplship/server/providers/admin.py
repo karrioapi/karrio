@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib import admin
 from django import forms
 
-import purplship.server.providers.models as carriers
+import karrio.server.providers.models as carriers
 
 
 def model_admin(model):

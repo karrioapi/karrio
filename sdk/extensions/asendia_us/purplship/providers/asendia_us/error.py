@@ -1,8 +1,8 @@
 from typing import List, Union
 from asendia_us_lib.tracking_milestone_response import ResponseStatus
-from purplship.core.utils import DP
-from purplship.core.models import Message
-from purplship.providers.asendia_us import Settings
+from karrio.core.utils import DP
+from karrio.core.models import Message
+from karrio.providers.asendia_us import Settings
 
 successes = [200, 204]
 

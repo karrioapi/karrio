@@ -4,16 +4,16 @@ from boxknight_lib.pickups import (
     PickupRequestRecipientAddress,
     Recipient,
 )
-from purplship.core.utils import Serializable, SF, DF
-from purplship.core.models import (
+from karrio.core.utils import Serializable, SF, DF
+from karrio.core.models import (
     ShipmentDetails,
     PickupRequest,
     PickupDetails,
     Message,
 )
 
-from purplship.providers.boxknight.error import parse_error_response
-from purplship.providers.boxknight.utils import Settings
+from karrio.providers.boxknight.error import parse_error_response
+from karrio.providers.boxknight.utils import Settings
 
 
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

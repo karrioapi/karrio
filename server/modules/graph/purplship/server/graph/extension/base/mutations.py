@@ -8,20 +8,20 @@ from django_email_verification import confirm as email_verification
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import exceptions
 
-from purplship.core.utils import DP
-from purplship.server.conf import settings
-from purplship.server.core.utils import ConfirmationToken, send_email
-from purplship.server.serializers import save_many_to_many_data, SerializerDecorator
-from purplship.server.user.serializers import TokenSerializer, Token
-import purplship.server.manager.serializers as manager_serializers
-import purplship.server.graph.forms as forms
-import purplship.server.graph.models as graph
-import purplship.server.manager.models as manager
-import purplship.server.providers.models as providers
-import purplship.server.graph.serializers as serializers
-import purplship.server.graph.extension.base.types as types
-import purplship.server.graph.extension.base.inputs as inputs
-import purplship.server.graph.utils as utils
+from karrio.core.utils import DP
+from karrio.server.conf import settings
+from karrio.server.core.utils import ConfirmationToken, send_email
+from karrio.server.serializers import save_many_to_many_data, SerializerDecorator
+from karrio.server.user.serializers import TokenSerializer, Token
+import karrio.server.manager.serializers as manager_serializers
+import karrio.server.graph.forms as forms
+import karrio.server.graph.models as graph
+import karrio.server.manager.models as manager
+import karrio.server.providers.models as providers
+import karrio.server.graph.serializers as serializers
+import karrio.server.graph.extension.base.types as types
+import karrio.server.graph.extension.base.inputs as inputs
+import karrio.server.graph.utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -197,8 +197,8 @@ class RequestEmailChange(utils.ClientMutation):
             send_email(
                 emails=[email],
                 subject="Confirm your new email address",
-                email_template="purplship/email_change_email.html",
-                text_template="purplship/email_change_email.txt",
+                email_template="karrio/email_change_email.html",
+                text_template="karrio/email_change_email.txt",
                 context=dict(
                     token=token,
                     link=redirect_url,

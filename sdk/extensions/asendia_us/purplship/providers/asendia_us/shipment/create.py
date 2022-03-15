@@ -2,9 +2,9 @@ from uuid import uuid4
 from typing import Tuple, List
 from asendia_us_lib.shipping_request import ShippingRequest, Item
 from asendia_us_lib.shipping_response import PackageLabel
-from purplship.core.units import CustomsInfo, Packages, Options, Weight
-from purplship.core.utils import Serializable, DP
-from purplship.core.models import (
+from karrio.core.units import CustomsInfo, Packages, Options, Weight
+from karrio.core.utils import Serializable, DP
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
@@ -12,14 +12,14 @@ from purplship.core.models import (
     Customs,
 )
 
-from purplship.providers.asendia_us.units import (
+from karrio.providers.asendia_us.units import (
     Service,
     Option,
     LabelType,
     ProcessingLocation,
 )
-from purplship.providers.asendia_us.error import parse_error_response
-from purplship.providers.asendia_us.utils import Settings
+from karrio.providers.asendia_us.error import parse_error_response
+from karrio.providers.asendia_us.utils import Settings
 
 
 def parse_shipment_response(

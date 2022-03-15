@@ -11,7 +11,7 @@ from rest_framework.serializers import (
     URLField,
 )
 
-from purplship.core.units import (
+from karrio.core.units import (
     Country,
     WeightUnit,
     DimensionUnit,
@@ -22,9 +22,9 @@ from purplship.core.units import (
     Incoterm,
     LabelType,
 )
-from purplship.server.providers.models import MODELS
-from purplship.server.serializers import Serializer, allow_model_id
-from purplship.server.core.validators import (
+from karrio.server.providers.models import MODELS
+from karrio.server.serializers import Serializer, allow_model_id
+from karrio.server.core.validators import (
     AugmentedAddressSerializer,
     PresetSerializer,
     valid_time_format,
@@ -492,7 +492,7 @@ class Duty(Serializer):
 
 @allow_model_id(
     [
-        ("commodities", "purplship.server.manager.models.Commodity"),
+        ("commodities", "karrio.server.manager.models.Commodity"),
     ]
 )
 class CustomsData(Serializer):
@@ -625,9 +625,9 @@ class Charge(Serializer):
 
 @allow_model_id(
     [
-        ("shipper", "purplship.server.manager.models.Address"),
-        ("recipient", "purplship.server.manager.models.Address"),
-        ("parcels", "purplship.server.manager.models.Parcel"),
+        ("shipper", "karrio.server.manager.models.Address"),
+        ("recipient", "karrio.server.manager.models.Address"),
+        ("parcels", "karrio.server.manager.models.Parcel"),
     ]
 )
 class RateRequest(Serializer):
@@ -727,8 +727,8 @@ class TrackingRequest(Serializer):
 
 @allow_model_id(
     [
-        ("address", "purplship.server.manager.models.Address"),
-        ("parcels", "purplship.server.manager.models.Parcel"),
+        ("address", "karrio.server.manager.models.Address"),
+        ("parcels", "karrio.server.manager.models.Parcel"),
     ]
 )
 class PickupRequest(Serializer):
@@ -795,8 +795,8 @@ class PickupRequest(Serializer):
 
 @allow_model_id(
     [
-        ("address", "purplship.server.manager.models.Address"),
-        ("parcels", "purplship.server.manager.models.Parcel"),
+        ("address", "karrio.server.manager.models.Address"),
+        ("parcels", "karrio.server.manager.models.Parcel"),
     ]
 )
 class PickupUpdateRequest(Serializer):
@@ -906,7 +906,7 @@ class Pickup(PickupDetails, PickupRequest):
 
 @allow_model_id(
     [
-        ("address", "purplship.server.manager.models.Address"),
+        ("address", "karrio.server.manager.models.Address"),
     ]
 )
 class PickupCancelRequest(Serializer):
@@ -1055,10 +1055,10 @@ class TrackingStatus(EntitySerializer, TrackingDetails):
 
 @allow_model_id(
     [
-        ("shipper", "purplship.server.manager.models.Address"),
-        ("recipient", "purplship.server.manager.models.Address"),
-        ("parcels", "purplship.server.manager.models.Parcel"),
-        ("customs", "purplship.server.manager.models.Customs"),
+        ("shipper", "karrio.server.manager.models.Address"),
+        ("recipient", "karrio.server.manager.models.Address"),
+        ("parcels", "karrio.server.manager.models.Parcel"),
+        ("customs", "karrio.server.manager.models.Customs"),
     ]
 )
 class ShippingData(Serializer):

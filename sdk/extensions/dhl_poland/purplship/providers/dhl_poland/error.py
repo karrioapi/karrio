@@ -1,8 +1,8 @@
 from typing import List
 from pysoap.envelope import Fault
-from purplship.core.models import Message
-from purplship.core.utils import Element, XP
-from purplship.providers.dhl_poland.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, XP
+from karrio.providers.dhl_poland.utils import Settings
 
 
 def parse_error_response(

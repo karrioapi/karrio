@@ -10,9 +10,9 @@ from dicom_lib.shipments import (
     Broker,
     ShipmentResponse,
 )
-from purplship.core.units import Packages
-from purplship.core.utils import Serializable, DP
-from purplship.core.models import (
+from karrio.core.units import Packages
+from karrio.core.utils import Serializable, DP
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
@@ -20,7 +20,7 @@ from purplship.core.models import (
     Address,
 )
 
-from purplship.providers.dicom.units import (
+from karrio.providers.dicom.units import (
     UnitOfMeasurement,
     ParcelType,
     Service,
@@ -28,8 +28,8 @@ from purplship.providers.dicom.units import (
     PaymentType,
     Purpose,
 )
-from purplship.providers.dicom.error import parse_error_response
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.error import parse_error_response
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_shipment_response(

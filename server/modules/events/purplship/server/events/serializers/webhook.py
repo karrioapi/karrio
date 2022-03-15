@@ -1,6 +1,6 @@
-from purplship.server.serializers import owned_model_serializer
-from purplship.server.events.serializers import WebhookData
-from purplship.server.events.models import Webhook
+from karrio.server.serializers import owned_model_serializer
+from karrio.server.events.serializers import WebhookData
+from karrio.server.events.models import Webhook
 
 
 @owned_model_serializer

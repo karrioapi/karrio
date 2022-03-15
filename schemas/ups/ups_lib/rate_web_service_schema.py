@@ -13,7 +13,7 @@
 #   ./schemas/RateWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/rate_web_service_schema.py" ./schemas/RateWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/rate_web_service_schema.py" ./schemas/RateWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

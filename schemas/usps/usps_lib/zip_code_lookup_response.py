@@ -13,7 +13,7 @@
 #   ./schemas/ZipCodeLookupResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/zip_code_lookup_response.py" ./schemas/ZipCodeLookupResponse.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/zip_code_lookup_response.py" ./schemas/ZipCodeLookupResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

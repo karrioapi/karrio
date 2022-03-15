@@ -120,7 +120,7 @@ def owned_model_serializer(serializer: Type[Serializer]):
                 org = context.get("org") if isinstance(context, dict) else context.org
 
                 if settings.MULTI_ORGANIZATIONS and org is None:
-                    import purplship.server.orgs.models as orgs
+                    import karrio.server.orgs.models as orgs
 
                     org = orgs.Organization.objects.filter(
                         users__id=getattr(user, "id", None)

@@ -2,9 +2,9 @@ from typing import List
 import attr
 from jstruct import JStruct, JList
 
-from purplship.core.settings import Settings as BaseSettings
-from purplship.core.models import LabelTemplate
-from purplship.core.models import ServiceLevel
+from karrio.core.settings import Settings as BaseSettings
+from karrio.core.models import LabelTemplate
+from karrio.core.models import ServiceLevel
 
 
 @attr.s(auto_attribs=True)

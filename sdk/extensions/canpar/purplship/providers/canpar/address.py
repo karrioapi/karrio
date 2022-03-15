@@ -4,13 +4,13 @@ from canpar_lib.CanparRatingService import (
     SearchCanadaPostRq,
     Address as CanparAddress
 )
-from purplship.core.models import (
+from karrio.core.models import (
     AddressValidationDetails,
     AddressValidationRequest,
     Message,
     Address
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Element,
     Envelope,
@@ -18,8 +18,8 @@ from purplship.core.utils import (
     SF,
     XP,
 )
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:

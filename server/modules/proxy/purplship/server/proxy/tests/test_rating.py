@@ -2,16 +2,16 @@ import json
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import RateDetails, ChargeDetails
-from purplship.server.core.tests import APITestCase
+from karrio.core.models import RateDetails, ChargeDetails
+from karrio.server.core.tests import APITestCase
 
 
 class TestRating(APITestCase):
     def test_fetch_shipment_rates(self):
-        url = reverse("purplship.server.proxy:shipment-rates")
+        url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)

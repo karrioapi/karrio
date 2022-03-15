@@ -2,11 +2,11 @@ import graphene
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 
-import purplship.server.graph.utils as utils
-from purplship.server.orgs.utils import OrganizationUserRole
-from purplship.server.serializers import SerializerDecorator, Context
-from purplship.server.user.serializers import TokenSerializer
-import purplship.server.orgs.models as models
+import karrio.server.graph.utils as utils
+from karrio.server.orgs.utils import OrganizationUserRole
+from karrio.server.serializers import SerializerDecorator, Context
+from karrio.server.user.serializers import TokenSerializer
+import karrio.server.orgs.models as models
 
 
 class OrganizationUserType(utils.BaseObjectType):

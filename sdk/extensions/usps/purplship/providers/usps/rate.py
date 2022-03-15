@@ -7,12 +7,12 @@ from usps_lib.rate_v4_request import (
     SpecialServicesType,
     ShipDateType,
 )
-from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.utils import Serializable, Element, NF, XP, DF
-from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.core.units import Packages, Currency, Options, Services, Country
+from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
+from karrio.core.utils import Serializable, Element, NF, XP, DF
+from karrio.core.models import RateDetails, RateRequest, Message, ChargeDetails
+from karrio.core.units import Packages, Currency, Options, Services, Country
 
-from purplship.providers.usps.units import (
+from karrio.providers.usps.units import (
     ShipmentService,
     ShipmentOption,
     PackagingType,
@@ -20,8 +20,8 @@ from purplship.providers.usps.units import (
     FirstClassMailType,
     SortLevelType,
 )
-from purplship.providers.usps.error import parse_error_response
-from purplship.providers.usps.utils import Settings
+from karrio.providers.usps.error import parse_error_response
+from karrio.providers.usps.utils import Settings
 
 
 def parse_rate_response(

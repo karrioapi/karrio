@@ -4,14 +4,14 @@ from ups_lib.pickup_web_service_schema import (
     CodeDescriptionType,
     RequestType,
 )
-from purplship.core.utils import Envelope, Element, create_envelope, Serializable, XP
-from purplship.core.models import (
+from karrio.core.utils import Envelope, Element, create_envelope, Serializable, XP
+from karrio.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
-from purplship.providers.ups.utils import Settings, default_request_serializer
-from purplship.providers.ups.error import parse_error_response
+from karrio.providers.ups.utils import Settings, default_request_serializer
+from karrio.providers.ups.error import parse_error_response
 
 
 def parse_pickup_cancel_response(

@@ -1,8 +1,8 @@
 from typing import List
 from aramex_lib.tracking import Notification
-from purplship.core.utils import Element, XP
-from purplship.core.models import Message
-from purplship.providers.aramex import Settings
+from karrio.core.utils import Element, XP
+from karrio.core.models import Message
+from karrio.providers.aramex import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

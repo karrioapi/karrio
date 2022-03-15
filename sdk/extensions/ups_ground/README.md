@@ -1,6 +1,6 @@
-# purplship.ups
+# karrio.ups
 
-This package is a UPS extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a UPS extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a UPS extension of the [purplship](https://pypi.org/project/purp
 ## Installation
 
 ```bash
-pip install purplship.ups_ground
+pip install karrio.ups_ground
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.ups_ground.settings import Settings
+import karrio
+from karrio.mappers.ups_ground.settings import Settings
 
 
 # Initialize a carrier gateway
-ups = purplship.gateway["ups_ground"].create(
+ups = karrio.gateway["ups_ground"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

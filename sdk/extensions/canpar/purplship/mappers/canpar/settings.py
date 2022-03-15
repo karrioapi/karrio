@@ -1,7 +1,7 @@
 """Purplship Canpar client settings."""
 
 import attr
-from purplship.providers.canpar import Settings as BaseSettings
+from karrio.providers.canpar import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

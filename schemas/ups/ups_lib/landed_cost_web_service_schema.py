@@ -13,7 +13,7 @@
 #   ./schemas/LandedCostWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/landed_cost_web_service_schema.py" ./schemas/LandedCostWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/landed_cost_web_service_schema.py" ./schemas/LandedCostWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

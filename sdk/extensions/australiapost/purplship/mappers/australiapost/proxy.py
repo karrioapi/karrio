@@ -1,7 +1,7 @@
 import urllib.parse
-from purplship.core.utils import request as http, Serializable, Deserializable, DP
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.australiapost.settings import Settings
+from karrio.core.utils import request as http, Serializable, Deserializable, DP
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.australiapost.settings import Settings
 
 
 class Proxy(BaseProxy):

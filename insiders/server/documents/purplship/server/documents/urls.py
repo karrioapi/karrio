@@ -1,9 +1,9 @@
 """
-purplship server documents module urls
+karrio server documents module urls
 """
 from django.urls import include, path
 
-app_name = "purplship.server.documents"
+app_name = "karrio.server.documents"
 urlpatterns = [
-    path("", include("purplship.server.documents.views")),
+    path("", include("karrio.server.documents.views")),
 ]

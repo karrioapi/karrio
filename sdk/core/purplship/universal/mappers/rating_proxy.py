@@ -1,21 +1,21 @@
 import attr
 from typing import List, Tuple
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Deserializable,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Message,
     RateRequest,
     ServiceLevel,
 )
-from purplship.core.units import (
+from karrio.core.units import (
     Weight,
     Dimension,
     Packages,
     Package,
 )
-from purplship.universal.providers.rating import RatingMixinSettings, PackageServices
+from karrio.universal.providers.rating import RatingMixinSettings, PackageServices
 
 
 @attr.s(auto_attribs=True)

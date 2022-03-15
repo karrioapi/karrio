@@ -12,8 +12,8 @@ from ups_lib.pickup_web_service_schema import (
     RateResultType,
     AccountType,
 )
-from purplship.core.units import Packages
-from purplship.core.utils import (
+from karrio.core.units import Packages
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     Envelope,
@@ -25,16 +25,16 @@ from purplship.core.utils import (
     DF,
     SF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupRequest,
     PickupDetails,
     Message,
     ChargeDetails,
 )
-from purplship.providers.ups.pickup.rate import pickup_rate_request
-from purplship.providers.ups.error import parse_error_response
-from purplship.providers.ups.units import PackagePresets, WeightUnit
-from purplship.providers.ups.utils import Settings, default_request_serializer
+from karrio.providers.ups.pickup.rate import pickup_rate_request
+from karrio.providers.ups.error import parse_error_response
+from karrio.providers.ups.units import PackagePresets, WeightUnit
+from karrio.providers.ups.utils import Settings, default_request_serializer
 
 
 def parse_pickup_response(

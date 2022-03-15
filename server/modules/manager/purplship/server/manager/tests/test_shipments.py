@@ -2,14 +2,14 @@ import json
 from unittest.mock import ANY, patch
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import (
+from karrio.core.models import (
     RateDetails,
     ChargeDetails,
     ShipmentDetails,
     ConfirmationDetails,
 )
-from purplship.server.core.tests import APITestCase
-import purplship.server.manager.models as models
+from karrio.server.core.tests import APITestCase
+import karrio.server.manager.models as models
 
 
 class TestShipmentFixture(APITestCase):
@@ -78,10 +78,10 @@ class TestShipmentFixture(APITestCase):
 
 class TestShipments(APITestCase):
     def test_create_shipment(self):
-        url = reverse("purplship.server.manager:shipment-list")
+        url = reverse("karrio.server.manager:shipment-list")
         data = SHIPMENT_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -93,7 +93,7 @@ class TestShipments(APITestCase):
 class TestShipmentDetails(TestShipmentFixture):
     def test_update_shipment_options(self):
         url = reverse(
-            "purplship.server.manager:shipment-details",
+            "karrio.server.manager:shipment-details",
             kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_OPTIONS
@@ -108,10 +108,10 @@ class TestShipmentDetails(TestShipmentFixture):
 
     def test_shipment_rates(self):
         url = reverse(
-            "purplship.server.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk)
+            "karrio.server.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk)
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
@@ -152,12 +152,12 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_purchase_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-purchase",
+            "karrio.server.manager:shipment-purchase",
             kwargs=dict(pk=self.shipment.pk),
         )
         data = SHIPMENT_PURCHASE_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -174,11 +174,11 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details",
+            "karrio.server.manager:shipment-details",
             kwargs=dict(pk=self.shipment.pk),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             response = self.client.delete(url)
             response_data = json.loads(response.content)
 
@@ -188,7 +188,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_purchased_shipment(self):
         url = reverse(
-            "purplship.server.manager:shipment-details",
+            "karrio.server.manager:shipment-details",
             kwargs=dict(pk=self.shipment.pk),
         )
         self.shipment.status = "purchased"
@@ -196,7 +196,7 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.shipment.selected_rate_carrier = self.carrier
         self.shipment.save()
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_CANCEL_VALUE
             response = self.client.delete(url)
             response_data = json.loads(response.content)

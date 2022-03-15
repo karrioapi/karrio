@@ -1,7 +1,7 @@
-"""purplship ICS Courier client settings."""
+"""karrio ICS Courier client settings."""
 
 import attr
-from purplship.providers.ics_courier import Settings as BaseSettings
+from karrio.providers.ics_courier import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

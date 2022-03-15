@@ -6,11 +6,11 @@ from django.conf import settings
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
-from purplship.core import utils
-from purplship.server.core.utils import identity
-from purplship.server.serializers import Context, SerializerDecorator
-from purplship.server.events import models
-from purplship.server.events import serializers
+from karrio.core import utils
+from karrio.server.core.utils import identity
+from karrio.server.serializers import Context, SerializerDecorator
+from karrio.server.events import models
+from karrio.server.events import serializers
 
 logger = logging.getLogger(__name__)
 NotificationResponse = typing.Tuple[str, requests.Response]
@@ -109,7 +109,7 @@ def retrive_context(info: dict) -> Context:
     org = None
 
     if settings.MULTI_ORGANIZATIONS and "org_id" in info:
-        import purplship.server.orgs.models as orgs_models
+        import karrio.server.orgs.models as orgs_models
 
         org = orgs_models.Organization.objects.filter(id=info["org_id"]).first()
 

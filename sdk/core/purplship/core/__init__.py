@@ -1,2 +1,2 @@
 """The Purplship core module"""
-from purplship.core.settings import Settings
+from karrio.core.settings import Settings

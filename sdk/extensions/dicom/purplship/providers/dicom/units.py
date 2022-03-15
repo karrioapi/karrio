@@ -1,4 +1,4 @@
-from purplship.core.utils import Flag, Enum, Spec
+from karrio.core.utils import Flag, Enum, Spec
 
 
 class UnitOfMeasurement(Enum):

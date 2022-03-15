@@ -6,7 +6,7 @@ from django.conf import settings
 ACCESS_METHOD = getattr(
     settings,
     "PURPLSHIP_ENTITY_ACCESS_METHOD",
-    "purplship.server.core.middleware.WideAccess",
+    "karrio.server.core.middleware.WideAccess",
 )
 get_access_filter = pydoc.locate(ACCESS_METHOD)()
 

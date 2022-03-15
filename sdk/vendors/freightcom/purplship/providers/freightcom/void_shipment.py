@@ -1,16 +1,16 @@
 from typing import List, Tuple
 from freightcom_lib.shipment_cancel_request import ShipmentCancelRequestType, Freightcom, OrderType
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Element,
     Serializable,
 )
-from purplship.providers.freightcom.error import parse_error_response
-from purplship.providers.freightcom.utils import Settings, standard_request_serializer
+from karrio.providers.freightcom.error import parse_error_response
+from karrio.providers.freightcom.utils import Settings, standard_request_serializer
 
 
 def parse_shipment_cancel_reply(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

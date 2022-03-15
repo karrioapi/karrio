@@ -6,16 +6,16 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from purplship.core.utils import DP
-from purplship.server.events.serializers import EventTypes
-import purplship.server.core.serializers as serializers
-import purplship.server.providers.models as providers
-import purplship.server.manager.models as manager
-import purplship.server.events.models as events
-import purplship.server.graph.models as graph
-import purplship.server.user.models as auth
-import purplship.server.core.models as core
-import purplship.server.graph.utils as utils
+from karrio.core.utils import DP
+from karrio.server.events.serializers import EventTypes
+import karrio.server.core.serializers as serializers
+import karrio.server.providers.models as providers
+import karrio.server.manager.models as manager
+import karrio.server.events.models as events
+import karrio.server.graph.models as graph
+import karrio.server.user.models as auth
+import karrio.server.core.models as core
+import karrio.server.graph.utils as utils
 
 User = get_user_model()
 

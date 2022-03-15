@@ -6,13 +6,13 @@ from ics_courier_lib.services import (
     ArrayOfTrackingInfo,
     TrackingInfo,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Message,
     TrackingRequest,
     TrackingDetails,
     TrackingEvent,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
@@ -21,8 +21,8 @@ from purplship.core.utils import (
     XP,
     SF,
 )
-from purplship.providers.ics_courier.error import parse_error_response
-from purplship.providers.ics_courier.utils import Settings
+from karrio.providers.ics_courier.error import parse_error_response
+from karrio.providers.ics_courier.utils import Settings
 
 
 def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

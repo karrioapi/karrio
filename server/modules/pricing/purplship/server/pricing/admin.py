@@ -2,10 +2,10 @@ import importlib
 
 from django import forms
 from django.contrib import admin
-from purplship.server.pricing.models import Surcharge
+from karrio.server.pricing.models import Surcharge
 
-if importlib.util.find_spec('purplship.server.orgs') is not None:
-    import purplship.server.orgs.models as orgs
+if importlib.util.find_spec('karrio.server.orgs') is not None:
+    import karrio.server.orgs.models as orgs
 
 
 class SurchargeAdmin(admin.ModelAdmin):
@@ -25,7 +25,7 @@ class SurchargeAdmin(admin.ModelAdmin):
         }),
     )
 
-    if importlib.util.find_spec('purplship.server.orgs') is not None:
+    if importlib.util.find_spec('karrio.server.orgs') is not None:
         class SurchargeForm(forms.ModelForm):
             class Meta:
                 model = Surcharge

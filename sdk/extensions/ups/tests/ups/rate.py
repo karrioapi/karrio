@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
 from tests.ups.fixture import gateway
-from purplship import Rating
+from karrio import Rating
 
 
 class TestUPSRating(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestUPSRating(unittest.TestCase):
         )
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetXML)
 
-    @patch("purplship.mappers.ups.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.ups.proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -29,7 +29,7 @@ class TestUPSRating(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Rate")
 
     def test_parse_package_quote_response(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -37,7 +37,7 @@ class TestUPSRating(unittest.TestCase):
             )
 
     def test_parse_rate_error(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -45,7 +45,7 @@ class TestUPSRating(unittest.TestCase):
             )
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(

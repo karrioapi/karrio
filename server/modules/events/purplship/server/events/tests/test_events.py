@@ -3,9 +3,9 @@ from datetime import datetime
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.server.graph.tests.base import GraphTestCase
-from purplship.server.events import serializers
-from purplship.server.events.tasks import webhook
+from karrio.server.graph.tests.base import GraphTestCase
+from karrio.server.events import serializers
+from karrio.server.events.tasks import webhook
 
 
 class TestEventCreation(GraphTestCase):

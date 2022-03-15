@@ -1,7 +1,7 @@
 """Purplship Yunexpress  settings."""
 
 import attr
-from purplship.providers.yunexpress.utils import Settings as BaseSettings
+from karrio.providers.yunexpress.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import ANY
-from purplship.core.utils import DP, Serializable
-from purplship.core.models import ShipmentRequest
-from purplship.universal.mappers.shipping_proxy import (
+from karrio.core.utils import DP, Serializable
+from karrio.core.models import ShipmentRequest
+from karrio.universal.mappers.shipping_proxy import (
     ShippingMixinSettings,
     ShippingMixinProxy,
 )
-from purplship.universal.providers.shipping.shipment import parse_shipment_response
+from karrio.universal.providers.shipping.shipment import parse_shipment_response
 
 import logging
 

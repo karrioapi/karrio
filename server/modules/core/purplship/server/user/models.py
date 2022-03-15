@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserM
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.authtoken.models import Token as BaseToken
 
-from purplship.server.core.models import ControlledAccessModel
+from karrio.server.core.models import ControlledAccessModel
 
 
 class UserManager(DefaultUserManager):

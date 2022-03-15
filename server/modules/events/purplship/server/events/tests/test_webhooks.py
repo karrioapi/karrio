@@ -6,16 +6,16 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 
-from purplship.server.core.tests import APITestCase
-from purplship.server.events.models import Webhook
-from purplship.server.events.tasks.webhook import notify_webhook_subscribers
+from karrio.server.core.tests import APITestCase
+from karrio.server.events.models import Webhook
+from karrio.server.events.tasks.webhook import notify_webhook_subscribers
 
 NOTIFICATION_DATETIME = timezone.now()
 
 
 class TestWebhooks(APITestCase):
     def test_create_webhook(self):
-        url = reverse("purplship.server.events:webhook-list")
+        url = reverse("karrio.server.events:webhook-list")
         data = WEBHOOK_DATA
 
         response = self.client.post(url, data)
@@ -43,7 +43,7 @@ class TestWebhookDetails(APITestCase):
 
     def test_update_webhook(self):
         url = reverse(
-            "purplship.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
+            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
         )
         data = WEBHOOK_UPDATE_DATA
 
@@ -55,10 +55,10 @@ class TestWebhookDetails(APITestCase):
 
     def test_webhook_notify(self):
         url = reverse(
-            "purplship.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
+            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
         )
 
-        with patch("purplship.server.events.tasks.webhook.identity") as mocks:
+        with patch("karrio.server.events.tasks.webhook.identity") as mocks:
             response = Response()
             response.status_code = 200
             mocks.return_value = response

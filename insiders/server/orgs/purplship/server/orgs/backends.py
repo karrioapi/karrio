@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from organizations.backends.defaults import InvitationBackend, RegistrationBackend
 
-from purplship.server.user.forms import SignUpForm
-from purplship.server.orgs.models import Organization
+from karrio.server.user.forms import SignUpForm
+from karrio.server.orgs.models import Organization
 
 
 class PurplshipInvitationsBackend(InvitationBackend):

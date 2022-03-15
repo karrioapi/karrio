@@ -1,1 +1,1 @@
-recursive-include purplship/server/orgs/templates *
+recursive-include karrio/server/orgs/templates *

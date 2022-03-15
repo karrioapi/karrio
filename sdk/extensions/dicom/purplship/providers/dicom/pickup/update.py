@@ -1,7 +1,7 @@
 from typing import Tuple, List, cast
 from functools import partial
-from purplship.core.utils import Serializable, Pipeline, Job
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Pipeline, Job
+from karrio.core.models import (
     PickupCancelRequest,
     PickupUpdateRequest,
     PickupRequest,
@@ -9,14 +9,14 @@ from purplship.core.models import (
     Message
 )
 
-from purplship.providers.dicom.pickup.create import (
+from karrio.providers.dicom.pickup.create import (
     _create_pickup as _create_pickup_job,
     parse_pickup_response,
     _retrieve_pickup
 )
-from purplship.providers.dicom.pickup.cancel import pickup_cancel_request
-from purplship.providers.dicom.error import parse_error_response
-from purplship.providers.dicom.utils import Settings
+from karrio.providers.dicom.pickup.cancel import pickup_cancel_request
+from karrio.providers.dicom.error import parse_error_response
+from karrio.providers.dicom.utils import Settings
 
 
 def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

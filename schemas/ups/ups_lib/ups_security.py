@@ -13,7 +13,7 @@
 #   ./schemas/UPSSecurity.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/ups_security.py" ./schemas/UPSSecurity.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/ups_security.py" ./schemas/UPSSecurity.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

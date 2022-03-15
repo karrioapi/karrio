@@ -1,11 +1,11 @@
 import unittest
-from purplship.core.utils import DP, Serializable
-from purplship.core.models import RateRequest
-from purplship.universal.mappers.rating_proxy import (
+from karrio.core.utils import DP, Serializable
+from karrio.core.models import RateRequest
+from karrio.universal.mappers.rating_proxy import (
     RatingMixinSettings,
     RatingMixinProxy,
 )
-from purplship.universal.providers.rating.rate import parse_rate_response
+from karrio.universal.providers.rating.rate import parse_rate_response
 
 
 class TestUniversalRating(unittest.TestCase):

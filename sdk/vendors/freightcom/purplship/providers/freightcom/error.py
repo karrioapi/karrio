@@ -1,9 +1,9 @@
 from typing import List
 from freightcom_lib.error import ErrorType
 from freightcom_lib.quote_reply import CarrierErrorMessageType
-from purplship.core.models import Message
-from purplship.core.utils import Element, XP
-from purplship.providers.freightcom.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, XP
+from karrio.providers.freightcom.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

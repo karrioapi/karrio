@@ -1,13 +1,13 @@
 from typing import List, Optional, Tuple
 from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
 from dhl_express_lib.tracking_response import AWBInfo, ShipmentEvent
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     XP,
     DF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,

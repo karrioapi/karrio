@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.utils
+import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='commodity',
             name='metadata',
-            field=models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
         ),
         migrations.AddField(
             model_name='commodity',
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='shipment',
             name='metadata',
-            field=models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
         ),
         migrations.AlterField(
             model_name='customs',

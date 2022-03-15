@@ -7,11 +7,11 @@ from rest_framework.reverse import reverse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from purplship.server.core.views.api import APIView
-from purplship.server.proxy.router import router
-from purplship.server.serializers import SerializerDecorator
-from purplship.server.core.gateway import Shipments
-from purplship.server.core.serializers import (
+from karrio.server.core.views.api import APIView
+from karrio.server.proxy.router import router
+from karrio.server.serializers import SerializerDecorator
+from karrio.server.core.gateway import Shipments
+from karrio.server.core.serializers import (
     CharField,
     ChoiceField,
     COUNTRIES,
@@ -75,7 +75,7 @@ class ShippingDetails(APIView):
             payload,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
-                    "purplship.server.proxy:shipment-tracking",
+                    "karrio.server.proxy:shipment-tracking",
                     kwargs=dict(
                         tracking_number=tracking_number, carrier_name=carrier_name
                     ),

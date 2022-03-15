@@ -1,8 +1,8 @@
 import base64
 from typing import Any
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.core.utils import Serializable, Deserializable, Envelope, XP, request as http
-from purplship.mappers.ics_courier.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.core.utils import Serializable, Deserializable, Envelope, XP, request as http
+from karrio.mappers.ics_courier.settings import Settings
 
 
 class Proxy(BaseProxy):

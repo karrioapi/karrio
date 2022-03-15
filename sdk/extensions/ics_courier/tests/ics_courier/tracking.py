@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship import Tracking
-from purplship.core.models import TrackingRequest
+from karrio.core.utils import DP
+from karrio import Tracking
+from karrio.core.models import TrackingRequest
 from tests.ics_courier.fixture import gateway
 
 
@@ -16,7 +16,7 @@ class TestICSCourierTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequestXML)
 
     def test_get_tracking(self):
-        with patch("purplship.mappers.ics_courier.proxy.http") as mock:
+        with patch("karrio.mappers.ics_courier.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -30,7 +30,7 @@ class TestICSCourierTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("purplship.mappers.ics_courier.proxy.http") as mock:
+        with patch("karrio.mappers.ics_courier.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

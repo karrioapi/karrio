@@ -8,19 +8,19 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
-import purplship
-from purplship.core.utils import DP
+import karrio
+from karrio.core.utils import DP
 
-from purplship.server.providers import models
-from purplship.server.core.models import get_access_filter
-from purplship.server.core import (
+from karrio.server.providers import models
+from karrio.server.core.models import get_access_filter
+from karrio.server.core import (
     datatypes,
     dataunits,
     serializers,
     exceptions,
     validators,
 )
-from purplship.server.core.utils import (
+from karrio.server.core.utils import (
     identity,
     post_processing,
     upper,
@@ -180,7 +180,7 @@ class Shipments:
 
         # The request is wrapped in identity to simplify mocking in tests
         shipment, messages = identity(
-            lambda: purplship.Shipment.create(request).from_(carrier.gateway).parse()
+            lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
         )
 
         if shipment is None:
@@ -282,7 +282,7 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
+        request = karrio.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
 
         # The request call is wrapped in identity to simplify mocking in tests
         confirmation, messages = (
@@ -326,7 +326,7 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Tracking.fetch(
+        request = karrio.Tracking.fetch(
             DP.to_object(datatypes.TrackingRequest, payload)
         )
 
@@ -383,7 +383,7 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Pickup.schedule(
+        request = karrio.Pickup.schedule(
             datatypes.PickupRequest(**DP.to_dict(payload))
         )
 
@@ -422,7 +422,7 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Pickup.update(
+        request = karrio.Pickup.update(
             datatypes.PickupUpdateRequest(**DP.to_dict(payload))
         )
 
@@ -460,7 +460,7 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Pickup.cancel(
+        request = karrio.Pickup.cancel(
             datatypes.PickupCancelRequest(**DP.to_dict(payload))
         )
 
@@ -520,7 +520,7 @@ class Rates:
         if len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = purplship.Rating.fetch(DP.to_object(datatypes.RateRequest, payload))
+        request = karrio.Rating.fetch(DP.to_object(datatypes.RateRequest, payload))
 
         # The request call is wrapped in identity to simplify mocking in tests
         rates, messages = identity(lambda: request.from_(*gateways).parse())

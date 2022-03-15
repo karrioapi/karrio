@@ -16,14 +16,14 @@ RUN pip install --upgrade pip && \
 # The runtime image
 FROM python:3.8-slim AS build-image
 
-LABEL maintainer=hello@purplship.com
-LABEL org.opencontainers.image.title="purplship server"
-LABEL org.opencontainers.image.description="purplship server runtime image"
-LABEL org.opencontainers.image.url="https://purplship.com"
-LABEL org.opencontainers.image.documentation="https://docs.purplship.com"
-LABEL org.opencontainers.image.source="https://github.com/purplship/purplship-server"
-LABEL org.opencontainers.image.vendor="team purplship"
-LABEL org.opencontainers.image.authors="hello@purplship.com"
+LABEL maintainer=hello@karrio.com
+LABEL org.opencontainers.image.title="karrio server"
+LABEL org.opencontainers.image.description="karrio server runtime image"
+LABEL org.opencontainers.image.url="https://karrio.com"
+LABEL org.opencontainers.image.documentation="https://docs.karrio.com"
+LABEL org.opencontainers.image.source="https://github.com/karrio/karrio-server"
+LABEL org.opencontainers.image.vendor="team karrio"
+LABEL org.opencontainers.image.authors="hello@karrio.com"
 
 ENV DEBUG_MODE False
 ENV USE_HTTPS False

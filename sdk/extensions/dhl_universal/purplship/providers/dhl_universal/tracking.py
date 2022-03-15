@@ -1,18 +1,18 @@
 from typing import List, Tuple
 from dhl_universal_lib.tracking import TrackingRequest as DHLTrackingRequest, Shipment
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DP,
     DF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.dhl_universal.utils import Settings
-from purplship.providers.dhl_universal.error import parse_error_response
+from karrio.providers.dhl_universal.utils import Settings
+from karrio.providers.dhl_universal.error import parse_error_response
 
 
 def parse_tracking_response(

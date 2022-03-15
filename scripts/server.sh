@@ -6,12 +6,12 @@ source "scripts/activate-env.sh" > /dev/null 2>&1
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
 	cd "${ROOT:?}"
-	purplship graphql_schema --out "${ROOT:?}/server/schemas/graphql.json"
+	karrio graphql_schema --out "${ROOT:?}/server/schemas/graphql.json"
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
     docker rm -f swagger 2> /dev/null
-	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/server/schemas/swagger.json"
+	karrio generate_swagger -f json -o -u https://app.karrio.com "${ROOT:?}/server/schemas/swagger.json"
 	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
 	sleep 5 &&
 	curl -X POST -H "Content-Type: application/json" \
@@ -50,8 +50,8 @@ elif [[ "$*" == *gen:py:cli* ]]; then
 		-i /local/schemas/openapi.json \
 		-g python \
 		-o /local/.codegen/python \
-        --additional-properties=projectName=purplship-python \
-        --additional-properties=packageName=purplship
+        --additional-properties=projectName=karrio-python \
+        --additional-properties=packageName=karrio
 
 	cd -
 elif [[ "$*" == *build:js* ]]; then
@@ -59,9 +59,9 @@ elif [[ "$*" == *build:js* ]]; then
 	rm -rf node_modules;
     yarn;
     rm -f "${ROOT:?}/.codegen/typescript/api/generated/apis/index.ts"
-	npx gulp build --output "${ROOT:?}/server/main/purplship/server/static/purplship/js/purplship.js"
+	npx gulp build --output "${ROOT:?}/server/main/karrio/server/static/karrio/js/karrio.js"
 	cd -
-	purplship collectstatic --noinput
+	karrio collectstatic --noinput
 elif [[ "$*" == *build:pkgs* ]]; then
 	cd "${ROOT:?}"
     rm -rf "${DIST}/*"

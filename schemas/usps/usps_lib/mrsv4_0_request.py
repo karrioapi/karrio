@@ -13,7 +13,7 @@
 #   ./schemas/MRSV4.0Request.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/mrsv4_0_request.py" ./schemas/MRSV4.0Request.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/mrsv4_0_request.py" ./schemas/MRSV4.0Request.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

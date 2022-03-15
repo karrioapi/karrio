@@ -2,18 +2,18 @@ import json
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
-from purplship.server.core.tests import APITestCase
+from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
+from karrio.server.core.tests import APITestCase
 
 
 class TesPickup(APITestCase):
     def test_schedule_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-details",
+            "karrio.server.proxy:pickup-details",
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}?test", PICKUP_DATA)
             response_data = json.loads(response.content)
@@ -23,11 +23,11 @@ class TesPickup(APITestCase):
 
     def test_udpate_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-details",
+            "karrio.server.proxy:pickup-details",
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
             response = self.client.put(f"{url}?test", PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
@@ -37,11 +37,11 @@ class TesPickup(APITestCase):
 
     def test_cancel_pickup(self):
         url = reverse(
-            "purplship.server.proxy:pickup-cancel",
+            "karrio.server.proxy:pickup-cancel",
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
             response = self.client.post(f"{url}?test", PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)

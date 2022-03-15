@@ -5,12 +5,12 @@ from dhl_express_lib.routing_global_req_2_0 import (
     MetaData,
     Note
 )
-from purplship.core.units import CountryState, Country
-from purplship.core.utils import Serializable, Element, SF, XP
-from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
-from purplship.providers.dhl_express.units import CountryRegion
-from purplship.providers.dhl_express.utils import Settings
-from purplship.providers.dhl_express.error import parse_error_response
+from karrio.core.units import CountryState, Country
+from karrio.core.utils import Serializable, Element, SF, XP
+from karrio.core.models import AddressValidationRequest, Message, AddressValidationDetails
+from karrio.providers.dhl_express.units import CountryRegion
+from karrio.providers.dhl_express.utils import Settings
+from karrio.providers.dhl_express.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:

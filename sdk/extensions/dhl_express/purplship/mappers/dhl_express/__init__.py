@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.dhl_express.mapper import Mapper
-from purplship.mappers.dhl_express.proxy import Proxy
-from purplship.mappers.dhl_express.settings import Settings
-import purplship.providers.dhl_express.units as units
+from karrio.mappers.dhl_express.mapper import Mapper
+from karrio.mappers.dhl_express.proxy import Proxy
+from karrio.mappers.dhl_express.settings import Settings
+import karrio.providers.dhl_express.units as units
 
 
 METADATA = Metadata(

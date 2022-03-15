@@ -2,9 +2,9 @@
 name = "py-soap"
 version = "2021.11"
 description = "SOAP Schemas Python Data Types library"
-repository="https://github.com/purplship/purplship"
-homepage="https://github.com/purplship/purplship/tree/main/schemas/soap"
-authors = ["Purplship <hello@purplship.com>"]
+repository="https://github.com/karrio/karrio"
+homepage="https://github.com/karrio/karrio/tree/main/schemas/soap"
+authors = ["Purplship <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [

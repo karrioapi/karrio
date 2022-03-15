@@ -1,6 +1,6 @@
 from typing import List, Any, Tuple
 from ups_lib.av_request import AddressValidationRequest
-from purplship.core.utils import (
+from karrio.core.utils import (
     XP,
     DP,
     request as http,
@@ -11,8 +11,8 @@ from purplship.core.utils import (
     Pipeline,
     Job,
 )
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.ups.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.ups.settings import Settings
 
 
 class Proxy(BaseProxy):

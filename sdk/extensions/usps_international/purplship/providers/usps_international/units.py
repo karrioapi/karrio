@@ -1,8 +1,8 @@
 """Purplship USPS International units module"""
 
 import typing
-from purplship.core.utils import Enum, Spec
-from purplship.core.models import Address
+from karrio.core.utils import Enum, Spec
+from karrio.core.models import Address
 
 
 class Incoterm(Enum):

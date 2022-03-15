@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models.base
+import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.base.uuid, *(), **{'prefix': 'svc_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'svc_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('service_name', models.CharField(max_length=50)),
                 ('service_code', models.CharField(max_length=50)),
                 ('description', models.CharField(blank=True, max_length=250, null=True)),
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 'db_table': 'service-level',
                 'ordering': ['-created_at'],
             },
-            bases=(purplship.server.core.models.base.ControlledAccessModel, models.Model),
+            bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
         migrations.CreateModel(
             name='DHLPolandSettings',

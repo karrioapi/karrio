@@ -7,14 +7,14 @@ from organizations.abstract import (
     AbstractOrganizationInvitation,
 )
 
-import purplship.server.providers.models as providers
-import purplship.server.pricing.models as pricing
-import purplship.server.manager.models as manager
-import purplship.server.events.models as events
-import purplship.server.orders.models as orders
-import purplship.server.graph.models as graph
-import purplship.server.core.models as core
-import purplship.server.user.models as auth
+import karrio.server.providers.models as providers
+import karrio.server.pricing.models as pricing
+import karrio.server.manager.models as manager
+import karrio.server.events.models as events
+import karrio.server.orders.models as orders
+import karrio.server.graph.models as graph
+import karrio.server.core.models as core
+import karrio.server.user.models as auth
 
 
 class Organization(AbstractOrganization):
@@ -83,7 +83,7 @@ class Organization(AbstractOrganization):
 class OrganizationUser(AbstractOrganizationUser):
     @property
     def roles(self):
-        from purplship.server.orgs.utils import OrganizationUserRole
+        from karrio.server.orgs.utils import OrganizationUserRole
 
         roles = [OrganizationUserRole.member]
 

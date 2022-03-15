@@ -13,7 +13,7 @@
 #   ./schemas/AccessRequestXPCI.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/access_request_xpci.py" ./schemas/AccessRequestXPCI.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/access_request_xpci.py" ./schemas/AccessRequestXPCI.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

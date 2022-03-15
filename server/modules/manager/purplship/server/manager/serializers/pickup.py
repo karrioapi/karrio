@@ -1,14 +1,14 @@
 import typing
-from purplship.server import serializers
+from karrio.server import serializers
 
-from purplship.server.serializers import (
+from karrio.server.serializers import (
     owned_model_serializer,
     save_one_to_one_data,
     Context,
 )
-from purplship.server.core.gateway import Pickups, Carriers
-from purplship.server.core.datatypes import Confirmation
-from purplship.server.core.serializers import (
+from karrio.server.core.gateway import Pickups, Carriers
+from karrio.server.core.datatypes import Confirmation
+from karrio.server.core.serializers import (
     Pickup,
     AddressData,
     PickupRequest,
@@ -17,8 +17,8 @@ from purplship.server.core.serializers import (
     StringListField,
     PlainDictField,
 )
-from purplship.server.manager.serializers import AddressSerializer
-import purplship.server.manager.models as models
+from karrio.server.manager.serializers import AddressSerializer
+import karrio.server.manager.models as models
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="pickup")
 

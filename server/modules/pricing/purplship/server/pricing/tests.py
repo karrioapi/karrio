@@ -3,9 +3,9 @@ import logging
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import RateDetails, ChargeDetails
-from purplship.server.core.tests import APITestCase
-import purplship.server.pricing.models as models
+from karrio.core.models import RateDetails, ChargeDetails
+from karrio.server.core.tests import APITestCase
+import karrio.server.pricing.models as models
 
 logging.disable(logging.CRITICAL)
 
@@ -25,10 +25,10 @@ class TestPricing(APITestCase):
         )
 
     def test_apply_surcharge_amount_to_shipment_rates(self):
-        url = reverse("purplship.server.proxy:shipment-rates")
+        url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)
@@ -40,10 +40,10 @@ class TestPricing(APITestCase):
         self.charge.amount = 2.0
         self.charge.surcharge_type = "PERCENTAGE"
         self.charge.save()
-        url = reverse("purplship.server.proxy:shipment-rates")
+        url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)

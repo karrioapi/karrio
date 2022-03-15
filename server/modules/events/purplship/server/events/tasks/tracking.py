@@ -7,14 +7,14 @@ from itertools import groupby
 from django.conf import settings
 from django.utils import timezone
 
-import purplship
-from purplship.core.models import TrackingDetails, Message
-from purplship.core.utils import exec_parrallel, DP
-from purplship.api.interface import Gateway, IRequestFrom
+import karrio
+from karrio.core.models import TrackingDetails, Message
+from karrio.core.utils import exec_parrallel, DP
+from karrio.api.interface import Gateway, IRequestFrom
 
-from purplship.server.core import datatypes
-from purplship.server.core.utils import identity, compute_tracking_status
-from purplship.server.manager import models, serializers
+from karrio.server.core import datatypes
+from karrio.server.core.utils import identity, compute_tracking_status
+from karrio.server.manager import models, serializers
 
 logger = logging.getLogger(__name__)
 Delay = int
@@ -71,8 +71,8 @@ def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatch
 
             logger.debug(f"prepare tracking request for {tracking_numbers}")
 
-            # Prepare and send tracking request(s) using the purplship interface.
-            request: IRequestFrom = purplship.Tracking.fetch(
+            # Prepare and send tracking request(s) using the karrio interface.
+            request: IRequestFrom = karrio.Tracking.fetch(
                 datatypes.TrackingRequest(tracking_numbers=tracking_numbers)
             )
             gateway: Gateway = carrier.gateway

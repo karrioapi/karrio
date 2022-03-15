@@ -1,6 +1,6 @@
 from typing import Any
 from fedex_lib.ship_service_v26 import TrackingId
-from purplship.core.utils import (
+from karrio.core.utils import (
     XP,
     request as http,
     Pipeline,
@@ -9,8 +9,8 @@ from purplship.core.utils import (
     Job,
     Envelope,
 )
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.fedex.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.fedex.settings import Settings
 
 
 class Proxy(BaseProxy):

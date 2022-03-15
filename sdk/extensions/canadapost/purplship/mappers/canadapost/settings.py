@@ -1,7 +1,7 @@
 """Purplship Canada post client settings."""
 
 import attr
-from purplship.providers.canadapost import Settings as BaseSettings
+from karrio.providers.canadapost import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

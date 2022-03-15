@@ -13,7 +13,7 @@
 #   ./schemas/ArrayOfstring.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/array_ofstring.py" ./schemas/ArrayOfstring.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/array_ofstring.py" ./schemas/ArrayOfstring.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

@@ -3,16 +3,16 @@ from datetime import datetime
 from usps_lib.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType, GXGType
 from usps_lib.intl_rate_v2_response import ServiceType, ExtraServiceType
 
-from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.utils import Serializable, Element, NF, XP, DF
-from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
-from purplship.core.units import Packages, Country, Weight, WeightUnit, Services, Options, Currency, CompleteAddress
+from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
+from karrio.core.utils import Serializable, Element, NF, XP, DF
+from karrio.core.models import RateDetails, Message, RateRequest, ChargeDetails
+from karrio.core.units import Packages, Country, Weight, WeightUnit, Services, Options, Currency, CompleteAddress
 
-from purplship.providers.usps_international.units import (
+from karrio.providers.usps_international.units import (
     ShipmentService, ShipmentOption, PackagingType, ServiceClassID
 )
-from purplship.providers.usps_international.error import parse_error_response
-from purplship.providers.usps_international import Settings
+from karrio.providers.usps_international.error import parse_error_response
+from karrio.providers.usps_international import Settings
 
 
 def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:

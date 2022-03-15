@@ -1,6 +1,6 @@
-# purplship.purolator
+# karrio.purolator
 
-This package is a Purolator extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Purolator extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Purolator extension of the [purplship](https://pypi.org/projec
 ## Installation
 
 ```bash
-pip install purplship.purolator
+pip install karrio.purolator
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.purolator.settings import Settings
+import karrio
+from karrio.mappers.purolator.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["purolator"].create(
+canadapost = karrio.gateway["purolator"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

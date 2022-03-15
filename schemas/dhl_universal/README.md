@@ -16,4 +16,4 @@ import dhl_universal_lib
 help(dhl_universal_lib)
 ```
 
-*This package is used by the [Purplship Multi-carrier Shipping Interface](https://github.com/PurplShip/purplship)*
+*This package is used by the [Purplship Multi-carrier Shipping Interface](https://github.com/PurplShip/karrio)*

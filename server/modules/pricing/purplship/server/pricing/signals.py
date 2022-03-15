@@ -3,9 +3,9 @@ import functools
 import importlib
 from django.db.models import Q
 
-from purplship.server.serializers import Context
-from purplship.server.core.gateway import Rates
-import purplship.server.pricing.models as models
+from karrio.server.serializers import Context
+from karrio.server.core.gateway import Rates
+import karrio.server.pricing.models as models
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def register_rate_post_processing(*args, **kwargs):
 def apply_custom_surcharges(context: Context, result):
     _filters = tuple()
 
-    if importlib.util.find_spec('purplship.server.orgs') is not None:
+    if importlib.util.find_spec('karrio.server.orgs') is not None:
         _filters += (
             Q(active=True, org__id=getattr(context.org, 'id', None))
             | Q(active=True, org=None),

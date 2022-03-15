@@ -1,8 +1,8 @@
 from typing import List, Tuple
-from purplship.api.mapper import Mapper as BaseMapper
-from purplship.mappers.freightcom.settings import Settings
-from purplship.core.utils.serializable import Deserializable, Serializable
-from purplship.core.models import (
+from karrio.api.mapper import Mapper as BaseMapper
+from karrio.mappers.freightcom.settings import Settings
+from karrio.core.utils.serializable import Deserializable, Serializable
+from karrio.core.models import (
     RateRequest,
     ShipmentRequest,
     ShipmentDetails,
@@ -11,7 +11,7 @@ from purplship.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
 )
-from purplship.providers.freightcom import (
+from karrio.providers.freightcom import (
     parse_quote_reply,
     quote_request,
     parse_shipping_reply,

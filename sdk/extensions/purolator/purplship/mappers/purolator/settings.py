@@ -1,6 +1,6 @@
 """Purplship Purolator connection settings."""
 import attr
-from purplship.providers.purolator.utils import Settings as BaseSettings
+from karrio.providers.purolator.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

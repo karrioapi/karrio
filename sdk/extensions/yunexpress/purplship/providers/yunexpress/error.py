@@ -1,7 +1,7 @@
 from typing import List
 from yunexpress_lib.error import ErrorResponse
-from purplship.core.models import Message
-from purplship.providers.yunexpress import Settings
+from karrio.core.models import Message
+from karrio.providers.yunexpress import Settings
 
 
 def parse_error_response(response: dict, settings: Settings) -> List[Message]:

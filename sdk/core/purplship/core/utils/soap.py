@@ -1,8 +1,8 @@
 from typing import List, Union, Any
 from pysoap.envelope import Header, Body, Envelope, Fault
-from purplship.core.utils.xml import GenerateDSAbstract, Element, XMLPARSER
-from purplship.core.settings import Settings
-from purplship.core.models import Message
+from karrio.core.utils.xml import GenerateDSAbstract, Element, XMLPARSER
+from karrio.core.settings import Settings
+from karrio.core.models import Message
 
 
 def create_envelope(

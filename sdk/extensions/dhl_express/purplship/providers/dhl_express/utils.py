@@ -1,6 +1,6 @@
 import time
 from dhl_express_lib.datatypes_global_v62 import ServiceHeader, Request
-from purplship.core import Settings as BaseSettings
+from karrio.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):

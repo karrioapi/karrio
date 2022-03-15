@@ -5,8 +5,8 @@ from django.contrib.auth.admin import GroupAdmin
 from django_tenants.admin import TenantAdminMixin
 from constance.admin import ConstanceAdmin, Config
 
-from purplship.server.user.admin import UserAdmin
-import purplship.server.tenants.models as models
+from karrio.server.user.admin import UserAdmin
+import karrio.server.tenants.models as models
 
 
 class TenantsAdmin(AdminSite):

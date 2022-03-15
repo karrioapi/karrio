@@ -1,10 +1,10 @@
 import logging
 from typing import Any
 from pysoap.envelope import Envelope
-from purplship.core.utils import XP, request as http, Pipeline, Job
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.purolator.settings import Settings
-from purplship.core.utils.serializable import Serializable, Deserializable
+from karrio.core.utils import XP, request as http, Pipeline, Job
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.purolator.settings import Settings
+from karrio.core.utils.serializable import Serializable, Deserializable
 
 logger = logging.getLogger(__name__)
 

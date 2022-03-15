@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-      name='purplship.boxknight',
+      name='karrio.boxknight',
       version='0.0.0-dev',
       license='LGPLv3',
       packages=find_namespace_packages(),
-      install_requires=['purplship', 'carrier.boxknight'],
+      install_requires=['karrio', 'carrier.boxknight'],
       zip_safe=False,
 )

@@ -1,8 +1,8 @@
 from typing import List
 from eshipper_lib.error import ErrorType
-from purplship.core.models import Message
-from purplship.core.utils import Element, XP
-from purplship.providers.eshipper.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, XP
+from karrio.providers.eshipper.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

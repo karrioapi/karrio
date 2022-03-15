@@ -8,8 +8,8 @@ from usps_lib.evs_priority_mail_intl_request import (
     ItemDetailType,
     ExtraServicesType,
 )
-from purplship.core.utils import Serializable, Element, XP, DF, Location
-from purplship.core.units import (
+from karrio.core.utils import Serializable, Element, XP, DF, Location
+from karrio.core.units import (
     CustomsInfo,
     Packages,
     Options,
@@ -17,7 +17,7 @@ from purplship.core.units import (
     WeightUnit,
     CompleteAddress,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
@@ -25,13 +25,13 @@ from purplship.core.models import (
     Address,
     Customs,
 )
-from purplship.providers.usps_international.units import (
+from karrio.providers.usps_international.units import (
     LabelFormat,
     ShipmentOption,
     ContentType,
 )
-from purplship.providers.usps_international.error import parse_error_response
-from purplship.providers.usps_international.utils import Settings
+from karrio.providers.usps_international.error import parse_error_response
+from karrio.providers.usps_international.utils import Settings
 
 
 def parse_shipment_response(

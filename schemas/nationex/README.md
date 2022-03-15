@@ -16,4 +16,4 @@ import nationex_lib
 help(nationex_lib)
 ```
 
-*This package is used by the [purplship multi-carrier Shipping Interface](https://github.com/purplship/purplship)*
+*This package is used by the [karrio multi-carrier Shipping Interface](https://github.com/karrio/karrio)*

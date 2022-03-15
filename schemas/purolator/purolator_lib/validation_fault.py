@@ -13,7 +13,7 @@
 #   ./schemas/ValidationFault.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/validation_fault.py" ./schemas/ValidationFault.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/validation_fault.py" ./schemas/ValidationFault.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

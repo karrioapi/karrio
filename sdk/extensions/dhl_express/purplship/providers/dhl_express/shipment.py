@@ -22,9 +22,9 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
 )
 from dhl_express_lib.ship_val_global_res_10_0 import LabelImage, MultiLabelType
 from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
-from purplship.core.errors import OriginNotServicedError
-from purplship.core.utils import Serializable, XP, SF, Location, Element
-from purplship.core.models import (
+from karrio.core.errors import OriginNotServicedError
+from karrio.core.utils import Serializable, XP, SF, Location, Element
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     Message,
@@ -33,7 +33,7 @@ from purplship.core.models import (
     Customs,
     Duty,
 )
-from purplship.core.units import (
+from karrio.core.units import (
     CustomsInfo,
     Options,
     Packages,
@@ -41,7 +41,7 @@ from purplship.core.units import (
     Weight,
     WeightUnit,
 )
-from purplship.providers.dhl_express.units import (
+from karrio.providers.dhl_express.units import (
     PackageType,
     ProductCode,
     PaymentType,
@@ -55,8 +55,8 @@ from purplship.providers.dhl_express.units import (
     COUNTRY_PREFERED_UNITS,
     MeasurementOptions,
 )
-from purplship.providers.dhl_express.utils import Settings
-from purplship.providers.dhl_express.error import parse_error_response
+from karrio.providers.dhl_express.utils import Settings
+from karrio.providers.dhl_express.error import parse_error_response
 
 
 UNSUPPORTED_PAPERLESS_COUNTRIES = ["JM"]

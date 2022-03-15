@@ -4,8 +4,8 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models.base
-import purplship.server.core.utils
+import karrio.server.core.models.base
+import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
@@ -24,13 +24,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.base.uuid, *(), **{'prefix': 'ord_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'ord_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('order_id', models.CharField(max_length=50)),
                 ('source', models.CharField(blank=True, max_length=50, null=True)),
                 ('status', models.CharField(choices=[('created', 'created'), ('cancelled', 'cancelled'), ('fulfilled', 'fulfilled'), ('delivered', 'delivered'), ('partially_fulfilled', 'partially_fulfilled')], default='created', max_length=25)),
-                ('options', models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True)),
+                ('options', models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True)),
                 ('test_mode', models.BooleanField()),
-                ('metadata', models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True)),
+                ('metadata', models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 'db_table': 'order',
                 'ordering': ['-created_at'],
             },
-            bases=(purplship.server.core.models.base.ControlledAccessModel, models.Model),
+            bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
         migrations.CreateModel(
             name='OrderLink',

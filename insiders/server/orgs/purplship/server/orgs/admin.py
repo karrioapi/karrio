@@ -4,7 +4,7 @@ from organizations.base_admin import BaseOrganizationOwnerAdmin
 from organizations.base_admin import BaseOrganizationUserAdmin
 from organizations.base_admin import BaseOwnerInline
 
-from purplship.server.orgs.models import (
+from karrio.server.orgs.models import (
     Organization, OrganizationUser, OrganizationOwner, OrganizationInvitation
 )
 

@@ -1,6 +1,6 @@
 """Purplship USPS client settings."""
 
-from purplship.core.settings import Settings as BaseSettings
+from karrio.core.settings import Settings as BaseSettings
 
 
 class Settings(BaseSettings):

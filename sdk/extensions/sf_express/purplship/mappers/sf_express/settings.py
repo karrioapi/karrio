@@ -1,7 +1,7 @@
 """Purplship SF-Express settings."""
 
 import attr
-from purplship.providers.sf_express.utils import Settings as BaseSettings
+from karrio.providers.sf_express.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

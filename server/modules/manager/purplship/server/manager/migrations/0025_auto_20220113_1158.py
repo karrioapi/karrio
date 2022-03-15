@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import functools
-import purplship.server.core.utils
+import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pickup',
             name='metadata',
-            field=models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
         ),
         migrations.AddField(
             model_name='tracking',
             name='metadata',
-            field=models.JSONField(blank=True, default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
         ),
     ]

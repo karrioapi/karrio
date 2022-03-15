@@ -1,13 +1,13 @@
 import re
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import (
+from karrio.core.utils import DP
+from karrio.core.models import (
     PickupCancelRequest,
     PickupRequest,
     PickupUpdateRequest,
 )
-from purplship import Pickup
+from karrio import Pickup
 from tests.dhl_express.fixture import gateway
 
 
@@ -48,7 +48,7 @@ class TestDHLPickup(unittest.TestCase):
         self.assertEqual(serialized_request, CancelPURequestXML)
 
     def test_parse_request_pickup_response(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = PickupResponseXML
             parsed_response = Pickup.schedule(self.BookPURequest).from_(gateway).parse()
 
@@ -57,7 +57,7 @@ class TestDHLPickup(unittest.TestCase):
             )
 
     def test_parse_modify_pickup_response(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ModifyPURequestXML
             parsed_response = Pickup.update(self.ModifyPURequest).from_(gateway).parse()
 
@@ -66,7 +66,7 @@ class TestDHLPickup(unittest.TestCase):
             )
 
     def test_parse_cancellation_pickup_response(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = CancelPUResponseXML
             parsed_response = Pickup.cancel(self.CancelPURequest).from_(gateway).parse()
 
@@ -75,7 +75,7 @@ class TestDHLPickup(unittest.TestCase):
             )
 
     def test_parse_request_pickup_error(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = PickupErrorResponseXML
             parsed_response = Pickup.schedule(self.BookPURequest).from_(gateway).parse()
 

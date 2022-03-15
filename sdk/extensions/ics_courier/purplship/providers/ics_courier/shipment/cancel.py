@@ -4,19 +4,19 @@ from ics_courier_lib.services import (
     Authenticate,
     ArrayOfString,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Envelope,
     Element,
     Serializable,
 )
-from purplship.providers.ics_courier.error import parse_error_response
-from purplship.providers.ics_courier.utils import Settings
+from karrio.providers.ics_courier.error import parse_error_response
+from karrio.providers.ics_courier.utils import Settings
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

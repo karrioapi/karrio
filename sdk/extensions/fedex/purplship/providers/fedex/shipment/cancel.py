@@ -7,19 +7,19 @@ from fedex_lib.ship_service_v26 import (
     DeletionControlType,
     TrackingIdType,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Envelope,
     Element,
     Serializable,
     create_envelope,
 )
-from purplship.providers.fedex.error import parse_error_response
-from purplship.providers.fedex.utils import Settings, default_request_serializer
+from karrio.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.utils import Settings, default_request_serializer
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

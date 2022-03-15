@@ -7,8 +7,8 @@ from django.contrib.auth.forms import (
     ValidationError,
 )
 from django.utils.translation import gettext_lazy as _
-from purplship.server.conf import settings
-from purplship.server.user.utils import send_email
+from karrio.server.conf import settings
+from karrio.server.user.utils import send_email
 
 
 class SignUpForm(UserCreationForm):

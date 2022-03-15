@@ -6,7 +6,7 @@ from aramex_lib.tracking import (
     ClientInfo,
     TrackingResult
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Envelope,
     Element,
@@ -14,14 +14,14 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.aramex.utils import Settings
-from purplship.providers.aramex.error import parse_error_response
+from karrio.providers.aramex.utils import Settings
+from karrio.providers.aramex.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

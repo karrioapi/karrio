@@ -15,11 +15,11 @@ from django_filters import rest_framework as filters
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
 
-from purplship.core.utils import DP
-from purplship.server.core.gateway import Carriers
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.manager.router import router
-from purplship.server.manager.serializers import (
+from karrio.core.utils import DP
+from karrio.server.core.gateway import Carriers
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.manager.router import router
+from karrio.server.manager.serializers import (
     SerializerDecorator,
     PaginatedResult,
     MODELS,
@@ -40,7 +40,7 @@ from purplship.server.manager.serializers import (
     ShipmentCancelSerializer,
     RateSerializer,
 )
-import purplship.server.manager.models as models
+import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate

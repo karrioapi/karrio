@@ -9,23 +9,23 @@ from ics_courier_lib.services import (
     ArrayOfString,
     CreateShipmentResponse,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Documents,
     Message,
     ShipmentRequest,
     ShipmentDetails,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Serializable,
     Element,
     Envelope,
     XP,
 )
-from purplship.core.units import Packages, Options
-from purplship.providers.ics_courier.error import parse_error_response
-from purplship.providers.ics_courier.utils import Settings
-from purplship.providers.ics_courier.units import Service, Option
+from karrio.core.units import Packages, Options
+from karrio.providers.ics_courier.error import parse_error_response
+from karrio.providers.ics_courier.utils import Settings
+from karrio.providers.ics_courier.units import Service, Option
 
 
 def parse_shipment_response(

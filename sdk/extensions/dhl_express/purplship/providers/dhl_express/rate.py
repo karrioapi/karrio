@@ -16,11 +16,11 @@ from dhl_express_lib.dct_req_global_2_0 import (
 from dhl_express_lib.dct_requestdatatypes_global import DCTDutiable
 from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 
-from purplship.core.errors import DestinationNotServicedError, OriginNotServicedError
-from purplship.core.utils import Serializable, Element, NF, XP, DF
-from purplship.core.units import Packages, Options, Package, Services, CountryCurrency
-from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
-from purplship.providers.dhl_express.units import (
+from karrio.core.errors import DestinationNotServicedError, OriginNotServicedError
+from karrio.core.utils import Serializable, Element, NF, XP, DF
+from karrio.core.units import Packages, Options, Package, Services, CountryCurrency
+from karrio.core.models import RateDetails, Message, ChargeDetails, RateRequest
+from karrio.providers.dhl_express.units import (
     ProductCode,
     DCTPackageType,
     PackagePresets,
@@ -29,8 +29,8 @@ from purplship.providers.dhl_express.units import (
     COUNTRY_PREFERED_UNITS,
     MeasurementOptions,
 )
-from purplship.providers.dhl_express.utils import Settings
-from purplship.providers.dhl_express.error import parse_error_response
+from karrio.providers.dhl_express.utils import Settings
+from karrio.providers.dhl_express.error import parse_error_response
 
 
 def parse_rate_response(

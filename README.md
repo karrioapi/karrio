@@ -1,24 +1,24 @@
-# <a href="https://next.purplship.com" target="_blank"><picture><source srcset="./server/main/purplship/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/purplship/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
+# <a href="https://next.karrio.com" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
 
 **The Headless Shipping platform**
 
-[![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
+[![puprlship-tests](https://github.com/karrio/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio/karrio&amp;utm_campaign=Badge_Grade)
 
-purplship makes shipping services simple and accessible.
+karrio makes shipping services simple and accessible.
 Help us out… If you love open source and great software, give us a star! 🌟
 
 **Features**
 
 - **Headless Shipping**: Access a network of traditional and modern shipping carrier API-first
-- **Multi-carrier SDK**: Integrate purplship once and connect to multiple shipping carrier APIs
-- **Extensible**: Use the purplship SDK Framework to integrate with custom carrier APIs.
+- **Multi-carrier SDK**: Integrate karrio once and connect to multiple shipping carrier APIs
+- **Extensible**: Use the karrio SDK Framework to integrate with custom carrier APIs.
 - **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels.
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [purplship dashboard](https://github.com/purplship/purplship-dashboard) to orchestrate your logistics operations.
+- **Dashboard**: Use the [karrio dashboard](https://github.com/karrio/karrio-dashboard) to orchestrate your logistics operations.
 
 <picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
 
@@ -26,16 +26,16 @@ Help us out… If you love open source and great software, give us a star! 🌟
 
 There are several ways to use Purplship:
 
-- [Purplship Cloud](https://cloud.purplship.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
-- [Purplship OSS](#purplship-oss) is an open-source version of purplship that provides the core functionality of purplship (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
-- [Purplship SDK](#purplship-sdk) is the core of the purplship abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
+- [Purplship Cloud](https://cloud.karrio.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
+- [Purplship OSS](#karrio-oss) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
+- [Purplship SDK](#karrio-sdk) is the core of the karrio abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
 
 > Source code for all editions is contained in this repository. See the [License section](#license) for more details.
 
 ## Status
 
-- [x] Alpha: We are testing purplship with a closed set of customers
-- [x] Public Alpha: Anyone can sign up over at [cloud.purplship.com](cloud.purplship.com). But go easy on us, there are a few kinks
+- [x] Alpha: We are testing karrio with a closed set of customers
+- [x] Public Alpha: Anyone can sign up over at [cloud.karrio.com](cloud.karrio.com). But go easy on us, there are a few kinks
 - [x] Public Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready
 
@@ -45,7 +45,7 @@ We are currently in Public Beta. Watch "releases" of this repo to get notified o
 
 ### Purplship OSS
 
-> check the latest version tags of the purplship/server image on [Docker Hub](https://hub.docker.com/r/purplship/server/tags)
+> check the latest version tags of the karrio/server image on [Docker Hub](https://hub.docker.com/r/karrio/server/tags)
 
 <details>
 <summary>Using our Docker image</summary>
@@ -70,7 +70,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/purplship/server:2022.2
+  danh91.docker.scarf.sh/karrio/server:2022.2
 ```
 
 </details>
@@ -95,7 +95,7 @@ services:
       - db_network
 
   pship:
-    image: danh91.docker.scarf.sh/purplship/server:2022.2
+    image: danh91.docker.scarf.sh/karrio/server:2022.2
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -139,44 +139,44 @@ Purplship should now be running at <http://localhost:5002>
 
 ### Official Purplship Server Client Libraries
 
-- [Node](https://github.com/purplship/purplship-node)
-- [PHP](https://github.com/purplship/purplship-php-client)
-- [Python](https://github.com/purplship/purplship-python-client)
+- [Node](https://github.com/karrio/karrio-node)
+- [PHP](https://github.com/karrio/karrio-php-client)
+- [Python](https://github.com/karrio/karrio-python-client)
 
 ## Purplship SDK
 
 ### Installation
 
 ```bash
-# install purplship core
-pip install purplship
+# install karrio core
+pip install karrio
 
-# eg: install the purplship canadapost extention
-pip install purplship.canadapost
+# eg: install the karrio canadapost extention
+pip install karrio.canadapost
 ```
 
 <details>
 <summary>Additional carrier extensions</summary>
 
-- `purplship.aramex`
-- `purplship.australiapost`
-- `purplship.canadapost`
-- `purplship.canpar`
-- `purplship.dhl-express`
-- `purplship.dhl-poland`
-- `purplship.dhl-universal`
-- `purplship.dicom`
-- `purplship.fedex`
-- `purplship.purolator`
-- `purplship.royalmail`
-- `purplship.sendle`
-- `purplship.sf-express`
-- `purplship.tnt`
-- `purplship.ups`
-- `purplship.usps`
-- `purplship.usps-international`
-- `purplship.yanwen`
-- `purplship.yunexpress`
+- `karrio.aramex`
+- `karrio.australiapost`
+- `karrio.canadapost`
+- `karrio.canpar`
+- `karrio.dhl-express`
+- `karrio.dhl-poland`
+- `karrio.dhl-universal`
+- `karrio.dicom`
+- `karrio.fedex`
+- `karrio.purolator`
+- `karrio.royalmail`
+- `karrio.sendle`
+- `karrio.sf-express`
+- `karrio.tnt`
+- `karrio.ups`
+- `karrio.usps`
+- `karrio.usps-international`
+- `karrio.yanwen`
+- `karrio.yunexpress`
 
 </details>
 
@@ -188,13 +188,13 @@ pip install purplship.canadapost
 - Fetch shipping rates
 
 ```python
-import purplship
-from purplship.core.models import Address, Parcel, RateRequest
-from purplship.mappers.canadapost import Settings
+import karrio
+from karrio.core.models import Address, Parcel, RateRequest
+from karrio.mappers.canadapost import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["canadapost"].create(
+canadapost = karrio.gateway["canadapost"].create(
     Settings(
         username="6e93d53968881714",
         password="0bfa9fcb9853d1f51ee57a",
@@ -244,7 +244,7 @@ rate_request = RateRequest(
 )
 
 # Send a rate request using a carrier gateway
-response = purplship.Rating.fetch(rate_request).from_(canadapost)
+response = karrio.Rating.fetch(rate_request).from_(canadapost)
 
 # Parse the returned response
 rates, messages = response.parse()
@@ -273,10 +273,10 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://next.purplship.com/docs)
-- [**Community Discussions**](https://github.com/purplship/purplship/discussions)
-- [**Issue Tracker**](https://github.com/purplship/purplship/issues)
-- [**Blog**](https://next.purplship.com/blog)
+- [**Documentation**](https://next.karrio.com/docs)
+- [**Community Discussions**](https://github.com/karrio/karrio/discussions)
+- [**Issue Tracker**](https://github.com/karrio/karrio/issues)
+- [**Blog**](https://next.karrio.com/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
 
@@ -288,4 +288,4 @@ All files in the `/insiders` fall under the [Purplship LICENSE](/insiders/LICENS
 
 The remaining files fall under the [Apache 2 license](LICENSE). Purplship OSS is built only from the Apache-licensed files in this repository.
 
-Any other questions, mail us at hello@purplship.com We’d love to meet you!
+Any other questions, mail us at hello@karrio.com We’d love to meet you!

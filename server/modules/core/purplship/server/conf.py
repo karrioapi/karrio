@@ -10,9 +10,9 @@ DEFAULT_ALLOWED_CONFIG = [
 ]
 FALLBACK_VALUES = {
     "APP_NAME": "Purplship",
-    "SUPPORT_EMAIL": "hello@purplship.com",
-    "BASE_TEMPLATE": "purplship/base_site.html",
-    "BASE_FOOTER_TEMPLATE": "purplship/base_footer.html",
+    "SUPPORT_EMAIL": "hello@karrio.com",
+    "BASE_TEMPLATE": "karrio/base_site.html",
+    "BASE_FOOTER_TEMPLATE": "karrio/base_footer.html",
 }
 
 

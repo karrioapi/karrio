@@ -3,7 +3,7 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from purplship.server.serializers import (
+from karrio.server.serializers import (
     ModelSerializer,
     save_one_to_one_data,
     save_many_to_many_data,
@@ -12,11 +12,11 @@ from purplship.server.serializers import (
     exclude_id_field,
     Context,
 )
-import purplship.server.core.serializers as serializers
-import purplship.server.core.validators as validators
-import purplship.server.providers.models as providers
-import purplship.server.manager.models as manager
-import purplship.server.graph.models as graph
+import karrio.server.core.serializers as serializers
+import karrio.server.core.validators as validators
+import karrio.server.providers.models as providers
+import karrio.server.manager.models as manager
+import karrio.server.graph.models as graph
 
 
 class UserModelSerializer(ModelSerializer):

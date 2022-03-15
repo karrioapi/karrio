@@ -1,8 +1,8 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.canpar.mapper import Mapper
-from purplship.mappers.canpar.proxy import Proxy
-from purplship.mappers.canpar.settings import Settings
+from karrio.mappers.canpar.mapper import Mapper
+from karrio.mappers.canpar.proxy import Proxy
+from karrio.mappers.canpar.settings import Settings
 
 
 METADATA = Metadata(

@@ -164,7 +164,7 @@ class Location:
 
     @property
     def as_country_name(self) -> str:
-        from purplship.core.units import Country
+        from karrio.core.units import Country
 
         if self.value in Country:
             return Country[self.value].value
@@ -173,7 +173,7 @@ class Location:
 
     @property
     def as_state_name(self) -> str:
-        from purplship.core.units import CountryState
+        from karrio.core.units import CountryState
 
         try:
             country: Any = CountryState.__members__.get(self.extra["country"])

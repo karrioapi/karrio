@@ -1,7 +1,7 @@
 """ TNT Native Types """
 
-from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import PackagePreset
+from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.units import PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 

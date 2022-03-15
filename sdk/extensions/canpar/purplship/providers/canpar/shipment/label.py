@@ -3,12 +3,12 @@ from canpar_lib.CanshipBusinessService import (
     GetLabelsAdvancedRq,
     getLabelsAdvanced
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     Serializable,
     Envelope
 )
-from purplship.providers.canpar.utils import Settings
+from karrio.providers.canpar.utils import Settings
 
 
 @struct

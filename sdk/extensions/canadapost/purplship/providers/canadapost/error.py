@@ -1,9 +1,9 @@
 from typing import List, Callable, cast, Any
 from functools import reduce
 from urllib.error import HTTPError
-from purplship.core.utils.xml import Element
-from purplship.providers.canadapost import Settings
-from purplship.core.models import Message
+from karrio.core.utils.xml import Element
+from karrio.providers.canadapost import Settings
+from karrio.core.models import Message
 from canadapost_lib.messages import messageType
 
 

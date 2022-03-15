@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.royalmail.mapper import Mapper
-from purplship.mappers.royalmail.proxy import Proxy
-from purplship.mappers.royalmail.settings import Settings
-# import purplship.providers.royalmail.units as units
+from karrio.mappers.royalmail.mapper import Mapper
+from karrio.mappers.royalmail.proxy import Proxy
+from karrio.mappers.royalmail.settings import Settings
+# import karrio.providers.royalmail.units as units
 
 
 METADATA = Metadata(

@@ -2,8 +2,8 @@
 
 from django.conf import settings
 from django.db import migrations, models
-import purplship.server.core.fields
-import purplship.server.providers.models.carrier
+import karrio.server.core.fields
+import karrio.server.providers.models.carrier
 
 
 class Migration(migrations.Migration):
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='carrier',
             name='capabilities',
-            field=purplship.server.core.fields.MultiChoiceField(base_field=models.CharField(choices=[('pickup', 'pickup'), ('rating', 'rating'), ('shipping', 'shipping'), ('tracking', 'tracking')], max_length=50), default=purplship.server.providers.models.carrier.CarrierCapabilities.get_capabilities, size=4),
+            field=karrio.server.core.fields.MultiChoiceField(base_field=models.CharField(choices=[('pickup', 'pickup'), ('rating', 'rating'), ('shipping', 'shipping'), ('tracking', 'tracking')], max_length=50), default=karrio.server.providers.models.carrier.CarrierCapabilities.get_capabilities, size=4),
         ),
         migrations.AddField(
             model_name='dhlexpresssettings',

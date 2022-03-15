@@ -13,7 +13,7 @@
 #   ./schemas/common.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/common.py" ./schemas/common.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/common.py" ./schemas/common.xsd
 #
 # Current working directory (os.getcwd()):
 #   canadapost

@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import TrackingRequest
-from purplship import Tracking
+from karrio.core.utils import DP
+from karrio.core.models import TrackingRequest
+from karrio import Tracking
 from tests.purolator.fixture import gateway
 
 
@@ -18,7 +18,7 @@ class TestPurolatorTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), TRACKING_REQUEST_XML)
 
-    @patch("purplship.mappers.purolator.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -28,7 +28,7 @@ class TestPurolatorTracking(unittest.TestCase):
         )
 
     def test_tracking_response_parsing(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mock:
+        with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

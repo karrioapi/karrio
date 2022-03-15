@@ -1,11 +1,11 @@
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Deserializable,
 )
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.universal.mappers.rating_proxy import RatingMixinProxy
-from purplship.universal.mappers.shipping_proxy import ShippingMixinProxy
-from purplship.mappers.generic.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.universal.mappers.rating_proxy import RatingMixinProxy
+from karrio.universal.mappers.shipping_proxy import ShippingMixinProxy
+from karrio.mappers.generic.settings import Settings
 
 
 Proxy = type(

@@ -1,1 +1,1 @@
-default_app_config = 'purplship.server.events.apps.EventsConfig'
+default_app_config = 'karrio.server.events.apps.EventsConfig'

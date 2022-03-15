@@ -18,22 +18,22 @@ from canadapost_lib.ncshipment import (
     CustomsType,
     PreferencesType,
 )
-from purplship.core.units import Currency, CustomsInfo, WeightUnit, Options, Packages
-from purplship.core.utils import Serializable, Element, SF, XP, NF
-from purplship.core.models import (
+from karrio.core.units import Currency, CustomsInfo, WeightUnit, Options, Packages
+from karrio.core.utils import Serializable, Element, SF, XP, NF
+from karrio.core.models import (
     Documents,
     Message,
     ShipmentDetails,
     ShipmentRequest,
 )
-from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.units import (
+from karrio.providers.canadapost.error import parse_error_response
+from karrio.providers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
     INTERNATIONAL_NON_DELIVERY_OPTION,
 )
-from purplship.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.utils import Settings
 
 
 def parse_shipment_response(

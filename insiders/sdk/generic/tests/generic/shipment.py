@@ -1,8 +1,8 @@
 import unittest
-import purplship
+import karrio
 from unittest.mock import ANY
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest
 from tests.generic.fixture import gateway
 
 
@@ -13,7 +13,7 @@ class TestGenericShipment(unittest.TestCase):
 
     def test_parse_rate_response(self):
         parsed_response = (
-            purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
         )
 
         self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)

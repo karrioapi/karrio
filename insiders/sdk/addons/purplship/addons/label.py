@@ -1,9 +1,9 @@
 from jinja2 import Template
-from purplship.core.utils import DP
-from purplship.core.units import Package, CountryISO
-from purplship.core.models import ShipmentRequest
-from purplship.addons.renderer import render_label
-from purplship.universal.providers.shipping import (
+from karrio.core.utils import DP
+from karrio.core.units import Package, CountryISO
+from karrio.core.models import ShipmentRequest
+from karrio.addons.renderer import render_label
+from karrio.universal.providers.shipping import (
     ShippingMixinSettings,
 )
 

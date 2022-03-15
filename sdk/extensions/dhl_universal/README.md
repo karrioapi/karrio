@@ -1,6 +1,6 @@
-# purplship.dhl_universal
+# karrio.dhl_universal
 
-This package is a DHL Universal Tracking extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a DHL Universal Tracking extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a DHL Universal Tracking extension of the [purplship](https://py
 ## Installation
 
 ```bash
-pip install purplship.dhl_universal
+pip install karrio.dhl_universal
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.dhl_universal.settings import Settings
+import karrio
+from karrio.mappers.dhl_universal.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["dhl_universal"].create(
+canadapost = karrio.gateway["dhl_universal"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

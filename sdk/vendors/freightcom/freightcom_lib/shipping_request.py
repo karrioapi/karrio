@@ -13,7 +13,7 @@
 #   ./vendor/schemas/shipping_request.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipping_request.py" ./vendor/schemas/shipping_request.xsd
+#   /Users/danielkobina/Workspace/project/karrio-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipping_request.py" ./vendor/schemas/shipping_request.xsd
 #
 # Current working directory (os.getcwd()):
 #   freightcom

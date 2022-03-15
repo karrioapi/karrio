@@ -4,8 +4,8 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models.base
-import purplship.server.core.utils
+import karrio.server.core.models.base
+import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.base.uuid, *(), **{'prefix': 'evt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'evt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('type', models.CharField(max_length=50)),
-                ('data', models.JSONField(default=functools.partial(purplship.server.core.utils.identity, *(), **{'value': {}}))),
+                ('data', models.JSONField(default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}))),
                 ('test_mode', models.BooleanField()),
                 ('pending_webhooks', models.IntegerField(default=0)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
                 'db_table': 'event',
                 'ordering': ['-created_at'],
             },
-            bases=(purplship.server.core.models.base.ControlledAccessModel, models.Model),
+            bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
     ]

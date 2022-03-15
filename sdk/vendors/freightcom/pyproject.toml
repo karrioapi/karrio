@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship.freightcom"
+name = "karrio.freightcom"
 version = "2022.2"
-homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/freightcom"
-repository="https://github.com/purplship/purplship"
-description = "Freightcom purplship extension"
-authors = ["Purplship <hello@purplship.com>"]
+homepage="https://github.com/karrio/karrio/tree/main/sdk/vendors/freightcom"
+repository="https://github.com/karrio/karrio"
+description = "Freightcom karrio extension"
+authors = ["Purplship <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "purplship" }, { include = "freightcom_lib" }]
+packages = [{ include = "karrio" }, { include = "freightcom_lib" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = ""
+"karrio" = ""
 
 [tool.poetry.dev-dependencies]
 

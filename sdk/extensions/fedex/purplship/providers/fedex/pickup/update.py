@@ -4,19 +4,19 @@ from fedex_lib.pickup_service_v22 import (
     CreatePickupReply,
     NotificationSeverityType,
 )
-from purplship.core.utils import Job, Pipeline, XP, Serializable
-from purplship.core.models import (
+from karrio.core.utils import Job, Pipeline, XP, Serializable
+from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
 )
-from purplship.providers.fedex.utils import Settings
-from purplship.providers.fedex.pickup.create import (
+from karrio.providers.fedex.utils import Settings
+from karrio.providers.fedex.pickup.create import (
     _get_availability,
     _create_pickup,
     parse_pickup_response,
 )
-from purplship.providers.fedex.pickup.cancel import pickup_cancel_request
+from karrio.providers.fedex.pickup.cancel import pickup_cancel_request
 
 
 parse_pickup_update_response = parse_pickup_response

@@ -13,7 +13,7 @@
 #   ./schemas/DangerousGoodsUtility.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/dangerous_goods_utility.py" ./schemas/DangerousGoodsUtility.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/dangerous_goods_utility.py" ./schemas/DangerousGoodsUtility.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

@@ -3,21 +3,21 @@ from ups_lib.rest_tracking_response import (
     Shipment,
     Package,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Envelope,
     DP,
     DF,
     SF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingRequest,
     TrackingDetails,
     Message,
 )
-from purplship.providers.ups.error import parse_rest_error_response
-from purplship.providers.ups.utils import Settings
+from karrio.providers.ups.error import parse_rest_error_response
+from karrio.providers.ups.utils import Settings
 
 
 def parse_tracking_response(

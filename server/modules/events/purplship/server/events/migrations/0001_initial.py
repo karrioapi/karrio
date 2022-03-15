@@ -5,7 +5,7 @@ import django.contrib.postgres.fields
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models
+import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'web_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'web_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('enabled_events', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=200), size=None)),
                 ('url', models.URLField()),
                 ('test_mode', models.BooleanField()),

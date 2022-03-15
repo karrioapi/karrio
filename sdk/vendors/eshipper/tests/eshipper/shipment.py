@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch, ANY
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
-from purplship import Shipment
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
+from karrio import Shipment
 from tests.eshipper.fixture import gateway
 
 
@@ -25,7 +25,7 @@ class TestEShipperShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+        with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -33,7 +33,7 @@ class TestEShipperShipment(unittest.TestCase):
             self.assertEqual(url, gateway.settings.server_url)
 
     def test_cancel_shipment(self):
-        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+        with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -41,7 +41,7 @@ class TestEShipperShipment(unittest.TestCase):
             self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+        with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -50,7 +50,7 @@ class TestEShipperShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
-        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+        with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()

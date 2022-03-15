@@ -8,13 +8,13 @@ from canpar_lib.CanshipBusinessService import (
     Address,
     Package,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Documents,
     Message,
     ShipmentRequest,
     ShipmentDetails,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
@@ -23,12 +23,12 @@ from purplship.core.utils import (
     Job,
     DF,
 )
-from purplship.core.units import Packages, Options
-from purplship.providers.canpar.shipment.label import get_label_request, LabelRequest
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
-from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
-from purplship.providers.canpar.rate import _extract_rate_details
+from karrio.core.units import Packages, Options
+from karrio.providers.canpar.shipment.label import get_label_request, LabelRequest
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
+from karrio.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
+from karrio.providers.canpar.rate import _extract_rate_details
 
 
 def parse_shipment_response(

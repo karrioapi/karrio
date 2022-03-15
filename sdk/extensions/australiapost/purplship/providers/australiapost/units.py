@@ -1,6 +1,6 @@
 """ Australia Post Native Types """
 
-# from purplship.core.utils import Enum, Flag
+# from karrio.core.utils import Enum, Flag
 #
 # PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 #

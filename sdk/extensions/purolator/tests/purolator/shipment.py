@@ -1,9 +1,9 @@
 import re
 import unittest
 from unittest.mock import patch, ANY
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
-from purplship import Shipment
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
+from karrio import Shipment
 from tests.purolator.fixture import gateway
 
 
@@ -35,7 +35,7 @@ class TestPurolatorShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), SHIPMENT_CANCEL_REQUEST_XML)
 
     def test_request_shipment(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mocks:
+        with patch("karrio.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = [
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
@@ -54,7 +54,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
     def test_cancel_shipment(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mock:
+        with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = ""
             Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
             url = mock.call_args[1]["url"]
@@ -65,7 +65,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mocks:
+        with patch("karrio.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = [
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
@@ -77,7 +77,7 @@ class TestPurolatorShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), PARSED_SHIPMENT_RESPONSE)
 
     def test_parse_cancel_shipment_response(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mocks:
+        with patch("karrio.mappers.purolator.proxy.http") as mocks:
             mocks.return_value = SHIPMENT_CANCEL_RESPONSE_XML
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()

@@ -3,7 +3,7 @@ from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication as BaseOAuth2Authentication,
 )
 
-from purplship.server.core.authentication import (
+from karrio.server.core.authentication import (
     JWTAuthentication,
     TokenAuthentication,
     get_request_org,

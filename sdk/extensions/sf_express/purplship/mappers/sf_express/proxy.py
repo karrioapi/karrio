@@ -1,6 +1,6 @@
-from purplship.core.utils import DP, request as http, Serializable, Deserializable
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.sf_express.settings import Settings
+from karrio.core.utils import DP, request as http, Serializable, Deserializable
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.sf_express.settings import Settings
 
 
 class Proxy(BaseProxy):

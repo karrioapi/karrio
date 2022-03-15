@@ -2,14 +2,14 @@ import logging
 from django.db import transaction
 from rest_framework import status
 
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.serializers import (
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.serializers import (
     save_many_to_many_data,
     owned_model_serializer,
     save_one_to_one_data,
 )
-import purplship.server.orders.serializers as serializers
-import purplship.server.orders.models as models
+import karrio.server.orders.serializers as serializers
+import karrio.server.orders.models as models
 
 logger = logging.getLogger(__name__)
 

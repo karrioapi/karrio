@@ -4,13 +4,13 @@ from dhl_poland_lib.services import (
     TrackAndTraceResponse,
     TrackAndTraceEvent,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Message,
     TrackingRequest,
     TrackingDetails,
     TrackingEvent,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
@@ -19,8 +19,8 @@ from purplship.core.utils import (
     XP,
     SF,
 )
-from purplship.providers.dhl_poland.error import parse_error_response
-from purplship.providers.dhl_poland.utils import Settings
+from karrio.providers.dhl_poland.error import parse_error_response
+from karrio.providers.dhl_poland.utils import Settings
 
 
 def parse_tracking_response(

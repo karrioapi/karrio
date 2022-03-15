@@ -1,9 +1,9 @@
 import logging
 from django.db.models import signals
 
-from purplship.server.core import utils
-from purplship.server import serializers
-import purplship.server.documents.models as models
+from karrio.server.core import utils
+from karrio.server import serializers
+import karrio.server.documents.models as models
 
 logger = logging.getLogger(__name__)
 

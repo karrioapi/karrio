@@ -1,16 +1,16 @@
-from purplship.providers.yanwen.utils import Settings
-# from purplship.providers.yanwen.rate import parse_rate_response, rate_request
-# from purplship.providers.yanwen.address import (
+from karrio.providers.yanwen.utils import Settings
+# from karrio.providers.yanwen.rate import parse_rate_response, rate_request
+# from karrio.providers.yanwen.address import (
 #     parse_address_validation_response,
 #     address_validation_request
 # )
-# from purplship.providers.yanwen.shipment import (
+# from karrio.providers.yanwen.shipment import (
 #     parse_shipment_cancel_response,
 #     parse_shipment_response,
 #     shipment_cancel_request,
 #     shipment_request,
 # )
-# from purplship.providers.yanwen.pickup import (
+# from karrio.providers.yanwen.pickup import (
 #     parse_pickup_cancel_response,
 #     parse_pickup_update_response,
 #     parse_pickup_response,
@@ -18,7 +18,7 @@ from purplship.providers.yanwen.utils import Settings
 #     pickup_cancel_request,
 #     pickup_request,
 # )
-from purplship.providers.yanwen.tracking import (
+from karrio.providers.yanwen.tracking import (
     parse_tracking_response,
     tracking_request,
 )

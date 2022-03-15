@@ -1,7 +1,7 @@
 from typing import List
 from australiapost_lib.error import Error
-from purplship.core.models import Message
-from purplship.providers.australiapost import Settings
+from karrio.core.models import Message
+from karrio.providers.australiapost import Settings
 
 
 def parse_error_response(response: dict, settings: Settings) -> List[Message]:

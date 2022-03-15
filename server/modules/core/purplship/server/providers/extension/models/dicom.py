@@ -1,5 +1,5 @@
 from django.db import models
-from purplship.server.providers.models.carrier import Carrier
+from karrio.server.providers.models.carrier import Carrier
 
 
 class DicomSettings(Carrier):

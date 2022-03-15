@@ -3,9 +3,9 @@ from tnt_lib.track_response_v3_1 import ErrorStructure
 from tnt_lib.label_response import brokenRules, fault
 from tnt_lib.pricing_response import brokenRule, parseError, runtimeError
 from tnt_lib.shipment_response import ERROR
-from purplship.core.models import Message
-from purplship.core.utils import Element, XP
-from purplship.providers.tnt import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, XP
+from karrio.providers.tnt import Settings
 
 
 def parse_error_response(response, settings: Settings) -> List[Message]:

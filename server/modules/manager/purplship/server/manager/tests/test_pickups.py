@@ -2,9 +2,9 @@ import json
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
-from purplship.server.manager.tests.test_shipments import TestShipmentFixture
-import purplship.server.manager.models as models
+from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
+from karrio.server.manager.tests.test_shipments import TestShipmentFixture
+import karrio.server.manager.models as models
 
 
 class TestFixture(TestShipmentFixture):
@@ -40,11 +40,11 @@ class TestFixture(TestShipmentFixture):
 class TestPickupSchedule(TestFixture):
     def test_schedule_pickup(self):
         url = reverse(
-            "purplship.server.manager:shipment-pickup-request",
+            "karrio.server.manager:shipment-pickup-request",
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}?test", PICKUP_DATA)
             response_data = json.loads(response.content)
@@ -73,11 +73,11 @@ class TestPickupDetails(TestFixture):
 
     def test_udpate_pickup(self):
         url = reverse(
-            "purplship.server.manager:shipment-pickup-details",
+            "karrio.server.manager:shipment-pickup-details",
             kwargs=dict(pk=self.pickup.pk),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
             response = self.client.patch(url, PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
@@ -87,11 +87,11 @@ class TestPickupDetails(TestFixture):
 
     def test_cancel_pickup(self):
         url = reverse(
-            "purplship.server.manager:shipment-pickup-cancel",
+            "karrio.server.manager:shipment-pickup-cancel",
             kwargs=dict(pk=self.pickup.pk),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
             response = self.client.post(url, PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)

@@ -3,17 +3,17 @@ import typing
 import graphene
 import django_filters
 import graphene_django
-from purplship.server.manager.serializers.shipment import reset_related_shipment_rates
+from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
 import rest_framework.status as http_status
 from rest_framework import exceptions
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
 
-from purplship.core.utils import Enum
-import purplship.server.manager.models as manager
-import purplship.server.providers.models as providers
-import purplship.server.core.serializers as serializers
+from karrio.core.utils import Enum
+import karrio.server.manager.models as manager
+import karrio.server.providers.models as providers
+import karrio.server.core.serializers as serializers
 
 
 def login_required(func):
@@ -53,12 +53,12 @@ def metadata_object_types() -> Enum:
     ]
 
     if settings.ORDERS_MANAGEMENT:
-        import purplship.server.orders.models as orders
+        import karrio.server.orders.models as orders
 
         _types.append(("order", orders.Order))
 
     if settings.APPS_MANAGEMENT:
-        import purplship.server.apps.models as apps
+        import karrio.server.apps.models as apps
 
         _types.append(("app", apps.App))
 

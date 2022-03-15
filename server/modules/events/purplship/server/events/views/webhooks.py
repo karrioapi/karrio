@@ -7,13 +7,13 @@ from rest_framework import status, serializers
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.serializers import ErrorResponse, Operation, FlagField, PlainDictField
-from purplship.server.events.serializers import WebhookData, Webhook, WebhookSerializer
-from purplship.server.events.tasks.webhook import notify_subscribers
-from purplship.server.events.router import router
-from purplship.server.events import models
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.serializers import SerializerDecorator, PaginatedResult
+from karrio.server.core.serializers import ErrorResponse, Operation, FlagField, PlainDictField
+from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
+from karrio.server.events.tasks.webhook import notify_subscribers
+from karrio.server.events.router import router
+from karrio.server.events import models
 
 
 logger = logging.getLogger(__name__)

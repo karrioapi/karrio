@@ -1,15 +1,15 @@
 from typing import Tuple, List
 from usps_lib.evs_cancel_request import eVSCancelRequest
 from usps_lib.evs_cancel_response import eVSCancelResponse
-from purplship.core.utils import Serializable, Element, XP
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Element, XP
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
 
-from purplship.providers.usps.error import parse_error_response
-from purplship.providers.usps.utils import Settings
+from karrio.providers.usps.error import parse_error_response
+from karrio.providers.usps.utils import Settings
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

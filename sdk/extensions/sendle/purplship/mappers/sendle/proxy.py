@@ -1,13 +1,13 @@
 from typing import List, Tuple
-from purplship.core.utils import (
+from karrio.core.utils import (
     DP,
     request as http,
     Serializable,
     Deserializable,
     exec_async,
 )
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.sendle.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.sendle.settings import Settings
 
 
 class Proxy(BaseProxy):

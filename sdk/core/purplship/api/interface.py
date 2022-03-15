@@ -4,10 +4,10 @@ import attr
 import logging
 import functools
 from typing import Callable, TypeVar, Union, List, Tuple
-from purplship.api.gateway import Gateway
-from purplship.core.utils import Serializable, Deserializable, DP, exec_async
-from purplship.core.errors import ShippingSDKDetailedError
-from purplship.core.models import (
+from karrio.api.gateway import Gateway
+from karriore.utils import Serializable, Deserializable, DP, exec_async
+from karriore.errors import ShippingSDKDetailedError
+from karriore.models import (
     AddressValidationRequest,
     RateRequest,
     ShipmentRequest,
@@ -29,7 +29,7 @@ def abort(error: ShippingSDKDetailedError, gateway: Gateway) -> Tuple[None, List
     """Process aborting helper
 
     Args:
-        error (ShippingSDKDetailedError): the purplship error raised during the process
+        error (ShippingSDKDetailedError): the karrioror raised during the process
         gateway (Gateway): the gateway in use during on process
 
     Returns:
@@ -127,7 +127,7 @@ class Address:
     @staticmethod
     def validate(args: Union[AddressValidationRequest, dict]) -> IRequestFrom:
         """Validate an address
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the address validation validation request payload
 
@@ -162,7 +162,7 @@ class Pickup:
     @staticmethod
     def schedule(args: Union[PickupRequest, dict]) -> IRequestFrom:
         """Schedule a pickup for one or many shipments
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the pickup schedule request payload
 
@@ -191,7 +191,7 @@ class Pickup:
     @staticmethod
     def cancel(args: Union[PickupCancelRequest, dict]) -> IRequestFrom:
         """Cancel a pickup previously scheduled
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the pickup cancellation request payload
 
@@ -224,7 +224,7 @@ class Pickup:
     @staticmethod
     def update(args: Union[PickupUpdateRequest, dict]):
         """Update a pickup previously scheduled
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the pickup update request payload
 
@@ -261,7 +261,7 @@ class Rating:
     @staticmethod
     def fetch(args: Union[RateRequest, dict]) -> IRequestFromMany:
         """Fetch shipment rates from one or many carriers
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the rate fetching request payload
 
@@ -307,7 +307,7 @@ class Shipment:
     def create(args: Union[ShipmentRequest, dict]) -> IRequestFrom:
         """Submit a shipment creation to a carrier.
         This operation is often referred to as Buying a shipping label
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the shipment creation request payload
 
@@ -337,7 +337,7 @@ class Shipment:
     @staticmethod
     def cancel(args: Union[ShipmentCancelRequest, dict]) -> IRequestFrom:
         """Cancel a shipment previously created
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the shipment cancellation request payload
 
@@ -370,7 +370,7 @@ class Tracking:
     @staticmethod
     def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
         """Fetch tracking statuses and details from a carrier
-        
+
         Args:
             args (Union[TrackingRequest, dict]): the tracking request payload
 

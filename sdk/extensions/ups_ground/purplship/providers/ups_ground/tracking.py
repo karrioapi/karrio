@@ -6,7 +6,7 @@ from ups_lib.track_web_service_schema import (
     ActivityType,
     AddressType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     apply_namespaceprefix,
@@ -15,14 +15,14 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingRequest,
     TrackingDetails,
     Message,
 )
-from purplship.providers.ups_ground.error import parse_error_response
-from purplship.providers.ups_ground.utils import Settings
+from karrio.providers.ups_ground.error import parse_error_response
+from karrio.providers.ups_ground.utils import Settings
 
 
 def parse_tracking_response(

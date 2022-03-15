@@ -38,7 +38,7 @@ from fedex_lib.ship_service_v26 import (
     CommercialInvoiceDetail,
     ShippingDocumentFormat,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     apply_namespaceprefix,
     create_envelope,
@@ -47,17 +47,17 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.core.units import Options, Packages, CompleteAddress, Weight
-from purplship.core.models import (
+from karrio.core.units import Options, Packages, CompleteAddress, Weight
+from karrio.core.models import (
     Documents,
     Duty,
     ShipmentDetails,
     Message,
     ShipmentRequest,
 )
-from purplship.providers.fedex.error import parse_error_response
-from purplship.providers.fedex.utils import Settings
-from purplship.providers.fedex.units import (
+from karrio.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.utils import Settings
+from karrio.providers.fedex.units import (
     PackagingType,
     ServiceType,
     SpecialServiceType,

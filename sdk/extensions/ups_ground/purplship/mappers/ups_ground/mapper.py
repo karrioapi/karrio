@@ -1,7 +1,7 @@
 from typing import List, Tuple
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.api.mapper import Mapper as BaseMapper
-from purplship.core.models import (
+from karrio.core.utils.serializable import Serializable, Deserializable
+from karrio.api.mapper import Mapper as BaseMapper
+from karrio.core.models import (
     ShipmentCancelRequest,
     PickupUpdateRequest,
     ShipmentRequest,
@@ -15,7 +15,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.providers.ups_ground import (
+from karrio.providers.ups_ground import (
     pickup_update_request,
     shipment_request,
     pickup_request,
@@ -28,7 +28,7 @@ from purplship.providers.ups_ground import (
     parse_rate_response,
     parse_tracking_response,
 )
-from purplship.mappers.ups.settings import Settings
+from karrio.mappers.ups.settings import Settings
 
 
 class Mapper(BaseMapper):

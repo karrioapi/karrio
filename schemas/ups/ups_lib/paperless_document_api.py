@@ -13,7 +13,7 @@
 #   ./schemas/PaperlessDocumentAPI.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/paperless_document_api.py" ./schemas/PaperlessDocumentAPI.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/paperless_document_api.py" ./schemas/PaperlessDocumentAPI.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

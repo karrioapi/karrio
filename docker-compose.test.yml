@@ -2,7 +2,7 @@ version: '3'
 
 services:
   pship:
-    image: purplship/test
+    image: karrio/test
     build:
       context: ./
       dockerfile: docker/dev.test.Dockerfile

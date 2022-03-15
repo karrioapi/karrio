@@ -8,21 +8,21 @@ from freightcom_lib.quote_request import (
     PackageType,
 )
 from freightcom_lib.quote_reply import QuoteType, SurchargeType
-from purplship.core.utils import Element, Serializable, SF, NF, XP
-from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from purplship.core.units import Packages, Options, Services
-from purplship.providers.freightcom.utils import (
+from karrio.core.utils import Element, Serializable, SF, NF, XP
+from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
+from karrio.core.units import Packages, Options, Services
+from karrio.providers.freightcom.utils import (
     Settings,
     standard_request_serializer,
     ceil,
 )
-from purplship.providers.freightcom.units import (
+from karrio.providers.freightcom.units import (
     Service,
     FreightPackagingType,
     FreightClass,
     Option,
 )
-from purplship.providers.freightcom.error import parse_error_response
+from karrio.providers.freightcom.error import parse_error_response
 
 
 def parse_quote_reply(

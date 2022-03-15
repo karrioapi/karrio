@@ -2,8 +2,8 @@ from django.urls import re_path
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
 
-from purplship.server.documents import models
-from purplship.server.documents.generator import Documents
+from karrio.server.documents import models
+from karrio.server.documents.generator import Documents
 
 
 class DocumentGenerator(VirtualDownloadView):

@@ -8,18 +8,18 @@ from purolator_lib.tracking_service_1_2_2 import (
     TrackingInformation,
     Depot,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingRequest,
     TrackingDetails,
     Message,
     TrackingEvent,
 )
-from purplship.core.utils import Element, DF, XP
-from purplship.core.utils.soap import create_envelope
+from karrio.core.utils import Element, DF, XP
+from karrio.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
-from purplship.core.utils.serializable import Serializable
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
-from purplship.providers.purolator.error import parse_error_response
+from karrio.core.utils.serializable import Serializable
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.error import parse_error_response
 
 
 def parse_tracking_response(

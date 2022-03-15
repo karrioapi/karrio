@@ -19,7 +19,7 @@ from fedex_lib.rate_service_v28 import (
     CustomerReference,
     CustomerReferenceType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     create_envelope,
     apply_namespaceprefix,
     Element,
@@ -28,16 +28,16 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.core.units import Packages, Options, Services, CompleteAddress
-from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.providers.fedex.units import (
+from karrio.core.units import Packages, Options, Services, CompleteAddress
+from karrio.core.models import RateDetails, RateRequest, Message, ChargeDetails
+from karrio.providers.fedex.units import (
     PackagingType,
     ServiceType,
     PackagePresets,
     MeasurementOptions,
 )
-from purplship.providers.fedex.error import parse_error_response
-from purplship.providers.fedex.utils import Settings
+from karrio.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.utils import Settings
 
 
 def parse_rate_response(

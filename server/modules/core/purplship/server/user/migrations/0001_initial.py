@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.utils.timezone
-import purplship.server.user.models
+import karrio.server.user.models
 
 
 class Migration(migrations.Migration):
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
             managers=[
-                ('objects', purplship.server.user.models.UserManager()),
+                ('objects', karrio.server.user.models.UserManager()),
             ],
         ),
     ]

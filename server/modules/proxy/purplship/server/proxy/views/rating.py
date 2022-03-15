@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
-from purplship.server.serializers import SerializerDecorator
-from purplship.server.core.views.api import APIView
-from purplship.server.core.serializers import (
+from karrio.server.serializers import SerializerDecorator
+from karrio.server.core.views.api import APIView
+from karrio.server.core.serializers import (
     RateRequest, RateResponse, ErrorResponse, TestFilters
 )
-from purplship.server.core.gateway import Rates
-from purplship.server.proxy.router import router
+from karrio.server.core.gateway import Rates
+from karrio.server.proxy.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate

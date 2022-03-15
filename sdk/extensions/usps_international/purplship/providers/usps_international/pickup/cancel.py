@@ -1,14 +1,14 @@
 from typing import Tuple, List
 from usps_lib.carrier_pickup_cancel_request import CarrierPickupCancelRequest
-from purplship.core.utils import Serializable, SF
-from purplship.core.models import (
+from karrio.core.utils import Serializable, SF
+from karrio.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
     Message
 )
 
-from purplship.providers.usps_international.error import parse_error_response
-from purplship.providers.usps_international.utils import Settings
+from karrio.providers.usps_international.error import parse_error_response
+from karrio.providers.usps_international.utils import Settings
 
 
 def parse_pickup_cancel_response(response: dict, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

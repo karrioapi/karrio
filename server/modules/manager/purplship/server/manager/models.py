@@ -4,10 +4,10 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
-from purplship.server.core.utils import identity
-from purplship.server.providers.models import Carrier
-from purplship.server.core.models import OwnedEntity, uuid
-from purplship.server.core.serializers import (
+from karrio.server.core.utils import identity
+from karrio.server.providers.models import Carrier
+from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.serializers import (
     WEIGHT_UNIT,
     DIMENSION_UNIT,
     CURRENCIES,
@@ -666,7 +666,7 @@ class Shipment(OwnedEntity):
             return None
 
         return reverse(
-            "purplship.server.manager:shipment-docs",
+            "karrio.server.manager:shipment-docs",
             kwargs=dict(
                 pk=self.pk, doc="label", format=(self.label_type or "PDF").lower()
             ),
@@ -678,6 +678,6 @@ class Shipment(OwnedEntity):
             return None
 
         return reverse(
-            "purplship.server.manager:shipment-docs",
+            "karrio.server.manager:shipment-docs",
             kwargs=dict(pk=self.pk, doc="invoice", format="pdf"),
         )

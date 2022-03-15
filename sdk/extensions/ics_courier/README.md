@@ -1,6 +1,6 @@
-# purplship.ics_courier
+# karrio.ics_courier
 
-This package is a ICS Courier extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a ICS Courier extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a ICS Courier extension of the [purplship](https://pypi.org/proj
 ## Installation
 
 ```bash
-pip install purplship.ics_courier
+pip install karrio.ics_courier
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.ics_courier.settings import Settings
+import karrio
+from karrio.mappers.ics_courier.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["ics_courier"].create(
+canadapost = karrio.gateway["ics_courier"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [karrio Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

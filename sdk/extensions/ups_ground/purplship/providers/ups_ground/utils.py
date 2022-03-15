@@ -1,6 +1,6 @@
 from typing import Callable
-from purplship.core import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, XP
+from karrio.core import Settings as BaseSettings
+from karrio.core.utils import Envelope, apply_namespaceprefix, XP
 from ups_lib.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
 
 

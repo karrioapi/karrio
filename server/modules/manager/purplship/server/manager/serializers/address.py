@@ -1,12 +1,12 @@
 from rest_framework import status
 from django.conf import settings
 
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.serializers import owned_model_serializer
-from purplship.core import utils
-from purplship.server.core import gateway
-from purplship.server.core.serializers import AddressData, ShipmentStatus
-from purplship.server.manager import models
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.serializers import owned_model_serializer
+from karrio.core import utils
+from karrio.server.core import gateway
+from karrio.server.core.serializers import AddressData, ShipmentStatus
+from karrio.server.manager import models
 
 
 @owned_model_serializer

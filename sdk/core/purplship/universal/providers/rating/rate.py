@@ -1,16 +1,16 @@
 from typing import Tuple, List
-from purplship.core.utils import Serializable
-from purplship.core.models import (
+from karrio.core.utils import Serializable
+from karrio.core.models import (
     RateRequest,
     RateDetails,
     Message,
     ServiceLevel,
 )
-from purplship.universal.providers.rating.utils import (
+from karrio.universal.providers.rating.utils import (
     RatingMixinSettings,
     PackageServices,
 )
-from purplship.core.utils.transformer import to_multi_piece_rates
+from karrio.core.utils.transformer import to_multi_piece_rates
 
 
 def parse_rate_response(

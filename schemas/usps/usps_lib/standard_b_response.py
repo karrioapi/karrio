@@ -13,7 +13,7 @@
 #   ./schemas/StandardBResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/standard_b_response.py" ./schemas/StandardBResponse.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/standard_b_response.py" ./schemas/StandardBResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

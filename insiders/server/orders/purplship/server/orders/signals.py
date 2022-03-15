@@ -1,15 +1,15 @@
 import logging
 from django.db.models import signals
 
-from purplship.server.core import utils
-from purplship.server.conf import settings
-from purplship.server.core.utils import failsafe
-from purplship.server.events.serializers import EventTypes
-from purplship.server.orders.serializers.order import compute_order_status
-import purplship.server.orders.serializers as serializers
-import purplship.server.manager.models as manager
-import purplship.server.orders.models as models
-import purplship.server.events.tasks as tasks
+from karrio.server.core import utils
+from karrio.server.conf import settings
+from karrio.server.core.utils import failsafe
+from karrio.server.events.serializers import EventTypes
+from karrio.server.orders.serializers.order import compute_order_status
+import karrio.server.orders.serializers as serializers
+import karrio.server.manager.models as manager
+import karrio.server.orders.models as models
+import karrio.server.events.tasks as tasks
 
 logger = logging.getLogger(__name__)
 

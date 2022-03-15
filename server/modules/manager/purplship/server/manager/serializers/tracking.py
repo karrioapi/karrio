@@ -1,18 +1,18 @@
 import logging
 import typing
 from django.utils import timezone
-from purplship.server.serializers import owned_model_serializer
+from karrio.server.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
-from purplship.core.utils import DP
-from purplship.server.core.gateway import Shipments, Carriers
-from purplship.server.core.serializers import (
+from karrio.core.utils import DP
+from karrio.server.core.gateway import Shipments, Carriers
+from karrio.server.core.serializers import (
     TrackingDetails,
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
 )
 
-import purplship.server.manager.models as models
+import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="tracking")

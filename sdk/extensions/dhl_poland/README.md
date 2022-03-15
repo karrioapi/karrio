@@ -1,6 +1,6 @@
-# purplship.dhl_poland
+# karrio.dhl_poland
 
-This package is a DHL Parcel Poland extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a DHL Parcel Poland extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a DHL Parcel Poland extension of the [purplship](https://pypi.or
 ## Installation
 
 ```bash
-pip install purplship.dhl_poland
+pip install karrio.dhl_poland
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.dhl_poland.settings import Settings
+import karrio
+from karrio.mappers.dhl_poland.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["dhl_poland"].create(
+canadapost = karrio.gateway["dhl_poland"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

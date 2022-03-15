@@ -8,17 +8,17 @@ from ics_courier_lib.services import (
     ResponseGetCharges,
     SurCharge,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     RateRequest,
     RateDetails,
     Message,
     ChargeDetails
 )
-from purplship.core.units import Packages, Services, Currency
-from purplship.core.utils import create_envelope, Serializable, Envelope, Element, NF, XP
-from purplship.providers.ics_courier.error import parse_error_response
-from purplship.providers.ics_courier.utils import Settings
-from purplship.providers.ics_courier.units import Service
+from karrio.core.units import Packages, Services, Currency
+from karrio.core.utils import create_envelope, Serializable, Envelope, Element, NF, XP
+from karrio.providers.ics_courier.error import parse_error_response
+from karrio.providers.ics_courier.utils import Settings
+from karrio.providers.ics_courier.units import Service
 
 
 def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:

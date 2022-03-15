@@ -13,7 +13,7 @@ pip install py-soap
 from pysoap.envelope import Envelope, Header, Body
 ```
 
-*This package is used by the [Purplship Multi-carrier Shipping SDK](https://github.com/PurplShip/purplship)*
+*This package is used by the [Purplship Multi-carrier Shipping SDK](https://github.com/PurplShip/karrio)*
 
 ## License
 
@@ -24,4 +24,4 @@ Please see [LICENSE.md](/LICENSE) for licensing details.
 ## Authors
 
 - **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
-- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)
+- **Purplship Team** | hello@karrio.com | [karrio.com](https://karrio.com)

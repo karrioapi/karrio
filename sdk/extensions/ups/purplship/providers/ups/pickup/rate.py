@@ -6,15 +6,15 @@ from ups_lib.pickup_web_service_schema import (
     PickupAddressType,
     PhoneType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     Envelope,
     DF,
     SF,
 )
-from purplship.core.models import PickupRequest
-from purplship.providers.ups.utils import Settings, default_request_serializer
+from karrio.core.models import PickupRequest
+from karrio.providers.ups.utils import Settings, default_request_serializer
 
 
 def pickup_rate_request(

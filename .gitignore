@@ -107,7 +107,7 @@ venv.bak/
 
 .DS_Store
 
-# purplship stuff:
+# karrio stuff:
 sdk/**/poetry.lock
 schemas/**/poetry.lock
 insiders/sdk/**/poetry.lock
@@ -115,8 +115,8 @@ insiders/sdk/**/poetry.lock
 *.DS_Store
 .idea/
 staticfiles/*
-server/main/purplship/server/staticfiles/*
-!server/main/purplship/server/staticfiles/.gitkeep
+server/main/karrio/server/staticfiles/*
+!server/main/karrio/server/staticfiles/.gitkeep
 
 .pship/
 .codegen/*

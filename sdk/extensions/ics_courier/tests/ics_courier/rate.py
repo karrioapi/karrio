@@ -1,9 +1,9 @@
 import re
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship import Rating
-from purplship.core.models import RateRequest
+from karrio.core.utils import DP
+from karrio import Rating
+from karrio.core.models import RateRequest
 from tests.ics_courier.fixture import gateway
 
 
@@ -23,7 +23,7 @@ class TestICSCourierRating(unittest.TestCase):
         self.assertEqual(serialized_request, RateRequestXML)
 
     def test_get_rates(self):
-        with patch("purplship.mappers.ics_courier.proxy.http") as mock:
+        with patch("karrio.mappers.ics_courier.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -35,7 +35,7 @@ class TestICSCourierRating(unittest.TestCase):
             )
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.ics_courier.proxy.http") as mock:
+        with patch("karrio.mappers.ics_courier.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

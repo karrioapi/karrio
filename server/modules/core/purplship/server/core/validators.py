@@ -4,9 +4,9 @@ import requests
 import phonenumbers
 from constance import config
 from datetime import datetime
-from purplship.server import serializers
-from purplship.core import units, utils
-from purplship.server.core import dataunits, datatypes
+from karrio.server import serializers
+from karrio.core import units, utils
+from karrio.server.core import dataunits, datatypes
 
 logger = logging.getLogger(__name__)
 DIMENSIONS = ["width", "height", "length"]

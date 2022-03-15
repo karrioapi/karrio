@@ -1,6 +1,6 @@
-# purplship.royalmail
+# karrio.royalmail
 
-This package is a Royal Mail extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Royal Mail extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Royal Mail extension of the [purplship](https://pypi.org/proje
 ## Installation
 
 ```bash
-pip install purplship.royalmail
+pip install karrio.royalmail
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.royalmail.settings import Settings
+import karrio
+from karrio.mappers.royalmail.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["royalmail"].create(
+canadapost = karrio.gateway["royalmail"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

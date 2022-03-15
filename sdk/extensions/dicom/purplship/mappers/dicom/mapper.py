@@ -1,7 +1,7 @@
 from typing import List, Tuple
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.api.mapper import Mapper as BaseMapper
-from purplship.core.models import (
+from karrio.core.utils.serializable import Serializable, Deserializable
+from karrioi.mapper import Mapper as BaseMapper
+from karriore.models import (
     # ShipmentCancelRequest,
     # PickupUpdateRequest,
     # PickupCancelRequest,
@@ -17,7 +17,7 @@ from purplship.core.models import (
     # RateDetails,
     Message,
 )
-from purplship.providers.dicom import (
+from karriooviders.dicom import (
     # parse_shipment_cancel_response,
     # parse_pickup_update_response,
     # parse_pickup_cancel_response,
@@ -34,7 +34,7 @@ from purplship.providers.dicom import (
     # pickup_request,
     # rate_request,
 )
-from purplship.mappers.dicom.settings import Settings
+from karrioppers.dicom.settings import Settings
 
 
 class Mapper(BaseMapper):
@@ -73,7 +73,7 @@ class Mapper(BaseMapper):
     # def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
     #     return shipment_cancel_request(payload, self.settings)
 
-    
+
 
 
     # def parse_cancel_pickup_response(

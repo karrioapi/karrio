@@ -1,4 +1,4 @@
-from purplship.server.conf import settings, DEFAULT_ALLOWED_CONFIG
+from karrio.server.conf import settings, DEFAULT_ALLOWED_CONFIG
 
 
 TEMPLATE_SETTINGS_ACCESS_LIST = (

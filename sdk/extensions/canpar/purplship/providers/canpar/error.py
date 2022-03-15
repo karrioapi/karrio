@@ -1,7 +1,7 @@
 from typing import List
-from purplship.core.models import Message
-from purplship.core.utils import Element, extract_fault
-from purplship.providers.canpar.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils import Element, extract_fault
+from karrio.providers.canpar.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

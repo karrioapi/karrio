@@ -21,11 +21,11 @@ from tnt_lib.shipment_request import (
     RATE,
     REQUIRED,
 )
-from purplship.core.utils import Serializable, XP
-from purplship.core.models import ShipmentRequest, Payment
-from purplship.core.units import Options, Packages, Weight, WeightUnit
-from purplship.providers.tnt.units import ShipmentOption, ShipmentService, PaymentType
-from purplship.providers.tnt.utils import Settings
+from karrio.core.utils import Serializable, XP
+from karrio.core.models import ShipmentRequest, Payment
+from karrio.core.units import Options, Packages, Weight, WeightUnit
+from karrio.providers.tnt.units import ShipmentOption, ShipmentService, PaymentType
+from karrio.providers.tnt.utils import Settings
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ESHIPPER]:

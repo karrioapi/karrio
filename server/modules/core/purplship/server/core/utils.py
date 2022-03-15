@@ -12,7 +12,7 @@ from django_email_verification.confirm import (
 )
 import rest_framework_simplejwt.tokens as jwt
 
-from purplship.server.core import datatypes, serializers
+from karrio.server.core import datatypes, serializers
 
 T = TypeVar("T")
 logger = logging.getLogger(__name__)

@@ -1,5 +1,5 @@
 from typing import List, Any
-from purplship.core.utils import (
+from karrio.core.utils import (
     XP,
     request as http,
     exec_parrallel,
@@ -9,8 +9,8 @@ from purplship.core.utils import (
     Pipeline,
     Job,
 )
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.ups.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.ups.settings import Settings
 
 
 class Proxy(BaseProxy):

@@ -4,19 +4,19 @@ from sf_express_lib.tracking import (
     TrackingRequest as SFTrackingRequest,
     RouteResp
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DP,
     DF,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.sf_express.utils import Settings
-from purplship.providers.sf_express.error import parse_error_response
+from karrio.providers.sf_express.utils import Settings
+from karrio.providers.sf_express.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

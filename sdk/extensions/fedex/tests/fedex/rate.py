@@ -2,9 +2,9 @@ import re
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
-from purplship import Rating
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
+from karrio import Rating
 from tests.fedex.fixture import gateway
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class TestFeDexQuote(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestUsingPackagePresetXML)
 
-    @patch("purplship.mappers.fedex.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -50,7 +50,7 @@ class TestFeDexQuote(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/rate")
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -59,7 +59,7 @@ class TestFeDexQuote(unittest.TestCase):
             )
 
     def test_parse_rate_error_response(self):
-        with patch("purplship.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateErrorResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(

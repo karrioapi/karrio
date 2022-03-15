@@ -33,7 +33,7 @@ from ups_lib.ship_web_service_schema import (
     ImageFormatType,
     ReferenceNumberType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     gif_to_pdf,
     Serializable,
     apply_namespaceprefix,
@@ -43,23 +43,23 @@ from purplship.core.utils import (
     XP,
     SF,
 )
-from purplship.core.units import Options, Packages, PaymentType
-from purplship.core.models import (
+from karrio.core.units import Options, Packages, PaymentType
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
     Message,
     Payment,
 )
-from purplship.providers.ups.units import (
+from karrio.providers.ups.units import (
     PackagingType,
     ServiceCode,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
     LabelType,
 )
-from purplship.providers.ups.error import parse_error_response
-from purplship.providers.ups.utils import Settings
+from karrio.providers.ups.error import parse_error_response
+from karrio.providers.ups.utils import Settings
 
 
 def parse_shipment_response(

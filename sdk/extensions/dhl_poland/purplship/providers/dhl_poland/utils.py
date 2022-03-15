@@ -1,8 +1,8 @@
 """Purplship DHL Parcel Poland client settings."""
 
 from dhl_poland_lib.services import AuthData
-from purplship.core.settings import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, XP
+from karrio.core.settings import Settings as BaseSettings
+from karrio.core.utils import Envelope, apply_namespaceprefix, XP
 
 
 class Settings(BaseSettings):

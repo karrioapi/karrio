@@ -1,2 +1,2 @@
-import purplship.server.core.views.references
-from purplship.server.core.router import router
+import karrio.server.core.views.references
+from karrio.server.core.router import router

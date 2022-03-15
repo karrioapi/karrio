@@ -13,7 +13,7 @@
 #   ./schemas/shipping.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./aramex_lib/shipping.py" ./schemas/shipping.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./aramex_lib/shipping.py" ./schemas/shipping.xsd
 #
 # Current working directory (os.getcwd()):
 #   aramex

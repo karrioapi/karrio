@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.australiapost.mapper import Mapper
-from purplship.mappers.australiapost.proxy import Proxy
-from purplship.mappers.australiapost.settings import Settings
-# import purplship.providers.australiapost.units as units
+from karrio.mappers.australiapost.mapper import Mapper
+from karrio.mappers.australiapost.proxy import Proxy
+from karrio.mappers.australiapost.settings import Settings
+# import karrio.providers.australiapost.units as units
 
 
 METADATA = Metadata(

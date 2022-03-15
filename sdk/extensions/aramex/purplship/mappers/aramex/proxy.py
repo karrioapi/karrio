@@ -1,6 +1,6 @@
-from purplship.core.utils import XP, request as http, Serializable, Deserializable
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.aramex.settings import Settings
+from karrio.core.utils import XP, request as http, Serializable, Deserializable
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.aramex.settings import Settings
 
 
 class Proxy(BaseProxy):

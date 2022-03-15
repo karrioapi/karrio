@@ -1,18 +1,18 @@
 from typing import List, Tuple
 from royalmail_lib.tracking import MailPieces
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DF,
     DP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.royalmail.utils import Settings
-from purplship.providers.royalmail.error import parse_error_response
+from karrio.providers.royalmail.utils import Settings
+from karrio.providers.royalmail.error import parse_error_response
 
 
 def parse_tracking_response(

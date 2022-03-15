@@ -1,9 +1,9 @@
 import urllib.parse
 from usps_lib.track_field_request import TrackFieldRequest
 
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.core.utils import Serializable, Deserializable, XP, request as http
-from purplship.mappers.usps_international.settings import Settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.core.utils import Serializable, Deserializable, XP, request as http
+from karrio.mappers.usps_international.settings import Settings
 
 
 class Proxy(BaseProxy):

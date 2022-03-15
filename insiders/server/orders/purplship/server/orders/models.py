@@ -2,11 +2,11 @@ from functools import partial
 from django.conf import settings
 from django.db import models
 
-from purplship.server.core.utils import identity
-from purplship.server.core.models import OwnedEntity, uuid
-from purplship.server.manager import models as manager
+from karrio.server.core.utils import identity
+from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.manager import models as manager
 
-from purplship.server.orders.serializers.base import (
+from karrio.server.orders.serializers.base import (
     ORDER_STATUS,
 )
 

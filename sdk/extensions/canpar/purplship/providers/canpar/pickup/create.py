@@ -6,12 +6,12 @@ from canpar_lib.CanparAddonsService import (
     PickupV2,
     Address
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupRequest,
     PickupDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Envelope,
     Element,
     create_envelope,
@@ -19,10 +19,10 @@ from purplship.core.utils import (
     DF,
     XP
 )
-from purplship.core.units import Packages
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
-from purplship.providers.canpar.units import WeightUnit
+from karrio.core.units import Packages
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
+from karrio.providers.canpar.units import WeightUnit
 
 
 def parse_pickup_response(response: Element, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

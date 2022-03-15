@@ -8,17 +8,17 @@ from canpar_lib.CanparRatingService import (
     Package,
     Address,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     RateRequest,
     RateDetails,
     Message,
     ChargeDetails
 )
-from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP, DF
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings
-from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
+from karrio.core.units import Packages, Services, Options
+from karrio.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP, DF
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.utils import Settings
+from karrio.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
 
 
 def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:

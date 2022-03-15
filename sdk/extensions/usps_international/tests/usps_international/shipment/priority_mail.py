@@ -1,9 +1,9 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch, ANY
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.usps_international.fixture import gateway
 
 
@@ -23,9 +23,9 @@ class TestUSPSPriorityMailShipment(unittest.TestCase):
         )
         self.assertEqual(requests.serialize(), ShipmentCancelRequestXML)
 
-    @patch("purplship.mappers.usps_international.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.usps_international.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
+        karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -33,9 +33,9 @@ class TestUSPSPriorityMailShipment(unittest.TestCase):
             f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}",
         )
 
-    @patch("purplship.mappers.usps_international.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.usps_international.proxy.http", return_value="<a></a>")
     def test_cancel_shipment(self, http_mock):
-        purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+        karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -44,19 +44,19 @@ class TestUSPSPriorityMailShipment(unittest.TestCase):
         )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.usps_international.proxy.http") as mocks:
+        with patch("karrio.mappers.usps_international.proxy.http") as mocks:
             mocks.return_value = ShipmentResponseXML
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
-        with patch("purplship.mappers.usps_international.proxy.http") as mocks:
+        with patch("karrio.mappers.usps_international.proxy.http") as mocks:
             mocks.return_value = ShipmentCancelResponseXML
             parsed_response = (
-                purplship.Shipment.cancel(self.ShipmentCancelRequest)
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
                 .parse()
             )

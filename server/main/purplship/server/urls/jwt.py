@@ -40,7 +40,7 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         if not settings.MULTI_ORGANIZATIONS:
             return super().validate(attrs)
 
-        from purplship.server.orgs.models import Organization
+        from karrio.server.orgs.models import Organization
 
         data = super().validate(attrs)
         org_id = attrs.get('org_id')
@@ -83,7 +83,7 @@ class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
         refresh = jwt.RefreshToken(attrs['refresh'])
 
         if settings.MULTI_ORGANIZATIONS and attrs.get('org_id') is not None:
-            from purplship.server.orgs.models import Organization
+            from karrio.server.orgs.models import Organization
             org = Organization.objects.filter(id=attrs.get('org_id'), users__id=refresh.payload['user_id']).first()
 
             if org is not None and not org.is_active:

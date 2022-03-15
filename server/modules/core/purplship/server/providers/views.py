@@ -8,19 +8,19 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.server import serializers
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.core.gateway import Carriers
-from purplship.server.core import dataunits
-from purplship.server.core.serializers import (
+from karrio.server import serializers
+from karrio.server.serializers import SerializerDecorator, PaginatedResult
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.gateway import Carriers
+from karrio.server.core import dataunits
+from karrio.server.core.serializers import (
     CarrierSettings,
     ErrorResponse,
     FlagField,
     FlagsSerializer,
     CARRIERS,
 )
-from purplship.server.providers.router import router
+from karrio.server.providers.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate

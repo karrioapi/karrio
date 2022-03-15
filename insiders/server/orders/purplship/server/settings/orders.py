@@ -1,5 +1,5 @@
-from purplship.server.settings.base import *
+from karrio.server.settings.base import *
 
 
-PURPLSHIP_URLS += ["purplship.server.orders.urls"]
-INSTALLED_APPS += ["purplship.server.orders"]
+PURPLSHIP_URLS += ["karrio.server.orders.urls"]
+INSTALLED_APPS += ["karrio.server.orders"]

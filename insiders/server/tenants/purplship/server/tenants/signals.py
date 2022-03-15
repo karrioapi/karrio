@@ -1,7 +1,7 @@
 from django_tenants.utils import tenant_context
 from django.contrib.auth import get_user_model
 
-from purplship.server.tenants.models import Client
+from karrio.server.tenants.models import Client
 
 
 def created_default_admin(sender: Client, **kwargs):

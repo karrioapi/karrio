@@ -9,8 +9,8 @@ from fedex_lib.pickup_service_v22 import (
     AssociatedAccount,
     AssociatedAccountNumberType,
 )
-from purplship.core.models import PickupRequest
-from purplship.core.utils import (
+from karrio.core.models import PickupRequest
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     apply_namespaceprefix,
@@ -19,7 +19,7 @@ from purplship.core.utils import (
     XP,
     DF,
 )
-from purplship.providers.fedex.utils import Settings
+from karrio.providers.fedex.utils import Settings
 
 
 def pickup_availability_request(

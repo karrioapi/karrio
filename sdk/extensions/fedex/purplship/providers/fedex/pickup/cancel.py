@@ -7,12 +7,12 @@ from fedex_lib.pickup_service_v22 import (
     CancelPickupReply,
     NotificationSeverityType,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     create_envelope,
     apply_namespaceprefix,
@@ -20,8 +20,8 @@ from purplship.core.utils import (
     Element,
     XP,
 )
-from purplship.providers.fedex.error import parse_error_response
-from purplship.providers.fedex.utils import Settings
+from karrio.providers.fedex.error import parse_error_response
+from karrio.providers.fedex.utils import Settings
 
 
 def parse_pickup_cancel_response(

@@ -13,7 +13,7 @@
 #   ./schemas/ReturnsManagementService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/returns_management_service_2_0.py" ./schemas/ReturnsManagementService.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/returns_management_service_2_0.py" ./schemas/ReturnsManagementService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

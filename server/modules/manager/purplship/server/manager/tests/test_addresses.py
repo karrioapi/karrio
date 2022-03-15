@@ -2,13 +2,13 @@ import json
 from unittest.mock import ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.server.core.tests import APITestCase
-from purplship.server.manager.models import Address
+from karrio.server.core.tests import APITestCase
+from karrio.server.manager.models import Address
 
 
 class TestAddresses(APITestCase):
     def test_create_address(self):
-        url = reverse("purplship.server.manager:address-list")
+        url = reverse("karrio.server.manager:address-list")
         data = ADDRESS_DATA
 
         response = self.client.post(url, data)
@@ -40,7 +40,7 @@ class TestAddressDetails(APITestCase):
 
     def test_update_address(self):
         url = reverse(
-            "purplship.server.manager:address-details", kwargs=dict(pk=self.address.pk)
+            "karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk)
         )
         data = ADDRESS_UPDATE_DATA
 

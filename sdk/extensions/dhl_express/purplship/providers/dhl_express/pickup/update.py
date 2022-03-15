@@ -8,26 +8,26 @@ from dhl_express_lib.pickupdatatypes_global_3_0 import (
     Pickup,
     WeightSeg,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     DF,
     NF,
     XP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Message,
     PickupDetails,
     ChargeDetails,
     PickupUpdateRequest,
 )
-from purplship.core.units import WeightUnit, Weight, Packages
-from purplship.providers.dhl_express.units import (
+from karrio.core.units import WeightUnit, Weight, Packages
+from karrio.providers.dhl_express.units import (
     CountryRegion,
     WeightUnit as DHLWeightUnit,
 )
-from purplship.providers.dhl_express.utils import Settings, reformat_time
-from purplship.providers.dhl_express.error import parse_error_response
+from karrio.providers.dhl_express.utils import Settings, reformat_time
+from karrio.providers.dhl_express.error import parse_error_response
 
 
 def parse_pickup_update_response(

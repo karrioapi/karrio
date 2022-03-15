@@ -1,10 +1,10 @@
 from typing import cast, Tuple, List
 from functools import partial
-from purplship.core.utils import Job, Pipeline, Serializable, Element
-from purplship.core.models import PickupRequest, PickupUpdateRequest, PickupDetails, Message
+from karrio.core.utils import Job, Pipeline, Serializable, Element
+from karrio.core.models import PickupRequest, PickupUpdateRequest, PickupDetails, Message
 
-from purplship.providers.canadapost.utils import Settings
-from purplship.providers.canadapost.pickup.create import (
+from karrio.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.pickup.create import (
     parse_pickup_response,
 
     _create_pickup_request,

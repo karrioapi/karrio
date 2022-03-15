@@ -1,25 +1,25 @@
 from typing import Tuple, List, Optional
 from tnt_lib.shipment_response import document
-from purplship.core.models import (
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     Message,
     ShipmentDetails,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Pipeline,
     Element,
     Job,
     XP,
 )
-from purplship.providers.tnt.shipment.label import (
+from karrio.providers.tnt.shipment.label import (
     create_label_request,
     parse_label_response,
 )
-from purplship.providers.tnt.shipment.request import create_shipment_request
-from purplship.providers.tnt.error import parse_error_response
-from purplship.providers.tnt.utils import Settings
+from karrio.providers.tnt.shipment.request import create_shipment_request
+from karrio.providers.tnt.error import parse_error_response
+from karrio.providers.tnt.utils import Settings
 
 
 def parse_shipment_response(

@@ -1,7 +1,7 @@
 from typing import List
-from purplship.core.utils import DP, request as http, Serializable, Deserializable, exec_async
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.royalmail.settings import Settings
+from karrio.core.utils import DP, request as http, Serializable, Deserializable, exec_async
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.royalmail.settings import Settings
 
 
 class Proxy(BaseProxy):

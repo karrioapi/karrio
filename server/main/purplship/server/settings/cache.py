@@ -5,7 +5,7 @@ CACHE_TTL = 60 * 15
 REDIS_HOST = config("REDIS_HOST", default=None)
 REDIS_PORT = config("REDIS_PORT", default=None)
 
-# purplship server caching setup
+# karrio server caching setup
 if REDIS_HOST is not None:
     REDIS_CONNECTION_URL = (
         f'redis://{REDIS_HOST or "127.0.0.1"}:{REDIS_PORT or "6379"}/1'
@@ -15,7 +15,7 @@ if REDIS_HOST is not None:
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_CONNECTION_URL,
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-            "KEY_PREFIX": "purplship",
+            "KEY_PREFIX": "karrio",
         }
     }
     print(f"Redis connection initialized at: {REDIS_CONNECTION_URL}")

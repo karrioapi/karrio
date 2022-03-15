@@ -1,6 +1,6 @@
 from enum import Enum
 from rest_framework import fields
-from purplship.server.core.serializers import (
+from karrio.server.core.serializers import (
     Address,
     AddressData,
     Commodity,
@@ -26,9 +26,9 @@ ORDER_STATUS = [(c.value, c.value) for c in list(OrderStatus)]
 
 @allow_model_id(
     [
-        ("shipping_to", "purplship.server.manager.models.Address"),
-        ("shipping_from", "purplship.server.manager.models.Address"),
-        ("line_items", "purplship.server.manager.models.Commodity"),
+        ("shipping_to", "karrio.server.manager.models.Address"),
+        ("shipping_from", "karrio.server.manager.models.Address"),
+        ("line_items", "karrio.server.manager.models.Commodity"),
     ]
 )
 class OrderData(Serializer):

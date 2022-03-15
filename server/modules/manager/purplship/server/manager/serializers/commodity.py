@@ -2,10 +2,10 @@ from django.conf import settings
 from django.db.models import Q
 from rest_framework import status
 
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import CommodityData, ShipmentStatus
-from purplship.server.serializers import owned_model_serializer
-import purplship.server.manager.models as models
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.core.serializers import CommodityData, ShipmentStatus
+from karrio.server.serializers import owned_model_serializer
+import karrio.server.manager.models as models
 
 
 @owned_model_serializer

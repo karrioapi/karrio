@@ -7,14 +7,14 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.postgres.fields import DecimalRangeField
 
-from purplship.core.models import ChargeDetails
-from purplship.core.utils import DP, NF
-from purplship.server.core.fields import MultiChoiceField
-from purplship.server.core.models import Entity, uuid
-from purplship.server.core.dataunits import REFERENCE_MODELS
-from purplship.server.core.datatypes import RateResponse, Rate
-from purplship.server.core.serializers import CARRIERS
-from purplship.server.providers.models import Carrier
+from karrio.core.models import ChargeDetails
+from karrio.core.utils import DP, NF
+from karrio.server.core.fields import MultiChoiceField
+from karrio.server.core.models import Entity, uuid
+from karrio.server.core.dataunits import REFERENCE_MODELS
+from karrio.server.core.datatypes import RateResponse, Rate
+from karrio.server.core.serializers import CARRIERS
+from karrio.server.providers.models import Carrier
 
 logger = logging.getLogger(__name__)
 CARRIER_SERVICES = [REFERENCE_MODELS["services"][name] for name in sorted(REFERENCE_MODELS["services"].keys())]

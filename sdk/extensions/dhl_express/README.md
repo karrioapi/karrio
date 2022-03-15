@@ -1,6 +1,6 @@
-# purplship.dhl_express
+# karrio.dhl_express
 
-This package is a DHL Express extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a DHL Express extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a DHL Express extension of the [purplship](https://pypi.org/proj
 ## Installation
 
 ```bash
-pip install purplship.dhl_express
+pip install karrio.dhl_express
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.dhl_express.settings import Settings
+import karrio
+from karrio.mappers.dhl_express.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["dhl_express"].create(
+canadapost = karrio.gateway["dhl_express"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

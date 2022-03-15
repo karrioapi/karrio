@@ -4,10 +4,10 @@ from time import sleep
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import TrackingDetails, TrackingEvent
-from purplship.server.core.tests import APITestCase
-from purplship.server.manager import models
-from purplship.server.events.tasks import tracking
+from karrio.core.models import TrackingDetails, TrackingEvent
+from karrio.server.core.tests import APITestCase
+from karrio.server.manager import models
+from karrio.server.events.tasks import tracking
 
 
 class TestTrackersBackgroundUpdate(APITestCase):
@@ -52,7 +52,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
         [models.Tracking.objects.create(**t) for t in trackers]
 
     def test_get_trackers(self):
-        url = reverse("purplship.server.manager:trackers-list")
+        url = reverse("karrio.server.manager:trackers-list")
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -61,9 +61,9 @@ class TestTrackersBackgroundUpdate(APITestCase):
         self.assertDictEqual(response_data, TRACKERS_LIST)
 
     def test_get_updated_trackers(self):
-        url = reverse("purplship.server.manager:trackers-list")
+        url = reverse("karrio.server.manager:trackers-list")
 
-        with patch("purplship.server.events.tasks.tracking.identity") as mocks:
+        with patch("karrio.server.events.tasks.tracking.identity") as mocks:
             mocks.return_value = RETURNED_UPDATED_VALUE
             sleep(0.1)
             tracking.update_trackers(delta=datetime.timedelta(seconds=0.1))

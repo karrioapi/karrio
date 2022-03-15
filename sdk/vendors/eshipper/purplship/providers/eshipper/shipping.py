@@ -20,8 +20,8 @@ from eshipper_lib.shipping_reply import (
     QuoteType,
     SurchargeType,
 )
-from purplship.core.utils import Element, Serializable, SF, NF, XP
-from purplship.core.models import (
+from karrio.core.utils import Element, Serializable, SF, NF, XP
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
@@ -30,20 +30,20 @@ from purplship.core.models import (
     ChargeDetails,
     Address,
 )
-from purplship.core.units import Packages, Options
-from purplship.providers.eshipper.utils import (
+from karrio.core.units import Packages, Options
+from karrio.providers.eshipper.utils import (
     Settings,
     standard_request_serializer,
     ceil,
 )
-from purplship.providers.eshipper.units import (
+from karrio.providers.eshipper.units import (
     Service,
     PackagingType,
     FreightClass,
     Option,
     PaymentType,
 )
-from purplship.providers.eshipper.error import parse_error_response
+from karrio.providers.eshipper.error import parse_error_response
 
 
 def parse_shipping_reply(

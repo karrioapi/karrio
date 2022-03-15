@@ -1,9 +1,9 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
-from purplship import Rating
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
+from karrio import Rating
 from tests.usps.fixture import gateway
 
 
@@ -16,7 +16,7 @@ class TestUSPSRating(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         self.assertEqual(request.serialize(), RATE_REQUEST_XML)
 
-    @patch("purplship.mappers.usps.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.usps.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -26,7 +26,7 @@ class TestUSPSRating(unittest.TestCase):
         )
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.usps.proxy.http") as mock:
+        with patch("karrio.mappers.usps.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -35,7 +35,7 @@ class TestUSPSRating(unittest.TestCase):
             )
 
     def test_parse_rate_response_errors(self):
-        with patch("purplship.mappers.usps.proxy.http") as mock:
+        with patch("karrio.mappers.usps.proxy.http") as mock:
             mock.return_value = ERROR_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_ERRORS))

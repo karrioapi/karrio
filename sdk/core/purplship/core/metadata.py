@@ -3,16 +3,16 @@ import attr
 from enum import Enum
 from typing import Optional, Type, List
 
-from purplship.api.proxy import Proxy
-from purplship.api.mapper import Mapper
-from purplship.core.settings import Settings
-from purplship.core.models import ServiceLevel
+from karrio.api.proxy import Proxy
+from karrio.api.mapper import Mapper
+from karrio.core.settings import Settings
+from karrio.core.models import ServiceLevel
 
 
 @attr.s(auto_attribs=True)
 class Metadata:
     """Purplship extension metadata.
-    Used to describe and define a purplship compatible extension for a carrier webservice integration.
+    Used to describe and define a karrio compatible extension for a carrier webservice integration.
     """
 
     label: str

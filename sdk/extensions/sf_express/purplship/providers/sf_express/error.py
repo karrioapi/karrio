@@ -1,6 +1,6 @@
 from typing import List
-from purplship.core.models import Message
-from purplship.providers.sf_express import Settings
+from karrio.core.models import Message
+from karrio.providers.sf_express import Settings
 
 
 def parse_error_response(response: dict, settings: Settings) -> List[Message]:

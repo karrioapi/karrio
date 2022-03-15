@@ -1,20 +1,20 @@
 from typing import Optional
 from functools import partial
-from purplship.core.models import (
+from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Pipeline,
     Job,
     Serializable,
     XP
 )
-from purplship.providers.canpar.utils import Settings
-from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.pickup.cancel import pickup_cancel_request
-from purplship.providers.canpar.pickup.create import pickup_request, parse_pickup_response
+from karrio.providers.canpar.utils import Settings
+from karrio.providers.canpar.error import parse_error_response
+from karrio.providers.canpar.pickup.cancel import pickup_cancel_request
+from karrio.providers.canpar.pickup.create import pickup_request, parse_pickup_response
 
 parse_pickup_update_response = parse_pickup_response
 

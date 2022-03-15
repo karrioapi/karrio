@@ -13,7 +13,7 @@
         <a href="{{ site_url }}">{% translate 'Health Status' %}</a> /
     {% endif %}
     <a href="{% url 'schema-redoc' %}">{% translate 'OpenAPI' %}</a> /
-    <a href="{% url 'purplship.server.graph:graphql' %}">{% translate 'GraphQL' %}</a> /
+    <a href="{% url 'karrio.server.graph:graphql' %}">{% translate 'GraphQL' %}</a> /
     {% if user.has_usable_password %}
     <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
     {% endif %}

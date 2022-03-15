@@ -1,6 +1,6 @@
-# purplship.carrier_name
+# karrio.carrier_name
 
-This package is a Australia Post extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Australia Post extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Australia Post extension of the [purplship](https://pypi.org/p
 ## Installation
 
 ```bash
-pip install purplship.australiapost
+pip install karrio.australiapost
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.australiapost.settings import Settings
+import karrio
+from karrio.mappers.australiapost.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["australiapost"].create(
+canadapost = karrio.gateway["australiapost"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

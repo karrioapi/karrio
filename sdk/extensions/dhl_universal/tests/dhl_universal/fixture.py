@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["dhl_universal"].create(
+gateway = karrio.gateway["dhl_universal"].create(
     dict(
         consumer_key="xxxxxxxxxxxxxxxxxx",
         consumer_secret="xxxxxxxxxxxxxx",

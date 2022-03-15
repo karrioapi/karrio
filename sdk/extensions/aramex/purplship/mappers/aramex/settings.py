@@ -1,7 +1,7 @@
 """Purplship Aramex settings."""
 
 import attr
-from purplship.providers.aramex.utils import Settings as BaseSettings
+from karrio.providers.aramex.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

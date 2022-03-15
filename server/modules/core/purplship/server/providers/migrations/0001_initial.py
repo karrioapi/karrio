@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models
+import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'car_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'car_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('carrier_id', models.CharField(help_text='eg. canadapost, dhl_express, fedex, purolator_courrier, ups...', max_length=200, unique=True)),
                 ('test', models.BooleanField(default=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),

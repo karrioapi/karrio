@@ -1,10 +1,10 @@
 import graphene
 from graphene_django.types import ErrorType
 
-import purplship.server.graph.utils as utils
-import purplship.server.documents.models as models
-import purplship.server.documents.serializers as serializers
-import purplship.server.graph.extension.documents.types as types
+import karrio.server.graph.utils as utils
+import karrio.server.documents.models as models
+import karrio.server.documents.serializers as serializers
+import karrio.server.graph.extension.documents.types as types
 
 
 class CreateDocumentTemplate(utils.ClientMutation):

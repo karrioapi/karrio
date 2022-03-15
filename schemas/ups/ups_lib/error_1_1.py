@@ -13,7 +13,7 @@
 #   ./schemas/Error1.1.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/error_1_1.py" ./schemas/Error1.1.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/error_1_1.py" ./schemas/Error1.1.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

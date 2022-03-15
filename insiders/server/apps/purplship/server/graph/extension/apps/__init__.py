@@ -1,10 +1,10 @@
 import graphene
 import graphene_django.filter as django_filter
 
-import purplship.server.graph.utils as utils
-import purplship.server.graph.extension.apps.mutations as mutations
-import purplship.server.graph.extension.apps.types as types
-import purplship.server.apps.models as models
+import karrio.server.graph.utils as utils
+import karrio.server.graph.extension.apps.mutations as mutations
+import karrio.server.graph.extension.apps.types as types
+import karrio.server.apps.models as models
 
 
 class Query:

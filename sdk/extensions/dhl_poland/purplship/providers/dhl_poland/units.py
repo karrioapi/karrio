@@ -1,5 +1,5 @@
-from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.models import ServiceLevel
+from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.models import ServiceLevel
 
 
 class CustomsContentType(Flag):

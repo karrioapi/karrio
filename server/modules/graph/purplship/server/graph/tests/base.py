@@ -1,8 +1,8 @@
 from graphene_django.utils.testing import GraphQLTestCase
 from django.contrib.auth import get_user_model
 
-from purplship.server.providers.models import MODELS
-from purplship.server.user.models import Token
+from karrio.server.providers.models import MODELS
+from karrio.server.user.models import Token
 
 
 class GraphTestCase(GraphQLTestCase):

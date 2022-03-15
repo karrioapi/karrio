@@ -4,14 +4,14 @@ import typing
 import graphene
 from graphene_django.debug import DjangoDebug
 
-import purplship.server.graph.extension as extensions
+import karrio.server.graph.extension as extensions
 
 logger = logging.getLogger(__name__)
 
 QUERIES: typing.List[graphene.ObjectType] = []
 MUTATIONS: typing.List[graphene.ObjectType] = []
 
-# Register purplship graphql schemas
+# Register karrio graphql schemas
 for _, name, _ in pkgutil.iter_modules(extensions.__path__):
     try:
         schema = __import__(f"{extensions.__name__}.{name}", fromlist=[name])

@@ -13,9 +13,9 @@ from typing import (
     cast,
     NamedTuple,
 )
-from purplship.core.utils import NF, Enum, Spec, SF
-from purplship.core.models import Customs, Parcel, Address, AddressExtra
-from purplship.core.errors import (
+from karrio.core.utils import NF, Enum, Spec, SF
+from karrio.core.models import Customs, Parcel, Address, AddressExtra
+from karrio.core.errors import (
     FieldError,
     FieldErrorCode,
     MultiParcelNotSupportedError,

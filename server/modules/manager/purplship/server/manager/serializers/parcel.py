@@ -1,11 +1,11 @@
 from rest_framework import status
 
-from purplship.server.core.exceptions import PurplshipAPIException
-from purplship.server.core.serializers import ParcelData, ShipmentStatus
-from purplship.server.serializers import owned_model_serializer, save_many_to_many_data
+from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.core.serializers import ParcelData, ShipmentStatus
+from karrio.server.serializers import owned_model_serializer, save_many_to_many_data
 
-from purplship.server.manager.serializers.commodity import CommoditySerializer
-import purplship.server.manager.models as models
+from karrio.server.manager.serializers.commodity import CommoditySerializer
+import karrio.server.manager.models as models
 
 
 @owned_model_serializer

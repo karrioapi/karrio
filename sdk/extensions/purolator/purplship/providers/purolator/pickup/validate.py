@@ -10,11 +10,11 @@ from purolator_lib.pickup_service_1_2_1 import (
     WeightUnit,
     NotificationEmails,
 )
-from purplship.core.units import Phone, Packages
-from purplship.core.models import PickupUpdateRequest, PickupRequest
-from purplship.core.utils import Serializable, create_envelope, Envelope, SF
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
-from purplship.providers.purolator.units import PackagePresets
+from karrio.core.units import Phone, Packages
+from karrio.core.models import PickupUpdateRequest, PickupRequest
+from karrio.core.utils import Serializable, create_envelope, Envelope, SF
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.units import PackagePresets
 
 
 def validate_pickup_request(

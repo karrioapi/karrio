@@ -6,13 +6,13 @@ from purolator_lib.pickup_service_1_2_1 import (
     ModifyPickUpResponse,
     RequestContext,
 )
-from purplship.core.models import PickupUpdateRequest, PickupDetails, Message
-from purplship.core.utils import (
+from karrio.core.models import PickupUpdateRequest, PickupDetails, Message
+from karrio.core.utils import (
     Serializable, create_envelope, Envelope, Element, XP, Pipeline, Job
 )
-from purplship.providers.purolator.pickup.create import _validate_pickup
-from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.pickup.create import _validate_pickup
+from karrio.providers.purolator.error import parse_error_response
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
 
 
 def parse_pickup_update_response(

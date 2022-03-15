@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import purplship.server.core.models.base
+import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
@@ -24,6 +24,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Token',
                 'verbose_name_plural': 'Tokens',
             },
-            bases=(models.Model, purplship.server.core.models.base.ControlledAccessModel),
+            bases=(models.Model, karrio.server.core.models.base.ControlledAccessModel),
         ),
     ]

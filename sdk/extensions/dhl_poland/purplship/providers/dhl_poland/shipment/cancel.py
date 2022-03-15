@@ -3,15 +3,15 @@ from dhl_poland_lib.services import (
     deleteShipment,
     DeleteShipmentRequest,
 )
-from purplship.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
-from purplship.core.utils import (
+from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
+from karrio.core.utils import (
     create_envelope,
     Envelope,
     Element,
     Serializable,
 )
-from purplship.providers.dhl_poland.error import parse_error_response
-from purplship.providers.dhl_poland.utils import Settings
+from karrio.providers.dhl_poland.error import parse_error_response
+from karrio.providers.dhl_poland.utils import Settings
 
 
 def parse_shipment_cancel_response(

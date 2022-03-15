@@ -1,7 +1,7 @@
-import purplship.server.manager.views.addresses
-import purplship.server.manager.views.parcels
-import purplship.server.manager.views.shipments
-import purplship.server.manager.views.trackers
-import purplship.server.manager.views.customs
-import purplship.server.manager.views.pickups
-from purplship.server.manager.router import router
+import karrio.server.manager.views.addresses
+import karrio.server.manager.views.parcels
+import karrio.server.manager.views.shipments
+import karrio.server.manager.views.trackers
+import karrio.server.manager.views.customs
+import karrio.server.manager.views.pickups
+from karrio.server.manager.router import router

@@ -2,9 +2,9 @@ import logging
 from django.conf import settings
 from django.db.models import signals
 
-from purplship.server.core import utils
-import purplship.server.manager.models as models
-import purplship.server.manager.serializers as serializers
+from karrio.server.core import utils
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
 
 logger = logging.getLogger(__name__)
 RATE_RELATED_CHANGES = [
@@ -32,7 +32,7 @@ def register_signals():
     signals.post_save.connect(parcel_updated, sender=models.Parcel)
     signals.post_delete.connect(parcel_deleted, sender=models.Parcel)
 
-    logger.info("purplship.manager signals registered...")
+    logger.info("karrio.manager signals registered...")
 
 
 @utils.disable_for_loaddata

@@ -1,18 +1,18 @@
 import graphene
 from graphene_django.types import ErrorType
-from purplship.server.conf import settings
-from purplship.server.core.utils import failsafe, send_email
+from karrio.server.conf import settings
+from karrio.server.core.utils import failsafe, send_email
 from rest_framework import exceptions
 
-from purplship.server.orgs.utils import (
+from karrio.server.orgs.utils import (
     OrganizationUserRole,
     required_roles,
     send_invitation_emails,
 )
-import purplship.server.graph.extension.orgs.types as types
-import purplship.server.orgs.serializers as serializers
-import purplship.server.orgs.models as models
-import purplship.server.graph.utils as utils
+import karrio.server.graph.extension.orgs.types as types
+import karrio.server.orgs.serializers as serializers
+import karrio.server.orgs.models as models
+import karrio.server.graph.utils as utils
 
 
 class CreateOrganization(utils.ClientMutation):
@@ -128,7 +128,7 @@ class ChangeOrganizationOwner(utils.ClientMutation):
             lambda: send_email(
                 emails=[email],
                 subject=f"{settings.APP_NAME} organization ownership successfully transferred to you",
-                email_template="purplship/organization_ownership_email.html",
+                email_template="karrio/organization_ownership_email.html",
                 context=dict(
                     organization_name=org.name,
                     current_owner_email=info.context.user.email,

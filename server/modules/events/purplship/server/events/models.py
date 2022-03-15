@@ -3,8 +3,8 @@ from django.conf import settings
 from django.db import models
 from django.contrib.postgres import fields
 
-from purplship.server.core.utils import identity
-from purplship.server.core.models import OwnedEntity, uuid
+from karrio.server.core.utils import identity
+from karrio.server.core.models import OwnedEntity, uuid
 
 
 class Webhook(OwnedEntity):

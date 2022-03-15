@@ -1,16 +1,16 @@
 from typing import Tuple, List
 from usps_lib.carrier_pickup_schedule_request import CarrierPickupScheduleRequest, PackageType
-from purplship.core.utils import Serializable, SF
-from purplship.core.units import Packages
-from purplship.core.models import (
+from karrio.core.utils import Serializable, SF
+from karrio.core.units import Packages
+from karrio.core.models import (
     ShipmentRequest,
     PickupRequest,
     PickupDetails,
     Message,
 )
 
-from purplship.providers.usps_international.error import parse_error_response
-from purplship.providers.usps_international.utils import Settings
+from karrio.providers.usps_international.error import parse_error_response
+from karrio.providers.usps_international.utils import Settings
 
 
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:

@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
 
-from purplship.server.core.models import OwnedEntity, uuid
-from purplship.server.manager.models import Customs, Parcel, Address
+from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.manager.models import Customs, Parcel, Address
 
 
 class Template(OwnedEntity):

@@ -1,10 +1,10 @@
 """
-purplship server providers module urls
+karrio server providers module urls
 """
 from django.urls import include, path
-from purplship.server.providers.views import router
+from karrio.server.providers.views import router
 
-app_name = 'purplship.server.providers'
+app_name = 'karrio.server.providers'
 urlpatterns = [
     path('v1/', include(router.urls)),
 ]

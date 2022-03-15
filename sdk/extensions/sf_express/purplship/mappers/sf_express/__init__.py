@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.sf_express.mapper import Mapper
-from purplship.mappers.sf_express.proxy import Proxy
-from purplship.mappers.sf_express.settings import Settings
-# import purplship.providers.sf_express.units as units
+from karrio.mappers.sf_express.mapper import Mapper
+from karrio.mappers.sf_express.proxy import Proxy
+from karrio.mappers.sf_express.settings import Settings
+# import karrio.providers.sf_express.units as units
 
 
 METADATA = Metadata(

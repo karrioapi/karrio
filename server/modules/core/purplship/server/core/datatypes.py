@@ -2,8 +2,8 @@ import attr
 from typing import List, Dict
 from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
-from purplship.core.utils import DP
-from purplship.core.models import (
+from karrio.core.utils import DP
+from karrio.core.models import (
     Documents,
     Parcel,
     Message,

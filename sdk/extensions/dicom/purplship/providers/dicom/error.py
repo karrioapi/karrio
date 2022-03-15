@@ -1,6 +1,6 @@
 from typing import List
-from purplship.providers.sendle import Settings
-from purplship.core.models import Message
+from karrio.providers.sendle import Settings
+from karrio.core.models import Message
 
 
 def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:

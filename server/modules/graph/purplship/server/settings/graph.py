@@ -1,8 +1,8 @@
-from purplship.server.settings.base import *
+from karrio.server.settings.base import *
 
 
 INSTALLED_APPS += [
     "graphene_django",
 ]
 
-GRAPHENE = {"SCHEMA": "purplship.server.graph.schema.schema", "MIDDLEWARE": []}
+GRAPHENE = {"SCHEMA": "karrio.server.graph.schema.schema", "MIDDLEWARE": []}

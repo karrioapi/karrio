@@ -1,18 +1,18 @@
 from typing import List, Tuple
 from asendia_us_lib.tracking_milestone_response import Datum as Tracking
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DF,
     DP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.asendia_us.utils import Settings
-from purplship.providers.asendia_us.error import parse_error_response
+from karrio.providers.asendia_us.utils import Settings
+from karrio.providers.asendia_us.error import parse_error_response
 
 
 def parse_tracking_response(response: List[dict], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

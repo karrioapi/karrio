@@ -4,9 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking.mixins import LoggingMixin
 
-from purplship.core.utils import DP
-from purplship.server.core.authentication import TokenAuthentication, JWTAuthentication
-from purplship.server.core.models import APILog
+from karrio.core.utils import DP
+from karrio.server.core.authentication import TokenAuthentication, JWTAuthentication
+from karrio.server.core.models import APILog
 
 
 class PurplshipLoggingMixin(LoggingMixin):
@@ -27,7 +27,7 @@ class PurplshipLoggingMixin(LoggingMixin):
         })
         log.save()
 
-        if (importlib.util.find_spec("purplship.server.orgs") is not None) and (
+        if (importlib.util.find_spec("karrio.server.orgs") is not None) and (
             getattr(self.request, "org", None) is not None
         ):
             log.link = log.__class__.link.related.related_model.objects.create(

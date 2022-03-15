@@ -2,8 +2,8 @@ import logging
 from django.db.models import signals
 from django.contrib.auth import get_user_model
 
-from purplship.server.core import utils
-import purplship.server.orgs.models as models
+from karrio.server.core import utils
+import karrio.server.orgs.models as models
 
 logger = logging.getLogger(__name__)
 

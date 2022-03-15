@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from purplship.server.user.models import Token
+from karrio.server.user.models import Token
 
 User = get_user_model()
 

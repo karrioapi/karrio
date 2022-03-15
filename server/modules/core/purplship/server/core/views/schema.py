@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework import permissions
 from drf_yasg import views, openapi, generators, inspectors
 
-from purplship.server.conf import settings
+from karrio.server.conf import settings
 
 VERSION = getattr(settings, "VERSION", "")
 

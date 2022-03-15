@@ -1,12 +1,12 @@
 from typing import Tuple, List
-from purplship.core.models import (
+from karrio.core.models import (
     PickupCancelRequest,
     Message,
     ConfirmationDetails,
 )
-from purplship.core.utils import Serializable, Element
-from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.utils import Settings
+from karrio.core.utils import Serializable, Element
+from karrio.providers.canadapost.error import parse_error_response
+from karrio.providers.canadapost.utils import Settings
 
 
 def parse_pickup_cancel_response(

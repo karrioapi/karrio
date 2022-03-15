@@ -3,19 +3,19 @@ from australiapost_lib.tracking import (
     TrackingRequest as CarrierTrackingRequest,
     TrackingResult
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DF,
     DP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.australiapost.utils import Settings
-from purplship.providers.australiapost.error import parse_error_response
+from karrio.providers.australiapost.utils import Settings
+from karrio.providers.australiapost.error import parse_error_response
 
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

@@ -3,7 +3,7 @@ from django.db.models import Q
 
 class OrganizationAccess:
     def __call__(self, context, key: str = "created_by", **kwargs):
-        import purplship.server.orgs.models as orgs
+        import karrio.server.orgs.models as orgs
 
         user_key = f"{key}"
         user = getattr(context, "user", context)

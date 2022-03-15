@@ -4,22 +4,22 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="purplship.server.documents",
+    name="karrio.server.documents",
     version="2022.3",
     description="Multi-carrier shipping API apps module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/purplship/purplship",
-    author="purplship",
-    author_email="hello@purplship.com",
+    url="https://github.com/karrio/karrio",
+    author="karrio",
+    author_email="hello@karrio.com",
     license="Purplship Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "weasyprint",
-        "purplship.server.core",
-        "purplship.server.orgs",
-        "purplship.server.graph",
-        "purplship.server.manager",
+        "karrio.server.core",
+        "karrio.server.orgs",
+        "karrio.server.graph",
+        "karrio.server.manager",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

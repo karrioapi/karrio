@@ -2,12 +2,12 @@ import graphene
 from graphene.types import generic
 from graphene_django.types import ErrorType
 
-from purplship.core.utils import DP
-import purplship.server.graph.utils as utils
-import purplship.server.orders.models as models
-import purplship.server.graph.extension.orders.types as types
-import purplship.server.graph.extension.base.inputs as inputs
-from purplship.server.orders.serializers.order import (
+from karrio.core.utils import DP
+import karrio.server.graph.utils as utils
+import karrio.server.orders.models as models
+import karrio.server.graph.extension.orders.types as types
+import karrio.server.graph.extension.base.inputs as inputs
+from karrio.server.orders.serializers.order import (
     OrderSerializer,
     can_mutate_order,
 )

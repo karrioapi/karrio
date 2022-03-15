@@ -2,19 +2,19 @@ import pkgutil
 import logging
 from typing import Any, Dict
 
-from purplship import gateway
-from purplship.server.providers.models.carrier import Carrier, ServiceLevel
-from purplship.server.providers.models.template import LabelTemplate
-import purplship.server.providers.extension.models as extensions
+from karrio import gateway
+from karrio.server.providers.models.carrier import Carrier, ServiceLevel
+from karrio.server.providers.models.template import LabelTemplate
+import karrio.server.providers.extension.models as extensions
 
 logger = logging.getLogger(__name__)
 
 
-# Register purplship settings defined above
+# Register karrio settings defined above
 MODELS: Dict[str, Any] = {}
 
 
-# Register purplship-server models extensions
+# Register karrio-server models extensions
 for _, name, _ in pkgutil.iter_modules(extensions.__path__):
     if name in gateway.providers:
         try:

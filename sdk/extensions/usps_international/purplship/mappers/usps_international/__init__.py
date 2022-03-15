@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.usps_international.mapper import Mapper
-from purplship.mappers.usps_international.proxy import Proxy
-from purplship.mappers.usps_international.settings import Settings
-import purplship.providers.usps_international.units as units
+from karrio.mappers.usps_international.mapper import Mapper
+from karrio.mappers.usps_international.proxy import Proxy
+from karrio.mappers.usps_international.settings import Settings
+import karrio.providers.usps_international.units as units
 
 
 METADATA = Metadata(

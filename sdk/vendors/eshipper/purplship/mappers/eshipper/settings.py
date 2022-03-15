@@ -1,7 +1,7 @@
 """PurplShip eshipper connection settings."""
 
 import attr
-from purplship.providers.eshipper.utils import Settings as BaseSettings
+from karrio.providers.eshipper.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

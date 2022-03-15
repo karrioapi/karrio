@@ -1,7 +1,7 @@
 """Purplship UPS connection settings."""
 
 import attr
-from purplship.providers.ups_ground.utils import Settings as BaseSettings
+from karrio.providers.ups_ground.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

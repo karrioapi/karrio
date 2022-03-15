@@ -12,13 +12,13 @@ from canadapost_lib.rating import (
     price_quoteType,
 )
 from typing import List, Tuple
-from purplship.core.utils import Serializable, Element, NF, XP
-from purplship.providers.canadapost.utils import Settings
-from purplship.core.units import Country, Currency, Packages, Services, Options
-from purplship.core.errors import OriginNotServicedError
-from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.units import OptionCode, ServiceType, PackagePresets, MeasurementOptions
+from karrio.core.utils import Serializable, Element, NF, XP
+from karrio.providers.canadapost.utils import Settings
+from karrio.core.units import Country, Currency, Packages, Services, Options
+from karrio.core.errors import OriginNotServicedError
+from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
+from karrio.providers.canadapost.error import parse_error_response
+from karrio.providers.canadapost.units import OptionCode, ServiceType, PackagePresets, MeasurementOptions
 
 
 def parse_rate_response(

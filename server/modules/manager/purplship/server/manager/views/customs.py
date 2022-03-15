@@ -7,8 +7,8 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.manager.serializers import (
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.manager.serializers import (
     SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
@@ -18,8 +18,8 @@ from purplship.server.manager.serializers import (
     CustomsSerializer,
     can_mutate_customs,
 )
-from purplship.server.manager.router import router
-import purplship.server.manager.models as models
+from karrio.server.manager.router import router
+import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate

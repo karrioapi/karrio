@@ -1,19 +1,19 @@
 from typing import cast
 from functools import partial
 from ups_lib.pickup_web_service_schema import PickupCreationResponse
-from purplship.core.utils import Job, Pipeline, XP, Serializable
-from purplship.core.models import (
+from karrio.core.utils import Job, Pipeline, XP, Serializable
+from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
 )
-from purplship.providers.ups.utils import Settings
-from purplship.providers.ups.pickup.create import (
+from karrio.providers.ups.utils import Settings
+from karrio.providers.ups.pickup.create import (
     _rate_pickup,
     _create_pickup,
     parse_pickup_response,
 )
-from purplship.providers.ups.pickup.cancel import pickup_cancel_request
+from karrio.providers.ups.pickup.cancel import pickup_cancel_request
 
 parse_pickup_update_response = parse_pickup_response
 

@@ -1,6 +1,6 @@
 """ Dynamic configuration editable on runtime powered by django-constance."""
 from decouple import config
-from purplship.server.settings.email import (
+from karrio.server.settings.email import (
     EMAIL_USE_TLS,
     EMAIL_HOST_USER,
     EMAIL_HOST_PASSWORD,
@@ -25,7 +25,7 @@ CONSTANCE_CONFIG = {
     ),
     "EMAIL_HOST_USER": (
         EMAIL_HOST_USER,
-        "The authentication user (email). e.g: admin@purplship.com",
+        "The authentication user (email). e.g: admin@karrio.com",
         str,
     ),
     "EMAIL_HOST_PASSWORD": (EMAIL_HOST_PASSWORD, "The authentication password", str),
@@ -37,7 +37,7 @@ CONSTANCE_CONFIG = {
     ),
     "EMAIL_FROM_ADDRESS": (
         EMAIL_FROM_ADDRESS,
-        "Email sent from. e.g: noreply@purplship.com",
+        "Email sent from. e.g: noreply@karrio.com",
         str,
     ),
     "GOOGLE_CLOUD_API_KEY": (GOOGLE_CLOUD_API_KEY, "A Google GeoCoding API key", str),

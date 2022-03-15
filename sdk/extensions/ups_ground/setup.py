@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name="purplship.ups_ground",
+    name="karrio.ups_ground",
     version="0.0.0-dev",
     license="LGPLv3",
     packages=find_namespace_packages(),
-    install_requires=["purplship", "carrier.ups"],
+    install_requires=["karrio", "carrier.ups"],
     zip_safe=False,
 )

@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.aramex.mapper import Mapper
-from purplship.mappers.aramex.proxy import Proxy
-from purplship.mappers.aramex.settings import Settings
-# import purplship.providers.aramex.units as units
+from karrio.mappers.aramex.mapper import Mapper
+from karrio.mappers.aramex.proxy import Proxy
+from karrio.mappers.aramex.settings import Settings
+# import karrio.providers.aramex.units as units
 
 
 METADATA = Metadata(

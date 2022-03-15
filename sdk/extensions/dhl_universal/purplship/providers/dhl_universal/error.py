@@ -1,7 +1,7 @@
 from typing import List
 from dhl_universal_lib.tracking import Error
-from purplship.providers.dhl_universal import Settings
-from purplship.core.models import Message
+from karrio.providers.dhl_universal import Settings
+from karrio.core.models import Message
 
 
 def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:

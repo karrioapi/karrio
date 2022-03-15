@@ -2,9 +2,9 @@ import re
 import unittest
 import logging
 from unittest.mock import patch, ANY
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
-from purplship import Shipment
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
+from karrio import Shipment
 from tests.fedex.fixture import gateway
 
 logger = logging.getLogger(__name__)
@@ -54,14 +54,14 @@ class TestFedExShipment(unittest.TestCase):
 
         self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
 
-    @patch("purplship.mappers.fedex.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/ship")
 
-    @patch("purplship.mappers.fedex.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_cancel_shipment(self, http_mock):
         Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -69,7 +69,7 @@ class TestFedExShipment(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/ship")
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -78,7 +78,7 @@ class TestFedExShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_multi_piece_shipment_response(self):
-        with patch("purplship.mappers.fedex.proxy.http") as mocks:
+        with patch("karrio.mappers.fedex.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentResponseXML]
             parsed_response = (
                 Shipment.create(self.MultiPieceShipmentRequest).from_(gateway).parse()
@@ -90,7 +90,7 @@ class TestFedExShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_cancel_response(self):
-        with patch("purplship.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()

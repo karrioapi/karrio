@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship import Tracking
-from purplship.core.models import TrackingRequest
+from karrio.core.utils import DP
+from karrio import Tracking
+from karrio.core.models import TrackingRequest
 from tests.aramex.fixture import gateway
 
 
@@ -17,7 +17,7 @@ class TestCarrierTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequestXML)
 
     def test_get_tracking(self):
-        with patch("purplship.mappers.aramex.proxy.http") as mock:
+        with patch("karrio.mappers.aramex.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestCarrierTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("purplship.mappers.aramex.proxy.http") as mock:
+        with patch("karrio.mappers.aramex.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -38,7 +38,7 @@ class TestCarrierTracking(unittest.TestCase):
             )
 
     def test_parse_non_existents_tracking_response(self):
-        with patch("purplship.mappers.aramex.proxy.http") as mock:
+        with patch("karrio.mappers.aramex.proxy.http") as mock:
             mock.return_value = TrackingNonExistentResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -50,7 +50,7 @@ class TestCarrierTracking(unittest.TestCase):
             )
 
     def test_parse_error_response(self):
-        with patch("purplship.mappers.aramex.proxy.http") as mock:
+        with patch("karrio.mappers.aramex.proxy.http") as mock:
             mock.return_value = ErrorResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

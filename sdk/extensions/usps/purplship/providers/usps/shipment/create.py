@@ -8,8 +8,8 @@ from usps_lib.evs_request import (
     ItemDetailType,
     ExtraServicesType,
 )
-from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.units import (
+from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
+from karrio.core.units import (
     CustomsInfo,
     Packages,
     Options,
@@ -17,8 +17,8 @@ from purplship.core.units import (
     Weight,
     Country,
 )
-from purplship.core.utils import Serializable, Element, Location, XP
-from purplship.core.models import (
+from karrio.core.utils import Serializable, Element, Location, XP
+from karrio.core.models import (
     Documents,
     ShipmentRequest,
     ShipmentDetails,
@@ -28,15 +28,15 @@ from purplship.core.models import (
     Customs,
 )
 
-from purplship.providers.usps.units import (
+from karrio.providers.usps.units import (
     LabelFormat,
     ServiceType,
     PackagingType,
     ShipmentOption,
     ContentType,
 )
-from purplship.providers.usps.error import parse_error_response
-from purplship.providers.usps.utils import Settings
+from karrio.providers.usps.error import parse_error_response
+from karrio.providers.usps.utils import Settings
 
 
 def parse_shipment_response(

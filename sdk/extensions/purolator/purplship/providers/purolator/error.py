@@ -1,8 +1,8 @@
 from typing import List
 from purolator_lib.estimate_service_2_1_2 import Error
-from purplship.core.models import Message
-from purplship.core.utils.xml import Element
-from purplship.core.utils.soap import extract_fault
+from karrio.core.models import Message
+from karrio.core.utils.xml import Element
+from karrio.core.utils.soap import extract_fault
 from .utils import Settings
 
 

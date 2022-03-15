@@ -9,10 +9,10 @@ from fedex_lib.address_validation_service_v4 import (
     VersionId,
     NotificationSeverityType,
 )
-from purplship.core.utils import create_envelope, Serializable, Element, Envelope, SF, XP
-from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
-from purplship.providers.fedex.utils import Settings, default_request_serializer
-from purplship.providers.fedex.error import parse_error_response
+from karrio.core.utils import create_envelope, Serializable, Element, Envelope, SF, XP
+from karrio.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
+from karrio.providers.fedex.utils import Settings, default_request_serializer
+from karrio.providers.fedex.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:

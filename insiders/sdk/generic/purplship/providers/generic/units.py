@@ -1,5 +1,5 @@
-from purplship.core.utils import Enum, Spec, Flag
-from purplship.core.models import ServiceLevel
+from karrio.core.utils import Enum, Spec, Flag
+from karrio.core.models import ServiceLevel
 
 
 class Service(Enum):

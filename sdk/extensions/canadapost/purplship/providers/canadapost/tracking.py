@@ -1,15 +1,15 @@
 from typing import Tuple, List
 from canadapost_lib.track import significant_events, occurrenceType
-from purplship.providers.canadapost.utils import Settings
-from purplship.core.utils import Element, Serializable, DF, XP, SF
-from purplship.core.models import (
+from karrio.providers.canadapost.utils import Settings
+from karrio.core.utils import Element, Serializable, DF, XP, SF
+from karrio.core.models import (
     TrackingRequest,
     TrackingDetails,
     TrackingEvent,
     Message,
 )
-from purplship.providers.canadapost.units import TRACKING_DELIVERED_EVENT_CODES
-from purplship.providers.canadapost.error import parse_error_response
+from karrio.providers.canadapost.units import TRACKING_DELIVERED_EVENT_CODES
+from karrio.providers.canadapost.error import parse_error_response
 
 
 def parse_tracking_response(

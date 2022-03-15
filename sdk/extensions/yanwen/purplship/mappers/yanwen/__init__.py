@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.yanwen.mapper import Mapper
-from purplship.mappers.yanwen.proxy import Proxy
-from purplship.mappers.yanwen.settings import Settings
-# import purplship.providers.yanwen.units as units
+from karrio.mappers.yanwen.mapper import Mapper
+from karrio.mappers.yanwen.proxy import Proxy
+from karrio.mappers.yanwen.settings import Settings
+# import karrio.providers.yanwen.units as units
 
 
 METADATA = Metadata(

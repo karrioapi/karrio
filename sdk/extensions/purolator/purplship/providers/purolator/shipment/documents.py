@@ -6,11 +6,11 @@ from purolator_lib.shipping_documents_service_1_3_0 import (
     PIN,
     DocumentTypes,
 )
-from purplship.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
-from purplship.core.models import ShipmentRequest
-from purplship.core.utils import Serializable, XP, SF
-from purplship.providers.purolator.units import PrintType
-from purplship.providers.purolator.utils import Settings
+from karrio.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
+from karrio.core.models import ShipmentRequest
+from karrio.core.utils import Serializable, XP, SF
+from karrio.providers.purolator.units import PrintType
+from karrio.providers.purolator.utils import Settings
 
 
 def get_shipping_documents_request(

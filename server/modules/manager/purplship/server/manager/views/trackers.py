@@ -11,8 +11,8 @@ from django.urls import path
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
-from purplship.server.core.views.api import GenericAPIView, APIView
-from purplship.server.core.serializers import (
+from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.serializers import (
     MODELS,
     TrackingStatus,
     ErrorResponse,
@@ -20,10 +20,10 @@ from purplship.server.core.serializers import (
     Operation,
     TrackerStatus,
 )
-from purplship.server.serializers import SerializerDecorator, PaginatedResult
-from purplship.server.manager.router import router
-from purplship.server.manager.serializers import TrackingSerializer
-import purplship.server.manager.models as models
+from karrio.server.serializers import SerializerDecorator, PaginatedResult
+from karrio.server.manager.router import router
+from karrio.server.manager.serializers import TrackingSerializer
+import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate

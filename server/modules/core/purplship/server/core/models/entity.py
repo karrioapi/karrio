@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from purplship.server.core.models.base import uuid, ControlledAccessModel
+from karrio.server.core.models.base import uuid, ControlledAccessModel
 
 
 class Entity(models.Model):

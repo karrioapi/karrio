@@ -9,9 +9,9 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 from django.conf import settings
 
-from purplship.server.core.router import router
-from purplship.server.core.serializers import PlainDictField, CharField, BooleanField
-from purplship.server.core import dataunits
+from karrio.server.core.router import router
+from karrio.server.core.serializers import PlainDictField, CharField, BooleanField
+from karrio.server.core import dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")

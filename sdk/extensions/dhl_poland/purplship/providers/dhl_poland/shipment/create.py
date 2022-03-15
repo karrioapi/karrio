@@ -23,21 +23,21 @@ from dhl_poland_lib.services import (
     Service as DhlService,
     CreateShipmentResponse,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     Documents,
     Message,
     Payment,
     ShipmentRequest,
     ShipmentDetails,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     Element,
     create_envelope,
     XP,
     DF,
 )
-from purplship.core.units import (
+from karrio.core.units import (
     CompleteAddress,
     CustomsInfo,
     Packages,
@@ -45,9 +45,9 @@ from purplship.core.units import (
     Weight,
     WeightUnit,
 )
-from purplship.providers.dhl_poland.error import parse_error_response
-from purplship.providers.dhl_poland.utils import Settings
-from purplship.providers.dhl_poland.units import (
+from karrio.providers.dhl_poland.error import parse_error_response
+from karrio.providers.dhl_poland.utils import Settings
+from karrio.providers.dhl_poland.units import (
     PackagingType,
     Option,
     Service,

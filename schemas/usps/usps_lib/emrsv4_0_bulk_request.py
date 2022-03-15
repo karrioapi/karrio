@@ -13,7 +13,7 @@
 #   ./schemas/EMRSV4.0BulkRequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/emrsv4_0_bulk_request.py" ./schemas/EMRSV4.0BulkRequest.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/emrsv4_0_bulk_request.py" ./schemas/EMRSV4.0BulkRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

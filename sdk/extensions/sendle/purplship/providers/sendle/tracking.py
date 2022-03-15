@@ -1,18 +1,18 @@
 from typing import List, Tuple
 from sendle_lib.tracking_response import Tracking
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DF,
     DP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.sendle.utils import Settings
-from purplship.providers.sendle.error import parse_error_response
+from karrio.providers.sendle.utils import Settings
+from karrio.providers.sendle.error import parse_error_response
 
 
 def parse_tracking_response(

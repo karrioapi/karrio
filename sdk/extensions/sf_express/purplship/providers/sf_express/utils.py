@@ -3,8 +3,8 @@ import uuid
 import base64
 import hashlib
 import urllib.parse
-from purplship.core.utils import DP
-from purplship.core import Settings as BaseSettings
+from karrio.core.utils import DP
+from karrio.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):

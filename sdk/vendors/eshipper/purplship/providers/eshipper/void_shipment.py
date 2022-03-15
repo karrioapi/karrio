@@ -1,16 +1,16 @@
 from typing import List, Tuple
 from eshipper_lib.shipment_cancel_request import ShipmentCancelRequestType, EShipper, OrderType
-from purplship.core.models import (
+from karrio.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Element,
     Serializable,
 )
-from purplship.providers.eshipper.error import parse_error_response
-from purplship.providers.eshipper.utils import Settings, standard_request_serializer
+from karrio.providers.eshipper.error import parse_error_response
+from karrio.providers.eshipper.utils import Settings, standard_request_serializer
 
 
 def parse_shipment_cancel_reply(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:

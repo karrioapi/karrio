@@ -2,9 +2,9 @@ from functools import partial
 from django.db import models
 from oauth2_provider.models import Application
 
-from purplship.server.core.utils import identity
-from purplship.server.core.models import OwnedEntity, uuid
-from purplship.server.orgs.models import Organization
+from karrio.server.core.utils import identity
+from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.orgs.models import Organization
 
 
 class App(OwnedEntity):

@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
-from purplship.server.providers.models import MODELS
-from purplship.server.user.models import Token
+from karrio.server.providers.models import MODELS
+from karrio.server.user.models import Token
 
 
 class APITestCase(BaseAPITestCase):

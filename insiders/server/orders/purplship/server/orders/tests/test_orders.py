@@ -4,13 +4,13 @@ from unittest.mock import ANY, patch
 from django.http.response import HttpResponse
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import (
+from karrio.core.models import (
     RateDetails,
     ChargeDetails,
 )
-from purplship.server.core.tests import APITestCase
-import purplship.server.manager.models as manager
-import purplship.server.orders.models as models
+from karrio.server.core.tests import APITestCase
+import karrio.server.manager.models as manager
+import karrio.server.orders.models as models
 
 
 class TestOrderFixture(APITestCase):
@@ -21,7 +21,7 @@ class TestOrderFixture(APITestCase):
         self.carrier.save()
 
     def create_order(self) -> Tuple[HttpResponse, dict]:
-        url = reverse("purplship.server.orders:order-list")
+        url = reverse("karrio.server.orders:order-list")
         data = ORDER_DATA
 
         response = self.client.post(url, data)
@@ -42,7 +42,7 @@ class TestOrderDetails(TestOrderFixture):
     def test_retrieve_order(self):
         _, data = self.create_order()
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=data["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
         )
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -53,7 +53,7 @@ class TestOrderDetails(TestOrderFixture):
     def test_cancel_order(self):
         _, order = self.create_order()
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
         )
         response = self.client.delete(url)
 
@@ -67,7 +67,7 @@ class TestOrderDetails(TestOrderFixture):
         order.save()
 
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=data["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
         )
         response = self.client.delete(url)
 
@@ -80,7 +80,7 @@ class TestOrderDetails(TestOrderFixture):
         order.save()
 
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=data["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
         )
         response = self.client.delete(url)
 
@@ -92,8 +92,8 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment
-        with patch("purplship.server.core.gateway.identity") as mock:
-            shipment_url = reverse("purplship.server.manager:shipment-list")
+        with patch("karrio.server.core.gateway.identity") as mock:
+            shipment_url = reverse("karrio.server.manager:shipment-list")
             data = SHIPMENT_DATA
             data["parcels"][0]["items"][0]["parent_id"] = order["line_items"][0]["id"]
             mock.return_value = RETURNED_RATES_VALUE
@@ -101,7 +101,7 @@ class TestOrderShipments(TestOrderFixture):
 
         # Fetch related order
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
         )
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -113,8 +113,8 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment and change status to purchased
-        with patch("purplship.server.core.gateway.identity") as mock:
-            shipment_url = reverse("purplship.server.manager:shipment-list")
+        with patch("karrio.server.core.gateway.identity") as mock:
+            shipment_url = reverse("karrio.server.manager:shipment-list")
             data = {
                 **SHIPMENT_DATA,
                 "parcels": [
@@ -138,7 +138,7 @@ class TestOrderShipments(TestOrderFixture):
 
         # Fetch related order
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
         )
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -150,8 +150,8 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment and change status to purchased
-        with patch("purplship.server.core.gateway.identity") as mock:
-            shipment_url = reverse("purplship.server.manager:shipment-list")
+        with patch("karrio.server.core.gateway.identity") as mock:
+            shipment_url = reverse("karrio.server.manager:shipment-list")
             data = {
                 **SHIPMENT_DATA,
                 "parcels": [
@@ -188,7 +188,7 @@ class TestOrderShipments(TestOrderFixture):
 
         # Fetch related order
         url = reverse(
-            "purplship.server.orders:order-detail", kwargs=dict(pk=order["id"])
+            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
         )
         response = self.client.get(url)
         response_data = json.loads(response.content)

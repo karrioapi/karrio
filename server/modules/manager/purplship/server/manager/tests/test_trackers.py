@@ -3,18 +3,18 @@ from time import sleep
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import TrackingDetails, TrackingEvent
-from purplship.server.core.tests import APITestCase
+from karrio.core.models import TrackingDetails, TrackingEvent
+from karrio.server.core.tests import APITestCase
 
 
 class TestTrackers(APITestCase):
     def test_shipment_tracking(self):
         url = reverse(
-            "purplship.server.manager:shipment-tracker",
+            "karrio.server.manager:shipment-tracker",
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.get(f"{url}?test")
             response_data = json.loads(response.content)
@@ -24,11 +24,11 @@ class TestTrackers(APITestCase):
 
     def test_shipment_tracking_retry(self):
         url = reverse(
-            "purplship.server.manager:shipment-tracker",
+            "karrio.server.manager:shipment-tracker",
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
-        with patch("purplship.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
             self.client.get(f"{url}?test")
             sleep(0.1)

@@ -5,10 +5,10 @@ from ups_lib.av_request import (
     RequestType,
 )
 from ups_lib.av_response import Response
-from purplship.core.utils import Serializable, Element, XP
-from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
-from purplship.providers.ups.utils import Settings
-from purplship.providers.ups.error import parse_error_response
+from karrio.core.utils import Serializable, Element, XP
+from karrio.core.models import AddressValidationRequest, Message, AddressValidationDetails
+from karrio.providers.ups.utils import Settings
+from karrio.providers.ups.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:

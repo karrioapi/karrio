@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
 from tests.usps_international.fixture import gateway
-from purplship.core.utils import DP
-from purplship.core.models import TrackingRequest
-from purplship import Tracking
+from karrio.core.utils import DP
+from karrio.core.models import TrackingRequest
+from karrio import Tracking
 
 
 class TestUSPSTracking(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestUSPSTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
     def test_parse_tracking_response(self):
-        with patch("purplship.mappers.usps_international.proxy.http") as mock:
+        with patch("karrio.mappers.usps_international.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

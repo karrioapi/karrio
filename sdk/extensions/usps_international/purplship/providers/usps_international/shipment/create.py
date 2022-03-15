@@ -1,20 +1,20 @@
 from typing import Tuple, List
 
-from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.units import Country
-from purplship.core.utils import Serializable, Element
-from purplship.core.models import (
+from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
+from karrio.core.units import Country
+from karrio.core.utils import Serializable, Element
+from karrio.core.models import (
     ShipmentRequest,
     ShipmentDetails,
     Message
 )
 
-import purplship.providers.usps_international.shipment.priority_mail as priority_mail
-import purplship.providers.usps_international.shipment.first_class_mail as first_class_mail
-import purplship.providers.usps_international.shipment.priority_express as priority_express
-import purplship.providers.usps_international.shipment.global_express_guaranteed as global_express_guaranteed
-from purplship.providers.usps_international.units import ServiceType
-from purplship.providers.usps_international.utils import Settings
+import karrio.providers.usps_international.shipment.priority_mail as priority_mail
+import karrio.providers.usps_international.shipment.first_class_mail as first_class_mail
+import karrio.providers.usps_international.shipment.priority_express as priority_express
+import karrio.providers.usps_international.shipment.global_express_guaranteed as global_express_guaranteed
+from karrio.providers.usps_international.units import ServiceType
+from karrio.providers.usps_international.utils import Settings
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:

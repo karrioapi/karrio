@@ -1,17 +1,17 @@
 import graphene
 import graphene_django.filter as django_filter
 
-import purplship.server.core.views.api as api
-import purplship.server.graph.models as graph
-import purplship.server.events.models as events
-import purplship.server.core.gateway as gateway
-import purplship.server.manager.models as manager
-import purplship.server.providers.models as providers
-import purplship.server.user.serializers as user_serializers
-import purplship.server.manager.serializers as manager_serializers
-import purplship.server.graph.extension.base.mutations as mutations
-import purplship.server.graph.extension.base.types as types
-import purplship.server.graph.utils as utils
+import karrio.server.core.views.api as api
+import karrio.server.graph.models as graph
+import karrio.server.events.models as events
+import karrio.server.core.gateway as gateway
+import karrio.server.manager.models as manager
+import karrio.server.providers.models as providers
+import karrio.server.user.serializers as user_serializers
+import karrio.server.manager.serializers as manager_serializers
+import karrio.server.graph.extension.base.mutations as mutations
+import karrio.server.graph.extension.base.types as types
+import karrio.server.graph.utils as utils
 
 
 class Query:

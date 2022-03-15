@@ -1,7 +1,7 @@
 from functools import partial
 from django.db import models
 
-from purplship.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid
 
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),

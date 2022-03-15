@@ -1,6 +1,6 @@
-from purplship.server.core.gateway import Rates
-from purplship.server.core.serializers import RateRequest, RateResponse
-from purplship.server.serializers import owned_model_serializer, Context
+from karrio.server.core.gateway import Rates
+from karrio.server.core.serializers import RateRequest, RateResponse
+from karrio.server.serializers import owned_model_serializer, Context
 
 
 @owned_model_serializer

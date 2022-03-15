@@ -1,16 +1,16 @@
 from typing import Tuple, List
 from asendia_us_lib.shipping_rate_request import ShippingRateRequest
 from asendia_us_lib.shipping_rate_response import ShippingRate
-from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, DP, NF
-from purplship.core.models import (
+from karrio.core.units import Packages, Services, Options
+from karrio.core.utils import Serializable, DP, NF
+from karrio.core.models import (
     RateRequest,
     RateDetails,
     Message
 )
-from purplship.providers.asendia_us.units import Service, Option, ProcessingLocation
-from purplship.providers.asendia_us.error import parse_error_response
-from purplship.providers.asendia_us.utils import Settings
+from karrio.providers.asendia_us.units import Service, Option, ProcessingLocation
+from karrio.providers.asendia_us.error import parse_error_response
+from karrio.providers.asendia_us.utils import Settings
 
 
 def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:

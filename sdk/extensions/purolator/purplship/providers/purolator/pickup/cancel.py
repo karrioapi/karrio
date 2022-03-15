@@ -4,14 +4,14 @@ from purolator_lib.pickup_service_1_2_1 import (
     VoidPickUpRequest,
     RequestContext,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
-from purplship.core.utils import Serializable, create_envelope, Envelope, Element
-from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.core.utils import Serializable, create_envelope, Envelope, Element
+from karrio.providers.purolator.error import parse_error_response
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
 
 
 def parse_pickup_cancel_response(

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from purplship.server.apps import models
+from karrio.server.apps import models
 
 
 admin.site.register(models.App)

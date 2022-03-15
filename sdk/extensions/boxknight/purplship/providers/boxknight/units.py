@@ -1,4 +1,4 @@
-from purplship.core.utils import Enum, Spec
+from karrio.core.utils import Enum, Spec
 
 
 class Option(Enum):

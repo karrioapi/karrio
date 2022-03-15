@@ -1,9 +1,9 @@
 import base64
 import urllib.parse
 from typing import List, Tuple
-from purplship.core.utils import DP, Serializable, Deserializable, request as http, exec_async
-from purplship.api.proxy import Proxy as BaseProxy
-from purplship.mappers.asendia_us.settings import Settings
+from karrio.core.utils import DP, Serializable, Deserializable, request as http, exec_async
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.asendia_us.settings import Settings
 
 
 class Proxy(BaseProxy):

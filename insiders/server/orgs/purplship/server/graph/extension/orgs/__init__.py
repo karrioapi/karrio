@@ -1,10 +1,10 @@
 import graphene
 
-import purplship.server.graph.utils as utils
-import purplship.server.graph.extension.orgs.types as types
-import purplship.server.graph.extension.orgs.mutations as mutations
-import purplship.server.orgs.models as models
-from purplship.server.orgs.utils import admin_required
+import karrio.server.graph.utils as utils
+import karrio.server.graph.extension.orgs.types as types
+import karrio.server.graph.extension.orgs.mutations as mutations
+import karrio.server.orgs.models as models
+from karrio.server.orgs.utils import admin_required
 
 
 class Query:

@@ -2,9 +2,9 @@ from django.apps import AppConfig
 
 
 class ManagerConfig(AppConfig):
-    name = "purplship.server.manager"
+    name = "karrio.server.manager"
 
     def ready(self):
-        from purplship.server.manager import signals
+        from karrio.server.manager import signals
 
         signals.register_signals()

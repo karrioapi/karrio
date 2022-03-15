@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.generic.mapper import Mapper
-from purplship.mappers.generic.proxy import Proxy
-from purplship.mappers.generic.settings import Settings
-from purplship.providers.generic import units
+from karrio.mappers.generic.mapper import Mapper
+from karrio.mappers.generic.proxy import Proxy
+from karrio.mappers.generic.settings import Settings
+from karrio.providers.generic import units
 
 
 DEFAULT_SERVICES = units.DEFAULT_SERVICES

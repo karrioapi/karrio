@@ -1,7 +1,7 @@
 """Purplship Yanwen settings."""
 
 import attr
-from purplship.providers.yanwen.utils import Settings as BaseSettings
+from karrio.providers.yanwen.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

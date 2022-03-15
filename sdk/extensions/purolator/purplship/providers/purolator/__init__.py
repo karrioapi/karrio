@@ -1,15 +1,15 @@
-from purplship.providers.purolator.rate import parse_rate_response, rate_request
-from purplship.providers.purolator.address import (
+from karrio.providers.purolator.rate import parse_rate_response, rate_request
+from karrio.providers.purolator.address import (
     parse_address_validation_response,
     address_validation_request
 )
-from purplship.providers.purolator.shipment import (
+from karrio.providers.purolator.shipment import (
     parse_shipment_cancel_response,
     parse_shipment_response,
     shipment_cancel_request,
     shipment_request,
 )
-from purplship.providers.purolator.pickup import (
+from karrio.providers.purolator.pickup import (
     parse_pickup_cancel_response,
     parse_pickup_update_response,
     parse_pickup_response,
@@ -17,7 +17,7 @@ from purplship.providers.purolator.pickup import (
     pickup_cancel_request,
     pickup_request,
 )
-from purplship.providers.purolator.tracking import (
+from karrio.providers.purolator.tracking import (
     parse_tracking_response,
     tracking_request,
 )

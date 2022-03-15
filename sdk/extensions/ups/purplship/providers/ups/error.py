@@ -1,8 +1,8 @@
 from typing import List
 from ups_lib.error_1_1 import CodeType
-from purplship.core.models import Message
-from purplship.core.utils.xml import Element
-from purplship.providers.ups.utils import Settings
+from karrio.core.models import Message
+from karrio.core.utils.xml import Element
+from karrio.providers.ups.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

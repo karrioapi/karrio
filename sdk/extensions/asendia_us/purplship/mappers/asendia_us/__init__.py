@@ -1,9 +1,9 @@
-from purplship.core.metadata import Metadata
+from karrio.core.metadata import Metadata
 
-from purplship.mappers.asendia_us.mapper import Mapper
-from purplship.mappers.asendia_us.proxy import Proxy
-from purplship.mappers.asendia_us.settings import Settings
-# import purplship.providers.asendia_us.units as units
+from karrio.mappers.asendia_us.mapper import Mapper
+from karrio.mappers.asendia_us.proxy import Proxy
+from karrio.mappers.asendia_us.settings import Settings
+# import karrio.providers.asendia_us.units as units
 
 
 METADATA = Metadata(

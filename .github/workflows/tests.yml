@@ -37,12 +37,12 @@ jobs:
             pip install -r requirements.server.dev.txt &&
             cd -
             mkdir -p .pship
-            purplship migrate &&
-            purplship test --failfast purplship.server.proxy.tests &&
-            purplship test --failfast purplship.server.pricing.tests &&
-            purplship test --failfast purplship.server.manager.tests &&
-            purplship test --failfast purplship.server.events.tests &&
-            purplship test --failfast purplship.server.graph.tests
+            karrio migrate &&
+            karrio test --failfast karrio.server.proxy.tests &&
+            karrio test --failfast karrio.server.pricing.tests &&
+            karrio test --failfast karrio.server.manager.tests &&
+            karrio test --failfast karrio.server.events.tests &&
+            karrio test --failfast karrio.server.graph.tests
           '
 
   server-insiders-tests:
@@ -62,12 +62,12 @@ jobs:
             pip install -r requirements.server.insiders.dev.txt &&
             cd -
             mkdir -p .pship
-            purplship migrate &&
-            purplship test --failfast purplship.server.proxy.tests &&
-            purplship test --failfast purplship.server.pricing.tests &&
-            purplship test --failfast purplship.server.manager.tests &&
-            purplship test --failfast purplship.server.events.tests &&
-            purplship test --failfast purplship.server.graph.tests &&
-            purplship test --failfast purplship.server.orgs.tests &&
-            purplship test --failfast purplship.server.orders.tests
+            karrio migrate &&
+            karrio test --failfast karrio.server.proxy.tests &&
+            karrio test --failfast karrio.server.pricing.tests &&
+            karrio test --failfast karrio.server.manager.tests &&
+            karrio test --failfast karrio.server.events.tests &&
+            karrio test --failfast karrio.server.graph.tests &&
+            karrio test --failfast karrio.server.orgs.tests &&
+            karrio test --failfast karrio.server.orders.tests
           '

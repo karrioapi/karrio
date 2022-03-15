@@ -5,7 +5,7 @@ from barcode import Code128
 from lxml.etree import fromstring
 from barcode.writer import ImageWriter
 from PIL import Image, ImageDraw, ImageFont
-from purplship.core.utils import DP, request
+from karrio.core.utils import DP, request
 
 FONTS_DIR = Path(__file__).resolve().parent / "fonts"
 LINE_SEPARATOR = """

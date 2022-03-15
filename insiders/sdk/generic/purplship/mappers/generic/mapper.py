@@ -1,21 +1,21 @@
 from typing import List, Tuple
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.api.mapper import Mapper as BaseMapper
-from purplship.core.models import (
+from karrio.core.utils.serializable import Serializable, Deserializable
+from karrio.api.mapper import Mapper as BaseMapper
+from karrio.core.models import (
     RateDetails,
     RateRequest,
     Message,
     ShipmentDetails,
 )
-from purplship.universal.providers.shipping import (
+from karrio.universal.providers.shipping import (
     parse_shipment_response,
     shipment_request,
 )
-from purplship.universal.providers.rating import (
+from karrio.universal.providers.rating import (
     parse_rate_response,
     rate_request,
 )
-from purplship.mappers.generic.settings import Settings
+from karrio.mappers.generic.settings import Settings
 
 
 class Mapper(BaseMapper):

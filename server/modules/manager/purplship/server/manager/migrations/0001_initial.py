@@ -5,7 +5,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import functools
 import jsonfield.fields
-import purplship.server.core.models
+import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'adr_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'adr_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('postal_code', models.CharField(blank=True, max_length=10, null=True)),
                 ('city', models.CharField(blank=True, max_length=50, null=True)),
                 ('federal_tax_id', models.CharField(blank=True, max_length=50, null=True)),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'cdt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'cdt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('weight', models.FloatField(blank=True, null=True)),
                 ('description', models.CharField(blank=True, max_length=250, null=True)),
                 ('quantity', models.IntegerField(blank=True, null=True)),
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'cst_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'cst_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('aes', models.CharField(blank=True, max_length=20, null=True)),
                 ('eel_pfc', models.CharField(blank=True, max_length=20, null=True)),
                 ('certify', models.BooleanField(null=True)),
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'pcl_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'pcl_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('weight', models.FloatField(blank=True, null=True)),
                 ('width', models.FloatField(blank=True, null=True)),
                 ('height', models.FloatField(blank=True, null=True)),
@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'pyt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'pyt_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('amount', models.FloatField(blank=True, null=True)),
                 ('paid_by', models.CharField(blank=True, choices=[('sender', 'sender'), ('recipient', 'recipient'), ('third_party', 'third_party'), ('credit_card', 'credit_card')], max_length=20, null=True)),
                 ('currency', models.CharField(blank=True, choices=[('EUR', 'EUR'), ('AED', 'AED'), ('USD', 'USD'), ('XCD', 'XCD'), ('AMD', 'AMD'), ('ANG', 'ANG'), ('AOA', 'AOA'), ('ARS', 'ARS'), ('AUD', 'AUD'), ('AWG', 'AWG'), ('AZN', 'AZN'), ('BAM', 'BAM'), ('BBD', 'BBD'), ('BDT', 'BDT'), ('XOF', 'XOF'), ('BGN', 'BGN'), ('BHD', 'BHD'), ('BIF', 'BIF'), ('BMD', 'BMD'), ('BND', 'BND'), ('BOB', 'BOB'), ('BRL', 'BRL'), ('BSD', 'BSD'), ('BTN', 'BTN'), ('BWP', 'BWP'), ('BYN', 'BYN'), ('BZD', 'BZD'), ('CAD', 'CAD'), ('CDF', 'CDF'), ('XAF', 'XAF'), ('CHF', 'CHF'), ('NZD', 'NZD'), ('CLP', 'CLP'), ('CNY', 'CNY'), ('COP', 'COP'), ('CRC', 'CRC'), ('CUC', 'CUC'), ('CVE', 'CVE'), ('CZK', 'CZK'), ('DJF', 'DJF'), ('DKK', 'DKK'), ('DOP', 'DOP'), ('DZD', 'DZD'), ('EGP', 'EGP'), ('ERN', 'ERN'), ('ETB', 'ETB'), ('FJD', 'FJD'), ('GBP', 'GBP'), ('GEL', 'GEL'), ('GHS', 'GHS'), ('GMD', 'GMD'), ('GNF', 'GNF'), ('GTQ', 'GTQ'), ('GYD', 'GYD'), ('HKD', 'HKD'), ('HNL', 'HNL'), ('HRK', 'HRK'), ('HTG', 'HTG'), ('HUF', 'HUF'), ('IDR', 'IDR'), ('ILS', 'ILS'), ('INR', 'INR'), ('IRR', 'IRR'), ('ISK', 'ISK'), ('JMD', 'JMD'), ('JOD', 'JOD'), ('JPY', 'JPY'), ('KES', 'KES'), ('KGS', 'KGS'), ('KHR', 'KHR'), ('KMF', 'KMF'), ('KPW', 'KPW'), ('KRW', 'KRW'), ('KWD', 'KWD'), ('KYD', 'KYD'), ('KZT', 'KZT'), ('LAK', 'LAK'), ('LKR', 'LKR'), ('LRD', 'LRD'), ('LSL', 'LSL'), ('LYD', 'LYD'), ('MAD', 'MAD'), ('MDL', 'MDL'), ('MGA', 'MGA'), ('MKD', 'MKD'), ('MMK', 'MMK'), ('MNT', 'MNT'), ('MOP', 'MOP'), ('MRO', 'MRO'), ('MUR', 'MUR'), ('MVR', 'MVR'), ('MWK', 'MWK'), ('MXN', 'MXN'), ('MYR', 'MYR'), ('MZN', 'MZN'), ('NAD', 'NAD'), ('XPF', 'XPF'), ('NGN', 'NGN'), ('NIO', 'NIO'), ('NOK', 'NOK'), ('NPR', 'NPR'), ('OMR', 'OMR'), ('PEN', 'PEN'), ('PGK', 'PGK'), ('PHP', 'PHP'), ('PKR', 'PKR'), ('PLN', 'PLN'), ('PYG', 'PYG'), ('QAR', 'QAR'), ('RSD', 'RSD'), ('RUB', 'RUB'), ('RWF', 'RWF'), ('SAR', 'SAR'), ('SBD', 'SBD'), ('SCR', 'SCR'), ('SDG', 'SDG'), ('SEK', 'SEK'), ('SGD', 'SGD'), ('SHP', 'SHP'), ('SLL', 'SLL'), ('SOS', 'SOS'), ('SRD', 'SRD'), ('SSP', 'SSP'), ('STD', 'STD'), ('SYP', 'SYP'), ('SZL', 'SZL'), ('THB', 'THB'), ('TJS', 'TJS'), ('TND', 'TND'), ('TOP', 'TOP'), ('TRY', 'TRY'), ('TTD', 'TTD'), ('TWD', 'TWD'), ('TZS', 'TZS'), ('UAH', 'UAH'), ('UYU', 'UYU'), ('UZS', 'UZS'), ('VEF', 'VEF'), ('VND', 'VND'), ('VUV', 'VUV'), ('WST', 'WST'), ('YER', 'YER'), ('ZAR', 'ZAR')], max_length=3, null=True)),
@@ -140,7 +140,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'trk_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'trk_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('tracking_number', models.CharField(max_length=50, unique=True)),
                 ('events', jsonfield.fields.JSONField(blank=True, default=[], null=True)),
                 ('test_mode', models.BooleanField()),
@@ -158,7 +158,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'shp_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'shp_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('status', models.CharField(choices=[('created', 'created'), ('purchased', 'purchased'), ('transit', 'transit'), ('delivered', 'delivered')], default='created', max_length=50)),
                 ('tracking_number', models.CharField(blank=True, max_length=50, null=True)),
                 ('shipment_identifier', models.CharField(blank=True, max_length=50, null=True)),
@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.uuid, *(), **{'prefix': 'pck_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'pck_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('confirmation_number', models.CharField(max_length=50, unique=True)),
                 ('test_mode', models.BooleanField()),
                 ('pickup_date', models.DateField()),

@@ -2,18 +2,18 @@ from typing import List, Tuple
 from yanwen_lib.tracking import (
     Result
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     Serializable,
     DF,
     DP,
 )
-from purplship.core.models import (
+from karrio.core.models import (
     TrackingEvent,
     TrackingDetails,
     TrackingRequest,
     Message,
 )
-from purplship.providers.yanwen.utils import Settings
+from karrio.providers.yanwen.utils import Settings
 
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:

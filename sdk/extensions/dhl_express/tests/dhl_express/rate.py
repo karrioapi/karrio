@@ -1,10 +1,10 @@
 import re
 import unittest
 from unittest.mock import patch
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
-from purplship import Rating
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
+from karrio import Rating
 from tests.dhl_express.fixture import gateway
 
 
@@ -47,7 +47,7 @@ class TestDHLRating(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestFromPresetXML)
 
-    @patch("purplship.mappers.dhl_express.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -55,7 +55,7 @@ class TestDHLRating(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -63,7 +63,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_get_rate_invalid_destination(self):
-        ca_account_gateway = purplship.gateway["dhl_express"].create(
+        ca_account_gateway = karrio.gateway["dhl_express"].create(
             dict(
                 site_id="site_id",
                 password="password",
@@ -89,7 +89,7 @@ class TestDHLRating(unittest.TestCase):
         )
 
     def test_get_rate_invalid_origin(self):
-        us_account_gateway = purplship.gateway["dhl_express"].create(
+        us_account_gateway = karrio.gateway["dhl_express"].create(
             dict(
                 site_id="site_id",
                 password="password",
@@ -109,7 +109,7 @@ class TestDHLRating(unittest.TestCase):
         )
 
     def test_parse_rate_parsing_error(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -117,7 +117,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -125,7 +125,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_parse_rate_vol_weight_higher_response(self):
-        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateVolWeightHigher
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(

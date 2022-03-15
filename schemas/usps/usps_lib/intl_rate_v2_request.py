@@ -13,7 +13,7 @@
 #   ./schemas/IntlRateV2Request.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/intl_rate_v2_request.py" ./schemas/IntlRateV2Request.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/intl_rate_v2_request.py" ./schemas/IntlRateV2Request.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

@@ -1,7 +1,7 @@
 import math
 from typing import Optional
-from purplship.core import Settings as BaseSettings
-from purplship.core.utils import XP
+from karrio.core import Settings as BaseSettings
+from karrio.core.utils import XP
 
 
 class Settings(BaseSettings):

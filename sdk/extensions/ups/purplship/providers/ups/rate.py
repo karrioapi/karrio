@@ -18,7 +18,7 @@ from ups_lib.rate_web_service_schema import (
     TimeInTransitRequestType,
     EstimatedArrivalType,
 )
-from purplship.core.utils import (
+from karrio.core.utils import (
     apply_namespaceprefix,
     create_envelope,
     Serializable,
@@ -28,16 +28,16 @@ from purplship.core.utils import (
     NF,
     XP,
 )
-from purplship.core.units import Packages, Services
-from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from purplship.providers.ups.units import (
+from karrio.core.units import Packages, Services
+from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
+from karrio.providers.ups.units import (
     ServiceCode,
     PackagingType,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
 )
-from purplship.providers.ups.error import parse_error_response
-from purplship.providers.ups.utils import Settings
+from karrio.providers.ups.error import parse_error_response
+from karrio.providers.ups.utils import Settings
 
 
 def parse_rate_response(

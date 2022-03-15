@@ -9,10 +9,10 @@ from rest_framework.exceptions import (
 )
 from django.core.exceptions import ObjectDoesNotExist
 
-from purplship.core.utils import DP
-from purplship.core.errors import ValidationError as PurplshipValidationError
+from karrio.core.utils import DP
+from karrio.core.errors import ValidationError as PurplshipValidationError
 
-from purplship.server.core.datatypes import Error
+from karrio.server.core.datatypes import Error
 
 logger = logging.getLogger(__name__)
 

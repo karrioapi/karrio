@@ -5,10 +5,10 @@ import attr
 import pkgutil
 from typing import Dict, List
 
-import purplship.mappers as mappers
-import purplship.core.units as units
-from purplship.core.utils import DP
-from purplship.core.metadata import Metadata
+import karrio.mappers as mappers
+import karrio.core.units as units
+from karrio.core.utils import DP
+from karrio.core.metadata import Metadata
 
 
 PROVIDERS = None
@@ -37,7 +37,7 @@ def collect_providers_data() -> Dict[str, dict]:
 
     PROVIDERS_DATA = {
         "universal": dict(
-            label="Multi-carrier (purplship)",
+            label="Multi-carrier (karrio)",
             packaging_types=units.PackagingUnit,
             options=units.Option,
         ),

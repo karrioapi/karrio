@@ -1,7 +1,7 @@
 import unittest
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
 from tests.generic.fixture import gateway
 
 
@@ -12,7 +12,7 @@ class TestGenericRating(unittest.TestCase):
 
     def test_parse_rate_response(self):
         parsed_response = (
-            purplship.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
         )
 
         self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)

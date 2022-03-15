@@ -6,7 +6,7 @@ import django.db.models.deletion
 import django.utils.timezone
 import functools
 import organizations.fields
-import purplship.server.core.models.base
+import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
                 ('created', organizations.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False)),
                 ('modified', organizations.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False)),
                 ('slug', organizations.fields.SlugField(blank=True, editable=False, help_text='The name in all lowercase, suitable for URL identification', max_length=200, populate_from='name', unique=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.base.uuid, *(), **{'prefix': 'org_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'org_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('addresses', models.ManyToManyField(related_name='org', through='orgs.AddressLink', to='manager.Address')),
                 ('carriers', models.ManyToManyField(related_name='org', through='orgs.CarrierLink', to='providers.Carrier')),
                 ('commodities', models.ManyToManyField(related_name='org', through='orgs.CommodityLink', to='manager.Commodity')),

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   pship:
-    image: purplship/dev
+    image: karrio/dev
     build:
       context: ./
       dockerfile: docker/dev.Dockerfile
@@ -21,10 +21,10 @@ services:
     networks:
       - db_network
       - web_network
-    command: purplship runserver 0.0.0.0:5002
+    command: karrio runserver 0.0.0.0:5002
 
   worker:
-    image: purplship/dev
+    image: karrio/dev
     container_name: worker
     env_file: .env
     environment:
@@ -36,7 +36,7 @@ services:
       - db
     networks:
       - db_network
-    command: purplship run_huey -w 2
+    command: karrio run_huey -w 2
 
   nginx:
     container_name: nginx

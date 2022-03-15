@@ -7,7 +7,7 @@ touch "${LIB_MODULES}/__init__.py"
 quicktype () {
     echo "Generating $1..."
     docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/dhl_express_lib \
-    purplship/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
+    karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
     --no-nice-property-names --all-properties-optional $@
 }
 

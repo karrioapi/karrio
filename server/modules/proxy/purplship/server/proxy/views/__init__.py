@@ -1,5 +1,5 @@
-import purplship.server.proxy.views.tracking
-import purplship.server.proxy.views.rating
-import purplship.server.proxy.views.shipping
-import purplship.server.proxy.views.pickup
-from purplship.server.proxy.router import router
+import karrio.server.proxy.views.tracking
+import karrio.server.proxy.views.rating
+import karrio.server.proxy.views.shipping
+import karrio.server.proxy.views.pickup
+from karrio.server.proxy.router import router

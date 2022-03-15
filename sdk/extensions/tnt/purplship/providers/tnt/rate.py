@@ -16,12 +16,12 @@ from tnt_lib.pricing_request import (
     option,
     consignmentDetails,
 )
-from purplship.core.utils import Serializable, Element, XP, DF, NF
-from purplship.core.units import Options, Packages, Services
-from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
-from purplship.providers.tnt.units import ShipmentOption, PaymentType, ShipmentService
-from purplship.providers.tnt.utils import Settings
-from purplship.providers.tnt.error import parse_error_response
+from karrio.core.utils import Serializable, Element, XP, DF, NF
+from karrio.core.units import Options, Packages, Services
+from karrio.core.models import RateDetails, Message, ChargeDetails, RateRequest
+from karrio.providers.tnt.units import ShipmentOption, PaymentType, ShipmentService
+from karrio.providers.tnt.utils import Settings
+from karrio.providers.tnt.error import parse_error_response
 
 
 def parse_rate_response(

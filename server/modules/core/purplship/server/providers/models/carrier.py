@@ -6,13 +6,13 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.core.validators import RegexValidator
 
-from purplship import gateway
-from purplship.core.utils import Enum
-from purplship.core.units import Country, Currency, DimensionUnit, WeightUnit
-from purplship.api.gateway import Gateway
-from purplship.server.core.models import OwnedEntity, uuid
-from purplship.server.core.datatypes import CarrierSettings
-from purplship.server.core.fields import MultiChoiceField
+from karrio import gateway
+from karrio.core.utils import Enum
+from karrio.core.units import Country, Currency, DimensionUnit, WeightUnit
+from karrio.api.gateway import Gateway
+from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.datatypes import CarrierSettings
+from karrio.server.core.fields import MultiChoiceField
 
 
 class CarrierCapabilities(Enum):
@@ -35,7 +35,7 @@ DIMENSION_UNITS = [(c.name, c.name) for c in DimensionUnit]
 
 class CarrierManager(models.Manager):
     def get_queryset(self):
-        from purplship.server.providers.models import MODELS
+        from karrio.server.providers.models import MODELS
 
         return (
             super()
@@ -94,7 +94,7 @@ class Carrier(OwnedEntity):
         return self.settings.carrier_name
 
     def _linked_settings(self):
-        from purplship.server.providers.models import MODELS
+        from karrio.server.providers.models import MODELS
 
         return next(
             (

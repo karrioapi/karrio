@@ -13,7 +13,7 @@
 #   ./schemas/DeniedPartyWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/denied_party_web_service_schema.py" ./schemas/DeniedPartyWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/denied_party_web_service_schema.py" ./schemas/DeniedPartyWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

@@ -3,8 +3,8 @@ from django.contrib.auth import forms as auth
 from django.core.exceptions import ValidationError
 from django.contrib.auth.tokens import default_token_generator
 
-from purplship.server.conf import settings
-from purplship.server.user.forms import SignUpForm
+from karrio.server.conf import settings
+from karrio.server.user.forms import SignUpForm
 
 
 class UserRegistrationForm(SignUpForm):
@@ -42,6 +42,6 @@ class ResetPasswordRequestForm(auth.PasswordResetForm):
                     app_name=settings.app_name,
                     redirect_url=self.cleaned_data["redirect_url"],
                 ),
-                "email_template_name": "purplship/password_reset_email.html",
+                "email_template_name": "karrio/password_reset_email.html",
             }
         )

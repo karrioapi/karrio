@@ -6,7 +6,7 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import functools
-import purplship.server.core.models.base
+import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(purplship.server.core.models.base.uuid, *(), **{'prefix': 'doc_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'doc_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
                 ('slug', models.SlugField(max_length=20, validators=[django.core.validators.RegexValidator('^[a-z0-9_]+$')])),
                 ('name', models.CharField(max_length=50)),
                 ('template', models.TextField()),
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 'db_table': 'document-template',
                 'ordering': ['-created_at'],
             },
-            bases=(purplship.server.core.models.base.ControlledAccessModel, models.Model),
+            bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
         migrations.CreateModel(
             name='DocumentTemplateLink',

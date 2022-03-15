@@ -1,6 +1,6 @@
-# purplship.dicom
+# karrio.dicom
 
-This package is a Dicom extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Dicom extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Dicom extension of the [purplship](https://pypi.org/project/pu
 ## Installation
 
 ```bash
-pip install purplship.dicom
+pip install karrio.dicom
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.dicom.settings import Settings
+import karrio
+from karrio.mappers.dicom.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["dicom"].create(
+canadapost = karrio.gateway["dicom"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests
