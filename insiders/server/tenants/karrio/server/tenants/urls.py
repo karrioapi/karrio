@@ -23,6 +23,6 @@ urlpatterns = [
     path(
         BASE_PATH,
         include([path("", tenants_admin.site.urls, name="tenants_admin")]),
-        name="karrio:tenats:index",
+        name="karrio:tenants:index",
     ),
 ]

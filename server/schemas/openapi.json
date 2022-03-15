@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://app.karrio.com/"
+            "url": "https://app.karrio.io/"
         }
     ],
     "security": [

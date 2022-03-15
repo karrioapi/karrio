@@ -10,7 +10,7 @@ DEFAULT_ALLOWED_CONFIG = [
 ]
 FALLBACK_VALUES = {
     "APP_NAME": "Karrio",
-    "SUPPORT_EMAIL": "hello@karrio.com",
+    "SUPPORT_EMAIL": "hello@karrio.io",
     "BASE_TEMPLATE": "karrio/base_site.html",
     "BASE_FOOTER_TEMPLATE": "karrio/base_footer.html",
 }

@@ -16,4 +16,4 @@ import dhl_ecom_am_lib
 help(dhl_ecom_am_lib)
 ```
 
-*This package is used by the [Karrio Multi-carrier Shipping Interface](https://github.com/karrio/karrio)*
+*This package is used by the [Karrio Multi-carrier Shipping Interface](https://github.com/karrio-inc/karrio)*

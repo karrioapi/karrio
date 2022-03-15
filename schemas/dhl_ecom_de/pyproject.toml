@@ -2,9 +2,9 @@
 name = "carrier.dhl_ecom_de"
 version = "2021.10rc0"
 description = "DHL eCommerce Germany Web API Schemas Python Data Types library"
-repository="https://github.com/karrio/karrio-carriers"
-homepage="https://github.com/karrio/karrio-carriers/tree/master/carrier.dhl_ecom_de"
-authors = ["Karrio <hello@karrio.com>"]
+repository="https://github.com/karrio-inc/karrio-carriers"
+homepage="https://github.com/karrio-inc/karrio-carriers/tree/master/carrier.dhl_ecom_de"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [

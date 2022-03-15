@@ -1,6 +1,6 @@
 import { ConfigurationParameters, KarrioClient } from './index';
 
-export default function Karrio(apiKey: string, host: string = 'https://cloud.karrio.com', apiKeyPrefix: string = 'Token') {
+export default function Karrio(apiKey: string, host: string = 'https://app.karrio.io', apiKeyPrefix: string = 'Token') {
   const clientConfig: ConfigurationParameters = {
     basePath: host,
     apiKey: `${apiKeyPrefix} ${apiKey}`,

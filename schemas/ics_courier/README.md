@@ -16,4 +16,4 @@ import ics_courier_lib
 help(ics_courier_lib)
 ```
 
-*This package is used by the [karrio multi-carrier shipping interface](https://github.com/karrio/karrio)*
+*This package is used by the [karrio multi-carrier shipping interface](https://github.com/karrio-inc/karrio)*

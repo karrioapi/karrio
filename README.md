@@ -2,9 +2,9 @@
 
 **The Headless Shipping platform**
 
-[![puprlship-tests](https://github.com/karrio/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio/karrio/actions/workflows/tests.yml)
+[![puprlship-tests](https://github.com/karrio-inc/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio-inc/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio/karrio&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio-inc/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio-inc/karrio&amp;utm_campaign=Badge_Grade)
 
 karrio makes shipping services simple and accessible.
 Help us out… If you love open source and great software, give us a star! 🌟
@@ -18,7 +18,7 @@ Help us out… If you love open source and great software, give us a star! 🌟
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [karrio dashboard](https://github.com/karrio/karrio-dashboard) to orchestrate your logistics operations.
+- **Dashboard**: Use the [karrio dashboard](https://github.com/karrio-inc/karrio-dashboard) to orchestrate your logistics operations.
 
 <picture><img alt="Karrio Dashboard" src="./screenshots/dashboard.png" /></picture>
 
@@ -26,7 +26,7 @@ Help us out… If you love open source and great software, give us a star! 🌟
 
 There are several ways to use Karrio:
 
-- [Karrio Cloud](https://cloud.karrio.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
+- [Karrio Cloud](https://app.karrio.io) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
 - [Karrio OSS](#karrio-oss) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
 - [Karrio SDK](#karrio-sdk) is the core of the karrio abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
 
@@ -35,7 +35,7 @@ There are several ways to use Karrio:
 ## Status
 
 - [x] Alpha: We are testing karrio with a closed set of customers
-- [x] Public Alpha: Anyone can sign up over at [cloud.karrio.com](cloud.karrio.com). But go easy on us, there are a few kinks
+- [x] Public Alpha: Anyone can sign up over at [app.karrio.io](app.karrio.io). But go easy on us, there are a few kinks
 - [x] Public Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready
 
@@ -139,9 +139,9 @@ Karrio should now be running at <http://localhost:5002>
 
 ### Official Karrio Server Client Libraries
 
-- [Node](https://github.com/karrio/karrio-node)
-- [PHP](https://github.com/karrio/karrio-php-client)
-- [Python](https://github.com/karrio/karrio-python-client)
+- [Node](https://github.com/karrio-inc/karrio-node)
+- [PHP](https://github.com/karrio-inc/karrio-php-client)
+- [Python](https://github.com/karrio-inc/karrio-python-client)
 
 ## Karrio SDK
 
@@ -274,8 +274,8 @@ print(rates)
 ## Resources
 
 - [**Documentation**](https://karrio.io/docs)
-- [**Community Discussions**](https://github.com/karrio/karrio/discussions)
-- [**Issue Tracker**](https://github.com/karrio/karrio/issues)
+- [**Community Discussions**](https://github.com/karrio-inc/karrio/discussions)
+- [**Issue Tracker**](https://github.com/karrio-inc/karrio/issues)
 - [**Blog**](https://karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
@@ -288,4 +288,4 @@ All files in the `/insiders` fall under the [Karrio LICENSE](/insiders/LICENSE).
 
 The remaining files fall under the [Apache 2 license](LICENSE). Karrio OSS is built only from the Apache-licensed files in this repository.
 
-Any other questions, mail us at hello@karrio.com We’d love to meet you!
+Any other questions, mail us at hello@karrio.io We’d love to meet you!

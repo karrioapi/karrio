@@ -22,4 +22,4 @@ Please see [LICENSE.md](/LICENSE) for licensing details.
 ## Authors
 
 - **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
-- **Karrio Team** | hello@karrio.com | [karrio.com](https://karrio.com)
+- **Karrio Team** | hello@karrio.io | [karrio.io](https://karrio.io)

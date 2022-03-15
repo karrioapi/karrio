@@ -2,9 +2,9 @@
 name = "karrio.royalmail"
 version = "2022.4"
 homepage="https://karrio.io/docs/guides/sdk"
-repository="https://github.com/karrio/karrio"
+repository="https://github.com/karrio-inc/karrio"
 description = "Karrio - Royal Mail Shipping Extension"
-authors = ["Karrio <hello@karrio.com>"]
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "karrio" }]

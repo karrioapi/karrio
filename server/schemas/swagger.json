@@ -8,7 +8,7 @@
         },
         "version": "2022.2"
     },
-    "host": "app.karrio.com",
+    "host": "app.karrio.io",
     "schemes": [
         "https"
     ],

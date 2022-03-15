@@ -9,9 +9,9 @@ setup(
     description="Multi-carrier shipping API orders module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/karrio/karrio",
+    url="https://github.com/karrio-inc/karrio",
     author="karrio",
-    author_email="hello@karrio.com",
+    author_email="hello@karrio.io",
     license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[

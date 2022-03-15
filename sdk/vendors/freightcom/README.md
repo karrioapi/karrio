@@ -27,5 +27,4 @@ freightcom = karrio.gateway["freightcom"].create(
 )
 ```
 
-Check the [karrio Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests
-
+Check the [karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

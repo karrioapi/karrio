@@ -2,9 +2,9 @@
 name = "carrier.oca"
 version = "2021.2-alpha"
 description = "OCA Web API Schemas Python Data Types library"
-repository="https://github.com/karrio/karrio"
-homepage="https://github.com/karrio/karrio/tree/main/carrier.oca"
-authors = ["Karrio <hello@karrio.com>"]
+repository="https://github.com/karrio-inc/karrio"
+homepage="https://github.com/karrio-inc/karrio/tree/main/carrier.oca"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [

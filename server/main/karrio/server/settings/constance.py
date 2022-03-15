@@ -25,7 +25,7 @@ CONSTANCE_CONFIG = {
     ),
     "EMAIL_HOST_USER": (
         EMAIL_HOST_USER,
-        "The authentication user (email). e.g: admin@karrio.com",
+        "The authentication user (email). e.g: admin@karrio.io",
         str,
     ),
     "EMAIL_HOST_PASSWORD": (EMAIL_HOST_PASSWORD, "The authentication password", str),
@@ -37,7 +37,7 @@ CONSTANCE_CONFIG = {
     ),
     "EMAIL_FROM_ADDRESS": (
         EMAIL_FROM_ADDRESS,
-        "Email sent from. e.g: noreply@karrio.com",
+        "Email sent from. e.g: noreply@karrio.io",
         str,
     ),
     "GOOGLE_CLOUD_API_KEY": (GOOGLE_CLOUD_API_KEY, "A Google GeoCoding API key", str),

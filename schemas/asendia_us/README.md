@@ -16,4 +16,4 @@ import asendia_us_lib
 help(asendia_us_lib)
 ```
 
-*This package is used by the [karrio multi-carrier Shipping Interface](https://github.com/karrio/karrio)*
+*This package is used by the [karrio multi-carrier Shipping Interface](https://github.com/karrio-inc/karrio)*

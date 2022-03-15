@@ -86,7 +86,7 @@
     }
 
     /* tslint:disable */
-    var BASE_PATH = "https://app.karrio.com".replace(/\/+$/, "");
+    var BASE_PATH = "https://app.karrio.io".replace(/\/+$/, "");
     var isBlob = function (value) { return typeof Blob !== 'undefined' && value instanceof Blob; };
     /**
      * This is the base class for all generated API classes.
@@ -6288,7 +6288,7 @@
     }());
 
     function Karrio(apiKey, host, apiKeyPrefix) {
-        if (host === void 0) { host = 'https://cloud.karrio.com'; }
+        if (host === void 0) { host = 'https://app.karrio.io'; }
         if (apiKeyPrefix === void 0) { apiKeyPrefix = 'Token'; }
         var clientConfig = {
             basePath: host,

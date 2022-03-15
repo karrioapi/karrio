@@ -16,14 +16,14 @@ RUN pip install --upgrade pip && \
 # The runtime image
 FROM python:3.8-slim AS build-image
 
-LABEL maintainer=hello@karrio.com
+LABEL maintainer=hello@karrio.io
 LABEL org.opencontainers.image.title="karrio server"
 LABEL org.opencontainers.image.description="karrio server runtime image"
-LABEL org.opencontainers.image.url="https://karrio.com"
-LABEL org.opencontainers.image.documentation="https://docs.karrio.com"
-LABEL org.opencontainers.image.source="https://github.com/karrio/karrio-server"
+LABEL org.opencontainers.image.url="https://karrio.io"
+LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
+LABEL org.opencontainers.image.source="https://github.com/karrio-inc/karrio-server"
 LABEL org.opencontainers.image.vendor="team karrio"
-LABEL org.opencontainers.image.authors="hello@karrio.com"
+LABEL org.opencontainers.image.authors="hello@karrio.io"
 
 ENV DEBUG_MODE False
 ENV USE_HTTPS False
