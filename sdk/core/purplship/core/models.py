@@ -1,4 +1,4 @@
-"""Purplship Unified model definitions module."""
+"""Karrio Unified model definitions module."""
 import attr
 from typing import List, Dict, Any, Union
 from jstruct import JList, JStruct, REQUIRED
@@ -222,7 +222,7 @@ class AddressValidationRequest:
 
 @attr.s(auto_attribs=True)
 class Message:
-    """Purplship unified Message data type."""
+    """Karrio unified Message data type."""
 
     carrier_name: str
     carrier_id: str
@@ -233,7 +233,7 @@ class Message:
 
 @attr.s(auto_attribs=True)
 class ChargeDetails:
-    """Purplship unified charge data type."""
+    """Karrio unified charge data type."""
 
     name: str = None
     amount: float = None
@@ -242,7 +242,7 @@ class ChargeDetails:
 
 @attr.s(auto_attribs=True)
 class AddressValidationDetails:
-    """Purplship unified address validation details data type."""
+    """Karrio unified address validation details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -252,7 +252,7 @@ class AddressValidationDetails:
 
 @attr.s(auto_attribs=True)
 class TrackingEvent:
-    """Purplship unified tracking event data type."""
+    """Karrio unified tracking event data type."""
 
     date: str
     description: str
@@ -263,7 +263,7 @@ class TrackingEvent:
 
 @attr.s(auto_attribs=True)
 class RateDetails:
-    """Purplship unified rate (quote) details data type."""
+    """Karrio unified rate (quote) details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -281,7 +281,7 @@ class RateDetails:
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:
-    """Purplship unified tracking details data type."""
+    """Karrio unified tracking details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -293,7 +293,7 @@ class TrackingDetails:
 
 @attr.s(auto_attribs=True)
 class Documents:
-    """Purplship unified shipment details data type."""
+    """Karrio unified shipment details data type."""
 
     label: str
     invoice: str = None
@@ -301,7 +301,7 @@ class Documents:
 
 @attr.s(auto_attribs=True)
 class ShipmentDetails:
-    """Purplship unified shipment details data type."""
+    """Karrio unified shipment details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -316,7 +316,7 @@ class ShipmentDetails:
 
 @attr.s(auto_attribs=True)
 class PickupDetails:
-    """Purplship unified pickup details data type."""
+    """Karrio unified pickup details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -330,7 +330,7 @@ class PickupDetails:
 
 @attr.s(auto_attribs=True)
 class ConfirmationDetails:
-    """Purplship unified binary operation confirmation data type."""
+    """Karrio unified binary operation confirmation data type."""
 
     carrier_name: str
     carrier_id: str
@@ -340,7 +340,7 @@ class ConfirmationDetails:
 
 @attr.s(auto_attribs=True)
 class ServiceLevel:
-    """Purplship unified service level data type."""
+    """Karrio unified service level data type."""
 
     service_name: str
     service_code: str
@@ -370,7 +370,7 @@ class ServiceLevel:
 
 @attr.s(auto_attribs=True)
 class LabelTemplate:
-    """Purplship unified label template data type."""
+    """Karrio unified label template data type."""
 
     alias: str
     template: str
@@ -384,7 +384,7 @@ class LabelTemplate:
 
 @attr.s(auto_attribs=True)
 class ServiceLabel:
-    """Purplship unified service label data type."""
+    """Karrio unified service label data type."""
 
     label: str
     label_type: str

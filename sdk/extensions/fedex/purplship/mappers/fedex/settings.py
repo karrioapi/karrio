@@ -1,4 +1,4 @@
-"""Purplship FedEx client settings."""
+"""Karrio FedEx client settings."""
 
 import attr
 from karrio.providers.fedex.utils import Settings as BaseSettings

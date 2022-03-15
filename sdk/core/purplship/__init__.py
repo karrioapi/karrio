@@ -1,10 +1,10 @@
-"""Purplship package root module
+"""Karrio package root module
 
-Purplship makes shipping carrier webservices integration easy by providing
+Karrio makes shipping carrier webservices integration easy by providing
 a modern and dev friendly library and by providing a unified extensible API
 to communicate with all supported carriers.
 
--- Speak Purplship, Speak carriers...
+-- Speak Karrio, Speak carriers...
 
 Example:
     Examples can be given using either the ``Example`` or ``Examples``

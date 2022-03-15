@@ -1,4 +1,4 @@
-"""Purplship USPS International units module"""
+"""Karrio USPS International units module"""
 
 import typing
 from karrio.core.utils import Enum, Spec

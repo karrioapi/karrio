@@ -9,7 +9,7 @@ setup(
     description="Multi-carrier shipping API Proxy module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Purplship/karrio-server",
+    url="https://github.com/Karrio/karrio-server",
     author="karrio",
     author_email="hello@karrio.com",
     license="Apache License Version 2.0",

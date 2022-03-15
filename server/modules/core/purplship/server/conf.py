@@ -9,7 +9,7 @@ DEFAULT_ALLOWED_CONFIG = [
     "BASE_FOOTER_TEMPLATE",
 ]
 FALLBACK_VALUES = {
-    "APP_NAME": "Purplship",
+    "APP_NAME": "Karrio",
     "SUPPORT_EMAIL": "hello@karrio.com",
     "BASE_TEMPLATE": "karrio/base_site.html",
     "BASE_FOOTER_TEMPLATE": "karrio/base_footer.html",

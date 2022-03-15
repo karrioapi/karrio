@@ -1,4 +1,4 @@
-"""Purplship Aramex settings."""
+"""Karrio Aramex settings."""
 
 import attr
 from karrio.providers.aramex.utils import Settings as BaseSettings

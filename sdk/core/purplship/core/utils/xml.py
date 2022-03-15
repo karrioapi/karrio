@@ -1,4 +1,4 @@
-"""Purplship lxml typing and utilities wrappers"""
+"""Karrio lxml typing and utilities wrappers"""
 
 import io
 import warnings

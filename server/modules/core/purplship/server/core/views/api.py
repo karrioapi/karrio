@@ -9,7 +9,7 @@ from karrio.server.core.authentication import TokenAuthentication, JWTAuthentica
 from karrio.server.core.models import APILog
 
 
-class PurplshipLoggingMixin(LoggingMixin):
+class KarrioLoggingMixin(LoggingMixin):
     def handle_log(self):
         data = None if "data" not in self.log else DP.jsonify(self.log["data"])
         query_params = (
@@ -54,9 +54,9 @@ class BaseGenericAPIView(generics.GenericAPIView, BaseView):
         return getattr(self, "queryset", None)
 
 
-class GenericAPIView(PurplshipLoggingMixin, BaseGenericAPIView):
+class GenericAPIView(KarrioLoggingMixin, BaseGenericAPIView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
 
 
-class APIView(PurplshipLoggingMixin, views.APIView, BaseView):
+class APIView(KarrioLoggingMixin, views.APIView, BaseView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]

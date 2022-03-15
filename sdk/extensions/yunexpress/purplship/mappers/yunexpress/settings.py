@@ -1,4 +1,4 @@
-"""Purplship Yunexpress  settings."""
+"""Karrio Yunexpress  settings."""
 
 import attr
 from karrio.providers.yunexpress.utils import Settings as BaseSettings

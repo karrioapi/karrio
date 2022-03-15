@@ -27,4 +27,4 @@ canadapost = karrio.gateway["boxknight"].create(
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests
+Check the [Karrio Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

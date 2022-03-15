@@ -11,8 +11,8 @@ INSTALLED_APPS += [
 PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.orgs.middleware.OrganizationAccess'
 
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
-INVITATION_BACKEND = 'karrio.server.orgs.backends.PurplshipInvitationsBackend'
-REGISTRATION_BACKEND = 'karrio.server.orgs.backends.PurplshipRegistrationBackend'
+INVITATION_BACKEND = 'karrio.server.orgs.backends.KarrioInvitationsBackend'
+REGISTRATION_BACKEND = 'karrio.server.orgs.backends.KarrioRegistrationBackend'
 
 
 def org_user_verified_callback(user):

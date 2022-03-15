@@ -1,4 +1,4 @@
-"""Purplship Custom Errors(Exception) definition modules"""
+"""Karrio Custom Errors(Exception) definition modules"""
 import warnings
 from enum import Enum
 from typing import Dict

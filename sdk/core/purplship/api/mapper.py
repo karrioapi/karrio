@@ -1,4 +1,4 @@
-"""Purplship Mapper abstract class definition module."""
+"""Karrio Mapper abstract class definition module."""
 
 import attr
 from abc import ABC

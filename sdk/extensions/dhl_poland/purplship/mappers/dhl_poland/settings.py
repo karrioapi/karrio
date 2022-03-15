@@ -1,4 +1,4 @@
-"""Purplship DHL Parcel Poland client settings."""
+"""Karrio DHL Parcel Poland client settings."""
 
 from typing import List
 import attr

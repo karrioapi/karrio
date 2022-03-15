@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server documents module.
+Karrio server documents module.

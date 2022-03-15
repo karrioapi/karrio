@@ -1,8 +1,9 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Purplship = factory());
-})(this, (function () { 'use strict';
+        typeof define === 'function' && define.amd ? define(factory) :
+            (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Karrio = factory());
+})(this, (function () {
+    'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -20,7 +21,7 @@
     ***************************************************************************** */
     /* global Reflect, Promise */
 
-    var extendStatics = function(d, b) {
+    var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
@@ -35,7 +36,7 @@
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
-    var __assign = function() {
+    var __assign = function () {
         __assign = Object.assign || function __assign(t) {
             for (var s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
@@ -57,8 +58,8 @@
     }
 
     function __generator(thisArg, body) {
-        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+        var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
         function verb(n) { return function (v) { return step([n, v]); }; }
         function step(op) {
             if (f) throw new TypeError("Generator is already executing.");
@@ -95,50 +96,52 @@
             var _this = this;
             if (configuration === void 0) { configuration = new Configuration(); }
             this.configuration = configuration;
-            this.fetchApi = function (url, init) { return __awaiter(_this, void 0, void 0, function () {
-                var fetchParams, _i, _a, middleware, response, _b, _c, middleware;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
-                        case 0:
-                            fetchParams = { url: url, init: init };
-                            _i = 0, _a = this.middleware;
-                            _d.label = 1;
-                        case 1:
-                            if (!(_i < _a.length)) return [3 /*break*/, 4];
-                            middleware = _a[_i];
-                            if (!middleware.pre) return [3 /*break*/, 3];
-                            return [4 /*yield*/, middleware.pre(__assign({ fetch: this.fetchApi }, fetchParams))];
-                        case 2:
-                            fetchParams = (_d.sent()) || fetchParams;
-                            _d.label = 3;
-                        case 3:
-                            _i++;
-                            return [3 /*break*/, 1];
-                        case 4: return [4 /*yield*/, (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init)];
-                        case 5:
-                            response = _d.sent();
-                            _b = 0, _c = this.middleware;
-                            _d.label = 6;
-                        case 6:
-                            if (!(_b < _c.length)) return [3 /*break*/, 9];
-                            middleware = _c[_b];
-                            if (!middleware.post) return [3 /*break*/, 8];
-                            return [4 /*yield*/, middleware.post({
+            this.fetchApi = function (url, init) {
+                return __awaiter(_this, void 0, void 0, function () {
+                    var fetchParams, _i, _a, middleware, response, _b, _c, middleware;
+                    return __generator(this, function (_d) {
+                        switch (_d.label) {
+                            case 0:
+                                fetchParams = { url: url, init: init };
+                                _i = 0, _a = this.middleware;
+                                _d.label = 1;
+                            case 1:
+                                if (!(_i < _a.length)) return [3 /*break*/, 4];
+                                middleware = _a[_i];
+                                if (!middleware.pre) return [3 /*break*/, 3];
+                                return [4 /*yield*/, middleware.pre(__assign({ fetch: this.fetchApi }, fetchParams))];
+                            case 2:
+                                fetchParams = (_d.sent()) || fetchParams;
+                                _d.label = 3;
+                            case 3:
+                                _i++;
+                                return [3 /*break*/, 1];
+                            case 4: return [4 /*yield*/, (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init)];
+                            case 5:
+                                response = _d.sent();
+                                _b = 0, _c = this.middleware;
+                                _d.label = 6;
+                            case 6:
+                                if (!(_b < _c.length)) return [3 /*break*/, 9];
+                                middleware = _c[_b];
+                                if (!middleware.post) return [3 /*break*/, 8];
+                                return [4 /*yield*/, middleware.post({
                                     fetch: this.fetchApi,
                                     url: fetchParams.url,
                                     init: fetchParams.init,
                                     response: response.clone(),
                                 })];
-                        case 7:
-                            response = (_d.sent()) || response;
-                            _d.label = 8;
-                        case 8:
-                            _b++;
-                            return [3 /*break*/, 6];
-                        case 9: return [2 /*return*/, response];
-                    }
+                            case 7:
+                                response = (_d.sent()) || response;
+                                _d.label = 8;
+                            case 8:
+                                _b++;
+                                return [3 /*break*/, 6];
+                            case 9: return [2 /*return*/, response];
+                        }
+                    });
                 });
-            }); };
+            };
             this.middleware = configuration.middleware;
         }
         BaseAPI.prototype.withMiddleware = function () {
@@ -285,9 +288,13 @@
                 var _this = this;
                 var accessToken = this.configuration.accessToken;
                 if (accessToken) {
-                    return typeof accessToken === 'function' ? accessToken : function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                        return [2 /*return*/, accessToken];
-                    }); }); };
+                    return typeof accessToken === 'function' ? accessToken : function () {
+                        return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                return [2 /*return*/, accessToken];
+                            });
+                        });
+                    };
                 }
                 return undefined;
             },
@@ -318,21 +325,21 @@
         if (prefix === void 0) { prefix = ''; }
         return Object.keys(params)
             .map(function (key) {
-            var fullKey = prefix + (prefix.length ? "[" + key + "]" : key);
-            var value = params[key];
-            if (value instanceof Array) {
-                var multiValue = value.map(function (singleValue) { return encodeURIComponent(String(singleValue)); })
-                    .join("&" + encodeURIComponent(fullKey) + "=");
-                return encodeURIComponent(fullKey) + "=" + multiValue;
-            }
-            if (value instanceof Date) {
-                return encodeURIComponent(fullKey) + "=" + encodeURIComponent(value.toISOString());
-            }
-            if (value instanceof Object) {
-                return querystring(value, fullKey);
-            }
-            return encodeURIComponent(fullKey) + "=" + encodeURIComponent(String(value));
-        })
+                var fullKey = prefix + (prefix.length ? "[" + key + "]" : key);
+                var value = params[key];
+                if (value instanceof Array) {
+                    var multiValue = value.map(function (singleValue) { return encodeURIComponent(String(singleValue)); })
+                        .join("&" + encodeURIComponent(fullKey) + "=");
+                    return encodeURIComponent(fullKey) + "=" + multiValue;
+                }
+                if (value instanceof Date) {
+                    return encodeURIComponent(fullKey) + "=" + encodeURIComponent(value.toISOString());
+                }
+                if (value instanceof Object) {
+                    return querystring(value, fullKey);
+                }
+                return encodeURIComponent(fullKey) + "=" + encodeURIComponent(String(value));
+            })
             .filter(function (part) { return part.length > 0; })
             .join('&');
     }
@@ -1516,8 +1523,8 @@
     /* tslint:disable */
     /* eslint-disable */
     /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     * Karrio API
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
      * The version of the OpenAPI document: 2022.2
      *
@@ -1542,8 +1549,8 @@
     /* tslint:disable */
     /* eslint-disable */
     /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     * Karrio API
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
      * The version of the OpenAPI document: 2022.2
      *
@@ -2298,8 +2305,8 @@
     /* tslint:disable */
     /* eslint-disable */
     /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     * Karrio API
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
      * The version of the OpenAPI document: 2022.2
      *
@@ -2587,8 +2594,8 @@
     /* tslint:disable */
     /* eslint-disable */
     /**
-     * Purplship API
-     *  ## API Reference  Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Purplship API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Purplship utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Purplship API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     * Karrio API
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.2`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
      * The version of the OpenAPI document: 2022.2
      *
@@ -2847,12 +2854,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: AddressDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/addresses",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: AddressDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -2897,11 +2904,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -2949,11 +2956,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/addresses",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressListFromJSON(jsonValue); })];
@@ -2999,11 +3006,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -3052,12 +3059,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: AddressDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: AddressDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
@@ -3115,12 +3122,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/api/token",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenObtainPairToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/api/token",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TokenObtainPairToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
@@ -3161,11 +3168,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/references",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/references",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ReferencesFromJSON(jsonValue); })];
@@ -3205,11 +3212,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return MetadataFromJSON(jsonValue); })];
@@ -3254,12 +3261,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/api/token/refresh",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenRefreshToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/api/token/refresh",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TokenRefreshToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
@@ -3305,12 +3312,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/api/token/verify",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenVerifyToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/api/token/verify",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TokenVerifyToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response)];
@@ -3367,11 +3374,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers/{carrier_name}/services".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/carriers/{carrier_name}/services".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response)];
@@ -3431,11 +3438,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/carriers",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierListFromJSON(jsonValue); })];
@@ -3552,12 +3559,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: CustomsDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/customs_info",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: CustomsDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3602,11 +3609,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -3654,11 +3661,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/customs_info",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsListFromJSON(jsonValue); })];
@@ -3704,11 +3711,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3757,12 +3764,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: CustomsDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: CustomsDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
@@ -3820,12 +3827,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ParcelDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/parcels",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ParcelDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -3870,11 +3877,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -3922,11 +3929,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/parcels",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelListFromJSON(jsonValue); })];
@@ -3972,11 +3979,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -4025,12 +4032,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ParcelDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ParcelDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
@@ -4091,12 +4098,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}/cancel".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupCancelDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/pickups/{id}/cancel".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupCancelDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
@@ -4147,11 +4154,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/pickups",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupListFromJSON(jsonValue); })];
@@ -4197,11 +4204,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
@@ -4253,12 +4260,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{carrier_name}/schedule".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/pickups/{carrier_name}/schedule".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
@@ -4307,12 +4314,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupUpdateDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupUpdateDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
@@ -4370,12 +4377,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/shipping",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShippingRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/shipping",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShippingRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShippingResponseFromJSON(jsonValue); })];
@@ -4427,12 +4434,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupCancelRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupCancelRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4481,12 +4488,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/rates",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: RateRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/rates",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: RateRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return RateResponseFromJSON(jsonValue); })];
@@ -4538,12 +4545,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
@@ -4594,11 +4601,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
@@ -4650,12 +4657,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupUpdateRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupUpdateRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
@@ -4707,12 +4714,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentCancelRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentCancelRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4914,11 +4921,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
@@ -4967,12 +4974,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/shipments",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5044,11 +5051,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/shipments",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentListFromJSON(jsonValue); })];
@@ -5098,12 +5105,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/purchase".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentPurchaseDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/shipments/{id}/purchase".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentPurchaseDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5152,12 +5159,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/rates".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentRateDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/shipments/{id}/rates".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentRateDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5202,11 +5209,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5255,12 +5262,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentUpdateDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentUpdateDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
@@ -5365,11 +5372,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
@@ -5435,11 +5442,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/trackers",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackerListFromJSON(jsonValue); })];
@@ -5485,11 +5492,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5534,11 +5541,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
@@ -5665,12 +5672,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: WebhookDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/webhooks",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: WebhookDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5721,11 +5728,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/webhooks",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookListFromJSON(jsonValue); })];
@@ -5771,11 +5778,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5820,11 +5827,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5873,12 +5880,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}/test".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: WebhookTestRequestToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/webhooks/{id}/test".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: WebhookTestRequestToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
@@ -5927,12 +5934,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: WebhookDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: WebhookDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
@@ -5989,11 +5996,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
@@ -6042,12 +6049,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: OrderDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/orders",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: OrderDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
@@ -6107,11 +6114,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/orders",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderListFromJSON(jsonValue); })];
@@ -6157,11 +6164,11 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
+                                path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
@@ -6210,12 +6217,12 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: OrderUpdateDataToJSON(requestParameters.data),
-                                }, initOverrides)];
+                                path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: OrderUpdateDataToJSON(requestParameters.data),
+                            }, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
@@ -6256,12 +6263,14 @@
         ListStatusEnum["Partial"] = "partial";
     })(ListStatusEnum || (ListStatusEnum = {}));
 
-    var PurplshipClient = /** @class */ (function () {
-        function PurplshipClient(clientConfig) {
-            var config = new Configuration(__assign({ credentials: "include", headers: {
+    var KarrioClient = /** @class */ (function () {
+        function KarrioClient(clientConfig) {
+            var config = new Configuration(__assign({
+                credentials: "include", headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                } }, clientConfig));
+                }
+            }, clientConfig));
             this.config = clientConfig;
             this.API = new APIApi(config);
             this.addresses = new AddressesApi(config);
@@ -6275,21 +6284,21 @@
             this.webhooks = new WebhooksApi(config);
             this.orders = new OrdersApi(config);
         }
-        return PurplshipClient;
+        return KarrioClient;
     }());
 
-    function Purplship(apiKey, host, apiKeyPrefix) {
+    function Karrio(apiKey, host, apiKeyPrefix) {
         if (host === void 0) { host = 'https://cloud.karrio.com'; }
         if (apiKeyPrefix === void 0) { apiKeyPrefix = 'Token'; }
         var clientConfig = {
             basePath: host,
             apiKey: apiKeyPrefix + " " + apiKey,
         };
-        return new PurplshipClient(clientConfig);
+        return new KarrioClient(clientConfig);
     }
-    Purplship.Client = PurplshipClient;
+    Karrio.Client = KarrioClient;
 
-    return Purplship;
+    return Karrio;
 
 }));
 //# sourceMappingURL=karrio.js.map

@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server shipments manager component
+Karrio server shipments manager component

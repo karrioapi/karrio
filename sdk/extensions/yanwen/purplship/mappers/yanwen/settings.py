@@ -1,4 +1,4 @@
-"""Purplship Yanwen settings."""
+"""Karrio Yanwen settings."""
 
 import attr
 from karrio.providers.yanwen.utils import Settings as BaseSettings

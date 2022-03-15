@@ -1,4 +1,4 @@
-"""Purplship Sendle settings."""
+"""Karrio Sendle settings."""
 
 import attr
 from karrio.providers.sendle.utils import Settings as BaseSettings

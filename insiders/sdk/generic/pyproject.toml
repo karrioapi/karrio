@@ -3,9 +3,9 @@ name = "karrio.generic"
 version = "2022.2"
 homepage="https://next.karrio.com/docs/guides/sdk"
 repository="https://github.com/karrio/karrio"
-description = "Purplship - Generic Shipping Extension"
-authors = ["Purplship <hello@karrio.com>"]
-license = "Purplship Enterprise License"
+description = "Karrio - Generic Shipping Extension"
+authors = ["Karrio <hello@karrio.com>"]
+license = "Karrio Enterprise License"
 readme = "README.md"
 packages = [{ include = "karrio" }]
 classifiers=[

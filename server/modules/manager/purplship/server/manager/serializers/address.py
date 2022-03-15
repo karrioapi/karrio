@@ -1,7 +1,7 @@
 from rest_framework import status
 from django.conf import settings
 
-from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.core.exceptions import KarrioAPIException
 from karrio.server.serializers import owned_model_serializer
 from karrio.core import utils
 from karrio.server.core import gateway
@@ -55,28 +55,28 @@ def can_mutate_address(
         return
 
     if update and shipment and shipment.status != ShipmentStatus.draft.value:
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if delete and shipment is not None:
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             "This address is linked to a shipment and cannot be removed",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if update and order and order.status != "unfulfilled":
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             f"Operation not permitted. The related order is '{order.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if delete and order is not None:
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             "This address is linked to an order and cannot be removed",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",

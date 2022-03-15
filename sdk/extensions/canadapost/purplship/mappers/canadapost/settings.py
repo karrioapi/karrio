@@ -1,4 +1,4 @@
-"""Purplship Canada post client settings."""
+"""Karrio Canada post client settings."""
 
 import attr
 from karrio.providers.canadapost import Settings as BaseSettings

@@ -4,7 +4,7 @@ version = "2022.2"
 homepage="https://github.com/karrio/karrio/tree/main/sdk/vendors/freightcom"
 repository="https://github.com/karrio/karrio"
 description = "Freightcom karrio extension"
-authors = ["Purplship <hello@karrio.com>"]
+authors = ["Karrio <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "karrio" }, { include = "freightcom_lib" }]

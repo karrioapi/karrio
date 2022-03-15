@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server organization component
+Karrio server organization component

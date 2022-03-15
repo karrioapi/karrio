@@ -1,4 +1,4 @@
-"""Purplship Canpar client settings."""
+"""Karrio Canpar client settings."""
 
 import attr
 from karrio.providers.canpar import Settings as BaseSettings

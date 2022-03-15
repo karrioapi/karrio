@@ -139,7 +139,7 @@ class Address:
         validation = validators.Address.validate(datatypes.Address(**payload))
 
         if validation.success is False:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=validation, code="invalid_address"
             )
 
@@ -184,7 +184,7 @@ class Shipments:
         )
 
         if shipment is None:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -300,7 +300,7 @@ class Shipments:
         )
 
         if confirmation is None:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -334,7 +334,7 @@ class Shipments:
         results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if not any(results or []) and (raise_on_error or is_sdk_message(messages)):
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_404_NOT_FOUND,
             )
@@ -391,7 +391,7 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -430,7 +430,7 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -480,7 +480,7 @@ class Pickups:
         )
 
         if confirmation is None:
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -526,7 +526,7 @@ class Rates:
         rates, messages = identity(lambda: request.from_(*gateways).parse())
 
         if not any(rates) and any(messages):
-            raise exceptions.PurplshipAPIException(
+            raise exceptions.KarrioAPIException(
                 detail=datatypes.ErrorResponse(messages=messages),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )

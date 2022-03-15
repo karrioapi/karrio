@@ -1,4 +1,4 @@
-"""Purplship SF-Express settings."""
+"""Karrio SF-Express settings."""
 
 import attr
 from karrio.providers.sf_express.utils import Settings as BaseSettings

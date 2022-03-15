@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server multi-tenant component
+Karrio server multi-tenant component

@@ -1,4 +1,4 @@
-# <a href="https://next.karrio.com" target="_blank"><img alt="Purplship" src="/karrio/karrio/raw/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
+# <a href="https://next.karrio.com" target="_blank"><img alt="Karrio" src="/karrio/karrio/raw/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
 
 [![puprlship-tests](https://github.com/karrio/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)

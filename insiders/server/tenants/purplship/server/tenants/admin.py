@@ -10,8 +10,8 @@ import karrio.server.tenants.models as models
 
 
 class TenantsAdmin(AdminSite):
-    site_header = "Purplship"
-    site_title = "Purplship"
+    site_header = "Karrio"
+    site_title = "Karrio"
     index_title = "System Configuration"
 
 

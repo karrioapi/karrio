@@ -1,4 +1,4 @@
-"""Purplship BoxKnight client settings."""
+"""Karrio BoxKnight client settings."""
 
 import attr
 from karrio.providers.boxknight.utils import Settings as BaseSettings

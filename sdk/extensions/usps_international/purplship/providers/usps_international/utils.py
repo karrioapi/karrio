@@ -1,4 +1,4 @@
-"""Purplship USPS International client settings."""
+"""Karrio USPS International client settings."""
 
 from karrio.core.settings import Settings as BaseSettings
 

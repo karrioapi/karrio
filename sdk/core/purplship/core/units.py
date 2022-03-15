@@ -1,4 +1,4 @@
-"""Purplship universal data types and units definitions"""
+"""Karrio universal data types and units definitions"""
 import attr
 import phonenumbers
 from typing import (

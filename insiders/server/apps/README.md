@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server apps module.
+Karrio server apps module.

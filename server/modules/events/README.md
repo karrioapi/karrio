@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server events component
+Karrio server events component

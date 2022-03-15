@@ -3,7 +3,7 @@ import decouple
 from huey import SqliteHuey
 from karrio.server.settings import base as settings
 
-# Purplship Server Background jobs interval config
+# Karrio Server Background jobs interval config
 DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 Hour
 DEFAULT_TRACKERS_UPDATE_INTERVAL = decouple.config(
     "TRACKING_PULSE", default=7200, cast=int

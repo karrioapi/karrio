@@ -1,4 +1,4 @@
-# karrio.yunexpress 
+# karrio.yunexpress
 
 This package is a Yunexpress extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
@@ -27,4 +27,4 @@ canadapost = karrio.gateway["yunexpress"].create(
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests
+Check the [Karrio Mutli-carrier SDK docs](https://sdk.karrio.com) for Shipping API requests

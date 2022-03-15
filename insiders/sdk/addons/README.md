@@ -1,1 +1,1 @@
-# Purplship Insiders SDK addons
+# Karrio Insiders SDK addons

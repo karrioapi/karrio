@@ -10,18 +10,18 @@ from rest_framework.exceptions import (
 from django.core.exceptions import ObjectDoesNotExist
 
 from karrio.core.utils import DP
-from karrio.core.errors import ValidationError as PurplshipValidationError
+from karrio.core.errors import ValidationError as KarrioValidationError
 
 from karrio.server.core.datatypes import Error
 
 logger = logging.getLogger(__name__)
 
 
-class ValidationError(DRFValidationError, PurplshipValidationError):
+class ValidationError(DRFValidationError, KarrioValidationError):
     pass
 
 
-class PurplshipAPIException(APIException):
+class KarrioAPIException(APIException):
     default_status_code = status.HTTP_400_BAD_REQUEST
     default_detail = _("Invalid input.")
     default_code = "failure"
@@ -46,7 +46,7 @@ def custom_exception_handler(exc, context):
     code = None
     status_code = None
 
-    if isinstance(exc, DRFValidationError) or isinstance(exc, PurplshipValidationError):
+    if isinstance(exc, DRFValidationError) or isinstance(exc, KarrioValidationError):
         response.status_code = status.HTTP_400_BAD_REQUEST
         code = "validation"
 
@@ -54,7 +54,7 @@ def custom_exception_handler(exc, context):
         status_code = status.HTTP_404_NOT_FOUND
         code = "not_found"
 
-    if isinstance(exc, PurplshipAPIException):
+    if isinstance(exc, KarrioAPIException):
         response.status_code = exc.status_code
         response.data = dict(
             error=DP.to_dict(

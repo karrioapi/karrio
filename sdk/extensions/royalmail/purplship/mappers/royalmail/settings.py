@@ -1,4 +1,4 @@
-"""Purplship Royal Mail settings."""
+"""Karrio Royal Mail settings."""
 
 import attr
 from karrio.providers.royalmail.utils import Settings as BaseSettings

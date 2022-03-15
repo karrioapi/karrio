@@ -1,4 +1,4 @@
-"""Purplship Australia Post settings."""
+"""Karrio Australia Post settings."""
 
 import attr
 from karrio.providers.australiapost.utils import Settings as BaseSettings

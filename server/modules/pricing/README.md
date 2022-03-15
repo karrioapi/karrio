@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server pricing panel component
+Karrio server pricing panel component

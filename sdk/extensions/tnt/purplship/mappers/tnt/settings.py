@@ -1,4 +1,4 @@
-"""Purplship TNT settings."""
+"""Karrio TNT settings."""
 
 import attr
 from karrio.providers.tnt.utils import Settings as BaseSettings

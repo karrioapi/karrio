@@ -1,4 +1,4 @@
-"""Purplship Dicom client settings."""
+"""Karrio Dicom client settings."""
 
 from base64 import b64encode
 from karrio.core.settings import Settings as BaseSettings

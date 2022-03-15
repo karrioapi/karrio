@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server graph component
+Karrio server graph component

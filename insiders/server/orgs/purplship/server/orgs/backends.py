@@ -5,7 +5,7 @@ from karrio.server.user.forms import SignUpForm
 from karrio.server.orgs.models import Organization
 
 
-class PurplshipInvitationsBackend(InvitationBackend):
+class KarrioInvitationsBackend(InvitationBackend):
     def __init__(self, org_model=None, namespace=None):
         self.user_model = get_user_model()
         self.org_model = org_model or Organization
@@ -24,5 +24,5 @@ class PurplshipInvitationsBackend(InvitationBackend):
         return user
 
 
-class PurplshipRegistrationBackend(RegistrationBackend):
+class KarrioRegistrationBackend(RegistrationBackend):
     form_class = SignUpForm

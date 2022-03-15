@@ -14,7 +14,7 @@ import { Configuration, ConfigurationParameters } from './generated/runtime';
 export * from './generated/runtime';
 export * from './generated/models';
 
-export interface PurplshipClientInterface {
+export interface KarrioClientInterface {
   API: APIApi;
   addresses: AddressesApi;
   carriers: CarriersApi;
@@ -29,7 +29,7 @@ export interface PurplshipClientInterface {
   config: ConfigurationParameters;
 }
 
-export class PurplshipClient implements PurplshipClientInterface {
+export class KarrioClient implements KarrioClientInterface {
   API: APIApi;
   addresses: AddressesApi;
   carriers: CarriersApi;

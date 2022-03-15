@@ -1,4 +1,4 @@
-"""Purplship DHL Parcel Poland client settings."""
+"""Karrio DHL Parcel Poland client settings."""
 
 from dhl_poland_lib.services import AuthData
 from karrio.core.settings import Settings as BaseSettings

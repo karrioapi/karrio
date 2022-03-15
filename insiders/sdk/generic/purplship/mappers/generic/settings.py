@@ -1,4 +1,4 @@
-"""Purplship Generic client settings."""
+"""Karrio Generic client settings."""
 
 from typing import List
 import attr

@@ -1,4 +1,4 @@
-"""Purplship Settings abstract class definition"""
+"""Karrio Settings abstract class definition"""
 
 import attr
 from typing import Optional

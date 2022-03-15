@@ -1,4 +1,4 @@
-"""Purplship Canpar client settings."""
+"""Karrio Canpar client settings."""
 
 from karrio.core.settings import Settings as BaseSettings
 from karrio.core.utils import Envelope, apply_namespaceprefix, XP, Header

@@ -1,4 +1,4 @@
-"""Purplship USPS enumerations module"""
+"""Karrio USPS enumerations module"""
 
 from karrio.core.utils import Enum, Flag, Spec
 

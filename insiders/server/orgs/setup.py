@@ -9,10 +9,10 @@ setup(
     description="Multi-carrier shipping API organization module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Purplship/karrio-server",
+    url="https://github.com/Karrio/karrio-server",
     author="karrio",
     author_email="hello@karrio.com",
-    license="Purplship Enterprise",
+    license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "django-extensions",

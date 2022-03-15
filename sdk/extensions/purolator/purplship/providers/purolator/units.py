@@ -82,7 +82,7 @@ class Service(Enum):
     purolator_adult_signature_required = Spec.asKey("Adult Signature Required (ASR)")
     purolator_special_handling = Spec.asKey("Special Handling")
 
-    """Purplship specific option"""
+    """Karrio specific option"""
     purolator_show_alternative_services = Spec.asFlag("Show Alternate Services")
 
 

@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from karrio.server.core.exceptions import PurplshipAPIException
+from karrio.server.core.exceptions import KarrioAPIException
 from karrio.server.core.serializers import ParcelData, ShipmentStatus
 from karrio.server.serializers import owned_model_serializer, save_many_to_many_data
 
@@ -65,14 +65,14 @@ def can_mutate_parcel(
         return
 
     if update and shipment.status != ShipmentStatus.draft.value:
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if delete and len(shipment.parcels.all()) == 1:
-        raise PurplshipAPIException(
+        raise KarrioAPIException(
             f"Operation not permitted. The related shipment needs at least one parcel.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",

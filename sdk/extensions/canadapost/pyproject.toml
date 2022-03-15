@@ -3,8 +3,8 @@ name = "karrio.canadapost"
 version = "2022.2.1"
 homepage="https://next.karrio.com/docs/guides/sdk"
 repository="https://github.com/karrio/karrio"
-description = "Purplship - Canada Post Shipping Extension"
-authors = ["Purplship <hello@karrio.com>"]
+description = "Karrio - Canada Post Shipping Extension"
+authors = ["Karrio <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "karrio" }]

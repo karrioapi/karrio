@@ -4,7 +4,7 @@ version = "2021.2.1"
 description = "DHL eCommerce API Schemas Python Data Types library"
 repository="https://github.com/karrio/karrio"
 homepage="https://github.com/karrio/karrio/tree/main/carrier.dhl_universal"
-authors = ["Purplship <hello@karrio.com>"]
+authors = ["Karrio <hello@karrio.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "dhl_universal_lib" }]

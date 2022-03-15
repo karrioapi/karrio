@@ -55,7 +55,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlRateV2Request]:
     """Create the appropriate USPS International rate request depending on the destination
 
-    :param payload: Purplship unified API rate request data
+    :param payload: Karrio unified API rate request data
     :param settings: USPS International connection and auth settings
     :return: a domestic or international USPS International compatible request
     :raises:

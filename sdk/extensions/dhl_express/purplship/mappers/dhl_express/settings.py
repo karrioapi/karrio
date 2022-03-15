@@ -1,4 +1,4 @@
-"""Purplship DHL client settings."""
+"""Karrio DHL client settings."""
 
 import attr
 from karrio.providers.dhl_express.utils import Settings as BaseSettings

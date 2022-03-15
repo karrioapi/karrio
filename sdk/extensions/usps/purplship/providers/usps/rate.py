@@ -75,7 +75,7 @@ def rate_request(
 ) -> Serializable[RateV4Request]:
     """Create the appropriate USPS rate request depending on the destination
 
-    :param payload: Purplship unified API rate request data
+    :param payload: Karrio unified API rate request data
     :param settings: USPS connection and auth settings
     :return: a domestic or international USPS compatible request
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier

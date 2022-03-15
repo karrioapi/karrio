@@ -198,7 +198,7 @@ WSGI_APPLICATION = "karrio.server.wsgi.application"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
-# Purplship Middleware
+# Karrio Middleware
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # PURPLSHIP_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 

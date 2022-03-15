@@ -1,4 +1,4 @@
-"""Purplship Extension Metadata definition module."""
+"""Karrio Extension Metadata definition module."""
 import attr
 from enum import Enum
 from typing import Optional, Type, List
@@ -11,7 +11,7 @@ from karrio.core.models import ServiceLevel
 
 @attr.s(auto_attribs=True)
 class Metadata:
-    """Purplship extension metadata.
+    """Karrio extension metadata.
     Used to describe and define a karrio compatible extension for a carrier webservice integration.
     """
 

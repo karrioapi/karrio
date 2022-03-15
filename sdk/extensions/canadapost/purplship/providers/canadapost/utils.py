@@ -1,4 +1,4 @@
-"""Purplship Canada post client settings."""
+"""Karrio Canada post client settings."""
 
 from base64 import b64encode
 from karrio.core.settings import Settings as BaseSettings

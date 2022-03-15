@@ -16,4 +16,4 @@ import usps_lib
 help(usps_lib)
 ```
 
-*This package is used by the [Purplship Multi-carrier Shipping Interface](https://github.com/PurplShip/karrio)*
+*This package is used by the [Karrio Multi-carrier Shipping Interface](https://github.com/PurplShip/karrio)*

@@ -1,4 +1,4 @@
-"""Purplship Generic client settings."""
+"""Karrio Generic client settings."""
 
 from karrio.core.settings import Settings as BaseSettings
 

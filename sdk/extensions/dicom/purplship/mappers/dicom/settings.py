@@ -1,4 +1,4 @@
-"""Purplship Dicom client settings."""
+"""Karrio Dicom client settings."""
 
 import attr
 from karrio.providers.dicom.utils import Settings as BaseSettings

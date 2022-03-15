@@ -1,4 +1,4 @@
-"""Purplship Purolator connection settings."""
+"""Karrio Purolator connection settings."""
 import attr
 from karrio.providers.purolator.utils import Settings as BaseSettings
 

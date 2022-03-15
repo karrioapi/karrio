@@ -12,7 +12,7 @@ setup(
     url="https://github.com/karrio/karrio",
     author="karrio",
     author_email="hello@karrio.com",
-    license="Purplship Enterprise",
+    license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "weasyprint",

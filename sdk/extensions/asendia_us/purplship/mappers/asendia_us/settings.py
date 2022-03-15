@@ -1,4 +1,4 @@
-"""Purplship Asendia US settings."""
+"""Karrio Asendia US settings."""
 
 import attr
 from karrio.providers.asendia_us.utils import Settings as BaseSettings

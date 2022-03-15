@@ -1,3 +1,3 @@
 # karrio-server
 
-Purplship server proxy component
+Karrio server proxy component

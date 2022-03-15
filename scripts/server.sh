@@ -38,8 +38,8 @@ elif [[ "$*" == *gen:php:cli* ]]; then
 		-i /local/server/schemas/openapi.json \
 		-g php \
 		-o /local/.codegen/php \
-        --additional-properties=invokerPackage=Purplship \
-        --additional-properties=packageName=Purplship \
+        --additional-properties=invokerPackage=Karrio \
+        --additional-properties=packageName=Karrio \
         --additional-properties=prependFormOrBodyParameters=true
 
 	cd -

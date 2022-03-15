@@ -1,4 +1,4 @@
-"""Purplship UPS connection settings."""
+"""Karrio UPS connection settings."""
 
 import attr
 from karrio.providers.ups.utils import Settings as BaseSettings

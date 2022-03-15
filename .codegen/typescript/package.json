@@ -1,7 +1,7 @@
 {
   "name": "karrio",
   "version": "2021.10.0",
-  "description": "Purplship Javascript client for bowser apps",
+  "description": "Karrio Javascript client for bowser apps",
   "main": "karrio.js",
   "scripts": {},
   "keywords": [

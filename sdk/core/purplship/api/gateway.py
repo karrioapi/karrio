@@ -1,4 +1,4 @@
-"""Purplship API Gateway definition modules."""
+"""Karrio API Gateway definition modules."""
 
 import attr
 import logging
@@ -153,6 +153,6 @@ class GatewayInitializer:
 nl = "\n    "
 logger.info(
     f"""
-Purplship default gateway mapper initialized.
+Karrio default gateway mapper initialized.
 """
 )

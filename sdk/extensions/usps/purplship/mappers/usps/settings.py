@@ -1,4 +1,4 @@
-"""Purplship USPS client settings."""
+"""Karrio USPS client settings."""
 
 import attr
 from karrio.providers.usps.utils import Settings as BaseSettings

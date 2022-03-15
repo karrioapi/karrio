@@ -1,4 +1,4 @@
-"""Purplship DHL Universal settings."""
+"""Karrio DHL Universal settings."""
 
 import attr
 from karrio.providers.dhl_universal.utils import Settings as BaseSettings

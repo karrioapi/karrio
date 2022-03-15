@@ -1,4 +1,4 @@
-# <a href="https://next.karrio.com" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Purplship" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
+# <a href="https://next.karrio.com" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Karrio" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
 
 **The Headless Shipping platform**
 
@@ -20,15 +20,15 @@ Help us out… If you love open source and great software, give us a star! 🌟
 - **Cloud**: Optimized for deployments using Docker.
 - **Dashboard**: Use the [karrio dashboard](https://github.com/karrio/karrio-dashboard) to orchestrate your logistics operations.
 
-<picture><img alt="Purplship Dashboard" src="./screenshots/dashboard.png" /></picture>
+<picture><img alt="Karrio Dashboard" src="./screenshots/dashboard.png" /></picture>
 
 ## Try it now
 
-There are several ways to use Purplship:
+There are several ways to use Karrio:
 
-- [Purplship Cloud](https://cloud.karrio.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
-- [Purplship OSS](#karrio-oss) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
-- [Purplship SDK](#karrio-sdk) is the core of the karrio abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
+- [Karrio Cloud](https://cloud.karrio.com) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
+- [Karrio OSS](#karrio-oss) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
+- [Karrio SDK](#karrio-sdk) is the core of the karrio abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
 
 > Source code for all editions is contained in this repository. See the [License section](#license) for more details.
 
@@ -43,7 +43,7 @@ We are currently in Public Beta. Watch "releases" of this repo to get notified o
 
 ## Self-hosted installation
 
-### Purplship OSS
+### Karrio OSS
 
 > check the latest version tags of the karrio/server image on [Docker Hub](https://hub.docker.com/r/karrio/server/tags)
 
@@ -129,7 +129,7 @@ docker-compose up
 
 </details>
 
-Purplship should now be running at <http://localhost:5002>
+Karrio should now be running at <http://localhost:5002>
 
 **Default Login**
 
@@ -137,13 +137,13 @@ Purplship should now be running at <http://localhost:5002>
 | ----------------- | -------- |
 | admin@example.com | demo     |
 
-### Official Purplship Server Client Libraries
+### Official Karrio Server Client Libraries
 
 - [Node](https://github.com/karrio/karrio-node)
 - [PHP](https://github.com/karrio/karrio-php-client)
 - [Python](https://github.com/karrio/karrio-python-client)
 
-## Purplship SDK
+## Karrio SDK
 
 ### Installation
 
@@ -284,8 +284,8 @@ print(rates)
 
 This repository contains both OSS-licensed and non-OSS-licensed files. We maintain one repository rather than two separate repositories mainly for development convenience.
 
-All files in the `/insiders` fall under the [Purplship LICENSE](/insiders/LICENSE).
+All files in the `/insiders` fall under the [Karrio LICENSE](/insiders/LICENSE).
 
-The remaining files fall under the [Apache 2 license](LICENSE). Purplship OSS is built only from the Apache-licensed files in this repository.
+The remaining files fall under the [Apache 2 license](LICENSE). Karrio OSS is built only from the Apache-licensed files in this repository.
 
 Any other questions, mail us at hello@karrio.com We’d love to meet you!
