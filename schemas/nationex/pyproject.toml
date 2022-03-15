@@ -2,8 +2,8 @@
 name = "carrier.nationex"
 version = "2021.2.1"
 description = "Nationex API Schemas Python Data Types library"
-repository="https://github.com/karrio-inc/karrio"
-homepage="https://github.com/karrio-inc/karrio/tree/main/carrier.nationex"
+repository="https://github.com/karrioapi/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/carrier.nationex"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"

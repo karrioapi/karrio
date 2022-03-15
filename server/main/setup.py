@@ -12,7 +12,7 @@ setup(
     description="Multi-carrier shipping API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/karrio-inc/karrio-server",
+    url="https://github.com/karrioapi/karrio-server",
     author="karrio",
     author_email="danielk.developer@gmail.com",
     license="Apache License Version 2.0",

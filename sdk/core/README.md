@@ -1,6 +1,6 @@
 # <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="/karrio/karrio/raw/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
 
-[![puprlship-tests](https://github.com/karrio-inc/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrio-inc/karrio/actions/workflows/tests.yml)
+[![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio/karrio&amp;utm_campaign=Badge_Grade)
 
@@ -147,8 +147,8 @@ print(rates)
 ## Resources
 
 - [**Documentation**](https://karrio.io/docs)
-- [**Community Discussions**](https://github.com/karrio-inc/karrio/discussions)
-- [**Issue Tracker**](https://github.com/karrio-inc/karrio/issues)
+- [**Community Discussions**](https://github.com/karrioapi/karrio/discussions)
+- [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
 - [**Blog**](https://karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)

@@ -2,8 +2,8 @@
 name = "carrier.boxknight"
 version = "2020.11.2"
 description = "Boxknight API Schemas Python Data Types library"
-repository="https://github.com/karrio-inc/karrio"
-homepage="https://github.com/karrio-inc/karrio/tree/main/carrier.boxknight"
+repository="https://github.com/karrioapi/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/carrier.boxknight"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"

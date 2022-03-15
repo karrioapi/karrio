@@ -2,7 +2,7 @@
 name = "karrio.aramex"
 version = "2022.4"
 homepage="https://karrio.io/docs/guides/sdk"
-repository="https://github.com/karrio-inc/karrio"
+repository="https://github.com/karrioapi/karrio"
 description = "Karrio - Aramex Shipping Extension"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"

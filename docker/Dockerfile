@@ -21,7 +21,7 @@ LABEL org.opencontainers.image.title="karrio server"
 LABEL org.opencontainers.image.description="karrio server runtime image"
 LABEL org.opencontainers.image.url="https://karrio.io"
 LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
-LABEL org.opencontainers.image.source="https://github.com/karrio-inc/karrio-server"
+LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio-server"
 LABEL org.opencontainers.image.vendor="team karrio"
 LABEL org.opencontainers.image.authors="hello@karrio.io"
 

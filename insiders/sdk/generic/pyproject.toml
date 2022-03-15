@@ -2,7 +2,7 @@
 name = "karrio.generic"
 version = "2022.4"
 homepage="https://karrio.io/docs/guides/sdk"
-repository="https://github.com/karrio-inc/karrio"
+repository="https://github.com/karrioapi/karrio"
 description = "Karrio - Generic Shipping Extension"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Karrio Enterprise License"

@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "karrio.freightcom"
 version = "2022.4"
-homepage="https://github.com/karrio-inc/karrio/tree/main/sdk/vendors/freightcom"
-repository="https://github.com/karrio-inc/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/freightcom"
+repository="https://github.com/karrioapi/karrio"
 description = "Freightcom karrio extension"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"

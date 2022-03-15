@@ -9,7 +9,7 @@ setup(
     description="Multi-carrier shipping API apps module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/karrio-inc/karrio",
+    url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
     license="Karrio Enterprise",
