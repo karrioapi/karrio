@@ -545,7 +545,7 @@ class CustomsData(Serializer):
     signer = CharField(required=False, max_length=50, allow_blank=True, allow_null=True)
     options = PlainDictField(
         required=False,
-        allow_null=True,
+        default={},
         help_text="""
     <details>
     <summary>Customs identification options.</summary>
@@ -667,7 +667,7 @@ class RateRequest(Serializer):
     )
     options = PlainDictField(
         required=False,
-        allow_null=True,
+        default={},
         help_text="""
     <details>
     <summary>The options available for the shipment.</summary>
@@ -1085,7 +1085,7 @@ class ShippingData(Serializer):
     )
     options = PlainDictField(
         required=False,
-        allow_null=True,
+        default={},
         help_text="""
     <details>
     <summary>The options available for the shipment.</summary>
@@ -1293,7 +1293,7 @@ class ShipmentContent(Serializer):
     )
     options = PlainDictField(
         required=False,
-        allow_null=True,
+        default={},
         help_text="""
     <details>
     <summary>The options available for the shipment.</summary>
@@ -1408,7 +1408,7 @@ class ShipmentCancelRequest(Serializer):
     )
     options = PlainDictField(
         required=False,
-        allow_null=True,
+        default={},
         help_text="Advanced carrier specific cancellation options",
     )
 

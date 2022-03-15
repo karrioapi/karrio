@@ -169,9 +169,9 @@ class Shipments:
             )
 
         carrier = carrier or Carriers.first(
-            carrier_name=selected_rate.carrier_name,
             carrier_id=selected_rate.carrier_id,
             test_mode=selected_rate.test_mode,
+            services=[selected_rate.service],
         )
         request = DP.to_object(
             datatypes.ShipmentRequest,
