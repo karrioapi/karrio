@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.usps_international"
-version = "2022.4"
+version = "2022.3"
 homepage="https://karrio.io/docs/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - USPS International Shipping Extension"

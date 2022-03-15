@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.eshipper"
-version = "2022.4"
+version = "2022.3"
 homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/eshipper"
 repository="https://github.com/karrioapi/karrio"
 description = "eShipper karrio extension"

@@ -276,7 +276,7 @@ print(rates)
 - [**Documentation**](https://karrio.io/docs)
 - [**Community Discussions**](https://github.com/karrioapi/karrio/discussions)
 - [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
-- [**Blog**](https://karrio.io/blog)
+- [**Blog**](https://docs.karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)
 
