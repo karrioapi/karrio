@@ -53,12 +53,12 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <text x="30" y="60" fill="black" style="font-size: 50; font-weight: bold">FROM:</text>
     <text x="30" y="110" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.shipper.get('company_name', '').upper() }}</text>
-    <text x="30" y="160" fill="black" style="font-size: 30;">{{ shipment.shipper.get('address_line1').upper() }}</text>
+    <text x="30" y="160" fill="black" style="font-size: 30;">{{ shipment.shipper.get('address_line1', '').upper() }}</text>
     <text x="30" y="210" fill="black" style="font-size: 30;">{{ [shipment.shipper.city, [shipment.shipper.state_code, shipment.shipper.postal_code]|join(" ")]|join(", ") }}</text>
 
     <line x1="450" y1="20" x2="450" y2="270" stroke="black" stroke-width="3" />
 
-    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {{ carrier.get('display_name', "").upper() }}</text>
+    <text x="470" y="60" fill="black" style="font-size: 50; font-weight: bold">CARR: {{ carrier.get('display_name', '').upper() }}</text>
     <text x="470" y="140" fill="black" style="font-size: 45; font-weight: bold">PRO#: {{ metadata.get('RFF_CN', '') }}</text>
     <text x="470" y="220" fill="black" style="font-size: 45; font-weight: bold">BOL#: {{ metadata.get('BGM', '') }}</text>
 
@@ -66,7 +66,7 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <!--  Part 2 -->
 
-    <text x="30" y="310" fill="black" style="font-size: 50; font-weight: bold">TO: {{ shipment.recipient.get('address_line1').upper() }}</text>
+    <text x="30" y="310" fill="black" style="font-size: 50; font-weight: bold">TO: {{ shipment.recipient.get('address_line1', '').upper() }}</text>
     <text x="110" y="370" fill="black" style="font-size: 40; font-weight: bold">{{ shipment.recipient.get('company_name', '').upper() }}</text>
 
 
@@ -78,8 +78,8 @@ DEFAULT_SVG_LABEL_TEMPLATE = """
 
     <text x="100" y="550" fill="black" style="font-size: 35; font-weight: bold">SHIP TO POSTAL CODE</text>
 
-    <text data-type="barcode-text" x="60" y="620" fill="black" style="font-size: 40">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}</text>
-    <g data-type="barcode" data-value="(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}"
+    <text data-type="barcode-text" x="60" y="620" fill="black" style="font-size: 40">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code', '').upper() }}</text>
+    <g data-type="barcode" data-value="(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code', '').upper() }}"
         data-module-width="3" data-width-ratio="2" x="30" y="660"
         width="460" height="150" style="font-size: 60; font-weight: bold">
         <text x="80" y="640" fill="black" style="font-size: 40; font-weight: bold">(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code') }}</text>
@@ -140,7 +140,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^FO30,90^FD{{ shipment.shipper.get('company_name', '').upper() }}^FS
 
 ^CFA,30
-^FO30,150^FD{{ shipment.shipper.get('address_line1').upper() }}^FS
+^FO30,150^FD{{ shipment.shipper.get('address_line1', '').upper() }}^FS
 ^FO30,200^FD{{ [shipment.shipper.city, [shipment.shipper.state_code, shipment.shipper.postal_code]|join(" ")]|join(", ") }}^FS
 
 ^FO520,20^GB4,260,4^FS
@@ -156,7 +156,7 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 
 ^FX Second section with recipient address
 ^CF0,60
-^FO30,320^FDTO: {{ shipment.recipient.get('address_line1') }}^FS
+^FO30,320^FDTO: {{ shipment.recipient.get('address_line1', '') }}^FS
 ^CF0,50
 ^FO110,380^FD{{ shipment.recipient.get('company_name', '').upper() }}^FS
 
@@ -169,9 +169,9 @@ DEFAULT_ZPL_LABEL_TEMPLATE = """
 ^FO100,600^FDSHIP TO POSTAL CODE^FS
 
 ^CFA,40
-^FO70,620^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}^FS
+^FO70,620^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code', '').upper() }}^FS
 ^BY3,2,150
-^FO30,660^BCN,150,N,Y,Y,D^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code').upper() }}^FS
+^FO30,660^BCN,150,N,Y,Y,D^FD(421) {{ units.CountryISO.get(shipment.recipient.country_code)  }}{{ shipment.recipient.get('postal_code', '').upper() }}^FS
 
 ^FO580,560^GB4,340,4^FS
 
