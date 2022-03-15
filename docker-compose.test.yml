@@ -1,17 +1,17 @@
 version: '3'
 
 services:
-  pship:
+  karrio:
     image: karrio/test
     build:
       context: ./
       dockerfile: docker/dev.test.Dockerfile
-    container_name: pship
+    container_name: karrio
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
+      - .:/karrio/app/
     ports:
       - "5002:5002"
     depends_on:

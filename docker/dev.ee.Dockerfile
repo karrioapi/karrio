@@ -1,9 +1,9 @@
 # The base image compilation
 FROM python:3.8-slim AS compile-image
-RUN python -m venv /pship/venv
-ENV PATH="/pship/venv/bin:$PATH"
-COPY . /pship/app/
-RUN cd /pship/app && \
+RUN python -m venv /karrio/venv
+ENV PATH="/karrio/venv/bin:$PATH"
+COPY . /karrio/app/
+RUN cd /karrio/app && \
     pip install -r requirements.dev.txt --upgrade && \
     pip install -r requirements.server.insiders.dev.txt
 
@@ -11,11 +11,11 @@ RUN cd /pship/app && \
 # The runtime image
 FROM python:3.8-slim AS build-image
 
-RUN useradd -m pship -d /pship
-USER pship
-COPY --chown=pship:pship --from=compile-image /pship/ /pship/
+RUN useradd -m karrio -d /karrio
+USER karrio
+COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
 
-WORKDIR /pship
+WORKDIR /karrio
 
 # Make sure we use the virtualenv:
-ENV PATH="/pship/venv/bin:$PATH"
+ENV PATH="/karrio/venv/bin:$PATH"

@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-  pship:
+  karrio:
     image: karrio/ee
     build:
       context: ./
       dockerfile: docker/dev.insiders.Dockerfile
-    container_name: pship
+    container_name: karrio
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipstatics:/pship/static
+      - .:/karrio/app/
+      - karriostatics:/karrio/static
     ports:
       - "5002:5002"
     depends_on:
@@ -30,8 +30,8 @@ services:
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipdata:/pship/data
+      - .:/karrio/app/
+      - karriodata:/karrio/data
     depends_on:
       - db
     networks:
@@ -50,8 +50,8 @@ services:
 
 volumes:
   redisdata: null
-  pshipdata: null
-  pshipstatics:
+  karriodata: null
+  karriostatics:
     driver: local
 
 networks:

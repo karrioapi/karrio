@@ -118,7 +118,7 @@ staticfiles/*
 server/main/karrio/server/staticfiles/*
 !server/main/karrio/server/staticfiles/.gitkeep
 
-.pship/
+.karrio/
 .codegen/*
 !.codegen/typescript/
 .codegen/typescript/api/generated

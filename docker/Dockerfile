@@ -5,8 +5,8 @@ ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
 ARG REGISTRY_TOKEN_NAME
 
-RUN python -m venv /pship/venv
-ENV PATH="/pship/venv/bin:$PATH"
+RUN python -m venv /karrio/venv
+ENV PATH="/karrio/venv/bin:$PATH"
 COPY "${REQUIREMENTS}" /temp/
 RUN pip install --upgrade pip && \
     pip install dumb-init && \
@@ -34,21 +34,21 @@ ENV DETACHED_WORKER False
 ENV ADMIN_EMAIL admin@example.com
 ENV ADMIN_PASSWORD demo
 ENV SECRET_KEY "w;l5kj65lk6j;lj56kl56jk5l656j5k6jl5"
-ENV WORK_DIR /pship/app
-ENV LOG_DIR /pship/log
-ENV WORKER_DB_DIR /pship/data
-ENV STATIC_ROOT_DIR /pship/static
+ENV WORK_DIR /karrio/app
+ENV LOG_DIR /karrio/log
+ENV WORKER_DB_DIR /karrio/data
+ENV STATIC_ROOT_DIR /karrio/static
 
-RUN useradd -m pship -d /pship
-USER pship
-COPY --chown=pship:pship --from=compile-image /pship/ /pship/
+RUN useradd -m karrio -d /karrio
+USER karrio
+COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
 RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
 COPY server/gunicorn-cfg.py docker/entrypoint.sh docker/worker.sh $WORK_DIR/
 
 WORKDIR $WORK_DIR
 
 # Make sure we use the virtualenv:
-ENV PATH="/pship/venv/bin:$PATH"
+ENV PATH="/karrio/venv/bin:$PATH"
 
-ENTRYPOINT ["/pship/venv/bin/dumb-init", "--"]
+ENTRYPOINT ["/karrio/venv/bin/dumb-init", "--"]
 CMD ["./entrypoint.sh"]

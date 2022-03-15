@@ -65,7 +65,7 @@ docker run -d \
 
 ```bash
 docker run -d \
-  --name pship --rm \
+  --name karrio --rm \
   -e DEBUG_MODE=True \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
@@ -94,7 +94,7 @@ services:
     networks:
       - db_network
 
-  pship:
+  karrio:
     image: danh91.docker.scarf.sh/karrio/server:2022.2
     restart: unless-stopped
     environment:
@@ -113,7 +113,7 @@ services:
       - db_network
 
 volumes:
-  pshipdb:
+  karriodb:
     driver: local
 
 networks:
