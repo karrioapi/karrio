@@ -19,5 +19,7 @@
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "glob-parent": "^5.1.2"
+  }
 }
