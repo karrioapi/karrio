@@ -146,7 +146,7 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://karrio.io/docs)
+- [**Documentation**](https://docs.karrio.io)
 - [**Community Discussions**](https://github.com/karrioapi/karrio/discussions)
 - [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
 - [**Blog**](https://docs.karrio.io/blog)

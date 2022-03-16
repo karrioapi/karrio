@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "karrio.yunexpress"
 version = "2022.3"
-homepage="https://karrio.io/docs/guides/sdk"
+homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - Yunexpress Shipping Extension"
 authors = ["Karrio <hello@karrio.io>"]
