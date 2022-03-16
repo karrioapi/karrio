@@ -57,7 +57,7 @@ elif [[ "$*" == *gen:py:cli* ]]; then
 elif [[ "$*" == *build:js* ]]; then
 	cd "${ROOT:?}/.codegen/typescript"
 	rm -rf node_modules;
-    yarn;
+    npm install;
     rm -f "${ROOT:?}/.codegen/typescript/api/generated/apis/index.ts"
 	npx gulp build --output "${ROOT:?}/server/main/karrio/server/static/karrio/js/karrio.js"
 	cd -

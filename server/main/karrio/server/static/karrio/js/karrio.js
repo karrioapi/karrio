@@ -92,8 +92,8 @@
      */
     var BaseAPI = /** @class */ (function () {
         function BaseAPI(configuration) {
-            var _this = this;
             if (configuration === void 0) { configuration = new Configuration(); }
+            var _this = this;
             this.configuration = configuration;
             this.fetchApi = function (url, init) { return __awaiter(_this, void 0, void 0, function () {
                 var fetchParams, _i, _a, middleware, response, _b, _c, middleware;
@@ -318,20 +318,20 @@
         if (prefix === void 0) { prefix = ''; }
         return Object.keys(params)
             .map(function (key) {
-            var fullKey = prefix + (prefix.length ? "[" + key + "]" : key);
+            var fullKey = prefix + (prefix.length ? "[".concat(key, "]") : key);
             var value = params[key];
             if (value instanceof Array) {
                 var multiValue = value.map(function (singleValue) { return encodeURIComponent(String(singleValue)); })
-                    .join("&" + encodeURIComponent(fullKey) + "=");
-                return encodeURIComponent(fullKey) + "=" + multiValue;
+                    .join("&".concat(encodeURIComponent(fullKey), "="));
+                return "".concat(encodeURIComponent(fullKey), "=").concat(multiValue);
             }
             if (value instanceof Date) {
-                return encodeURIComponent(fullKey) + "=" + encodeURIComponent(value.toISOString());
+                return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(value.toISOString()));
             }
             if (value instanceof Object) {
                 return querystring(value, fullKey);
             }
-            return encodeURIComponent(fullKey) + "=" + encodeURIComponent(String(value));
+            return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(String(value)));
         })
             .filter(function (part) { return part.length > 0; })
             .join('&');
@@ -2897,7 +2897,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -2999,7 +2999,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3052,7 +3052,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3367,7 +3367,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers/{carrier_name}/services".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3602,7 +3602,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3704,7 +3704,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3757,7 +3757,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3870,7 +3870,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -3972,7 +3972,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4025,7 +4025,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4091,7 +4091,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}/cancel".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/pickups/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4197,7 +4197,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4253,7 +4253,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{carrier_name}/schedule".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/pickups/{carrier_name}/schedule".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4307,7 +4307,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4427,7 +4427,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4538,7 +4538,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4594,7 +4594,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))).replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4650,7 +4650,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'PUT',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4707,7 +4707,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -4914,7 +4914,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5098,7 +5098,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/purchase".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/shipments/{id}/purchase".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5152,7 +5152,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/rates".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/shipments/{id}/rates".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5202,7 +5202,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5255,7 +5255,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PUT',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5365,7 +5365,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{" + "tracking_number" + "}", encodeURIComponent(String(requestParameters.trackingNumber))).replace("{" + "carrier_name" + "}", encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))).replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5485,7 +5485,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
+                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5534,7 +5534,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{" + "id_or_tracking_number" + "}", encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
+                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5771,7 +5771,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5820,7 +5820,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5873,7 +5873,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}/test".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/webhooks/{id}/test".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5927,7 +5927,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -5989,7 +5989,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'DELETE',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -6157,7 +6157,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -6210,7 +6210,7 @@
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{" + "id" + "}", encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PUT',
                                     headers: headerParameters,
                                     query: queryParameters,
@@ -6283,7 +6283,7 @@
         if (apiKeyPrefix === void 0) { apiKeyPrefix = 'Token'; }
         var clientConfig = {
             basePath: host,
-            apiKey: apiKeyPrefix + " " + apiKey,
+            apiKey: "".concat(apiKeyPrefix, " ").concat(apiKey),
         };
         return new KarrioClient(clientConfig);
     }
