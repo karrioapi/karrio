@@ -1,4 +1,4 @@
-Django<=3.2.11
+Django<=3.2.12
 
 
 # Carrier Extenstions in Development
