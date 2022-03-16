@@ -1,8 +1,5 @@
 Django<=3.2.11
 
-# Carrier Schemas in Development
-# -e ./schemas/dhl_poland
-
 
 # Carrier Extenstions in Development
 -e ./sdk/core

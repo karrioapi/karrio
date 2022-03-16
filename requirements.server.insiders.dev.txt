@@ -1,4 +1,4 @@
-# --extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/karrio%2Fcloud/packages/pypi/simple
+--extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/28001120/packages/pypi/simple
 
 -r ./requirements.server.dev.txt
 

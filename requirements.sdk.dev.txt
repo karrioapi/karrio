@@ -5,10 +5,10 @@
 # SDK extentions
 -e ./sdk/core
 -e ./insiders/sdk/addons
+-e ./insiders/sdk/generic
 
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
--e ./sdk/extensions/boxknight
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/dhl_express
@@ -28,11 +28,3 @@
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
-
--e ./insiders/sdk/generic
-
-# Extenstions in Development
--e ./sdk/extensions/ics_courier
--e ./sdk/extensions/asendia_us
--e ./sdk/extensions/ups_ground
-

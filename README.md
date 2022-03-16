@@ -140,8 +140,8 @@ Karrio should now be running at <http://localhost:5002>
 ### Official Karrio Server Client Libraries
 
 - [Node](https://github.com/karrioapi/karrio-node)
-- [PHP](https://github.com/karrioapi/karrio-php-client)
-- [Python](https://github.com/karrioapi/karrio-python-client)
+- [PHP](https://github.com/karrioapi/karrio-php)
+- [Python](https://github.com/karrioapi/karrio-python)
 
 ## Karrio SDK
 

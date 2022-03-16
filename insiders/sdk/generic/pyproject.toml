@@ -15,15 +15,9 @@ classifiers=[
     "License :: OSI Approved :: Apache Software License",
 ]
 
-[[tool.poetry.source]]
-name = "karrio"
-url = "https://gitlab.com/api/v4/projects/28001120/packages/pypi"
-secondary = true
-
 [tool.poetry.dependencies]
 python = "^3.7"
 "karrio" = ""
-"karrio.addons" = ""
 
 [tool.poetry.dev-dependencies]
 
