@@ -3,11 +3,11 @@ const gulp = require('gulp');
 const rollup = require('rollup');
 const rollupTypescript = require('@rollup/plugin-typescript');
 
-const output = argv.output === undefined ? './dist/purplship.js' : argv.output;
+const output = argv.output === undefined ? './dist/karrio.js' : argv.output;
 
 gulp.task('build', async function () {
   const bundle = await rollup.rollup({
-    input: './api/purplship.ts',
+    input: './api/karrio.ts',
     plugins: [
       rollupTypescript()
     ]
@@ -16,7 +16,7 @@ gulp.task('build', async function () {
   await bundle.write({
     file: output,
     format: 'umd',
-    name: 'Purplship',
+    name: 'Karrio',
     sourcemap: true
   });
 });

@@ -2,9 +2,9 @@
 name = "carrier.dhl_ecom_am"
 version = "2021.10rc0"
 description = "DHL eCommerce Americas API Schemas Python Data Types library"
-repository="https://github.com/purplship/purplship-carriers"
-homepage="https://github.com/purplship/purplship-carriers/tree/master/carrier.dhl_ecom_am"
-authors = ["Purplship <hello@purplship.com>"]
+repository="https://github.com/karrioapi/karrio-carriers"
+homepage="https://github.com/karrioapi/karrio-carriers/tree/master/carrier.dhl_ecom_am"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [{ include = "dhl_ecom_am_lib" }]

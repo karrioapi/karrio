@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["aramex"].create(
+gateway = karrio.gateway["aramex"].create(
     dict(
         username="testingapi@aramex.com",
         password="R123456789$r",

@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["yunexpress"].create(
+gateway = karrio.gateway["yunexpress"].create(
     dict(
         customer_number="customer_number",
         api_secret="api_secret",

@@ -1,9 +1,9 @@
 import logging
 import unittest
 from unittest.mock import patch
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import (
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
@@ -41,9 +41,9 @@ class TestUPSPickup(unittest.TestCase):
         self.assertEqual(cancel_request.data.serialize(), PickupCancelRequestXML)
 
     def test_create_pickup(self):
-        with patch("purplship.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
-            purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
+            karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
 
             rate_call, create_call = mocks.call_args_list
             self.assertEqual(
@@ -56,13 +56,13 @@ class TestUPSPickup(unittest.TestCase):
             )
 
     def test_update_pickup(self):
-        with patch("purplship.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.http") as mocks:
             mocks.side_effect = [
                 PickupRateResponseXML,
                 PickupResponseXML,
                 PickupCancelResponseXML,
             ]
-            purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway)
+            karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             rate_call, create_call, cancel_call = mocks.call_args_list
             self.assertEqual(
@@ -79,19 +79,19 @@ class TestUPSPickup(unittest.TestCase):
             )
 
     def test_parse_pickup_reply(self):
-        with patch("purplship.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
             parsed_response = (
-                purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
+                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_cancel_reply(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = PickupCancelResponseXML
             parsed_response = (
-                purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
+                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(

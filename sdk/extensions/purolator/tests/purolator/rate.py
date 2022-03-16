@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
-from purplship import Rating
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
+from karrio import Rating
 from tests.purolator.fixture import gateway
 
 
@@ -23,7 +23,7 @@ class TestPurolatorQuote(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RATE_REQUEST_WITH_PRESET_XML)
 
-    @patch("purplship.mappers.purolator.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_create_rate(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -34,7 +34,7 @@ class TestPurolatorQuote(unittest.TestCase):
         )
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.purolator.proxy.http") as mock:
+        with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

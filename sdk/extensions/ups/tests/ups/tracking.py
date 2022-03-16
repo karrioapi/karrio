@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import TrackingRequest
+from karrio.core.utils import DP
+from karrio.core.models import TrackingRequest
 from tests.ups.fixture import gateway
-from purplship import Tracking
+from karrio import Tracking
 
 
 class TestUPSTracking(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestUPSTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), TrackingRequestPayload)
 
-    @patch("purplship.mappers.ups.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.ups.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestUPSTracking(unittest.TestCase):
         )
 
     def test_tracking_auth_error_parsing(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -35,7 +35,7 @@ class TestUPSTracking(unittest.TestCase):
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = TrackingResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -45,7 +45,7 @@ class TestUPSTracking(unittest.TestCase):
             )
 
     def test_invalid_tracking_number_response_parsing(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = InvalidTrackingNumberResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -56,7 +56,7 @@ class TestUPSTracking(unittest.TestCase):
             )
 
     def test_tracking_number_not_found_response_parsing(self):
-        with patch("purplship.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = TrackingNumberNotFoundResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

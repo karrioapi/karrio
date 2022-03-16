@@ -1,6 +1,6 @@
-# purplship.generic
+# karrio.generic
 
-This package is a Generic extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a Generic extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a Generic extension of the [purplship](https://pypi.org/project/
 ## Installation
 
 ```bash
-pip install purplship.generic
+pip install karrio.generic
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.generic.settings import Settings
+import karrio
+from karrio.mappers.generic.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["generic"].create(
+canadapost = karrio.gateway["generic"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

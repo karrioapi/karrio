@@ -1,16 +1,16 @@
-# <a href="https://next.purplship.com" target="_blank"><img alt="Purplship" src="/purplship/purplship/raw/main/server/main/purplship/server/static/extra/branding/logo.svg" height="50px" /></a>
+# <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="https://docs.karrio.io/img/logo.svg" height="50px" /></a>
 
-[![puprlship-tests](https://github.com/purplship/purplship/actions/workflows/tests.yml/badge.svg)](https://github.com/purplship/purplship/actions/workflows/tests.yml)
+[![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio/karrio&amp;utm_campaign=Badge_Grade)
 
-purplship is a multi-carrier shipping SDK.
+karrio is a multi-carrier shipping SDK.
 
 The key features are:
 
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
 - **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Shipping`, `Tracking`...)
-- **Multi-carrier**: Integrate purplship once and connect to multiple shipping carrier APIs
+- **Multi-carrier**: Integrate karrio once and connect to multiple shipping carrier APIs
 - **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 ## Requirements
@@ -20,34 +20,34 @@ Python 3.7+
 ## Installation
 
 ```bash
-# install purplship core
-pip install purplship
+# install karrio core
+pip install karrio
 
-# eg: install the purplship canadapost extention
-pip install purplship.canadapost
+# eg: install the karrio canadapost extention
+pip install karrio.canadapost
 ```
 
 <details>
 <summary>Additional carrier extensions</summary>
 
-- `purplship.aramex`
-- `purplship.australiapost`
-- `purplship.canadapost`
-- `purplship.canpar`
-- `purplship.dhl-express`
-- `purplship.dhl-universal`
-- `purplship.dicom`
-- `purplship.fedex`
-- `purplship.purolator`
-- `purplship.royalmail`
-- `purplship.sendle`
-- `purplship.sf-express`
-- `purplship.tnt`
-- `purplship.ups`
-- `purplship.usps`
-- `purplship.usps-international`
-- `purplship.yanwen`
-- `purplship.yunexpress`
+- `karrio.aramex`
+- `karrio.australiapost`
+- `karrio.canadapost`
+- `karrio.canpar`
+- `karrio.dhl-express`
+- `karrio.dhl-universal`
+- `karrio.dicom`
+- `karrio.fedex`
+- `karrio.purolator`
+- `karrio.royalmail`
+- `karrio.sendle`
+- `karrio.sf-express`
+- `karrio.tnt`
+- `karrio.ups`
+- `karrio.usps`
+- `karrio.usps-international`
+- `karrio.yanwen`
+- `karrio.yunexpress`
 
 </details>
 
@@ -59,13 +59,13 @@ pip install purplship.canadapost
 - Fetch shipping rates
 
 ```python
-import purplship
-from purplship.core.models import Address, Parcel, RateRequest
-from purplship.mappers.canadapost.settings import Settings
+import karrio
+from karrio.core.models import Address, Parcel, RateRequest
+from karrio.mappers.canadapost.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["canadapost"].create(
+canadapost = karrio.gateway["canadapost"].create(
     Settings(
         username="6e93d53968881714",
         password="0bfa9fcb9853d1f51ee57a",
@@ -115,7 +115,7 @@ rate_request = RateRequest(
 )
 
 # Send a rate request using a carrier gateway
-response = purplship.Rating.fetch(rate_request).from_(canadapost)
+response = karrio.Rating.fetch(rate_request).from_(canadapost)
 
 # Parse the returned response
 rates, messages = response.parse()
@@ -146,9 +146,9 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://next.purplship.com/docs)
-- [**Community Discussions**](https://github.com/purplship/purplship/discussions)
-- [**Issue Tracker**](https://github.com/purplship/purplship/issues)
-- [**Blog**](https://next.purplship.com/blog)
+- [**Documentation**](https://karrio.io/docs)
+- [**Community Discussions**](https://github.com/karrioapi/karrio/discussions)
+- [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
+- [**Blog**](https://docs.karrio.io/blog)
 
 > [Join us on Discord](https://discord.gg/gS88uE7sEx)

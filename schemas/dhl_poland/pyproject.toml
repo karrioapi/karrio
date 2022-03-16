@@ -2,9 +2,9 @@
 name = "carrier.dhl_poland"
 version = "2021.11"
 description = "DHL Parcel Poland Web API Schemas Python Data Types library"
-repository="https://github.com/purplship/purplship-carriers"
-homepage="https://github.com/purplship/purplship-carriers/tree/main/schemas/carrier.dhl_poland"
-authors = ["Purplship <hello@purplship.com>"]
+repository="https://github.com/karrioapi/karrio-carriers"
+homepage="https://github.com/karrioapi/karrio-carriers/tree/main/schemas/carrier.dhl_poland"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [

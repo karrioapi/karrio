@@ -1,3 +1,3 @@
-# purplship-server
+# karrio-server
 
-Purplship server orders component
+Karrio server orders component

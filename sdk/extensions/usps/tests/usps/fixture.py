@@ -1,5 +1,5 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["usps"].create(
+gateway = karrio.gateway["usps"].create(
     {"username": "username", "password": "password", "mailer_id": "847654321"}
 )

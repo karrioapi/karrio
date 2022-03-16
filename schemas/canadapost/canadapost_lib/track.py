@@ -13,7 +13,7 @@
 #   ./schemas/track.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/track.py" ./schemas/track.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/track.py" ./schemas/track.xsd
 #
 # Current working directory (os.getcwd()):
 #   canadapost

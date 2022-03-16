@@ -3,17 +3,17 @@ from setuptools import setup, find_namespace_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open("purplship/server/VERSION", "r") as v:
+with open("karrio/server/VERSION", "r") as v:
     version = v.read().strip()
 
 setup(
-    name="purplship.server",
+    name="karrio.server",
     version=version,
     description="Multi-carrier shipping API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/purplship/purplship-server",
-    author="purplship",
+    url="https://github.com/karrioapi/karrio-server",
+    author="karrio",
     author_email="danielk.developer@gmail.com",
     license="Apache License Version 2.0",
     packages=find_namespace_packages("."),
@@ -36,11 +36,11 @@ setup(
         "more-itertools",
         "requests",
         "python-decouple",
-        "purplship.server.core",
+        "karrio.server.core",
     ],
-    entry_points={"console_scripts": ["purplship = purplship.server.__main__:main"]},
+    entry_points={"console_scripts": ["karrio = karrio.server.__main__:main"]},
     dependency_links=[
-        "https://git.io/purplship",
+        "https://git.io/karrio",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

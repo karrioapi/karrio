@@ -2,8 +2,8 @@ import click
 import inspect
 import pydoc
 from jinja2 import Template
-from purplship.references import collect_providers_data, collect_references
-import purplship.core.utils as utils
+from karrio.references import collect_providers_data, collect_references
+import karrio.core.utils as utils
 
 PROVIDERS_DATA = collect_providers_data()
 REFERENCES = collect_references()
@@ -197,13 +197,13 @@ def generate_units():
 
 @cli.command()
 def generate_models():
-    import purplship.core.models as m
+    import karrio.core.models as m
     classes = {i: t for i, t in inspect.getmembers(m) if inspect.isclass(t)}
     docstr = MODELS_TEMPLATE.render(
         classes=classes,
         str=str
     ).replace(
-        "purplship.core.models.", ""
+        "karrio.core.models.", ""
     ).replace(
         "typing.", ""
     ).replace(
@@ -243,11 +243,11 @@ def generate_settings():
 @cli.command()
 def generate_utilities_info():
     utilities = [
-        (utils.DP, 'from purplship.core.utils import DP'),
-        (utils.XP, 'from purplship.core.utils import XP'),
-        (utils.DF, 'from purplship.core.utils import DF'),
-        (utils.SF, 'from purplship.core.utils import SF'),
-        (utils.helpers, 'from purplship.core.utils import [function]'),
+        (utils.DP, 'from karrio.core.utils import DP'),
+        (utils.XP, 'from karrio.core.utils import XP'),
+        (utils.DF, 'from karrio.core.utils import DF'),
+        (utils.SF, 'from karrio.core.utils import SF'),
+        (utils.helpers, 'from karrio.core.utils import [function]'),
     ]
     click.echo(UTILS_TOOLS_TEMPLATE.render(utils=utilities, doc=doc))
 

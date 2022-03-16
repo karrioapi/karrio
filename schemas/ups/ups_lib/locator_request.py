@@ -13,7 +13,7 @@
 #   ./schemas/LocatorRequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/locator_request.py" ./schemas/LocatorRequest.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/locator_request.py" ./schemas/LocatorRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

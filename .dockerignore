@@ -106,11 +106,11 @@ venv.bak/
 # node
 node_modules/
 
-# purplship stuff:
+# karrio stuff:
 *.DS_Store
 .idea/
 staticfiles/*
-purplship/server/staticfiles/*
-!purplship/server/staticfiles/.gitkeep
+karrio/server/staticfiles/*
+!karrio/server/staticfiles/.gitkeep
 codegen/
-.pship/
+.karrio/

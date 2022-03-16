@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["generic"].create(
+gateway = karrio.gateway["generic"].create(
     {
         "carrier_id": "custom-carrier",
         "custom_carrier_name": "custom_carrier",

@@ -13,7 +13,7 @@
 #   ./schemas/FreightValidationDetail.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_validation_detail.py" ./schemas/FreightValidationDetail.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_validation_detail.py" ./schemas/FreightValidationDetail.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

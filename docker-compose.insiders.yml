@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-  pship:
-    image: purplship/ee
+  karrio:
+    image: karrio/ee
     build:
       context: ./
       dockerfile: docker/dev.insiders.Dockerfile
-    container_name: pship
+    container_name: karrio
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipstatics:/pship/static
+      - .:/karrio/app/
+      - karriostatics:/karrio/static
     ports:
       - "5002:5002"
     depends_on:
@@ -21,22 +21,22 @@ services:
     networks:
       - db_network
       - web_network
-    command: purplship runserver 0.0.0.0:5002
+    command: karrio runserver 0.0.0.0:5002
 
   worker:
-    image: purplship/ee
+    image: karrio/ee
     container_name: worker
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipdata:/pship/data
+      - .:/karrio/app/
+      - karriodata:/karrio/data
     depends_on:
       - db
     networks:
       - db_network
-    command: purplship run_huey -w 2
+    command: karrio run_huey -w 2
 
   db:
     extends:
@@ -50,8 +50,8 @@ services:
 
 volumes:
   redisdata: null
-  pshipdata: null
-  pshipstatics:
+  karriodata: null
+  karriostatics:
     driver: local
 
 networks:

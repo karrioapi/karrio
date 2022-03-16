@@ -13,7 +13,7 @@
 #   ./schemas/PickupService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/pickup_service_1_2_1.py" ./schemas/PickupService.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/pickup_service_1_2_1.py" ./schemas/PickupService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

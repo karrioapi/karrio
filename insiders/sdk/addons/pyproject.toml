@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship.addons"
-version = "2022.2.2"
-homepage="https://next.purplship.com/docs/guides/sdk"
-repository="https://github.com/purplship/purplship"
+name = "karrio.addons"
+version = "2022.3"
+homepage="https://karrio.io/docs/guides/sdk"
+repository="https://github.com/karrioapi/karrio"
 description = "Multi-carrier shipping API integration with python"
-authors = ["Purplship <hello@purplship.com>"]
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "purplship" }]
+packages = [{ include = "karrio" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-purplship = ""
+karrio = ""
 Jinja2 = ""
 
 [tool.poetry.dev-dependencies]

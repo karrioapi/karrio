@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-  pship:
-    image: purplship/dev
+  karrio:
+    image: karrio/dev
     build:
       context: ./
       dockerfile: docker/dev.Dockerfile
-    container_name: pship
+    container_name: karrio
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipstatics:/pship/static
+      - .:/karrio/app/
+      - karriostatics:/karrio/static
     ports:
       - "5002:5002"
     depends_on:
@@ -21,22 +21,22 @@ services:
     networks:
       - db_network
       - web_network
-    command: purplship runserver 0.0.0.0:5002
+    command: karrio runserver 0.0.0.0:5002
 
   worker:
-    image: purplship/dev
+    image: karrio/dev
     container_name: worker
     env_file: .env
     environment:
       DATABASE_HOST: "db"
     volumes:
-      - .:/pship/app/
-      - pshipdata:/pship/data
+      - .:/karrio/app/
+      - karriodata:/karrio/data
     depends_on:
       - db
     networks:
       - db_network
-    command: purplship run_huey -w 2
+    command: karrio run_huey -w 2
 
   nginx:
     container_name: nginx
@@ -45,11 +45,11 @@ services:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - pshipstatics:/static
+      - karriostatics:/static
     networks:
       - web_network
     depends_on:
-      - pship
+      - karrio
 
   db:
     image: postgres
@@ -58,7 +58,7 @@ services:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      PGDATA: /var/lib/postgresql/data/pship-dev
+      PGDATA: /var/lib/postgresql/data/karrio-dev
     ports:
       - "5432:5432"
     networks:
@@ -75,8 +75,8 @@ services:
 
 volumes:
   redisdata:
-  pshipdata:
-  pshipstatics:
+  karriodata:
+  karriostatics:
     driver: local
 
 networks:

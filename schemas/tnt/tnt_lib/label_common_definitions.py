@@ -13,7 +13,7 @@
 #   ./schemas/label_common_definitions.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./tnt_lib/label_common_definitions.py" ./schemas/label_common_definitions.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./tnt_lib/label_common_definitions.py" ./schemas/label_common_definitions.xsd
 #
 # Current working directory (os.getcwd()):
 #   tnt

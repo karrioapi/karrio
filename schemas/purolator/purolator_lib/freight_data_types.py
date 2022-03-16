@@ -13,7 +13,7 @@
 #   ./schemas/FreightDataTypes.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_data_types.py" ./schemas/FreightDataTypes.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_data_types.py" ./schemas/FreightDataTypes.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

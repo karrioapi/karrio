@@ -13,7 +13,7 @@
 #   ./schemas/TimeInTransitWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/time_in_transit_web_service_schema.py" ./schemas/TimeInTransitWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/time_in_transit_web_service_schema.py" ./schemas/TimeInTransitWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

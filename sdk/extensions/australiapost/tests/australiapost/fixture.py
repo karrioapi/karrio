@@ -1,5 +1,5 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["australiapost"].create(
+gateway = karrio.gateway["australiapost"].create(
     dict(api_key="api-key", password="password", account_number="account-number")
 )

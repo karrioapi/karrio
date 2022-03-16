@@ -13,7 +13,7 @@
 #   ./schemas/HFPFacilityInfoResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/hfp_facility_info_response.py" ./schemas/HFPFacilityInfoResponse.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/hfp_facility_info_response.py" ./schemas/HFPFacilityInfoResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

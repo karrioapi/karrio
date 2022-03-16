@@ -1,6 +1,6 @@
-# purplship.eshipper
+# karrio.eshipper
 
-This package is a eShipper extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a eShipper extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a eShipper extension of the [purplship](https://pypi.org/project
 ## Installation
 
 ```bash
-pip install purplship.eshipper
+pip install karrio.eshipper
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.eshipper.settings import Settings
+import karrio
+from karrio.mappers.eshipper.settings import Settings
 
 
 # Initialize a carrier gateway
-eshipper = purplship.gateway["eshipper"].create(
+eshipper = karrio.gateway["eshipper"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

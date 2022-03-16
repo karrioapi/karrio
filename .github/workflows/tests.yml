@@ -31,18 +31,18 @@ jobs:
       - name: Run Tests
         run: |
           sudo chown -R 1000 ./
-          docker-compose -f docker-compose.test.yml run --rm pship bash -c '
+          docker-compose -f docker-compose.test.yml run --rm karrio bash -c '
             cd app &&
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.dev.txt &&
             cd -
-            mkdir -p .pship
-            purplship migrate &&
-            purplship test --failfast purplship.server.proxy.tests &&
-            purplship test --failfast purplship.server.pricing.tests &&
-            purplship test --failfast purplship.server.manager.tests &&
-            purplship test --failfast purplship.server.events.tests &&
-            purplship test --failfast purplship.server.graph.tests
+            mkdir -p .karrio
+            karrio migrate &&
+            karrio test --failfast karrio.server.proxy.tests &&
+            karrio test --failfast karrio.server.pricing.tests &&
+            karrio test --failfast karrio.server.manager.tests &&
+            karrio test --failfast karrio.server.events.tests &&
+            karrio test --failfast karrio.server.graph.tests
           '
 
   server-insiders-tests:
@@ -56,18 +56,18 @@ jobs:
           REGISTRY_TOKEN_NAME: ${{ secrets.REGISTRY_TOKEN_NAME }}
         run: |
           sudo chown -R 1000 ./
-          docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN pship bash -c '
+          docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN karrio bash -c '
             cd app &&
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&
             cd -
-            mkdir -p .pship
-            purplship migrate &&
-            purplship test --failfast purplship.server.proxy.tests &&
-            purplship test --failfast purplship.server.pricing.tests &&
-            purplship test --failfast purplship.server.manager.tests &&
-            purplship test --failfast purplship.server.events.tests &&
-            purplship test --failfast purplship.server.graph.tests &&
-            purplship test --failfast purplship.server.orgs.tests &&
-            purplship test --failfast purplship.server.orders.tests
+            mkdir -p .karrio
+            karrio migrate &&
+            karrio test --failfast karrio.server.proxy.tests &&
+            karrio test --failfast karrio.server.pricing.tests &&
+            karrio test --failfast karrio.server.manager.tests &&
+            karrio test --failfast karrio.server.events.tests &&
+            karrio test --failfast karrio.server.graph.tests &&
+            karrio test --failfast karrio.server.orgs.tests &&
+            karrio test --failfast karrio.server.orders.tests
           '

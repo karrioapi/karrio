@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["dhl_express"].create(
+gateway = karrio.gateway["dhl_express"].create(
     dict(
         site_id="site_id",
         password="password",

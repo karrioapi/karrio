@@ -13,7 +13,7 @@
 #   ./schemas/schemas.xmlsoap.org.xml
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./pysoap/envelope.py" ./schemas/schemas.xmlsoap.org.xml
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./pysoap/envelope.py" ./schemas/schemas.xmlsoap.org.xml
 #
 # Current working directory (os.getcwd()):
 #   soap

@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-      name='purplship.canadapost',
+      name='karrio.canadapost',
       version='0.0.0-dev',
       license='LGPLv3',
       packages=find_namespace_packages(),
-      install_requires=['purplship', 'carrier.canadapost'],
+      install_requires=['karrio', 'carrier.canadapost'],
       zip_safe=False,
 )

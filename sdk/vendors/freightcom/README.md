@@ -1,6 +1,6 @@
-# purplship.freightcom
+# karrio.freightcom
 
-This package is a freightcom extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a freightcom extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,23 +9,22 @@ This package is a freightcom extension of the [purplship](https://pypi.org/proje
 ## Installation
 
 ```bash
-pip install purplship.freightcom
+pip install karrio.freightcom
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.freightcom.settings import Settings
+import karrio
+from karrio.mappers.freightcom.settings import Settings
 
 
 # Initialize a carrier gateway
-freightcom = purplship.gateway["freightcom"].create(
+freightcom = karrio.gateway["freightcom"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
-
+Check the [karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

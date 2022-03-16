@@ -1,9 +1,9 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch, ANY
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest
 from tests.usps_international.fixture import gateway
 
 
@@ -16,9 +16,9 @@ class TestUSPSPriorityExpressShipment(unittest.TestCase):
         requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         self.assertEqual(requests.serialize(), ShipmentRequestXML)
 
-    @patch("purplship.mappers.usps_international.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.usps_international.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
+        karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -27,10 +27,10 @@ class TestUSPSPriorityExpressShipment(unittest.TestCase):
         )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.usps_international.proxy.http") as mocks:
+        with patch("karrio.mappers.usps_international.proxy.http") as mocks:
             mocks.return_value = ShipmentResponseXML
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 

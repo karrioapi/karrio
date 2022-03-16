@@ -1,16 +1,17 @@
---extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/purplship%2Fcloud/packages/pypi/simple
+--extra-index-url https://${REGISTRY_TOKEN_NAME}:${REGISTRY_TOKEN}@gitlab.com/api/v4/projects/28001120/packages/pypi/simple
 
 -r ./requirements.server.dev.txt
 
-# purplship insider sdk extensions
+# karrio insider sdk extensions
 -e ./insiders/sdk/addons
-# purplship.addons
+# karrio.addons
 -e ./insiders/sdk/generic
-# purplship.generic
+# karrio.generic
 
-# purplship enterprise modules
+# karrio enterprise modules
 -e ./insiders/server/tenants
 -e ./insiders/server/orders
 -e ./insiders/server/orgs
 -e ./insiders/server/iam
 -e ./insiders/server/apps
+# -e ./insiders/server/documents

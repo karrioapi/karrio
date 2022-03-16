@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship.aramex"
-version = "2022.2.1"
-homepage="https://next.purplship.com/docs/guides/sdk"
-repository="https://github.com/purplship/purplship"
-description = "Purplship - Aramex Shipping Extension"
-authors = ["Purplship <hello@purplship.com>"]
+name = "karrio.aramex"
+version = "2022.3"
+homepage="https://karrio.io/docs/guides/sdk"
+repository="https://github.com/karrioapi/karrio"
+description = "Karrio - Aramex Shipping Extension"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "purplship" }]
+packages = [{ include = "karrio" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = ""
+"karrio" = ""
 "carrier.aramex" = ""
 
 [tool.poetry.dev-dependencies]

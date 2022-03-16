@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship.eshipper"
-version = "2022.2"
-homepage="https://github.com/purplship/purplship/tree/main/sdk/vendors/eshipper"
-repository="https://github.com/purplship/purplship"
-description = "eShipper purplship extension"
-authors = ["Purplship <hello@purplship.com>"]
+name = "karrio.eshipper"
+version = "2022.3"
+homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/eshipper"
+repository="https://github.com/karrioapi/karrio"
+description = "eShipper karrio extension"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "purplship" }, { include = "eshipper_lib" }]
+packages = [{ include = "karrio" }, { include = "eshipper_lib" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = ""
+"karrio" = ""
 
 [tool.poetry.dev-dependencies]
 

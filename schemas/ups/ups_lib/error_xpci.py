@@ -13,7 +13,7 @@
 #   ./schemas/ErrorXPCI.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/error_xpci.py" ./schemas/ErrorXPCI.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/error_xpci.py" ./schemas/ErrorXPCI.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

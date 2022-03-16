@@ -2,9 +2,9 @@
 name = "carrier.purolator"
 version = "2020.4.1"
 description = "Purolator Web API Schemas Python Data Types library"
-repository="https://github.com/purplship/purplship"
-homepage="https://github.com/purplship/purplship/tree/main/carrier.purolator"
-authors = ["Purplship <hello@purplship.com>"]
+repository="https://github.com/karrioapi/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/carrier.purolator"
+authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [

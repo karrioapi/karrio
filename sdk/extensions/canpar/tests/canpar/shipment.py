@@ -2,9 +2,9 @@ import re
 import unittest
 import time
 from unittest.mock import patch, ANY
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canpar.fixture import gateway
 
 
@@ -38,12 +38,12 @@ class TestCanparShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mocks:
+        with patch("karrio.mappers.canpar.proxy.http") as mocks:
             mocks.side_effect = [
                 ShipmentResponseXML,
                 ShipmentLabelResponseXML,
             ]
-            purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             process_shipment_call, get_label_call = mocks.call_args_list
 
@@ -63,9 +63,9 @@ class TestCanparShipment(unittest.TestCase):
             )
 
     def test_void_shipment(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
+            karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -76,22 +76,22 @@ class TestCanparShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mocks:
+        with patch("karrio.mappers.canpar.proxy.http") as mocks:
             mocks.side_effect = [
                 ShipmentResponseXML,
                 ShipmentLabelResponseXML,
             ]
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_void_shipment_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                purplship.Shipment.cancel(self.VoidShipmentRequest)
+                karrio.Shipment.cancel(self.VoidShipmentRequest)
                 .from_(gateway)
                 .parse()
             )

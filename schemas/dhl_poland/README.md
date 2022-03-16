@@ -16,4 +16,4 @@ import dhl_poland_lib
 help(dhl_poland_lib)
 ```
 
-*This package is used by the [purplship multi-carrier shipping interface](https://github.com/purplship/purplship)*
+*This package is used by the [karrio multi-carrier shipping interface](https://github.com/karrioapi/karrio)*

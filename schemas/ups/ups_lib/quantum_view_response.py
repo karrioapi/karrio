@@ -13,7 +13,7 @@
 #   ./schemas/QuantumViewResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/quantum_view_response.py" ./schemas/QuantumViewResponse.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/quantum_view_response.py" ./schemas/QuantumViewResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

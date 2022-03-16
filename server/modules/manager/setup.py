@@ -4,18 +4,18 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="purplship.server.manager",
-    version="2022.2",
+    name="karrio.server.manager",
+    version="2022.3",
     description="Multi-carrier shipping API Shipments manager module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/purplship/purplship",
-    author="purplship",
-    author_email="hello@purplship.com",
+    url="https://github.com/karrioapi/karrio",
+    author="karrio",
+    author_email="hello@karrio.io",
     license="Apache License Version 2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "purplship.server.core",
+        "karrio.server.core",
         "django-downloadview",
     ],
     classifiers=[

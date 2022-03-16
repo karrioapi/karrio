@@ -1,7 +1,7 @@
-import purplship
-from purplship.mappers.ups.settings import Settings
+import karrio
+from karrio.mappers.ups.settings import Settings
 
-gateway = purplship.gateway["ups"].create(
+gateway = karrio.gateway["ups"].create(
     Settings(
         username="username",
         password="password",

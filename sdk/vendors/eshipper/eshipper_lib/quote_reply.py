@@ -13,7 +13,7 @@
 #   ./vendor/schemas/quote_reply.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-bridges/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./eshipper_lib/quote_reply.py" ./vendor/schemas/quote_reply.xsd
+#   /Users/danielkobina/Workspace/project/karrio-bridges/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./eshipper_lib/quote_reply.py" ./vendor/schemas/quote_reply.xsd
 #
 # Current working directory (os.getcwd()):
 #   eshipper

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Setup DB and static files
-purplship migrate || exit
-purplship collectstatic --noinput 1> /dev/null || exit
+karrio migrate || exit
+karrio collectstatic --noinput 1> /dev/null || exit
 
 # Setup Default super admin
 (echo "
@@ -12,7 +12,7 @@ if not any(get_user_model().objects.all()):
    ADMIN_EMAIL = config('ADMIN_EMAIL')
    ADMIN_PASSWORD = config('ADMIN_PASSWORD')
    get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
-" | purplship shell) || exit
+" | karrio shell) || exit
 
 
 # Start services
@@ -21,11 +21,11 @@ then
 	set -e # turn on bash's job control
 	trap 'kill 0' INT
 
-	gunicorn --config gunicorn-cfg.py purplship.server.asgi -k uvicorn.workers.UvicornWorker &
+	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k uvicorn.workers.UvicornWorker &
 	/bin/bash ./worker.sh &
 
 	wait -n
 
 else
-	gunicorn --config gunicorn-cfg.py purplship.server.asgi -k uvicorn.workers.UvicornWorker
+	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k uvicorn.workers.UvicornWorker
 fi

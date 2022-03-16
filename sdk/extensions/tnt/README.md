@@ -1,6 +1,6 @@
-# purplship.tnt
+# karrio.tnt
 
-This package is a TNT extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a TNT extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,22 +9,22 @@ This package is a TNT extension of the [purplship](https://pypi.org/project/purp
 ## Installation
 
 ```bash
-pip install purplship.tnt
+pip install karrio.tnt
 ```
 
 ## Usage
 
 ```python
-import purplship
-from purplship.mappers.tnt.settings import Settings
+import karrio
+from karrio.mappers.tnt.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = purplship.gateway["tnt"].create(
+canadapost = karrio.gateway["tnt"].create(
     Settings(
         ...
     )
 )
 ```
 
-Check the [Purplship Mutli-carrier SDK docs](https://sdk.purplship.com) for Shipping API requests
+Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

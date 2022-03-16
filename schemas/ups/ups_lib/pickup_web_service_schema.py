@@ -13,7 +13,7 @@
 #   ./schemas/PickupWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/pickup_web_service_schema.py" ./schemas/PickupWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/pickup_web_service_schema.py" ./schemas/PickupWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

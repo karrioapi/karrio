@@ -1,16 +1,16 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Purplship API",
-        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.2`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "title": "Karrio API",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=25\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": ""
         },
-        "version": "2022.2"
+        "version": "2022.4"
     },
     "servers": [
         {
-            "url": "https://app.purplship.com/"
+            "url": "https://app.karrio.io/"
         }
     ],
     "security": [
@@ -4650,8 +4650,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "object_type": {
                         "title": "Object type",
@@ -4855,8 +4854,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>Customs identification options.</summary>\n\n```\n{\n    \"aes\": \"5218487281\",\n    \"eel_pfc\": \"5218487281\",\n    \"license_number\": \"5218487281\",\n    \"certificate_number\": \"5218487281\",\n    \"nip_number\": \"5218487281\",\n    \"eori_number\": \"5218487281\",\n    \"vat_registration_number\": \"5218487281\",\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     }
                 }
             },
@@ -5325,8 +5323,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "payment": {
                         "$ref": "#/components/schemas/Payment"
@@ -6318,8 +6315,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "reference": {
                         "title": "Reference",
@@ -6387,8 +6383,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "payment": {
                         "$ref": "#/components/schemas/Payment"
@@ -6504,8 +6499,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "payment": {
                         "$ref": "#/components/schemas/Payment"
@@ -6662,8 +6656,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "Advanced carrier specific cancellation options",
-                        "nullable": true
+                        "description": "Advanced carrier specific cancellation options"
                     }
                 }
             },
@@ -7022,8 +7015,7 @@
                         "title": "Options",
                         "type": "object",
                         "properties": {},
-                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n",
-                        "nullable": true
+                        "description": "\n<details>\n<summary>The options available for the shipment.</summary>\n\n```\n{\n    \"currency\": \"USD\",\n    \"insurance\": 100.00,\n    \"cash_on_delivery\": 30.00,\n    \"shipment_date\": \"2020-01-01\",\n    \"dangerous_good\": true,\n    \"declared_value\": 150.00,\n    \"email_notification\": true,\n    \"email_notification_to\": \"shipper@mail.com\",\n    \"signature_confirmation\": true,\n}\n```\n\nPlease check the docs for carrier specific options.\n</details>\n"
                     },
                     "payment": {
                         "$ref": "#/components/schemas/Payment"

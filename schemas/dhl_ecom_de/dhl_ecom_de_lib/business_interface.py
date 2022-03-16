@@ -13,7 +13,7 @@
 #   ./schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_ecom_de_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./dhl_ecom_de_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd
 #
 # Current working directory (os.getcwd()):
 #   dhl_ecom_de

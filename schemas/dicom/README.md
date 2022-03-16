@@ -16,4 +16,4 @@ import dicom_lib
 help(dicom_lib)
 ```
 
-*This package is used by the [Purplship Multi-carrier Shipping Interface](https://github.com/PurplShip/purplship)*
+*This package is used by the [Karrio Multi-carrier Shipping Interface](https://github.com/PurplShip/karrio)*

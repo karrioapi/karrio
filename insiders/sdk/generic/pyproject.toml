@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "purplship.generic"
-version = "2022.2"
-homepage="https://next.purplship.com/docs/guides/sdk"
-repository="https://github.com/purplship/purplship"
-description = "Purplship - Generic Shipping Extension"
-authors = ["Purplship <hello@purplship.com>"]
-license = "Purplship Enterprise License"
+name = "karrio.generic"
+version = "2022.3"
+homepage="https://karrio.io/docs/guides/sdk"
+repository="https://github.com/karrioapi/karrio"
+description = "Karrio - Generic Shipping Extension"
+authors = ["Karrio <hello@karrio.io>"]
+license = "Karrio Enterprise License"
 readme = "README.md"
-packages = [{ include = "purplship" }]
+packages = [{ include = "karrio" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -15,15 +15,9 @@ classifiers=[
     "License :: OSI Approved :: Apache Software License",
 ]
 
-[[tool.poetry.source]]
-name = "purplship"
-url = "https://gitlab.com/api/v4/projects/28001120/packages/pypi"
-secondary = true
-
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = ""
-"purplship.addons" = ""
+"karrio" = ""
 
 [tool.poetry.dev-dependencies]
 

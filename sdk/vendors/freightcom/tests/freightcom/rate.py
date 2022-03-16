@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship.core.models import RateRequest
-from purplship.core.errors import FieldError
-from purplship import Rating
+from karrio.core.utils import DP
+from karrio.core.models import RateRequest
+from karrio.core.errors import FieldError
+from karrio import Rating
 from tests.freightcom.fixture import gateway
 
 
@@ -23,7 +23,7 @@ class TestFreightcomRating(unittest.TestCase):
                 RateRequest(**RateWithPresetMissingDimensionPayload)
             )
 
-    @patch("purplship.mappers.freightcom.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.freightcom.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -31,7 +31,7 @@ class TestFreightcomRating(unittest.TestCase):
         self.assertEqual(url, gateway.proxy.settings.server_url)
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.freightcom.proxy.http") as mock:
+        with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -40,7 +40,7 @@ class TestFreightcomRating(unittest.TestCase):
             )
 
     def test_parse_rate_response_error(self):
-        with patch("purplship.mappers.freightcom.proxy.http") as mock:
+        with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = RateErrorResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

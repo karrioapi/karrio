@@ -1,59 +1,56 @@
 Django<=3.2.11
 
-# Carrier Schemas in Development
-# -e ./schemas/dhl_poland
-
 
 # Carrier Extenstions in Development
-# -e ./sdk/core
-# -e ./sdk/extensions/aramex
-# -e ./sdk/extensions/australiapost
-# -e ./sdk/extensions/canadapost
-# -e ./sdk/extensions/canpar
-# -e ./sdk/extensions/dhl_express
-# -e ./sdk/extensions/dhl_poland
-# -e ./sdk/extensions/dhl_universal
-# -e ./sdk/extensions/dicom
-# -e ./sdk/vendors/eshipper
-# -e ./sdk/extensions/fedex
-# -e ./sdk/vendors/freightcom
-# -e ./sdk/extensions/purolator
-# -e ./sdk/extensions/royalmail
-# -e ./sdk/extensions/sendle
-# -e ./sdk/extensions/sf_express
-# -e ./sdk/extensions/tnt
-# -e ./sdk/extensions/ups
-# -e ./sdk/extensions/usps
-# -e ./sdk/extensions/usps_international
-# -e ./sdk/extensions/yanwen
-# -e ./sdk/extensions/yunexpress
+-e ./sdk/core
+-e ./sdk/extensions/aramex
+-e ./sdk/extensions/australiapost
+-e ./sdk/extensions/canadapost
+-e ./sdk/extensions/canpar
+-e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_poland
+-e ./sdk/extensions/dhl_universal
+-e ./sdk/extensions/dicom
+-e ./sdk/vendors/eshipper
+-e ./sdk/extensions/fedex
+-e ./sdk/vendors/freightcom
+-e ./sdk/extensions/purolator
+-e ./sdk/extensions/royalmail
+-e ./sdk/extensions/sendle
+-e ./sdk/extensions/sf_express
+-e ./sdk/extensions/tnt
+-e ./sdk/extensions/ups
+-e ./sdk/extensions/usps
+-e ./sdk/extensions/usps_international
+-e ./sdk/extensions/yanwen
+-e ./sdk/extensions/yunexpress
 
 
-# purplship
-purplship.aramex
-purplship.australiapost
-purplship.canadapost
-purplship.canpar
-purplship.dhl-express
-purplship.dhl-poland
-purplship.dhl-universal
-purplship.dicom
-purplship.fedex
-purplship.purolator
-purplship.royalmail
-purplship.sendle
-purplship.sf-express
-purplship.tnt
-purplship.ups
-purplship.usps
-purplship.usps_international
-purplship.yanwen
-purplship.yunexpress
-purplship.eshipper
-purplship.freightcom
+# karrio
+# karrio.aramex
+# karrio.australiapost
+# karrio.canadapost
+# karrio.canpar
+# karrio.dhl-express
+# karrio.dhl-poland
+# karrio.dhl-universal
+# karrio.dicom
+# karrio.fedex
+# karrio.purolator
+# karrio.royalmail
+# karrio.sendle
+# karrio.sf-express
+# karrio.tnt
+# karrio.ups
+# karrio.usps
+# karrio.usps_international
+# karrio.yanwen
+# karrio.yunexpress
+# karrio.eshipper
+# karrio.freightcom
 
 
-# purplship server core modules
+# karrio server core modules
 -e ./server/modules/core
 -e ./server/modules/graph
 -e ./server/main

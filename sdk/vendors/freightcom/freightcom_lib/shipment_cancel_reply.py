@@ -13,7 +13,7 @@
 #   ./vendor/schemas/shipment_cancel_reply.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipment_cancel_reply.py" ./vendor/schemas/shipment_cancel_reply.xsd
+#   /Users/danielkobina/Workspace/project/karrio-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipment_cancel_reply.py" ./vendor/schemas/shipment_cancel_reply.xsd
 #
 # Current working directory (os.getcwd()):
 #   freightcom

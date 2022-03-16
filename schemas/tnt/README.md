@@ -5,7 +5,7 @@ TNT Python Data Structure generated from .xsd files with [generateDS](http://www
 ## Installation
 
 ```bash
-pip install -f https://git.io/purplship py-tnt
+pip install py-tnt
 ```
 
 TODO:

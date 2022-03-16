@@ -13,7 +13,7 @@
 #   ./schemas/EstimateService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/estimate_service_2_1_2.py" ./schemas/EstimateService.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/estimate_service_2_1_2.py" ./schemas/EstimateService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

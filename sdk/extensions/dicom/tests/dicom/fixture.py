@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["dicom"].create(
+gateway = karrio.gateway["dicom"].create(
     dict(
         username="username",
         password="password",

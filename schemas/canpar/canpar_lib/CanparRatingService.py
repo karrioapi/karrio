@@ -13,7 +13,7 @@
 #   ./schemas/CanparRatingService.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanparRatingService.py" ./schemas/CanparRatingService.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pycanpar/CanparRatingService.py" ./schemas/CanparRatingService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-canpar

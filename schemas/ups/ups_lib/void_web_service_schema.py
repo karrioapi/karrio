@@ -13,7 +13,7 @@
 #   ./schemas/VoidWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/void_web_service_schema.py" ./schemas/VoidWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/void_web_service_schema.py" ./schemas/VoidWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

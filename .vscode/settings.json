@@ -3,7 +3,7 @@
   "python.terminal.activateEnvInCurrentTerminal": true,
   "editor.formatOnSave": true,
   "python.formatting.provider": "black",
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/purplship",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/karrio",
   "python.linting.mypyEnabled": true,
   "python.linting.enabled": true,
   "files.associations": {

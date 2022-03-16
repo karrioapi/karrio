@@ -13,7 +13,7 @@
 #   ./schemas/track_request_v3_1.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./tnt_lib/track_request_v3_1.py" ./schemas/track_request_v3_1.xsd
+#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./tnt_lib/track_request_v3_1.py" ./schemas/track_request_v3_1.xsd
 #
 # Current working directory (os.getcwd()):
 #   tnt

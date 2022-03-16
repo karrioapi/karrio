@@ -13,7 +13,7 @@
 #   ./schemas/ShippingDocumentsService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_documents_service_1_3_0.py" ./schemas/ShippingDocumentsService.xsd
+#   /Users/daniel/Workspace/Project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_documents_service_1_3_0.py" ./schemas/ShippingDocumentsService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator

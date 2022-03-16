@@ -1,9 +1,9 @@
 import logging
 import unittest
 from unittest.mock import patch
-import purplship
-from purplship.core.utils import DP
-from purplship.core.models import (
+import karrio
+from karrio.core.utils import DP
+from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
@@ -41,9 +41,9 @@ class TestCanparPickup(unittest.TestCase):
         self.assertEqual(request.serialize(), PickupCancelRequestXML)
 
     def test_request_pickup(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
+            karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -54,12 +54,12 @@ class TestCanparPickup(unittest.TestCase):
             )
 
     def test_modify_pickup(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mocks:
+        with patch("karrio.mappers.canpar.proxy.http") as mocks:
             mocks.side_effect = [
                 PickupCancelResponseXML,
                 PickupResponseXML,
             ]
-            purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway)
+            karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             cancel_call, schedule_call = mocks.call_args_list
 
@@ -79,9 +79,9 @@ class TestCanparPickup(unittest.TestCase):
             )
 
     def test_cancel_pickup(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
+            karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -92,31 +92,31 @@ class TestCanparPickup(unittest.TestCase):
             )
 
     def test_parse_request_pickup_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = PickupResponseXML
             parsed_response = (
-                purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
+                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mocks:
+        with patch("karrio.mappers.canpar.proxy.http") as mocks:
             mocks.side_effect = [
                 PickupCancelResponseXML,
                 PickupResponseXML,
             ]
             parsed_response = (
-                purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
+                karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_void_shipment_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = PickupCancelResponseXML
             parsed_response = (
-                purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
+                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
             self.assertEqual(

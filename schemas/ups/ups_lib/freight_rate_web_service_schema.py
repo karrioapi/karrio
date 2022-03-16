@@ -13,7 +13,7 @@
 #   ./schemas/FreightRateWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship/.venv/purplship/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_rate_web_service_schema.py" ./schemas/FreightRateWebServiceSchema.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_rate_web_service_schema.py" ./schemas/FreightRateWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

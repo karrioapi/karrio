@@ -1,6 +1,6 @@
-import purplship
+import karrio
 
-gateway = purplship.gateway["royalmail"].create(
+gateway = karrio.gateway["royalmail"].create(
     dict(
         client_id="x-ibm-client-id",
         client_secret="x-ibm-client-secret",

@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ APP_NAME|default:_('Site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ APP_NAME|default:_('Administration') }}</a></h1>
+{% endblock %}
+
+{% block userlinks %}
+    {% if site_url %}
+        <a href="{{ site_url }}">{% translate 'Health Status' %}</a> /
+    {% endif %}
+    <a href="{% url 'schema-redoc' %}">{% translate 'OpenAPI' %}</a> /
+    <a href="{% url 'karrio.server.graph:graphql' %}">{% translate 'GraphQL' %}</a> /
+    {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
+    {% endif %}
+    <a href="{% url 'admin:logout' %}">{% translate 'Log out' %}</a>
+{% endblock %}

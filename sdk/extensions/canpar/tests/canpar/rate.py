@@ -3,9 +3,9 @@ import time
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils import DP
-from purplship import Rating
-from purplship.core.models import RateRequest
+from karrio.core.utils import DP
+from karrio import Rating
+from karrio.core.models import RateRequest
 from tests.canpar.fixture import gateway
 
 
@@ -25,7 +25,7 @@ class TestCanparRating(unittest.TestCase):
         self.assertEqual(serialized_request, RateRequestXML)
 
     def test_get_rates(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -38,7 +38,7 @@ class TestCanparRating(unittest.TestCase):
             )
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.canpar.proxy.http") as mock:
+        with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
