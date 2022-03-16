@@ -5,6 +5,7 @@ ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
 ARG REGISTRY_TOKEN_NAME
 
+RUN apt install python3-pip libpango-1.0-0 libpangoft2-1.0-0
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY "${REQUIREMENTS}" /temp/
@@ -39,6 +40,7 @@ ENV LOG_DIR /karrio/log
 ENV WORKER_DB_DIR /karrio/data
 ENV STATIC_ROOT_DIR /karrio/static
 
+RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0
 RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
