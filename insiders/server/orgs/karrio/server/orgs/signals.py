@@ -3,6 +3,7 @@ from django.db.models import signals
 from django.contrib.auth import get_user_model
 
 from karrio.server.core import utils
+from karrio.server.conf import settings
 import karrio.server.orgs.models as models
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,9 @@ def user_updated(sender, instance, *args, **kwargs):
     """
     created = kwargs.get("created", False)
     changes = kwargs.get("update_fields") or []
+
+    if settings.MULTI_TENANTS and settings.schema == "public":
+        return
 
     # user created
     if created:
