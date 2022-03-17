@@ -54,8 +54,6 @@ class Documents:
             ]
         )
 
-        print(order_contexts)
-
         buffer = io.BytesIO()
         HTML(string=content).write_pdf(
             buffer,
