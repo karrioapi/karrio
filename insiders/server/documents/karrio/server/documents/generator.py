@@ -54,6 +54,8 @@ class Documents:
             ]
         )
 
+        print(order_contexts)
+
         buffer = io.BytesIO()
         HTML(string=content).write_pdf(
             buffer,
@@ -113,7 +115,7 @@ def get_orders_context(order_ids: str, context) -> typing.List[dict]:
     return [
         dict(
             order=OrderSerializer(order).data,
-            fulfilment=get_fulfilments_context(order),
+            fulfilments=get_fulfilments_context(order),
         )
         for order in orders
     ]
@@ -125,18 +127,21 @@ def get_fulfilments_context(order: Order) -> typing.List[dict]:
             item=Commodity(item).data,
             fulfilled_quantity=sum(
                 [
-                    child.quantity
-                    for child in item.children.exclude(
-                        commodity_parcel__parcel_shipment__status__in=[
-                            ShipmentStatus.cancelled.value,
-                            ShipmentStatus.draft.value,
-                        ]
-                    ).filter(
-                        commodity_parcel__isnull=False, commodity_customs__isnull=True
+                    child.quantity or 0
+                    for child in list(
+                        item.children.exclude(
+                            commodity_parcel__parcel_shipment__status__in=[
+                                ShipmentStatus.cancelled.value,
+                                ShipmentStatus.draft.value,
+                            ]
+                        ).filter(
+                            commodity_parcel__isnull=False,
+                            commodity_customs__isnull=True,
+                        )
                     )
                 ],
                 0,
             ),
         )
-        for item in order.line_items
+        for item in order.line_items.all()
     ]
