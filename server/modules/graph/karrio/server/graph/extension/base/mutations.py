@@ -250,7 +250,7 @@ class RegisterUser(DjangoFormMutation):
             )
 
         user = form.save()
-        return cls(errors=[], user=user, **form.cleaned_data)
+        return cls(user=user, **form.cleaned_data)
 
 
 class ConfirmEmail(utils.ClientMutation):
@@ -288,7 +288,7 @@ class RequestPasswordReset(DjangoFormMutation):
     @classmethod
     def perform_mutate(cls, form, info):
         form.save(request=info.context)
-        return cls(errors=[], **form.cleaned_data)
+        return cls(**form.cleaned_data)
 
 
 class ConfirmPasswordReset(DjangoFormMutation):
