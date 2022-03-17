@@ -70,7 +70,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.2
+  danh91.docker.scarf.sh/karrio/server:2022.3rc
 ```
 
 </details>
@@ -95,7 +95,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.2
+    image: danh91.docker.scarf.sh/karrio/server:2022.3rc
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True

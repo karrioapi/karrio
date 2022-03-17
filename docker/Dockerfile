@@ -5,7 +5,6 @@ ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
 ARG REGISTRY_TOKEN_NAME
 
-RUN apt install python3-pip libpango-1.0-0 libpangoft2-1.0-0
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY "${REQUIREMENTS}" /temp/
@@ -22,7 +21,7 @@ LABEL org.opencontainers.image.title="karrio server"
 LABEL org.opencontainers.image.description="karrio server runtime image"
 LABEL org.opencontainers.image.url="https://karrio.io"
 LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
-LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio-server"
+LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio"
 LABEL org.opencontainers.image.vendor="team karrio"
 LABEL org.opencontainers.image.authors="hello@karrio.io"
 
