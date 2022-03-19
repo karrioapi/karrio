@@ -2,8 +2,8 @@
 name = "carrier.usps"
 version = "2021.6"
 description = "USPS Web API Schemas Python Data Types library"
-repository="https://github.com/Karrio/karrio-carriers"
-homepage="https://github.com/Karrio/karrio-carriers/tree/master/usps"
+repository="https://github.com/karrioapi/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/schemas/usps"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
