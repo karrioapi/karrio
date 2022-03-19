@@ -1,0 +1,73 @@
+{
+  "clientReferenceId": "string",
+  "shipTo": {
+    "name": "string",
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "addressLine3": "string",
+    "stateOrRegion": "string",
+    "city": "string",
+    "countryCode": "st",
+    "postalCode": "string",
+    "email": "string",
+    "copyEmails": [
+      "string"
+    ],
+    "phoneNumber": "string"
+  },
+  "shipFrom": {
+    "name": "string",
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "addressLine3": "string",
+    "stateOrRegion": "string",
+    "city": "string",
+    "countryCode": "st",
+    "postalCode": "string",
+    "email": "string",
+    "copyEmails": [
+      "string"
+    ],
+    "phoneNumber": "string"
+  },
+  "shipDate": "2019-08-24T14:15:22Z",
+  "serviceType": "Amazon Shipping Ground",
+  "containers": [
+    {
+      "containerType": "PACKAGE",
+      "containerReferenceId": "string",
+      "value": {
+        "value": 0,
+        "unit": "str"
+      },
+      "dimensions": {
+        "length": 0,
+        "width": 0,
+        "height": 0,
+        "unit": "IN"
+      },
+      "items": [
+        {
+          "quantity": 0,
+          "unitPrice": {
+            "value": 0,
+            "unit": "str"
+          },
+          "unitWeight": {
+            "unit": "g",
+            "value": 0
+          },
+          "title": "string"
+        }
+      ],
+      "weight": {
+        "unit": "g",
+        "value": 0
+      }
+    }
+  ],
+  "labelSpecification": {
+    "labelFormat": "PNG",
+    "labelStockSize": "4x6"
+  }
+}

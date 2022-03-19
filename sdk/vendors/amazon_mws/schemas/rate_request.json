@@ -1,0 +1,50 @@
+{
+  "shipTo": {
+    "name": "string",
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "addressLine3": "string",
+    "stateOrRegion": "string",
+    "city": "string",
+    "countryCode": "st",
+    "postalCode": "string",
+    "email": "string",
+    "copyEmails": [
+      "string"
+    ],
+    "phoneNumber": "string"
+  },
+  "shipFrom": {
+    "name": "string",
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "addressLine3": "string",
+    "stateOrRegion": "string",
+    "city": "string",
+    "countryCode": "st",
+    "postalCode": "string",
+    "email": "string",
+    "copyEmails": [
+      "string"
+    ],
+    "phoneNumber": "string"
+  },
+  "serviceTypes": [
+    "Amazon Shipping Ground"
+  ],
+  "shipDate": "2019-08-24T14:15:22Z",
+  "containerSpecifications": [
+    {
+      "dimensions": {
+        "length": 0,
+        "width": 0,
+        "height": 0,
+        "unit": "IN"
+      },
+      "weight": {
+        "unit": "g",
+        "value": 0
+      }
+    }
+  ]
+}

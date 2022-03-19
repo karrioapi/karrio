@@ -1,0 +1,46 @@
+{
+  "payload": {
+    "shipmentId": "string",
+    "serviceRate": {
+      "totalCharge": {
+        "value": 0,
+        "unit": "str"
+      },
+      "billableWeight": {
+        "unit": "g",
+        "value": 0
+      },
+      "serviceType": "Amazon Shipping Ground",
+      "promise": {
+        "deliveryWindow": {
+          "start": "2019-08-24T14:15:22Z",
+          "end": "2019-08-24T14:15:22Z"
+        },
+        "receiveWindow": {
+          "start": "2019-08-24T14:15:22Z",
+          "end": "2019-08-24T14:15:22Z"
+        }
+      }
+    },
+    "labelResults": [
+      {
+        "containerReferenceId": "string",
+        "trackingId": "string",
+        "label": {
+          "labelStream": "string",
+          "labelSpecification": {
+            "labelFormat": "PNG",
+            "labelStockSize": "4x6"
+          }
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "string",
+      "message": "string",
+      "details": "string"
+    }
+  ]
+}

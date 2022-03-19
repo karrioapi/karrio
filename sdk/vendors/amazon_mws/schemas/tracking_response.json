@@ -1,0 +1,28 @@
+{
+  "payload": {
+    "trackingId": "string",
+    "summary": {
+      "status": "string"
+    },
+    "promisedDeliveryDate": "2019-08-24T14:15:22Z",
+    "eventHistory": [
+      {
+        "eventCode": "string",
+        "eventTime": "2019-08-24T14:15:22Z",
+        "location": {
+          "stateOrRegion": "string",
+          "city": "string",
+          "countryCode": "st",
+          "postalCode": "string"
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "string",
+      "message": "string",
+      "details": "string"
+    }
+  ]
+}

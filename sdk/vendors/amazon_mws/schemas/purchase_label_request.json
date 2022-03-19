@@ -1,0 +1,7 @@
+{
+  "rateId": "string",
+  "labelSpecification": {
+    "labelFormat": "PNG",
+    "labelStockSize": "4x6"
+  }
+}
