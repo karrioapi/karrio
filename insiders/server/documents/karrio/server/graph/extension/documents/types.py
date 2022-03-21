@@ -13,21 +13,17 @@ class TemplateRelatedObject(graphene.Enum):
 
 class DocumentTemplateFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
-    related_objects = utils.CharInFilter(
-        field_name="related_objects",
-        method="related_objects_filter",
+    related_object = django_filters.CharFilter(
+        field_name="related_object", lookup_expr="icontains"
     )
 
     class Meta:
         model = models.DocumentTemplate
         fields: list = []
 
-    def related_objects_filter(self, queryset, name, value):
-        return queryset.filter(Q(related_objects__contains=value))
-
 
 class DocumentTemplateType(utils.BaseObjectType):
-    related_objects = graphene.List(TemplateRelatedObject, default_value=[])
+    related_object = TemplateRelatedObject()
 
     class Meta:
         model = models.DocumentTemplate

@@ -33,12 +33,12 @@ class Documents:
     def generate(document: models.DocumentTemplate, data: dict, context) -> io.BytesIO:
         shipment_contexts = (
             get_shipments_context(data["shipments"], context)
-            if "shipments" in data and "shipment" in document.related_objects
+            if "shipments" in data and document.related_object == "shipment"
             else []
         )
         order_contexts = (
             get_orders_context(data["orders"], context)
-            if "orders" in data and "order" in document.related_objects
+            if "orders" in data and document.related_object == "order"
             else []
         )
 

@@ -24,7 +24,7 @@ class DocumentTemplate(OwnedEntity):
     slug = models.SlugField(max_length=20, validators=[RegexValidator(r"^[a-z0-9_]+$")])
     template = models.TextField()
     description = models.CharField(max_length=50, null=True, blank=True)
-    related_objects = fields.ArrayField(models.CharField(max_length=25), blank=False)
+    related_object = models.CharField(max_length=25, blank=False)
 
     org = models.ManyToManyField(
         Organization, related_name="document_templates", through="DocumentTemplateLink"

@@ -537,15 +537,11 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "related_objects",
+                  "name": "related_object",
                   "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   }
                 }
               ],
@@ -3562,15 +3558,11 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "related_objects",
+              "name": "related_object",
               "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "TemplateRelatedObject",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "TemplateRelatedObject",
+                "ofType": null
               }
             },
             {
@@ -15111,18 +15103,14 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "related_objects",
+              "name": "related_object",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "TemplateRelatedObject",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "TemplateRelatedObject",
+                  "ofType": null
                 }
               }
             },
@@ -15255,15 +15243,11 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "related_objects",
+              "name": "related_object",
               "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "TemplateRelatedObject",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "TemplateRelatedObject",
+                "ofType": null
               }
             },
             {
