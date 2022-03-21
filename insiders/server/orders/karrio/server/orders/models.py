@@ -11,6 +11,32 @@ from karrio.server.orders.serializers.base import (
 )
 
 
+class LineItem(manager.Commodity):
+    class Meta:
+        proxy = True
+
+    @property
+    def unfulfilled_quantity(self):
+        quantity = self.quantity - sum(
+            [
+                child.quantity or 0
+                for child in list(
+                    self.children.exclude(
+                        commodity_parcel__parcel_shipment__status__in=[
+                            "cancelled",
+                            "draft",
+                        ]
+                    ).filter(
+                        commodity_parcel__isnull=False,
+                        commodity_customs__isnull=True,
+                    )
+                )
+            ],
+            0,
+        )
+        return quantity if quantity > 0 else 0
+
+
 class OrderManager(models.Manager):
     def get_queryset(self):
         return (
@@ -65,7 +91,7 @@ class Order(OwnedEntity):
         related_name="shipper_order",
     )
     line_items = models.ManyToManyField(
-        "manager.Commodity", related_name="commodity_order", through="OrderLineItemLink"
+        LineItem, related_name="commodity_order", through="OrderLineItemLink"
     )
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
@@ -96,5 +122,5 @@ class OrderLineItemLink(models.Model):
         Order, on_delete=models.CASCADE, related_name="line_item_links"
     )
     item = models.OneToOneField(
-        "manager.Commodity", on_delete=models.CASCADE, related_name="order_link"
+        LineItem, on_delete=models.CASCADE, related_name="order_link"
     )

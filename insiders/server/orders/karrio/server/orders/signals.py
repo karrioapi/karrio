@@ -58,7 +58,7 @@ def shipment_updated(
     - shipment fulfilled (shipped)
     """
     if not instance.parcels.filter(
-        items__parent__commodity_order__isnull=False
+        items__parent__order_link__order__isnull=False
     ).exists():
         return
 

@@ -76,6 +76,10 @@ class OrderData(Serializer):
     )
 
 
+class LineItem(Commodity):
+    unfulfilled_quantity = fields.IntegerField(default=0)
+
+
 class Order(EntitySerializer):
     object_type = fields.CharField(
         default="order", help_text="Specifies the object type"
@@ -96,7 +100,7 @@ class Order(EntitySerializer):
         allow_null=True,
         help_text="The origin or warehouse address of the order items.",
     )
-    line_items = Commodity(
+    line_items = LineItem(
         many=True, allow_empty=False, help_text="The order line items."
     )
     options = PlainDictField(

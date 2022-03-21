@@ -5,6 +5,7 @@ from django.db.models import Q
 
 import karrio.server.graph.utils as utils
 import karrio.server.graph.extension.base.types as types
+import karrio.server.manager.models as manager
 import karrio.server.orders.models as models
 import karrio.server.orders.serializers as serializers
 
@@ -74,11 +75,22 @@ class OrderFilter(django_filters.FilterSet):
         return queryset.filter(Q(metadata__values__contains=value))
 
 
+class LineItemType(types.CommodityType):
+    unfulfilled_quantity = graphene.Int()
+
+    class Meta:
+        model = models.LineItem
+        exclude = (
+            *manager.Commodity.HIDDEN_PROPS,
+            "commodity_order",
+        )
+
+
 class OrderType(utils.BaseObjectType):
     shipping_to = graphene.Field(graphene.NonNull(types.AddressType))
     shipping_from = graphene.Field(types.AddressType)
     line_items = graphene.List(
-        graphene.NonNull(types.CommodityType), required=True, default_value=[]
+        graphene.NonNull(LineItemType), required=True, default_value=[]
     )
     shipments = graphene.List(
         graphene.NonNull(types.ShipmentType), required=True, default_value=[]

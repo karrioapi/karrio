@@ -41,9 +41,7 @@ class TestOrders(TestOrderFixture):
 class TestOrderDetails(TestOrderFixture):
     def test_retrieve_order(self):
         _, data = self.create_order()
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=data["id"]))
         response = self.client.get(url)
         response_data = json.loads(response.content)
 
@@ -52,9 +50,7 @@ class TestOrderDetails(TestOrderFixture):
 
     def test_cancel_order(self):
         _, order = self.create_order()
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=order["id"]))
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -66,9 +62,7 @@ class TestOrderDetails(TestOrderFixture):
         order.status = "fulfilled"
         order.save()
 
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=data["id"]))
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
@@ -79,9 +73,7 @@ class TestOrderDetails(TestOrderFixture):
         order.status = "delivered"
         order.save()
 
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=data["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=data["id"]))
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
@@ -100,9 +92,7 @@ class TestOrderShipments(TestOrderFixture):
             self.client.post(shipment_url, data)
 
         # Fetch related order
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=order["id"]))
         response = self.client.get(url)
         response_data = json.loads(response.content)
 
@@ -137,9 +127,7 @@ class TestOrderShipments(TestOrderFixture):
             shipment.save()
 
         # Fetch related order
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=order["id"]))
         response = self.client.get(url)
         response_data = json.loads(response.content)
 
@@ -187,9 +175,7 @@ class TestOrderShipments(TestOrderFixture):
             shipment.save()
 
         # Fetch related order
-        url = reverse(
-            "karrio.server.orders:order-detail", kwargs=dict(pk=order["id"])
-        )
+        url = reverse("karrio.server.orders:order-detail", kwargs=dict(pk=order["id"]))
         response = self.client.get(url)
         response_data = json.loads(response.content)
 
@@ -269,6 +255,7 @@ ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
             "quantity": 1,
+            "unfulfilled_quantity": 1,
             "sku": None,
             "value_amount": 85.95,
             "value_currency": "USD",
@@ -283,6 +270,7 @@ ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Red Leather Coat",
             "quantity": 1,
+            "unfulfilled_quantity": 1,
             "sku": None,
             "value_amount": 129.99,
             "value_currency": "USD",
@@ -404,6 +392,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
             "quantity": 1,
+            "unfulfilled_quantity": 1,
             "sku": None,
             "value_amount": 85.95,
             "value_currency": "USD",
@@ -418,6 +407,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "weight_unit": "KG",
             "description": "Red Leather Coat",
             "quantity": 1,
+            "unfulfilled_quantity": 1,
             "sku": None,
             "value_amount": 129.99,
             "value_currency": "USD",
@@ -596,6 +586,7 @@ FULFILLED_ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
             "quantity": 1,
+            "unfulfilled_quantity": 0,
             "sku": None,
             "value_amount": 85.95,
             "value_currency": "USD",
@@ -610,6 +601,7 @@ FULFILLED_ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Red Leather Coat",
             "quantity": 1,
+            "unfulfilled_quantity": 0,
             "sku": None,
             "value_amount": 129.99,
             "value_currency": "USD",
@@ -801,6 +793,7 @@ PARTIAL_ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Blue Suede Shoes",
             "quantity": 1,
+            "unfulfilled_quantity": 0,
             "sku": None,
             "value_amount": 85.95,
             "value_currency": "USD",
@@ -815,6 +808,7 @@ PARTIAL_ORDER_RESPONSE = {
             "weight_unit": "KG",
             "description": "Red Leather Coat",
             "quantity": 1,
+            "unfulfilled_quantity": 1,
             "sku": None,
             "value_amount": 129.99,
             "value_currency": "USD",
