@@ -122,9 +122,10 @@ def compute_order_status(order: models.Order) -> str:
     )
 
     for line_item in order.line_items.all():
-        fulfilled = line_item.unfulfilled_quantity == 0
+        fulfilled = line_item.unfulfilled_quantity <= 0
+        partially_fulfilled = line_item.unfulfilled_quantity < line_item.quantity
 
-        if fulfilled and not line_items_are_partially_fulfilled:
+        if partially_fulfilled and not line_items_are_partially_fulfilled:
             line_items_are_partially_fulfilled = True
 
         if not fulfilled:
