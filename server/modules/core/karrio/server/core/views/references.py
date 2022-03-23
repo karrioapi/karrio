@@ -21,6 +21,7 @@ class References(Serializer):
     APP_NAME = CharField()
     APP_VERSION = CharField()
     APP_WEBSITE = CharField()
+    CUSTOM_CARRIER_DEFINITION = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()

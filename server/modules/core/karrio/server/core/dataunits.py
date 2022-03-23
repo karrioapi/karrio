@@ -43,6 +43,7 @@ def contextual_metadata(request: Request):
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
+        "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
     }
 

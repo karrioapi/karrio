@@ -16,14 +16,14 @@ def parse_shipment_response(
     settings: ShippingMixinSettings,
 ) -> Tuple[ShipmentDetails, List[Message]]:
     service_labels, errors = response
-    shipments = to_multi_piece_shipment(
+    shipment = to_multi_piece_shipment(
         [
             (package_ref, _extract_details(service_label, settings))
             for package_ref, service_label in service_labels
         ]
     )
 
-    return shipments, errors
+    return shipment, errors
 
 
 def _extract_details(

@@ -433,7 +433,7 @@ class _UpdateCarrierConnection:
             context=info.context,
         )
 
-        if not serializer.is_valid():
+        if not serializer.is_valid(raise_exception=True):
             return UpdateCarrierConnection(
                 errors=ErrorType.from_errors(serializer.errors)
             )

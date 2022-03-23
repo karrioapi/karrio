@@ -21149,7 +21149,7 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
-              "name": "alias",
+              "name": "slug",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -21179,29 +21179,13 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
-              "isDeprecated": false,
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
               "name": "template_type",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "LabelTemplateTemplateType",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "LabelTemplateTypeEnum",
+                "ofType": null
               }
             },
             {
@@ -21231,25 +21215,13 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "",
+              "description": null,
               "isDeprecated": false,
-              "name": "genericsettings_set",
+              "name": "shipment_sample",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "GenericSettings",
-                      "ofType": null
-                    }
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null
               }
             },
             {
@@ -21286,13 +21258,13 @@
           "enumValues": [
             {
               "deprecationReason": null,
-              "description": "SVG",
+              "description": null,
               "isDeprecated": false,
               "name": "SVG"
             },
             {
               "deprecationReason": null,
-              "description": "ZPL",
+              "description": null,
               "isDeprecated": false,
               "name": "ZPL"
             }
@@ -21301,7 +21273,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "LabelTemplateTemplateType",
+          "name": "LabelTemplateTypeEnum",
           "possibleTypes": null
         },
         {
@@ -26681,19 +26653,19 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
+              "defaultValue": "\"SVG\"",
               "description": null,
               "name": "template_type",
               "type": {
                 "kind": "ENUM",
-                "name": "LabelTypeEnum",
+                "name": "LabelTemplateTypeEnum",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "alias",
+              "name": "slug",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -26721,16 +26693,6 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "width",
               "type": {
                 "kind": "SCALAR",
@@ -26745,6 +26707,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "shipment_sample",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             }
@@ -29753,19 +29725,19 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"SVG\"",
               "description": null,
               "name": "template_type",
               "type": {
                 "kind": "ENUM",
-                "name": "LabelTypeEnum",
+                "name": "LabelTemplateTypeEnum",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "alias",
+              "name": "slug",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -29776,16 +29748,6 @@
               "defaultValue": null,
               "description": null,
               "name": "template",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "description",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -29809,6 +29771,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "shipment_sample",
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
                 "ofType": null
               }
             }

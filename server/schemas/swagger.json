@@ -2589,6 +2589,7 @@
             "required": [
                 "APP_NAME",
                 "APP_VERSION",
+                "CUSTOM_CARRIER_DEFINITION",
                 "MULTI_ORGANIZATIONS",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
@@ -2614,6 +2615,10 @@
                     "type": "string",
                     "minLength": 1,
                     "x-nullable": true
+                },
+                "CUSTOM_CARRIER_DEFINITION": {
+                    "title": "Custom carrier definition",
+                    "type": "boolean"
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",
@@ -6313,6 +6318,7 @@
                 "APP_NAME",
                 "APP_VERSION",
                 "APP_WEBSITE",
+                "CUSTOM_CARRIER_DEFINITION",
                 "MULTI_ORGANIZATIONS",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
@@ -6353,6 +6359,10 @@
                     "title": "App website",
                     "type": "string",
                     "minLength": 1
+                },
+                "CUSTOM_CARRIER_DEFINITION": {
+                    "title": "Custom carrier definition",
+                    "type": "boolean"
                 },
                 "MULTI_ORGANIZATIONS": {
                     "title": "Multi organizations",

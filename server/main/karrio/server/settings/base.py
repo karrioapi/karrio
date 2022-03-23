@@ -115,8 +115,9 @@ KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 MULTI_ORGANIZATIONS = importlib.util.find_spec("karrio.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("karrio.server.orders") is not None
 APPS_MANAGEMENT = importlib.util.find_spec("karrio.server.apps") is not None
-DOCUMENTS_MANAGEMENT = (
-    importlib.util.find_spec("karrio.server.documents") is not None
+DOCUMENTS_MANAGEMENT = importlib.util.find_spec("karrio.server.documents") is not None
+CUSTOM_CARRIER_DEFINITION = (
+    importlib.util.find_spec("karrio.mappers.generic") is not None
 )
 MULTI_TENANTS = importlib.util.find_spec(
     "karrio.server.tenants"

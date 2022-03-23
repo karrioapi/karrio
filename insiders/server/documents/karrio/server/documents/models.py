@@ -1,6 +1,5 @@
 from functools import partial
 from django.db import models
-from django.contrib.postgres import fields
 from django.core.validators import RegexValidator
 
 from karrio.server.orgs.models import Organization

@@ -142,6 +142,9 @@ CustomsContentTypeEnum = graphene.Enum(
 IncotermCodeEnum = graphene.Enum("IncotermCodeEnum", serializers.INCOTERMS)
 PaidByEnum = graphene.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
 LabelTypeEnum = graphene.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
+LabelTemplateTypeEnum = graphene.Enum(
+    "LabelTemplateTypeEnum", serializers.LABEL_TEMPLATE_TYPES
+)
 ShipmentStatusEnum = graphene.Enum("ShipmentStatusEnum", serializers.SHIPMENT_STATUS)
 TrackerStatusEnum = graphene.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
 
