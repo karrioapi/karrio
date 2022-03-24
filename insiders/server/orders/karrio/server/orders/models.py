@@ -1,3 +1,4 @@
+import datetime
 from functools import partial
 from django.conf import settings
 from django.db import models
@@ -6,9 +7,7 @@ from karrio.server.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid
 from karrio.server.manager import models as manager
 
-from karrio.server.orders.serializers.base import (
-    ORDER_STATUS,
-)
+from karrio.server.orders.serializers.base import ORDER_STATUS
 
 
 class LineItem(manager.Commodity):
@@ -55,6 +54,7 @@ class Order(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [
         "order_id",
+        "order_date",
         "source",
         "status",
         "options",
@@ -77,11 +77,12 @@ class Order(OwnedEntity):
         editable=False,
     )
     order_id = models.CharField(max_length=50)
+    order_date = models.DateField(default=datetime.date.today)
     source = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
     )
-    shipping_to = models.ForeignKey(
+    shipping_to = models.OneToOneField(
         "manager.Address", on_delete=models.CASCADE, related_name="recipient_order"
     )
     shipping_from = models.OneToOneField(

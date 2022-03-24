@@ -11001,6 +11001,22 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "order_date",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Date",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "source",
               "type": {
                 "kind": "SCALAR",

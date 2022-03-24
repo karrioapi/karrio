@@ -10,6 +10,7 @@ from karrio.server.core.serializers import (
     EntitySerializer,
     Shipment,
     allow_model_id,
+    valid_date_format,
 )
 
 
@@ -33,6 +34,13 @@ ORDER_STATUS = [(c.value, c.value) for c in list(OrderStatus)]
 )
 class OrderData(Serializer):
     order_id = fields.CharField(required=True, help_text="The source' order id.")
+    order_date = fields.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        validators=[valid_date_format("order_date")],
+        help_text="The order date. format: `YYYY-MM-DD`",
+    )
     source = fields.CharField(
         required=False,
         default="API",
@@ -85,6 +93,13 @@ class Order(EntitySerializer):
         default="order", help_text="Specifies the object type"
     )
     order_id = fields.CharField(required=True, help_text="The source' order id.")
+    order_date = fields.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        validators=[valid_date_format("order_date")],
+        help_text="The order date. format: `YYYY-MM-DD`",
+    )
     source = fields.CharField(required=False, help_text="The order's source.")
     status = fields.ChoiceField(
         choices=ORDER_STATUS,

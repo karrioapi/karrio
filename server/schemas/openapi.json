@@ -5598,6 +5598,12 @@
                         "type": "string",
                         "description": "The source' order id."
                     },
+                    "order_date": {
+                        "title": "Order date",
+                        "type": "string",
+                        "description": "The order date. format: `YYYY-MM-DD`",
+                        "nullable": true
+                    },
                     "source": {
                         "title": "Source",
                         "minLength": 1,
@@ -5702,6 +5708,12 @@
                         "minLength": 1,
                         "type": "string",
                         "description": "The source' order id."
+                    },
+                    "order_date": {
+                        "title": "Order date",
+                        "type": "string",
+                        "description": "The order date. format: `YYYY-MM-DD`",
+                        "nullable": true
                     },
                     "source": {
                         "title": "Source",
