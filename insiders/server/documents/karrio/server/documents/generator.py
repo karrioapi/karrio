@@ -3,15 +3,17 @@ import typing
 from jinja2 import Template
 from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
+from django.db.models import Sum
 
 from karrio.core.units import CountryISO
 from karrio.server.core.dataunits import REFERENCE_MODELS
 from karrio.server.manager.models import Shipment
-from karrio.server.orders.models import Order
-from karrio.server.orders.serializers import Order as OrderSerializer
+from karrio.server.orders.models import Order, LineItem
+from karrio.server.orders.serializers import (
+    Order as OrderSerializer,
+    LineItem as LineItemSerializer,
+)
 from karrio.server.core.serializers import (
-    Commodity,
-    ShipmentStatus,
     Shipment as ShipmentSerializer,
     CarrierSettings,
 )
@@ -32,12 +34,12 @@ class Documents:
     @staticmethod
     def generate(document: models.DocumentTemplate, data: dict, context) -> io.BytesIO:
         shipment_contexts = (
-            get_shipments_context(data["shipments"], context)
+            get_shipments_context(data["shipments"])
             if "shipments" in data and document.related_object == "shipment"
             else []
         )
         order_contexts = (
-            get_orders_context(data["orders"], context)
+            get_orders_context(data["orders"])
             if "orders" in data and document.related_object == "order"
             else []
         )
@@ -64,7 +66,7 @@ class Documents:
         return buffer
 
 
-def get_shipments_context(shipment_ids: str, context) -> typing.List[dict]:
+def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
     if shipment_ids == "sample":
         return [utils.SHIPMENT_SAMPLE]
 
@@ -74,10 +76,39 @@ def get_shipments_context(shipment_ids: str, context) -> typing.List[dict]:
     return [
         dict(
             shipment=ShipmentSerializer(shipment).data,
+            line_items=get_shipment_item_contexts(shipment),
             carrier=get_carrier_context(shipment.selected_rate_carrier),
+            orders=OrderSerializer(
+                get_shipment_order_contexts(shipment), many=True
+            ).data,
         )
         for shipment in shipments
     ]
+
+
+def get_shipment_item_contexts(shipment):
+    items = LineItem.objects.filter(commodity_parcel__parcel_shipment=shipment)
+
+    return [
+        {
+            **LineItemSerializer(item.parent or item).data,
+            "ship_quantity": items.filter(parent_id=item.parent_id).aggregate(
+                Sum("quantity")
+            )["quantity__sum"],
+            "order": OrderSerializer(item.order or {}).data,
+        }
+        for item in items.order_by("parent_id").distinct("parent_id")
+    ]
+
+
+def get_shipment_order_contexts(shipment):
+    return (
+        Order.objects.filter(
+            line_items__children__commodity_parcel__parcel_shipment=shipment
+        )
+        .order_by("order_date")
+        .distinct()
+    )
 
 
 def get_carrier_context(carrier=None):
@@ -103,7 +134,7 @@ def get_carrier_context(carrier=None):
     }
 
 
-def get_orders_context(order_ids: str, context) -> typing.List[dict]:
+def get_orders_context(order_ids: str) -> typing.List[dict]:
     if order_ids == "sample":
         return [utils.ORDER_SAMPLE]
 

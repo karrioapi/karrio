@@ -260,6 +260,13 @@ SHIPMENT_SAMPLE = dict(
             "CHECK_DIGIT": "5",
         },
     },
+    items=[
+        {
+            "id": "cdt_04e2d1cc865e495aaced676d82764a14",
+            "order": {"id": "ord_c9d9f9f8b9e44f8c9c8b8b8b8b8b8b8b"},
+        }
+    ],
+    orders=[]
 )
 
 
