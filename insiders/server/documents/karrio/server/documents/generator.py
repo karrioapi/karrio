@@ -106,7 +106,7 @@ def get_shipment_order_contexts(shipment):
         Order.objects.filter(
             line_items__children__commodity_parcel__parcel_shipment=shipment
         )
-        .order_by("order_date")
+        .order_by("-order_date")
         .distinct()
     )
 

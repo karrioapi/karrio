@@ -26,6 +26,7 @@ from karrio.server.providers.models import MODELS
 from karrio.server.serializers import Serializer, allow_model_id
 from karrio.server.core.validators import (
     AugmentedAddressSerializer,
+    OptionDefaultSerializer,
     PresetSerializer,
     valid_time_format,
     valid_date_format,
@@ -577,33 +578,6 @@ class Customs(EntitySerializer, CustomsData):
     )
 
 
-class COD(Serializer):
-
-    amount = FloatField(required=True, help_text="The amount to collect on delivery")
-
-
-class Notification(Serializer):
-
-    email = CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="""
-    The alternative notification email.
-
-    Note that by default the recipient email will be used.
-    """,
-    )
-    locale = CharField(required=False, allow_blank=True, allow_null=True, default="en")
-
-
-class Insurance(Serializer):
-
-    amount = FloatField(
-        required=True, allow_null=True, help_text="The insurance coverage amount."
-    )
-
-
 class Charge(Serializer):
 
     name = CharField(
@@ -630,7 +604,7 @@ class Charge(Serializer):
         ("parcels", "karrio.server.manager.models.Parcel"),
     ]
 )
-class RateRequest(Serializer):
+class RateRequest(OptionDefaultSerializer):
     shipper = AddressData(
         required=True,
         help_text="""
@@ -1061,7 +1035,7 @@ class TrackingStatus(EntitySerializer, TrackingDetails):
         ("customs", "karrio.server.manager.models.Customs"),
     ]
 )
-class ShippingData(Serializer):
+class ShippingData(OptionDefaultSerializer):
     shipper = AddressData(
         required=True,
         help_text="""
