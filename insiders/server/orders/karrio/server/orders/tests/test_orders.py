@@ -224,6 +224,7 @@ ORDER_RESPONSE = {
     "id": ANY,
     "object_type": "order",
     "order_id": "1073459962",
+    "order_date": ANY,
     "source": "shopify",
     "status": "unfulfilled",
     "shipping_to": {
@@ -361,6 +362,7 @@ ORDER_SHIPMENTS_RESPONSE = {
     "id": ANY,
     "object_type": "order",
     "order_id": "1073459962",
+    "order_date": ANY,
     "source": "shopify",
     "status": "unfulfilled",
     "shipping_to": {
@@ -531,7 +533,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                 }
             ],
             "services": [],
-            "options": {"currency": "CAD"},
+            "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "reference": None,
@@ -555,6 +557,7 @@ FULFILLED_ORDER_RESPONSE = {
     "id": ANY,
     "object_type": "order",
     "order_id": "1073459962",
+    "order_date": ANY,
     "source": "shopify",
     "status": "fulfilled",
     "shipping_to": {
@@ -740,7 +743,7 @@ FULFILLED_ORDER_RESPONSE = {
                 }
             ],
             "services": [],
-            "options": {"currency": "CAD"},
+            "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "reference": None,
@@ -763,6 +766,7 @@ PARTIAL_ORDER_RESPONSE = {
     "id": ANY,
     "object_type": "order",
     "order_id": "1073459962",
+    "order_date": ANY,
     "source": "shopify",
     "status": "partial",
     "shipping_to": {
@@ -898,7 +902,7 @@ PARTIAL_ORDER_RESPONSE = {
                 }
             ],
             "services": [],
-            "options": {"currency": "CAD"},
+            "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "rates": [

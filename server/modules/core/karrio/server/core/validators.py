@@ -80,12 +80,15 @@ def valid_datetime_format(prop: str):
 
 class OptionDefaultSerializer(serializers.Serializer):
     def validate(self, data):
-
+        options = {
+            **getattr(self.instance, "options", {}),
+            **(data.get("options") or {}),
+        }
         data.update(
             dict(
                 options={
                     "shipment_date": datetime.now().strftime("%Y-%m-%d"),
-                    **(data.get("options") or {}),
+                    **options,
                 }
             )
         )
@@ -145,7 +148,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                 if not re.match(r"^\d{5}(-\d{4})?$", formatted):
                     raise serializers.ValidationError(
                         {
-                            "postal_code": "The American postal code must match 12345 and 12345-6789"
+                            "postal_code": "The American postal code must match 12345 or 12345-6789"
                         }
                     )
 

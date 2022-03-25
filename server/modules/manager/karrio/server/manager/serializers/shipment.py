@@ -40,7 +40,6 @@ from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
-from uritemplate import partial
 
 logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: Any = dict(active=True, capability="shipping")
