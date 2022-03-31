@@ -1,6 +1,7 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import (
     UserCreationForm,
     AuthenticationForm,
@@ -38,7 +39,7 @@ class SignUpForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         label=_("Email"),
-        widget=forms.PasswordInput(attrs={"autofocus": True}),
+        widget=forms.EmailInput(attrs={"autofocus": True}),
     )
 
     def get_invalid_login_error(self):
@@ -47,3 +48,7 @@ class LoginForm(AuthenticationForm):
             code="invalid_login",
             params={"username": self.username_field.verbose_name},
         )
+
+
+class LogIn(LoginView):
+    form_class = LoginForm

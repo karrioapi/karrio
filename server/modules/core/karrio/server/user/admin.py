@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -36,17 +37,43 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
-    list_display = ("email", "full_name", "is_staff", "is_active", "date_joined")
-    list_filter = ("is_staff", "is_superuser", "is_active", "groups", "date_joined")
+    list_display = (
+        "email",
+        "full_name",
+        "is_staff",
+        "is_active",
+        "date_joined",
+        "last_login",
+    )
+    list_filter = (
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "groups",
+        "last_login",
+        "date_joined",
+    )
     search_fields = ("email", "full_name")
     ordering = ("email",)
 
 
 class TokenAdmin(admin.ModelAdmin):
-    list_display = ("key", "user", "created")
+    list_display = (
+        "key",
+        "user",
+        *(["organization"] if settings.MULTI_ORGANIZATIONS else []),
+        "created",
+    )
     fields = ("user",)
     ordering = ("-created",)
 
+    def has_add_permission(self, request, obj=None):
+        return not settings.MULTI_ORGANIZATIONS
 
-admin.site.register(User, UserAdmin)
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        return query.filter(user=request.user)
+
+
 admin.site.register(Token, TokenAdmin)
+admin.site.register(User, UserAdmin)

@@ -48,7 +48,7 @@ def contextual_metadata(request: Request):
     }
 
 
-def contextual_reference(request: Request):
+def contextual_reference(request: Request, reduced: bool = True):
     import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
 
@@ -56,7 +56,11 @@ def contextual_reference(request: Request):
     references = {
         **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
-        **{k: v for k, v in REFERENCE_MODELS.items() if k not in REFERENCE_EXCLUSIONS},
+        **{
+            k: v
+            for k, v in REFERENCE_MODELS.items()
+            if k not in (REFERENCE_EXCLUSIONS if reduced else [])
+        },
     }
 
     if is_authenticated and "generic" in MODELS:
