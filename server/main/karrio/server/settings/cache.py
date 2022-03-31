@@ -1,4 +1,5 @@
 from decouple import config
+from karrio.server.settings.base import *
 
 
 CACHE_TTL = 60 * 15
@@ -7,6 +8,10 @@ REDIS_PORT = config("REDIS_PORT", default=None)
 
 # karrio server caching setup
 if REDIS_HOST is not None:
+    INSTALLED_APPS += [
+        "health_check.contrib.redis",
+    ]
+
     REDIS_CONNECTION_URL = (
         f'redis://{REDIS_HOST or "127.0.0.1"}:{REDIS_PORT or "6379"}/1'
     )

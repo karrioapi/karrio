@@ -17,6 +17,8 @@ setup(
     install_requires=[
         "karrio",
         "psycopg2-binary",
+        "django-health-check",
+        "psutil",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

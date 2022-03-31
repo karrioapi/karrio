@@ -1,6 +1,16 @@
 import sentry_sdk
-from decouple import config
 from sentry_sdk.integrations.django import DjangoIntegration
+from karrio.server.settings.base import *
+
+
+INSTALLED_APPS += [
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.storage",
+    "health_check.contrib.migrations",
+    "health_check.contrib.psutil",
+]
 
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096
