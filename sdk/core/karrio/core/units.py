@@ -649,6 +649,10 @@ class CustomsInfo:
     def duty(self) -> str:
         return getattr(self._customs, "duty", None)
 
+    @property
+    def commodities(self):
+        return getattr(self._customs, "commodities", None) or []
+
 
 class Phone:
     def __init__(self, phone_number: str = None, country_code: str = None):

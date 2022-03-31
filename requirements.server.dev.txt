@@ -2,12 +2,12 @@ Django<=3.2.12
 
 
 # Carrier Extenstions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
-# -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
