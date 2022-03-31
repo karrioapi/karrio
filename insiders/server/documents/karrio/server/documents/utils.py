@@ -2,6 +2,7 @@ import base64
 import io
 from barcode import Code128
 from barcode.writer import ImageWriter
+from karrio.core.utils import DF
 
 ORDER_SAMPLE = dict(
     order={
@@ -2347,3 +2348,6 @@ def create_barcode(value) -> str:
     barcode.save(buffer, "PNG")
 
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+date_format = DF.fdatetime
