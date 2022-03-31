@@ -52,7 +52,9 @@ def contextual_reference(request: Request, reduced: bool = True):
     import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
 
-    is_authenticated = getattr(request, "auth", None) is not None
+    is_authenticated = (
+        request.user.is_authenticated if hasattr(request, "user") else False
+    )
     references = {
         **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
