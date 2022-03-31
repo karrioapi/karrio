@@ -9,14 +9,14 @@ import karrio.server.apps.models as models
 
 class Query:
     app = graphene.Field(types.AppType, id=graphene.String(required=True))
-    apps = django_filter.DjangoFilterConnectionField(
-        types.AppType,
+    private_apps = django_filter.DjangoFilterConnectionField(
+        types.PrivateAppType,
         required=True,
         filterset_class=types.AppFilter,
         default_value=[],
     )
-    public_apps = django_filter.DjangoFilterConnectionField(
-        types.PublicAppType,
+    apps = django_filter.DjangoFilterConnectionField(
+        types.AppType,
         required=True,
         filterset_class=types.AppFilter,
         default_value=[],
