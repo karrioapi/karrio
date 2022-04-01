@@ -22,7 +22,12 @@ BASE_PATH = getattr(settings, "BASE_PATH", "")
 urlpatterns = [
     path(
         BASE_PATH,
-        include([path("", tenants_admin.site.urls, name="tenants_admin")]),
+        include(
+            [
+                path("status/", include("health_check.urls")),
+                path("", tenants_admin.site.urls, name="tenants_admin"),
+            ]
+        ),
         name="karrio:tenants:index",
     ),
 ]
