@@ -58,7 +58,7 @@ karrio.aramex==2022.3
 karrio.australiapost==2022.3
 karrio.canadapost==2022.3
 karrio.canpar==2022.3
-karrio.dhl-express==2022.3.5
+karrio.dhl-express==2022.3.6
 karrio.dhl-poland==2022.3
 karrio.dhl-universal==2022.3
 karrio.dicom==2022.3
