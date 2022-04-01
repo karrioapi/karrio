@@ -290,7 +290,9 @@ def shipment_request(
             if is_dutiable
             else None
         ),
-        Reference=([Reference(ReferenceID=reference)] if any([reference]) else None),
+        Reference=(
+            [Reference(ReferenceID=reference[:30])] if any([reference]) else None
+        ),
         ShipmentDetails=DHLShipmentDetails(
             Pieces=Pieces(
                 Piece=[
