@@ -72,7 +72,7 @@ karrio.server==2022.3.6
 karrio.server.core==2022.3.5
 karrio.server.events==2022.3
 karrio.server.graph==2022.3.2
-karrio.server.manager==2022.3.5
+karrio.server.manager==2022.3.6
 karrio.server.pricing==2022.3
 karrio.server.proxy==2022.3.4
 karrio.sf-express==2022.3

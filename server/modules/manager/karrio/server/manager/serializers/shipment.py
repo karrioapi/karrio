@@ -197,6 +197,7 @@ class ShipmentSerializer(ShipmentData):
 
         if "docs" in validated_data:
             changes.append("label")
+            changes.append("invoice")
             instance.label = validated_data["docs"].get("label") or instance.label
             instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
 
