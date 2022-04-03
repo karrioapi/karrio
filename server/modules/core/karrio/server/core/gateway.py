@@ -94,7 +94,7 @@ class Carriers:
 
         if any(list_filter.get("services", [])):
             carrier_names = [
-                name.replace("_", "")
+                name
                 for name, services in dataunits.contextual_reference(context)[
                     "services"
                 ].items()
@@ -105,13 +105,13 @@ class Carriers:
 
             if len(carrier_names) > 0:
                 _queries = (
-                    Q(**{f"{carrier_names[0]}settings__isnull": False})
+                    Q(**{f"{carrier_names[0].replace('_', '')}settings__isnull": False})
                     if carrier_names[0] in models.MODELS.keys()
                     else Q(genericsettings__custom_carrier_name=carrier_names[0])
                 )
                 for carrier_name in carrier_names[1:]:
                     _queries |= (
-                        Q(**{f"{carrier_name}settings__isnull": False})
+                        Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
                         if carrier_name in models.MODELS.keys()
                         else Q(genericsettings__custom_carrier_name=carrier_name)
                     )
