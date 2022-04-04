@@ -6,6 +6,7 @@ from karrio.server.settings.email import *
 from karrio.server.settings.constance import *
 from karrio.server.settings.workers import *
 from karrio.server.settings.cache import *
+from karrio.server.settings.apm import *
 
 
 if importlib.util.find_spec("karrio.server.iam") is not None:

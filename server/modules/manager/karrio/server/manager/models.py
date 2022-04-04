@@ -155,14 +155,7 @@ class Commodity(OwnedEntity):
         "children",
         "commodity_parcel",
         "commodity_customs",
-        *(
-            (
-                "org",
-                "commodity_order",
-            )
-            if settings.MULTI_ORGANIZATIONS
-            else tuple()
-        ),
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
     )
 
     class Meta:
@@ -227,8 +220,8 @@ class Commodity(OwnedEntity):
 
     @property
     def order(self):
-        if self.commodity_order.exists():
-            return self.commodity_order.first()
+        if hasattr(self, "order_link"):
+            return self.order_link.order
         if self.parent is not None:
             return self.parent.order
 

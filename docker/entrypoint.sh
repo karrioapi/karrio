@@ -21,11 +21,11 @@ then
 	set -e # turn on bash's job control
 	trap 'kill 0' INT
 
-	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k uvicorn.workers.UvicornWorker &
+	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker &
 	/bin/bash ./worker.sh &
 
 	wait -n
 
 else
-	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k uvicorn.workers.UvicornWorker
+	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker
 fi

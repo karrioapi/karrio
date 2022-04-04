@@ -197,6 +197,7 @@
                 ? context.body
                 : JSON.stringify(context.body);
             var headers = Object.assign({}, this.configuration.headers, context.headers);
+            Object.keys(headers).forEach(function (key) { return headers[key] === undefined ? delete headers[key] : {}; });
             var init = __assign({ method: context.method, headers: headers, body: body, credentials: this.configuration.credentials }, initOverrides);
             return { url: url, init: init };
         };
@@ -960,6 +961,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(AddressFromJSON)),
@@ -1022,6 +1024,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(CarrierSettingsFromJSON)),
@@ -1454,6 +1457,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(CustomsFromJSON)),
@@ -1492,6 +1496,40 @@
     }
 
     /* tslint:disable */
+    /**
+    * @export
+    * @enum {string}
+    */
+    var LineItemWeightUnitEnum;
+    (function (LineItemWeightUnitEnum) {
+        LineItemWeightUnitEnum["Kg"] = "KG";
+        LineItemWeightUnitEnum["Lb"] = "LB";
+    })(LineItemWeightUnitEnum || (LineItemWeightUnitEnum = {}));
+    function LineItemFromJSON(json) {
+        return LineItemFromJSONTyped(json);
+    }
+    function LineItemFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'weight': json['weight'],
+            'weight_unit': json['weight_unit'],
+            'description': !exists(json, 'description') ? undefined : json['description'],
+            'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
+            'sku': !exists(json, 'sku') ? undefined : json['sku'],
+            'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
+            'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
+            'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
+            'parent_id': !exists(json, 'parent_id') ? undefined : json['parent_id'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'unfulfilled_quantity': !exists(json, 'unfulfilled_quantity') ? undefined : json['unfulfilled_quantity'],
+        };
+    }
+
+    /* tslint:disable */
     function MetadataFromJSON(json) {
         return MetadataFromJSONTyped(json);
     }
@@ -1503,6 +1541,7 @@
             'app_name': json['APP_NAME'],
             'app_version': json['APP_VERSION'],
             'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
+            'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
@@ -1517,10 +1556,10 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.5`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4
-     *
+     * The version of the OpenAPI document: 2022.3.5
+     * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
      * https://openapi-generator.tech
@@ -1543,10 +1582,10 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.5`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4
-     *
+     * The version of the OpenAPI document: 2022.3.5
+     * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
      * https://openapi-generator.tech
@@ -1974,11 +2013,12 @@
             'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'order_id': json['order_id'],
+            'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
             'source': !exists(json, 'source') ? undefined : json['source'],
             'status': !exists(json, 'status') ? undefined : json['status'],
             'shipping_to': AddressFromJSON(json['shipping_to']),
             'shipping_from': !exists(json, 'shipping_from') ? undefined : AddressFromJSON(json['shipping_from']),
-            'line_items': (json['line_items'].map(CommodityFromJSON)),
+            'line_items': (json['line_items'].map(LineItemFromJSON)),
             'options': !exists(json, 'options') ? undefined : json['options'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'shipments': !exists(json, 'shipments') ? undefined : (json['shipments'].map(ShipmentFromJSON)),
@@ -1997,6 +2037,7 @@
         }
         return {
             'order_id': value.order_id,
+            'order_date': value.order_date,
             'source': value.source,
             'shipping_to': AddressDataToJSON(value.shipping_to),
             'shipping_from': AddressDataToJSON(value.shipping_from),
@@ -2015,6 +2056,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(OrderFromJSON)),
@@ -2086,6 +2128,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(ParcelFromJSON)),
@@ -2179,6 +2222,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(PickupFromJSON)),
@@ -2299,10 +2343,10 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.5`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4
-     *
+     * The version of the OpenAPI document: 2022.3.5
+     * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
      * https://openapi-generator.tech
@@ -2319,6 +2363,7 @@
             'app_name': json['APP_NAME'],
             'app_version': json['APP_VERSION'],
             'app_website': json['APP_WEBSITE'],
+            'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
@@ -2402,6 +2447,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(ShipmentFromJSON)),
@@ -2588,10 +2634,10 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"next\": \"/v1/shipments?limit=25&offset=25\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.5`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4
-     *
+     * The version of the OpenAPI document: 2022.3.5
+     * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
      * https://openapi-generator.tech
@@ -2698,6 +2744,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(TrackingStatusFromJSON)),
@@ -2799,6 +2846,7 @@
             return json;
         }
         return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(WebhookFromJSON)),

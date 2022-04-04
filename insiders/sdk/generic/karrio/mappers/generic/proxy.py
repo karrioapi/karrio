@@ -1,7 +1,3 @@
-from karrio.core.utils import (
-    Serializable,
-    Deserializable,
-)
 from karrio.api.proxy import Proxy as BaseProxy
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
 from karrio.universal.mappers.shipping_proxy import ShippingMixinProxy

@@ -1,5 +1,6 @@
 from functools import partial
 from django.db import models
+from django.core.validators import RegexValidator
 
 from karrio.server.core.models import OwnedEntity, uuid
 
@@ -22,12 +23,12 @@ class LabelTemplate(OwnedEntity):
         default=partial(uuid, prefix="tpl_"),
         editable=False,
     )
-    alias = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=30, validators=[RegexValidator(r"^[a-z0-9_]+$")])
     template = models.TextField()
-    description = models.CharField(max_length=50, null=True, blank=True)
     template_type = models.CharField(max_length=3, choices=LABEL_TEMPLATE_TYPES)
     width = models.IntegerField(null=True, blank=True)
     height = models.IntegerField(null=True, blank=True)
+    shipment_sample = models.JSONField(blank=True, null=True, default=dict)
 
     @property
     def object_type(self):

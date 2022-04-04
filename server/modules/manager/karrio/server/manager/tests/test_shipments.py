@@ -352,7 +352,7 @@ SHIPMENT_RESPONSE = {
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
     "services": [],
-    "options": {},
+    "options": {"shipment_date": ANY},
     "customs": None,
     "reference": None,
     "carrier_ids": ["canadapost"],
@@ -362,7 +362,9 @@ SHIPMENT_RESPONSE = {
     "messages": [],
 }
 
-SHIPMENT_OPTIONS = {"options": {"insurance": 54, "currency": "CAD"}}
+SHIPMENT_OPTIONS = {
+    "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2020-01-01"},
+}
 
 RETURNED_RATES_VALUE = (
     [
@@ -511,7 +513,7 @@ PURCHASED_SHIPMENT = {
         }
     ],
     "services": [],
-    "options": {},
+    "options": {"shipment_date": ANY},
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
     "customs": None,
     "reference": None,

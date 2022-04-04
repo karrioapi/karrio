@@ -9,5 +9,6 @@ from karrio.server.orders.serializers.base import (
     ORDER_STATUS,
     OrderStatus,
     OrderData,
+    LineItem,
     Order,
 )

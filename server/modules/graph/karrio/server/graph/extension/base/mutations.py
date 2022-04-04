@@ -250,7 +250,7 @@ class RegisterUser(DjangoFormMutation):
             )
 
         user = form.save()
-        return cls(errors=[], user=user, **form.cleaned_data)
+        return cls(user=user, **form.cleaned_data)
 
 
 class ConfirmEmail(utils.ClientMutation):
@@ -288,7 +288,7 @@ class RequestPasswordReset(DjangoFormMutation):
     @classmethod
     def perform_mutate(cls, form, info):
         form.save(request=info.context)
-        return cls(errors=[], **form.cleaned_data)
+        return cls(**form.cleaned_data)
 
 
 class ConfirmPasswordReset(DjangoFormMutation):
@@ -433,7 +433,7 @@ class _UpdateCarrierConnection:
             context=info.context,
         )
 
-        if not serializer.is_valid():
+        if not serializer.is_valid(raise_exception=True):
             return UpdateCarrierConnection(
                 errors=ErrorType.from_errors(serializer.errors)
             )

@@ -15,6 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 @owned_model_serializer
+class LineItemModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LineItem
+        exclude = ["created_at", "updated_at", "created_by"]
+
+
+@owned_model_serializer
 class OrderSerializer(serializers.OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
@@ -46,7 +53,7 @@ class OrderSerializer(serializers.OrderData):
 
         save_many_to_many_data(
             "line_items",
-            serializers.CommoditySerializer,
+            LineItemModelSerializer,
             order,
             payload=validated_data,
             context=context,
@@ -102,9 +109,7 @@ def compute_order_status(order: models.Order) -> str:
     The remaining statuses ("unfulfilled", "cancelled") are self explanatory and should never be computed.
     """
 
-    if not order.shipments.exclude(
-        status=serializers.ShipmentStatus.cancelled.value
-    ).exists():
+    if not order.shipments.exclude(status="cancelled").exists():
         return serializers.OrderStatus.unfulfilled.value
 
     line_items_are_fulfilled = True
@@ -117,17 +122,10 @@ def compute_order_status(order: models.Order) -> str:
     )
 
     for line_item in order.line_items.all():
-        shipment_items = line_item.children.exclude(
-            commodity_parcel__parcel_shipment__status__in=[
-                serializers.ShipmentStatus.cancelled.value,
-                serializers.ShipmentStatus.draft.value,
-            ]
-        ).filter(commodity_parcel__isnull=False, commodity_customs__isnull=True)
-        fulfilled = (
-            sum([item.quantity for item in shipment_items]) >= line_item.quantity
-        )
+        fulfilled = line_item.unfulfilled_quantity <= 0
+        partially_fulfilled = line_item.unfulfilled_quantity < line_item.quantity
 
-        if any(shipment_items) and fulfilled and not line_items_are_partially_fulfilled:
+        if partially_fulfilled and not line_items_are_partially_fulfilled:
             line_items_are_partially_fulfilled = True
 
         if not fulfilled:

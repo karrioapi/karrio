@@ -1,3 +1,4 @@
+import datetime
 from functools import partial
 from django.conf import settings
 from django.db import models
@@ -6,9 +7,33 @@ from karrio.server.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid
 from karrio.server.manager import models as manager
 
-from karrio.server.orders.serializers.base import (
-    ORDER_STATUS,
-)
+from karrio.server.orders.serializers.base import ORDER_STATUS
+
+
+class LineItem(manager.Commodity):
+    class Meta:
+        proxy = True
+
+    @property
+    def unfulfilled_quantity(self):
+        quantity = self.quantity - sum(
+            [
+                child.quantity or 0
+                for child in list(
+                    self.children.exclude(
+                        commodity_parcel__parcel_shipment__status__in=[
+                            "cancelled",
+                            "draft",
+                        ]
+                    ).filter(
+                        commodity_parcel__isnull=False,
+                        commodity_customs__isnull=True,
+                    )
+                )
+            ],
+            0,
+        )
+        return quantity if quantity > 0 else 0
 
 
 class OrderManager(models.Manager):
@@ -29,6 +54,7 @@ class Order(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [
         "order_id",
+        "order_date",
         "source",
         "status",
         "options",
@@ -51,11 +77,12 @@ class Order(OwnedEntity):
         editable=False,
     )
     order_id = models.CharField(max_length=50)
+    order_date = models.DateField(default=datetime.date.today)
     source = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
     )
-    shipping_to = models.ForeignKey(
+    shipping_to = models.OneToOneField(
         "manager.Address", on_delete=models.CASCADE, related_name="recipient_order"
     )
     shipping_from = models.OneToOneField(
@@ -65,7 +92,7 @@ class Order(OwnedEntity):
         related_name="shipper_order",
     )
     line_items = models.ManyToManyField(
-        "manager.Commodity", related_name="commodity_order", through="OrderLineItemLink"
+        LineItem, related_name="commodity_order", through="OrderLineItemLink"
     )
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
@@ -96,5 +123,5 @@ class OrderLineItemLink(models.Model):
         Order, on_delete=models.CASCADE, related_name="line_item_links"
     )
     item = models.OneToOneField(
-        "manager.Commodity", on_delete=models.CASCADE, related_name="order_link"
+        LineItem, on_delete=models.CASCADE, related_name="order_link"
     )

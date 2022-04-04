@@ -37,6 +37,7 @@ setup(
         "requests",
         "python-decouple",
         "karrio.server.core",
+        "sentry-sdk",
     ],
     entry_points={"console_scripts": ["karrio = karrio.server.__main__:main"]},
     dependency_links=[

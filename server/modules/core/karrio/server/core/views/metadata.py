@@ -16,6 +16,7 @@ class Metadata(Serializer):
     APP_NAME = CharField()
     APP_VERSION = CharField()
     APP_WEBSITE = CharField(required=False, allow_null=True)
+    CUSTOM_CARRIER_DEFINITION = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()

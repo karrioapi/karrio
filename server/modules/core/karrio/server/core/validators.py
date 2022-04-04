@@ -43,7 +43,7 @@ def valid_time_format(prop: str):
             datetime.strptime(value, "%H:%M")
         except Exception:
             raise serializers.ValidationError(
-                {prop: "The time format must match HH:HM"},
+                "The time format must match HH:HM",
                 code="invalid",
             )
 
@@ -57,7 +57,7 @@ def valid_date_format(prop: str):
             datetime.strptime(value, "%Y-%m-%d")
         except Exception:
             raise serializers.ValidationError(
-                {prop: "The date format must match YYYY-MM-DD"},
+                "The date format must match YYYY-MM-DD",
                 code="invalid",
             )
 
@@ -71,11 +71,29 @@ def valid_datetime_format(prop: str):
             datetime.strptime(value, "%Y-%m-%d %H:%M")
         except Exception:
             raise serializers.ValidationError(
-                {prop: "The datetime format must match YYYY-MM-DD HH:HM"},
+                "The datetime format must match YYYY-MM-DD HH:HM",
                 code="invalid",
             )
 
     return validate
+
+
+class OptionDefaultSerializer(serializers.Serializer):
+    def validate(self, data):
+        options = {
+            **getattr(self.instance, "options", {}),
+            **(data.get("options") or {}),
+        }
+        data.update(
+            dict(
+                options={
+                    "shipment_date": datetime.now().strftime("%Y-%m-%d"),
+                    **options,
+                }
+            )
+        )
+
+        return data
 
 
 class PresetSerializer(serializers.Serializer):
@@ -130,7 +148,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                 if not re.match(r"^\d{5}(-\d{4})?$", formatted):
                     raise serializers.ValidationError(
                         {
-                            "postal_code": "The American postal code must match 12345 and 12345-6789"
+                            "postal_code": "The American postal code must match 12345 or 12345-6789"
                         }
                     )
 

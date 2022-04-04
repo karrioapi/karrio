@@ -94,7 +94,7 @@ class Carriers:
 
         if any(list_filter.get("services", [])):
             carrier_names = [
-                name.replace("_", "")
+                name
                 for name, services in dataunits.contextual_reference(context)[
                     "services"
                 ].items()
@@ -104,11 +104,19 @@ class Carriers:
             ]
 
             if len(carrier_names) > 0:
-                _queries = (Q(**{f"{carrier_names[0]}settings__isnull": False}),)
+                _queries = (
+                    Q(**{f"{carrier_names[0].replace('_', '')}settings__isnull": False})
+                    if carrier_names[0] in models.MODELS.keys()
+                    else Q(genericsettings__custom_carrier_name=carrier_names[0])
+                )
                 for carrier_name in carrier_names[1:]:
-                    _queries |= Q(**{f"{carrier_name}settings__isnull": False})
+                    _queries |= (
+                        Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
+                        if carrier_name in models.MODELS.keys()
+                        else Q(genericsettings__custom_carrier_name=carrier_name)
+                    )
 
-                query += _queries
+                query += (_queries,)
 
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
@@ -383,9 +391,7 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Pickup.schedule(
-            datatypes.PickupRequest(**DP.to_dict(payload))
-        )
+        request = karrio.Pickup.schedule(datatypes.PickupRequest(**DP.to_dict(payload)))
 
         # The request call is wrapped in identity to simplify mocking in tests
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())

@@ -5,11 +5,11 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.proxy",
-    version="2022.3",
+    version="2022.3.4",
     description="Multi-carrier shipping API Proxy module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Karrio/karrio-server",
+    url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
     license="Apache License Version 2.0",

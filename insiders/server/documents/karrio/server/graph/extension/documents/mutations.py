@@ -15,7 +15,7 @@ class CreateDocumentTemplate(utils.ClientMutation):
         name = graphene.String(required=True)
         template = graphene.String(required=True)
         description = graphene.String()
-        related_objects = graphene.List(types.TemplateRelatedObject, required=True)
+        related_object = types.TemplateRelatedObject(required=True)
 
     @classmethod
     @utils.login_required
@@ -40,7 +40,7 @@ class UpdateDocumentTemplate(utils.ClientMutation):
         name = graphene.String()
         template = graphene.String()
         description = graphene.String()
-        related_objects = graphene.List(types.TemplateRelatedObject)
+        related_object = types.TemplateRelatedObject()
 
     @classmethod
     @utils.login_required

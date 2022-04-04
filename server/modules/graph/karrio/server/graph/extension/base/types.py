@@ -523,8 +523,12 @@ class ServiceLevelType(utils.BaseObjectType):
 
 
 class LabelTemplateType(utils.BaseObjectType):
+    template_type = utils.LabelTemplateTypeEnum()
+    shipment_sample = generic.GenericScalar()
+
     class Meta:
         model = providers.LabelTemplate
+        exclude = ("genericsettings_set",)
         interfaces = (utils.CustomNode,)
 
 

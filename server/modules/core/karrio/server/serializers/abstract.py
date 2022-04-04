@@ -54,6 +54,7 @@ def PaginatedResult(serializer_name: str, content_serializer: Type[Serializer]):
         serializer_name,
         (Serializer,),
         dict(
+            count=serializers.IntegerField(required=False, allow_null=True),
             next=serializers.URLField(
                 required=False, allow_blank=True, allow_null=True
             ),

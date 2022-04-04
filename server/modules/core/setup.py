@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.core",
-    version="2022.3",
+    version="2022.3.7",
     description="Multi-carrier shipping API Core module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -17,6 +17,8 @@ setup(
     install_requires=[
         "karrio",
         "psycopg2-binary",
+        "django-health-check",
+        "psutil",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

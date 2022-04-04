@@ -43,19 +43,26 @@ def contextual_metadata(request: Request):
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
+        "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
     }
 
 
-def contextual_reference(request: Request):
+def contextual_reference(request: Request, reduced: bool = True):
     import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
 
-    is_authenticated = getattr(request, "auth", None) is not None
+    is_authenticated = (
+        request.user.is_authenticated if hasattr(request, "user") else False
+    )
     references = {
         **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
-        **{k: v for k, v in REFERENCE_MODELS.items() if k not in REFERENCE_EXCLUSIONS},
+        **{
+            k: v
+            for k, v in REFERENCE_MODELS.items()
+            if k not in (REFERENCE_EXCLUSIONS if reduced else [])
+        },
     }
 
     if is_authenticated and "generic" in MODELS:

@@ -126,7 +126,10 @@ def create_label_template_input(partial: bool = False) -> graphene.InputObjectTy
         f"{_method}LabelTemplate",
         (serializer_to_input(_type),),
         dict(
-            template_type=utils.LabelTypeEnum(required=False),
+            template_type=utils.LabelTemplateTypeEnum(
+                required=False, default_value=utils.LabelTemplateTypeEnum.SVG.value
+            ),
+            shipment_sample=generic.GenericScalar(),
         ),
     )
 

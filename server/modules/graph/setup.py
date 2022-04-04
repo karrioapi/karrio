@@ -5,11 +5,11 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.graph",
-    version="2022.3",
+    version="2022.3.2",
     description="Multi-carrier shipping API Graph module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Karrio/karrio-server",
+    url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
     license="Apache License Version 2.0",
@@ -19,7 +19,6 @@ setup(
         "graphene-django",
         "django-filter",
     ],
-    dependency_links=["https://git.io/karrio"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

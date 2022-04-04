@@ -10,7 +10,7 @@ import karrio.server.graph.extension.apps.types as types
 
 
 class CreateApp(utils.ClientMutation):
-    app = graphene.Field(types.AppType)
+    app = graphene.Field(types.PrivateAppType)
 
     class Input:
         display_name = graphene.String(required=True)
@@ -45,7 +45,7 @@ class CreateApp(utils.ClientMutation):
 
 
 class UpdateApp(utils.ClientMutation):
-    app = graphene.Field(types.AppType)
+    app = graphene.Field(types.PrivateAppType)
 
     class Input:
         id = graphene.String(required=True)
@@ -131,7 +131,7 @@ class InstallApp(utils.ClientMutation):
 
 
 class UninstallApp(utils.ClientMutation):
-    app = graphene.Field(types.AppType)
+    app = graphene.Field(types.PrivateAppType)
 
     class Input:
         app_id = graphene.String(required=True)

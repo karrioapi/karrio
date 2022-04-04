@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio"
-version = "2022.3"
+version = "2022.3.5"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Multi-carrier shipping API integration with python"

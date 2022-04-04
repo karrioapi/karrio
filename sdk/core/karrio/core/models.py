@@ -372,9 +372,8 @@ class ServiceLevel:
 class LabelTemplate:
     """Karrio unified label template data type."""
 
-    alias: str
+    slug: str
     template: str
-    description: str = ""
     template_type: str = "SVG"  # ZPL, SVG
     width: int = 4
     height: int = 6

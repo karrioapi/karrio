@@ -1,10 +1,13 @@
-from django.urls import path
+from django.urls import path, re_path
+from jinja2 import Template
+from karrio.server.core.dataunits import contextual_reference
 from rest_framework import permissions
 from drf_yasg import views, openapi, generators, inspectors
 
 from karrio.server.conf import settings
 
 VERSION = getattr(settings, "VERSION", "")
+non_null = lambda items: [i for i in items if i is not None]
 
 
 def render_schema_description(APP_NAME):
@@ -44,9 +47,11 @@ def render_schema_description(APP_NAME):
 
     ```json
     {{
-        "next": "/v1/shipments?limit=25&offset=25",
+        "count": 100,
+        "next": "/v1/shipments?limit=25&offset=50",
         "previous": "/v1/shipments?limit=25&offset=25",
         "results": [
+            {{ ... }},
         ]
     }}
     ```
@@ -58,6 +63,79 @@ def render_schema_description(APP_NAME):
     buy labels, create trackers and schedule pickups in `test_mode`.
 
     """
+
+
+def render_reference_descriptions(request):
+    refs = contextual_reference(request, reduced=False)
+
+    def format_preset(preset: dict):
+        vals = [
+            str(v)
+            for v in [
+                preset.get("width"),
+                preset.get("height"),
+                preset.get("length"),
+            ]
+            if v is not None
+        ]
+
+        return f'{" x ".join(vals)} {preset.get("dimension_unit").lower()}'
+
+    return Template(
+        """
+    ## Carriers
+
+    | Carrier Name | Display Name |
+    | ------------ | ------------ |
+    {% for carrier, name in refs.get("carriers", {}).items() -%}{% if carrier != "generic" -%}
+    | {{ carrier }} | {{ name }} |
+    {% endif -%}{% endfor %}
+
+    ---
+
+    ## Services
+
+    The following service level codes can be used to reference specific rates
+    when purchasing shipping labels using single call label creation.
+
+    You can also find all of the possible service levels for each of your carrier
+    accounts by using [this endpoint](#operation/&&get_services).
+
+
+    {% for carrier, services in refs.get("services", {}).items() -%}{% if carrier != "generic" -%}
+
+    ### {{ refs.get("carriers", {}).get(carrier, "") }}
+
+
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    {% for code, name in services.items() -%}
+    | {{ code }} | {{ name }} |
+    {% endfor %}
+
+    {% endif -%}{% endfor %}
+
+    ---
+
+    ## Parcel Templates
+
+    Use any of the following templates when you ship with special carrier packaging.
+
+
+    {% for carrier, presets in refs.get("package_presets", {}).items() -%}
+
+    ### {{ refs.get("carriers", {}).get(carrier, "") }}
+
+
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    {% for code, preset in presets.items() -%}
+    | {{ code }} | {{ format_preset(preset) }} |
+    {% endfor %}
+    {% endfor %}
+
+    """
+    ).render(refs=refs, format_preset=format_preset)
 
 
 class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
@@ -75,54 +153,55 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
             )
 
         swagger = super().get_schema(request, public)
-        swagger.tags = [
-            {
-                "name": "API",
-                "description": """
+        swagger.tags = non_null(
+            [
+                {
+                    "name": "API",
+                    "description": """
                 For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
                 The JWT tokens changes for every new session and have an expiration timestamp.
 
                 To authenticate via JWT access key, use `-H "Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U"`.
                 """,
-            },
-            {
-                "name": "Addresses",
-                "description": f"""
+                },
+                {
+                    "name": "Carriers",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} carrier account connectsions.
+                You can retrieve all configured connections available to your {APP_NAME} account.
+
+                The `carrier_id` is a nickname you assign to your connection.
+                """,
+                },
+                {
+                    "name": "Addresses",
+                    "description": f"""
                 This is an object representing your a {APP_NAME} shipping address.
                 You can retrieve all addresses related to your {APP_NAME} account.
 
                 Address objects are linked to your shipment history, and can be used for recurring shipping
                 to / from the same locations.
                 """,
-            },
-            {
-                "name": "Carriers",
-                "description": f"""
-                This is an object representing your a {APP_NAME} carrier account connectsions.
-                You can retrieve all configured connections available to your {APP_NAME} account.
-
-                The `carrier_id` is a nickname you assign to your connection.
-                """,
-            },
-            {
-                "name": "Customs",
-                "description": f"""
-                This is an object representing your a {APP_NAME} shipping customs declaration.
-                You can retrieve all customs declarations used historically with your {APP_NAME} account shipments.
-                """,
-            },
-            {
-                "name": "Parcels",
-                "description": f"""
+                },
+                {
+                    "name": "Parcels",
+                    "description": f"""
                 This is an object representing your a {APP_NAME} shipping parcel.
 
                 Parcel objects are linked to your shipment history, and can be used for recurring shipping
                 using the same packaging.
                 """,
-            },
-            {
-                "name": "Shipments",
-                "description": f"""
+                },
+                {
+                    "name": "Customs",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} shipping customs declaration.
+                You can retrieve all customs declarations used historically with your {APP_NAME} account shipments.
+                """,
+                },
+                {
+                    "name": "Shipments",
+                    "description": f"""
                 This is an object representing your a {APP_NAME} shipment.
 
                 A Shipment guides you through process of preparing and purchasing a label for an order.
@@ -130,43 +209,40 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 A Shipment transitions through multiple statuses throughout its lifetime as the package
                 shipped makes its journey to it's destination.
                 """,
-            },
-            {
-                "name": "Trackers",
-                "description": f"""
+                },
+                {
+                    "name": "Trackers",
+                    "description": f"""
                 This is an object representing your a {APP_NAME} shipment tracker.
 
                 A shipment tracker is an object attached to a shipment by it's tracking number.
                 The tracker provide the latest tracking status and events associated with a shipment
                 """,
-            },
-            {
-                "name": "Pickups",
-                "description": f"""
-                This is an object representing your a {APP_NAME} pickup booking.
-                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
-                """,
-            },
-            {
-                "name": "Webhooks",
-                "description": f"""
+                },
+                {
+                    "name": "Webhooks",
+                    "description": f"""
                 This is an object representing your a {APP_NAME} webhook.
 
                 You can configure webhook endpoints via the API to be notified about events that happen in your
                 {APP_NAME} account.
                 """,
-            },
-            {
-                "name": "Orders",
-                "description": f"""
+                },
+                (
+                    {
+                        "name": "Orders",
+                        "description": f"""
                 This is an object representing your a {APP_NAME} order.
 
                 You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
-            },
-            {
-                "name": "Proxy",
-                "description": f"""
+                    }
+                    if settings.ORDERS_MANAGEMENT
+                    else None
+                ),
+                {
+                    "name": "Proxy",
+                    "description": f"""
                 In some scenarios, all we need is to send request to a carrier using the {APP_NAME} unified API.
 
                 The Proxy API comes handy for that as it turn {APP_NAME} into a simple middleware that converts and
@@ -176,8 +252,20 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 >
                 > When using the proxy API, no objects are created in the {APP_NAME} system.
                 """,
-            },
-        ]
+                },
+                {
+                    "name": "Pickups",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} pickup booking.
+                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
+                """,
+                },
+                {
+                    "name": "Reference & Enums",
+                    "description": render_reference_descriptions(request),
+                },
+            ]
+        )
 
         return swagger
 
@@ -210,8 +298,8 @@ view = views.get_schema_view(
 
 
 urlpatterns = [
-    path(
-        "shipping-openapi.json",
+    re_path(
+        r"^shipping-openapi(?P<format>\.json|\.yaml)$",
         view.without_ui(cache_timeout=0),
         name="schema-json",
     ),

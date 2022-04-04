@@ -15,6 +15,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.urls import include, path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -27,10 +28,12 @@ admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 admin.site.index_template = "karrio/admin.html"
+admin.site.unregister(Group)
 
 if getattr(settings, "MULTI_TENANTS", False):
     admin.site.unregister([Config])
-    admin.autodiscover()
+
+admin.autodiscover()
 
 urlpatterns = [
     path(

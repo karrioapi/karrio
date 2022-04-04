@@ -304,12 +304,6 @@ class ShipmentPurchase(APIView):
 
 
 class ShipmentDocs(VirtualDownloadView):
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}label",
-        operation_summary="Retrieve a shipment label",
-        responses={400: ErrorResponse()},
-    )
     def get(
         self,
         request: Request,

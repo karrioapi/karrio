@@ -296,7 +296,7 @@ SHIPPING_RESPONSE = {
         }
     ],
     "services": [],
-    "options": {},
+    "options": {"shipment_date": ANY},
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
     "customs": None,
     "reference": "",

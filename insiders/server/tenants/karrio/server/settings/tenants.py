@@ -1,5 +1,6 @@
 from django.conf.global_settings import CACHES
 from karrio.server.settings.base import *
+from karrio.server.settings.cache import HEALTH_CHECK_APPS
 
 
 DATABASES["default"]["ENGINE"] = "django_tenants.postgresql_backend"
@@ -17,6 +18,7 @@ SHARED_APPS = [
     "karrio.server.tenants",
     *BASE_APPS,
     "constance.backends.database",
+    *HEALTH_CHECK_APPS,
 ]
 
 EXCLUDED_TENANT_APPS = ["constance", "constance.backends.database"]
@@ -33,11 +35,6 @@ PUBLIC_SCHEMA_NAME = "public"
 PUBLIC_SCHEMA_URLCONF = "karrio.server.tenants.urls"
 TENANT_LIMIT_SET_CALLS = True
 TENANT_COLOR_ADMIN_APPS = False
-
-# Storage config
-MEDIA_ROOT = BASE_DIR / "/media"
-MEDIA_URL = "/media/"
-DEFAULT_FILE_STORAGE = "django_tenants.storage.TenantFileSystemStorage"
 
 # Cache config
 CACHES["default"]["KEY_FUNCTION"] = "django_tenants.cache.make_key"

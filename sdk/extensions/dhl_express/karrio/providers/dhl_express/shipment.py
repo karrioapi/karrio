@@ -175,7 +175,7 @@ def shipment_request(
         Commodity=(
             [
                 Commodity(CommodityCode=c.sku, CommodityName=c.description)
-                for c in payload.customs.commodities
+                for c in customs.commodities
             ]
             if any(customs.commodities)
             else None
@@ -290,7 +290,9 @@ def shipment_request(
             if is_dutiable
             else None
         ),
-        Reference=([Reference(ReferenceID=reference)] if any([reference]) else None),
+        Reference=(
+            [Reference(ReferenceID=reference[:30])] if any([reference]) else None
+        ),
         ShipmentDetails=DHLShipmentDetails(
             Pieces=Pieces(
                 Piece=[
@@ -310,7 +312,7 @@ def shipment_request(
                             package.parcel.content or package.parcel.description
                         ),
                         PieceReference=(
-                            [Reference(ReferenceID=package.parcel.id)]
+                            [Reference(ReferenceID=package.parcel.id[:30])]
                             if package.parcel.id is not None
                             else None
                         ),

@@ -40,7 +40,6 @@ from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
-from uritemplate import partial
 
 logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: Any = dict(active=True, capability="shipping")
@@ -198,6 +197,7 @@ class ShipmentSerializer(ShipmentData):
 
         if "docs" in validated_data:
             changes.append("label")
+            changes.append("invoice")
             instance.label = validated_data["docs"].get("label") or instance.label
             instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
 
