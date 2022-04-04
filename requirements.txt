@@ -69,7 +69,7 @@ karrio.purolator==2022.3
 karrio.royalmail==2022.3
 karrio.sendle==2022.3
 karrio.server==2022.3.6
-karrio.server.core==2022.3.6
+karrio.server.core==2022.3.7
 karrio.server.events==2022.3
 karrio.server.graph==2022.3.2
 karrio.server.manager==2022.3.6
