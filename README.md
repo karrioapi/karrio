@@ -26,20 +26,24 @@ Help us out… If you love open source and great software, give us a star! 🌟
 
 There are several ways to use Karrio:
 
-- [Karrio Cloud](https://app.karrio.io) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
-- [Karrio OSS](#karrio-oss) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
-- [Karrio SDK](#karrio-sdk) is the core of the karrio abstraction layer. It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
+- [Karrio Cloud](https://karrio.io) let's you use the fullset of shipping features.
+you don't need to deploy anything. We will manage and scale your infrastructure.
+- [Karrio OSS](#karrio-oss) is an open-source version of karrio that provides
+the core functionality of karrio (rating API, tracking API, shipping API),
+but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
+- [Karrio SDK](#karrio-sdk) is the core of the karrio abstraction layer.
+It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
 
-> Source code for all editions is contained in this repository. See the [License section](#license) for more details.
+> Source code for all editions is contained in this repository.
+See the [License section](#license) for more details.
 
 ## Status
 
 - [x] Alpha: We are testing karrio with a closed set of customers
-- [x] Public Alpha: Anyone can sign up over at [app.karrio.io](app.karrio.io). But go easy on us, there are a few kinks
-- [x] Public Beta: Stable enough for most non-enterprise use-cases
+- [x] Private Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready
 
-We are currently in Public Beta. Watch "releases" of this repo to get notified of major updates.
+We are currently in Private Beta. Watch "releases" of this repo to get notified of major updates.
 
 ## Self-hosted installation
 
@@ -70,7 +74,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.3rc1
+  danh91.docker.scarf.sh/karrio/server:2022.3.6
 ```
 
 </details>
@@ -95,7 +99,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.3rc1
+    image: danh91.docker.scarf.sh/karrio/server:2022.3.6
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -282,10 +286,12 @@ print(rates)
 
 ## License
 
-This repository contains both OSS-licensed and non-OSS-licensed files. We maintain one repository rather than two separate repositories mainly for development convenience.
+This repository contains both OSS-licensed and non-OSS-licensed files.
+We maintain one repository rather than two separate repositories mainly for development convenience.
 
 All files in the `/insiders` fall under the [Karrio LICENSE](/insiders/LICENSE).
 
-The remaining files fall under the [Apache 2 license](LICENSE). Karrio OSS is built only from the Apache-licensed files in this repository.
+The remaining files fall under the [Apache 2 license](LICENSE).
+Karrio OSS is built only from the Apache-licensed files in this repository.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
