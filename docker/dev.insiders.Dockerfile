@@ -16,7 +16,9 @@ RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
 
-WORKDIR /karrio
+WORKDIR /karrio/app
 
 # Make sure we use the virtualenv:
 ENV PATH="/karrio/venv/bin:$PATH"
+EXPOSE 5002
+ENV PORT 5002

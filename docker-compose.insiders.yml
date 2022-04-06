@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  karrio:
+  api:
     image: karrio/ee
     build:
       context: ./
