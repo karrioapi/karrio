@@ -6,7 +6,7 @@ services:
     build:
       context: ./
       dockerfile: docker/dev.insiders.Dockerfile
-    container_name: karrio
+    container_name: api
     env_file: .env
     environment:
       DATABASE_HOST: "db"
