@@ -29,6 +29,10 @@ def parse_tracking_response(
 
 
 def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
+    delivered = (
+        getattr(detail.status, "statusCode", "") == "delivered"
+        or getattr(detail.status, "status", "").lower() == "delivered"
+    )
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -50,11 +54,7 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
         estimated_delivery=DF.fdate(
             detail.estimatedTimeOfDelivery, "%Y-%m-%dT%H:%M:%SZ"
         ),
-        delivered=(
-            detail.status.status.lower() == "delivered"
-            if all([detail.status, detail.status.status])
-            else False
-        ),
+        delivered=delivered,
     )
 
 
