@@ -243,7 +243,7 @@ def shipment_request(
                         Description=item.description or "N/A",
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
-                        CommodityCode=item.sku,
+                        CommodityCode=item.sku or "N/A",
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(

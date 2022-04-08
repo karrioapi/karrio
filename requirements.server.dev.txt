@@ -7,12 +7,12 @@ Django<=3.2.12
 # -e ./sdk/extensions/australiapost
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
-# -e ./sdk/extensions/dhl_express
-# -e ./sdk/extensions/dhl_poland
-# -e ./sdk/extensions/dhl_universal
+-e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_poland
+-e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/vendors/eshipper
-# -e ./sdk/extensions/fedex
+-e ./sdk/extensions/fedex
 # -e ./sdk/vendors/freightcom
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
@@ -31,11 +31,11 @@ karrio.aramex
 karrio.australiapost
 karrio.canadapost
 karrio.canpar
-karrio.dhl-express
-karrio.dhl-poland
-karrio.dhl-universal
+# karrio.dhl-express
+# karrio.dhl-poland
+# karrio.dhl-universal
 karrio.dicom
-karrio.fedex
+# karrio.fedex
 karrio.purolator
 karrio.royalmail
 karrio.sendle
