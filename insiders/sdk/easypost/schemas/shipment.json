@@ -1,0 +1,221 @@
+{
+  "id": "shp_...",
+  "object": "Shipment",
+  "mode": "test",
+  "is_return": false,
+  "batch_message": null,
+  "batch_status": null,
+  "to_address": {
+    "id": "adr_...",
+    "object": "Address",
+    "created_at": "2017-05-08T19:43:41Z",
+    "updated_at": "2017-05-08T19:43:41Z",
+    "name": null,
+    "company": "EasyPost",
+    "street1": "UNDELIVERABLE ST",
+    "street2": null,
+    "city": "SAN FRANCISCO",
+    "state": "CA",
+    "zip": "94104",
+    "country": "US",
+    "phone": "4151234567",
+    "email": null,
+    "mode": "test",
+    "carrier_facility": null,
+    "residential": false,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {
+      "delivery": {
+        "success": false,
+        "errors": [
+          {
+            "suggestion": null,
+            "code": "E.ADDRESS.NOT_FOUND",
+            "field": "address",
+            "message": "Address not found"
+          },
+          {
+            "suggestion": null,
+            "code": "E.HOUSE_NUMBER.MISSING",
+            "field": "street1",
+            "message": "House number is missing"
+          }
+        ],
+        "details": {}
+      }
+    }
+  },
+  "from_address": {
+    "id": "adr_...",
+    "object": "Address",
+    "created_at": "2017-05-08T19:43:41Z",
+    "updated_at": "2017-05-08T19:43:41Z",
+    "name": null,
+    "company": "EasyPost",
+    "street1": "UNDELIVERABLE ST",
+    "street2": null,
+    "city": "SAN FRANCISCO",
+    "state": "CA",
+    "zip": "94104",
+    "country": "US",
+    "phone": "4151234567",
+    "email": null,
+    "mode": "test",
+    "carrier_facility": null,
+    "residential": false,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {
+      "delivery": {
+        "success": false,
+        "errors": [
+          {
+            "suggestion": null,
+            "code": "E.ADDRESS.NOT_FOUND",
+            "field": "address",
+            "message": "Address not found"
+          },
+          {
+            "suggestion": null,
+            "code": "E.HOUSE_NUMBER.MISSING",
+            "field": "street1",
+            "message": "House number is missing"
+          }
+        ],
+        "details": {}
+      }
+    }
+  },
+  "parcel": {
+    "id": "prcl_...",
+    "object": "Parcel",
+    "length": 20.2,
+    "width": 10.9,
+    "height": 5.0,
+    "predefined_package": null,
+    "weight": 140.8,
+    "created_at": "2013-04-22T05:39:57Z",
+    "updated_at": "2013-04-22T05:39:57Z"
+  },
+  "customs_info": {
+    "id": "cstinfo_...",
+    "object": "CustomsInfo",
+    "created_at": "2013-04-22T05:39:57Z",
+    "updated_at": "2013-04-22T05:39:57Z",
+    "contents_explanation": null,
+    "contents_type": "merchandise",
+    "customs_certify": false,
+    "customs_signer": null,
+    "eel_pfc": null,
+    "non_delivery_option": "return",
+    "restriction_comments": null,
+    "restriction_type": "none",
+    "customs_items": [
+      {
+        "id": "cstitem_...",
+        "object": "CustomsItem",
+        "description": "Many, many EasyPost stickers.",
+        "hs_tariff_number": "123456",
+        "origin_country": "US",
+        "quantity": 1,
+        "value": 879,
+        "weight": 140,
+        "created_at": "2013-04-22T05:39:57Z",
+        "updated_at": "2013-04-22T05:39:57Z"
+      }
+    ]
+  },
+  "options": {},
+  "rates": [
+    {
+      "id": "rate_...",
+      "object": "Rate",
+      "carrier_account_id": "ca_...",
+      "service": "FirstClassPackageInternationalService",
+      "rate": "9.50",
+      "carrier": "USPS",
+      "shipment_id": "shp_...",
+      "delivery_days": 4,
+      "delivery_date": "2013-04-26T05:40:57Z",
+      "delivery_date_guaranteed": false,
+      "created_at": "2013-04-22T05:40:57Z",
+      "updated_at": "2013-04-22T05:40:57Z"
+    },
+    {
+      "id": "rate_...",
+      "object": "Rate",
+      "carrier_account_id": "ca_...",
+      "service": "PriorityMailInternational",
+      "rate": "27.40",
+      "carrier": "USPS",
+      "shipment_id": "shp_...",
+      "delivery_days": 2,
+      "delivery_date": "2013-04-24T05:40:57Z",
+      "delivery_date_guaranteed": false,
+      "created_at": "2013-04-22T05:40:57Z",
+      "updated_at": "2013-04-22T05:40:57Z"
+    },
+    {
+      "id": "rate_...",
+      "object": "Rate",
+      "carrier_account_id": "ca_...",
+      "service": "ExpressMailInternational",
+      "rate": "35.48",
+      "carrier": "USPS",
+      "shipment_id": "shp_...",
+      "delivery_days": 1,
+      "delivery_date": "2013-04-23T05:40:57Z",
+      "delivery_date_guaranteed": true,
+      "created_at": "2013-04-22T05:40:57Z",
+      "updated_at": "2013-04-22T05:40:57Z"
+    }
+  ],
+  "reference": null,
+  "scan_form": null,
+  "refund_status": null,
+  "selected_rate": {
+    "carrier": "UPS",
+    "created_at": "2013-11-08T15:50:02Z",
+    "currency": "USD",
+    "id": "rate_...",
+    "object": "Rate",
+    "rate": "30.44",
+    "service": "NextDayAir",
+    "shipment_id": "shp_...",
+    "updated_at": "2013-11-08T15:50:02Z"
+  },
+  "status": "unknown",
+  "postage_label": {
+    "created_at": "2013-11-08T20:57:32Z",
+    "id": "pl_...",
+    "integrated_form": "none",
+    "label_date": "2013-11-08T20:57:32Z",
+    "label_epl2_url": null,
+    "label_file_type": "image/png",
+    "label_pdf_url": "https://amazonaws.com/.../a1b2c3.pdf",
+    "label_resolution": 200,
+    "label_size": "4x7",
+    "label_type": "default",
+    "label_url": "https://amazonaws.com/.../a1b2c3.png",
+    "label_zpl_url": null,
+    "object": "PostageLabel",
+    "updated_at": "2013-11-08T21:11:14Z"
+  },
+  "tracking_code": "1ZE6A4850190733810",
+  "tracker": {
+    "created_at": "2013-11-08T20:57:32Z",
+    "id": "trk_...",
+    "mode": "test",
+    "object": "Tracker",
+    "shipment_id": "shp_...",
+    "status": "unknown",
+    "tracking_code": "1ZE6A4850190733810",
+    "tracking_details": [],
+    "updated_at": "2013-11-08T20:58:26Z",
+    "public_url": "https://track.easypost.com/djE7..."
+  },
+  "insurance": null,
+  "created_at": "2013-04-22T05:40:57Z",
+  "updated_at": "2013-04-22T05:40:57Z"
+}
