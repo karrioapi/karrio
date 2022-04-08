@@ -174,7 +174,7 @@ def shipment_request(
         ),
         Commodity=(
             [
-                Commodity(CommodityCode=c.sku, CommodityName=c.description)
+                Commodity(CommodityCode=c.sku or "N/A", CommodityName=c.description)
                 for c in customs.commodities
             ]
             if any(customs.commodities)
