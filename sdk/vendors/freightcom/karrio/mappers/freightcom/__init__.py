@@ -9,13 +9,13 @@ import karrio.providers.freightcom.units as units
 METADATA = Metadata(
     id="freightcom",
     label="Freightcom",
-
+    is_hub=True,
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
     options=units.Option,
     services=units.Service,
+    CARRIER_IDS=units.CARRIER_IDS,
 )

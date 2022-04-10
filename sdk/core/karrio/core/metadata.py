@@ -30,6 +30,7 @@ class Metadata:
     service_levels: Optional[List[ServiceLevel]] = None
 
     id: Optional[str] = None
+    is_hub: Optional[bool] = False
 
     def __getitem__(self, item):
         return getattr(self, item)

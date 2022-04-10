@@ -9,6 +9,7 @@ import karrio.providers.eshipper.units as units
 METADATA = Metadata(
     id="eshipper",
     label="eShipper",
+    is_hub=True,
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
@@ -16,4 +17,5 @@ METADATA = Metadata(
     # Data Units
     options=units.Option,
     services=units.Service,
+    CARRIER_IDS=units.CARRIER_IDS,
 )
