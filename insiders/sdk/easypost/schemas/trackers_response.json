@@ -1,0 +1,68 @@
+{
+  "trackers": [
+    {
+      "id": "trk_...",
+      "object": "Tracker",
+      "mode": "test",
+      "tracking_code": "9400110898825022579493",
+      "status": "in_transit",
+      "created_at": "2016-01-13T21:52:28Z",
+      "updated_at": "2016-01-13T21:52:32Z",
+      "signed_by": "",
+      "weight": 1.5,
+      "est_delivery_date": "2014-08-27T00:00:00Z",
+      "shipment_id": "",
+      "carrier": "USPS",
+      "public_url": "https://track.easypost.com/djE6...",
+      "tracking_details": [
+        {
+          "object": "TrackingDetail",
+          "message": "Shipping Label Created",
+          "status": "pre_transit",
+          "datetime": "2015-12-31T15:58:00Z",
+          "source": "USPS",
+          "tracking_location": {
+            "object": "TrackingLocation",
+            "city": "FOUNTAIN VALLEY",
+            "state": "CA",
+            "country": "US",
+            "zip": "92708"
+          }
+        },
+        {
+          "object": "TrackingDetail",
+          "message": "Arrived at Post Office",
+          "status": "in_transit",
+          "datetime": "2016-01-07T06:58:00Z",
+          "source": "USPS",
+          "tracking_location": {
+            "object": "TrackingLocation",
+            "city": "FOUNTAIN VALLEY",
+            "state": "CA",
+            "country": "US",
+            "zip": "92728"
+          }
+        }
+      ],
+      "carrier_detail": {
+        "object": "CarrierDetail",
+        "service": "First-Class Package Service",
+        "container_type": "",
+        "est_delivery_date_local": "",
+        "est_delivery_time_local": "",
+        "origin_location": "HOUSTON TX, 77001",
+        "destination_location": "CHARLESTON SC, 29401"
+      },
+      "fees": [
+        {
+          "object": "Fee",
+          "type": "TrackerFee",
+          "amount": "0.00000",
+          "charged": true,
+          "refunded": false
+        }
+      ]
+    }
+  ],
+  "has_more": true
+}

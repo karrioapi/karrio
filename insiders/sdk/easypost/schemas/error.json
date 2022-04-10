@@ -11,7 +11,7 @@
       {
         "field": "street1",
         "message": "House number is missing",
-        "suggestion": null
+        "suggestion": ""
       }
     ]
   }

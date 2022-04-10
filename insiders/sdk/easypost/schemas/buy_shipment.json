@@ -1,0 +1,11 @@
+{
+  "has_more": true,
+  "shipments": [
+    {
+      "insurance": 249.99,
+      "rate": {
+        "id": ""
+      }
+    }
+  ]
+}
