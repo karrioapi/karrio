@@ -15,13 +15,13 @@ def parse_tracking_response(
     responses: List[Tuple[str, dict]], settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     errors = [
-        parse_error_response(response, settings)
-        for _, response in responses
+        parse_error_response(response, settings, dict(tracking_number=code))
+        for code, response in responses
         if "error" in response
     ]
     trackers = [
-        (index, _extract_details(response, settings))
-        for index, response in responses
+        _extract_details(response, settings)
+        for _, response in responses
         if "error" not in response
     ]
 
@@ -37,10 +37,10 @@ def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
         tracking_number=tracker.tracking_code,
         events=[
             TrackingEvent(
-                date=DF.fdate(event.datetime, "%Y-%M-%dT%H:%m:%sZ"),
+                date=DF.fdate(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
                 description=event.message,
                 code=event.status,
-                time=DF.ftime(event.datetime),
+                time=DF.ftime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
                 location=SF.concat_str(
                     event.tracking_location.city,
                     event.tracking_location.state,

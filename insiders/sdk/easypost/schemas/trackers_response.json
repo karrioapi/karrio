@@ -1,46 +1,52 @@
 {
   "trackers": [
     {
-      "id": "trk_...",
+      "id": "trk_77620bfc319a4b54ba483c93b55a9a4f",
       "object": "Tracker",
       "mode": "test",
-      "tracking_code": "9400110898825022579493",
-      "status": "in_transit",
-      "created_at": "2016-01-13T21:52:28Z",
-      "updated_at": "2016-01-13T21:52:32Z",
+      "tracking_code": "EZ1000000001",
+      "status": "pre_transit",
+      "status_detail": "status_update",
+      "created_at": "2022-04-11T15:39:40Z",
+      "updated_at": "2022-04-11T15:39:40Z",
       "signed_by": "",
-      "weight": 1.5,
-      "est_delivery_date": "2014-08-27T00:00:00Z",
+      "weight": "",
+      "est_delivery_date": "2022-04-11T15:39:40Z",
       "shipment_id": "",
       "carrier": "USPS",
-      "public_url": "https://track.easypost.com/djE6...",
       "tracking_details": [
         {
           "object": "TrackingDetail",
-          "message": "Shipping Label Created",
+          "message": "Pre-Shipment Info Sent to USPS",
+          "description": "",
           "status": "pre_transit",
-          "datetime": "2015-12-31T15:58:00Z",
+          "status_detail": "status_update",
+          "datetime": "2022-03-11T15:39:40Z",
           "source": "USPS",
+          "carrier_code": "",
           "tracking_location": {
             "object": "TrackingLocation",
-            "city": "FOUNTAIN VALLEY",
-            "state": "CA",
-            "country": "US",
-            "zip": "92708"
+            "city": "",
+            "state": "",
+            "country": "",
+            "zip": ""
           }
         },
         {
           "object": "TrackingDetail",
-          "message": "Arrived at Post Office",
-          "status": "in_transit",
-          "datetime": "2016-01-07T06:58:00Z",
+          "message": "Shipping Label Created",
+          "description": "",
+          "status": "pre_transit",
+          "status_detail": "status_update",
+          "datetime": "2022-03-12T04:16:40Z",
           "source": "USPS",
+          "carrier_code": "",
           "tracking_location": {
             "object": "TrackingLocation",
-            "city": "FOUNTAIN VALLEY",
-            "state": "CA",
-            "country": "US",
-            "zip": "92728"
+            "city": "HOUSTON",
+            "state": "TX",
+            "country": "",
+            "zip": "77063"
           }
         }
       ],
@@ -51,14 +57,28 @@
         "est_delivery_date_local": "",
         "est_delivery_time_local": "",
         "origin_location": "HOUSTON TX, 77001",
-        "destination_location": "CHARLESTON SC, 29401"
+        "origin_tracking_location": {
+          "object": "TrackingLocation",
+          "city": "HOUSTON",
+          "state": "TX",
+          "country": "",
+          "zip": "77063"
+        },
+        "destination_location": "CHARLESTON SC, 29401",
+        "destination_tracking_location": "",
+        "guaranteed_delivery_date": "",
+        "alternate_identifier": "",
+        "initial_delivery_attempt": ""
       },
+      "finalized": true,
+      "is_return": false,
+      "public_url": "https://track.easypost.com/djE6dHJrXzc3NjIwYmZjMzE5YTRiNTRiYTQ4M2M5M2I1NWE5YTRm",
       "fees": [
         {
           "object": "Fee",
           "type": "TrackerFee",
-          "amount": "0.00000",
-          "charged": true,
+          "amount": "0.02000",
+          "charged": false,
           "refunded": false
         }
       ]

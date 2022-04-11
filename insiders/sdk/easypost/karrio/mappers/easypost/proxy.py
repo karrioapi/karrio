@@ -60,7 +60,7 @@ class Proxy(BaseProxy):
         self, path: str, request: Serializable = None, method: str = "POST"
     ) -> str:
         data: dict = (
-            dict(data=bytearray(request.serialize(), "utf-8"))
+            dict(data=bytearray(DP.jsonify(request.serialize()), "utf-8"))
             if request is not None
             else dict()
         )
