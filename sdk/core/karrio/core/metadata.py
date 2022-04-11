@@ -1,7 +1,7 @@
 """Karrio Extension Metadata definition module."""
 import attr
 from enum import Enum
-from typing import Optional, Type, List
+from typing import Optional, Type, List, Dict
 
 from karrio.api.proxy import Proxy
 from karrio.api.mapper import Mapper
@@ -31,6 +31,7 @@ class Metadata:
 
     id: Optional[str] = None
     is_hub: Optional[bool] = False
+    hub_carriers: Optional[Dict[str, str]] = None
 
     def __getitem__(self, item):
         return getattr(self, item)

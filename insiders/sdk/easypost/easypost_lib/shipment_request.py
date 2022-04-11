@@ -76,12 +76,12 @@ class Parcel:
 
 
 @s(auto_attribs=True)
-class CreateShipment:
+class ShipmentRequest:
     reference: Optional[str] = None
     is_return: Optional[bool] = None
     to_address: Optional[Address] = JStruct[Address]
     from_address: Optional[Address] = JStruct[Address]
     parcel: Optional[Parcel] = JStruct[Parcel]
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
-    options: Optional[dict] = {}
+    options: Optional[Options] = JStruct[Options]
     carrier_accounts: List[str] = JList[str]

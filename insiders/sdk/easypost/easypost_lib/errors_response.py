@@ -11,12 +11,17 @@ class ErrorElement:
 
 
 @s(auto_attribs=True)
-class PurpleError:
+class ReponseError:
     code: Optional[str] = None
     message: Optional[str] = None
     errors: List[ErrorElement] = JList[ErrorElement]
 
 
 @s(auto_attribs=True)
-class Error:
-    error: Optional[PurpleError] = JStruct[PurpleError]
+class Reponse:
+    error: Optional[ReponseError] = JStruct[ReponseError]
+
+
+@s(auto_attribs=True)
+class ErrorsResponse:
+    reponse: Optional[Reponse] = JStruct[Reponse]

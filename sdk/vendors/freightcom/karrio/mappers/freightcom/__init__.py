@@ -17,5 +17,5 @@ METADATA = Metadata(
     # Data Units
     options=units.Option,
     services=units.Service,
-    CARRIER_IDS=units.CARRIER_IDS,
+    hub_carriers=units.CARRIER_IDS,
 )

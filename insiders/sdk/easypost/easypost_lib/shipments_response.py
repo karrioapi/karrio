@@ -227,7 +227,7 @@ class Shipment:
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
     fees: List[Fee] = JList[Fee]
     forms: List[Form] = JList[Form]
-    options: Optional[dict] = {}
+    options: Optional[Options] = JStruct[Options]
     rates: List[Rate] = JList[Rate]
     reference: Optional[str] = None
     scan_form: Optional[str] = None
