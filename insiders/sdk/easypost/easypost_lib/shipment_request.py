@@ -5,10 +5,6 @@ from jstruct import JList, JStruct
 
 @s(auto_attribs=True)
 class CustomsItem:
-    id: Optional[str] = None
-    object: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
     description: Optional[str] = None
     hs_tariff_number: Optional[int] = None
     origin_country: Optional[str] = None
@@ -16,7 +12,6 @@ class CustomsItem:
     value: Optional[float] = None
     weight: Optional[float] = None
     code: Optional[str] = None
-    mode: Optional[str] = None
     manufacturer: Optional[str] = None
     currency: Optional[str] = None
     eccn: Optional[str] = None
@@ -25,10 +20,6 @@ class CustomsItem:
 
 @s(auto_attribs=True)
 class CustomsInfo:
-    id: Optional[str] = None
-    object: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
     contents_explanation: Optional[str] = None
     contents_type: Optional[str] = None
     customs_certify: Optional[bool] = None
@@ -37,7 +28,6 @@ class CustomsInfo:
     non_delivery_option: Optional[str] = None
     restriction_comments: Optional[str] = None
     restriction_type: Optional[str] = None
-    mode: Optional[str] = None
     declaration: Optional[str] = None
     customs_items: List[CustomsItem] = JList[CustomsItem]
 
@@ -83,5 +73,5 @@ class ShipmentRequest:
     from_address: Optional[Address] = JStruct[Address]
     parcel: Optional[Parcel] = JStruct[Parcel]
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
-    options: Optional[Options] = JStruct[Options]
+    options: Optional[dict] = {}
     carrier_accounts: List[str] = JList[str]

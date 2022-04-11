@@ -184,7 +184,7 @@ class TrackingLocation:
     object: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
-    country: None
+    country: Optional[str] = None
     zip: Optional[int] = None
 
 
@@ -227,7 +227,7 @@ class Shipment:
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
     fees: List[Fee] = JList[Fee]
     forms: List[Form] = JList[Form]
-    options: Optional[Options] = JStruct[Options]
+    options: Optional[dict] = {}
     rates: List[Rate] = JList[Rate]
     reference: Optional[str] = None
     scan_form: Optional[str] = None

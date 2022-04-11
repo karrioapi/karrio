@@ -169,6 +169,7 @@ class TrackingRequest:
     tracking_numbers: List[str]
     language_code: str = None
     level_of_details: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)

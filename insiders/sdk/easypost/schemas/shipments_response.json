@@ -271,7 +271,7 @@
               "object": "TrackingLocation",
               "city": "FOUNTAIN VALLEY",
               "state": "CA",
-              "country": null,
+              "country": "",
               "zip": "92708"
             }
           }

@@ -10,12 +10,16 @@ from karrio.core.models import (
     RateDetails,
     Message,
     ConfirmationDetails,
+    TrackingDetails,
+    TrackingRequest,
 )
 from karrio.providers.easypost import (
     parse_shipment_cancel_response,
+    parse_tracking_response,
     parse_shipment_response,
     parse_rate_response,
     shipment_cancel_request,
+    tracking_request,
     shipment_request,
     rate_request,
 )
@@ -37,19 +41,27 @@ class Mapper(BaseMapper):
     ) -> Serializable:
         return shipment_cancel_request(payload, self.settings)
 
+    def create_tracking_request(self, payload: TrackingRequest) -> Serializable:
+        return tracking_request(payload, self.settings)
+
     # Response Parsers
 
     def parse_rate_response(
-        self, response: Deserializable[str]
+        self, response: Deserializable
     ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_rate_response(response.deserialize(), self.settings)
 
     def parse_shipment_response(
-        self, response: Deserializable[str]
+        self, response: Deserializable
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
     def parse_cancel_shipment_response(
-        self, response: Deserializable[str]
+        self, response: Deserializable
     ) -> Tuple[ConfirmationDetails, List[Message]]:
         return parse_shipment_cancel_response(response.deserialize(), self.settings)
+
+    def parse_tracking_response(
+        self, response: Deserializable
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
+        return parse_tracking_response(response.deserialize(), self.settings)
