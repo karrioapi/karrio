@@ -13,6 +13,9 @@ def to_multi_piece_rates(
     """
     Convert a list of package rates to a multi-piece combined rates.
     """
+    if len(package_rates) == 0:
+        return []
+
     multi_piece_rates = []
     max_rates = max([len(rates) for _, rates in package_rates])
     main_piece_rates: List[RateDetails] = next(

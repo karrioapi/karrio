@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, List, Any
 from jstruct import JList, JStruct
 
 
@@ -115,11 +115,6 @@ class Address:
 
 
 @s(auto_attribs=True)
-class Options:
-    pass
-
-
-@s(auto_attribs=True)
 class Parcel:
     id: Optional[str] = None
     object: Optional[str] = None
@@ -155,6 +150,7 @@ class Rate:
     id: Optional[str] = None
     object: Optional[str] = None
     carrier_account_id: Optional[str] = None
+    currency: Optional[str] = None
     service: Optional[str] = None
     rate: Optional[str] = None
     carrier: Optional[str] = None
@@ -193,7 +189,7 @@ class TrackingDetail:
     object: Optional[str] = None
     message: Optional[str] = None
     status: Optional[str] = None
-    tracking_detail_datetime: Optional[str] = None
+    datetime: Optional[str] = None
     source: Optional[str] = None
     tracking_location: Optional[TrackingLocation] = JStruct[TrackingLocation]
 
@@ -227,7 +223,7 @@ class Shipment:
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
     fees: List[Fee] = JList[Fee]
     forms: List[Form] = JList[Form]
-    options: Optional[Options] = JStruct[Options]
+    options: Any = None
     rates: List[Rate] = JList[Rate]
     reference: Optional[str] = None
     scan_form: Optional[str] = None
@@ -238,7 +234,7 @@ class Shipment:
     tracking_code: Optional[str] = None
     usps_zone: Optional[int] = None
     tracker: Optional[Tracker] = JStruct[Tracker]
-    messages: List[str] = JList[str]
+    messages: List[str] = []
     insurance: Optional[float] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None

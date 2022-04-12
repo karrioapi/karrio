@@ -174,12 +174,13 @@
           "submitted_electronically": true
         }
       ],
-      "options": {},
+      "options": null,
       "rates": [
         {
           "id": "rate_...",
           "object": "Rate",
           "carrier_account_id": "ca_...",
+          "currency": "USD",
           "service": "FirstClassPackageInternationalService",
           "rate": "9.50",
           "carrier": "USPS",

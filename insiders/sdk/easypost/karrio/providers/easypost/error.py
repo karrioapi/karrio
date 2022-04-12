@@ -1,4 +1,4 @@
-from easypost_lib.errors_response import ReponseError
+from easypost_lib.error_response import Error
 from karrio.core.utils import DP
 from karrio.core.models import Message
 from karrio.providers.easypost.utils import Settings
@@ -7,7 +7,7 @@ from karrio.providers.easypost.utils import Settings
 def parse_error_response(
     response: dict, settings: Settings, details: dict = None
 ) -> Message:
-    error = DP.to_object(ReponseError, response.get("error"))
+    error = DP.to_object(Error, response.get("error"))
 
     return Message(
         carrier_id=settings.carrier_id,

@@ -77,11 +77,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 street1=payload.recipient.address_line1,
                 street2=payload.recipient.address_line2,
                 city=payload.recipient.city,
-                state=payload.recipient.state,
+                state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
                 country=payload.recipient.country_code,
                 residential=payload.recipient.residential,
-                name=payload.recipient.name,
+                name=payload.recipient.person_name,
                 phone=payload.recipient.phone_number,
                 email=payload.recipient.email,
                 federal_tax_id=payload.recipient.federal_tax_id,
@@ -92,11 +92,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 street1=payload.shipper.address_line1,
                 street2=payload.shipper.address_line2,
                 city=payload.shipper.city,
-                state=payload.shipper.state,
+                state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
                 country=payload.shipper.country_code,
                 residential=payload.shipper.residential,
-                name=payload.shipper.name,
+                name=payload.shipper.person_name,
                 phone=payload.shipper.phone_number,
                 email=payload.shipper.email,
                 federal_tax_id=payload.shipper.federal_tax_id,
@@ -150,4 +150,4 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         for package in packages
     ]
 
-    return Serializable(requests)
+    return Serializable(requests, DP.to_dict)

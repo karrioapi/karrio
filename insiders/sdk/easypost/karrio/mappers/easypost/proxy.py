@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from karrio.core.utils import DP, request as http
 from karrio.api.proxy import Proxy as BaseProxy
-from karrio.core.utils.helpers import exec_async
+from karrio.core.utils.helpers import exec_async, exec_parrallel
 from karrio.mappers.easypost.settings import Settings
 from karrio.core.utils.serializable import Serializable, Deserializable
 
@@ -11,10 +11,10 @@ class Proxy(BaseProxy):
 
     def get_rates(self, requests: Serializable) -> Deserializable[str]:
         create = lambda request: self._send_request(
-            path="/shipments", request=Serializable(request)
+            path="/shipments", request=Serializable(request, DP.jsonify)
         )
 
-        responses: List[str] = exec_async(create, requests.serialize())
+        responses: List[str] = exec_parrallel(create, requests.serialize())
         return Deserializable(
             responses,
             lambda res: [
@@ -24,10 +24,10 @@ class Proxy(BaseProxy):
 
     def create_shipment(self, requests: Serializable) -> Deserializable[str]:
         create = lambda request: self._send_request(
-            path="/shipments", request=Serializable(request)
+            path="/shipments", request=Serializable(request, DP.jsonify)
         )
 
-        responses: List[str] = exec_async(create, requests.serialize())
+        responses: List[str] = exec_parrallel(create, requests.serialize())
         return Deserializable(
             responses,
             lambda res: [
@@ -47,7 +47,9 @@ class Proxy(BaseProxy):
     def get_tracking(self, requests: Serializable) -> Deserializable[str]:
         track = lambda request: (
             request["tracking_code"],
-            self._send_request(path="/trackers", request=Serializable(request)),
+            self._send_request(
+                path="/trackers", request=Serializable(request, DP.jsonify)
+            ),
         )
 
         responses: List[Tuple[str, str]] = exec_async(track, requests.serialize())
@@ -60,7 +62,7 @@ class Proxy(BaseProxy):
         self, path: str, request: Serializable = None, method: str = "POST"
     ) -> str:
         data: dict = (
-            dict(data=bytearray(DP.jsonify(request.serialize()), "utf-8"))
+            dict(data=bytearray(request.serialize(), "utf-8"))
             if request is not None
             else dict()
         )

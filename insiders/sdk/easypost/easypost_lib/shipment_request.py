@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, List, Any
 from jstruct import JList, JStruct
 
 
@@ -52,11 +52,6 @@ class Address:
 
 
 @s(auto_attribs=True)
-class Options:
-    pass
-
-
-@s(auto_attribs=True)
 class Parcel:
     length: Optional[float] = None
     width: Optional[float] = None
@@ -73,5 +68,5 @@ class ShipmentRequest:
     from_address: Optional[Address] = JStruct[Address]
     parcel: Optional[Parcel] = JStruct[Parcel]
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
-    options: Optional[dict] = {}
-    carrier_accounts: List[str] = JList[str]
+    options: Any = None
+    carrier_accounts: List[str] = []

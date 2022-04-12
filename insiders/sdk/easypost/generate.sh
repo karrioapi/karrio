@@ -10,7 +10,7 @@ quicktype () {
     --src-lang json --lang jstruct --all-properties-optional $@
 }
 
-quicktype --src="${SCHEMAS}/errors_response.json" --out="${LIB_MODULES}/errors_response.py"
+quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_response.py"
 quicktype --src="${SCHEMAS}/shipment_request.json" --out="${LIB_MODULES}/shipment_request.py"
 quicktype --src="${SCHEMAS}/shipment_purchase.json" --out="${LIB_MODULES}/shipment_purchase.py"
 quicktype --src="${SCHEMAS}/trackers_response.json" --out="${LIB_MODULES}/trackers_response.py"
