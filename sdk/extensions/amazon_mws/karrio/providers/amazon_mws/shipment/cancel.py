@@ -10,10 +10,18 @@ from karrio.providers.amazon_mws.utils import Settings
 def parse_shipment_cancel_response(
     response: dict, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    pass
+    errors = [
+        parse_error_response(data, settings) for data in response.get("errors", [])
+    ]
+    details = ConfirmationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success="errors" not in response,
+        operation="cancel shipment",
+    )
+
+    return details, errors
 
 
-def shipment_cancel_request(
-    payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[str]:
-    pass
+def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable[str]:
+    return Serializable(payload.shipment_identifier)

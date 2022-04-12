@@ -4,15 +4,8 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class Error:
-    code: Optional[str] = None
-    message: Optional[str] = None
-    details: Optional[str] = None
-
-
-@s(auto_attribs=True)
 class BilledWeight:
-    value: Optional[int] = None
+    value: Optional[float] = None
     unit: Optional[str] = None
 
 
@@ -30,21 +23,15 @@ class Promise:
 
 @s(auto_attribs=True)
 class EligibleRate:
-    rateId: Optional[str] = None
-    totalCharge: Optional[BilledWeight] = JStruct[BilledWeight]
     billedWeight: Optional[BilledWeight] = JStruct[BilledWeight]
-    expirationTime: Optional[str] = None
+    totalCharge: Optional[BilledWeight] = JStruct[BilledWeight]
     serviceType: Optional[str] = None
     promise: Optional[Promise] = JStruct[Promise]
-
-
-@s(auto_attribs=True)
-class Payload:
-    shipmentId: Optional[str] = None
-    eligibleRates: List[EligibleRate] = JList[EligibleRate]
+    rateId: Optional[str] = None
+    expirationTime: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class CreateShipmentResponse:
-    payload: Optional[Payload] = JStruct[Payload]
-    errors: List[Error] = JList[Error]
+    shipmentId: Optional[str] = None
+    eligibleRates: List[EligibleRate] = JList[EligibleRate]

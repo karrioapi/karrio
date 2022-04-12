@@ -1,16 +1,7 @@
 {
-  "payload": {
-    "labelStream": "string",
-    "labelSpecification": {
-      "labelFormat": "PNG",
-      "labelStockSize": "4x6"
-    }
-  },
-  "errors": [
-    {
-      "code": "string",
-      "message": "string",
-      "details": "string"
-    }
-  ]
+  "labelStream": "iVBORw0KGgo...AAAARK5CYII=(Truncated)",
+  "labelSpecification": {
+    "labelFormat": "PNG",
+    "labelStockSize": "4x6"
+  }
 }

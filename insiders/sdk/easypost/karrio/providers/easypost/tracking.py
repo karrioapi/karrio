@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict
+from typing import Tuple, List
 from easypost_lib.trackers_response import Tracker
 from karrio.providers.easypost.utils import Settings
 from karrio.core.utils import Serializable, DF, SF, DP
@@ -52,7 +52,7 @@ def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
             )
             for event in tracker.tracking_details
         ],
-        delivered=False,
+        delivered=(tracker.status == "delivered"),
     )
 
 

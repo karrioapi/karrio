@@ -17,8 +17,8 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def gif_to_pdf(gif_str: str) -> str:
-    content = base64.b64decode(gif_str)
+def image_to_pdf(image_str: str) -> str:
+    content = base64.b64decode(image_str)
     buffer = io.BytesIO()
     buffer.write(content)
     image = Image.open(buffer)

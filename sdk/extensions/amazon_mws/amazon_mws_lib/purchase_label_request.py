@@ -11,5 +11,5 @@ class LabelSpecification:
 
 @s(auto_attribs=True)
 class PurchaseLabelRequest:
-    rateId: Optional[str] = None
     labelSpecification: Optional[LabelSpecification] = JStruct[LabelSpecification]
+    rateId: Optional[str] = None

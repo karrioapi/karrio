@@ -1,13 +1,6 @@
 from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
-
-
-@s(auto_attribs=True)
-class Error:
-    code: Optional[str] = None
-    message: Optional[str] = None
-    details: Optional[str] = None
+from typing import Optional
+from jstruct import JStruct
 
 
 @s(auto_attribs=True)
@@ -17,12 +10,6 @@ class LabelSpecification:
 
 
 @s(auto_attribs=True)
-class Payload:
+class ShippingLabel:
     labelStream: Optional[str] = None
     labelSpecification: Optional[LabelSpecification] = JStruct[LabelSpecification]
-
-
-@s(auto_attribs=True)
-class ShippingLabel:
-    payload: Optional[Payload] = JStruct[Payload]
-    errors: List[Error] = JList[Error]

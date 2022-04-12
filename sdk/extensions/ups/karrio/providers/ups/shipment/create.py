@@ -34,7 +34,7 @@ from ups_lib.ship_web_service_schema import (
     ReferenceNumberType,
 )
 from karrio.core.utils import (
-    gif_to_pdf,
+    image_to_pdf,
     Serializable,
     apply_namespaceprefix,
     create_envelope,
@@ -76,7 +76,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipping_label = cast(LabelType, package.ShippingLabel)
 
     label = (
-        gif_to_pdf(shipping_label.GraphicImage)
+        image_to_pdf(shipping_label.GraphicImage)
         if cast(ImageFormatType, shipping_label.ImageFormat).Code == "GIF"
         else shipping_label.GraphicImage
     )

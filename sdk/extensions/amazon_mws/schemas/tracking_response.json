@@ -1,28 +1,19 @@
 {
-  "payload": {
-    "trackingId": "string",
-    "summary": {
-      "status": "string"
-    },
-    "promisedDeliveryDate": "2019-08-24T14:15:22Z",
-    "eventHistory": [
-      {
-        "eventCode": "string",
-        "eventTime": "2019-08-24T14:15:22Z",
-        "location": {
-          "stateOrRegion": "string",
-          "city": "string",
-          "countryCode": "st",
-          "postalCode": "string"
-        }
-      }
-    ]
-  },
-  "errors": [
+  "trackingId": "89108749065090",
+  "eventHistory": [
     {
-      "code": "string",
-      "message": "string",
-      "details": "string"
+      "eventCode": "Delivered",
+      "location": {
+        "city": "San Bernardino",
+        "countryCode": "US",
+        "stateOrRegion": "CA",
+        "postalCode": "92404"
+      },
+      "eventTime": "2019-04-04T06:45:12Z"
     }
-  ]
+  ],
+  "promisedDeliveryDate": "2019-04-04T07:05:06Z",
+  "summary": {
+    "status": "Delivered"
+  }
 }

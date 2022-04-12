@@ -5,34 +5,45 @@ from jstruct import JStruct, JList
 
 @s(auto_attribs=True)
 class Dimensions:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    height: Optional[float] = None
+    length: Optional[float] = None
     unit: Optional[str] = None
+    width: Optional[float] = None
 
 
 @s(auto_attribs=True)
 class Value:
-    value: Optional[int] = None
     unit: Optional[str] = None
+    value: Optional[float] = None
+
+
+@s(auto_attribs=True)
+class Unit:
+    value: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class UnitWeight:
+    unit: Optional[Unit] = JStruct[Unit]
+    value: Optional[Unit] = JStruct[Unit]
 
 
 @s(auto_attribs=True)
 class Item:
-    quantity: Optional[int] = None
-    unitPrice: Optional[Value] = JStruct[Value]
-    unitWeight: Optional[Value] = JStruct[Value]
+    quantity: Optional[float] = None
     title: Optional[str] = None
+    unitPrice: Optional[Value] = JStruct[Value]
+    unitWeight: Optional[UnitWeight] = JStruct[UnitWeight]
 
 
 @s(auto_attribs=True)
 class Container:
-    containerType: Optional[str] = None
     containerReferenceId: Optional[str] = None
-    value: Optional[Value] = JStruct[Value]
     dimensions: Optional[Dimensions] = JStruct[Dimensions]
     items: List[Item] = JList[Item]
+    value: Optional[Value] = JStruct[Value]
     weight: Optional[Value] = JStruct[Value]
+    containerType: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -43,25 +54,25 @@ class LabelSpecification:
 
 @s(auto_attribs=True)
 class Ship:
-    name: Optional[str] = None
     addressLine1: Optional[str] = None
-    addressLine2: Optional[str] = None
-    addressLine3: Optional[str] = None
-    stateOrRegion: Optional[str] = None
     city: Optional[str] = None
     countryCode: Optional[str] = None
+    name: Optional[str] = None
     postalCode: Optional[str] = None
+    stateOrRegion: Optional[str] = None
+    addressLine2: Optional[str] = None
+    addressLine3: Optional[str] = None
     email: Optional[str] = None
-    copyEmails: List[str] = JList[str]
+    copyEmails: List[str] = []
     phoneNumber: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class PurchaseShipmentRequest:
     clientReferenceId: Optional[str] = None
-    shipTo: Optional[Ship] = JStruct[Ship]
-    shipFrom: Optional[Ship] = JStruct[Ship]
-    shipDate: Optional[str] = None
-    serviceType: Optional[str] = None
     containers: List[Container] = JList[Container]
     labelSpecification: Optional[LabelSpecification] = JStruct[LabelSpecification]
+    serviceType: Optional[str] = None
+    shipFrom: Optional[Ship] = JStruct[Ship]
+    shipTo: Optional[Ship] = JStruct[Ship]
+    shipDate: Optional[str] = None
