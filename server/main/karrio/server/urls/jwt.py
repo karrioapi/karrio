@@ -129,7 +129,9 @@ class TokenObtainPair(jwt_views.TokenObtainPairView):
         responses={201: TokenPair()}
     )
     def post(self, *args, **kwargs):
-        return super().post(*args, **kwargs)
+        response = super().post(*args, **kwargs)
+        response['cdn-cache-control'] = 'no-store'
+        return response
 
 
 class TokenRefresh(jwt_views.TokenRefreshView):
@@ -143,7 +145,9 @@ class TokenRefresh(jwt_views.TokenRefreshView):
         responses={201: TokenPair()}
     )
     def post(self, *args, **kwargs):
-        return super().post(*args, **kwargs)
+        response = super().post(*args, **kwargs)
+        response['cdn-cache-control'] = 'no-store'
+        return response
 
 
 class TokenVerify(jwt_views.TokenVerifyView):
@@ -156,7 +160,9 @@ class TokenVerify(jwt_views.TokenVerifyView):
         responses={200: openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True)}
     )
     def post(self, *args, **kwargs):
-        return super().post(*args, **kwargs)
+        response = super().post(*args, **kwargs)
+        response['cdn-cache-control'] = 'no-store'
+        return response
 
 
 urlpatterns = [
