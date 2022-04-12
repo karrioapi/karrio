@@ -136,7 +136,7 @@ ParsedCancelShipmentResponse = [
 
 
 ShipmentRequestJSON = {
-    "insurace": 249.99,
+    "insurance": 249.99,
     "service": "NextDayAir",
     "shipments": [
         {
@@ -150,7 +150,10 @@ ShipmentRequestJSON = {
                     "street1": "1 E 161st St.",
                     "zip": "10451",
                 },
-                "options": {},
+                "options": {
+                    "label_format": "PDF",
+                    "payment": {"postal_code": "10451", "type": "SENDER"},
+                },
                 "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
                 "reference": "order #1111",
                 "to_address": {

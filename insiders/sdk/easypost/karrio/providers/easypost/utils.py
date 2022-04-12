@@ -24,13 +24,8 @@ class Settings(BaseSettings):
         return b64encode(pair.encode("utf-8")).decode("ascii")
 
 
-def download_label(file_url: str, file_type: str, settings: Settings) -> str:
+def download_label(file_url: str) -> str:
     return request(
         decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
         url=file_url,
-        headers={
-            "Accept": file_type,
-            "Authorization": f"Basic {settings.authorization}",
-        },
-        method="GET",
     )

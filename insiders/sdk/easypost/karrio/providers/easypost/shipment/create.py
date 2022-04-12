@@ -6,6 +6,7 @@ from karrio.core.utils.transformer import to_multi_piece_shipment
 from karrio.core.utils import Serializable, DP
 from karrio.core.models import (
     Documents,
+    Payment,
     ShipmentRequest,
     ShipmentDetails,
     Message,
@@ -15,6 +16,8 @@ from karrio.providers.easypost.units import (
     Service,
     PackagingType,
     Option,
+    LabelType,
+    PaymentType,
 )
 from karrio.providers.easypost.utils import Settings, download_label
 from karrio.providers.easypost.error import parse_error_response
@@ -42,12 +45,7 @@ def parse_shipment_response(
 def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
     shipment = DP.to_object(Shipment, response)
     label_type = shipment.postage_label.label_file_type.split("/")[-1]
-    label_url = getattr(
-        shipment.postage_label,
-        f"label_{label_type}_url",
-        shipment.postage_label.label_url,
-    )
-    label = download_label(label_url, shipment.postage_label.label_type, settings)
+    label = download_label(shipment.postage_label.label_url)
 
     return ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -66,13 +64,31 @@ def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
 
 def shipment_request(payload: ShipmentRequest, _) -> Serializable:
     packages = Packages(payload.parcels)
-    options = Options(payload.options, Option)
     service = Service.map(payload.service).value_or_key
     constoms_options = getattr(payload.customs, "options", {})
+    payment = payload.payment or Payment()
+    payor = payment.address or (
+        payload.shipper if payment.paid_by == "sender" else payload.recipient
+    )
+
+    options = Options(
+        {
+            "easypost_invoice_number": getattr(payload.customs, "invoice", None),
+            "easypost_label_format": LabelType.map(payload.label_type or "PDF").value,
+            "easypost_payment": dict(
+                type=PaymentType.map(payment.paid_by).value,
+                account=getattr(payload.payment, "account", None),
+                country=getattr(payor, "country_code", None),
+                postal_code=getattr(payor, "postal_code", None),
+            ),
+            **payload.options,
+        },
+        Option,
+    )
 
     requests = dict(
         service=service,
-        insurace=options.insurance,
+        insurance=options.insurance,
         shipments=[
             easypost.ShipmentRequest(
                 shipment=easypost.Shipment(
@@ -117,7 +133,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
                         ).value,
                     ),
                     options={
-                        getattr(option, "key", option): getattr(option, "value", None)
+                        getattr(option, "key", code): getattr(option, "value", option)
                         for code, option in options
                         if code in Option
                     },
