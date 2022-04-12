@@ -23,11 +23,43 @@ class Proxy(BaseProxy):
         )
 
     def create_shipment(self, requests: Serializable) -> Deserializable[str]:
-        create = lambda request: self._send_request(
-            path="/shipments", request=Serializable(request, DP.jsonify)
-        )
+        payload = requests.serialize()
 
-        responses: List[str] = exec_parrallel(create, requests.serialize())
+        def create(request) -> str:
+            response = DP.to_dict(
+                self._send_request(
+                    path="/shipments", request=Serializable(request, DP.jsonify)
+                )
+            )
+
+            if "error" in response:
+                return response
+
+            # retrieve rate with the selected service.
+            rate_id = next(
+                (
+                    rate["id"]
+                    for rate in response.get("rates", [])
+                    if rate["service"] == payload["service"]
+                ),
+                None,
+            )
+            data = DP.to_dict(
+                {
+                    "rate": {"id": rate_id},
+                    "insurance": payload.get("insurance"),
+                }
+            )
+
+            if rate_id is None:
+                raise Exception("No rate found for the given service.")
+
+            return self._send_request(
+                path=f"/shipments/{response['id']}/buy",
+                request=Serializable(data, DP.jsonify),
+            )
+
+        responses: List[str] = exec_parrallel(create, payload["shipments"])
         return Deserializable(
             responses,
             lambda res: [

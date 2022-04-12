@@ -37,7 +37,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable:
     request = (
-        payload.options.shipment_identifiers
+        payload.options["shipment_identifiers"]
         if "shipment_identifiers" in (payload.options or {})
         else [payload.shipment_identifier]
     )

@@ -61,49 +61,51 @@ def rate_request(payload: RateRequest, _) -> Serializable:
 
     requests = [
         easypost.ShipmentRequest(
-            reference=payload.reference,
-            to_address=easypost.Address(
-                company=payload.recipient.company_name,
-                street1=payload.recipient.address_line1,
-                street2=payload.recipient.address_line2,
-                city=payload.recipient.city,
-                state=payload.recipient.state_code,
-                zip=payload.recipient.postal_code,
-                country=payload.recipient.country_code,
-                residential=payload.recipient.residential,
-                name=payload.recipient.person_name,
-                phone=payload.recipient.phone_number,
-                email=payload.recipient.email,
-                federal_tax_id=payload.recipient.federal_tax_id,
-                state_tax_id=payload.recipient.state_tax_id,
-            ),
-            from_address=easypost.Address(
-                company=payload.shipper.company_name,
-                street1=payload.shipper.address_line1,
-                street2=payload.shipper.address_line2,
-                city=payload.shipper.city,
-                state=payload.shipper.state_code,
-                zip=payload.shipper.postal_code,
-                country=payload.shipper.country_code,
-                residential=payload.shipper.residential,
-                name=payload.shipper.person_name,
-                phone=payload.shipper.phone_number,
-                email=payload.shipper.email,
-                federal_tax_id=payload.shipper.federal_tax_id,
-                state_tax_id=payload.shipper.state_tax_id,
-            ),
-            parcel=easypost.Parcel(
-                length=package.length.IN,
-                width=package.width.IN,
-                height=package.height.IN,
-                weight=package.weight.OZ,
-                predefined_package=PackagingType.map(package.packaging_type).value,
-            ),
-            options={
-                getattr(option, "key", option): getattr(option, "value", None)
-                for code, option in options
-                if code in Option
-            },
+            shipment=easypost.Shipment(
+                reference=payload.reference,
+                to_address=easypost.Address(
+                    company=payload.recipient.company_name,
+                    street1=payload.recipient.address_line1,
+                    street2=payload.recipient.address_line2,
+                    city=payload.recipient.city,
+                    state=payload.recipient.state_code,
+                    zip=payload.recipient.postal_code,
+                    country=payload.recipient.country_code,
+                    residential=payload.recipient.residential,
+                    name=payload.recipient.person_name,
+                    phone=payload.recipient.phone_number,
+                    email=payload.recipient.email,
+                    federal_tax_id=payload.recipient.federal_tax_id,
+                    state_tax_id=payload.recipient.state_tax_id,
+                ),
+                from_address=easypost.Address(
+                    company=payload.shipper.company_name,
+                    street1=payload.shipper.address_line1,
+                    street2=payload.shipper.address_line2,
+                    city=payload.shipper.city,
+                    state=payload.shipper.state_code,
+                    zip=payload.shipper.postal_code,
+                    country=payload.shipper.country_code,
+                    residential=payload.shipper.residential,
+                    name=payload.shipper.person_name,
+                    phone=payload.shipper.phone_number,
+                    email=payload.shipper.email,
+                    federal_tax_id=payload.shipper.federal_tax_id,
+                    state_tax_id=payload.shipper.state_tax_id,
+                ),
+                parcel=easypost.Parcel(
+                    length=package.length.IN,
+                    width=package.width.IN,
+                    height=package.height.IN,
+                    weight=package.weight.OZ,
+                    predefined_package=PackagingType.map(package.packaging_type).value,
+                ),
+                options={
+                    getattr(option, "key", option): getattr(option, "value", None)
+                    for code, option in options
+                    if code in Option
+                },
+            )
         )
         for package in packages
     ]

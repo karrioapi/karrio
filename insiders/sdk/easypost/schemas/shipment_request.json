@@ -1,75 +1,77 @@
 {
-  "reference": "string",
-  "is_return": false,
-  "to_address": {
-    "mode": "test",
-    "street1": "417 MONTGOMERY ST",
-    "street2": "FLOOR 5",
-    "city": "SAN FRANCISCO",
-    "state": "CA",
-    "zip": "94104",
-    "country": "US",
-    "residential": false,
-    "carrier_facility": "",
-    "name": "",
-    "company": "EasyPost",
-    "phone": "4151234567",
-    "email": "",
-    "federal_tax_id": "",
-    "state_tax_id": ""
-  },
-  "from_address": {
-    "mode": "test",
-    "street1": "417 MONTGOMERY ST",
-    "street2": "FLOOR 5",
-    "city": "SAN FRANCISCO",
-    "state": "CA",
-    "zip": "94104",
-    "country": "US",
-    "residential": true,
-    "carrier_facility": "",
-    "name": "",
-    "company": "EasyPost",
-    "phone": "4151234567",
-    "email": "",
-    "federal_tax_id": "",
-    "state_tax_id": ""
-  },
-  "parcel": {
-    "length": 20.2,
-    "width": 10.9,
-    "height": 5.0,
-    "predefined_package": "",
-    "weight": 65.9
-  },
-  "customs_info": {
-    "contents_explanation": "",
-    "contents_type": "merchandise",
-    "customs_certify": true,
-    "customs_signer": "Steve Brule",
-    "eel_pfc": "NOEEI 30.37(a)",
-    "non_delivery_option": "return",
-    "restriction_comments": "",
-    "restriction_type": "none",
-    "declaration": "",
-    "customs_items": [
-      {
-        "description": "Sweet shirts",
-        "hs_tariff_number": "654321",
-        "origin_country": "US",
-        "quantity": 2,
-        "value": 23.0,
-        "weight": 21.0,
-        "code": "",
-        "manufacturer": "",
-        "currency": "",
-        "eccn": "",
-        "printed_commodity_identifier": ""
-      }
+  "shipment": {
+    "reference": "string",
+    "is_return": false,
+    "to_address": {
+      "mode": "test",
+      "street1": "417 MONTGOMERY ST",
+      "street2": "FLOOR 5",
+      "city": "SAN FRANCISCO",
+      "state": "CA",
+      "zip": "94104",
+      "country": "US",
+      "residential": false,
+      "carrier_facility": "",
+      "name": "",
+      "company": "EasyPost",
+      "phone": "4151234567",
+      "email": "",
+      "federal_tax_id": "",
+      "state_tax_id": ""
+    },
+    "from_address": {
+      "mode": "test",
+      "street1": "417 MONTGOMERY ST",
+      "street2": "FLOOR 5",
+      "city": "SAN FRANCISCO",
+      "state": "CA",
+      "zip": "94104",
+      "country": "US",
+      "residential": true,
+      "carrier_facility": "",
+      "name": "",
+      "company": "EasyPost",
+      "phone": "4151234567",
+      "email": "",
+      "federal_tax_id": "",
+      "state_tax_id": ""
+    },
+    "parcel": {
+      "length": 20.2,
+      "width": 10.9,
+      "height": 5.0,
+      "predefined_package": "",
+      "weight": 65.9
+    },
+    "customs_info": {
+      "contents_explanation": "",
+      "contents_type": "merchandise",
+      "customs_certify": true,
+      "customs_signer": "Steve Brule",
+      "eel_pfc": "NOEEI 30.37(a)",
+      "non_delivery_option": "return",
+      "restriction_comments": "",
+      "restriction_type": "none",
+      "declaration": "",
+      "customs_items": [
+        {
+          "description": "Sweet shirts",
+          "hs_tariff_number": "654321",
+          "origin_country": "US",
+          "quantity": 2,
+          "value": 23.0,
+          "weight": 21.0,
+          "code": "",
+          "manufacturer": "",
+          "currency": "",
+          "eccn": "",
+          "printed_commodity_identifier": ""
+        }
+      ]
+    },
+    "options": null,
+    "carrier_accounts": [
+      "carr_.."
     ]
-  },
-  "options": null,
-  "carrier_accounts": [
-    "carr_.."
-  ]
+  }
 }

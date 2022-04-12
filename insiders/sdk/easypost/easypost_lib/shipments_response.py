@@ -234,7 +234,7 @@ class Shipment:
     tracking_code: Optional[str] = None
     usps_zone: Optional[int] = None
     tracker: Optional[Tracker] = JStruct[Tracker]
-    messages: List[str] = []
+    messages: List[Any] = []
     insurance: Optional[float] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None

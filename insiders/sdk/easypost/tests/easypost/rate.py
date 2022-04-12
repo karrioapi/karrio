@@ -9,7 +9,7 @@ from tests.easypost.fixture import gateway
 class TestEasyPostRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = RateRequest(**TRACKING_PAYLOAD)
+        self.RateRequest = RateRequest(**PAYLOAD)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
@@ -30,7 +30,7 @@ class TestEasyPostRating(unittest.TestCase):
         with patch("karrio.mappers.easypost.proxy.http") as mock:
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            print(DP.to_dict(parsed_response))
+
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
             )
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
-TRACKING_PAYLOAD = {
+PAYLOAD = {
     "reference": "order #1111",
     "recipient": {
         "company_name": "EasyPost",
@@ -134,28 +134,30 @@ ParsedErrorResponse = [
 
 RateRequestJSON = [
     {
-        "from_address": {
-            "city": "Bronx",
-            "company": "Vandelay Industries",
-            "name": "George Costanza",
-            "residential": False,
-            "state": "NY",
-            "street1": "1 E 161st St.",
-            "zip": "10451",
-        },
-        "options": {},
-        "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
-        "reference": "order #1111",
-        "to_address": {
-            "city": "San Francisco",
-            "company": "EasyPost",
-            "phone": "415-528-7555",
-            "residential": False,
-            "state": "CA",
-            "street1": "417 Montgomery Street",
-            "street2": "5th Floor",
-            "zip": "94104",
-        },
+        "shipment": {
+            "from_address": {
+                "city": "Bronx",
+                "company": "Vandelay Industries",
+                "name": "George Costanza",
+                "residential": False,
+                "state": "NY",
+                "street1": "1 E 161st St.",
+                "zip": "10451",
+            },
+            "options": {},
+            "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
+            "reference": "order #1111",
+            "to_address": {
+                "city": "San Francisco",
+                "company": "EasyPost",
+                "phone": "415-528-7555",
+                "residential": False,
+                "state": "CA",
+                "street1": "417 Montgomery Street",
+                "street2": "5th Floor",
+                "zip": "94104",
+            },
+        }
     }
 ]
 

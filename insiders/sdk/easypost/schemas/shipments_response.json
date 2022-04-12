@@ -280,9 +280,7 @@
         "updated_at": "2013-11-08T20:58:26Z",
         "public_url": "https://track.easypost.com/djE7..."
       },
-      "messages": [
-        "The tracker entered the mailstream before insurance was purchased."
-      ],
+      "messages": [],
       "insurance": 249.99,
       "created_at": "2013-04-22T05:40:57Z",
       "updated_at": "2013-04-22T05:40:57Z"
