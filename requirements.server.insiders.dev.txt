@@ -7,6 +7,8 @@
 # karrio.addons
 -e ./insiders/sdk/generic
 # karrio.generic
+-e ./insiders/sdk/easypost
+# karrio.easypost
 
 # karrio enterprise modules
 -e ./insiders/server/tenants
