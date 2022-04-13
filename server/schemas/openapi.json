@@ -428,6 +428,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -529,6 +530,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -1678,6 +1680,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -1764,6 +1767,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -1852,6 +1856,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2038,6 +2043,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2134,6 +2140,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2298,6 +2305,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2716,6 +2724,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2801,6 +2810,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -4227,6 +4237,7 @@
                         "type": "string",
                         "description": "Indicates a carrier (type)",
                         "enum": [
+                            "amazon_mws",
                             "aramex",
                             "australiapost",
                             "canadapost",
