@@ -36,7 +36,7 @@ class Proxy(BaseProxy):
         track = lambda trackingId: (
             trackingId,
             self._send_request(
-                path="/shipping/v1/tracking/{trackingId}",
+                path=f"/shipping/v1/tracking/{trackingId}",
                 method="GET",
             ),
         )

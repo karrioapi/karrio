@@ -1,13 +1,11 @@
 
-# Schemas in Development
-# -e ./schemas/dhl_poland
-
 # SDK extentions
 -e ./sdk/core
 -e ./insiders/sdk/addons
 -e ./insiders/sdk/generic
 -e ./insiders/sdk/easypost
 
+-e ./sdk/extensions/amazon_mws
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/canadapost
