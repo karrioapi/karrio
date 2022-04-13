@@ -30,7 +30,7 @@ class Proxy(BaseProxy):
             path=f"/shipping/v1/shipments/{request.serialize()}/cancel",
         )
 
-        return Deserializable(response, DP.to_dict)
+        return Deserializable(response if any(response) else "{}", DP.to_dict)
 
     def get_tracking(self, request: Serializable) -> Deserializable[str]:
         track = lambda trackingId: (

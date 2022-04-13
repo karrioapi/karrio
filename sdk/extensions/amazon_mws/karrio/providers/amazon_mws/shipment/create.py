@@ -81,14 +81,14 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
         containers=[
             amazon.Container(
                 containerType="PACKAGE",
-                containerReferenceId=package.id,
+                containerReferenceId=package.parcel.id,
                 dimensions=amazon.Dimensions(
                     height=package.height.IN,
                     length=package.length.IN,
                     width=package.width.IN,
                     unit="IN",
                 ),
-                weight=amazon.Weight(
+                weight=amazon.UnitWeight(
                     value=package.weight.LB,
                     unit="LB",
                 ),
