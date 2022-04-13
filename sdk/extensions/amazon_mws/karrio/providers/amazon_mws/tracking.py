@@ -16,10 +16,7 @@ def parse_tracking_response(
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     errors: List[Message] = sum(
         [
-            [
-                parse_error_response(e, settings, dict(tracking_number=id))
-                for e in response.get("errors", [])
-            ]
+            parse_error_response(response, settings, dict(tracking_number=id))
             for id, response in responses
             if "errors" in response
         ],

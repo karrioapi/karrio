@@ -14,9 +14,10 @@ from karrio.providers.amazon_mws.error import parse_error_response
 def parse_rate_response(
     response: dict, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
-    errors = [
-        parse_error_response(data, settings) for data in response.get("errors", [])
-    ]
+    errors: List[Message] = sum(
+        [parse_error_response(data, settings) for data in response.get("errors", [])],
+        [],
+    )
     rates = [
         _extract_details(data, settings) for data in response.get("serviceRates", [])
     ]
@@ -27,16 +28,17 @@ def parse_rate_response(
 def _extract_details(data: dict, settings: Settings) -> RateDetails:
     rate = DP.to_object(ServiceRate, data)
     transit = (
-        DF.fdate(rate.promise.deliveryWindow.start).days
-        - DF.fdate(rate.promise.receiveWindow.end).days
-    )
+        DF.date(rate.promise.deliveryWindow.start, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        - DF.date(rate.promise.receiveWindow.end, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+    ).days
 
     return RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=Service.map(rate.serviceType).name_or_key,
-        base_charge=NF.decimal(rate.billableWeight.value),
-        total_charge=NF.decimal(rate.billableWeight.value),
+        base_charge=NF.decimal(rate.totalCharge.value),
+        total_charge=NF.decimal(rate.totalCharge.value),
+        currency=rate.totalCharge.unit,
         transit_days=transit,
         meta=dict(
             service_name=rate.serviceType,
@@ -71,7 +73,9 @@ def rate_request(payload: RateRequest, _) -> Serializable:
             phoneNumber=payload.recipient.phone_number,
         ),
         serviceTypes=list(services),
-        shipDate=DF.fdatetime(options.ship_date, "%Y-%m-%d"),
+        shipDate=DF.fdatetime(
+            options.shipment_date, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
+        ),
         containerSpecifications=[
             amazon.ContainerSpecification(
                 dimensions=amazon.Dimensions(

@@ -19,13 +19,14 @@ from karrio.providers.amazon_mws.error import parse_error_response
 def parse_shipment_response(
     response: dict, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = [
-        parse_error_response(data, settings) for data in response.get("errors", [])
-    ]
+    errors: List[Message] = sum(
+        [parse_error_response(data, settings) for data in response.get("errors", [])],
+        [],
+    )
     shipment = to_multi_piece_shipment(
         [
             (index, _extract_details(data, data.get("shipmentId"), settings))
-            for index, data in enumerate(response.get("labelResults"))
+            for index, data in enumerate(response.get("labelResults", []))
         ]
     )
 
@@ -75,7 +76,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
             email=payload.recipient.email,
             phoneNumber=payload.recipient.phone_number,
         ),
-        shipDate=DF.fdatetime(options.ship_date, "%Y-%m-%d"),
+        shipDate=DF.fdatetime(options.shipment_date, "%Y-%m-%d"),
         serviceType=Service.map(payload.service).name_or_key,
         containers=[
             amazon.Container(
