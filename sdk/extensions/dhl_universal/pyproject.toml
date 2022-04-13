@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.dhl_universal"
-version = "2022.3"
+version = "2022.3.7"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - DHL Universal Tracking Extension"
