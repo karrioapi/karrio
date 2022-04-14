@@ -17,5 +17,5 @@ METADATA = Metadata(
     # Data Units
     options=units.Option,
     services=units.Service,
-    hub_carriers=units.CARRIER_IDS,
+    hub_carriers=units.CarrierId.to_dict(),
 )

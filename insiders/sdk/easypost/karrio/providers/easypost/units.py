@@ -302,46 +302,44 @@ class Service(Enum):
     easypost_asendia_us_epaq_standard_ipa = "ePAQStandardIPA"
     easypost_asendia_us_epaq_standard_isal = "ePAQStandardISAL"
     easypost_asendia_us_epaq_select_pmei_non_presort = "ePaqSelectPMEINonPresort"
-    easypost_australia_post_express_post = "ExpressPost"
-    easypost_australia_post_express_post_signature = "ExpressPostSignature"
-    easypost_australia_post_parcel_post = "ParcelPost"
-    easypost_australia_post_parcel_post_signature = "ParcelPostSignature"
-    easypost_australia_post_parcel_post_extra = "ParcelPostExtra"
-    easypost_australia_post_parcel_post_wine_plus_signature = (
+    easypost_australiapost_express_post = "ExpressPost"
+    easypost_australiapost_express_post_signature = "ExpressPostSignature"
+    easypost_australiapost_parcel_post = "ParcelPost"
+    easypost_australiapost_parcel_post_signature = "ParcelPostSignature"
+    easypost_australiapost_parcel_post_extra = "ParcelPostExtra"
+    easypost_australiapost_parcel_post_wine_plus_signature = (
         "ParcelPostWinePlusSignature"
     )
     easypost_axlehire_delivery = "AxleHireDelivery"
     easypost_better_trucks_next_day = "NEXT_DAY"
     easypost_bond_standard = "Standard"
-    easypost_canada_post_regular_parcel = "RegularParcel"
-    easypost_canada_post_expedited_parcel = "ExpeditedParcel"
-    easypost_canada_post_xpresspost = "Xpresspost"
-    easypost_canada_post_xpresspost_certified = "XpresspostCertified"
-    easypost_canada_post_priority = "Priority"
-    easypost_canada_post_library_books = "LibraryBooks"
-    easypost_canada_post_expedited_parcel_usa = "ExpeditedParcelUSA"
-    easypost_canada_post_priority_worldwide_envelope_usa = (
-        "PriorityWorldwideEnvelopeUSA"
-    )
-    easypost_canada_post_priority_worldwide_pak_usa = "PriorityWorldwidePakUSA"
-    easypost_canada_post_priority_worldwide_parcel_usa = "PriorityWorldwideParcelUSA"
-    easypost_canada_post_small_packet_usa_air = "SmallPacketUSAAir"
-    easypost_canada_post_tracked_packet_usa = "TrackedPacketUSA"
-    easypost_canada_post_tracked_packet_usalvm = "TrackedPacketUSALVM"
-    easypost_canada_post_xpresspost_usa = "XpresspostUSA"
-    easypost_canada_post_xpresspost_international = "XpresspostInternational"
-    easypost_canada_post_international_parcel_air = "InternationalParcelAir"
-    easypost_canada_post_international_parcel_surface = "InternationalParcelSurface"
-    easypost_canada_post_priority_worldwide_envelope_intl = (
+    easypost_canadapost_regular_parcel = "RegularParcel"
+    easypost_canadapost_expedited_parcel = "ExpeditedParcel"
+    easypost_canadapost_xpresspost = "Xpresspost"
+    easypost_canadapost_xpresspost_certified = "XpresspostCertified"
+    easypost_canadapost_priority = "Priority"
+    easypost_canadapost_library_books = "LibraryBooks"
+    easypost_canadapost_expedited_parcel_usa = "ExpeditedParcelUSA"
+    easypost_canadapost_priority_worldwide_envelope_usa = "PriorityWorldwideEnvelopeUSA"
+    easypost_canadapost_priority_worldwide_pak_usa = "PriorityWorldwidePakUSA"
+    easypost_canadapost_priority_worldwide_parcel_usa = "PriorityWorldwideParcelUSA"
+    easypost_canadapost_small_packet_usa_air = "SmallPacketUSAAir"
+    easypost_canadapost_tracked_packet_usa = "TrackedPacketUSA"
+    easypost_canadapost_tracked_packet_usalvm = "TrackedPacketUSALVM"
+    easypost_canadapost_xpresspost_usa = "XpresspostUSA"
+    easypost_canadapost_xpresspost_international = "XpresspostInternational"
+    easypost_canadapost_international_parcel_air = "InternationalParcelAir"
+    easypost_canadapost_international_parcel_surface = "InternationalParcelSurface"
+    easypost_canadapost_priority_worldwide_envelope_intl = (
         "PriorityWorldwideEnvelopeIntl"
     )
-    easypost_canada_post_priority_worldwide_pak_intl = "PriorityWorldwidePakIntl"
-    easypost_canada_post_priority_worldwide_parcel_intl = "PriorityWorldwideParcelIntl"
-    easypost_canada_post_small_packet_international_air = "SmallPacketInternationalAir"
-    easypost_canada_post_small_packet_international_surface = (
+    easypost_canadapost_priority_worldwide_pak_intl = "PriorityWorldwidePakIntl"
+    easypost_canadapost_priority_worldwide_parcel_intl = "PriorityWorldwideParcelIntl"
+    easypost_canadapost_small_packet_international_air = "SmallPacketInternationalAir"
+    easypost_canadapost_small_packet_international_surface = (
         "SmallPacketInternationalSurface"
     )
-    easypost_canada_post_tracked_packet_international = "TrackedPacketInternational"
+    easypost_canadapost_tracked_packet_international = "TrackedPacketInternational"
     easypost_canpar_ground = "Ground"
     easypost_canpar_select_letter = "SelectLetter"
     easypost_canpar_select_pak = "SelectPak"
@@ -394,17 +392,17 @@ class Service(Enum):
     easypost_couriersplease_international_economy = "InternationalEconomy"
     easypost_couriersplease_international_standard = "InternationalStandard"
     easypost_couriersplease_international_express = "InternationalExpress"
-    easypost_dai_post_domestic_tracked = "DomesticTracked"
-    easypost_dai_post_international_economy = "InternationalEconomy"
-    easypost_dai_post_international_standard = "InternationalStandard"
-    easypost_dai_post_international_express = "InternationalExpress"
-    easypost_deutsche_post_packet_plus = "PacketPlus"
-    easypost_deutsche_post_uk_priority_packet_plus = "PriorityPacketPlus"
-    easypost_deutsche_post_uk_priority_packet = "PriorityPacket"
-    easypost_deutsche_post_uk_priority_packet_tracked = "PriorityPacketTracked"
-    easypost_deutsche_post_uk_business_mail_registered = "BusinessMailRegistered"
-    easypost_deutsche_post_uk_standard_packet = "StandardPacket"
-    easypost_deutsche_post_uk_business_mail_standard = "BusinessMailStandard"
+    easypost_daipost_domestic_tracked = "DomesticTracked"
+    easypost_daipost_international_economy = "InternationalEconomy"
+    easypost_daipost_international_standard = "InternationalStandard"
+    easypost_daipost_international_express = "InternationalExpress"
+    easypost_deutschepost_packet_plus = "PacketPlus"
+    easypost_deutschepost_uk_priority_packet_plus = "PriorityPacketPlus"
+    easypost_deutschepost_uk_priority_packet = "PriorityPacket"
+    easypost_deutschepost_uk_priority_packet_tracked = "PriorityPacketTracked"
+    easypost_deutschepost_uk_business_mail_registered = "BusinessMailRegistered"
+    easypost_deutschepost_uk_standard_packet = "StandardPacket"
+    easypost_deutschepost_uk_business_mail_standard = "BusinessMailStandard"
     easypost_dhl_ecom_asia_packet = "Packet"
     easypost_dhl_ecom_asia_packet_plus = "PacketPlus"
     easypost_dhl_ecom_asia_parcel_direct = "ParcelDirect"
@@ -860,82 +858,84 @@ class Service(Enum):
     easypost_veho_same_day = "sameDay"
 
     @staticmethod
-    def info(serviceId, carrierId, serviceName, carrierName):
-        carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
-        service = Service.map(str(serviceId))
-        formatted_name = re.sub(
-            r"((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))", r" \1", serviceName
-        )
-        service_name = (service.name or formatted_name).replace("easypost_", "")
+    def info(serviceName, carrier):
+        rate_provider = CarrierId.map(carrier).name_or_key
+        service = Service.map(serviceName)
+        service_name = re.sub(
+            r"((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))", r" \1", service.name_or_key
+        ).replace("easypost_", "")
 
-        return carrier_name, service.name_or_key, service_name
+        return rate_provider, service.name_or_key, service_name
 
 
-CARRIER_IDS = {
-    "amazonmws": "AmazonMws",
-    "apc": "APC",
-    "asendia": "Asendia",
-    "asendia_us": "Asendia USA",
-    "australia_post": "Australia Post",
-    "axlehire": "AxleHire",
-    "better_trucks": "Better Trucks",
-    "bond": "Bond",
-    "canada_post": "Canada Post",
-    "canpar": "Canpar",
-    "cdl": "CDL Last Mile Solutions",
-    "chronopost": "Chronopost",
-    "cloudsort": "CloudSort",
-    "courier_express": "Courier Express",
-    "courierplease": "CourierPlease",
-    "dai_post": "Dai Post",
-    "deutsche_post": "Deutsche Post",
-    "deutsche_post_uk": "Deutsche Post UK",
-    "dhl_ecom_asia": "DHL eCommerce Asia",
-    "dhl_ecom": "DHL eCommerce Solutions",
-    "dhl_express": "DHL Express",
-    "dpd": "DPD",
-    "dpd_uk": "DPD UK",
-    "epost": "ePost Global",
-    "estafeta": "Estafeta",
-    "fastway": "Fastway",
-    "fedex": "FedEx",
-    "fedex_mail": "FedEx Mailview",
-    "fedex_sameday_city": "FedEx Same Day City",
-    "fedex_smartpost": "FedEx SmartPost",
-    "firstmile": "FirstMile",
-    "globegistics": "Globegistics",
-    "gso": "GSO",
-    "hermes": "Hermes",
-    "interlink": "Interlink Express",
-    "jp_post": "JP Post",
-    "kuroneko_yamato": "Kuroneko Yamato",
-    "laposte": "La Poste",
-    "lasership": "LaserShip",
-    "loomis": "Loomis Express",
-    "lso": "LSO",
-    "newgistics": "Newgistics",
-    "ontrac": "OnTrac",
-    "osm": "OSM Worldwide",
-    "parcelforce": "Parcelforce",
-    "parcll": "PARCLL",
-    "passport": "Passport",
-    "postnl": "PostNL",
-    "purolator": "Purolator",
-    "royalmail": "Royal Mail",
-    "seko": "SEKO OmniParcel",
-    "sendle": "Sendle",
-    "sfexpress": "SF Express",
-    "speedee": "Spee-Dee",
-    "startrack": "StarTrack",
-    "tforce": "TForce",
-    "uds": "UDS",
-    "ups": "UPS",
-    "ups_iparcel": "UPS i-parcel",
-    "ups_mail_innovations": "UPS Mail Innovations",
-    "usps": "USPS",
-    "veho": "Veho",
-    "yanwen": "Yanwen",
-}
+class CarrierId(Flag):
+    amazon_mws = "AmazonMws"
+    apc = "APC"
+    asendia = "Asendia"
+    asendia_us = "Asendia USA"
+    australiapost = "Australia Post"
+    axlehire = "AxleHire"
+    better_trucks = "Better Trucks"
+    bond = "Bond"
+    canadapost = "Canada Post"
+    canpar = "Canpar"
+    cdl = "CDL Last Mile Solutions"
+    chronopost = "Chronopost"
+    cloudsort = "CloudSort"
+    courier_express = "Courier Express"
+    courierplease = "CourierPlease"
+    daipost = "Dai Post"
+    deutschepost = "Deutsche Post"
+    deutschepost_uk = "Deutsche Post UK"
+    dhl_ecom_asia = "DHL eCommerce Asia"
+    dhl_ecom = "DHL eCommerce Solutions"
+    dhl_express = "DHL Express"
+    dpd = "DPD"
+    dpd_uk = "DPD UK"
+    epost = "ePost Global"
+    estafeta = "Estafeta"
+    fastway = "Fastway"
+    fedex = "FedEx"
+    fedex_mail = "FedEx Mailview"
+    fedex_sameday_city = "FedEx Same Day City"
+    fedex_smartpost = "FedEx SmartPost"
+    firstmile = "FirstMile"
+    globegistics = "Globegistics"
+    gso = "GSO"
+    hermes = "Hermes"
+    interlink = "Interlink Express"
+    jppost = "JP Post"
+    kuroneko_yamato = "Kuroneko Yamato"
+    laposte = "La Poste"
+    lasership = "LaserShip"
+    loomis = "Loomis Express"
+    lso = "LSO"
+    newgistics = "Newgistics"
+    ontrac = "OnTrac"
+    osm = "OSM Worldwide"
+    parcelforce = "Parcelforce"
+    parcll = "PARCLL"
+    passport = "Passport"
+    postnl = "PostNL"
+    purolator = "Purolator"
+    royalmail = "Royal Mail"
+    seko = "SEKO OmniParcel"
+    sendle = "Sendle"
+    sfexpress = "SF Express"
+    speedee = "Spee-Dee"
+    startrack = "StarTrack"
+    tforce = "TForce"
+    uds = "UDS"
+    ups = "UPS"
+    ups_iparcel = "UPS i-parcel"
+    ups_mail_innovations = "UPS Mail Innovations"
+    usps = "USPS"
+    veho = "Veho"
+    yanwen = "Yanwen"
+
+    @staticmethod
+    def to_dict():
+        return {key: enum.value for key, enum in CarrierId.__members__.items()}
 
 
 class Option(Flag):

@@ -30,19 +30,15 @@ class TestEasyPostRating(unittest.TestCase):
         with patch("karrio.mappers.easypost.proxy.http") as mock:
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
-            )
+            print(DP.to_dict(parsed_response))
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.easypost.proxy.http") as mock:
             mock.return_value = ErrorResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedErrorResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -78,8 +74,8 @@ ParsedRateResponse = [
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {
-                "rate_provider": "USPS",
-                "service_name": "FirstClassPackageInternationalService",
+                "rate_provider": "usps",
+                "service_name": "usps_first_class_package_international_service",
             },
             "service": "easypost_usps_first_class_package_international_service",
             "total_charge": 9.5,
@@ -90,8 +86,8 @@ ParsedRateResponse = [
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {
-                "rate_provider": "USPS",
-                "service_name": "PriorityMailInternational",
+                "rate_provider": "usps",
+                "service_name": "usps_priority_mail_international",
             },
             "service": "easypost_usps_priority_mail_international",
             "total_charge": 27.4,
@@ -102,8 +98,8 @@ ParsedRateResponse = [
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {
-                "rate_provider": "USPS",
-                "service_name": "ExpressMailInternational",
+                "rate_provider": "usps",
+                "service_name": "usps_express_mail_international",
             },
             "service": "easypost_usps_express_mail_international",
             "total_charge": 35.48,

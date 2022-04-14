@@ -38,19 +38,21 @@ def _extract_details(response: dict, settings: Settings) -> List[RateDetails]:
     rates = DP.to_object(Shipment, response).rates
 
     return [
-        RateDetails(
-            carrier_id=settings.carrier_id,
-            carrier_name=settings.carrier_name,
-            currency=rate.currency,
-            service=Service.map(rate.service).name_or_key,
-            base_charge=NF.decimal(rate.rate),
-            total_charge=NF.decimal(rate.rate),
-            transit_days=rate.delivery_days,
-            meta=dict(
-                service_name=rate.service,
-                rate_provider=rate.carrier,
-            ),
-        )
+        (
+            lambda rate_provider, service, service_name: RateDetails(
+                carrier_id=settings.carrier_id,
+                carrier_name=settings.carrier_name,
+                currency=rate.currency,
+                service=service,
+                base_charge=NF.decimal(rate.rate),
+                total_charge=NF.decimal(rate.rate),
+                transit_days=rate.delivery_days,
+                meta=dict(
+                    service_name=service_name,
+                    rate_provider=rate_provider,
+                ),
+            )
+        )(*Service.info(rate.service, rate.carrier))
         for rate in rates
     ]
 
