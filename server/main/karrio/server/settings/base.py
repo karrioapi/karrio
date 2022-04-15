@@ -103,6 +103,11 @@ KARRIO_CONF = [
             "module": "karrio.server.documents",
             "urls": "karrio.server.documents.urls",
         },
+        {
+            "app": "karrio.server.data",
+            "module": "karrio.server.data",
+            "urls": "karrio.server.data.urls",
+        },
         {"app": "karrio.server.pricing", "module": "karrio.server.pricing"},
         {"app": "karrio.server.apps", "module": "karrio.server.apps"},
     ]
@@ -116,6 +121,7 @@ MULTI_ORGANIZATIONS = importlib.util.find_spec("karrio.server.orgs") is not None
 ORDERS_MANAGEMENT = importlib.util.find_spec("karrio.server.orders") is not None
 APPS_MANAGEMENT = importlib.util.find_spec("karrio.server.apps") is not None
 DOCUMENTS_MANAGEMENT = importlib.util.find_spec("karrio.server.documents") is not None
+DATA_IMPORT_EXPORT = importlib.util.find_spec("karrio.server.data") is not None
 CUSTOM_CARRIER_DEFINITION = (
     importlib.util.find_spec("karrio.mappers.generic") is not None
 )
@@ -133,9 +139,9 @@ if len(BASE_PATH) > 0 and not BASE_PATH.endswith("/"):
     BASE_PATH = BASE_PATH + "/"
 
 ROOT_URLCONF = "karrio.server.urls"
-LOGOUT_REDIRECT_URL = "/admin/login/"
-LOGIN_REDIRECT_URL = "/admin/"
-LOGIN_URL = "/admin/login/"
+LOGOUT_REDIRECT_URL = BASE_PATH + "/admin/login/"
+LOGIN_REDIRECT_URL = BASE_PATH + "/admin/"
+LOGIN_URL = BASE_PATH + "/admin/login/"
 OPEN_API_PATH = "openapi/"
 
 NAMESPACED_URLS = [

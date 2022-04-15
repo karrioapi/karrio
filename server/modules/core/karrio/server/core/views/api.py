@@ -1,12 +1,21 @@
 import importlib
+import pydoc
+import typing
+from django.conf import settings
+from django.http import JsonResponse
 from rest_framework import generics, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking.mixins import LoggingMixin
+from rest_framework import status
 
 from karrio.core.utils import DP
 from karrio.server.core.authentication import TokenAuthentication, JWTAuthentication
 from karrio.server.core.models import APILog
+
+AccessMixin: typing.Any = pydoc.locate(
+    getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
+)
 
 
 class KarrioLoggingMixin(LoggingMixin):
@@ -17,14 +26,18 @@ class KarrioLoggingMixin(LoggingMixin):
             if "query_params" not in self.log
             else DP.jsonify(self.log["query_params"])
         )
-        response = None if "response" not in self.log else DP.jsonify(self.log["response"])
+        response = (
+            None if "response" not in self.log else DP.jsonify(self.log["response"])
+        )
 
-        log = APILog(**{
-            **self.log,
-            "data": data,
-            "response": response,
-            "query_params": query_params
-        })
+        log = APILog(
+            **{
+                **self.log,
+                "data": data,
+                "response": response,
+                "query_params": query_params,
+            }
+        )
         log.save()
 
         if (importlib.util.find_spec("karrio.server.orgs") is not None) and (
@@ -60,3 +73,16 @@ class GenericAPIView(KarrioLoggingMixin, BaseGenericAPIView):
 
 class APIView(KarrioLoggingMixin, views.APIView, BaseView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
+
+
+class LoginRequiredView(AccessMixin):
+    def dispatch(self, request, *args, **kwargs):
+        auth = super().dispatch(request, *args, **kwargs)
+        if not request.user.is_authenticated:
+            return JsonResponse(
+                dict(
+                    error={"message": "Authentication credentials were not provided."}
+                ),
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        return auth

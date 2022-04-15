@@ -17,3 +17,4 @@
 -e ./insiders/server/iam
 -e ./insiders/server/apps
 -e ./insiders/server/documents
+-e ./insiders/server/data
