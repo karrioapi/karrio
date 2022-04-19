@@ -1,4 +1,4 @@
-# <a href="https://karrio.io" target="_blank"><picture><source srcset="./server/main/karrio/server/static/extra/branding/logo-inverted.svg" media="(prefers-color-scheme: dark)"/><img alt="Karrio" src="./server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></picture></a>
+# <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
 
 **The Universal Shipping API**
 
@@ -20,7 +20,7 @@ Help us out… If you love open source and great software, give us a star! 🌟
 - **Cloud**: Optimized for deployments using Docker.
 - **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
 
-<picture><img alt="Karrio Dashboard" src="./screenshots/dashboard.png" /></picture>
+<img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
 ## Try it now
 
