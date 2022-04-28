@@ -1,5 +1,7 @@
 # <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />
+
 **The Universal Shipping API**
 
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
