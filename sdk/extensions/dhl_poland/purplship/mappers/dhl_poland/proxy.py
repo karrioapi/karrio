@@ -28,25 +28,6 @@ class Proxy(RatingMixinProxy, BaseProxy):
     def get_rates(self, request: Serializable) -> Deserializable:
         return super().get_rates(request)
 
-    def get_tracking(self, requests: Serializable) -> Deserializable:
-        responses = exec_async(
-            lambda request: dict(
-                number=request[0],
-                data=self._send_request(
-                    Serializable(request[1]),
-                    soapaction=f"{self.settings.server_url}#getTrackAndTraceInfo",
-                ),
-            ),
-            requests.serialize().items(),
-        )
-
-        return Deserializable(
-            responses,
-            lambda results: {
-                result["number"]: XP.to_xml(result["data"]) for result in results
-            },
-        )
-
     def create_shipment(self, request: Serializable) -> Deserializable[str]:
         response = self._send_request(
             request,
