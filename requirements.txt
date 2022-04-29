@@ -67,8 +67,8 @@ purplship.australiapost==2022.2
 purplship.canadapost==2022.2.1
 purplship.canpar==2022.2
 purplship.dhl-express==2022.2
-purplship.dhl-poland==2022.2
-purplship.dhl-universal==2022.2
+purplship.dhl-poland==2022.2.3
+purplship.dhl-universal==2022.2.3
 purplship.dicom==2022.2
 purplship.eshipper==2022.2
 purplship.fedex==2022.2
@@ -76,11 +76,11 @@ purplship.freightcom==2022.2
 purplship.purolator==2022.2
 purplship.royalmail==2022.2
 purplship.sendle==2022.2
-purplship.server==2022.2.2
+purplship.server==2022.2.3
 purplship.server.core==2022.2.2
 purplship.server.events==2022.2
 purplship.server.graph==2022.2
-purplship.server.manager==2022.2
+purplship.server.manager==2022.2.3
 purplship.server.pricing==2022.2
 purplship.server.proxy==2022.2
 purplship.sf-express==2022.2
