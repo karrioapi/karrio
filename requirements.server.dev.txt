@@ -12,7 +12,7 @@ Django<=3.2.11
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
 -e ./sdk/extensions/dhl_poland
-# -e ./sdk/extensions/dhl_universal
+-e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/vendors/eshipper
 # -e ./sdk/extensions/fedex
@@ -35,8 +35,8 @@ purplship.australiapost
 purplship.canadapost
 purplship.canpar
 purplship.dhl-express
-purplship.dhl-poland
-purplship.dhl-universal
+# purplship.dhl-poland
+# purplship.dhl-universal
 purplship.dicom
 purplship.fedex
 purplship.purolator
