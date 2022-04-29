@@ -9,7 +9,7 @@ purplship server is a private cloud Multi-carrier API.
 - Install
 
 ```shell script
-pip install -f https://git.io/purplship purplship.server
+pip install purplship.server
 ```
 
 - Start the server

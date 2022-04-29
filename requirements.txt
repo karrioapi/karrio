@@ -1,4 +1,4 @@
--f https://git.io/purplship
+-f https://github.com/karrioapi/purplship-packages/releases
 aniso8601==7.0.0
 asgiref==3.5.0
 attrs==21.4.0

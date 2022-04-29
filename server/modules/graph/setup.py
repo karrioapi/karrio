@@ -19,7 +19,6 @@ setup(
         "graphene-django",
         "django-filter",
     ],
-    dependency_links=["https://git.io/purplship"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

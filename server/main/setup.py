@@ -39,9 +39,6 @@ setup(
         "purplship.server.core",
     ],
     entry_points={"console_scripts": ["purplship = purplship.server.__main__:main"]},
-    dependency_links=[
-        "https://git.io/purplship",
-    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

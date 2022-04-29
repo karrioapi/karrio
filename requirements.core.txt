@@ -1,4 +1,4 @@
--f https://git.io/purplship
+-f https://github.com/karrioapi/purplship-packages/releases
 Django<=3.2.11
 
 purplship
