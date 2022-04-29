@@ -482,6 +482,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
     carrier = shipment.selected_rate_carrier
 
+    # Get rate provider carrier if supported instead of carrier account
     if (rate_provider != shipment.carrier_name) and rate_provider in MODELS:
         carrier = (
             MODELS[rate_provider]
@@ -490,7 +491,20 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
             .first()
         )
 
+    # Get dhl universal account if a dhl integration doesn't support tracking API
+    if (
+        carrier
+        and "dhl" in carrier.carrier_name
+        and "get_tracking" not in carrier.gateway.capabilities
+    ):
+        carrier = Carriers.first(
+            carrier_name="dhl_universal",
+            test=shipment.test_mode,
+            context=context,
+        )
+
     if carrier is not None and "get_tracking" in carrier.gateway.capabilities:
+        # Create shipment tracker
         try:
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
@@ -517,3 +531,19 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
             logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
         except Exception as e:
             logger.exception("Failed to create new label tracker", e)
+
+        # Update shipment tracking url if different from the current one
+        try:
+            url = reverse(
+                "purplship.server.manager:shipment-tracker",
+                kwargs=dict(
+                    tracking_number=shipment.tracking_number,
+                    carrier_name=carrier.carrier_name,
+                ),
+            )
+            tracking_url = f"{url}{'?test' if carrier.test else ''}"
+            if tracking_url != shipment.tracking_url:
+                shipment.tracking_url = tracking_url
+                shipment.save(update_fields=["tracking_url"])
+        except Exception as e:
+            logger.exception("Failed to update shipment tracking url", e)
