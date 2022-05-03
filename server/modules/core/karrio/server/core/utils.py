@@ -108,15 +108,20 @@ def filter_rate_carrier_compatible_gateways(
         carrier.gateway
         for carrier in carriers
         if (
+            # If no carrier list is provided, and gateway has get_rates capability.
             ("get_rates" in carrier.gateway.capabilities and len(carrier_ids) > 0)
+            # If a carrier list is provided, and gateway is in the list.
             or (
+                # the gateway has get_rates capability.
                 "get_rates" in carrier.gateway.capabilities
+                # and no explicit carrier list is provided.
                 and len(carrier_ids) == 0
+                # and the shipper country code is provided.
                 and shipper_country_code is not None
-                and any(carrier.gateway.settings.account_country_code or [])
                 and (
                     carrier.gateway.settings.account_country_code
                     == shipper_country_code
+                    or carrier.gateway.settings.account_country_code is None
                 )
             )
         )
