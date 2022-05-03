@@ -1,4 +1,4 @@
-Django<=3.2.12
+Django<=3.2.13
 
 
 # Carrier Extenstions in Development
@@ -20,7 +20,7 @@ Django<=3.2.12
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/sf_express
 # -e ./sdk/extensions/tnt
-# -e ./sdk/extensions/ups
+-e ./sdk/extensions/ups
 # -e ./sdk/extensions/usps
 # -e ./sdk/extensions/usps_international
 # -e ./sdk/extensions/yanwen
@@ -42,7 +42,7 @@ karrio.royalmail
 karrio.sendle
 karrio.sf-express
 karrio.tnt
-karrio.ups
+# karrio.ups
 karrio.usps
 karrio.usps_international
 karrio.yanwen
