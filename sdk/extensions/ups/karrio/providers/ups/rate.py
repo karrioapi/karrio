@@ -103,11 +103,15 @@ def _extract_package_rate(
                             )
                         ]
                     ),
-                    [charge for charge in extra_charges if charge is not None and charge.Code is not None],
+                    [
+                        charge
+                        for charge in extra_charges
+                        if charge is not None and charge.Code is not None
+                    ],
                     [],
                 ),
                 transit_days=NF.integer(transit_days),
-                meta=dict(service_name=service.name_or_key)
+                meta=dict(service_name=service.name_or_key),
             )
         ]
 
@@ -128,7 +132,7 @@ def rate_request(
             SubVersion=None,
             TransactionReference=TransactionReferenceType(
                 CustomerContext=payload.reference,
-                TransactionIdentifier=getattr(payload, 'id', None)
+                TransactionIdentifier=getattr(payload, "id", None),
             ),
         ),
         PickupType=None,
@@ -172,7 +176,8 @@ def rate_request(
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
                 UOMCodeDescriptionType(Code=service.value, Description=None)
-                if service is not None else None
+                if service is not None
+                else None
             ),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
@@ -181,7 +186,8 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=(
-                            mps_packaging or PackagingType[
+                            mps_packaging
+                            or PackagingType[
                                 package.packaging_type or "your_packaging"
                             ].value
                         ),
@@ -202,7 +208,8 @@ def rate_request(
                                 package.height.value,
                                 package.width.value,
                             ]
-                        ) else None
+                        )
+                        else None
                     ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
@@ -236,6 +243,7 @@ def rate_request(
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
+        logged=True,
     )
 
 

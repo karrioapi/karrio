@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from ups_lib import common
 from ups_lib.void_web_service_schema import (
     VoidShipmentRequest,
     CodeDescriptionType,
@@ -47,17 +48,22 @@ def shipment_cancel_request(
     request = create_envelope(
         header_content=settings.Security,
         body_content=VoidShipmentRequest(
-            Request=RequestType(),
+            Request=common.RequestType(
+                TransactionReference=common.TransactionReferenceType(
+                    CustomerContext=payload.shipment_identifier,
+                ),
+            ),
             VoidShipment=VoidShipmentType(
                 ShipmentIdentificationNumber=payload.shipment_identifier,
-                TrackingNumber=None
-            )
+                TrackingNumber=None,
+            ),
         ),
     )
 
     return Serializable(
         request,
         default_request_serializer(
-            "void", 'xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"'
+            "void", 'xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1"'
         ),
+        logged=True,
     )
