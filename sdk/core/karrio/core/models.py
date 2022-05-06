@@ -290,6 +290,7 @@ class TrackingDetails:
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     delivered: bool = None
     estimated_delivery: str = None
+    meta: dict = None
 
 
 @attr.s(auto_attribs=True)

@@ -1,5 +1,6 @@
 import logging
 import typing
+from click import option
 from django.utils import timezone
 from karrio.server.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
@@ -10,6 +11,7 @@ from karrio.server.core.serializers import (
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
+    PlainDictField,
 )
 
 import karrio.server.manager.models as models
@@ -23,18 +25,25 @@ class TrackingSerializer(TrackingDetails):
     carrier_id = CharField(required=False)
     carrier_name = CharField(required=False)
     test_mode = BooleanField(required=False)
-    pending = BooleanField(required=False)
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="additional tracking options",
+    )
 
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         carrier_filter = validated_data["carrier_filter"]
         tracking_number = validated_data["tracking_number"]
+        options = validated_data["options"]
         carrier = Carriers.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
         )
 
         response = Shipments.track(
-            TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
+            TrackingRequest(
+                dict(tracking_numbers=[tracking_number], options=options)
+            ).data,
             carrier=carrier,
             raise_on_error=False,
         )
@@ -49,6 +58,8 @@ class TrackingSerializer(TrackingDetails):
             tracking_carrier=carrier,
             estimated_delivery=response.tracking.estimated_delivery,
             messages=DP.to_dict(response.messages),
+            meta=response.tracking.meta,
+            options=response.tracking.options,
         )
 
     def update(
@@ -58,8 +69,19 @@ class TrackingSerializer(TrackingDetails):
             timezone.now() - instance.updated_at
         ).seconds / 60  # minutes since last fetch
 
-        if last_fetch >= 30 and instance.delivered is not True:
+        if last_fetch >= 1 and instance.delivered is not True:
             carrier_filter = validated_data["carrier_filter"]
+            options = {
+                instance.tracking_number: {
+                    **(instance.options.get(instance.tracking_number) or {}),
+                    **(
+                        (validated_data.get("options") or {}).get(
+                            instance.tracking_number
+                        )
+                        or {}
+                    ),
+                }
+            }
             carrier = (
                 Carriers.first(
                     context=context, **{**DEFAULT_CARRIER_FILTER, **carrier_filter}
@@ -69,7 +91,7 @@ class TrackingSerializer(TrackingDetails):
 
             response = Shipments.track(
                 payload=TrackingRequest(
-                    dict(tracking_numbers=[instance.tracking_number])
+                    dict(tracking_numbers=[instance.tracking_number], options=options)
                 ).data,
                 carrier=carrier,
             )
@@ -100,6 +122,10 @@ class TrackingSerializer(TrackingDetails):
             if response.tracking.estimated_delivery != instance.estimated_delivery:
                 instance.estimated_delivery = response.tracking.estimated_delivery
                 changes.append("estimated_delivery")
+
+            if response.tracking.options != instance.options:
+                instance.options = response.tracking.options
+                changes.append("options")
 
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier

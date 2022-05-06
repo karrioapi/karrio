@@ -139,6 +139,7 @@ TRACKERS_LIST = {
             "status": "in_transit",
             "test_mode": True,
             "messages": [],
+            "meta": {},
             "metadata": {},
         },
         {
@@ -161,6 +162,7 @@ TRACKERS_LIST = {
             "status": "in_transit",
             "test_mode": True,
             "messages": [],
+            "meta": {},
             "metadata": {},
         },
     ],
@@ -226,6 +228,7 @@ UPDATED_TRACKERS_LIST = {
             "status": "in_transit",
             "estimated_delivery": None,
             "messages": [],
+            "meta": {},
             "metadata": {},
         },
         {
@@ -248,6 +251,7 @@ UPDATED_TRACKERS_LIST = {
             "status": "in_transit",
             "estimated_delivery": None,
             "messages": [],
+            "meta": {},
             "metadata": {},
         },
     ],

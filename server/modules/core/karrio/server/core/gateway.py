@@ -27,6 +27,7 @@ from karrio.server.core.utils import (
     is_sdk_message,
     compute_tracking_status,
     filter_rate_carrier_compatible_gateways,
+    app_tracking_query_params,
 )
 
 logger = logging.getLogger(__name__)
@@ -234,7 +235,7 @@ class Shipments:
                 url = resolve_tracking_url(
                     shipment.tracking_number, rate_provider or rate.carrier_name
                 )
-                return f"{url}{'?test' if carrier.test else ''}"
+                return app_tracking_query_params(url, carrier)
 
             return ""
 
@@ -362,6 +363,14 @@ class Shipments:
             ],
             delivered=False,
         )
+        tracking_number = payload["tracking_numbers"][0]
+        options = {
+            **(payload.get("options") or {}),
+            tracking_number: {
+                **(details.meta or {}),
+                **(payload.get("options") or {}).get(tracking_number, {}),
+            },
+        }
 
         return datatypes.TrackingResponse(
             tracking=datatypes.Tracking(
@@ -370,6 +379,8 @@ class Shipments:
                     "id": f"trk_{uuid.uuid4().hex}",
                     "test_mode": carrier.test,
                     "status": compute_tracking_status(result).value,
+                    "meta": details.meta or {},
+                    "options": options,
                 }
             ),
             messages=messages,

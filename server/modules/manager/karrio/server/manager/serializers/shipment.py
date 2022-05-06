@@ -17,6 +17,7 @@ from karrio.server.serializers import (
     link_org,
 )
 import karrio.server.core.datatypes as datatypes
+import karrio.server.core.utils as utils
 from karrio.server.providers.models import Carrier, MODELS
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
@@ -491,6 +492,10 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
             .first()
         )
 
+    # Handle hub extension tracking
+    if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
+        carrier = shipment.selected_rate_carrier
+
     # Get dhl universal account if a dhl integration doesn't support tracking API
     if (
         carrier
@@ -538,10 +543,15 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                 "purplship.server.manager:shipment-tracker",
                 kwargs=dict(
                     tracking_number=shipment.tracking_number,
-                    carrier_name=carrier.carrier_name,
+                    carrier_name=(
+                        rate_provider
+                        if carrier.gateway.is_hub
+                        else carrier.carrier_name
+                    ),
                 ),
             )
-            tracking_url = f"{url}{'?test' if carrier.test else ''}"
+            tracking_url = utils.app_tracking_query_params(url, carrier)
+
             if tracking_url != shipment.tracking_url:
                 shipment.tracking_url = tracking_url
                 shipment.save(update_fields=["tracking_url"])

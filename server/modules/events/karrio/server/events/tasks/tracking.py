@@ -1,7 +1,7 @@
 import time
 import logging
 import datetime
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from itertools import groupby
 
 from django.conf import settings
@@ -68,12 +68,15 @@ def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatch
             # Collect the 5 trackers between the start and end indexes
             batch_trackers = trackers[start:end]
             tracking_numbers = [t.tracking_number for t in batch_trackers]
+            options: Dict = {t.tracking_number: t.options for t in batch_trackers}
 
             logger.debug(f"prepare tracking request for {tracking_numbers}")
 
             # Prepare and send tracking request(s) using the karrio interface.
             request: IRequestFrom = karrio.Tracking.fetch(
-                datatypes.TrackingRequest(tracking_numbers=tracking_numbers)
+                datatypes.TrackingRequest(
+                    tracking_numbers=tracking_numbers, options=options
+                )
             )
             gateway: Gateway = carrier.gateway
 

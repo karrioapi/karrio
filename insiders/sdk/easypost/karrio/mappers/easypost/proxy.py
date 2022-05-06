@@ -80,7 +80,11 @@ class Proxy(BaseProxy):
         track = lambda request: (
             request["tracking_code"],
             self._send_request(
-                path="/trackers", request=Serializable(request, DP.jsonify)
+                **(
+                    dict(path="/trackers", request=Serializable(request, DP.jsonify))
+                    if request.get("tracker_id") is None
+                    else dict(path=f"/trackers/{request['tracker_id']}", method="GET")
+                )
             ),
         )
 

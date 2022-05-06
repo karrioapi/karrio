@@ -253,6 +253,8 @@ class Tracking:
     estimated_delivery: str = None
     id: str = None
     test_mode: bool = None
+    options: Dict = {}
+    meta: dict = None
 
 
 @attr.s(auto_attribs=True)

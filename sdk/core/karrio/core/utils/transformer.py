@@ -97,7 +97,7 @@ def to_multi_piece_shipment(
 
     labels = []
     tracking_numbers = set()
-    tracking_identifiers = set()
+    shipment_identifiers = set()
     label_type = master_shipment.label_type
 
     for _, shipment in package_shipments:
@@ -105,7 +105,7 @@ def to_multi_piece_shipment(
         if shipment.tracking_number:
             tracking_numbers.add(shipment.tracking_number)
         if shipment.shipment_identifier:
-            tracking_identifiers.add(shipment.shipment_identifier)
+            shipment_identifiers.add(shipment.shipment_identifier)
 
     return ShipmentDetails(
         carrier_name=master_shipment.carrier_name,
@@ -117,6 +117,6 @@ def to_multi_piece_shipment(
         meta={
             **master_shipment.meta,
             "tracking_numbers": list(tracking_numbers),
-            "tracking_identifiers": list(tracking_identifiers),
+            "shipment_identifiers": list(shipment_identifiers),
         },
     )

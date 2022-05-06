@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 class Gateway:
     """The carrier connection instance"""
 
+    is_hub: bool
     mapper: Mapper
     proxy: Proxy
     settings: Settings
@@ -126,6 +127,7 @@ class GatewayInitializer:
                         else settings
                     )
                     return Gateway(
+                        is_hub=provider.is_hub,
                         settings=settings_value,
                         proxy=provider.Proxy(settings_value),
                         mapper=provider.Mapper(settings_value),

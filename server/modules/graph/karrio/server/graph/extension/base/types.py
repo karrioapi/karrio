@@ -286,6 +286,8 @@ class TrackerType(utils.BaseObjectType):
     events = graphene.List(graphene.NonNull(TrackingEventType), default_value=[])
     messages = graphene.List(graphene.NonNull(MessageType), default_value=[])
     status = utils.TrackerStatusEnum(required=True)
+    meta = generic.GenericScalar()
+    options = generic.GenericScalar()
     metadata = generic.GenericScalar()
 
     class Meta:

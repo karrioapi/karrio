@@ -24,6 +24,11 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
+CARRIER_NAMES = list(sorted(MODELS.keys()))
+CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
+NON_HUBS_CARRIERS = [
+    carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
+]
 
 
 def contextual_metadata(request: Request):

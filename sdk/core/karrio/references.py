@@ -87,6 +87,11 @@ def collect_references() -> dict:
         "carriers": {
             carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()
         },
+        "carrier_hubs": {
+            carrier_name: metadata.label
+            for carrier_name, metadata in PROVIDERS.items()
+            if metadata.is_hub
+        },
         "services": services,
         "options": options,
         "carrier_capabilities": {

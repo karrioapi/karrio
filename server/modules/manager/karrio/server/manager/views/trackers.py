@@ -11,14 +11,16 @@ from django.urls import path
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
+from karrio.core.utils import DP
+import karrio.server.core.dataunits as dataunits
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
-    MODELS,
     TrackingStatus,
     ErrorResponse,
     TestFilters,
     Operation,
     TrackerStatus,
+    CharField,
 )
 from karrio.server.serializers import SerializerDecorator, PaginatedResult
 from karrio.server.manager.router import router
@@ -28,10 +30,19 @@ import karrio.server.manager.models as models
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Trackers = PaginatedResult("TrackerList", TrackingStatus)
-CARRIER_NAMES = list(MODELS.keys())
 
 
-class TrackerFilters(filters.FilterSet):
+class TrackerFilter(TestFilters):
+    hub = CharField(
+        required=False,
+        allow_blank=False,
+        allow_null=False,
+        max_length=50,
+        help_text="A carrier_name of a hub connector",
+    )
+
+
+class TrackersFilter(filters.FilterSet):
     created_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
     created_before = filters.DateFilter(field_name="created_at", lookup_expr="lte")
     carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
@@ -41,7 +52,7 @@ class TrackerFilters(filters.FilterSet):
             "carrier_name",
             in_=openapi.IN_QUERY,
             type=openapi.TYPE_STRING,
-            enum=CARRIER_NAMES,
+            enum=dataunits.CARRIER_NAMES,
         ),
         openapi.Parameter("carrier_id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter(
@@ -77,7 +88,7 @@ class TrackerList(GenericAPIView):
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = TrackerFilters
+    filterset_class = TrackersFilter
     serializer_class = Trackers
     model = models.Tracking
 
@@ -103,7 +114,7 @@ class TrackerList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
         responses={200: Trackers(), 400: ErrorResponse()},
-        manual_parameters=TrackerFilters.parameters,
+        manual_parameters=TrackersFilter.parameters,
     )
     def get(self, request: Request):
         """
@@ -121,14 +132,14 @@ class TrackersCreate(APIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment tracker",
-        query_serializer=TestFilters(),
+        query_serializer=TrackerFilter(),
         responses={200: TrackingStatus(), 404: ErrorResponse()},
         manual_parameters=[
             openapi.Parameter(
                 "carrier_name",
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
-                enum=CARRIER_NAMES,
+                enum=dataunits.NON_HUBS_CARRIERS,
             ),
         ],
     )
@@ -137,25 +148,34 @@ class TrackersCreate(APIView):
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
         """
-        carrier_filter = {
-            **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name,
-        }
-        tracking = (
+        instance = (
             models.Tracking.access_by(request)
             .filter(tracking_number=tracking_number)
             .first()
         )
 
-        instance = (
+        query = SerializerDecorator[TrackerFilter](data=request.query_params).data
+        carrier_filter = {
+            **{k: v for k, v in query.items() if k != "hub"},
+            # If a hub is specified, use the hub as carrier to track the package
+            "carrier_name": (query.get("hub") if "hub" in query else carrier_name),
+        }
+        data = {
+            "tracking_number": tracking_number,
+            "options": (
+                {tracking_number: {"carrier": carrier_name}} if "hub" in query else {}
+            ),
+        }
+
+        tracker = (
             SerializerDecorator[TrackingSerializer](
-                tracking, data=dict(tracking_number=tracking_number), context=request
+                instance, data=data, context=request
             )
             .save(carrier_filter=carrier_filter)
             .instance
         )
 
-        return Response(TrackingStatus(instance).data)
+        return Response(TrackingStatus(tracker).data)
 
 
 class TrackersDetails(APIView):

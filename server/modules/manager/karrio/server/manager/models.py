@@ -451,6 +451,10 @@ class Tracking(OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=partial(identity, value=[])
     )
+    options = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
+    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
