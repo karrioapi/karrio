@@ -45,25 +45,19 @@ class TestCanadaPostRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedQuoteResponse)
 
     def test_parse_rate_parsing_error(self):
         with patch("karrio.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteParsingError)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), ParsedQuoteParsingError)
 
     def test_parse_rate_missing_args_error(self):
         with patch("karrio.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteMissingArgsError)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), ParsedQuoteMissingArgsError)
 
 
 if __name__ == "__main__":
@@ -157,13 +151,14 @@ ParsedQuoteMissingArgsError = [
 ParsedQuoteResponse = [
     [
         {
-            "base_charge": 9.59,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "discount": 0.62,
-            "duties_and_taxes": 0.0,
             "extra_charges": [
+                {"amount": 9.59, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "GST"},
+                {"amount": 0.0, "currency": "CAD", "name": "PST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
@@ -173,13 +168,14 @@ ParsedQuoteResponse = [
             "transit_days": 2,
         },
         {
-            "base_charge": 22.64,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "discount": 2.56,
-            "duties_and_taxes": 0.0,
             "extra_charges": [
+                {"amount": 22.64, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "GST"},
+                {"amount": 0.0, "currency": "CAD", "name": "PST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
                 {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
             ],
@@ -189,13 +185,14 @@ ParsedQuoteResponse = [
             "transit_days": 1,
         },
         {
-            "base_charge": 9.59,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "discount": 0.62,
-            "duties_and_taxes": 0.0,
             "extra_charges": [
+                {"amount": 9.59, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "GST"},
+                {"amount": 0.0, "currency": "CAD", "name": "PST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
@@ -205,13 +202,14 @@ ParsedQuoteResponse = [
             "transit_days": 4,
         },
         {
-            "base_charge": 12.26,
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "discount": 1.38,
-            "duties_and_taxes": 0.0,
             "extra_charges": [
+                {"amount": 12.26, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "GST"},
+                {"amount": 0.0, "currency": "CAD", "name": "PST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
                 {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
             ],

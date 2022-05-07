@@ -56,13 +56,12 @@ RETURNED_VALUE = (
             currency="CAD",
             transit_days=2,
             service="canadapost_priority",
-            discount=-9.04,
-            base_charge=101.83,
             total_charge=106.71,
-            duties_and_taxes=13.92,
             extra_charges=[
+                ChargeDetails(amount=101.83, currency="CAD", name="Base charge"),
                 ChargeDetails(amount=2.7, currency="CAD", name="Fuel surcharge"),
                 ChargeDetails(amount=-11.74, currency="CAD", name="SMB Savings"),
+                ChargeDetails(amount=-9.04, currency="CAD", name="Discount"),
             ],
         )
     ],
@@ -75,26 +74,24 @@ RATING_RESPONSE = {
         {
             "id": ANY,
             "object_type": "rate",
-            "meta": None,
-            "base_charge": 101.83,
-            "carrier_id": "canadapost",
             "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
-            "discount": -9.04,
-            "duties_and_taxes": 13.92,
-            "extra_charges": [
-                {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
-                {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
-            ],
-            "test_mode": True,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
+            "extra_charges": [
+                {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                {"name": "Discount", "amount": -9.04, "currency": "CAD"},
+            ],
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
-                        "carrier_connection_id": ANY,
+                "carrier_connection_id": ANY,
             },
+            "test_mode": True,
         }
     ],
 }

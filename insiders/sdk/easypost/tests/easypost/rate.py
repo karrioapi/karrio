@@ -30,7 +30,7 @@ class TestEasyPostRating(unittest.TestCase):
         with patch("karrio.mappers.easypost.proxy.http") as mock:
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            print(DP.to_dict(parsed_response))
+
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
@@ -70,7 +70,6 @@ PAYLOAD = {
 ParsedRateResponse = [
     [
         {
-            "base_charge": 9.5,
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {
@@ -82,7 +81,6 @@ ParsedRateResponse = [
             "transit_days": 4,
         },
         {
-            "base_charge": 27.4,
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {
@@ -94,7 +92,6 @@ ParsedRateResponse = [
             "transit_days": 2,
         },
         {
-            "base_charge": 35.48,
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "meta": {

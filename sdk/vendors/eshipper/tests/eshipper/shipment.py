@@ -56,8 +56,8 @@ class TestEShipperShipment(unittest.TestCase):
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
 
@@ -130,19 +130,18 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "eshipper",
         "carrier_name": "eshipper",
-        "docs": {"label": ANY},
+        "docs": {"label": "[base-64 encoded String]"},
         "meta": {
             "rate_provider": "fedex",
             "service_name": "fedex_ground",
             "tracking_url": "http://www.fedex.com/Tracking?tracknumbers=052800410000484",
         },
         "selected_rate": {
-            "base_charge": 30.74,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 30.74, "currency": "CAD", "name": "Base charge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "meta": {"rate_provider": "fedex", "service_name": "fedex_ground"},

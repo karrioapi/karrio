@@ -127,15 +127,15 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
-                "base_charge": 101.83,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
                 "currency": "CAD",
-                "discount": -9.04,
-                "duties_and_taxes": 13.92,
                 "extra_charges": [
+                    {"amount": 101.83, "currency": "CAD", "name": "Base charge"},
                     {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
                     {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
+                    {"amount": -9.04, "currency": "CAD", "name": "Discount"},
+                    {"amount": 13.92, "currency": "CAD", "name": "Duties and taxes"},
                 ],
                 "service": "canadapost_priority",
                 "total_charge": 106.71,
@@ -250,19 +250,19 @@ SHIPMENT_RATES = {
         {
             "id": ANY,
             "object_type": "rate",
-            "base_charge": 101.83,
-            "carrier_id": "canadapost",
             "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
-            "discount": -9.04,
-            "duties_and_taxes": 13.92,
-            "extra_charges": [
-                {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
-                {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
-            ],
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
+            "extra_charges": [
+                {"name": "Duty and taxes", "amount": 13.92, "currency": "CAD"},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                {"name": "Discount", "amount": -9.04, "currency": "CAD"},
+                {"name": "Base surcharge", "amount": 101.83, "currency": "CAD"},
+            ],
             "meta": {
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
@@ -366,7 +366,7 @@ SHIPMENT_OPTIONS = {
     "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2020-01-01"},
 }
 
-RETURNED_RATES_VALUE = (
+RETURNED_RATES_VALUE = [
     [
         RateDetails(
             carrier_id="canadapost",
@@ -374,30 +374,27 @@ RETURNED_RATES_VALUE = (
             currency="CAD",
             transit_days=2,
             service="canadapost_priority",
-            discount=-9.04,
-            base_charge=101.83,
             total_charge=106.71,
-            duties_and_taxes=13.92,
             extra_charges=[
+                ChargeDetails(amount=13.92, currency="CAD", name="Duty and taxes"),
                 ChargeDetails(amount=2.7, currency="CAD", name="Fuel surcharge"),
                 ChargeDetails(amount=-11.74, currency="CAD", name="SMB Savings"),
+                ChargeDetails(amount=-9.04, currency="CAD", name="Discount"),
+                ChargeDetails(amount=101.83, currency="CAD", name="Base surcharge"),
             ],
         )
     ],
     [],
-)
+]
 
 SHIPMENT_PURCHASE_DATA = {"selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"}
 
 SELECTED_RATE = {
     "id": ANY,
     "object_type": "rate",
-    "base_charge": 101.83,
     "carrier_id": "canadapost",
     "carrier_name": "canadapost",
     "currency": "CAD",
-    "discount": -9.04,
-    "duties_and_taxes": 13.92,
     "extra_charges": [
         {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
         {"amount": -11.74, "currency": "CAD", "name": "SMB Savings"},
@@ -437,25 +434,9 @@ RETURNED_CANCEL_VALUE = (
 PURCHASED_SHIPMENT = {
     "id": ANY,
     "object_type": "shipment",
-    "status": "purchased",
-    "carrier_name": "canadapost",
-    "carrier_id": "canadapost",
-    "label_url": ANY,
-    "invoice_url": None,
-    "label_type": "PDF",
-    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
-    "metadata": {},
-    "tracking_number": "123456789012",
-    "shipment_identifier": "123456789012",
-    "selected_rate": SELECTED_RATE,
-    "selected_rate_id": ANY,
-    "service": "canadapost_priority",
-    "rates": [SELECTED_RATE],
     "tracking_url": "/v1/trackers/canadapost/123456789012?test",
-    "tracker_id": None,
     "shipper": {
         "id": ANY,
-        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -471,11 +452,11 @@ PURCHASED_SHIPMENT = {
         "address_line1": "125 Church St",
         "address_line2": None,
         "validate_location": False,
+        "object_type": "address",
         "validation": None,
     },
     "recipient": {
         "id": ANY,
-        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -491,12 +472,12 @@ PURCHASED_SHIPMENT = {
         "address_line1": "5840 Oak St",
         "address_line2": None,
         "validate_location": False,
+        "object_type": "address",
         "validation": None,
     },
     "parcels": [
         {
             "id": ANY,
-            "object_type": "parcel",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -506,21 +487,83 @@ PURCHASED_SHIPMENT = {
             "description": None,
             "content": None,
             "is_document": False,
-            "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
-            "reference_number": ANY,
+            "items": [],
+            "reference_number": "123456789012",
+            "object_type": "parcel",
         }
     ],
     "services": [],
     "options": {"shipment_date": ANY},
-    "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
+    "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
     "customs": None,
+    "rates": [
+        {
+            "id": ANY,
+            "object_type": "rate",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_priority",
+            "total_charge": 106.71,
+            "transit_days": 2,
+            "extra_charges": [
+                {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                {"name": "Discount", "amount": -9.04, "currency": "CAD"},
+                {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
+            ],
+            "meta": {
+                "service_name": "CANADAPOST PRIORITY",
+                "rate_provider": "canadapost",
+                "carrier_connection_id": ANY,
+            },
+            "test_mode": True,
+        }
+    ],
     "reference": None,
+    "label_type": "PDF",
     "carrier_ids": [],
+    "tracker_id": None,
     "created_at": ANY,
-    "test_mode": True,
+    "metadata": {},
     "messages": [],
+    "status": "purchased",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
+    "tracking_number": "123456789012",
+    "shipment_identifier": "123456789012",
+    "selected_rate": {
+        "id": ANY,
+        "object_type": "rate",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "currency": "CAD",
+        "service": "canadapost_priority",
+        "total_charge": 106.71,
+        "transit_days": 2,
+        "extra_charges": [
+            {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+            {"name": "Discount", "amount": -9.04, "currency": "CAD"},
+            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
+        ],
+        "meta": {
+            "service_name": "CANADAPOST PRIORITY",
+            "rate_provider": "canadapost",
+            "carrier_connection_id": ANY,
+        },
+        "test_mode": True,
+    },
+    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "service": "canadapost_priority",
+    "selected_rate_id": ANY,
+    "test_mode": True,
+    "label_url": ANY,
+    "invoice_url": None,
 }
 
 CANCEL_RESPONSE = {

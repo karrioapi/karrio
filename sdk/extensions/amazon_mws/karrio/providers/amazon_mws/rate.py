@@ -36,7 +36,6 @@ def _extract_details(data: dict, settings: Settings) -> RateDetails:
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=Service.map(rate.serviceType).name_or_key,
-        base_charge=NF.decimal(rate.totalCharge.value),
         total_charge=NF.decimal(rate.totalCharge.value),
         currency=rate.totalCharge.unit,
         transit_days=transit,

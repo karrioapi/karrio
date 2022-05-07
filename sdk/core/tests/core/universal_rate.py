@@ -179,7 +179,6 @@ rate_request_data = {
 ParsedRateResponseWithoutSelection = [
     [
         {
-            "base_charge": 10.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Standard"},
@@ -187,7 +186,6 @@ ParsedRateResponseWithoutSelection = [
             "total_charge": 10.0,
         },
         {
-            "base_charge": 15.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Premium"},
@@ -201,7 +199,6 @@ ParsedRateResponseWithoutSelection = [
 ParsedRateResponseStandardService = [
     [
         {
-            "base_charge": 10.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Standard"},
@@ -215,7 +212,6 @@ ParsedRateResponseStandardService = [
 ParsedRateResponseHighWeightService = [
     [
         {
-            "base_charge": 15.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Premium"},
@@ -235,7 +231,6 @@ ParsedRateResponseHighWeightService = [
 ParsedInternationalRateResponseService = [
     [
         {
-            "base_charge": 25.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "International Parcel"},
@@ -260,7 +255,6 @@ ParsedInternationalRateResponseHighWeightService = [
 ParsedMultiPieceRateResponse = [
     [
         {
-            "base_charge": 20.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Standard"},
@@ -268,7 +262,6 @@ ParsedMultiPieceRateResponse = [
             "total_charge": 20.0,
         },
         {
-            "base_charge": 30.0,
             "carrier_id": "universal",
             "currency": "USD",
             "meta": {"service_name": "Premium"},

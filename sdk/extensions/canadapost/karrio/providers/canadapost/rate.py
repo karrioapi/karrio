@@ -18,11 +18,16 @@ from karrio.core.units import Country, Currency, Packages, Services, Options
 from karrio.core.errors import OriginNotServicedError
 from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from karrio.providers.canadapost.error import parse_error_response
-from karrio.providers.canadapost.units import OptionCode, ServiceType, PackagePresets, MeasurementOptions
+from karrio.providers.canadapost.units import (
+    OptionCode,
+    ServiceType,
+    PackagePresets,
+    MeasurementOptions,
+)
 
 
 def parse_rate_response(
-        response: Element, settings: Settings
+    response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
     price_quotes = XP.find("price-quote", response)
     quotes: List[RateDetails] = [
@@ -34,40 +39,38 @@ def parse_rate_response(
 def _extract_quote(node: Element, settings: Settings) -> RateDetails:
     quote = XP.to_object(price_quoteType, node)
     service = ServiceType.map(quote.service_code)
-    adjustments = getattr(quote.price_details.adjustments, 'adjustment', [])
-    discount = sum(NF.decimal(d.adjustment_cost or 0) for d in adjustments)
-    transit_days = quote.service_standard.expected_transit_time
+
+    adjustments = getattr(quote.price_details.adjustments, "adjustment", [])
+    charges = [
+        ("Base charge", quote.price_details.base),
+        ("GST", quote.price_details.taxes.gst.valueOf_),
+        ("PST", quote.price_details.taxes.pst.valueOf_),
+        ("HST", quote.price_details.taxes.hst.valueOf_),
+        *((a.adjustment_name, a.adjustment_cost) for a in adjustments),
+    ]
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=Currency.CAD.name,
-        transit_days=transit_days,
+        transit_days=quote.service_standard.expected_transit_time,
         service=service.name_or_key,
-        base_charge=NF.decimal(quote.price_details.base or 0),
         total_charge=NF.decimal(quote.price_details.due or 0),
-        discount=NF.decimal(discount),
-        duties_and_taxes=NF.decimal(
-            float(quote.price_details.taxes.gst.valueOf_ or 0)
-            + float(quote.price_details.taxes.pst.valueOf_ or 0)
-            + float(quote.price_details.taxes.hst.valueOf_ or 0)
-        ),
         extra_charges=[
             ChargeDetails(
-                name=a.adjustment_name,
+                name=name,
                 currency=Currency.CAD.name,
-                amount=NF.decimal(a.adjustment_cost or 0),
+                amount=NF.decimal(amount),
             )
-            for a in adjustments
+            for name, amount in charges
+            if amount
         ],
-        meta=dict(
-            service_name=(service.name or quote.service_name)
-        )
+        meta=dict(service_name=(service.name or quote.service_name)),
     )
 
 
 def rate_request(
-        payload: RateRequest, settings: Settings
+    payload: RateRequest, settings: Settings
 ) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
@@ -82,7 +85,9 @@ def rate_request(
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     services = Services(payload.services, ServiceType)
     options = Options(payload.options, OptionCode)
-    recipient_postal_code = (payload.recipient.postal_code or "").replace(" ", "").upper()
+    recipient_postal_code = (
+        (payload.recipient.postal_code or "").replace(" ", "").upper()
+    )
     shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = mailing_scenario(
@@ -95,13 +100,15 @@ def rate_request(
             optionsType(
                 option=[
                     optionType(
-                        option_code=getattr(option, 'key', option),
-                        option_amount=getattr(option, 'value', None)
+                        option_code=getattr(option, "key", option),
+                        option_amount=getattr(option, "value", None),
                     )
-                    for code, option in options if code in OptionCode
+                    for code, option in options
+                    if code in OptionCode
                 ]
             )
-            if any([c in OptionCode for c, _ in options]) else None
+            if any([c in OptionCode for c, _ in options])
+            else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=package.weight.map(MeasurementOptions).KG,
@@ -115,10 +122,9 @@ def rate_request(
             oversized=None,
         ),
         services=(
-            servicesType(
-                service_code=[svc.value for svc in services]
-            )
-            if any(services) else None
+            servicesType(service_code=[svc.value for svc in services])
+            if any(services)
+            else None
         ),
         origin_postal_code=shipper_postal_code,
         destination=destinationType(
@@ -135,8 +141,8 @@ def rate_request(
             international=(
                 internationalType(country_code=recipient_postal_code)
                 if (
-                        payload.recipient.country_code
-                        not in [Country.US.name, Country.CA.name]
+                    payload.recipient.country_code
+                    not in [Country.US.name, Country.CA.name]
                 )
                 else None
             ),

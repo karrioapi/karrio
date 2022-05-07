@@ -944,29 +944,12 @@ class Rate(EntitySerializer):
         allow_null=True,
         help_text="The carrier's rate (quote) service",
     )
-    discount = FloatField(
-        required=False,
-        allow_null=True,
-        help_text="The monetary amount of the discount on the rate",
-    )
-    base_charge = FloatField(
-        default=0.0,
-        help_text="""
-    The rate's monetary amount of the base charge.<br/>
-    This is the net amount of the rate before additional charges
-    """,
-    )
     total_charge = FloatField(
         default=0.0,
         help_text="""
     The rate's monetary amount of the total charge.<br/>
     This is the gross amount of the rate after adding the additional charges
     """,
-    )
-    duties_and_taxes = FloatField(
-        required=False,
-        allow_null=True,
-        help_text="The monetary amount of the duties and taxes if applied",
     )
     transit_days = IntegerField(
         required=False, allow_null=True, help_text="The estimated delivery transit days"

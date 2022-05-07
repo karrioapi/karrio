@@ -20,7 +20,7 @@ def register_signals():
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
     signals.post_save.connect(order_updated, sender=models.Order)
 
-    logger.info("order webhooks signals registered...")
+    logger.info("karrio.order signals registered...")
 
 
 @utils.disable_for_loaddata

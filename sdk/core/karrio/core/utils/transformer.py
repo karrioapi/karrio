@@ -44,27 +44,9 @@ def to_multi_piece_rates(
                 all_charges,
                 {},
             )
-            discount = (
-                sum((NF.decimal(rate.discount or 0) for rate in similar_rates), 0.0)
-                if any(rate.discount for rate in similar_rates)
-                else None
-            )
-            base_charge = (
-                sum((NF.decimal(rate.base_charge or 0) for rate in similar_rates), 0.0)
-                if any(rate.base_charge for rate in similar_rates)
-                else None
-            )
             total_charge = (
                 sum((NF.decimal(rate.total_charge or 0) for rate in similar_rates), 0.0)
                 if any(rate.total_charge for rate in similar_rates)
-                else None
-            )
-            duties_and_taxes = (
-                sum(
-                    (NF.decimal(rate.duties_and_taxes or 0) for rate in similar_rates),
-                    0.0,
-                )
-                if any(rate.duties_and_taxes for rate in similar_rates)
                 else None
             )
 
@@ -75,10 +57,7 @@ def to_multi_piece_rates(
                     currency=main.currency,
                     transit_days=main.transit_days,
                     service=main.service,
-                    discount=discount,
-                    base_charge=base_charge,
                     total_charge=total_charge,
-                    duties_and_taxes=duties_and_taxes,
                     extra_charges=list(extra_charges.values()),
                     meta=main.meta,
                 )

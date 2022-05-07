@@ -31,9 +31,7 @@ class TestAmazonMwsRating(unittest.TestCase):
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
@@ -66,7 +64,6 @@ PAYLOAD = {
 ParsedRateResponse = [
     [
         {
-            "base_charge": 3.25,
             "carrier_id": "amazon_mws",
             "carrier_name": "amazon_mws",
             "currency": "GBP",

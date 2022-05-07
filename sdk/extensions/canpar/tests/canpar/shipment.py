@@ -91,9 +91,7 @@ class TestCanparShipment(unittest.TestCase):
         with patch("karrio.mappers.canpar.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                karrio.Shipment.cancel(self.VoidShipmentRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -146,12 +144,11 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "canpar",
         "carrier_name": "canpar",
+        "docs": {"label": "...ENCODED INFORMATION..."},
         "selected_rate": {
-            "base_charge": 7.57,
             "carrier_id": "canpar",
             "carrier_name": "canpar",
             "currency": "CAD",
-            "duties_and_taxes": 1.34,
             "extra_charges": [
                 {"amount": 7.57, "currency": "CAD", "name": "Freight Charge"},
                 {
@@ -166,9 +163,8 @@ ParsedShipmentResponse = [
             "total_charge": 11.66,
             "transit_days": 1,
         },
-        "tracking_number": "D999999990000000461001",
         "shipment_identifier": "10000696",
-        "docs": {"label": ANY},
+        "tracking_number": "D999999990000000461001",
     },
     [],
 ]

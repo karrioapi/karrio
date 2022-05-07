@@ -42,9 +42,8 @@ def _extract_details(response: dict, settings: Settings) -> List[RateDetails]:
             lambda rate_provider, service, service_name: RateDetails(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                currency=rate.currency,
                 service=service,
-                base_charge=NF.decimal(rate.rate),
+                currency=rate.currency,
                 total_charge=NF.decimal(rate.rate),
                 transit_days=rate.delivery_days,
                 meta=dict(

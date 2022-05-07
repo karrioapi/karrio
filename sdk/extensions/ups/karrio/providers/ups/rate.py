@@ -66,7 +66,12 @@ def _extract_package_rate(
             taxes = rate.TaxCharges
             itemized_charges = rate.ItemizedCharges + taxes
 
-        extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
+        charges = [
+            ("Base charge", rate.TransportationCharges.MonetaryValue),
+            ("Taxes", sum(c.MonetaryValue for c in taxes)),
+            (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
+            *((c.Code, c.MonetaryValue) for c in itemized_charges),
+        ]
         estimated_arrival = (
             XP.find("EstimatedArrival", detail_node, EstimatedArrivalType, first=True)
             or EstimatedArrivalType()
@@ -85,31 +90,16 @@ def _extract_package_rate(
                 carrier_id=settings.carrier_id,
                 currency=currency,
                 service=service.name_or_key,
-                base_charge=NF.decimal(rate.TransportationCharges.MonetaryValue),
                 total_charge=NF.decimal(total_charges.MonetaryValue),
-                duties_and_taxes=reduce(
-                    lambda total, charge: total + NF.decimal(charge.MonetaryValue),
-                    taxes or [],
-                    0.0,
-                ),
-                extra_charges=reduce(
-                    lambda total, charge: (
-                        total
-                        + [
-                            ChargeDetails(
-                                name=charge.Code,
-                                amount=NF.decimal(charge.MonetaryValue),
-                                currency=charge.CurrencyCode,
-                            )
-                        ]
-                    ),
-                    [
-                        charge
-                        for charge in extra_charges
-                        if charge is not None and charge.Code is not None
-                    ],
-                    [],
-                ),
+                extra_charges=[
+                    ChargeDetails(
+                        name=name,
+                        amount=NF.decimal(amount),
+                        currency=currency,
+                    )
+                    for name, amount in charges
+                    if name is not None or not amount
+                ],
                 transit_days=NF.integer(transit_days),
                 meta=dict(service_name=service.name_or_key),
             )

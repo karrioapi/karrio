@@ -69,23 +69,11 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     rate_provider, service, service_name = Service.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
-    surcharges = [
-        ChargeDetails(
-            name=charge.name,
-            currency=quote.currency,
-            amount=NF.decimal(charge.amount),
-        )
-        for charge in cast(List[SurchargeType], quote.Surcharge)
+    charges = [
+        ("Base charge", quote.baseCharge),
+        ("Fuel surcharge", quote.fuelSurcharge),
+        *((surcharge.name, surcharge.amount) for surcharge in quote.Surcharge),
     ]
-    fuel_surcharge = (
-        ChargeDetails(
-            name="Fuel surcharge",
-            currency=quote.currency,
-            amount=NF.decimal(quote.fuelSurcharge),
-        )
-        if quote.fuelSurcharge is not None
-        else None
-    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -98,10 +86,17 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
                 carrier_id=settings.carrier_id,
                 service=service,
                 currency=quote.currency,
-                base_charge=NF.decimal(quote.baseCharge),
                 total_charge=NF.decimal(quote.totalCharge),
                 transit_days=quote.transitDays,
-                extra_charges=([fuel_surcharge] + surcharges),
+                extra_charges=[
+                    ChargeDetails(
+                        name=name,
+                        currency="CAD",
+                        amount=NF.decimal(amount),
+                    )
+                    for name, amount in charges
+                    if amount
+                ],
                 meta=dict(rate_provider=rate_provider, service_name=service_name),
             )
             if quote is not None

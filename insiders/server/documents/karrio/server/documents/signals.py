@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def register_all():
     signals.post_save.connect(document_updated, sender=models.DocumentTemplate)
 
-    logger.info("documents webhooks signals registered...")
+    logger.info("karrio.documents signals registered...")
 
 
 @utils.disable_for_loaddata

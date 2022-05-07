@@ -54,17 +54,14 @@ class TestFeDexQuote(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error_response(self):
         with patch("karrio.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateErrorResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateErrorResponse)
-            )
+
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateErrorResponse)
 
 
 if __name__ == "__main__":
@@ -87,13 +84,12 @@ RateWithPresetPayload = {
 ParsedRateResponse = [
     [
         {
-            "base_charge": 245.35,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 50.66,
-            "duties_and_taxes": 13.53,
             "extra_charges": [
+                {"amount": 245.35, "currency": "CAD", "name": "Base charge"},
+                {"amount": 50.66, "currency": "CAD", "name": "Discount"},
                 {"amount": 25.31, "currency": "CAD", "name": "Fuel"},
                 {
                     "amount": 13.53,
@@ -106,13 +102,12 @@ ParsedRateResponse = [
             "total_charge": 284.19,
         },
         {
-            "base_charge": 229.15,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 45.96,
-            "duties_and_taxes": 12.64,
             "extra_charges": [
+                {"amount": 229.15, "currency": "CAD", "name": "Base charge"},
+                {"amount": 45.96, "currency": "CAD", "name": "Discount"},
                 {"amount": 23.63, "currency": "CAD", "name": "Fuel"},
                 {
                     "amount": 12.64,
@@ -125,13 +120,12 @@ ParsedRateResponse = [
             "total_charge": 265.42,
         },
         {
-            "base_charge": 208.55,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 41.63,
-            "duties_and_taxes": 11.5,
             "extra_charges": [
+                {"amount": 208.55, "currency": "CAD", "name": "Base charge"},
+                {"amount": 41.63, "currency": "CAD", "name": "Discount"},
                 {"amount": 21.51, "currency": "CAD", "name": "Fuel"},
                 {
                     "amount": 11.5,
@@ -144,13 +138,12 @@ ParsedRateResponse = [
             "total_charge": 241.56,
         },
         {
-            "base_charge": 195.2,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 141.04,
-            "duties_and_taxes": 5.92,
             "extra_charges": [
+                {"amount": 195.2, "currency": "CAD", "name": "Base charge"},
+                {"amount": 141.04, "currency": "CAD", "name": "Discount"},
                 {"amount": 11.07, "currency": "CAD", "name": "Fuel"},
                 {
                     "amount": 5.92,
@@ -163,13 +156,12 @@ ParsedRateResponse = [
             "total_charge": 124.35,
         },
         {
-            "base_charge": 124.7,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 138.42,
-            "duties_and_taxes": 1.51,
             "extra_charges": [
+                {"amount": 124.7, "currency": "CAD", "name": "Base charge"},
+                {"amount": 138.42, "currency": "CAD", "name": "Discount"},
                 {"amount": 2.83, "currency": "CAD", "name": "Fuel"},
                 {
                     "amount": 1.51,
@@ -182,13 +174,12 @@ ParsedRateResponse = [
             "total_charge": 31.77,
         },
         {
-            "base_charge": 27.99,
             "carrier_id": "carrier_id",
             "carrier_name": "fedex",
             "currency": "CAD",
-            "discount": 47.25,
-            "duties_and_taxes": 1.59,
             "extra_charges": [
+                {"amount": 27.99, "currency": "CAD", "name": "Base charge"},
+                {"amount": 47.25, "currency": "CAD", "name": "Discount"},
                 {"amount": 3.85, "currency": "CAD", "name": "FedEx Ground Fuel"},
                 {
                     "amount": 1.59,

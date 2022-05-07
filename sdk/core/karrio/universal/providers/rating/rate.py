@@ -35,7 +35,6 @@ def _extract_details(
         currency=service.currency,
         transit_days=service.estimated_transit_days,
         service=service.service_code,
-        base_charge=service.cost,
         total_charge=service.cost,
         meta=dict(service_name=service.service_name),
         carrier_name=getattr(settings, "custom_carrier_name", settings.carrier_name),

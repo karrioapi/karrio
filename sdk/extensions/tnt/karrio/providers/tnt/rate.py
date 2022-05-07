@@ -40,37 +40,46 @@ def parse_rate_response(
     return rate_details, parse_error_response(response, settings)
 
 
-def _extract_detail(details: Tuple[ratedServices, ratedService], settings: Settings) -> RateDetails:
+def _extract_detail(
+    details: Tuple[ratedServices, ratedService], settings: Settings
+) -> RateDetails:
     rate, service = details
-    charges: List[chargeElement] = service.chargeElements.chargeElement
+    charges = [
+        ("Base charge", service.totalPriceExclVat),
+        ("VAT", service.vatAmount),
+        *(
+            (charge.description, charge.chargeValue)
+            for charge in service.chargeElements.chargeElement
+        ),
+    ]
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-
         currency=rate.currency,
         service=str(service.product.id),
-        base_charge=NF.decimal(service.totalPriceExclVat),
         total_charge=NF.decimal(service.totalPrice),
-        duties_and_taxes=NF.decimal(service.vatAmount),
         extra_charges=[
             ChargeDetails(
-                name=charge.description,
-                amount=NF.decimal(charge.chargeValue),
-                currency=rate.currency
+                name=name,
+                amount=NF.decimal(amount),
+                currency=rate.currency,
             )
-            for charge in charges
+            for name, amount in charges
+            if amount
         ],
-        meta=dict(service_name=service.product.productDesc)
+        meta=dict(service_name=service.product.productDesc),
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[priceRequest]:
+def rate_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[priceRequest]:
     options = Options(payload.options, ShipmentOption)
     package = Packages(payload.parcels).single
     service = Services(payload.services, ShipmentService).first
 
-    option_codes = [code for label, code in options if 'division' not in label]
+    option_codes = [code for label, code in options if "division" not in label]
 
     request = priceRequest(
         appId=settings.username,
@@ -80,32 +89,30 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[price
             sender=address(
                 country=payload.shipper.country_code,
                 town=payload.shipper.city,
-                postcode=payload.shipper.postal_code
+                postcode=payload.shipper.postal_code,
             ),
             delivery=address(
                 country=payload.recipient.country_code,
                 town=payload.recipient.city,
-                postcode=payload.recipient.postal_code
+                postcode=payload.recipient.postal_code,
             ),
-            collectionDateTime=DF.fdatetime(options.shipment_date, output_format='%Y-%m-%dT%H:%M:%S'),
+            collectionDateTime=DF.fdatetime(
+                options.shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
+            ),
             product=product(
-                id=getattr(service, 'value', None),
+                id=getattr(service, "value", None),
                 division=next(
-                    (code for label, code in options if 'division' in label),
-                    None
+                    (code for label, code in options if "division" in label), None
                 ),
                 productDesc=None,
-                type_=('D' if package.parcel.is_document else 'N'),
+                type_=("D" if package.parcel.is_document else "N"),
                 options=(
                     optionsType(
-                        option=[
-                            option(optionCode=code)
-                            for code in option_codes
-                        ]
+                        option=[option(optionCode=code) for code in option_codes]
                     )
                     if any(option_codes)
                     else None
-                )
+                ),
             ),
             account=(
                 account(
@@ -117,8 +124,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[price
             ),
             insurance=(
                 insurance(
-                    insuranceValue=options.insurance,
-                    goodsValue=options.declared_value
+                    insuranceValue=options.insurance, goodsValue=options.declared_value
                 )
                 if options.insurance is not None
                 else None
@@ -131,7 +137,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[price
                 totalVolume=package.volume.value,
                 totalNumberOfPieces=1,
             ),
-            pieceLine=None
+            pieceLine=None,
         ),
     )
 

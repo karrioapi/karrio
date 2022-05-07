@@ -142,10 +142,7 @@ class Rate:
 
     transit_days: int = None
     service: str = None
-    discount: float = None
-    base_charge: float = 0.0
     total_charge: float = 0.0
-    duties_and_taxes: float = None
     extra_charges: List[ChargeDetails] = []
     id: str = None
     meta: dict = None

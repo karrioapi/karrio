@@ -127,7 +127,7 @@ SHIPPING_DATA = {
 
 SHIPPING_CANCEL_DATA = {"shipment_identifier": "123456789012"}
 
-RETURNED_VALUE = (
+RETURNED_VALUE = [
     ShipmentDetails(
         carrier_name="canadapost",
         carrier_id="canadapost",
@@ -136,9 +136,9 @@ RETURNED_VALUE = (
         docs=dict(label="==apodifjoefr"),
     ),
     [],
-)
+]
 
-RETURNED_SUCCESS_CANCEL_VALUE = (
+RETURNED_SUCCESS_CANCEL_VALUE = [
     ConfirmationDetails(
         carrier_name="canadapost",
         carrier_id="canadapost",
@@ -146,9 +146,9 @@ RETURNED_SUCCESS_CANCEL_VALUE = (
         operation="Cancel Shipment",
     ),
     [],
-)
+]
 
-RETURNED_FAILED_CANCEL_VALUE = (
+RETURNED_FAILED_CANCEL_VALUE = [
     None,
     [
         Message(
@@ -158,87 +158,14 @@ RETURNED_FAILED_CANCEL_VALUE = (
             code="404",
         )
     ],
-)
+]
 
 SHIPPING_RESPONSE = {
     "id": ANY,
     "object_type": "shipment",
-    "status": "purchased",
-    "carrier_name": "canadapost",
-    "carrier_id": "canadapost",
-    "label_type": "PDF",
-    "tracking_number": "123456789012",
-    "shipment_identifier": "123456789012",
-    "docs": {"invoice": None, "label": ANY},
-    "selected_rate": {
-        "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-        "object_type": "rate",
-        "carrier_name": "canadapost",
-        "carrier_id": "canadapost",
-        "currency": "CAD",
-        "service": "canadapost_priority",
-        "discount": -9.04,
-        "base_charge": 101.83,
-        "total_charge": 106.71,
-        "duties_and_taxes": 13.92,
-        "transit_days": None,
-        "extra_charges": [
-            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
-        ],
-        "meta": {
-            "rate_provider": "canadapost",
-            "service_name": "CANADAPOST PRIORITY",
-        },
-        "test_mode": True,
-    },
-    "selected_rate_id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-    "rates": [
-        {
-            "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-            "object_type": "rate",
-            "carrier_name": "canadapost",
-            "carrier_id": "canadapost",
-            "currency": "CAD",
-            "service": "canadapost_priority",
-            "discount": -9.04,
-            "base_charge": 101.83,
-            "total_charge": 106.71,
-            "duties_and_taxes": 13.92,
-            "transit_days": None,
-            "extra_charges": [
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
-            ],
-            "meta": None,
-            "test_mode": True,
-        },
-        {
-            "id": "prx_9290e4a2c8e34c8d8c73ab990b029f3d",
-            "object_type": "rate",
-            "carrier_name": "canadapost",
-            "carrier_id": "canadapost",
-            "currency": "CAD",
-            "service": "canadapost_regular_parcel",
-            "discount": -3.06,
-            "base_charge": 27.36,
-            "total_charge": 27.95,
-            "duties_and_taxes": 3.65,
-            "transit_days": None,
-            "extra_charges": [
-                {"name": "Fuel surcharge", "amount": 0.71, "currency": "CAD"},
-                {"name": "SMB Savings", "amount": -3.77, "currency": "CAD"},
-            ],
-            "meta": None,
-            "test_mode": True,
-        },
-    ],
     "tracking_url": "/v1/proxy/tracking/canadapost/123456789012?test",
-    "tracker_id": None,
-    "service": "canadapost_priority",
     "shipper": {
         "id": None,
-        "object_type": "address",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -254,11 +181,11 @@ SHIPPING_RESPONSE = {
         "address_line1": "5840 Oak St",
         "address_line2": "",
         "validate_location": False,
+        "object_type": "address",
         "validation": None,
     },
     "recipient": {
         "id": None,
-        "object_type": "address",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -274,12 +201,12 @@ SHIPPING_RESPONSE = {
         "address_line1": "125 Church St",
         "address_line2": "",
         "validate_location": False,
+        "object_type": "address",
         "validation": None,
     },
     "parcels": [
         {
             "id": None,
-            "object_type": "parcel",
             "weight": 1.0,
             "width": 42.0,
             "height": 32.0,
@@ -289,24 +216,84 @@ SHIPPING_RESPONSE = {
             "description": None,
             "content": None,
             "is_document": False,
-            "items": [],
             "weight_unit": "KG",
             "dimension_unit": "CM",
-            "reference_number": ANY,
+            "items": [],
+            "reference_number": "123456789012",
+            "object_type": "parcel",
         }
     ],
     "services": [],
     "options": {"shipment_date": ANY},
-    "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
+    "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
     "customs": None,
+    "rates": [
+        {
+            "id": ANY,
+            "object_type": "rate",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_priority",
+            "total_charge": 106.71,
+            "transit_days": None,
+            "extra_charges": [
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+            ],
+            "meta": None,
+            "test_mode": True,
+        },
+        {
+            "id": ANY,
+            "object_type": "rate",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_regular_parcel",
+            "total_charge": 27.95,
+            "transit_days": None,
+            "extra_charges": [
+                {"name": "Fuel surcharge", "amount": 0.71, "currency": "CAD"},
+                {"name": "SMB Savings", "amount": -3.77, "currency": "CAD"},
+            ],
+            "meta": None,
+            "test_mode": True,
+        },
+    ],
     "reference": "",
+    "label_type": "PDF",
     "carrier_ids": [],
     "tracker_id": None,
     "created_at": ANY,
-    "test_mode": True,
-    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
     "metadata": {},
     "messages": [],
+    "status": "purchased",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
+    "tracking_number": "123456789012",
+    "shipment_identifier": "123456789012",
+    "selected_rate": {
+        "id": ANY,
+        "object_type": "rate",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "currency": "CAD",
+        "service": "canadapost_priority",
+        "total_charge": 106.71,
+        "transit_days": None,
+        "extra_charges": [
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+        ],
+        "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+        "test_mode": True,
+    },
+    "docs": {"label": "==apodifjoefr", "invoice": None},
+    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "service": "canadapost_priority",
+    "selected_rate_id": ANY,
+    "test_mode": True,
 }
 
 SHIPPING_CANCEL_SUCCESS_RESPONSE = {
