@@ -14,7 +14,7 @@ class TestEasyPostRating(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        self.assertListEqual(request.serialize(), RateRequestJSON)
+        self.assertEqual(request.serialize(), RateRequestJSON)
 
     def test_get_rate(self):
         with patch("karrio.mappers.easypost.proxy.http") as mock:
@@ -125,34 +125,32 @@ ParsedErrorResponse = [
 ]
 
 
-RateRequestJSON = [
-    {
-        "shipment": {
-            "from_address": {
-                "city": "Bronx",
-                "company": "Vandelay Industries",
-                "name": "George Costanza",
-                "residential": False,
-                "state": "NY",
-                "street1": "1 E 161st St.",
-                "zip": "10451",
-            },
-            "options": {},
-            "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
-            "reference": "order #1111",
-            "to_address": {
-                "city": "San Francisco",
-                "company": "EasyPost",
-                "phone": "415-528-7555",
-                "residential": False,
-                "state": "CA",
-                "street1": "417 Montgomery Street",
-                "street2": "5th Floor",
-                "zip": "94104",
-            },
-        }
+RateRequestJSON = {
+    "shipment": {
+        "from_address": {
+            "city": "Bronx",
+            "company": "Vandelay Industries",
+            "name": "George Costanza",
+            "residential": False,
+            "state": "NY",
+            "street1": "1 E 161st St.",
+            "zip": "10451",
+        },
+        "options": {},
+        "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
+        "reference": "order #1111",
+        "to_address": {
+            "city": "San Francisco",
+            "company": "EasyPost",
+            "phone": "415-528-7555",
+            "residential": False,
+            "state": "CA",
+            "street1": "417 Montgomery Street",
+            "street2": "5th Floor",
+            "zip": "94104",
+        },
     }
-]
+}
 
 RateResponseJSON = """{
   "id": "shp_...",

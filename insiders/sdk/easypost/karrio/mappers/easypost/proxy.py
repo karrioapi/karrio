@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from karrio.core.utils import DP, request as http
 from karrio.api.proxy import Proxy as BaseProxy
-from karrio.core.utils.helpers import exec_async, exec_parrallel
+from karrio.core.utils.helpers import exec_async
 from karrio.mappers.easypost.settings import Settings
 from karrio.core.utils.serializable import Serializable, Deserializable
 
@@ -9,23 +9,18 @@ from karrio.core.utils.serializable import Serializable, Deserializable
 class Proxy(BaseProxy):
     settings: Settings
 
-    def get_rates(self, requests: Serializable) -> Deserializable[str]:
-        create = lambda request: self._send_request(
-            path="/shipments", request=Serializable(request, DP.jsonify)
+    def get_rates(self, request: Serializable) -> Deserializable[str]:
+        response = self._send_request(
+            path="/shipments", request=Serializable(request.serialize(), DP.jsonify)
         )
 
-        responses: List[str] = exec_parrallel(create, requests.serialize())
-        return Deserializable(
-            responses,
-            lambda res: [
-                (index, DP.to_dict(response)) for index, response in enumerate(res)
-            ],
-        )
+        return Deserializable(response, DP.to_dict)
 
-    def create_shipment(self, requests: Serializable) -> Deserializable[str]:
-        payload = requests.serialize()
+    def create_shipment(self, request: Serializable) -> Deserializable[str]:
+        payload = request.serialize()
 
         def create(request) -> str:
+            print(request, "<<<<<<<")
             response = DP.to_dict(
                 self._send_request(
                     path="/shipments", request=Serializable(request, DP.jsonify)
@@ -59,22 +54,13 @@ class Proxy(BaseProxy):
                 request=Serializable(data, DP.jsonify),
             )
 
-        responses: List[str] = exec_parrallel(create, payload["shipments"])
-        return Deserializable(
-            responses,
-            lambda res: [
-                (index, DP.to_dict(response)) for index, response in enumerate(res)
-            ],
-        )
+        response = create(payload["data"])
+        return Deserializable(response, DP.to_dict)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
-        refund = lambda key: (key, self._send_request(path=f"/shipments/{key}/refund"))
+        response = self._send_request(path=f"/shipments/{request.serialize()}/refund")
 
-        responses: List[Tuple[str, str]] = exec_async(refund, request.serialize())
-        return Deserializable(
-            responses,
-            lambda res: [(key, DP.to_dict(response)) for key, response in res],
-        )
+        return Deserializable(response, DP.to_dict)
 
     def get_tracking(self, requests: Serializable) -> Deserializable[str]:
         track = lambda request: (

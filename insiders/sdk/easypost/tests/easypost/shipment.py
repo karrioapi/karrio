@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from karrio import Shipment
@@ -21,7 +21,7 @@ class TestEasyPostShipment(unittest.TestCase):
         request = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-        self.assertListEqual(request.serialize(), CancelShipmentRequestJSON)
+        self.assertEqual(request.serialize(), CancelShipmentRequestJSON)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.easypost.proxy.http") as mocks:
@@ -138,40 +138,38 @@ ParsedCancelShipmentResponse = [
 ShipmentRequestJSON = {
     "insurance": 249.99,
     "service": "NextDayAir",
-    "shipments": [
-        {
-            "shipment": {
-                "from_address": {
-                    "city": "Bronx",
-                    "company": "Vandelay Industries",
-                    "name": "George Costanza",
-                    "residential": False,
-                    "state": "NY",
-                    "street1": "1 E 161st St.",
-                    "zip": "10451",
-                },
-                "options": {
-                    "label_format": "PDF",
-                    "payment": {"postal_code": "10451", "type": "SENDER"},
-                },
-                "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
-                "reference": "order #1111",
-                "to_address": {
-                    "city": "San Francisco",
-                    "company": "EasyPost",
-                    "phone": "415-528-7555",
-                    "residential": False,
-                    "state": "CA",
-                    "street1": "417 Montgomery Street",
-                    "street2": "5th Floor",
-                    "zip": "94104",
-                },
-            }
+    "data": {
+        "shipment": {
+            "from_address": {
+                "city": "Bronx",
+                "company": "Vandelay Industries",
+                "name": "George Costanza",
+                "residential": False,
+                "state": "NY",
+                "street1": "1 E 161st St.",
+                "zip": "10451",
+            },
+            "options": {
+                "label_format": "PDF",
+                "payment": {"postal_code": "10451", "type": "SENDER"},
+            },
+            "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
+            "reference": "order #1111",
+            "to_address": {
+                "city": "San Francisco",
+                "company": "EasyPost",
+                "phone": "415-528-7555",
+                "residential": False,
+                "state": "CA",
+                "street1": "417 Montgomery Street",
+                "street2": "5th Floor",
+                "zip": "94104",
+            },
         }
-    ],
+    },
 }
 
-CancelShipmentRequestJSON = ["shipment_id"]
+CancelShipmentRequestJSON = "shipment_id"
 
 ShipmentResponseJSON = """{
   "id": "shp_...",
