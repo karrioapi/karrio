@@ -97,10 +97,10 @@ class Order(OwnedEntity):
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
-    test_mode = models.BooleanField()
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
+    test_mode = models.BooleanField()
 
     @property
     def object_type(self):

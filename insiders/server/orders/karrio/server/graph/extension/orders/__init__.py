@@ -26,4 +26,5 @@ class Query:
 
 
 class Mutation:
+    create_order = mutations.CreateOrder.Field()
     partial_order_update = mutations.PartialOrderUpdate.Field()
