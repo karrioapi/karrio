@@ -1,4 +1,3 @@
-import datetime
 import graphene
 from graphene.types import generic
 from graphene_django.types import ErrorType
@@ -18,9 +17,7 @@ class CreateOrder(utils.ClientMutation):
     order = graphene.Field(types.OrderType)
 
     class Input:
-        order_id = graphene.String(required=False)
         order_date = graphene.Date(required=False)
-        source = graphene.String(required=False, default_value="manual")
         shipping_to = graphene.Field(inputs.CreateAddressInput, required=True)
         shipping_from = graphene.Field(inputs.CreateAddressInput, required=False)
         line_items = graphene.List(inputs.CreateCommodityInput, required=True)
@@ -31,17 +28,21 @@ class CreateOrder(utils.ClientMutation):
     @classmethod
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, **inputs):
+        count = models.Order.access_by(info.context).filter(source="manual").count() + 1
+        order_id = "1" + str(count).zfill(5)  # TODO: make this grow beyond 2 million
         serializer = OrderSerializer(
             context=info.context,
-            data=DP.to_dict(inputs),
+            data={
+                **DP.to_dict(inputs),
+                "source": "manual",
+                "order_id": order_id,
+            },
         )
 
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        serializer.save()
-
-        order = models.Order.access_by(info.context).get(id=id)
+        order = serializer.save()
 
         return cls(errors=None, order=order)
 
@@ -51,9 +52,7 @@ class PartialOrderUpdate(utils.ClientMutation):
 
     class Input:
         id = graphene.String(required=True)
-        order_id = graphene.String(required=False)
         order_date = graphene.Date(required=False)
-        source = graphene.String(required=False)
         shipping_to = graphene.Field(inputs.UpdateAddressInput, required=False)
         shipping_from = graphene.Field(inputs.UpdateAddressInput, required=False)
         line_items = graphene.List(inputs.UpdateCommodityInput, required=False)
