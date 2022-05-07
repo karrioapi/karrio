@@ -1726,6 +1726,15 @@
                         "x-nullable": true
                     },
                     {
+                        "name": "hub",
+                        "in": "query",
+                        "description": "A carrier_name of a hub connector",
+                        "required": false,
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 1
+                    },
+                    {
                         "name": "carrier_name",
                         "in": "path",
                         "type": "string",
@@ -1738,10 +1747,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
-                            "easypost",
-                            "eshipper",
                             "fedex",
-                            "freightcom",
                             "generic",
                             "purolator",
                             "royalmail",
@@ -2262,6 +2268,15 @@
                         "x-nullable": true
                     },
                     {
+                        "name": "hub",
+                        "in": "query",
+                        "description": "A carrier_name of a hub connector",
+                        "required": false,
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 1
+                    },
+                    {
                         "name": "carrier_name",
                         "in": "path",
                         "type": "string",
@@ -2274,10 +2289,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
-                            "easypost",
-                            "eshipper",
                             "fedex",
-                            "freightcom",
                             "generic",
                             "purolator",
                             "royalmail",
@@ -4734,29 +4746,11 @@
                     "type": "string",
                     "x-nullable": true
                 },
-                "discount": {
-                    "title": "Discount",
-                    "description": "The monetary amount of the discount on the rate",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "base_charge": {
-                    "title": "Base charge",
-                    "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n",
-                    "type": "number",
-                    "default": 0.0
-                },
                 "total_charge": {
                     "title": "Total charge",
                     "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n",
                     "type": "number",
                     "default": 0.0
-                },
-                "duties_and_taxes": {
-                    "title": "Duties and taxes",
-                    "description": "The monetary amount of the duties and taxes if applied",
-                    "type": "number",
-                    "x-nullable": true
                 },
                 "transit_days": {
                     "title": "Transit days",
@@ -6332,6 +6326,13 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
                 "object_type": {
                     "title": "Object type",
                     "description": "Specifies the object type",
@@ -6834,15 +6835,16 @@
                         "type": "string",
                         "enum": [
                             "all",
-                            "shipment.purchased",
-                            "shipment.cancelled",
-                            "shipment.fulfilled",
-                            "tracker.created",
-                            "tracker.updated",
-                            "order.created",
-                            "order.fulfilled",
-                            "order.cancelled",
-                            "order.delivered"
+                            "shipment_purchased",
+                            "shipment_cancelled",
+                            "shipment_fulfilled",
+                            "tracker_created",
+                            "tracker_updated",
+                            "order_created",
+                            "order_updated",
+                            "order_fulfilled",
+                            "order_cancelled",
+                            "order_delivered"
                         ]
                     }
                 },
@@ -6938,15 +6940,16 @@
                         "type": "string",
                         "enum": [
                             "all",
-                            "shipment.purchased",
-                            "shipment.cancelled",
-                            "shipment.fulfilled",
-                            "tracker.created",
-                            "tracker.updated",
-                            "order.created",
-                            "order.fulfilled",
-                            "order.cancelled",
-                            "order.delivered"
+                            "shipment_purchased",
+                            "shipment_cancelled",
+                            "shipment_fulfilled",
+                            "tracker_created",
+                            "tracker_updated",
+                            "order_created",
+                            "order_updated",
+                            "order_fulfilled",
+                            "order_cancelled",
+                            "order_delivered"
                         ]
                     }
                 },

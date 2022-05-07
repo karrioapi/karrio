@@ -19,7 +19,7 @@ class CreateOrder(utils.ClientMutation):
 
     class Input:
         order_id = graphene.String(required=False)
-        order_date = graphene.Date(required=False, default_value=datetime.date.today)
+        order_date = graphene.Date(required=False)
         source = graphene.String(required=False, default_value="manual")
         shipping_to = graphene.Field(inputs.CreateAddressInput, required=True)
         shipping_from = graphene.Field(inputs.CreateAddressInput, required=False)
