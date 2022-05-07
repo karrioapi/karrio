@@ -11,6 +11,7 @@ RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0
 RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
+RUN mkdir -p /karrio/.karrio
 
 WORKDIR /karrio
 

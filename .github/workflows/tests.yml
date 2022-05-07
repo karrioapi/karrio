@@ -36,7 +36,6 @@ jobs:
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.dev.txt &&
             cd -
-            mkdir -p .karrio
             karrio migrate &&
             karrio test --failfast karrio.server.proxy.tests &&
             karrio test --failfast karrio.server.pricing.tests &&
@@ -61,7 +60,6 @@ jobs:
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&
             cd -
-            mkdir -p .karrio
             karrio migrate &&
             karrio test --failfast karrio.server.proxy.tests &&
             karrio test --failfast karrio.server.pricing.tests &&
