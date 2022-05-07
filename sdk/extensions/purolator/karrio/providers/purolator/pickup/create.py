@@ -12,7 +12,12 @@ from purolator_lib.pickup_service_1_2_1 import (
     NotificationEmails,
 )
 from karrio.core.units import Phone, Packages
-from karrio.core.models import PickupUpdateRequest, PickupRequest, PickupDetails, Message
+from karrio.core.models import (
+    PickupUpdateRequest,
+    PickupRequest,
+    PickupDetails,
+    Message,
+)
 from karrio.core.utils import (
     Serializable,
     create_envelope,
@@ -32,7 +37,9 @@ from karrio.providers.purolator.units import PackagePresets
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.find("SchedulePickUpResponse", response, SchedulePickUpResponse, first=True)
+    reply = XP.find(
+        "SchedulePickUpResponse", response, SchedulePickUpResponse, first=True
+    )
     pickup = (
         _extract_pickup_details(reply, settings)
         if reply is not None and reply.PickUpConfirmationNumber is not None
@@ -88,7 +95,7 @@ def _schedule_pickup_request(
     :return: Serializable[PickupRequest]
     """
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    phone = Phone(payload.address.phone_number, payload.address.country_code or 'CA')
+    phone = Phone(payload.address.phone_number, payload.address.country_code or "CA")
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",
@@ -149,7 +156,9 @@ def _schedule_pickup_request(
         ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version="v1"))
+    return Serializable(
+        request, partial(standard_request_serializer, version="v1"), logged=True
+    )
 
 
 def _validate_pickup(

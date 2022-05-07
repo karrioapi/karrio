@@ -122,7 +122,7 @@ def tracking_request(
         TransactionTimeOutValueInMilliseconds=None,
         ProcessingOptions=["INCLUDE_DETAILED_SCANS"],
     )
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: TrackRequest) -> str:

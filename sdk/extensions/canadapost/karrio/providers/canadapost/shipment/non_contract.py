@@ -214,7 +214,7 @@ def shipment_request(
             settlement_info=None,
         ),
     )
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: NonContractShipmentType) -> str:

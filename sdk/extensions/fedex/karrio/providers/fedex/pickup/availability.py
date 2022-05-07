@@ -61,7 +61,7 @@ def pickup_availability_request(
         PackageDetails=None,
     )
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: PickupAvailabilityRequest) -> str:

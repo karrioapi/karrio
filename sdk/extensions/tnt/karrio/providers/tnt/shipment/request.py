@@ -28,20 +28,22 @@ from karrio.providers.tnt.units import ShipmentOption, ShipmentService, PaymentT
 from karrio.providers.tnt.utils import Settings
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ESHIPPER]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[ESHIPPER]:
     ref = f"ref_{uuid4()}"
     options = Options(payload.options, ShipmentOption)
     package = Packages(payload.parcels).single
     service = ShipmentService.map(payload.service).value_or_key
 
-    payment = payload.payment or Payment(paid_by='sender')
-    insurance = getattr(options.tnt_insurance, 'value', None)
+    payment = payload.payment or Payment(paid_by="sender")
+    insurance = getattr(options.tnt_insurance, "value", None)
 
     request = ESHIPPER(
         LOGIN=LOGIN(
             COMPANY=settings.username,
             PASSWORD=settings.password,
-            APPID='EC',
+            APPID="EC",
             APPVERSION=3.1,
         ),
         CONSIGNMENTBATCH=CONSIGNMENTBATCH(
@@ -75,7 +77,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         PROVINCE=payload.recipient.state_code,
                         POSTCODE=payload.recipient.postal_code,
                         COUNTRY=payload.recipient.country_code,
-                        VAT=(payload.recipient.state_tax_id or payload.recipient.federal_tax_id),
+                        VAT=(
+                            payload.recipient.state_tax_id
+                            or payload.recipient.federal_tax_id
+                        ),
                         CONTACTNAME=payload.recipient.person_name,
                         CONTACTDIALCODE=None,
                         CONTACTTELEPHONE=payload.recipient.phone_number,
@@ -86,8 +91,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     DELIVERY=None,
                     CONNUMBER=None,
                     CUSTOMERREF=payload.reference,
-                    CONTYPE=('D' if package.parcel.is_document else 'N'),
-                    PAYMENTIND=PaymentType[payment.paid_by or 'sender'].value,
+                    CONTYPE=("D" if package.parcel.is_document else "N"),
+                    PAYMENTIND=PaymentType[payment.paid_by or "sender"].value,
                     ITEMS=1,
                     TOTALWEIGHT=package.weight.KG,
                     TOTALVOLUME=package.volume,
@@ -97,7 +102,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     INSURANCECURRENCY=options.currency,
                     DIVISION=None,
                     SERVICE=service,
-                    OPTION=[getattr(option, 'key', option) for _, option in options],
+                    OPTION=[getattr(option, "key", option) for _, option in options],
                     DESCRIPTION=package.parcel.content,
                     DELIVERYINST=None,
                     CUSTOMCONTROLIN=None,
@@ -116,21 +121,24 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                 ARTICLE(
                                     ITEMS=article.quantity,
                                     DESCRIPTION=article.description,
-                                    WEIGHT=Weight(article.weight, WeightUnit[article.weight_unit]).KG,
+                                    WEIGHT=Weight(
+                                        article.weight, WeightUnit[article.weight_unit]
+                                    ).KG,
                                     INVOICEVALUE=article.value_amount,
                                     INVOICEDESC=None,
                                     HTS=article.sku,
-                                    COUNTRY=article.origin_country
+                                    COUNTRY=article.origin_country,
                                 )
                                 for article in payload.customs.commodities
                             ]
-                            if payload.customs is not None and any(payload.customs.commodities)
+                            if payload.customs is not None
+                            and any(payload.customs.commodities)
                             else None
-                        )
+                        ),
                     ),
                 ),
                 CONNUMBER=None,
-            )
+            ),
         ),
         ACTIVITY=ACTIVITY(
             CREATE=CREATE(CONREF=ref),
@@ -146,8 +154,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 EMAILTO=payload.recipient.email,
                 EMAILFROM=payload.shipper.email,
             ),
-            SHOW_GROUPCODE=None
-        )
+            SHOW_GROUPCODE=None,
+        ),
     )
 
-    return Serializable(request, XP.to_xml)
+    return Serializable(request, XP.to_xml, logged=True)

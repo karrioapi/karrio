@@ -249,7 +249,7 @@ def shipment_request(
     )
     request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: ShipmentType) -> str:

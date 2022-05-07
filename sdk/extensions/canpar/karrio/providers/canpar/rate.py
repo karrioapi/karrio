@@ -202,4 +202,5 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
             special_prefixes=dict(shipment_children="xsd1"),
         ),
+        logged=True,
     )

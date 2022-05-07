@@ -1,13 +1,6 @@
 from jstruct import struct
-from canpar_lib.CanshipBusinessService import (
-    GetLabelsAdvancedRq,
-    getLabelsAdvanced
-)
-from karrio.core.utils import (
-    create_envelope,
-    Serializable,
-    Envelope
-)
+from canpar_lib.CanshipBusinessService import GetLabelsAdvancedRq, getLabelsAdvanced
+from karrio.core.utils import create_envelope, Serializable, Envelope
 from karrio.providers.canpar.utils import Settings
 
 
@@ -17,7 +10,9 @@ class LabelRequest:
     thermal: bool = False
 
 
-def get_label_request(payload: LabelRequest, settings: Settings) -> Serializable[Envelope]:
+def get_label_request(
+    payload: LabelRequest, settings: Settings
+) -> Serializable[Envelope]:
 
     request = create_envelope(
         body_content=getLabelsAdvanced(
@@ -26,9 +21,9 @@ def get_label_request(payload: LabelRequest, settings: Settings) -> Serializable
                 id=payload.shipment_id,
                 password=settings.password,
                 thermal=payload.thermal,
-                user_id=settings.username
+                user_id=settings.username,
             )
         )
     )
 
-    return Serializable(request, Settings.serialize)
+    return Serializable(request, Settings.serialize, logged=True)

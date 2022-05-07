@@ -278,7 +278,8 @@ def rate_request(
             ],
         ),
     )
-    return Serializable(request, _request_serializer)
+
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: FedexRateRequest) -> str:

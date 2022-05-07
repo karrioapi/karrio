@@ -316,4 +316,5 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
             ShowAlternativeServicesIndicator=show_alternate_services,
         ),
     )
-    return Serializable(request, standard_request_serializer)
+
+    return Serializable(request, standard_request_serializer, logged=True)

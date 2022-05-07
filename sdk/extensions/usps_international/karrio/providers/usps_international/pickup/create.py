@@ -1,5 +1,8 @@
 from typing import Tuple, List
-from usps_lib.carrier_pickup_schedule_request import CarrierPickupScheduleRequest, PackageType
+from usps_lib.carrier_pickup_schedule_request import (
+    CarrierPickupScheduleRequest,
+    PackageType,
+)
 from karrio.core.utils import Serializable, SF
 from karrio.core.units import Packages
 from karrio.core.models import (
@@ -13,7 +16,9 @@ from karrio.providers.usps_international.error import parse_error_response
 from karrio.providers.usps_international.utils import Settings
 
 
-def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
+def parse_pickup_response(
+    response: dict, settings: Settings
+) -> Tuple[PickupDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     details = None
 
@@ -21,7 +26,7 @@ def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDet
 
 
 def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
-    shipments: List[ShipmentRequest] = payload.options.get('shipments', [])
+    shipments: List[ShipmentRequest] = payload.options.get("shipments", [])
     packages = Packages(payload.parcels)
 
     request = CarrierPickupScheduleRequest(
@@ -30,7 +35,9 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
         LastName=None,
         FirmName=payload.address.company_name,
         SuiteOrApt=payload.address.address_line1,
-        Address2=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+        Address2=SF.concat_str(
+            payload.address.address_line1, payload.address.address_line2, join=True
+        ),
         Urbanization=None,
         City=payload.address.city,
         State=payload.address.state_code,
@@ -39,16 +46,13 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
         Phone=payload.address.phone_number,
         Extension=None,
         Package=[
-            PackageType(
-                ServiceType=shipment.service,
-                Count=len(shipment.parcels)
-            )
+            PackageType(ServiceType=shipment.service, Count=len(shipment.parcels))
             for shipment in shipments
         ],
         EstimatedWeight=packages.weight.LB,
         PackageLocation=payload.package_location,
         SpecialInstructions=payload.instruction,
-        EmailAddress=payload.address.email
+        EmailAddress=payload.address.email,
     )
 
-    return Serializable(request)
+    return Serializable(request, logged=True)

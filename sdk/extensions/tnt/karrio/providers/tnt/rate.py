@@ -141,4 +141,4 @@ def rate_request(
         ),
     )
 
-    return Serializable(request, XP.to_xml)
+    return Serializable(request, XP.to_xml, logged=True)

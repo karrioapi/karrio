@@ -159,4 +159,4 @@ def rate_request(
         ],
     )
 
-    return Serializable(request, XP.export)
+    return Serializable(request, XP.export, logged=True)

@@ -54,7 +54,8 @@ class Proxy(BaseProxy):
                     Serializable(
                         request.replace(
                             "[MASTER_ID_TYPE]", master_id.TrackingIdType
-                        ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber)
+                        ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber),
+                        logged=True,
                     ),
                 )
                 for request in requests[1:]

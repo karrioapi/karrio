@@ -1,7 +1,7 @@
 import time
 from typing import Tuple, List
 from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
-from karrio.core.utils import XP,  Serializable
+from karrio.core.utils import XP, Serializable
 from karrio.core.models import (
     PickupCancelRequest,
     Message,
@@ -43,7 +43,8 @@ def pickup_cancel_request(
         schemaVersion=3.0,
         RegionCode=(
             CountryRegion[payload.address.country_code].value
-            if payload.address is not None and payload.address.country_code is not None else "AM"
+            if payload.address is not None and payload.address.country_code is not None
+            else "AM"
         ),
         ConfirmationNumber=payload.confirmation_number,
         RequestorName=payload.address.person_name,
@@ -52,7 +53,8 @@ def pickup_cancel_request(
         PickupDate=payload.pickup_date,
         CancelTime=time.strftime("%H:%M:%S"),
     )
-    return Serializable(request, _request_serializer)
+
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: CancelPURequest) -> str:

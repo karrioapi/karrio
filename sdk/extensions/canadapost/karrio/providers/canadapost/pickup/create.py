@@ -187,7 +187,9 @@ def _create_pickup_request(
         ),
         payment_info=None,
     )
-    return Serializable(request, partial(_request_serializer, update=update))
+    return Serializable(
+        request, partial(_request_serializer, update=update), logged=True
+    )
 
 
 def _get_pickup_availability(payload: PickupRequest):

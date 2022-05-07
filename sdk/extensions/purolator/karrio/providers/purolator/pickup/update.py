@@ -8,7 +8,13 @@ from purolator_lib.pickup_service_1_2_1 import (
 )
 from karrio.core.models import PickupUpdateRequest, PickupDetails, Message
 from karrio.core.utils import (
-    Serializable, create_envelope, Envelope, Element, XP, Pipeline, Job
+    Serializable,
+    create_envelope,
+    Envelope,
+    Element,
+    XP,
+    Pipeline,
+    Job,
 )
 from karrio.providers.purolator.pickup.create import _validate_pickup
 from karrio.providers.purolator.error import parse_error_response
@@ -86,7 +92,9 @@ def _modify_pickup_request(
         ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version="v1"))
+    return Serializable(
+        request, partial(standard_request_serializer, version="v1"), logged=True
+    )
 
 
 def _modify_pickup(
