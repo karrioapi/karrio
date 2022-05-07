@@ -98,13 +98,13 @@ WEBHOOK_RESPONSE = {
 
 WEBHOOK_UPDATE_DATA = {
     "description": "Testing Hook Updated",
-    "enabled_events": ["shipment.purchased", "shipment.cancelled"],
+    "enabled_events": ["shipment_purchased", "shipment_cancelled"],
 }
 
 WEBHOOK_UPDATED_RESPONSE = {
     "url": "http://localhost:8080",
     "description": "Testing Hook Updated",
-    "enabled_events": ["shipment.purchased", "shipment.cancelled"],
+    "enabled_events": ["shipment_purchased", "shipment_cancelled"],
     "test_mode": True,
     "disabled": False,
     "id": ANY,

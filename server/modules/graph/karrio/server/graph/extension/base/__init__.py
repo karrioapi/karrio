@@ -68,22 +68,6 @@ class Query:
         filterset_class=types.TrackerFilter,
     )
 
-    webhook = graphene.Field(types.WebhookType, id=graphene.String(required=True))
-    webhooks = django_filter.DjangoFilterConnectionField(
-        types.WebhookType,
-        required=True,
-        default_value=[],
-        filterset_class=types.WebhookFilter,
-    )
-
-    event = graphene.Field(types.EventType, id=graphene.String(required=True))
-    events = django_filter.DjangoFilterConnectionField(
-        types.EventType,
-        required=True,
-        default_value=[],
-        filterset_class=types.EventFilter,
-    )
-
     @utils.login_required
     def resolve_user(self, info):
         return types.User.objects.get(id=info.context.user.id)
@@ -148,22 +132,6 @@ class Query:
     @utils.login_required
     def resolve_trackers(self, info, **kwargs):
         return manager.Tracking.access_by(info.context)
-
-    @utils.login_required
-    def resolve_webhook(self, info, **kwargs):
-        return events.Webhook.access_by(info.context).filter(**kwargs).first()
-
-    @utils.login_required
-    def resolve_webhooks(self, info, **kwargs):
-        return events.Webhook.access_by(info.context)
-
-    @utils.login_required
-    def resolve_event(self, info, **kwargs):
-        return events.Event.access_by(info.context).filter(**kwargs).first()
-
-    @utils.login_required
-    def resolve_events(self, info, **kwargs):
-        return events.Event.access_by(info.context)
 
 
 class Mutation:

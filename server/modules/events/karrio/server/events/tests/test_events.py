@@ -91,7 +91,7 @@ EVENTS_RESPONSE = {
                 {
                     "node": {
                         "id": ANY,
-                        "type": "tracker.created",
+                        "type": "tracker_created",
                         "data": {
                             "events": [
                                 {
@@ -120,7 +120,7 @@ EVENT_RESPONSE = {
     "data": {
         "event": {
             "id": ANY,
-            "type": "tracker.created",
+            "type": "tracker_created",
             "data": {
                 "events": [
                     {
