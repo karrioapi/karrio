@@ -104,7 +104,7 @@ def order_updated(sender, instance, *args, **kwargs):
     if created or "created_at" in changes:
         event = EventTypes.order_created.value
     elif "status" not in changes:
-        return
+        event = EventTypes.order_updated.value
     elif instance.status == serializers.OrderStatus.fulfilled.value:
         event = EventTypes.order_fulfilled.value
     elif instance.status == serializers.OrderStatus.cancelled.value:
