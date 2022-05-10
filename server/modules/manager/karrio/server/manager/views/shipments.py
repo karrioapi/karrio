@@ -5,11 +5,9 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status, serializers
+from rest_framework import status
 
-from drf_yasg import openapi
 from django.urls import path, re_path
-from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
 from django.core.files.base import ContentFile
@@ -18,13 +16,11 @@ from django_downloadview import VirtualDownloadView
 from karrio.core.utils import DP
 from karrio.server.core.gateway import Carriers
 from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.filters import ShipmentFilters, ShipmentModeFilter
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     SerializerDecorator,
     PaginatedResult,
-    MODELS,
-    FlagField,
-    ShipmentStatus,
     ErrorResponse,
     Shipment,
     ShipmentData,
@@ -47,60 +43,6 @@ ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique m
 Shipments = PaginatedResult("ShipmentList", Shipment)
 
 
-class ShipmentFilters(filters.FilterSet):
-    created_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
-    created_before = filters.DateFilter(field_name="created_at", lookup_expr="lte")
-    carrier_id = filters.CharFilter(field_name="selected_rate_carrier__carrier_id")
-    service = filters.CharFilter(field_name="selected_rate__service")
-    reference = filters.CharFilter(field_name="reference", lookup_expr="iregex")
-
-    parameters = [
-        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-        openapi.Parameter(
-            "carrier_name",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            enum=list(MODELS.keys()),
-        ),
-        openapi.Parameter("carrier_id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter(
-            "status",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            enum=[c.value for c in list(ShipmentStatus)],
-        ),
-        openapi.Parameter("service", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter("reference", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter(
-            "created_before",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATETIME,
-            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
-        ),
-        openapi.Parameter(
-            "created_after",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATETIME,
-            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
-        ),
-    ]
-
-    class Meta:
-        model = models.Shipment
-        fields = ["test_mode", "status"]
-
-
-class ShipmentMode(serializers.Serializer):
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="Create shipment in test or live mode",
-    )
-
-
 class ShipmentList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
@@ -110,30 +52,11 @@ class ShipmentList(GenericAPIView):
     serializer_class = Shipments
     model = models.Shipment
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        _filters = tuple()
-        query_params = getattr(self.request, "query_params", {})
-        carrier_name = query_params.get("carrier_name")
-
-        if carrier_name is not None:
-            _filters += (
-                Q(meta__rate_provider=carrier_name)
-                | Q(
-                    **{
-                        f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False
-                    }
-                ),
-            )
-
-        return queryset.filter(*_filters)
-
     @swagger_auto_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
         responses={200: Shipments(), 400: ErrorResponse()},
-        manual_parameters=ShipmentFilters.parameters,
     )
     def get(self, request: Request):
         """
@@ -149,14 +72,14 @@ class ShipmentList(GenericAPIView):
         operation_summary="Create a shipment",
         responses={200: Shipment(), 400: ErrorResponse()},
         request_body=ShipmentData(),
-        query_serializer=ShipmentMode(),
+        query_serializer=ShipmentModeFilter(),
     )
     def post(self, request: Request):
         """
         Create a new shipment instance.
         """
         carrier_filter = {
-            **SerializerDecorator[ShipmentMode](data=request.query_params).data
+            **SerializerDecorator[ShipmentModeFilter](data=request.query_params).data
         }
         shipment = (
             SerializerDecorator[ShipmentSerializer](data=request.data, context=request)

@@ -694,35 +694,88 @@
                 "description": "Retrieve all orders.",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
-                        "type": "boolean"
+                        "description": "customer address line",
+                        "required": false,
+                        "type": "string"
                     },
                     {
-                        "name": "status",
+                        "name": "id",
                         "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "unfulfilled",
-                            "cancelled",
-                            "fulfilled",
-                            "delivered",
-                            "partial"
-                        ]
+                        "description": "id(s). multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "source order order_id(s). multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "order source(s). multiple separated by comma",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_after",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_before",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "order statuses. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "order option keys. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "order option value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "order metadata keys. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "order metadata value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "limit",
@@ -1823,50 +1876,87 @@
                 "description": "Retrieve all shipments.",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
-                        "type": "boolean"
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "purchased",
-                            "cancelled",
-                            "shipped",
-                            "in_transit",
-                            "delivered"
-                        ]
+                        "description": "shipment recipient address line",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_after",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_before",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    {
-                        "name": "carrier_id",
-                        "in": "query",
+                        "required": false,
                         "type": "string"
                     },
                     {
-                        "name": "service",
+                        "name": "carrier_name",
                         "in": "query",
+                        "description": "carrier_name used to fulfill the shipment",
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "reference",
                         "in": "query",
+                        "description": "a shipment reference",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "service",
+                        "in": "query",
+                        "description": "preferred carrier services. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "shipment statuses. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "shipment option keys. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "shipment option value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "shipment metadata keys. multiple separated by comma",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "shipment metadata value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
+                        "required": false,
                         "type": "string"
                     },
                     {
@@ -1882,36 +1972,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "aramex",
-                            "australiapost",
-                            "canadapost",
-                            "canpar",
-                            "dhl_express",
-                            "dhl_poland",
-                            "dhl_universal",
-                            "dicom",
-                            "easypost",
-                            "eshipper",
-                            "fedex",
-                            "freightcom",
-                            "generic",
-                            "purolator",
-                            "royalmail",
-                            "sendle",
-                            "sf_express",
-                            "tnt",
-                            "ups",
-                            "usps",
-                            "usps_international",
-                            "yanwen",
-                            "yunexpress"
-                        ]
                     }
                 ],
                 "responses": {

@@ -3,6 +3,7 @@ from django.db.models import Q
 import graphene
 import graphene.types.generic as generic
 
+import karrio.server.core.filters as filters
 import karrio.server.graph.utils as utils
 import karrio.server.apps.models as models
 
@@ -14,7 +15,7 @@ class AppInstallationFilter(django_filters.FilterSet):
     created_before = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    metadata_key = utils.CharInFilter(
+    metadata_key = filters.CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
     )
@@ -52,7 +53,7 @@ class AppFilter(django_filters.FilterSet):
     created_before = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    metadata_key = utils.CharInFilter(
+    metadata_key = filters.CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
     )

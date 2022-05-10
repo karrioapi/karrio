@@ -1,5 +1,6 @@
 from enum import Enum
 from drf_yasg import openapi
+import rest_framework.status as http_status
 from rest_framework.serializers import (
     CharField,
     FloatField,
@@ -49,6 +50,7 @@ class TrackerStatus(Enum):
     delivered = "delivered"
 
 
+HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]

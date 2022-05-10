@@ -837,24 +837,35 @@
                 "operationId": "&&&&list",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
+                        "description": "customer address line",
                         "schema": {
-                            "type": "boolean"
+                            "type": "string"
                         }
                     },
                     {
-                        "name": "status",
+                        "name": "id",
                         "in": "query",
+                        "description": "id(s). multiple separated by comma",
                         "schema": {
-                            "type": "string",
-                            "enum": [
-                                "unfulfilled",
-                                "cancelled",
-                                "fulfilled",
-                                "delivered",
-                                "partial"
-                            ]
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "source order order_id(s). multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "order source(s). multiple separated by comma",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -862,8 +873,7 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
+                            "type": "string"
                         }
                     },
                     {
@@ -871,8 +881,55 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "order statuses. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "order option keys. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "order option value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "order metadata keys. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "order metadata value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -2223,25 +2280,11 @@
                 "operationId": "$$$$$list",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
+                        "description": "shipment recipient address line",
                         "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "draft",
-                                "purchased",
-                                "cancelled",
-                                "shipped",
-                                "in_transit",
-                                "delivered"
-                            ]
+                            "type": "string"
                         }
                     },
                     {
@@ -2249,8 +2292,7 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
+                            "type": "string"
                         }
                     },
                     {
@@ -2258,20 +2300,13 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
-                        }
-                    },
-                    {
-                        "name": "carrier_id",
-                        "in": "query",
-                        "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "service",
+                        "name": "carrier_name",
                         "in": "query",
+                        "description": "carrier_name used to fulfill the shipment",
                         "schema": {
                             "type": "string"
                         }
@@ -2279,6 +2314,63 @@
                     {
                         "name": "reference",
                         "in": "query",
+                        "description": "a shipment reference",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "service",
+                        "in": "query",
+                        "description": "preferred carrier services. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "shipment statuses. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "shipment option keys. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "shipment option value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "shipment metadata keys. multiple separated by comma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "shipment metadata value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
                         "schema": {
                             "type": "string"
                         }
@@ -2297,38 +2389,6 @@
                         "description": "The initial index from which to return the results.",
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "aramex",
-                                "australiapost",
-                                "canadapost",
-                                "canpar",
-                                "dhl_express",
-                                "dhl_poland",
-                                "dhl_universal",
-                                "dicom",
-                                "easypost",
-                                "eshipper",
-                                "fedex",
-                                "freightcom",
-                                "generic",
-                                "purolator",
-                                "royalmail",
-                                "sendle",
-                                "sf_express",
-                                "tnt",
-                                "ups",
-                                "usps",
-                                "usps_international",
-                                "yanwen",
-                                "yunexpress"
-                            ]
                         }
                     }
                 ],

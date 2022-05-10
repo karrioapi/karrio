@@ -708,12 +708,12 @@ FULFILLED_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         },
                     ],
-                    "reference_number": "0000000002",
+                    "reference_number": ANY,
                     "object_type": "parcel",
                 }
             ],
             "services": [],
-            "options": {"currency": "CAD", "shipment_date": "2022-05-07"},
+            "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
             "customs": None,
             "rates": [

@@ -1,50 +1,55 @@
 import typing
 import json
 from django.db.models import Q
-from django.contrib.auth import get_user_model
 from import_export import resources
 
 from karrio.core.utils import DP, DF
 from karrio.core.units import Packages
 from karrio.server.core import serializers
 from karrio.server.core import datatypes as types, dataunits as units
-from karrio.server.manager import models as manager
+from karrio.server.manager import models
+from karrio.server.core.filters import ShipmentFilters
 
-User = get_user_model()
-
-
-def export(resource: str, query_params: dict, context) -> dict:
-    """Generate a file to export."""
-
-    if resource == "users":
-        return user_resource(query_params, context).export()
-
-    if resource == "shipments":
-        return shipment_resource(query_params, context).export()
-
-    raise Exception("Unknown resource")
-
-
-def user_resource(query_params: dict, context):
-    _exclude = query_params.get("exclude", "").split(",")
-    _fields = (
-        "id",
-        "email",
-        "full_name",
-        "is_active",
-    )
-
-    class Resource(resources.ModelResource):
-        class Meta:
-            model = User
-            fields = _fields
-            exclude = _exclude
-
-    return Resource()
+DEFAULT_HEADERS = {
+    "id": "ID",
+    "created_at": "Created at",
+    "tracking_number": "Tracking number",
+    "status": "Status",
+    "shipper_id": "Shipper ID",
+    "shipper_name": "Shipper name",
+    "shipper_company": "Shipper Company",
+    "shipper_address_line1": "Shipper address line 1",
+    "shipper_address_line2": "Shipper address line 2",
+    "shipper_city": "Shipper city",
+    "shipper_state": "Shipper state",
+    "shipper_postal_code": "Shipper postal code",
+    "shipper_country": "Shipper country",
+    "shipper_residential": "Shipper residential",
+    "recipient_id": "Recipient ID",
+    "recipient_name": "Recipient name",
+    "recipient_company": "Recipient Company",
+    "recipient_address_line1": "Recipient address line 1",
+    "recipient_address_line2": "Recipient address line 2",
+    "recipient_city": "Recipient city",
+    "recipient_state": "Recipient state",
+    "recipient_postal_code": "Recipient postal code",
+    "recipient_country": "Recipient country",
+    "recipient_residential": "Recipient residential",
+    "weight": "Weight",
+    "weight_unit": "Weight unit",
+    "pieces": "Number of pieces",
+    "service": "Service",
+    "carrier": "Carrier",
+    "rate": "Rate",
+    "currency": "Currency",
+    "paid_by": "Payor",
+    "reference": "Reference",
+    "options": "Options",
+}
 
 
 def shipment_resource(query_params: dict, context):
-    query: typing.Any = tuple()
+    queryset = models.Shipment.access_by(context)
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (
         "id",
@@ -53,55 +58,21 @@ def shipment_resource(query_params: dict, context):
         "status",
         "reference",
     )
-    DEFAULT_HEADERS = {
-        "id": "ID",
-        "created_at": "Created at",
-        "tracking_number": "Tracking number",
-        "status": "Status",
-        "shipper_id": "Shipper ID",
-        "shipper_name": "Shipper name",
-        "shipper_company": "Shipper Company",
-        "shipper_address_line1": "Shipper address line 1",
-        "shipper_address_line2": "Shipper address line 2",
-        "shipper_city": "Shipper city",
-        "shipper_state": "Shipper state",
-        "shipper_postal_code": "Shipper postal code",
-        "shipper_country": "Shipper country",
-        "shipper_residential": "Shipper residential",
-        "recipient_id": "Recipient ID",
-        "recipient_name": "Recipient name",
-        "recipient_company": "Recipient Company",
-        "recipient_address_line1": "Recipient address line 1",
-        "recipient_address_line2": "Recipient address line 2",
-        "recipient_city": "Recipient city",
-        "recipient_state": "Recipient state",
-        "recipient_postal_code": "Recipient postal code",
-        "recipient_country": "Recipient country",
-        "recipient_residential": "Recipient residential",
-        "weight": "Weight",
-        "weight_unit": "Weight unit",
-        "pieces": "Number of pieces",
-        "service": "Service",
-        "carrier": "Carrier",
-        "rate": "Rate",
-        "currency": "Currency",
-        "paid_by": "Payor",
-        "reference": "Reference",
-        "options": "Options",
-    }
 
-    if "status" in query_params:
-        query += (Q(status__in=query_params.get("status", "").split(",")),)
+    if "status" not in query_params:
+        queryset = queryset.filter(
+            Q(status__in=["purchased", "delivered", "shipped", "in_transit"]),
+        )
 
     class Resource(resources.ModelResource):
         class Meta:
-            model = manager.Shipment
+            model = models.Shipment
             fields = _fields
             exclude = _exclude
             export_order = [k for k in DEFAULT_HEADERS.keys() if k not in _exclude]
 
         def get_queryset(self):
-            return manager.Shipment.access_by(context).filter(*query)
+            return ShipmentFilters(query_params, queryset).qs
 
         def get_export_headers(self):
             headers = super().get_export_headers()

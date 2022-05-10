@@ -1,9 +1,9 @@
 import graphene
 import graphene_django.filter as django_filter
 
+import karrio.server.core.filters as filters
 import karrio.server.core.views.api as api
 import karrio.server.graph.models as graph
-import karrio.server.events.models as events
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -49,7 +49,7 @@ class Query:
         types.LogType,
         required=True,
         default_value=[],
-        filterset_class=types.LogFilter,
+        filterset_class=filters.LogFilter,
     )
 
     shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
@@ -57,7 +57,7 @@ class Query:
         types.ShipmentType,
         required=True,
         default_value=[],
-        filterset_class=types.ShipmentFilter,
+        filterset_class=filters.ShipmentFilters,
     )
 
     tracker = graphene.Field(types.TrackerType, id=graphene.String(required=True))
@@ -65,7 +65,7 @@ class Query:
         types.TrackerType,
         required=True,
         default_value=[],
-        filterset_class=types.TrackerFilter,
+        filterset_class=filters.TrackerFilter,
     )
 
     @utils.login_required

@@ -1,19 +1,18 @@
 import functools
 import typing
 import graphene
-import django_filters
 import graphene_django
-from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
-import rest_framework.status as http_status
 from rest_framework import exceptions
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
 
 from karrio.core.utils import Enum
+from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
 import karrio.server.core.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 
 
 def login_required(func):
@@ -63,10 +62,6 @@ def metadata_object_types() -> Enum:
         _types.append(("app", apps.App))
 
     return Enum("MetadataObjectType", _types)
-
-
-class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
-    pass
 
 
 class CustomNode(graphene.Node):
@@ -130,8 +125,8 @@ def create_delete_mutation(
     return type(name, (_DeleteMutation, ClientMutation), {})
 
 
-CARRIER_NAMES = list(providers.MODELS.keys())
-HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
+HTTP_STATUS = serializers.HTTP_STATUS
+CARRIER_NAMES = dataunits.CARRIER_NAMES
 CountryCodeEnum = graphene.Enum("CountryCodeEnum", serializers.COUNTRIES)
 CurrencyCodeEnum = graphene.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
 DimensionUnitEnum = graphene.Enum("DimensionUnitEnum", serializers.DIMENSION_UNIT)

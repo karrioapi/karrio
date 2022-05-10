@@ -5,12 +5,12 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 from django_filters import rest_framework as filters
 
 from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.filters import PickupFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     SerializerDecorator,
@@ -28,16 +28,6 @@ import karrio.server.manager.models as models
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Pickups = PaginatedResult("PickupList", Pickup)
-
-
-class PickupFilters(filters.FilterSet):
-    parameters = [
-        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-    ]
-
-    class Meta:
-        model = models.Pickup
-        fields = ["test_mode"]
 
 
 class PickupList(GenericAPIView):

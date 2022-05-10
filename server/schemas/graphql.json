@@ -842,6 +842,20 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "metadata_key",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "metadata_value",
                   "type": {
                     "kind": "SCALAR",
