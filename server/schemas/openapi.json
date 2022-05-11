@@ -2,11 +2,11 @@
     "openapi": "3.0.1",
     "info": {
         "title": "Karrio API",
-        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.3.8`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": ""
         },
-        "version": "2022.3.8"
+        "version": "2022.4"
     },
     "servers": [
         {
@@ -847,7 +847,7 @@
                     {
                         "name": "id",
                         "in": "query",
-                        "description": "id(s). multiple separated by comma",
+                        "description": "id(s).",
                         "schema": {
                             "type": "string"
                         }
@@ -855,7 +855,7 @@
                     {
                         "name": "order_id",
                         "in": "query",
-                        "description": "source order order_id(s). multiple separated by comma",
+                        "description": "source order order_id(s).",
                         "schema": {
                             "type": "string"
                         }
@@ -863,7 +863,7 @@
                     {
                         "name": "source",
                         "in": "query",
-                        "description": "order source(s). multiple separated by comma",
+                        "description": "order source(s).",
                         "schema": {
                             "type": "string"
                         }
@@ -887,7 +887,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "order statuses. multiple separated by comma",
+                        "description": "order statuses.",
                         "schema": {
                             "type": "string"
                         }
@@ -895,7 +895,7 @@
                     {
                         "name": "option_key",
                         "in": "query",
-                        "description": "order option keys. multiple separated by comma",
+                        "description": "order option keys.",
                         "schema": {
                             "type": "string"
                         }
@@ -911,7 +911,7 @@
                     {
                         "name": "metadata_key",
                         "in": "query",
-                        "description": "order metadata keys. multiple separated by comma",
+                        "description": "order metadata keys.",
                         "schema": {
                             "type": "string"
                         }
@@ -2322,7 +2322,7 @@
                     {
                         "name": "service",
                         "in": "query",
-                        "description": "preferred carrier services. multiple separated by comma",
+                        "description": "preferred carrier services.",
                         "schema": {
                             "type": "string"
                         }
@@ -2330,7 +2330,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "shipment statuses. multiple separated by comma",
+                        "description": "shipment statuses.",
                         "schema": {
                             "type": "string"
                         }
@@ -2338,7 +2338,7 @@
                     {
                         "name": "option_key",
                         "in": "query",
-                        "description": "shipment option keys. multiple separated by comma",
+                        "description": "shipment option keys.",
                         "schema": {
                             "type": "string"
                         }
@@ -2354,7 +2354,7 @@
                     {
                         "name": "metadata_key",
                         "in": "query",
-                        "description": "shipment metadata keys. multiple separated by comma",
+                        "description": "shipment metadata keys.",
                         "schema": {
                             "type": "string"
                         }
