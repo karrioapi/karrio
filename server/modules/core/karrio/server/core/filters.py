@@ -1,7 +1,7 @@
 import typing
-from django_filters import rest_framework as filters
 from drf_yasg import openapi
 from django.db.models import Q
+from django_filters import rest_framework as filters
 
 from karrio.server.core import dataunits
 from karrio.server.core import serializers
@@ -44,17 +44,17 @@ class ShipmentFilters(filters.FilterSet):
         method="service_filter",
         field_name="selected_rate__service",
         lookup_expr="in",
-        help_text="preferred carrier services. multiple separated by comma",
+        help_text="preferred carrier services.",
     )
     status = filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
-        help_text="shipment statuses. multiple separated by comma",
+        help_text="shipment statuses.",
     )
     option_key = CharInFilter(
         field_name="options",
         method="option_key_filter",
-        help_text="shipment option keys. multiple separated by comma",
+        help_text="shipment option keys.",
     )
     option_value = filters.CharFilter(
         field_name="options",
@@ -64,7 +64,7 @@ class ShipmentFilters(filters.FilterSet):
     metadata_key = CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
-        help_text="shipment metadata keys. multiple separated by comma",
+        help_text="shipment metadata keys.",
     )
     metadata_value = filters.CharFilter(
         field_name="metadata",
@@ -97,16 +97,28 @@ class ShipmentFilters(filters.FilterSet):
         return queryset.filter(query)
 
     def option_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_key=value))
+        return queryset.filter(Q(options__has_keys=value))
 
     def option_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__values__contains=value))
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "options")
+                if value in (o.get("options") or {}).values()
+            ]
+        )
 
     def metadata_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_key=value))
+        return queryset.filter(metadata__has_keys=value)
 
     def metadata_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(metadata__values__contains=value))
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "metadata")
+                if value in (o.get("metadata") or {}).values()
+            ]
+        )
 
     def service_filter(self, queryset, name, values):
         return queryset.filter(Q(selected_rate__service__in=values))

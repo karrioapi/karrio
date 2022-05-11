@@ -7,7 +7,8 @@ from karrio.server.orders.filters import OrderFilters
 
 DEFAULT_HEADERS = {
     # Order details
-    "order_id": "Order ID",
+    "id": "ID",
+    "order_id": "Order ID/Number",
     "order_date": "Order date",
     "order_source": "Source",
     "order_status": "Status",
@@ -69,6 +70,12 @@ def order_resource(query_params: dict, context):
         def get_export_headers(self):
             headers = super().get_export_headers()
             return [DEFAULT_HEADERS.get(k, k) for k in headers]
+
+        if "id" not in _exclude:
+            id = resources.Field()
+
+            def dehydrate_id(self, row):
+                return row.order.id
 
         if "order_id" not in _exclude:
             order_id = resources.Field()

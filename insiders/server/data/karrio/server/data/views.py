@@ -20,7 +20,7 @@ class DataExport(LoginRequiredView, VirtualDownloadView):
     ):
         try:
             """Generate a file to export."""
-            query_params = request.GET.dict()
+            query_params = request.GET
             self.attachment = "download" in query_params
             self.resource = resource
             self.format = format
