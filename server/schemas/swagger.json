@@ -4927,7 +4927,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "x-nullable": true
                 },
@@ -6017,7 +6018,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6141,7 +6143,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "x-nullable": true
                 },
@@ -6679,7 +6682,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6727,7 +6731,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6773,7 +6778,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },

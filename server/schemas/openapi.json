@@ -5538,7 +5538,8 @@
                         "nullable": true,
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "carrier_ids": {
@@ -6619,7 +6620,8 @@
                         "default": "PDF",
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "selected_rate_id": {
@@ -6741,7 +6743,8 @@
                         "nullable": true,
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "carrier_ids": {
@@ -7273,7 +7276,8 @@
                         "default": "PDF",
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "service": {
@@ -7318,7 +7322,8 @@
                         "default": "PDF",
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "payment": {
@@ -7364,7 +7369,8 @@
                         "default": "PDF",
                         "enum": [
                             "PDF",
-                            "ZPL"
+                            "ZPL",
+                            "PNG"
                         ]
                     },
                     "payment": {

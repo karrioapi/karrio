@@ -9647,6 +9647,12 @@
               "description": null,
               "isDeprecated": false,
               "name": "ZPL"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PNG"
             }
           ],
           "fields": null,
