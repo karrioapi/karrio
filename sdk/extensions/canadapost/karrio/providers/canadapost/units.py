@@ -50,7 +50,7 @@ class PackagePresets(Flag):
     )
 
 
-MeasurementOptions = MeasurementOptionsType(quant=0.1)
+MeasurementOptions = MeasurementOptionsType(quant=0.1, min_kg=0.01, min_in=0.01)
 
 
 class LabelType(Enum):
