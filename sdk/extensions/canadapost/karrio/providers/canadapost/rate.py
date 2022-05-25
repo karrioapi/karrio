@@ -23,6 +23,7 @@ from karrio.providers.canadapost.units import (
     ServiceType,
     PackagePresets,
     MeasurementOptions,
+    CUSTOM_OPTIONS,
 )
 
 
@@ -104,7 +105,7 @@ def rate_request(
                         option_amount=getattr(option, "value", None),
                     )
                     for code, option in options
-                    if code in OptionCode
+                    if code in OptionCode and code not in CUSTOM_OPTIONS
                 ]
             )
             if any([c in OptionCode for c, _ in options])

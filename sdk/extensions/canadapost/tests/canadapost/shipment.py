@@ -186,6 +186,7 @@ shipment_data = {
         "canadapost_signature": True,
         "cash_on_delivery": 10.5,
         "insurance": 70.0,
+        "canadapost_cost_center": "karrio",
     },
     "reference": "#Order 11111",
 }
@@ -307,7 +308,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <show-insured-value>true</show-insured-value>
         </preferences>
         <references>
-            <cost-centre>#Order 11111</cost-centre>
+            <cost-centre>karrio</cost-centre>
             <customer-ref-1>#Order 11111</customer-ref-1>
         </references>
         <settlement-info>
@@ -434,7 +435,7 @@ NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.cana
             <show-insured-value>true</show-insured-value>
         </preferences>
         <references>
-            <cost-centre>#Order 11111</cost-centre>
+            <cost-centre>karrio</cost-centre>
             <customer-ref-1>#Order 11111</customer-ref-1>
         </references>
     </delivery-spec>
