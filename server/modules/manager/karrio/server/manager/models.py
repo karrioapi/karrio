@@ -216,7 +216,7 @@ class Commodity(OwnedEntity):
     def shipment(self):
         related = self.customs or self.parcel
 
-        getattr(related, "shipment", None)
+        return getattr(related, "shipment", None)
 
     @property
     def order(self):

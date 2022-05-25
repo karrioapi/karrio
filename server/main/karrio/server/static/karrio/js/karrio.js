@@ -983,6 +983,7 @@
         CarrierSettingsCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CarrierSettingsCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CarrierSettingsCarrierNameEnum["Dicom"] = "dicom";
+        CarrierSettingsCarrierNameEnum["Easypost"] = "easypost";
         CarrierSettingsCarrierNameEnum["Eshipper"] = "eshipper";
         CarrierSettingsCarrierNameEnum["Fedex"] = "fedex";
         CarrierSettingsCarrierNameEnum["Freightcom"] = "freightcom";
@@ -1538,10 +1539,11 @@
             return json;
         }
         return {
+            'version': json['VERSION'],
             'app_name': json['APP_NAME'],
-            'app_version': json['APP_VERSION'],
             'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
             'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
+            'data_import_export': json['DATA_IMPORT_EXPORT'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
@@ -1556,9 +1558,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.7`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.3.7
+     * The version of the OpenAPI document: 2022.4
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1582,9 +1584,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.7`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.3.7
+     * The version of the OpenAPI document: 2022.4
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1891,10 +1893,7 @@
             'carrier_id': json['carrier_id'],
             'currency': json['currency'],
             'service': !exists(json, 'service') ? undefined : json['service'],
-            'discount': !exists(json, 'discount') ? undefined : json['discount'],
-            'base_charge': !exists(json, 'base_charge') ? undefined : json['base_charge'],
             'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
-            'duties_and_taxes': !exists(json, 'duties_and_taxes') ? undefined : json['duties_and_taxes'],
             'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
             'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
@@ -1915,10 +1914,7 @@
             'carrier_id': value.carrier_id,
             'currency': value.currency,
             'service': value.service,
-            'discount': value.discount,
-            'base_charge': value.base_charge,
             'total_charge': value.total_charge,
-            'duties_and_taxes': value.duties_and_taxes,
             'transit_days': value.transit_days,
             'extra_charges': value.extra_charges === undefined ? undefined : (value.extra_charges.map(ChargeToJSON)),
             'meta': value.meta,
@@ -1935,6 +1931,7 @@
     (function (ShipmentLabelTypeEnum) {
         ShipmentLabelTypeEnum["Pdf"] = "PDF";
         ShipmentLabelTypeEnum["Zpl"] = "ZPL";
+        ShipmentLabelTypeEnum["Png"] = "PNG";
     })(ShipmentLabelTypeEnum || (ShipmentLabelTypeEnum = {})); /**
     * @export
     * @enum {string}
@@ -2343,9 +2340,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.7`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.3.7
+     * The version of the OpenAPI document: 2022.4
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2360,10 +2357,11 @@
             return json;
         }
         return {
+            'version': json['VERSION'],
             'app_name': json['APP_NAME'],
-            'app_version': json['APP_VERSION'],
             'app_website': json['APP_WEBSITE'],
             'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
+            'data_import_export': json['DATA_IMPORT_EXPORT'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
@@ -2414,6 +2412,7 @@
     (function (ShipmentDataLabelTypeEnum) {
         ShipmentDataLabelTypeEnum["Pdf"] = "PDF";
         ShipmentDataLabelTypeEnum["Zpl"] = "ZPL";
+        ShipmentDataLabelTypeEnum["Png"] = "PNG";
     })(ShipmentDataLabelTypeEnum || (ShipmentDataLabelTypeEnum = {}));
     function ShipmentDataToJSON(value) {
         if (value === undefined) {
@@ -2463,6 +2462,7 @@
     (function (ShipmentPurchaseDataLabelTypeEnum) {
         ShipmentPurchaseDataLabelTypeEnum["Pdf"] = "PDF";
         ShipmentPurchaseDataLabelTypeEnum["Zpl"] = "ZPL";
+        ShipmentPurchaseDataLabelTypeEnum["Png"] = "PNG";
     })(ShipmentPurchaseDataLabelTypeEnum || (ShipmentPurchaseDataLabelTypeEnum = {}));
     function ShipmentPurchaseDataToJSON(value) {
         if (value === undefined) {
@@ -2505,6 +2505,7 @@
     (function (ShipmentUpdateDataLabelTypeEnum) {
         ShipmentUpdateDataLabelTypeEnum["Pdf"] = "PDF";
         ShipmentUpdateDataLabelTypeEnum["Zpl"] = "ZPL";
+        ShipmentUpdateDataLabelTypeEnum["Png"] = "PNG";
     })(ShipmentUpdateDataLabelTypeEnum || (ShipmentUpdateDataLabelTypeEnum = {}));
     function ShipmentUpdateDataToJSON(value) {
         if (value === undefined) {
@@ -2531,6 +2532,7 @@
     (function (ShippingRequestLabelTypeEnum) {
         ShippingRequestLabelTypeEnum["Pdf"] = "PDF";
         ShippingRequestLabelTypeEnum["Zpl"] = "ZPL";
+        ShippingRequestLabelTypeEnum["Png"] = "PNG";
     })(ShippingRequestLabelTypeEnum || (ShippingRequestLabelTypeEnum = {}));
     function ShippingRequestToJSON(value) {
         if (value === undefined) {
@@ -2562,6 +2564,7 @@
     (function (ShippingResponseLabelTypeEnum) {
         ShippingResponseLabelTypeEnum["Pdf"] = "PDF";
         ShippingResponseLabelTypeEnum["Zpl"] = "ZPL";
+        ShippingResponseLabelTypeEnum["Png"] = "PNG";
     })(ShippingResponseLabelTypeEnum || (ShippingResponseLabelTypeEnum = {})); /**
     * @export
     * @enum {string}
@@ -2634,9 +2637,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.3.7`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.3.7
+     * The version of the OpenAPI document: 2022.4
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2729,6 +2732,7 @@
             'test_mode': json['test_mode'],
             'status': !exists(json, 'status') ? undefined : json['status'],
             'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
@@ -2773,15 +2777,16 @@
     var WebhookEnabledEventsEnum;
     (function (WebhookEnabledEventsEnum) {
         WebhookEnabledEventsEnum["All"] = "all";
-        WebhookEnabledEventsEnum["ShipmentPurchased"] = "shipment.purchased";
-        WebhookEnabledEventsEnum["ShipmentCancelled"] = "shipment.cancelled";
-        WebhookEnabledEventsEnum["ShipmentFulfilled"] = "shipment.fulfilled";
-        WebhookEnabledEventsEnum["TrackerCreated"] = "tracker.created";
-        WebhookEnabledEventsEnum["TrackerUpdated"] = "tracker.updated";
-        WebhookEnabledEventsEnum["OrderCreated"] = "order.created";
-        WebhookEnabledEventsEnum["OrderFulfilled"] = "order.fulfilled";
-        WebhookEnabledEventsEnum["OrderCancelled"] = "order.cancelled";
-        WebhookEnabledEventsEnum["OrderDelivered"] = "order.delivered";
+        WebhookEnabledEventsEnum["ShipmentPurchased"] = "shipment_purchased";
+        WebhookEnabledEventsEnum["ShipmentCancelled"] = "shipment_cancelled";
+        WebhookEnabledEventsEnum["ShipmentFulfilled"] = "shipment_fulfilled";
+        WebhookEnabledEventsEnum["TrackerCreated"] = "tracker_created";
+        WebhookEnabledEventsEnum["TrackerUpdated"] = "tracker_updated";
+        WebhookEnabledEventsEnum["OrderCreated"] = "order_created";
+        WebhookEnabledEventsEnum["OrderUpdated"] = "order_updated";
+        WebhookEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
+        WebhookEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
+        WebhookEnabledEventsEnum["OrderDelivered"] = "order_delivered";
     })(WebhookEnabledEventsEnum || (WebhookEnabledEventsEnum = {}));
     function WebhookFromJSON(json) {
         return WebhookFromJSONTyped(json);
@@ -2811,15 +2816,16 @@
     var WebhookDataEnabledEventsEnum;
     (function (WebhookDataEnabledEventsEnum) {
         WebhookDataEnabledEventsEnum["All"] = "all";
-        WebhookDataEnabledEventsEnum["ShipmentPurchased"] = "shipment.purchased";
-        WebhookDataEnabledEventsEnum["ShipmentCancelled"] = "shipment.cancelled";
-        WebhookDataEnabledEventsEnum["ShipmentFulfilled"] = "shipment.fulfilled";
-        WebhookDataEnabledEventsEnum["TrackerCreated"] = "tracker.created";
-        WebhookDataEnabledEventsEnum["TrackerUpdated"] = "tracker.updated";
-        WebhookDataEnabledEventsEnum["OrderCreated"] = "order.created";
-        WebhookDataEnabledEventsEnum["OrderFulfilled"] = "order.fulfilled";
-        WebhookDataEnabledEventsEnum["OrderCancelled"] = "order.cancelled";
-        WebhookDataEnabledEventsEnum["OrderDelivered"] = "order.delivered";
+        WebhookDataEnabledEventsEnum["ShipmentPurchased"] = "shipment_purchased";
+        WebhookDataEnabledEventsEnum["ShipmentCancelled"] = "shipment_cancelled";
+        WebhookDataEnabledEventsEnum["ShipmentFulfilled"] = "shipment_fulfilled";
+        WebhookDataEnabledEventsEnum["TrackerCreated"] = "tracker_created";
+        WebhookDataEnabledEventsEnum["TrackerUpdated"] = "tracker_updated";
+        WebhookDataEnabledEventsEnum["OrderCreated"] = "order_created";
+        WebhookDataEnabledEventsEnum["OrderUpdated"] = "order_updated";
+        WebhookDataEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
+        WebhookDataEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
+        WebhookDataEnabledEventsEnum["OrderDelivered"] = "order_delivered";
     })(WebhookDataEnabledEventsEnum || (WebhookDataEnabledEventsEnum = {}));
     function WebhookDataToJSON(value) {
         if (value === undefined) {
@@ -3526,6 +3532,7 @@
         GetServicesCarrierNameEnum["DhlPoland"] = "dhl_poland";
         GetServicesCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         GetServicesCarrierNameEnum["Dicom"] = "dicom";
+        GetServicesCarrierNameEnum["Easypost"] = "easypost";
         GetServicesCarrierNameEnum["Eshipper"] = "eshipper";
         GetServicesCarrierNameEnum["Fedex"] = "fedex";
         GetServicesCarrierNameEnum["Freightcom"] = "freightcom";
@@ -3545,7 +3552,7 @@
         * @export
         * @enum {string}
         */
-    var ListCarrierNameEnum$2;
+    var ListCarrierNameEnum$1;
     (function (ListCarrierNameEnum) {
         ListCarrierNameEnum["Aramex"] = "aramex";
         ListCarrierNameEnum["Australiapost"] = "australiapost";
@@ -3555,6 +3562,7 @@
         ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
         ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         ListCarrierNameEnum["Dicom"] = "dicom";
+        ListCarrierNameEnum["Easypost"] = "easypost";
         ListCarrierNameEnum["Eshipper"] = "eshipper";
         ListCarrierNameEnum["Fedex"] = "fedex";
         ListCarrierNameEnum["Freightcom"] = "freightcom";
@@ -3569,7 +3577,7 @@
         ListCarrierNameEnum["UspsInternational"] = "usps_international";
         ListCarrierNameEnum["Yanwen"] = "yanwen";
         ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(ListCarrierNameEnum$2 || (ListCarrierNameEnum$2 = {}));
+    })(ListCarrierNameEnum$1 || (ListCarrierNameEnum$1 = {}));
 
     /* tslint:disable */
     /**
@@ -4637,6 +4645,9 @@
                             if (requestParameters.test !== undefined) {
                                 queryParameters['test'] = requestParameters.test;
                             }
+                            if (requestParameters.hub !== undefined) {
+                                queryParameters['hub'] = requestParameters.hub;
+                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
@@ -4802,6 +4813,7 @@
         CancelPickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CancelPickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CancelPickupCarrierNameEnum["Dicom"] = "dicom";
+        CancelPickupCarrierNameEnum["Easypost"] = "easypost";
         CancelPickupCarrierNameEnum["Eshipper"] = "eshipper";
         CancelPickupCarrierNameEnum["Fedex"] = "fedex";
         CancelPickupCarrierNameEnum["Freightcom"] = "freightcom";
@@ -4831,6 +4843,7 @@
         SchedulePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         SchedulePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         SchedulePickupCarrierNameEnum["Dicom"] = "dicom";
+        SchedulePickupCarrierNameEnum["Easypost"] = "easypost";
         SchedulePickupCarrierNameEnum["Eshipper"] = "eshipper";
         SchedulePickupCarrierNameEnum["Fedex"] = "fedex";
         SchedulePickupCarrierNameEnum["Freightcom"] = "freightcom";
@@ -4860,9 +4873,7 @@
         TrackShipmentCarrierNameEnum["DhlPoland"] = "dhl_poland";
         TrackShipmentCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         TrackShipmentCarrierNameEnum["Dicom"] = "dicom";
-        TrackShipmentCarrierNameEnum["Eshipper"] = "eshipper";
         TrackShipmentCarrierNameEnum["Fedex"] = "fedex";
-        TrackShipmentCarrierNameEnum["Freightcom"] = "freightcom";
         TrackShipmentCarrierNameEnum["Generic"] = "generic";
         TrackShipmentCarrierNameEnum["Purolator"] = "purolator";
         TrackShipmentCarrierNameEnum["Royalmail"] = "royalmail";
@@ -4889,6 +4900,7 @@
         UpdatePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         UpdatePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         UpdatePickupCarrierNameEnum["Dicom"] = "dicom";
+        UpdatePickupCarrierNameEnum["Easypost"] = "easypost";
         UpdatePickupCarrierNameEnum["Eshipper"] = "eshipper";
         UpdatePickupCarrierNameEnum["Fedex"] = "fedex";
         UpdatePickupCarrierNameEnum["Freightcom"] = "freightcom";
@@ -4918,6 +4930,7 @@
         VoidLabelCarrierNameEnum["DhlPoland"] = "dhl_poland";
         VoidLabelCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         VoidLabelCarrierNameEnum["Dicom"] = "dicom";
+        VoidLabelCarrierNameEnum["Easypost"] = "easypost";
         VoidLabelCarrierNameEnum["Eshipper"] = "eshipper";
         VoidLabelCarrierNameEnum["Fedex"] = "fedex";
         VoidLabelCarrierNameEnum["Freightcom"] = "freightcom";
@@ -5057,35 +5070,47 @@
                     switch (_a.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
-                            }
-                            if (requestParameters.status !== undefined) {
-                                queryParameters['status'] = requestParameters.status;
+                            if (requestParameters.address !== undefined) {
+                                queryParameters['address'] = requestParameters.address;
                             }
                             if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                                queryParameters['created_after'] = requestParameters.createdAfter;
                             }
                             if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                                queryParameters['created_before'] = requestParameters.createdBefore;
                             }
-                            if (requestParameters.carrierId !== undefined) {
-                                queryParameters['carrier_id'] = requestParameters.carrierId;
+                            if (requestParameters.carrierName !== undefined) {
+                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            }
+                            if (requestParameters.reference !== undefined) {
+                                queryParameters['reference'] = requestParameters.reference;
                             }
                             if (requestParameters.service !== undefined) {
                                 queryParameters['service'] = requestParameters.service;
                             }
-                            if (requestParameters.reference !== undefined) {
-                                queryParameters['reference'] = requestParameters.reference;
+                            if (requestParameters.status !== undefined) {
+                                queryParameters['status'] = requestParameters.status;
+                            }
+                            if (requestParameters.optionKey !== undefined) {
+                                queryParameters['option_key'] = requestParameters.optionKey;
+                            }
+                            if (requestParameters.optionValue !== undefined) {
+                                queryParameters['option_value'] = requestParameters.optionValue;
+                            }
+                            if (requestParameters.metadataKey !== undefined) {
+                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            }
+                            if (requestParameters.metadataValue !== undefined) {
+                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            }
+                            if (requestParameters.testMode !== undefined) {
+                                queryParameters['test_mode'] = requestParameters.testMode;
                             }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;
                             }
                             if (requestParameters.offset !== undefined) {
                                 queryParameters['offset'] = requestParameters.offset;
-                            }
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
@@ -5336,48 +5361,6 @@
         };
         return ShipmentsApi;
     }(BaseAPI));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListStatusEnum$2;
-    (function (ListStatusEnum) {
-        ListStatusEnum["Draft"] = "draft";
-        ListStatusEnum["Purchased"] = "purchased";
-        ListStatusEnum["Cancelled"] = "cancelled";
-        ListStatusEnum["Shipped"] = "shipped";
-        ListStatusEnum["InTransit"] = "in_transit";
-        ListStatusEnum["Delivered"] = "delivered";
-    })(ListStatusEnum$2 || (ListStatusEnum$2 = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListCarrierNameEnum$1;
-    (function (ListCarrierNameEnum) {
-        ListCarrierNameEnum["Aramex"] = "aramex";
-        ListCarrierNameEnum["Australiapost"] = "australiapost";
-        ListCarrierNameEnum["Canadapost"] = "canadapost";
-        ListCarrierNameEnum["Canpar"] = "canpar";
-        ListCarrierNameEnum["DhlExpress"] = "dhl_express";
-        ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        ListCarrierNameEnum["Dicom"] = "dicom";
-        ListCarrierNameEnum["Eshipper"] = "eshipper";
-        ListCarrierNameEnum["Fedex"] = "fedex";
-        ListCarrierNameEnum["Freightcom"] = "freightcom";
-        ListCarrierNameEnum["Generic"] = "generic";
-        ListCarrierNameEnum["Purolator"] = "purolator";
-        ListCarrierNameEnum["Royalmail"] = "royalmail";
-        ListCarrierNameEnum["Sendle"] = "sendle";
-        ListCarrierNameEnum["SfExpress"] = "sf_express";
-        ListCarrierNameEnum["Tnt"] = "tnt";
-        ListCarrierNameEnum["Ups"] = "ups";
-        ListCarrierNameEnum["Usps"] = "usps";
-        ListCarrierNameEnum["UspsInternational"] = "usps_international";
-        ListCarrierNameEnum["Yanwen"] = "yanwen";
-        ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(ListCarrierNameEnum$1 || (ListCarrierNameEnum$1 = {}));
 
     /* tslint:disable */
     /**
@@ -5407,6 +5390,9 @@
                             queryParameters = {};
                             if (requestParameters.test !== undefined) {
                                 queryParameters['test'] = requestParameters.test;
+                            }
+                            if (requestParameters.hub !== undefined) {
+                                queryParameters['hub'] = requestParameters.hub;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
@@ -5628,9 +5614,7 @@
         CreateCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CreateCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CreateCarrierNameEnum["Dicom"] = "dicom";
-        CreateCarrierNameEnum["Eshipper"] = "eshipper";
         CreateCarrierNameEnum["Fedex"] = "fedex";
-        CreateCarrierNameEnum["Freightcom"] = "freightcom";
         CreateCarrierNameEnum["Generic"] = "generic";
         CreateCarrierNameEnum["Purolator"] = "purolator";
         CreateCarrierNameEnum["Royalmail"] = "royalmail";
@@ -5647,13 +5631,13 @@
         * @export
         * @enum {string}
         */
-    var ListStatusEnum$1;
+    var ListStatusEnum;
     (function (ListStatusEnum) {
         ListStatusEnum["Pending"] = "pending";
         ListStatusEnum["InTransit"] = "in_transit";
         ListStatusEnum["Incident"] = "incident";
         ListStatusEnum["Delivered"] = "delivered";
-    })(ListStatusEnum$1 || (ListStatusEnum$1 = {}));
+    })(ListStatusEnum || (ListStatusEnum = {}));
     /**
         * @export
         * @enum {string}
@@ -5668,6 +5652,7 @@
         ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
         ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         ListCarrierNameEnum["Dicom"] = "dicom";
+        ListCarrierNameEnum["Easypost"] = "easypost";
         ListCarrierNameEnum["Eshipper"] = "eshipper";
         ListCarrierNameEnum["Fedex"] = "fedex";
         ListCarrierNameEnum["Freightcom"] = "freightcom";
@@ -6132,17 +6117,41 @@
                     switch (_a.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
+                            if (requestParameters.address !== undefined) {
+                                queryParameters['address'] = requestParameters.address;
+                            }
+                            if (requestParameters.id !== undefined) {
+                                queryParameters['id'] = requestParameters.id;
+                            }
+                            if (requestParameters.orderId !== undefined) {
+                                queryParameters['order_id'] = requestParameters.orderId;
+                            }
+                            if (requestParameters.source !== undefined) {
+                                queryParameters['source'] = requestParameters.source;
+                            }
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter;
+                            }
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore;
                             }
                             if (requestParameters.status !== undefined) {
                                 queryParameters['status'] = requestParameters.status;
                             }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            if (requestParameters.optionKey !== undefined) {
+                                queryParameters['option_key'] = requestParameters.optionKey;
                             }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            if (requestParameters.optionValue !== undefined) {
+                                queryParameters['option_value'] = requestParameters.optionValue;
+                            }
+                            if (requestParameters.metadataKey !== undefined) {
+                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            }
+                            if (requestParameters.metadataValue !== undefined) {
+                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            }
+                            if (requestParameters.testMode !== undefined) {
+                                queryParameters['test_mode'] = requestParameters.testMode;
                             }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;
@@ -6291,18 +6300,6 @@
         };
         return OrdersApi;
     }(BaseAPI));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListStatusEnum;
-    (function (ListStatusEnum) {
-        ListStatusEnum["Unfulfilled"] = "unfulfilled";
-        ListStatusEnum["Cancelled"] = "cancelled";
-        ListStatusEnum["Fulfilled"] = "fulfilled";
-        ListStatusEnum["Delivered"] = "delivered";
-        ListStatusEnum["Partial"] = "partial";
-    })(ListStatusEnum || (ListStatusEnum = {}));
 
     var KarrioClient = /** @class */ (function () {
         function KarrioClient(clientConfig) {
