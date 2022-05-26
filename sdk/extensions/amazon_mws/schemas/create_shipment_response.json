@@ -1,0 +1,28 @@
+{
+  "shipmentId": "89108749065090",
+  "eligibleRates": [
+    {
+      "billedWeight": {
+        "value": 4,
+        "unit": "kg"
+      },
+      "totalCharge": {
+        "value": 3.25,
+        "unit": "GBP"
+      },
+      "serviceType": "Amazon Shipping Standard",
+      "promise": {
+        "deliveryWindow": {
+          "start": "2018-08-25T20:22:30.737Z",
+          "end": "2018-08-26T20:22:30.737Z"
+        },
+        "receiveWindow": {
+          "start": "2018-08-23T09:22:30.737Z",
+          "end": "2018-08-23T11:22:30.737Z"
+        }
+      },
+      "rateId": "RI123456",
+      "expirationTime": "2018-08-22T09:22:30.737Z"
+    }
+  ]
+}

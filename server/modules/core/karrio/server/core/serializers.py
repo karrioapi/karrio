@@ -1,5 +1,6 @@
 from enum import Enum
 from drf_yasg import openapi
+import rest_framework.status as http_status
 from rest_framework.serializers import (
     CharField,
     FloatField,
@@ -49,6 +50,7 @@ class TrackerStatus(Enum):
     delivered = "delivered"
 
 
+HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
@@ -107,6 +109,15 @@ class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
 
+class TestFilters(FlagsSerializer):
+    test = FlagField(
+        required=False,
+        allow_null=True,
+        default=False,
+        help_text="The test flag indicates whether to use a carrier configured for test.",
+    )
+
+
 class CarrierSettings(Serializer):
     id = CharField(required=True, help_text="A unique address identifier")
     carrier_name = ChoiceField(
@@ -128,15 +139,6 @@ class CarrierSettings(Serializer):
     """,
     )
     object_type = CharField(default="carrier", help_text="Specifies the object type")
-
-
-class TestFilters(FlagsSerializer):
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=False,
-        help_text="The test flag indicates whether to use a carrier configured for test.",
-    )
 
 
 class Message(Serializer):
@@ -697,6 +699,11 @@ class TrackingRequest(Serializer):
         allow_null=True,
         help_text="The level of event details.",
     )
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="additional tracking options",
+    )
 
 
 @allow_model_id(
@@ -939,29 +946,12 @@ class Rate(EntitySerializer):
         allow_null=True,
         help_text="The carrier's rate (quote) service",
     )
-    discount = FloatField(
-        required=False,
-        allow_null=True,
-        help_text="The monetary amount of the discount on the rate",
-    )
-    base_charge = FloatField(
-        default=0.0,
-        help_text="""
-    The rate's monetary amount of the base charge.<br/>
-    This is the net amount of the rate before additional charges
-    """,
-    )
     total_charge = FloatField(
         default=0.0,
         help_text="""
     The rate's monetary amount of the total charge.<br/>
     This is the gross amount of the rate after adding the additional charges
     """,
-    )
-    duties_and_taxes = FloatField(
-        required=False,
-        allow_null=True,
-        help_text="The monetary amount of the duties and taxes if applied",
     )
     transit_days = IntegerField(
         required=False, allow_null=True, help_text="The estimated delivery transit days"
@@ -1011,6 +1001,9 @@ class TrackingDetails(Serializer):
     estimated_delivery = CharField(
         required=False,
         help_text="The delivery estimated date",
+    )
+    meta = PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
     )
 
 

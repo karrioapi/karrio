@@ -7,7 +7,7 @@ from karrio.core.utils import (
     Job,
     XP,
     request as http,
-    exec_parrallel
+    exec_parrallel,
 )
 from karrio.mappers.canpar.settings import Settings
 from karrio.api.proxy import Proxy as BaseProxy
@@ -47,7 +47,9 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_tracking(self, request: Serializable[List[Envelope]]) -> Deserializable[str]:
+    def get_tracking(
+        self, request: Serializable[List[Envelope]]
+    ) -> Deserializable[str]:
         """
         get_tracking make parallel request for each TrackRequest
         """
@@ -56,7 +58,7 @@ class Proxy(BaseProxy):
             return self._send_request(
                 path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
                 soapaction="urn:trackByBarcodeV2",
-                request=Serializable(track_request),
+                request=Serializable(track_request, logged=True),
             )
 
         response: List[str] = exec_parrallel(get_tracking, request.serialize())

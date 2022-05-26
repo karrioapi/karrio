@@ -4,4 +4,4 @@
 source "scripts/_env.sh"
 
 echo "building dev tool image..."
-docker build -f "${ROOT}/docker/dev.tool.Dockerfile" -t karrio/tools "${ROOT}"
+docker build -f "${ROOT}/docker/dev.tool.Dockerfile" -t karrio/tools --no-cache "${ROOT}"

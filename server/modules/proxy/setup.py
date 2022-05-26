@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.proxy",
-    version="2022.3.4",
+    version="2022.4",
     description="Multi-carrier shipping API Proxy module",
     long_description=long_description,
     long_description_content_type="text/markdown",

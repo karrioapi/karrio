@@ -31,6 +31,7 @@ from karrio.providers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
+    CUSTOM_OPTIONS,
     INTERNATIONAL_NON_DELIVERY_OPTION,
 )
 from karrio.providers.canadapost.utils import Settings
@@ -143,10 +144,16 @@ def shipment_request(
                             option_qualifier_2=None,
                         )
                         for code, option in all_options
-                        if code in OptionCode
+                        if code in OptionCode and code not in CUSTOM_OPTIONS
                     ]
                 )
-                if any(options)
+                if any(
+                    [
+                        code
+                        for code, _ in all_options
+                        if code in OptionCode and code not in CUSTOM_OPTIONS
+                    ]
+                )
                 else None
             ),
             parcel_characteristics=ParcelCharacteristicsType(
@@ -175,7 +182,7 @@ def shipment_request(
                 show_insured_value=("insurance" in payload.options),
             ),
             references=ReferencesType(
-                cost_centre=payload.reference,
+                cost_centre=options.canadapost_cost_center or payload.reference,
                 customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
@@ -214,7 +221,7 @@ def shipment_request(
             settlement_info=None,
         ),
     )
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: NonContractShipmentType) -> str:

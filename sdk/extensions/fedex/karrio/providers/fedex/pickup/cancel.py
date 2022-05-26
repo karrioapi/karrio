@@ -72,7 +72,7 @@ def pickup_cancel_request(
         PhoneExtension=None,
     )
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: CancelPickupRequest) -> str:

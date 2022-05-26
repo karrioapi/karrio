@@ -24,6 +24,11 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
+CARRIER_NAMES = list(sorted(MODELS.keys()))
+CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
+NON_HUBS_CARRIERS = [
+    carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
+]
 
 
 def contextual_metadata(request: Request):
@@ -44,6 +49,7 @@ def contextual_metadata(request: Request):
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
         "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
+        "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
     }
 

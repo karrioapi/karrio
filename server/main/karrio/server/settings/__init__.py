@@ -25,6 +25,10 @@ if importlib.util.find_spec("karrio.server.orgs") is not None:
     from karrio.server.settings.orgs import *
 
 
+if importlib.util.find_spec("karrio.server.data") is not None:
+    from karrio.server.settings.data import *
+
+
 """ Warning:: This section need to be last for settings extensibility """
 if MULTI_TENANTS:
     from karrio.server.settings.tenants import *

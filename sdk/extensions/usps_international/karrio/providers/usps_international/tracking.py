@@ -70,4 +70,5 @@ def tracking_request(
             for tracking_number in payload.tracking_numbers
         ],
     )
-    return Serializable(request, XP.export)
+
+    return Serializable(request, XP.export, logged=True)

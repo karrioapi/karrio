@@ -1,20 +1,21 @@
 from enum import Enum
-from karrio.server import serializers
 
+from karrio.server import serializers
 from karrio.server.core.serializers import EntitySerializer
 
 
 class EventTypes(Enum):
     all = "all"
-    shipment_purchased = "shipment.purchased"
-    shipment_cancelled = "shipment.cancelled"
-    shipment_fulfilled = "shipment.fulfilled"
-    tracker_created = "tracker.created"
-    tracker_updated = "tracker.updated"
-    order_created = "order.created"
-    order_fulfilled = "order.fulfilled"
-    order_cancelled = "order.cancelled"
-    order_delivered = "order.delivered"
+    shipment_purchased = "shipment_purchased"
+    shipment_cancelled = "shipment_cancelled"
+    shipment_fulfilled = "shipment_fulfilled"
+    tracker_created = "tracker_created"
+    tracker_updated = "tracker_updated"
+    order_created = "order_created"
+    order_updated = "order_updated"
+    order_fulfilled = "order_fulfilled"
+    order_cancelled = "order_cancelled"
+    order_delivered = "order_delivered"
 
 
 EVENT_TYPES = [(c.value, c.value) for c in list(EventTypes)]

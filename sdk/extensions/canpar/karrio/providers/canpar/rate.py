@@ -8,20 +8,31 @@ from canpar_lib.CanparRatingService import (
     Package,
     Address,
 )
-from karrio.core.models import (
-    RateRequest,
-    RateDetails,
-    Message,
-    ChargeDetails
-)
+from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from karrio.core.units import Packages, Services, Options
-from karrio.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP, DF
+from karrio.core.utils import (
+    Serializable,
+    Envelope,
+    create_envelope,
+    Element,
+    NF,
+    XP,
+    DF,
+)
 from karrio.providers.canpar.error import parse_error_response
 from karrio.providers.canpar.utils import Settings
-from karrio.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
+from karrio.providers.canpar.units import (
+    WeightUnit,
+    DimensionUnit,
+    Option,
+    Service,
+    Charges,
+)
 
 
-def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_rate_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     shipment_nodes = XP.find("shipment", response)
     rates: List[RateDetails] = [
         _extract_rate_details(node, settings) for node in shipment_nodes
@@ -32,22 +43,26 @@ def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[Rat
 def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
     shipment = XP.to_object(Shipment, node)
     service = Service.map(shipment.service_type)
+
     surcharges = [
         ChargeDetails(
             name=charge.value,
             amount=NF.decimal(getattr(shipment, charge.name)),
-            currency='CAD'
+            currency="CAD",
         )
         for charge in list(Charges)
         if NF.decimal(getattr(shipment, charge.name)) > 0.0
     ]
     taxes = [
         ChargeDetails(
-            name=f'{getattr(shipment, code)} Tax Charge',
+            name=f"{getattr(shipment, code, '')} Tax Charge",
             amount=NF.decimal(charge),
-            currency='CAD'
+            currency="CAD",
         )
-        for code, charge in [('tax_code_1', shipment.tax_charge_1), ('tax_code_2', shipment.tax_charge_2)]
+        for code, charge in [
+            ("tax_code_1", shipment.tax_charge_1),
+            ("tax_code_2", shipment.tax_charge_2),
+        ]
         if NF.decimal(charge) > 0.0
     ]
 
@@ -57,9 +72,7 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
         currency="CAD",
         transit_days=shipment.transit_time,
         service=service.name_or_key,
-        base_charge=NF.decimal(shipment.freight_charge),
         total_charge=sum([c.amount for c in (surcharges + taxes)], 0.0),
-        duties_and_taxes=sum([t.amount for t in taxes], 0.0),
         extra_charges=(surcharges + taxes),
         meta=dict(service_name=(service.name or shipment.service_type)),
     )
@@ -71,20 +84,33 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
     options = Options(payload.options, Option)
 
     shipment_date = DF.fdatetime(
-        options.shipment_date or time.strftime('%Y-%m-%d'),
-        current_format='%Y-%m-%d', output_format='%Y-%m-%dT%H:%M:%S'
+        options.shipment_date or time.strftime("%Y-%m-%d"),
+        current_format="%Y-%m-%d",
+        output_format="%Y-%m-%dT%H:%M:%S",
     )
-    premium: Optional[bool] = next((True for option, _ in options if option in [
-        Option.canpar_ten_am.name,
-        Option.canpar_noon.name,
-        Option.canpar_saturday.name,
-    ]), None)
+    premium: Optional[bool] = next(
+        (
+            True
+            for option, _ in options
+            if option
+            in [
+                Option.canpar_ten_am.name,
+                Option.canpar_noon.name,
+                Option.canpar_saturday.name,
+            ]
+        ),
+        None,
+    )
     nsr = next(
-        (Option[o].value for o in [
-            'canpar_no_signature_required',
-            'canpar_not_no_signature_required'
-        ] if o in options),
-        None
+        (
+            Option[o].value
+            for o in [
+                "canpar_no_signature_required",
+                "canpar_not_no_signature_required",
+            ]
+            if o in options
+        ),
+        None,
     )
 
     request = create_envelope(
@@ -95,7 +121,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 apply_invoice_discount=False,
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=options['canpar_cash_on_delivery'],
+                    cod_type=options["canpar_cash_on_delivery"],
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -112,7 +138,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=options['canpar_dangerous_goods'],
+                    dg=options["canpar_dangerous_goods"],
                     dimention_unit=DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
@@ -131,8 +157,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=options['canpar_extra_care']
-                        ) for pkg in packages
+                            xc=options["canpar_extra_care"],
+                        )
+                        for pkg in packages
                     ],
                     pickup_address=Address(
                         address_line_1=payload.shipper.address_line1,
@@ -163,15 +190,17 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                     total_with_handling=None,
                     user_id=None,
                 ),
-                user_id=settings.username
+                user_id=settings.username,
             )
         )
     )
 
     return Serializable(
-        request, partial(
+        request,
+        partial(
             settings.serialize,
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
-            special_prefixes=dict(shipment_children='xsd1')
-        )
+            special_prefixes=dict(shipment_children="xsd1"),
+        ),
+        logged=True,
     )

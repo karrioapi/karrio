@@ -13,6 +13,9 @@ def to_multi_piece_rates(
     """
     Convert a list of package rates to a multi-piece combined rates.
     """
+    if len(package_rates) == 0:
+        return []
+
     multi_piece_rates = []
     max_rates = max([len(rates) for _, rates in package_rates])
     main_piece_rates: List[RateDetails] = next(
@@ -41,27 +44,9 @@ def to_multi_piece_rates(
                 all_charges,
                 {},
             )
-            discount = (
-                sum((NF.decimal(rate.discount or 0) for rate in similar_rates), 0.0)
-                if any(rate.discount for rate in similar_rates)
-                else None
-            )
-            base_charge = (
-                sum((NF.decimal(rate.base_charge or 0) for rate in similar_rates), 0.0)
-                if any(rate.base_charge for rate in similar_rates)
-                else None
-            )
             total_charge = (
                 sum((NF.decimal(rate.total_charge or 0) for rate in similar_rates), 0.0)
                 if any(rate.total_charge for rate in similar_rates)
-                else None
-            )
-            duties_and_taxes = (
-                sum(
-                    (NF.decimal(rate.duties_and_taxes or 0) for rate in similar_rates),
-                    0.0,
-                )
-                if any(rate.duties_and_taxes for rate in similar_rates)
                 else None
             )
 
@@ -72,10 +57,7 @@ def to_multi_piece_rates(
                     currency=main.currency,
                     transit_days=main.transit_days,
                     service=main.service,
-                    discount=discount,
-                    base_charge=base_charge,
                     total_charge=total_charge,
-                    duties_and_taxes=duties_and_taxes,
                     extra_charges=list(extra_charges.values()),
                     meta=main.meta,
                 )
@@ -94,7 +76,7 @@ def to_multi_piece_shipment(
 
     labels = []
     tracking_numbers = set()
-    tracking_identifiers = set()
+    shipment_identifiers = set()
     label_type = master_shipment.label_type
 
     for _, shipment in package_shipments:
@@ -102,7 +84,7 @@ def to_multi_piece_shipment(
         if shipment.tracking_number:
             tracking_numbers.add(shipment.tracking_number)
         if shipment.shipment_identifier:
-            tracking_identifiers.add(shipment.shipment_identifier)
+            shipment_identifiers.add(shipment.shipment_identifier)
 
     return ShipmentDetails(
         carrier_name=master_shipment.carrier_name,
@@ -114,6 +96,6 @@ def to_multi_piece_shipment(
         meta={
             **master_shipment.meta,
             "tracking_numbers": list(tracking_numbers),
-            "tracking_identifiers": list(tracking_identifiers),
+            "shipment_identifiers": list(shipment_identifiers),
         },
     )

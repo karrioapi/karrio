@@ -35,9 +35,7 @@ class TestEShipperRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedQuoteResponse)
 
 
 if __name__ == "__main__":
@@ -97,60 +95,48 @@ RateWithPresetMissingDimensionPayload = {
 ParsedQuoteResponse = [
     [
         {
-            "base_charge": 177.0,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 177.0, "currency": "CAD", "name": "Base charge"}
             ],
-            "meta": {
-                "rate_provider": "purolator",
-                "service_name": "purolator_air",
-            },
+            "meta": {"rate_provider": "purolator", "service_name": "purolator_air"},
             "service": "eshipper_purolator_air",
             "total_charge": 177.0,
             "transit_days": 1,
         },
         {
-            "base_charge": 28.65,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 28.65, "currency": "CAD", "name": "Base charge"}
             ],
-            "meta": {
-                "rate_provider": "purolator",
-                "service_name": "purolator_ground",
-            },
+            "meta": {"rate_provider": "purolator", "service_name": "purolator_ground"},
             "service": "eshipper_purolator_ground",
             "total_charge": 28.65,
             "transit_days": 1,
         },
         {
-            "base_charge": 46.27,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 46.27, "currency": "CAD", "name": "Base charge"},
+                {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "meta": {
-                "rate_provider": "fedex",
-                "service_name": "fedex_priority",
-            },
+            "meta": {"rate_provider": "fedex", "service_name": "fedex_priority"},
             "service": "eshipper_fedex_priority",
             "total_charge": 52.52,
             "transit_days": 0,
         },
         {
-            "base_charge": 30.74,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 30.74, "currency": "CAD", "name": "Base charge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "meta": {"rate_provider": "fedex", "service_name": "fedex_ground"},
@@ -159,12 +145,12 @@ ParsedQuoteResponse = [
             "transit_days": 0,
         },
         {
-            "base_charge": 300.0,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 36.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 300.0, "currency": "CAD", "name": "Base charge"},
+                {"amount": 36.0, "currency": "CAD", "name": "Fuel surcharge"},
             ],
             "meta": {
                 "rate_provider": "canada_worldwide",
@@ -175,12 +161,12 @@ ParsedQuoteResponse = [
             "transit_days": 0,
         },
         {
-            "base_charge": 165.0,
             "carrier_id": "eshipper",
             "carrier_name": "eshipper",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 19.8, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 165.0, "currency": "CAD", "name": "Base charge"},
+                {"amount": 19.8, "currency": "CAD", "name": "Fuel surcharge"},
             ],
             "meta": {
                 "rate_provider": "canada_worldwide",

@@ -1,0 +1,19 @@
+{
+  "trackingId": "89108749065090",
+  "eventHistory": [
+    {
+      "eventCode": "Delivered",
+      "location": {
+        "city": "San Bernardino",
+        "countryCode": "US",
+        "stateOrRegion": "CA",
+        "postalCode": "92404"
+      },
+      "eventTime": "2019-04-04T06:45:12Z"
+    }
+  ],
+  "promisedDeliveryDate": "2019-04-04T07:05:06Z",
+  "summary": {
+    "status": "Delivered"
+  }
+}

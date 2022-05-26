@@ -46,9 +46,7 @@ def pickup_cancel_request(
     request = create_envelope(
         header_content=settings.Security,
         body_content=UPSPickupCancelRequest(
-            Request=RequestType(),
-            CancelBy="02",
-            PRN=payload.confirmation_number
+            Request=RequestType(), CancelBy="02", PRN=payload.confirmation_number
         ),
     )
 
@@ -57,4 +55,5 @@ def pickup_cancel_request(
         default_request_serializer(
             "v11", 'xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1"'
         ),
+        logged=True,
     )

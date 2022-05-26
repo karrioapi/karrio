@@ -13,16 +13,52 @@ from karrio.server.orders.serializers.order import (
 )
 
 
+class CreateOrder(utils.ClientMutation):
+    order = graphene.Field(types.OrderType)
+
+    class Input:
+        order_date = graphene.Date(required=False)
+        shipping_to = graphene.Field(inputs.CreateAddressInput, required=True)
+        shipping_from = graphene.Field(inputs.CreateAddressInput, required=False)
+        line_items = graphene.List(inputs.CreateCommodityInput, required=True)
+        options = generic.GenericScalar(required=False)
+        metadata = generic.GenericScalar(required=False)
+        test_mode = graphene.Boolean(required=False, default_value=False)
+
+    @classmethod
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, **inputs):
+        count = models.Order.access_by(info.context).filter(source="manual").count() + 1
+        order_id = "1" + str(count).zfill(5)  # TODO: make this grow beyond 2 million
+        serializer = OrderSerializer(
+            context=info.context,
+            data={
+                **DP.to_dict(inputs),
+                "source": "manual",
+                "order_id": order_id,
+            },
+        )
+
+        if not serializer.is_valid():
+            return cls(errors=ErrorType.from_errors(serializer.errors))
+
+        order = serializer.save()
+
+        return cls(errors=None, order=order)
+
+
 class PartialOrderUpdate(utils.ClientMutation):
     order = graphene.Field(types.OrderType)
 
     class Input:
         id = graphene.String(required=True)
+        order_date = graphene.Date(required=False)
         shipping_to = graphene.Field(inputs.UpdateAddressInput, required=False)
         shipping_from = graphene.Field(inputs.UpdateAddressInput, required=False)
         line_items = graphene.List(inputs.UpdateCommodityInput, required=False)
         options = generic.GenericScalar(required=False)
         metadata = generic.GenericScalar(required=False)
+        test_mode = graphene.Boolean(required=False)
 
     @classmethod
     @utils.login_required

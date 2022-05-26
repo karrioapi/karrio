@@ -37,7 +37,12 @@ from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.units import (
-    Product, PackagePresets, DutyPaymentType, MeasurementOptions, Service, NON_OFFICIAL_SERVICES
+    Product,
+    PackagePresets,
+    DutyPaymentType,
+    MeasurementOptions,
+    Service,
+    NON_OFFICIAL_SERVICES,
 )
 
 
@@ -55,29 +60,16 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     estimate = XP.to_object(ShipmentEstimate, estimate_node)
     currency = Currency.CAD.name
     service = Product.map(estimate.ServiceID)
-    duties_and_taxes = [
-        ChargeDetails(
-            name=cast(Tax, tax).Description,
-            amount=NF.decimal(cast(Tax, tax).Amount),
-            currency=currency,
-        )
-        for tax in estimate.Taxes.Tax
-    ]
-    surcharges = [
-        ChargeDetails(
-            name=cast(Surcharge, charge).Description,
-            amount=NF.decimal(cast(Surcharge, charge).Amount),
-            currency=currency,
-        )
-        for charge in estimate.Surcharges.Surcharge
-    ]
-    option_charges = [
-        ChargeDetails(
-            name=cast(OptionPrice, charge).Description,
-            amount=NF.decimal(cast(OptionPrice, charge).Amount),
-            currency=currency,
-        )
-        for charge in estimate.OptionPrices.OptionPrice
+    charges = [
+        ("Base charge", estimate.BasePrice),
+        *(
+            (s.Description, s.Amount)
+            for s in (
+                estimate.Taxes.Tax
+                + estimate.Surcharges.Surcharge
+                + estimate.OptionPrices.OptionPrice
+            )
+        ),
     ]
 
     return RateDetails(
@@ -85,12 +77,18 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
         currency=currency,
-        base_charge=NF.decimal(estimate.BasePrice),
         transit_days=estimate.EstimatedTransitDays,
         total_charge=NF.decimal(estimate.TotalPrice),
-        duties_and_taxes=NF.decimal(sum(c.amount for c in duties_and_taxes)),
-        extra_charges=(duties_and_taxes + surcharges + option_charges),
-        meta=dict(service_name=service.name_or_key)
+        extra_charges=[
+            ChargeDetails(
+                name=name,
+                amount=NF.decimal(amount),
+                currency=currency,
+            )
+            for name, amount in charges
+            if amount
+        ],
+        meta=dict(service_name=service.name_or_key),
     )
 
 
@@ -101,28 +99,38 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
 
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    shipper_phone = Phone(payload.shipper.phone_number, payload.shipper.country_code or 'CA')
-    recipient_phone = Phone(payload.recipient.phone_number, payload.recipient.country_code)
+    shipper_phone = Phone(
+        payload.shipper.phone_number, payload.shipper.country_code or "CA"
+    )
+    recipient_phone = Phone(
+        payload.recipient.phone_number, payload.recipient.country_code
+    )
     is_international = payload.shipper.country_code != payload.recipient.country_code
     option_ids = [
-        (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
+        (key, value)
+        for key, value in options
+        if key in Service and key not in NON_OFFICIAL_SERVICES
     ]
 
     # When no specific service is requested, set a default one.
     if service is None:
-        show_alternate_services = options['purolator_show_alternative_services'] is not False
+        show_alternate_services = (
+            options["purolator_show_alternative_services"] is not False
+        )
         service = Product[
-            'purolator_express_international' if is_international else 'purolator_express'
+            "purolator_express_international"
+            if is_international
+            else "purolator_express"
         ]
     else:
-        show_alternate_services = options['purolator_show_alternative_services'] is True
+        show_alternate_services = options["purolator_show_alternative_services"] is True
 
     request = create_envelope(
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
             GroupID="",
-            RequestReference=getattr(payload, 'id', ""),
+            RequestReference=getattr(payload, "id", ""),
             UserToken=settings.user_token,
         ),
         body_content=GetFullEstimateRequest(
@@ -134,7 +142,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(payload.shipper.address_line1, join=True),
+                        StreetName=SF.concat_str(
+                            payload.shipper.address_line1, join=True
+                        ),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
@@ -190,7 +200,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         FaxNumber=None,
                     ),
                     TaxNumber=(
-                        payload.recipient.federal_tax_id or payload.recipient.state_tax_id
+                        payload.recipient.federal_tax_id
+                        or payload.recipient.state_tax_id
                     ),
                 ),
                 FromOnLabelIndicator=None,
@@ -204,7 +215,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                             Value=packages.weight.map(MeasurementOptions).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
-                        if packages.weight.value is not None else None
+                        if packages.weight.value is not None
+                        else None
                     ),
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
@@ -212,12 +224,15 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                             Piece(
                                 Weight=(
                                     PurolatorWeight(
-                                        Value=package.weight.map(MeasurementOptions).value,
+                                        Value=package.weight.map(
+                                            MeasurementOptions
+                                        ).value,
                                         WeightUnit=PurolatorWeightUnit[
                                             package.weight_unit.value
                                         ].value,
                                     )
-                                    if package.weight.value else None
+                                    if package.weight.value
+                                    else None
                                 ),
                                 Length=(
                                     PurolatorDimension(
@@ -226,7 +241,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                             package.dimension_unit.value
                                         ].value,
                                     )
-                                    if package.length.value else None
+                                    if package.length.value
+                                    else None
                                 ),
                                 Width=(
                                     PurolatorDimension(
@@ -235,7 +251,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                             package.dimension_unit.value
                                         ].value,
                                     )
-                                    if package.width.value else None
+                                    if package.width.value
+                                    else None
                                 ),
                                 Height=(
                                     PurolatorDimension(
@@ -244,7 +261,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                             package.dimension_unit.value
                                         ].value,
                                     )
-                                    if package.height.value else None
+                                    if package.height.value
+                                    else None
                                 ),
                                 Options=ArrayOfOptionIDValuePair(
                                     OptionIDValuePair=[
@@ -252,7 +270,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                         for key, value in option_ids
                                     ]
                                 )
-                                if any(option_ids) else None,
+                                if any(option_ids)
+                                else None,
                             )
                             for package in packages
                         ]
@@ -274,7 +293,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         ImportExportType=None,
                         CustomsInvoiceDocumentIndicator=None,
                     )
-                    if is_international else None
+                    if is_international
+                    else None
                 ),
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
@@ -287,7 +307,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 NotificationInformation=None,
                 TrackingReferenceInformation=(
                     TrackingReferenceInformation(Reference1=payload.reference)
-                    if payload.reference != "" else None
+                    if payload.reference != ""
+                    else None
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,
@@ -295,4 +316,5 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
             ShowAlternativeServicesIndicator=show_alternate_services,
         ),
     )
-    return Serializable(request, standard_request_serializer)
+
+    return Serializable(request, standard_request_serializer, logged=True)

@@ -1,0 +1,88 @@
+{
+  "trackers": [
+    {
+      "id": "trk_77620bfc319a4b54ba483c93b55a9a4f",
+      "object": "Tracker",
+      "mode": "test",
+      "tracking_code": "EZ1000000001",
+      "status": "pre_transit",
+      "status_detail": "status_update",
+      "created_at": "2022-04-11T15:39:40Z",
+      "updated_at": "2022-04-11T15:39:40Z",
+      "signed_by": "",
+      "weight": "",
+      "est_delivery_date": "2022-04-11T15:39:40Z",
+      "shipment_id": "",
+      "carrier": "USPS",
+      "tracking_details": [
+        {
+          "object": "TrackingDetail",
+          "message": "Pre-Shipment Info Sent to USPS",
+          "description": "",
+          "status": "pre_transit",
+          "status_detail": "status_update",
+          "datetime": "2022-03-11T15:39:40Z",
+          "source": "USPS",
+          "carrier_code": "",
+          "tracking_location": {
+            "object": "TrackingLocation",
+            "city": "",
+            "state": "",
+            "country": "",
+            "zip": ""
+          }
+        },
+        {
+          "object": "TrackingDetail",
+          "message": "Shipping Label Created",
+          "description": "",
+          "status": "pre_transit",
+          "status_detail": "status_update",
+          "datetime": "2022-03-12T04:16:40Z",
+          "source": "USPS",
+          "carrier_code": "",
+          "tracking_location": {
+            "object": "TrackingLocation",
+            "city": "HOUSTON",
+            "state": "TX",
+            "country": "",
+            "zip": "77063"
+          }
+        }
+      ],
+      "carrier_detail": {
+        "object": "CarrierDetail",
+        "service": "First-Class Package Service",
+        "container_type": "",
+        "est_delivery_date_local": "",
+        "est_delivery_time_local": "",
+        "origin_location": "HOUSTON TX, 77001",
+        "origin_tracking_location": {
+          "object": "TrackingLocation",
+          "city": "HOUSTON",
+          "state": "TX",
+          "country": "",
+          "zip": "77063"
+        },
+        "destination_location": "CHARLESTON SC, 29401",
+        "destination_tracking_location": "",
+        "guaranteed_delivery_date": "",
+        "alternate_identifier": "",
+        "initial_delivery_attempt": ""
+      },
+      "finalized": true,
+      "is_return": false,
+      "public_url": "https://track.easypost.com/djE6dHJrXzc3NjIwYmZjMzE5YTRiNTRiYTQ4M2M5M2I1NWE5YTRm",
+      "fees": [
+        {
+          "object": "Fee",
+          "type": "TrackerFee",
+          "amount": "0.02000",
+          "charged": false,
+          "refunded": false
+        }
+      ]
+    }
+  ],
+  "has_more": true
+}

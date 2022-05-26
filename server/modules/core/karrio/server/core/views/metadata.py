@@ -13,10 +13,11 @@ ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make
 
 
 class Metadata(Serializer):
+    VERSION = CharField()
     APP_NAME = CharField()
-    APP_VERSION = CharField()
     APP_WEBSITE = CharField(required=False, allow_null=True)
     CUSTOM_CARRIER_DEFINITION = BooleanField()
+    DATA_IMPORT_EXPORT = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()

@@ -11,11 +11,9 @@ from karrio.core.models import (
 from karrio.universal.providers.rating import parse_rate_response, rate_request
 from karrio.providers.dhl_poland import (
     parse_shipment_cancel_response,
-    parse_tracking_response,
     parse_shipment_response,
     shipment_cancel_request,
     shipment_request,
-    tracking_request,
 )
 from karrio.mappers.dhl_poland.settings import Settings
 
@@ -32,9 +30,6 @@ class Mapper(BaseMapper):
     def create_cancel_shipment_request(self, payload: TrackingRequest) -> Serializable:
         return shipment_cancel_request(payload, self.settings)
 
-    def create_tracking_request(self, payload: TrackingRequest) -> Serializable:
-        return tracking_request(payload, self.settings)
-
     def parse_rate_response(
         self, response: Deserializable[str]
     ) -> Tuple[List[RateDetails], List[Message]]:
@@ -49,8 +44,3 @@ class Mapper(BaseMapper):
         self, response: Deserializable[str]
     ) -> Tuple[TrackingDetails, List[Message]]:
         return parse_shipment_cancel_response(response.deserialize(), self.settings)
-
-    def parse_tracking_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
-        return parse_tracking_response(response.deserialize(), self.settings)

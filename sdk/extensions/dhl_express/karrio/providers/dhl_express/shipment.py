@@ -174,7 +174,7 @@ def shipment_request(
         ),
         Commodity=(
             [
-                Commodity(CommodityCode=c.sku, CommodityName=c.description)
+                Commodity(CommodityCode=c.sku or "N/A", CommodityName=c.description)
                 for c in customs.commodities
             ]
             if any(customs.commodities)
@@ -243,7 +243,7 @@ def shipment_request(
                         Description=item.description or "N/A",
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
-                        CommodityCode=item.sku,
+                        CommodityCode=item.sku or "N/A",
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(
@@ -415,7 +415,7 @@ def shipment_request(
         Importer=None,
     )
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: DHLShipmentRequest) -> str:

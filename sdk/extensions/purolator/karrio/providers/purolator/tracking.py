@@ -44,14 +44,14 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
         events=[
             TrackingEvent(
                 date=DF.fdate(scan.ScanDate),
-                time=DF.ftime(scan.ScanTime, '%H%M%S'),
+                time=DF.ftime(scan.ScanTime, "%H%M%S"),
                 description=scan.Description,
                 location=scan.Depot.Name,
                 code=scan.ScanType,
             )
             for scan in track.Scans.Scan
         ],
-        delivered=any(scan.ScanType == "Delivery" for scan in track.Scans.Scan)
+        delivered=any(scan.ScanType == "Delivery" for scan in track.Scans.Scan),
     )
 
 
@@ -70,4 +70,7 @@ def tracking_request(
             PINs=ArrayOfPIN(PIN=[PIN(Value=pin) for pin in payload.tracking_numbers])
         ),
     )
-    return Serializable(request, partial(standard_request_serializer, version="v1"))
+
+    return Serializable(
+        request, partial(standard_request_serializer, version="v1"), logged=True
+    )

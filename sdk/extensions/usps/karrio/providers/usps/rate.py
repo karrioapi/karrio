@@ -54,7 +54,6 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
-        base_charge=rate,
         total_charge=rate,
         currency=Currency.USD.name,
         transit_days=transit,
@@ -160,4 +159,4 @@ def rate_request(
         ],
     )
 
-    return Serializable(request, XP.export)
+    return Serializable(request, XP.export, logged=True)

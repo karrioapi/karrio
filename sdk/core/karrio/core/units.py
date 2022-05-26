@@ -37,6 +37,7 @@ class PackagePreset:
 class LabelType(Enum):
     PDF = "PDF"
     ZPL = "ZPL"
+    PNG = "PNG"
 
 
 class DocFormat(Enum):

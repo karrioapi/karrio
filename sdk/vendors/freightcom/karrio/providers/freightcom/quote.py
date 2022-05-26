@@ -26,7 +26,7 @@ from karrio.providers.freightcom.error import parse_error_response
 
 
 def parse_quote_reply(
-        response: Element, settings: Settings
+    response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="Quote")
     return (
@@ -40,43 +40,42 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     rate_provider, service, service_name = Service.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
-    surcharges = [
-        ChargeDetails(
-            name=charge.name, amount=NF.decimal(charge.amount), currency=quote.currency
-        )
-        for charge in cast(List[SurchargeType], quote.Surcharge)
+    charges = [
+        ("Base charge", quote.baseCharge),
+        ("Fuel surcharge", quote.fuelSurcharge),
+        *((surcharge.name, surcharge.amount) for surcharge in quote.Surcharge),
     ]
-    fuel_surcharge = (
-        ChargeDetails(
-            name="Fuel surcharge",
-            amount=NF.decimal(quote.fuelSurcharge),
-            currency=quote.currency,
-        )
-        if quote.fuelSurcharge is not None else None
-    )
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=quote.currency,
         service=service,
-        base_charge=NF.decimal(quote.baseCharge),
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=([fuel_surcharge] + surcharges),
-        meta=dict(
-            rate_provider=rate_provider,
-            service_name=service_name
-        )
+        extra_charges=[
+            ChargeDetails(
+                name=name,
+                currency="CAD",
+                amount=NF.decimal(amount),
+            )
+            for name, amount in charges
+            if amount
+        ],
+        meta=dict(rate_provider=rate_provider, service_name=service_name),
     )
 
 
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Freightcom]:
     options = Options(payload.options, Option)
-    packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
+    packages = Packages(
+        payload.parcels, required=["weight", "height", "width", "length"]
+    )
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
-    packaging = ("Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package")
-    service = (Services(payload.services, Service).first or Service.freightcom_all)
+    packaging = (
+        "Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package"
+    )
+    service = Services(payload.services, Service).first or Service.freightcom_all
 
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass),
@@ -165,4 +164,4 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         ),
     )
 
-    return Serializable(request, standard_request_serializer)
+    return Serializable(request, standard_request_serializer, logged=True)

@@ -1,6 +1,11 @@
-# <a href="https://karrio.io" target="_blank"><img alt="Karrio" src="server/main/karrio/server/static/extra/branding/logo.svg" height="50px" /></a>
+<a href="https://karrio.io" target="_blank">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo-inverted.svg" height="50px"/>
+    <img alt="Karrio" src="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo.svg" height="50px"/>
+  </picture>
+</a>
 
-<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />
+---
 
 **The Universal Shipping API**
 
@@ -76,7 +81,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.3.6
+  danh91.docker.scarf.sh/karrio/server:2022.4
 ```
 
 </details>
@@ -101,7 +106,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.3.6
+    image: danh91.docker.scarf.sh/karrio/server:2022.4
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -297,3 +302,5 @@ The remaining files fall under the [Apache 2 license](LICENSE).
 Karrio OSS is built only from the Apache-licensed files in this repository.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />

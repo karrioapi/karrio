@@ -14,6 +14,7 @@ FROM python:3.8-slim AS build-image
 RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
+RUN mkdir -p /karrio/.karrio
 
 WORKDIR /karrio/app
 

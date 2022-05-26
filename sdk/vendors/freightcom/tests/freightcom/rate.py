@@ -35,16 +35,14 @@ class TestFreightcomRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedQuoteResponse)
 
     def test_parse_rate_response_error(self):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = RateErrorResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateError))
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateError)
 
 
 if __name__ == "__main__":
@@ -75,12 +73,11 @@ RateWithPresetMissingDimensionPayload = {
 ParsedQuoteResponse = [
     [
         {
-            "base_charge": 177.0,
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 177.0, "currency": "CAD", "name": "Base charge"}
             ],
             "meta": {
                 "rate_provider": "Freightcom",
@@ -91,12 +88,11 @@ ParsedQuoteResponse = [
             "transit_days": 1,
         },
         {
-            "base_charge": 28.65,
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 28.65, "currency": "CAD", "name": "Base charge"}
             ],
             "meta": {"rate_provider": "Freightcom", "service_name": "estes"},
             "service": "freightcom_estes",
@@ -104,17 +100,14 @@ ParsedQuoteResponse = [
             "transit_days": 1,
         },
         {
-            "base_charge": 46.27,
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 46.27, "currency": "CAD", "name": "Base charge"},
+                {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "meta": {
-                "rate_provider": "Freightcom",
-                "service_name": "usf_holland",
-            },
+            "meta": {"rate_provider": "Freightcom", "service_name": "usf_holland"},
             "service": "freightcom_usf_holland",
             "total_charge": 52.52,
             "transit_days": 0,
@@ -122,9 +115,9 @@ ParsedQuoteResponse = [
     ],
     [
         {
-            "code": "CarrierErrorMessage",
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
+            "code": "CarrierErrorMessage",
             "message": "Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge",
         }
     ],

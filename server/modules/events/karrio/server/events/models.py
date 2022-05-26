@@ -43,6 +43,8 @@ class Webhook(OwnedEntity):
 
 
 class Event(OwnedEntity):
+    HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
+
     class Meta:
         db_table = "event"
         verbose_name = "Event"

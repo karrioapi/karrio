@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def register_all():
     signals.post_save.connect(user_updated, sender=get_user_model())
 
-    logger.info("orgs webhooks signals registered...")
+    logger.info("karrio.orgs signals registered...")
 
 
 @utils.disable_for_loaddata

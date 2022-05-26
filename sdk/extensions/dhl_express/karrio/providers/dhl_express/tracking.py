@@ -71,7 +71,8 @@ def tracking_request(
         LevelOfDetails=payload.level_of_details or "ALL_CHECK_POINTS",
         AWBNumber=payload.tracking_numbers,
     )
-    return Serializable(request, _request_serializer)
+
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: KnownTrackingRequest) -> str:

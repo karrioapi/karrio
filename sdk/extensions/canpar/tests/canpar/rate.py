@@ -42,9 +42,7 @@ class TestCanparRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedQuoteResponse)
 
 
 if __name__ == "__main__":
@@ -88,11 +86,9 @@ RatePayload = {
 ParsedQuoteResponse = [
     [
         {
-            "base_charge": 7.57,
             "carrier_id": "canpar",
             "carrier_name": "canpar",
             "currency": "CAD",
-            "duties_and_taxes": 1.34,
             "extra_charges": [
                 {"amount": 7.57, "currency": "CAD", "name": "Freight Charge"},
                 {

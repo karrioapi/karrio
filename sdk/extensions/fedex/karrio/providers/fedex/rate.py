@@ -54,6 +54,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     rate: RateReplyDetail = XP.to_object(RateReplyDetail, detail_node)
     service = ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
+
     shipment_rate, shipment_discount = cast(
         Tuple[ShipmentRateDetail, Money],
         next(
@@ -65,20 +66,14 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
             (None, None),
         ),
     )
-    discount = (
-        NF.decimal(shipment_discount.Amount) if shipment_discount is not None else None
-    )
     currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
-    duties_and_taxes = (
-        shipment_rate.TotalTaxes.Amount + shipment_rate.TotalDutiesAndTaxes.Amount
-    )
-    surcharges = [
-        ChargeDetails(
-            name=cast(Surcharge, s).Description,
-            amount=NF.decimal(cast(Surcharge, s).Amount.Amount),
-            currency=currency,
-        )
-        for s in shipment_rate.Surcharges + shipment_rate.Taxes
+    charges = [
+        ("Base charge", shipment_rate.TotalBaseCharge.Amount),
+        ("Discount", shipment_discount.Amount),
+        *(
+            (s.Description, s.Amount.Amount)
+            for s in shipment_rate.Surcharges + shipment_rate.Taxes
+        ),
     ]
     estimated_delivery = DF.date(rate.DeliveryTimestamp)
     transit = (
@@ -92,12 +87,17 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
         currency=currency,
-        base_charge=NF.decimal(shipment_rate.TotalBaseCharge.Amount),
         total_charge=NF.decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
-        duties_and_taxes=NF.decimal(duties_and_taxes),
-        discount=discount,
         transit_days=transit,
-        extra_charges=surcharges,
+        extra_charges=[
+            ChargeDetails(
+                name=name,
+                amount=NF.decimal(amount),
+                currency=currency,
+            )
+            for name, amount in charges
+            if amount
+        ],
         meta=dict(service_name=service.name_or_key),
     )
 
@@ -278,7 +278,8 @@ def rate_request(
             ],
         ),
     )
-    return Serializable(request, _request_serializer)
+
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: FedexRateRequest) -> str:

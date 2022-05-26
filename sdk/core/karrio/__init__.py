@@ -82,7 +82,12 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from pathlib import Path
 from karrio.api.gateway import GatewayInitializer
-from karrio.api.interface import Pickup, Rating, Shipment, Tracking, Address
+import karrio.api.interface as interface
 
-VERSION = "2021.1"
+VERSION = "2022.4"
 gateway = GatewayInitializer.get_instance()
+Pickup = interface.Pickup
+Rating = interface.Rating
+Shipment = interface.Shipment
+Tracking = interface.Tracking
+Address = interface.Address

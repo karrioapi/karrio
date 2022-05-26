@@ -11,9 +11,7 @@ class TestGenericRating(unittest.TestCase):
         self.RateRequest = RateRequest(**rate_request_data)
 
     def test_parse_rate_response(self):
-        parsed_response = (
-            karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
         self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
@@ -42,7 +40,6 @@ rate_request_data = {
 ParsedRateResponse = [
     [
         {
-            "base_charge": 100.0,
             "carrier_id": "custom-carrier",
             "carrier_name": "custom_carrier",
             "currency": "USD",

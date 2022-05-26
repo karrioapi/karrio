@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "ADDRESS.VERIFY.FAILURE",
+    "message": "Address not found",
+    "errors": []
+  }
+}

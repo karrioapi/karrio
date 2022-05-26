@@ -30,15 +30,14 @@ class TestUSPSRating(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_RATE_RESPONSE)
 
     def test_parse_rate_response_errors(self):
         with patch("karrio.mappers.usps.proxy.http") as mock:
             mock.return_value = ERROR_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_ERRORS))
+
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_ERRORS)
 
 
 if __name__ == "__main__":
@@ -65,7 +64,6 @@ RATE_PAYLOAD = {
 PARSED_RATE_RESPONSE = [
     [
         {
-            "base_charge": 31.15,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -74,7 +72,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 31.15,
         },
         {
-            "base_charge": 31.15,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -83,7 +80,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 31.15,
         },
         {
-            "base_charge": 43.65,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -94,7 +90,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 43.65,
         },
         {
-            "base_charge": 8.85,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -103,7 +98,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 8.85,
         },
         {
-            "base_charge": 21.9,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -112,7 +106,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 21.9,
         },
         {
-            "base_charge": 15.5,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -121,7 +114,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 15.5,
         },
         {
-            "base_charge": 3.45,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
@@ -130,7 +122,6 @@ PARSED_RATE_RESPONSE = [
             "total_charge": 3.45,
         },
         {
-            "base_charge": 3.28,
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",

@@ -104,17 +104,14 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "freightcom",
         "carrier_name": "freightcom",
-        "meta": {
-            "rate_provider": "Freightcom",
-            "service_name": "central_transport",
-        },
+        "docs": {"label": "[base-64 encoded String]"},
+        "meta": {"rate_provider": "Freightcom", "service_name": "central_transport"},
         "selected_rate": {
-            "base_charge": 30.74,
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 30.74, "currency": "CAD", "name": "Base charge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "meta": {
@@ -127,7 +124,6 @@ ParsedShipmentResponse = [
         },
         "shipment_identifier": "181004",
         "tracking_number": "052800410000484",
-        "docs": {"label": ANY},
     },
     [],
 ]

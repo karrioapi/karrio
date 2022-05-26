@@ -50,4 +50,5 @@ def shipment_cancel_request(
         lambda request: settings.serialize(
             request, "createShipment", settings.server_url
         ),
+        logged=True,
     )

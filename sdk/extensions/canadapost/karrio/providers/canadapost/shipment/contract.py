@@ -1,4 +1,4 @@
-from typing import Tuple, List, Any
+from typing import Tuple, List
 from canadapost_lib.shipment import (
     ShipmentType,
     ShipmentInfoType,
@@ -37,6 +37,7 @@ from karrio.providers.canadapost.units import (
     PackagePresets,
     PaymentType,
     LabelType,
+    CUSTOM_OPTIONS,
     INTERNATIONAL_NON_DELIVERY_OPTION,
     MeasurementOptions,
 )
@@ -166,10 +167,16 @@ def shipment_request(
                             option_qualifier_2=None,
                         )
                         for code, option in all_options
-                        if code in OptionCode
+                        if code in OptionCode and code not in CUSTOM_OPTIONS
                     ]
                 )
-                if any([code for code, _ in all_options if code in OptionCode])
+                if any(
+                    [
+                        code
+                        for code, _ in all_options
+                        if code in OptionCode and code not in CUSTOM_OPTIONS
+                    ]
+                )
                 else None
             ),
             notification=(
@@ -228,7 +235,7 @@ def shipment_request(
                 else None
             ),
             references=ReferencesType(
-                cost_centre=payload.reference,
+                cost_centre=options.canadapost_cost_center or payload.reference,
                 customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
@@ -249,7 +256,7 @@ def shipment_request(
     )
     request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: ShipmentType) -> str:

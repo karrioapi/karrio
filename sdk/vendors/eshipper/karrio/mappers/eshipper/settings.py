@@ -1,4 +1,4 @@
-"""PurplShip eshipper connection settings."""
+"""Karrio eshipper connection settings."""
 
 import attr
 from karrio.providers.eshipper.utils import Settings as BaseSettings

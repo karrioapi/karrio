@@ -2,11 +2,11 @@
     "swagger": "2.0",
     "info": {
         "title": "Karrio API",
-        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.3.7`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": ""
         },
-        "version": "2022.3.7"
+        "version": "2022.4"
     },
     "host": "app.karrio.io",
     "schemes": [
@@ -367,6 +367,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -454,6 +455,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -692,35 +694,88 @@
                 "description": "Retrieve all orders.",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
-                        "type": "boolean"
+                        "description": "customer address line",
+                        "required": false,
+                        "type": "string"
                     },
                     {
-                        "name": "status",
+                        "name": "id",
                         "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "unfulfilled",
-                            "cancelled",
-                            "fulfilled",
-                            "delivered",
-                            "partial"
-                        ]
+                        "description": "id(s).",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "source order order_id(s).",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "order source(s).",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_after",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_before",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "order statuses.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "order option keys.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "order option value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "order metadata keys.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "order metadata value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "limit",
@@ -1347,6 +1402,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -1418,6 +1474,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -1499,6 +1556,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -1659,6 +1717,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -1720,6 +1779,15 @@
                         "x-nullable": true
                     },
                     {
+                        "name": "hub",
+                        "in": "query",
+                        "description": "A carrier_name of a hub connector",
+                        "required": false,
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 1
+                    },
+                    {
                         "name": "carrier_name",
                         "in": "path",
                         "type": "string",
@@ -1732,9 +1800,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
-                            "eshipper",
                             "fedex",
-                            "freightcom",
                             "generic",
                             "purolator",
                             "royalmail",
@@ -1810,50 +1876,87 @@
                 "description": "Retrieve all shipments.",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "address",
                         "in": "query",
-                        "type": "boolean"
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "purchased",
-                            "cancelled",
-                            "shipped",
-                            "in_transit",
-                            "delivered"
-                        ]
+                        "description": "shipment recipient address line",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_after",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_before",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    {
-                        "name": "carrier_id",
-                        "in": "query",
+                        "required": false,
                         "type": "string"
                     },
                     {
-                        "name": "service",
+                        "name": "carrier_name",
                         "in": "query",
+                        "description": "carrier_name used to fulfill the shipment",
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "reference",
                         "in": "query",
+                        "description": "a shipment reference",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "service",
+                        "in": "query",
+                        "description": "preferred carrier services.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "shipment statuses.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_key",
+                        "in": "query",
+                        "description": "shipment option keys.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "option_value",
+                        "in": "query",
+                        "description": "shipment option value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_key",
+                        "in": "query",
+                        "description": "shipment metadata keys.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "metadata_value",
+                        "in": "query",
+                        "description": "shipment metadata value",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "test_mode",
+                        "in": "query",
+                        "description": "test mode flag",
+                        "required": false,
                         "type": "string"
                     },
                     {
@@ -1869,35 +1972,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "aramex",
-                            "australiapost",
-                            "canadapost",
-                            "canpar",
-                            "dhl_express",
-                            "dhl_poland",
-                            "dhl_universal",
-                            "dicom",
-                            "eshipper",
-                            "fedex",
-                            "freightcom",
-                            "generic",
-                            "purolator",
-                            "royalmail",
-                            "sendle",
-                            "sf_express",
-                            "tnt",
-                            "ups",
-                            "usps",
-                            "usps_international",
-                            "yanwen",
-                            "yunexpress"
-                        ]
                     }
                 ],
                 "responses": {
@@ -2200,6 +2274,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "easypost",
                             "eshipper",
                             "fedex",
                             "freightcom",
@@ -2253,6 +2328,15 @@
                         "x-nullable": true
                     },
                     {
+                        "name": "hub",
+                        "in": "query",
+                        "description": "A carrier_name of a hub connector",
+                        "required": false,
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 1
+                    },
+                    {
                         "name": "carrier_name",
                         "in": "path",
                         "type": "string",
@@ -2265,9 +2349,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
-                            "eshipper",
                             "fedex",
-                            "freightcom",
                             "generic",
                             "purolator",
                             "royalmail",
@@ -2587,9 +2669,10 @@
     "definitions": {
         "Metadata": {
             "required": [
+                "VERSION",
                 "APP_NAME",
-                "APP_VERSION",
                 "CUSTOM_CARRIER_DEFINITION",
+                "DATA_IMPORT_EXPORT",
                 "MULTI_ORGANIZATIONS",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
@@ -2600,13 +2683,13 @@
             ],
             "type": "object",
             "properties": {
-                "APP_NAME": {
-                    "title": "App name",
+                "VERSION": {
+                    "title": "Version",
                     "type": "string",
                     "minLength": 1
                 },
-                "APP_VERSION": {
-                    "title": "App version",
+                "APP_NAME": {
+                    "title": "App name",
                     "type": "string",
                     "minLength": 1
                 },
@@ -2618,6 +2701,10 @@
                 },
                 "CUSTOM_CARRIER_DEFINITION": {
                     "title": "Custom carrier definition",
+                    "type": "boolean"
+                },
+                "DATA_IMPORT_EXPORT": {
+                    "title": "Data import export",
                     "type": "boolean"
                 },
                 "MULTI_ORGANIZATIONS": {
@@ -3596,6 +3683,7 @@
                         "dhl_poland",
                         "dhl_universal",
                         "dicom",
+                        "easypost",
                         "eshipper",
                         "fedex",
                         "freightcom",
@@ -4718,29 +4806,11 @@
                     "type": "string",
                     "x-nullable": true
                 },
-                "discount": {
-                    "title": "Discount",
-                    "description": "The monetary amount of the discount on the rate",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "base_charge": {
-                    "title": "Base charge",
-                    "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n",
-                    "type": "number",
-                    "default": 0.0
-                },
                 "total_charge": {
                     "title": "Total charge",
                     "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n",
                     "type": "number",
                     "default": 0.0
-                },
-                "duties_and_taxes": {
-                    "title": "Duties and taxes",
-                    "description": "The monetary amount of the duties and taxes if applied",
-                    "type": "number",
-                    "x-nullable": true
                 },
                 "transit_days": {
                     "title": "Transit days",
@@ -4857,7 +4927,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "x-nullable": true
                 },
@@ -5947,7 +6018,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6071,7 +6143,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "x-nullable": true
                 },
@@ -6316,6 +6389,13 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
                 "object_type": {
                     "title": "Object type",
                     "description": "Specifies the object type",
@@ -6357,10 +6437,11 @@
         },
         "References": {
             "required": [
+                "VERSION",
                 "APP_NAME",
-                "APP_VERSION",
                 "APP_WEBSITE",
                 "CUSTOM_CARRIER_DEFINITION",
+                "DATA_IMPORT_EXPORT",
                 "MULTI_ORGANIZATIONS",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
@@ -6387,13 +6468,13 @@
             ],
             "type": "object",
             "properties": {
-                "APP_NAME": {
-                    "title": "App name",
+                "VERSION": {
+                    "title": "Version",
                     "type": "string",
                     "minLength": 1
                 },
-                "APP_VERSION": {
-                    "title": "App version",
+                "APP_NAME": {
+                    "title": "App name",
                     "type": "string",
                     "minLength": 1
                 },
@@ -6404,6 +6485,10 @@
                 },
                 "CUSTOM_CARRIER_DEFINITION": {
                     "title": "Custom carrier definition",
+                    "type": "boolean"
+                },
+                "DATA_IMPORT_EXPORT": {
+                    "title": "Data import export",
                     "type": "boolean"
                 },
                 "MULTI_ORGANIZATIONS": {
@@ -6597,7 +6682,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6645,7 +6731,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6691,7 +6778,8 @@
                     "type": "string",
                     "enum": [
                         "PDF",
-                        "ZPL"
+                        "ZPL",
+                        "PNG"
                     ],
                     "default": "PDF"
                 },
@@ -6813,15 +6901,16 @@
                         "type": "string",
                         "enum": [
                             "all",
-                            "shipment.purchased",
-                            "shipment.cancelled",
-                            "shipment.fulfilled",
-                            "tracker.created",
-                            "tracker.updated",
-                            "order.created",
-                            "order.fulfilled",
-                            "order.cancelled",
-                            "order.delivered"
+                            "shipment_purchased",
+                            "shipment_cancelled",
+                            "shipment_fulfilled",
+                            "tracker_created",
+                            "tracker_updated",
+                            "order_created",
+                            "order_updated",
+                            "order_fulfilled",
+                            "order_cancelled",
+                            "order_delivered"
                         ]
                     }
                 },
@@ -6917,15 +7006,16 @@
                         "type": "string",
                         "enum": [
                             "all",
-                            "shipment.purchased",
-                            "shipment.cancelled",
-                            "shipment.fulfilled",
-                            "tracker.created",
-                            "tracker.updated",
-                            "order.created",
-                            "order.fulfilled",
-                            "order.cancelled",
-                            "order.delivered"
+                            "shipment_purchased",
+                            "shipment_cancelled",
+                            "shipment_fulfilled",
+                            "tracker_created",
+                            "tracker_updated",
+                            "order_created",
+                            "order_updated",
+                            "order_fulfilled",
+                            "order_cancelled",
+                            "order_delivered"
                         ]
                     }
                 },

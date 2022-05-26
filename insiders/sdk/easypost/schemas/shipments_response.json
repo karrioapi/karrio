@@ -1,0 +1,289 @@
+{
+  "has_more": true,
+  "shipments": [
+    {
+      "id": "shp_...",
+      "object": "Shipment",
+      "mode": "test",
+      "is_return": false,
+      "batch_id": "",
+      "batch_message": "",
+      "batch_status": "",
+      "to_address": {
+        "id": "adr_...",
+        "object": "Address",
+        "created_at": "2017-05-08T19:43:41Z",
+        "updated_at": "2017-05-08T19:43:41Z",
+        "name": "",
+        "company": "EasyPost",
+        "street1": "UNDELIVERABLE ST",
+        "street2": "",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94104",
+        "country": "US",
+        "phone": "4151234567",
+        "email": "",
+        "mode": "test",
+        "carrier_facility": "",
+        "residential": false,
+        "federal_tax_id": "",
+        "state_tax_id": "",
+        "verifications": {
+          "delivery": {
+            "success": false,
+            "errors": [
+              {
+                "suggestion": "",
+                "code": "E.ADDRESS.NOT_FOUND",
+                "field": "address",
+                "message": "Address not found"
+              },
+              {
+                "suggestion": "",
+                "code": "E.HOUSE_NUMBER.MISSING",
+                "field": "street1",
+                "message": "House number is missing"
+              }
+            ],
+            "details": {
+              "longitude": -122.40288,
+              "latitude": 37.79298,
+              "time_zone": "America/Los_Angeles"
+            }
+          }
+        }
+      },
+      "from_address": {
+        "id": "adr_...",
+        "object": "Address",
+        "created_at": "2017-05-08T19:43:41Z",
+        "updated_at": "2017-05-08T19:43:41Z",
+        "name": "",
+        "company": "EasyPost",
+        "street1": "UNDELIVERABLE ST",
+        "street2": "",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94104",
+        "country": "US",
+        "phone": "4151234567",
+        "email": "",
+        "mode": "test",
+        "carrier_facility": "",
+        "residential": false,
+        "federal_tax_id": "",
+        "state_tax_id": "",
+        "verifications": {
+          "delivery": {
+            "success": false,
+            "errors": [
+              {
+                "suggestion": "",
+                "code": "E.ADDRESS.NOT_FOUND",
+                "field": "address",
+                "message": "Address not found"
+              },
+              {
+                "suggestion": "",
+                "code": "E.HOUSE_NUMBER.MISSING",
+                "field": "street1",
+                "message": "House number is missing"
+              }
+            ],
+            "details": {
+              "longitude": -122.40288,
+              "latitude": 37.79298,
+              "time_zone": "America/Los_Angeles"
+            }
+          }
+        }
+      },
+      "parcel": {
+        "id": "prcl_...",
+        "object": "Parcel",
+        "length": 20.2,
+        "width": 10.9,
+        "height": 5.0,
+        "predefined_package": "",
+        "weight": 140.8,
+        "created_at": "2013-04-22T05:39:57Z",
+        "updated_at": "2013-04-22T05:39:57Z"
+      },
+      "customs_info": {
+        "id": "cstinfo_...",
+        "object": "CustomsInfo",
+        "created_at": "2021-10-06T16:36:11Z",
+        "updated_at": "2021-10-06T16:36:11Z",
+        "contents_explanation": "",
+        "contents_type": "merchandise",
+        "customs_certify": true,
+        "customs_signer": "Steve Brule",
+        "eel_pfc": "NOEEI 30.37(a)",
+        "non_delivery_option": "return",
+        "restriction_comments": "",
+        "restriction_type": "none",
+        "mode": "test",
+        "declaration": "",
+        "customs_items": [
+          {
+            "id": "cstitem_...",
+            "object": "CustomsItem",
+            "created_at": "2021-10-06T16:36:11Z",
+            "updated_at": "2021-10-06T16:36:11Z",
+            "description": "Sweet shirts",
+            "hs_tariff_number": "654321",
+            "origin_country": "US",
+            "quantity": 2,
+            "value": 23.0,
+            "weight": 21.0,
+            "code": "",
+            "mode": "test",
+            "manufacturer": "",
+            "currency": "",
+            "eccn": "",
+            "printed_commodity_identifier": ""
+          }
+        ]
+      },
+      "fees": [
+        {
+          "amount": "0.00000",
+          "charged": true,
+          "object": "Fee",
+          "refunded": false,
+          "type": "LabelFee"
+        },
+        {
+          "amount": "2.60000",
+          "charged": true,
+          "object": "Fee",
+          "refunded": false,
+          "type": "PostageFee"
+        }
+      ],
+      "forms": [
+        {
+          "object": "Form",
+          "id": "form_...",
+          "created_at": "2021-10-06T16:36:14Z",
+          "updated_at": "2021-10-06T16:36:14Z",
+          "mode": "test",
+          "form_type": "commercial_invoice",
+          "form_url": "https://easypost-files.s3-us-west-2.amazonaws.com/files/form/...",
+          "submitted_electronically": true
+        }
+      ],
+      "options": null,
+      "rates": [
+        {
+          "id": "rate_...",
+          "object": "Rate",
+          "carrier_account_id": "ca_...",
+          "currency": "USD",
+          "service": "FirstClassPackageInternationalService",
+          "rate": "9.50",
+          "carrier": "USPS",
+          "shipment_id": "shp_...",
+          "delivery_days": 4,
+          "delivery_date": "2013-04-26T05:40:57Z",
+          "delivery_date_guaranteed": false,
+          "created_at": "2013-04-22T05:40:57Z",
+          "updated_at": "2013-04-22T05:40:57Z"
+        },
+        {
+          "id": "rate_...",
+          "object": "Rate",
+          "carrier_account_id": "ca_...",
+          "service": "PriorityMailInternational",
+          "rate": "27.40",
+          "carrier": "USPS",
+          "shipment_id": "shp_...",
+          "delivery_days": 2,
+          "delivery_date": "2013-04-24T05:40:57Z",
+          "delivery_date_guaranteed": false,
+          "created_at": "2013-04-22T05:40:57Z",
+          "updated_at": "2013-04-22T05:40:57Z"
+        },
+        {
+          "id": "rate_...",
+          "object": "Rate",
+          "carrier_account_id": "ca_...",
+          "service": "ExpressMailInternational",
+          "rate": "35.48",
+          "carrier": "USPS",
+          "shipment_id": "shp_...",
+          "delivery_days": 1,
+          "delivery_date": "2013-04-23T05:40:57Z",
+          "delivery_date_guaranteed": true,
+          "created_at": "2013-04-22T05:40:57Z",
+          "updated_at": "2013-04-22T05:40:57Z"
+        }
+      ],
+      "reference": "",
+      "scan_form": "",
+      "refund_status": "",
+      "selected_rate": {
+        "carrier": "UPS",
+        "created_at": "2013-11-08T15:50:02Z",
+        "currency": "USD",
+        "id": "rate_...",
+        "object": "Rate",
+        "rate": "30.44",
+        "service": "NextDayAir",
+        "shipment_id": "shp_...",
+        "updated_at": "2013-11-08T15:50:02Z"
+      },
+      "status": "unknown",
+      "postage_label": {
+        "created_at": "2013-11-08T20:57:32Z",
+        "id": "pl_...",
+        "integrated_form": "none",
+        "label_date": "2013-11-08T20:57:32Z",
+        "label_epl2_url": "",
+        "label_file_type": "image/png",
+        "label_pdf_url": "https://amazonaws.com/.../a1b2c3.pdf",
+        "label_resolution": 200,
+        "label_size": "4x7",
+        "label_type": "default",
+        "label_url": "https://amazonaws.com/.../a1b2c3.png",
+        "label_zpl_url": "",
+        "object": "PostageLabel",
+        "updated_at": "2013-11-08T21:11:14Z"
+      },
+      "tracking_code": "9400110896700986051652",
+      "usps_zone": 8,
+      "tracker": {
+        "created_at": "2013-11-08T20:57:32Z",
+        "id": "trk_...",
+        "mode": "test",
+        "object": "Tracker",
+        "shipment_id": "shp_...",
+        "status": "unknown",
+        "tracking_code": "1ZE6A4850190733810",
+        "tracking_details": [
+          {
+            "object": "TrackingDetail",
+            "message": "Shipping Label Created",
+            "status": "pre_transit",
+            "datetime": "2015-12-31T15:58:00Z",
+            "source": "USPS",
+            "tracking_location": {
+              "object": "TrackingLocation",
+              "city": "FOUNTAIN VALLEY",
+              "state": "CA",
+              "country": "",
+              "zip": "92708"
+            }
+          }
+        ],
+        "updated_at": "2013-11-08T20:58:26Z",
+        "public_url": "https://track.easypost.com/djE7..."
+      },
+      "messages": [],
+      "insurance": 249.99,
+      "created_at": "2013-04-22T05:40:57Z",
+      "updated_at": "2013-04-22T05:40:57Z"
+    }
+  ]
+}

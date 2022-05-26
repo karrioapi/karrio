@@ -182,7 +182,7 @@ def shipment_request(
                             PersonName=shipper.person_name,
                             Title=None,
                             CompanyName=shipper.company_name,
-                            PhoneNumber=shipper.phone_number,
+                            PhoneNumber=(shipper.phone_number or "000-000-0000"),
                             PhoneExtension=None,
                             TollFreePhoneNumber=None,
                             PagerNumber=None,
@@ -217,7 +217,7 @@ def shipment_request(
                             PersonName=recipient.person_name,
                             Title=None,
                             CompanyName=recipient.company_name,
-                            PhoneNumber=recipient.phone_number,
+                            PhoneNumber=recipient.phone_number or "000-000-0000",
                             PhoneExtension=None,
                             TollFreePhoneNumber=None,
                             PagerNumber=None,
@@ -531,7 +531,7 @@ def shipment_request(
         for package_index, package in enumerate(packages, 1)
     ]
 
-    return Serializable(requests, _request_serializer)
+    return Serializable(requests, _request_serializer, logged=True)
 
 
 def _request_serializer(requests: List[ProcessShipmentRequest]) -> List[str]:

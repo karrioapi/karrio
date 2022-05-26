@@ -16,10 +16,14 @@ def _identity(value: Any) -> Any:
 class Serializable(Generic[T]):
     value: T
     _serializer: Callable[[T], Any] = _identity
+    logged: bool = False
 
     def serialize(self) -> Any:
         serialized_value = self._serializer(self.value)
-        logger.info("serialized request::" f"{serialized_value}")
+
+        if self.logged:
+            logger.info("serialized request::" f"{serialized_value}")
+
         return serialized_value
 
 
@@ -27,8 +31,10 @@ class Serializable(Generic[T]):
 class Deserializable(Generic[T]):
     value: T
     _deserializer: Callable[[T], Any] = _identity
+    logged: bool = False
 
     def deserialize(self) -> Any:
-        logger.info("deserialized response::" f"{self.value}")
+        if self.logged:
+            logger.info("deserialized response::" f"{self.value}")
 
         return self._deserializer(self.value)

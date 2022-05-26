@@ -1,8 +1,8 @@
+import sys
 from django.http import JsonResponse
 from django.urls import re_path
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
-from rest_framework.response import Response
 from rest_framework import status
 
 from karrio.server.documents import models
@@ -30,7 +30,17 @@ class DocumentGenerator(VirtualDownloadView):
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
-            return JsonResponse(dict(error=str(e)), status=status.HTTP_409_CONFLICT)
+            _, __, exc_traceback = sys.exc_info()
+            trace = exc_traceback
+            while True:
+                trace = trace.tb_next
+                if "<template>" in str(trace.tb_frame) or not trace.tb_next:
+                    break
+
+            return JsonResponse(
+                dict(error=str(e), line=getattr(trace, "tb_lineno", None)),
+                status=status.HTTP_409_CONFLICT,
+            )
 
     def get_file(self):
         return ContentFile(self.document.getvalue(), name=self.name)

@@ -72,7 +72,7 @@ class Proxy(BaseProxy):
         return Deserializable(response, XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
-        response = self._send_request("/webservices/Ship", request)
+        response = self._send_request("/webservices/Void", request)
 
         return Deserializable(response, XP.to_xml)
 

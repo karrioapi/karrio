@@ -1,0 +1,65 @@
+{
+  "containerSpecifications": [
+    {
+      "dimensions": {
+        "height": -11128938.315315291,
+        "length": -53992777.93301245,
+        "unit": "IN",
+        "width": -15948568.310932204
+      },
+      "weight": {
+        "unit": "oz",
+        "value": -18429960.164813638
+      }
+    },
+    {
+      "dimensions": {
+        "height": 3778128.7328606546,
+        "length": 92830895.03670138,
+        "unit": "CM",
+        "width": 64394598.26120943
+      },
+      "weight": {
+        "unit": "oz",
+        "value": 59033905.13044372
+      }
+    }
+  ],
+  "serviceTypes": [
+    "Amazon Shipping Premium",
+    "Amazon Shipping Ground"
+  ],
+  "shipFrom": {
+    "addressLine1": "consectetur dolore aliqua",
+    "city": "cillum",
+    "countryCode": "su",
+    "name": "ad mollit fugiat",
+    "postalCode": "enim",
+    "stateOrRegion": "commodo",
+    "addressLine2": "qui elit exercitation",
+    "addressLine3": "qui proident",
+    "email": "iru",
+    "copyEmails": [
+      "officia laborum Lorem",
+      "eiusmod L"
+    ],
+    "phoneNumber": "tempor pariatu"
+  },
+  "shipTo": {
+    "addressLine1": "Lorem aliquip in consequat",
+    "city": "consectetur dolor u",
+    "countryCode": "su",
+    "name": "eu ali",
+    "postalCode": "proident",
+    "stateOrRegion": "commodo sed",
+    "addressLine2": "proident",
+    "addressLine3": "laboris",
+    "email": "eu et Excepteur i",
+    "copyEmails": [
+      "dolor dolore ut ut irure",
+      "exercitation est "
+    ],
+    "phoneNumber": "id"
+  },
+  "shipDate": "1983-08-21T03:27:52.022Z"
+}

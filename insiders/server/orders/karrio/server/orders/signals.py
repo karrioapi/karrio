@@ -20,7 +20,7 @@ def register_signals():
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
     signals.post_save.connect(order_updated, sender=models.Order)
 
-    logger.info("order webhooks signals registered...")
+    logger.info("karrio.order signals registered...")
 
 
 @utils.disable_for_loaddata
@@ -83,10 +83,28 @@ def order_updated(sender, instance, *args, **kwargs):
     created = kwargs.get("created", False)
     changes = kwargs.get("update_fields") or []
 
+    if "created_at" in changes:
+        duplicates = (
+            models.Order.objects.exclude(status="cancelled")
+            .filter(
+                org=instance.link.org,
+                source=instance.source,
+                order_id=instance.order_id,
+            )
+            .count()
+        )
+
+        if duplicates > 1:
+            raise serializers.ValidationError(
+                {
+                    "order_id": f"An order with 'order_id' {instance.order_id} already exists."
+                }
+            )
+
     if created or "created_at" in changes:
         event = EventTypes.order_created.value
     elif "status" not in changes:
-        return
+        event = EventTypes.order_updated.value
     elif instance.status == serializers.OrderStatus.fulfilled.value:
         event = EventTypes.order_fulfilled.value
     elif instance.status == serializers.OrderStatus.cancelled.value:

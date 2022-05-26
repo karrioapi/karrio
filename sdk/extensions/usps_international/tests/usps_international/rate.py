@@ -15,7 +15,9 @@ class TestUSPSRating(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         serialized_request = re.sub(
-            "<AcceptanceDateTime>[^>]+</AcceptanceDateTime>", "", request.serialize()
+            "        <AcceptanceDateTime>[^>]+</AcceptanceDateTime>",
+            "",
+            request.serialize(),
         )
         self.assertEqual(serialized_request, RATE_REQUEST_XML)
 
@@ -24,15 +26,14 @@ class TestUSPSRating(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_RATE_RESPONSE)
 
     def test_parse_rate_response_errors(self):
         with patch("karrio.mappers.usps_international.proxy.http") as mock:
             mock.return_value = ERROR_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_ERRORS))
+
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_ERRORS)
 
 
 if __name__ == "__main__":
@@ -58,34 +59,37 @@ RATE_PAYLOAD = {
 PARSED_RATE_RESPONSE = [
     [
         {
-            "base_charge": 115.9,
             "carrier_id": "usps_international",
             "carrier_name": "usps_international",
             "currency": "USD",
-            "extra_charges": [{"amount": 0.0, "currency": "USD", "name": "Insurance"}],
+            "extra_charges": [
+                {"amount": 115.9, "currency": "USD", "name": "Base charge"}
+            ],
+            "meta": {"service_name": "usps_global_express_guaranteed_envelopes"},
             "service": "usps_global_express_guaranteed_envelopes",
             "total_charge": 115.9,
-            "meta": {"service_name": "usps_global_express_guaranteed_envelopes"},
         },
         {
-            "base_charge": 82.45,
             "carrier_id": "usps_international",
             "carrier_name": "usps_international",
             "currency": "USD",
-            "extra_charges": [{"amount": 0.0, "currency": "USD", "name": "Insurance"}],
+            "extra_charges": [
+                {"amount": 82.45, "currency": "USD", "name": "Base charge"}
+            ],
+            "meta": {"service_name": "usps_priority_mail_express_international"},
             "service": "usps_priority_mail_express_international",
             "total_charge": 82.45,
-            "meta": {"service_name": "usps_priority_mail_express_international"},
         },
         {
-            "base_charge": 55.35,
             "carrier_id": "usps_international",
             "carrier_name": "usps_international",
             "currency": "USD",
-            "extra_charges": [{"amount": 0.0, "currency": "USD", "name": "Insurance"}],
+            "extra_charges": [
+                {"amount": 55.35, "currency": "USD", "name": "Base charge"}
+            ],
+            "meta": {"service_name": "usps_priority_mail_international"},
             "service": "usps_priority_mail_international",
             "total_charge": 55.35,
-            "meta": {"service_name": "usps_priority_mail_international"},
         },
     ],
     [],
@@ -136,7 +140,7 @@ RATE_REQUEST_XML = """<IntlRateV2Request USERID="username">
         <ExtraServices>
             <ExtraService>106</ExtraService>
         </ExtraServices>
-        
+
         <DestinationPostalCode>2046</DestinationPostalCode>
     </Package>
 </IntlRateV2Request>

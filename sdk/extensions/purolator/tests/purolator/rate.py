@@ -38,9 +38,7 @@ class TestPurolatorQuote(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_RATE_RESPONSE)
 
 
 if __name__ == "__main__":
@@ -111,14 +109,11 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
 PARSED_RATE_RESPONSE = [
     [
         {
-            "base_charge": 62.35,
             "carrier_id": "purolator",
             "carrier_name": "purolator",
             "currency": "CAD",
-            "duties_and_taxes": 5.15,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 62.35, "currency": "CAD", "name": "Base charge"},
                 {"amount": 5.15, "currency": "CAD", "name": "GST"},
                 {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
                 {"amount": 2.81, "currency": "CAD", "name": "Fuel"},
@@ -134,14 +129,11 @@ PARSED_RATE_RESPONSE = [
             "transit_days": 1,
         },
         {
-            "base_charge": 55.0,
             "carrier_id": "purolator",
             "carrier_name": "purolator",
             "currency": "CAD",
-            "duties_and_taxes": 4.77,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 55.0, "currency": "CAD", "name": "Base charge"},
                 {"amount": 4.77, "currency": "CAD", "name": "GST"},
                 {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
                 {"amount": 2.48, "currency": "CAD", "name": "Fuel"},
@@ -157,14 +149,11 @@ PARSED_RATE_RESPONSE = [
             "transit_days": 1,
         },
         {
-            "base_charge": 46.15,
             "carrier_id": "purolator",
             "carrier_name": "purolator",
             "currency": "CAD",
-            "duties_and_taxes": 4.3,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 46.15, "currency": "CAD", "name": "Base charge"},
                 {"amount": 4.3, "currency": "CAD", "name": "GST"},
                 {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
                 {"amount": 2.08, "currency": "CAD", "name": "Fuel"},
@@ -180,14 +169,11 @@ PARSED_RATE_RESPONSE = [
             "transit_days": 1,
         },
         {
-            "base_charge": 29.6,
             "carrier_id": "purolator",
             "carrier_name": "purolator",
             "currency": "CAD",
-            "duties_and_taxes": 3.44,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 29.6, "currency": "CAD", "name": "Base charge"},
                 {"amount": 3.44, "currency": "CAD", "name": "GST"},
                 {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
                 {"amount": 1.33, "currency": "CAD", "name": "Fuel"},
@@ -203,14 +189,11 @@ PARSED_RATE_RESPONSE = [
             "transit_days": 4,
         },
         {
-            "base_charge": 87.69,
             "carrier_id": "purolator",
             "carrier_name": "purolator",
             "currency": "CAD",
-            "duties_and_taxes": 6.47,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 87.69, "currency": "CAD", "name": "Base charge"},
                 {"amount": 6.47, "currency": "CAD", "name": "GST"},
                 {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
                 {"amount": 3.95, "currency": "CAD", "name": "Fuel"},
@@ -401,13 +384,13 @@ RATE_REQUEST_WITH_PRESET_XML = """<soap:Envelope xmlns:soap="http://schemas.xmls
 
 RATE_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
     <s:Header>
-        <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v1" 
+        <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v1"
             xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
             <h:ResponseReference>Rating Example</h:ResponseReference>
         </h:ResponseContext>
     </s:Header>
     <s:Body>
-        <GetFullEstimateResponse xmlns="http://purolator.com/pws/datatypes/v1" 
+        <GetFullEstimateResponse xmlns="http://purolator.com/pws/datatypes/v1"
             xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
             <ResponseInformation>
                 <Errors/>

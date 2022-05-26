@@ -16,7 +16,7 @@ def register_signals():
     signals.post_delete.connect(shipment_cancelled, sender=models.Shipment)
     signals.post_save.connect(tracker_updated, sender=models.Tracking)
 
-    logger.info("webhooks signals registered...")
+    logger.info("karrio.events signals registered...")
 
 
 @utils.disable_for_loaddata

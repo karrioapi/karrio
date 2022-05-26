@@ -18,12 +18,16 @@ class TestDHLRating(unittest.TestCase):
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         serialized_request = re.sub(
-            "<MessageTime>[^>]+</MessageTime>",
+            "                <MessageTime>[^>]+</MessageTime>",
             "",
             re.sub(
-                "<Date>[^>]+</Date>",
+                "            <Date>[^>]+</Date>",
                 "",
-                re.sub("<ReadyTime>[^>]+</ReadyTime>", "", request.serialize()),
+                re.sub(
+                    "            <ReadyTime>[^>]+</ReadyTime>",
+                    "",
+                    request.serialize(),
+                ),
             ),
         )
 
@@ -36,12 +40,16 @@ class TestDHLRating(unittest.TestCase):
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         serialized_request = re.sub(
-            "<MessageTime>[^>]+</MessageTime>",
+            "                <MessageTime>[^>]+</MessageTime>",
             "",
             re.sub(
-                "<Date>[^>]+</Date>",
+                "            <Date>[^>]+</Date>",
                 "",
-                re.sub("<ReadyTime>[^>]+</ReadyTime>", "", request.serialize()),
+                re.sub(
+                    "            <ReadyTime>[^>]+</ReadyTime>",
+                    "",
+                    request.serialize(),
+                ),
             ),
         )
 
@@ -58,9 +66,8 @@ class TestDHLRating(unittest.TestCase):
         with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
-            )
+
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_get_rate_invalid_destination(self):
         ca_account_gateway = karrio.gateway["dhl_express"].create(
@@ -83,9 +90,9 @@ class TestDHLRating(unittest.TestCase):
             Rating.fetch(invalid_destination_request).from_(ca_account_gateway).parse()
         )
 
-        self.assertEqual(
+        self.assertListEqual(
             DP.to_dict(parsed_response),
-            DP.to_dict(ParsedInvalidDestinationResponse),
+            ParsedInvalidDestinationResponse,
         )
 
     def test_get_rate_invalid_origin(self):
@@ -226,32 +233,29 @@ ParsedRateMissingArgsError = [
 ParsedRateResponse = [
     [
         {
-            "base_charge": 195.32,
-            "carrier_name": "dhl_express",
             "carrier_id": "carrier_id",
+            "carrier_name": "dhl_express",
             "currency": "CAD",
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
-            "transit_days": 5,
             "extra_charges": [
-                {"amount": 12.7, "currency": "CAD", "name": "FUEL SURCHARGE"}
+                {"amount": 195.32, "currency": "CAD", "name": "Base charge"},
+                {"amount": 12.7, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
             "meta": {"service_name": "dhl_express_worldwide_doc"},
             "service": "dhl_express_worldwide_doc",
             "total_charge": 208.02,
+            "transit_days": 5,
         },
         {
-            "base_charge": 213.47,
-            "carrier_name": "dhl_express",
             "carrier_id": "carrier_id",
+            "carrier_name": "dhl_express",
             "currency": "CAD",
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
-            "transit_days": 5,
-            "extra_charges": [],
+            "extra_charges": [
+                {"amount": 213.47, "currency": "CAD", "name": "Base charge"}
+            ],
             "meta": {"service_name": "dhl_express_easy_doc"},
             "service": "dhl_express_easy_doc",
             "total_charge": 213.47,
+            "transit_days": 5,
         },
     ],
     [],
@@ -313,7 +317,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
     <GetQuote>
         <Request>
             <ServiceHeader>
-                
+
                 <MessageReference>1234567890123456789012345678901</MessageReference>
                 <SiteID>site_id</SiteID>
                 <Password>password</Password>
@@ -329,8 +333,8 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
         </From>
         <BkgDetails>
             <PaymentCountryCode>CA</PaymentCountryCode>
-            
-            
+
+
             <DimensionUnit>IN</DimensionUnit>
             <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
@@ -369,7 +373,7 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
     <GetQuote>
         <Request>
             <ServiceHeader>
-                
+
                 <MessageReference>1234567890123456789012345678901</MessageReference>
                 <SiteID>site_id</SiteID>
                 <Password>password</Password>
@@ -385,8 +389,8 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
         </From>
         <BkgDetails>
             <PaymentCountryCode>CA</PaymentCountryCode>
-            
-            
+
+
             <DimensionUnit>CM</DimensionUnit>
             <WeightUnit>KG</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>

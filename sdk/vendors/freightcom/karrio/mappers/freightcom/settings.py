@@ -1,4 +1,4 @@
-"""PurplShip freightcom connection settings."""
+"""Karrio freightcom connection settings."""
 
 import attr
 from karrio.providers.freightcom.utils import Settings as BaseSettings

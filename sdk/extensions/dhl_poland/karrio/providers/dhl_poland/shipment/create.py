@@ -320,4 +320,5 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     return Serializable(
         request,
         lambda req: settings.serialize(req, "createShipment", settings.server_url),
+        logged=True,
     )

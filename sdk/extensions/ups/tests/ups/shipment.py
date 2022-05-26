@@ -527,7 +527,7 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
 </tns:Envelope>
 """
 
-ShipmentCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0">
+ShipmentCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -541,7 +541,11 @@ ShipmentCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.o
     </tns:Header>
     <tns:Body>
         <void:VoidShipmentRequest>
-            <common:Request/>
+            <common:Request>
+                <common:TransactionReference>
+                    <common:CustomerContext>1ZWA82900191640782</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Request>
             <void:VoidShipment>
                 <void:ShipmentIdentificationNumber>1ZWA82900191640782</void:ShipmentIdentificationNumber>
             </void:VoidShipment>

@@ -61,7 +61,7 @@ class ParcelList(GenericAPIView):
         )
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
-        print(request.user, request.org)
+
         return self.get_paginated_response(response)
 
     @swagger_auto_schema(

@@ -66,7 +66,12 @@ def _extract_package_rate(
             taxes = rate.TaxCharges
             itemized_charges = rate.ItemizedCharges + taxes
 
-        extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
+        charges = [
+            ("Base charge", rate.TransportationCharges.MonetaryValue),
+            ("Taxes", sum(c.MonetaryValue for c in taxes)),
+            (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
+            *((c.Code, c.MonetaryValue) for c in itemized_charges),
+        ]
         estimated_arrival = (
             XP.find("EstimatedArrival", detail_node, EstimatedArrivalType, first=True)
             or EstimatedArrivalType()
@@ -85,29 +90,18 @@ def _extract_package_rate(
                 carrier_id=settings.carrier_id,
                 currency=currency,
                 service=service.name_or_key,
-                base_charge=NF.decimal(rate.TransportationCharges.MonetaryValue),
                 total_charge=NF.decimal(total_charges.MonetaryValue),
-                duties_and_taxes=reduce(
-                    lambda total, charge: total + NF.decimal(charge.MonetaryValue),
-                    taxes or [],
-                    0.0,
-                ),
-                extra_charges=reduce(
-                    lambda total, charge: (
-                        total
-                        + [
-                            ChargeDetails(
-                                name=charge.Code,
-                                amount=NF.decimal(charge.MonetaryValue),
-                                currency=charge.CurrencyCode,
-                            )
-                        ]
-                    ),
-                    [charge for charge in extra_charges if charge is not None and charge.Code is not None],
-                    [],
-                ),
+                extra_charges=[
+                    ChargeDetails(
+                        name=name,
+                        amount=NF.decimal(amount),
+                        currency=currency,
+                    )
+                    for name, amount in charges
+                    if name is not None or not amount
+                ],
                 transit_days=NF.integer(transit_days),
-                meta=dict(service_name=service.name_or_key)
+                meta=dict(service_name=service.name_or_key),
             )
         ]
 
@@ -128,7 +122,7 @@ def rate_request(
             SubVersion=None,
             TransactionReference=TransactionReferenceType(
                 CustomerContext=payload.reference,
-                TransactionIdentifier=getattr(payload, 'id', None)
+                TransactionIdentifier=getattr(payload, "id", None),
             ),
         ),
         PickupType=None,
@@ -172,7 +166,8 @@ def rate_request(
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
                 UOMCodeDescriptionType(Code=service.value, Description=None)
-                if service is not None else None
+                if service is not None
+                else None
             ),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
@@ -181,7 +176,8 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=(
-                            mps_packaging or PackagingType[
+                            mps_packaging
+                            or PackagingType[
                                 package.packaging_type or "your_packaging"
                             ].value
                         ),
@@ -202,7 +198,8 @@ def rate_request(
                                 package.height.value,
                                 package.width.value,
                             ]
-                        ) else None
+                        )
+                        else None
                     ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
@@ -236,6 +233,7 @@ def rate_request(
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
+        logged=True,
     )
 
 

@@ -7,35 +7,60 @@ from purolator_lib.service_availability_service_2_0_2 import (
     RequestContext,
 )
 from karrio.core.utils import Serializable, Element, create_envelope, Envelope, XP
-from karrio.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
+from karrio.core.models import (
+    AddressValidationRequest,
+    Message,
+    AddressValidationDetails,
+    Address,
+)
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.error import parse_error_response
 
 
-def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
+def parse_address_validation_response(
+    response: Element, settings: Settings
+) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     reply = XP.to_object(
         ValidateCityPostalCodeZipResponse,
-        next(iter(response.xpath(".//*[local-name() = $name]", name="ValidateCityPostalCodeZipResponse")), None)
+        next(
+            iter(
+                response.xpath(
+                    ".//*[local-name() = $name]",
+                    name="ValidateCityPostalCodeZipResponse",
+                )
+            ),
+            None,
+        ),
     )
-    address: ShortAddress = next((result.Address for result in reply.SuggestedAddresses.SuggestedAddress), None)
+    address: ShortAddress = next(
+        (result.Address for result in reply.SuggestedAddresses.SuggestedAddress), None
+    )
     success = len(errors) == 0
-    validation_details = AddressValidationDetails(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        success=success,
-        complete_address=Address(
-            city=address.City,
-            state_code=address.Province,
-            country_code=address.Country,
-            postal_code=address.PostalCode
-        ) if address is not None else None
-    ) if success else None
+    validation_details = (
+        AddressValidationDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            success=success,
+            complete_address=Address(
+                city=address.City,
+                state_code=address.Province,
+                country_code=address.Country,
+                postal_code=address.PostalCode,
+            )
+            if address is not None
+            else None,
+        )
+        if success
+        else None
+    )
 
     return validation_details, errors
 
 
-def address_validation_request(payload: AddressValidationRequest, settings: Settings) -> Serializable[Envelope]:
+def address_validation_request(
+    payload: AddressValidationRequest, settings: Settings
+) -> Serializable[Envelope]:
 
     request = create_envelope(
         header_content=RequestContext(
@@ -56,7 +81,7 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
                     )
                 ]
             )
-        )
+        ),
     )
 
-    return Serializable(request, standard_request_serializer)
+    return Serializable(request, standard_request_serializer, logged=True)

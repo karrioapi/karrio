@@ -18,14 +18,20 @@ from karrio.providers.purolator.utils import Settings, standard_request_serializ
 def parse_shipment_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    void_response = XP.find("VoidShipmentResponse", response, VoidShipmentResponse, first=True)
+    void_response = XP.find(
+        "VoidShipmentResponse", response, VoidShipmentResponse, first=True
+    )
     voided = void_response is not None and void_response.ShipmentVoided
-    cancellation = ConfirmationDetails(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        success=True,
-        operation="Cancel Shipment",
-    ) if voided else None
+    cancellation = (
+        ConfirmationDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            success=True,
+            operation="Cancel Shipment",
+        )
+        if voided
+        else None
+    )
 
     return cancellation, parse_error_response(response, settings)
 
@@ -42,9 +48,7 @@ def shipment_cancel_request(
             RequestReference="",
             UserToken=settings.user_token,
         ),
-        body_content=VoidShipmentRequest(
-            PIN=PIN(Value=payload.shipment_identifier)
-        ),
+        body_content=VoidShipmentRequest(PIN=PIN(Value=payload.shipment_identifier)),
     )
 
-    return Serializable(request, standard_request_serializer)
+    return Serializable(request, standard_request_serializer, logged=True)

@@ -18,10 +18,11 @@ BASE_PATH = getattr(settings, "BASE_PATH", "")
 
 
 class References(Serializer):
+    VERSION = CharField()
     APP_NAME = CharField()
-    APP_VERSION = CharField()
     APP_WEBSITE = CharField()
     CUSTOM_CARRIER_DEFINITION = BooleanField()
+    DATA_IMPORT_EXPORT = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()

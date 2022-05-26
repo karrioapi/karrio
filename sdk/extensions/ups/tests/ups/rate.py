@@ -32,24 +32,23 @@ class TestUPSRating(unittest.TestCase):
         with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
-            )
+
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error(self):
         with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateteParsingError)
-            )
+
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateteParsingError)
 
     def test_parse_rate_missing_args_error(self):
         with patch("karrio.mappers.ups.proxy.http") as mock:
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateMissingArgsError)
+
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedRateMissingArgsError
             )
 
 
@@ -150,14 +149,16 @@ ParsedRateMissingArgsError = [
 ParsedRateResponse = [
     [
         {
-            "base_charge": 9.86,
-            "carrier_name": "ups",
             "carrier_id": "ups",
+            "carrier_name": "ups",
             "currency": "USD",
-            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": 9.86, "currency": "USD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Taxes"},
+            ],
+            "meta": {"service_name": "ups_ground"},
             "service": "ups_ground",
             "total_charge": 9.86,
-            "meta": {"service_name": "ups_ground"},
         }
     ],
     [],

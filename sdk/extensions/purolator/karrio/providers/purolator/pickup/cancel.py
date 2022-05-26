@@ -25,7 +25,8 @@ def parse_pickup_cancel_response(
             success=True,
             operation="Cancel Pickup",
         )
-        if not any(errors) else None
+        if not any(errors)
+        else None
     )
 
     return cancellation, errors
@@ -48,4 +49,6 @@ def pickup_cancel_request(
         ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version="v1"))
+    return Serializable(
+        request, partial(standard_request_serializer, version="v1"), logged=True
+    )

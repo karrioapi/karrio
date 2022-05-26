@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.purolator"
-version = "2022.3"
+version = "2022.4"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - Purolator Shipping Extension"

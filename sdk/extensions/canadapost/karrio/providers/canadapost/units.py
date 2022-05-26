@@ -50,7 +50,7 @@ class PackagePresets(Flag):
     )
 
 
-MeasurementOptions = MeasurementOptionsType(quant=0.1)
+MeasurementOptions = MeasurementOptionsType(quant=0.1, min_kg=0.01, min_in=0.01)
 
 
 class LabelType(Enum):
@@ -114,6 +114,9 @@ class OptionCode(Enum):
     canadapost_return_to_sender = Spec.asKey("RTS")
     canadapost_abandon = Spec.asKey("ABAN")
 
+    """ Custom Option """
+    canadapost_cost_center = Spec.asValue("cost-centre")
+
     """ Unified Option type mapping """
     insurance = canadapost_coverage
     cash_on_delivery = canadapost_collect_on_delivery
@@ -124,6 +127,10 @@ INTERNATIONAL_NON_DELIVERY_OPTION = [
     OptionCode.canadapost_return_at_senders_expense.name,
     OptionCode.canadapost_return_to_sender.name,
     OptionCode.canadapost_abandon.name,
+]
+
+CUSTOM_OPTIONS = [
+    OptionCode.canadapost_cost_center.name,
 ]
 
 

@@ -169,6 +169,7 @@ class TrackingRequest:
     tracking_numbers: List[str]
     language_code: str = None
     level_of_details: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -267,13 +268,10 @@ class RateDetails:
 
     carrier_name: str
     carrier_id: str
+    service: str
     currency: str
-    transit_days: int = None
-    service: str = None
-    discount: float = None
-    base_charge: float = 0.0
     total_charge: float = 0.0
-    duties_and_taxes: float = None
+    transit_days: int = None
     extra_charges: List[ChargeDetails] = JList[ChargeDetails]
     meta: dict = None
     id: str = None
@@ -289,6 +287,7 @@ class TrackingDetails:
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     delivered: bool = None
     estimated_delivery: str = None
+    meta: dict = None
 
 
 @attr.s(auto_attribs=True)

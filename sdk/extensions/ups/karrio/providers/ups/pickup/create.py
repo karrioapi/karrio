@@ -158,6 +158,7 @@ def _create_pickup_request(
         default_request_serializer(
             "v11", 'xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1"'
         ),
+        logged=True,
     )
 
 

@@ -53,9 +53,7 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         else None
     )
     pickup_date = (
-        DF.fdate(pickup.NextPickupDate)
-        if pickup.NextPickupDate is not None
-        else None
+        DF.fdate(pickup.NextPickupDate) if pickup.NextPickupDate is not None else None
     )
 
     return PickupDetails(
@@ -116,20 +114,25 @@ def pickup_update_request(
             RemotePickupFlag="Y",
             weight=WeightSeg(
                 Weight=packages.weight.value,
-                WeightUnit=DHLWeightUnit[packages.weight.unit].value
+                WeightUnit=DHLWeightUnit[packages.weight.unit].value,
             ),
         ),
         OriginSvcArea=None,
     )
-    return Serializable(request, _request_serializer)
+
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: ModifyPURequest) -> str:
-    xml_str = XP.export(
-        request,
-        name_="req:ModifyPURequest",
-        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"',
-    ).replace("dhlPickup:", "").replace('schemaVersion="3"', 'schemaVersion="3.0"')
+    xml_str = (
+        XP.export(
+            request,
+            name_="req:ModifyPURequest",
+            namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"',
+        )
+        .replace("dhlPickup:", "")
+        .replace('schemaVersion="3"', 'schemaVersion="3.0"')
+    )
 
     xml_str = reformat_time("CloseTime", reformat_time("ReadyByTime", xml_str))
     return xml_str

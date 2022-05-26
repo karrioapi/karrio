@@ -1,0 +1,147 @@
+{
+  "clientReferenceId": "minim laborum in",
+  "containers": [
+    {
+      "containerReferenceId": "id in",
+      "dimensions": {
+        "height": 15756715.873853505,
+        "length": 18111378.798239246,
+        "unit": "IN",
+        "width": -37969327.83731184
+      },
+      "items": [
+        {
+          "quantity": -17677439.335805193,
+          "title": "quis ",
+          "unitPrice": {
+            "unit": "mol",
+            "value": -79835640.89067078
+          },
+          "unitWeight": {
+            "unit": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            },
+            "value": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            }
+          }
+        },
+        {
+          "quantity": -9926465.702011853,
+          "title": "dolor",
+          "unitPrice": {
+            "unit": "nis",
+            "value": 7566035.36459583
+          },
+          "unitWeight": {
+            "unit": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            },
+            "value": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            }
+          }
+        }
+      ],
+      "value": {
+        "unit": "eli",
+        "value": -68067369.76533543
+      },
+      "weight": {
+        "unit": "kg",
+        "value": -73192292.64839828
+      },
+      "containerType": "PACKAGE"
+    },
+    {
+      "containerReferenceId": "ex sint in commodo",
+      "dimensions": {
+        "height": -19407586.03698893,
+        "length": -55185834.27229706,
+        "unit": "CM",
+        "width": -31708593.243751436
+      },
+      "items": [
+        {
+          "quantity": 90189062.57375425,
+          "title": "et t",
+          "unitPrice": {
+            "unit": "in ",
+            "value": -97347805.76425956
+          },
+          "unitWeight": {
+            "unit": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            },
+            "value": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            }
+          }
+        },
+        {
+          "quantity": 13643134.63265416,
+          "title": "commodo magna veniam laboru",
+          "unitPrice": {
+            "unit": "dol",
+            "value": 3800656.253087938
+          },
+          "unitWeight": {
+            "unit": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            },
+            "value": {
+              "value": "<Error: Too many levels of nesting to fake this schema>"
+            }
+          }
+        }
+      ],
+      "value": {
+        "unit": "ven",
+        "value": 66459370.84915614
+      },
+      "weight": {
+        "unit": "g",
+        "value": -18348961.925478593
+      },
+      "containerType": "PACKAGE"
+    }
+  ],
+  "labelSpecification": {
+    "labelFormat": "PNG",
+    "labelStockSize": "4x6"
+  },
+  "serviceType": "Amazon Shipping Standard",
+  "shipFrom": {
+    "addressLine1": "est sint",
+    "city": "laborum non Ut ullamco",
+    "countryCode": "oc",
+    "name": "reprehenderit",
+    "postalCode": "cillum",
+    "stateOrRegion": "eu dolore",
+    "addressLine2": "sed magna tempor dolore",
+    "addressLine3": "enim cillum Ut laborum",
+    "email": "sit et",
+    "copyEmails": [
+      "ut est minim aliqua",
+      "cupidatat qui"
+    ],
+    "phoneNumber": "ut dolore pariatur e"
+  },
+  "shipTo": {
+    "addressLine1": "qui eu",
+    "city": "deserunt ",
+    "countryCode": "qu",
+    "name": "eu ",
+    "postalCode": "incididunt ut",
+    "stateOrRegion": "velit sunt fugiat est proi",
+    "addressLine2": "sunt consectet",
+    "addressLine3": "id sint voluptate sed",
+    "email": "fugiat",
+    "copyEmails": [
+      "non incididunt velit id dolore",
+      "proident in"
+    ],
+    "phoneNumber": "ut veniam l"
+  },
+  "shipDate": "1999-02-28T03:04:09.392Z"
+}

@@ -164,7 +164,7 @@ ParsedMultiPieceShipmentResponse = [
         "docs": {"label": ANY},
         "meta": {
             "service_name": "Premium",
-            "tracking_identifiers": ANY,
+            "shipment_identifiers": ANY,
             "tracking_numbers": ANY,
         },
         "shipment_identifier": ANY,

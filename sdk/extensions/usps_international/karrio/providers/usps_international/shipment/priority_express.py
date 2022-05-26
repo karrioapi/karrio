@@ -186,4 +186,4 @@ def shipment_request(
         VendorProductVersionNumber=None,
     )
 
-    return Serializable(request, XP.export)
+    return Serializable(request, XP.export, logged=True)

@@ -9,27 +9,26 @@ from dicom_lib.rates import (
 )
 from karrio.core.units import Packages, Services, Options
 from karrio.core.utils import Serializable, DP, NF
-from karrio.core.models import (
-    ChargeDetails,
-    RateRequest,
-    RateDetails,
-    Message
-)
+from karrio.core.models import ChargeDetails, RateRequest, RateDetails, Message
 
 from karrio.providers.dicom.units import (
     UnitOfMeasurement,
     ParcelType,
     Service,
     Option,
-    PaymentType
+    PaymentType,
 )
 from karrio.providers.dicom.error import parse_error_response
 from karrio.providers.dicom.utils import Settings
 
 
-def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_rate_response(
+    response: dict, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     errors = parse_error_response(response, settings)
-    rate_response = (DP.to_object(RateResponse, response) if 'rates' in response else RateResponse())
+    rate_response = (
+        DP.to_object(RateResponse, response) if "rates" in response else RateResponse()
+    )
     details = [
         _extract_details(rate, rate_response, settings)
         for rate in (rate_response.rates or [])
@@ -38,7 +37,15 @@ def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDe
     return details, errors
 
 
-def _extract_details(rate: Rate, response: RateResponse, settings: Settings) -> RateDetails:
+def _extract_details(
+    rate: Rate, response: RateResponse, settings: Settings
+) -> RateDetails:
+    charges = [
+        ("Base Charge", rate.basicCharge),
+        ("Discount", rate.discountAmount),
+        ("Taxes", rate.taxes),
+        *((charge.name, charge.amount) for charge in rate.surcharges),
+    ]
 
     return RateDetails(
         carrier_id=settings.carrier_id,
@@ -46,25 +53,27 @@ def _extract_details(rate: Rate, response: RateResponse, settings: Settings) -> 
         currency="CAD",
         transit_days=response.delay,
         service=Service(rate.rateType),
-        discount=NF.decimal(rate.discountAmount),
-        base_charge=NF.decimal(rate.basicCharge),
         total_charge=NF.decimal(rate.total),
-        duties_and_taxes=NF.decimal(rate.taxes),
         extra_charges=[
             ChargeDetails(
-                name=charge.name,
-                amount=NF.decimal(charge.amount),
                 currency="CAD",
+                name=name,
+                amount=NF.decimal(charge),
             )
-            for charge in rate.surcharges
+            for name, charge in charges
+            if charge
         ],
-        meta=dict(accountType=rate.accountType)
+        meta=dict(accountType=rate.accountType),
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DicomRateRequest]:
+def rate_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[DicomRateRequest]:
     packages = Packages(payload.parcels)
-    service = (Services(payload.services, Service).first or Service.dicom_ground_delivery).value
+    service = (
+        Services(payload.services, Service).first or Service.dicom_ground_delivery
+    ).value
     options = Options(payload.options, Option)
 
     request = DicomRateRequest(
@@ -76,13 +85,13 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Dicom
             postalCode=payload.shipper.postal_code,
             provinceCode=payload.shipper.state_code,
             countryCode=payload.shipper.country_code,
-            name=(payload.shipper.company_name or payload.shipper.person_name)
+            name=(payload.shipper.company_name or payload.shipper.person_name),
         ),
         consignee=Address(
             postalCode=payload.recipient.postal_code,
             provinceCode=payload.recipient.state_code,
             countryCode=payload.recipient.country_code,
-            name=(payload.recipient.company_name or payload.recipient.person_name)
+            name=(payload.recipient.company_name or payload.recipient.person_name),
         ),
         parcels=[
             Parcel(
@@ -106,12 +115,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Dicom
         promoCodes=None,
         surcharges=[
             Surcharge(
-                type=getattr(option, 'key', option),
-                value=getattr(option, 'value', None)
+                type=getattr(option, "key", option),
+                value=getattr(option, "value", None),
             )
             for _, option in options
         ],
         appointment=None,
     )
 
-    return Serializable(request, DP.to_dict)
+    return Serializable(request, DP.to_dict, logged=True)

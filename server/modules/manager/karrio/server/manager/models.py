@@ -70,18 +70,18 @@ class Address(OwnedEntity):
     @property
     def shipment(self):
         if hasattr(self, "shipper_shipment"):
-            return self.shipper_shipment.first()
+            return self.shipper_shipment
         if hasattr(self, "recipient_shipment"):
-            return self.recipient_shipment.first()
+            return self.recipient_shipment
 
         return None
 
     @property
     def order(self):
         if hasattr(self, "shipper_order"):
-            return self.shipper_order.first()
+            return self.shipper_order
         if hasattr(self, "recipient_order"):
-            return self.recipient_order.first()
+            return self.recipient_order
 
         return None
 
@@ -216,7 +216,7 @@ class Commodity(OwnedEntity):
     def shipment(self):
         related = self.customs or self.parcel
 
-        getattr(related, "shipment", None)
+        return getattr(related, "shipment", None)
 
     @property
     def order(self):
@@ -451,6 +451,10 @@ class Tracking(OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=partial(identity, value=[])
     )
+    options = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
+    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )

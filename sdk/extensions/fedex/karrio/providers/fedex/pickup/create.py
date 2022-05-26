@@ -154,7 +154,7 @@ def _pickup_request(
         CountryRelationship=None,
     )
 
-    return Serializable(request, _request_serializer)
+    return Serializable(request, _request_serializer, logged=True)
 
 
 def _request_serializer(request: CreatePickupRequest) -> str:
@@ -177,7 +177,9 @@ def _get_availability(payload: PickupRequest, settings: Settings):
 def _create_pickup(
     availability_response: str, payload: PickupRequest, settings: Settings
 ):
-    availability = XP.to_object(PickupAvailabilityReply, XP.to_xml(availability_response))
+    availability = XP.to_object(
+        PickupAvailabilityReply, XP.to_xml(availability_response)
+    )
     data = _pickup_request(payload, settings) if availability else None
 
     return Job(id="create_pickup", data=data, fallback="")

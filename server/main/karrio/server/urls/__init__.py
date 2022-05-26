@@ -28,12 +28,16 @@ admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 admin.site.index_template = "karrio/admin.html"
-admin.site.unregister(Group)
 
-if getattr(settings, "MULTI_TENANTS", False):
-    admin.site.unregister([Config])
+try:
+    admin.site.unregister(Group)
 
-admin.autodiscover()
+    if getattr(settings, "MULTI_TENANTS", False):
+        admin.site.unregister([Config])
+
+    admin.autodiscover()
+except:
+    pass
 
 urlpatterns = [
     path(

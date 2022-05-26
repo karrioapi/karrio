@@ -1,17 +1,12 @@
-import typing
 import graphene
-import django_filters
 from graphene.types import generic
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from karrio.core.utils import DP
-from karrio.server.events.serializers import EventTypes
-import karrio.server.core.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
-import karrio.server.events.models as events
 import karrio.server.graph.models as graph
 import karrio.server.user.models as auth
 import karrio.server.core.models as core
@@ -24,50 +19,6 @@ class UserType(utils.BaseObjectType):
     class Meta:
         model = User
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
-
-
-class LogFilter(django_filters.FilterSet):
-    api_endpoint = django_filters.CharFilter(field_name="path", lookup_expr="icontains")
-    date_after = django_filters.DateTimeFilter(
-        field_name="requested_at", lookup_expr="gte"
-    )
-    date_before = django_filters.DateTimeFilter(
-        field_name="requested_at", lookup_expr="lte"
-    )
-    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    method = django_filters.MultipleChoiceFilter(
-        field_name="method",
-        choices=[
-            ("GET", "GET"),
-            ("POST", "POST"),
-            ("PATCH", "PATCH"),
-            ("DELETE", "DELETE"),
-        ],
-    )
-    status = django_filters.ChoiceFilter(
-        method="status_filter",
-        choices=[("succeeded", "succeeded"), ("failed", "failed")],
-    )
-    status_code = django_filters.TypedMultipleChoiceFilter(
-        coerce=int,
-        field_name="status_code",
-        choices=[(s, s) for s in utils.HTTP_STATUS],
-    )
-
-    class Meta:
-        model = core.APILog
-        fields: typing.List[str] = []
-
-    def status_filter(self, queryset, name, value):
-        if value == "succeeded":
-            return queryset.filter(status_code__range=[200, 399])
-        elif value == "failed":
-            return queryset.filter(status_code__range=[400, 599])
-
-        return queryset
-
-    def entity_filter(self, queryset, name, value):
-        return queryset.filter(response__icontains=value)
 
 
 class LogType(utils.BaseObjectType):
@@ -245,40 +196,6 @@ class TrackingEventType(graphene.ObjectType):
     time = graphene.String()
 
 
-class TrackerFilter(django_filters.FilterSet):
-    created_after = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    created_before = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
-    carrier_name = django_filters.MultipleChoiceFilter(
-        method="carrier_filter",
-        choices=[(c, c) for c in utils.CARRIER_NAMES],
-    )
-    status = django_filters.MultipleChoiceFilter(
-        field_name="status",
-        choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
-    )
-    test_mode = django_filters.BooleanFilter(field_name="test_mode")
-
-    class Meta:
-        model = manager.Tracking
-        fields: typing.List[str] = []
-
-    def carrier_filter(self, queryset, name, values):
-        _filters = [
-            Q(**{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False})
-            for value in values
-        ]
-        query = _filters.pop()
-
-        for item in _filters:
-            query |= item
-
-        return queryset.filter(query)
-
-
 class TrackerType(utils.BaseObjectType):
     carrier_id = graphene.String(required=True)
     carrier_name = graphene.String(required=True)
@@ -286,6 +203,8 @@ class TrackerType(utils.BaseObjectType):
     events = graphene.List(graphene.NonNull(TrackingEventType), default_value=[])
     messages = graphene.List(graphene.NonNull(MessageType), default_value=[])
     status = utils.TrackerStatusEnum(required=True)
+    meta = generic.GenericScalar()
+    options = generic.GenericScalar()
     metadata = generic.GenericScalar()
 
     class Meta:
@@ -305,84 +224,6 @@ class PaymentType(graphene.ObjectType):
     currency = utils.CurrencyCodeEnum(required=False)
     account_number = graphene.String()
     id = graphene.String()
-
-
-class ShipmentFilter(django_filters.FilterSet):
-    address = django_filters.CharFilter(
-        field_name="recipient__address_line1", lookup_expr="icontains"
-    )
-    created_after = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    created_before = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
-    carrier_name = django_filters.MultipleChoiceFilter(
-        method="carrier_filter",
-        choices=[(c, c) for c in utils.CARRIER_NAMES],
-    )
-    reference = django_filters.CharFilter(
-        field_name="reference", lookup_expr="icontains"
-    )
-    service = utils.CharInFilter(
-        method="service_filter", field_name="selected_rate__service", lookup_expr="in"
-    )
-    status = django_filters.MultipleChoiceFilter(
-        field_name="status",
-        choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
-    )
-    option_key = utils.CharInFilter(
-        field_name="options",
-        method="option_key_filter",
-    )
-    option_value = django_filters.CharFilter(
-        field_name="options",
-        method="option_value_filter",
-    )
-    metadata_key = utils.CharInFilter(
-        field_name="metadata",
-        method="metadata_key_filter",
-    )
-    metadata_value = django_filters.CharFilter(
-        field_name="metadata",
-        method="metadata_value_filter",
-    )
-    test_mode = django_filters.BooleanFilter(field_name="test_mode")
-
-    class Meta:
-        model = manager.Shipment
-        fields: typing.List[str] = []
-
-    def carrier_filter(self, queryset, name, values):
-        _filters = [
-            Q(
-                **{
-                    f"selected_rate_carrier__{value.replace('_', '')}settings__isnull": False
-                }
-            )
-            for value in values
-        ]
-        query = Q(meta__rate_provider__in=values)
-
-        for item in _filters:
-            query |= item
-
-        return queryset.filter(query)
-
-    def option_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_key=value))
-
-    def option_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__values__contains=value))
-
-    def metadata_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_key=value))
-
-    def metadata_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(metadata__values__contains=value))
-
-    def service_filter(self, queryset, name, values):
-        return queryset.filter(Q(selected_rate__service__in=values))
 
 
 class ShipmentType(utils.BaseObjectType):
@@ -441,78 +282,6 @@ class ShipmentType(utils.BaseObjectType):
 
     def resolve_tracker(self, info):
         return self.tracker
-
-
-class WebhookFilter(django_filters.FilterSet):
-    created_after = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    created_before = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
-    description = django_filters.CharFilter(
-        field_name="description", lookup_expr="icontains"
-    )
-    events = django_filters.MultipleChoiceFilter(
-        field_name="enabled_events",
-        method="events_filter",
-        choices=[(c.value, c.value) for c in list(EventTypes)],
-    )
-    disabled = django_filters.BooleanFilter(field_name="disabled")
-    test_mode = django_filters.BooleanFilter(field_name="test_mode")
-    url = django_filters.CharFilter(field_name="url", lookup_expr="icontains")
-
-    class Meta:
-        model = events.Webhook
-        fields: typing.List[str] = []
-
-    def events_filter(self, queryset, name, values):
-        return queryset.filter(
-            Q(enabled_events__contains=values) | Q(enabled_events__contains=["all"])
-        )
-
-
-class WebhookType(utils.BaseObjectType):
-    class Meta:
-        model = events.Webhook
-        exclude = ("failure_streak_count",)
-        interfaces = (utils.CustomNode,)
-
-
-class EventFilter(django_filters.FilterSet):
-    date_after = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    date_before = django_filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
-    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    type = django_filters.MultipleChoiceFilter(
-        field_name="type",
-        method="types_filter",
-        choices=[(c.value, c.value) for c in list(EventTypes) if c != EventTypes.all],
-    )
-
-    class Meta:
-        model = events.Event
-        fields: typing.List[str] = []
-
-    def entity_filter(self, queryset, name, value):
-        try:
-            return queryset.filter(data__icontains=value)
-        except:
-            return queryset
-
-    def types_filter(self, queryset, name, values):
-        return queryset.filter(Q(type__in=values))
-
-
-class EventType(utils.BaseObjectType):
-    data = generic.GenericScalar()
-
-    class Meta:
-        model = events.Event
-        interfaces = (utils.CustomNode,)
 
 
 class ServiceLevelType(utils.BaseObjectType):

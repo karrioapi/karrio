@@ -1,9 +1,9 @@
 import graphene
 import graphene_django.filter as django_filter
 
+import karrio.server.core.filters as filters
 import karrio.server.core.views.api as api
 import karrio.server.graph.models as graph
-import karrio.server.events.models as events
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -49,7 +49,7 @@ class Query:
         types.LogType,
         required=True,
         default_value=[],
-        filterset_class=types.LogFilter,
+        filterset_class=filters.LogFilter,
     )
 
     shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
@@ -57,7 +57,7 @@ class Query:
         types.ShipmentType,
         required=True,
         default_value=[],
-        filterset_class=types.ShipmentFilter,
+        filterset_class=filters.ShipmentFilters,
     )
 
     tracker = graphene.Field(types.TrackerType, id=graphene.String(required=True))
@@ -65,23 +65,7 @@ class Query:
         types.TrackerType,
         required=True,
         default_value=[],
-        filterset_class=types.TrackerFilter,
-    )
-
-    webhook = graphene.Field(types.WebhookType, id=graphene.String(required=True))
-    webhooks = django_filter.DjangoFilterConnectionField(
-        types.WebhookType,
-        required=True,
-        default_value=[],
-        filterset_class=types.WebhookFilter,
-    )
-
-    event = graphene.Field(types.EventType, id=graphene.String(required=True))
-    events = django_filter.DjangoFilterConnectionField(
-        types.EventType,
-        required=True,
-        default_value=[],
-        filterset_class=types.EventFilter,
+        filterset_class=filters.TrackerFilter,
     )
 
     @utils.login_required
@@ -148,22 +132,6 @@ class Query:
     @utils.login_required
     def resolve_trackers(self, info, **kwargs):
         return manager.Tracking.access_by(info.context)
-
-    @utils.login_required
-    def resolve_webhook(self, info, **kwargs):
-        return events.Webhook.access_by(info.context).filter(**kwargs).first()
-
-    @utils.login_required
-    def resolve_webhooks(self, info, **kwargs):
-        return events.Webhook.access_by(info.context)
-
-    @utils.login_required
-    def resolve_event(self, info, **kwargs):
-        return events.Event.access_by(info.context).filter(**kwargs).first()
-
-    @utils.login_required
-    def resolve_events(self, info, **kwargs):
-        return events.Event.access_by(info.context)
 
 
 class Mutation:
