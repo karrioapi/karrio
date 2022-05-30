@@ -2,7 +2,7 @@ from karrio.server.settings.base import *
 
 
 INSTALLED_APPS += [
-    "graphene_django",
+    "strawberry.django",
 ]
 
-GRAPHENE = {"SCHEMA": "karrio.server.graph.schema.schema", "MIDDLEWARE": []}
+# GRAPHENE = {"SCHEMA": "karrio.server.graph.schema.schema", "MIDDLEWARE": []}
