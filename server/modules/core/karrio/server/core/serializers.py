@@ -50,7 +50,13 @@ class TrackerStatus(Enum):
     delivered = "delivered"
 
 
+class OperationStatus(Enum):
+    succeeded = "succeeded"
+    failed = "failed"
+
+
 HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
+HTTPStatus: Enum = Enum("HTTPStatus", {f"HTTP_{s}": s for s in HTTP_STATUS})
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
 CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]

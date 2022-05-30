@@ -1,6 +1,5 @@
 import typing
 from django.db import transaction
-from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from karrio.server.serializers import (
@@ -240,8 +239,8 @@ class LabelTemplateModelSerializer(ModelSerializer):
 
 
 def create_carrier_model_serializers(partial: bool = False):
-    def _create_model_serializer(carrier_model):
-        _name = f"{carrier_model.__name__}"
+    def _create_model_serializer(carrier_name: str, carrier_model):
+        _name = carrier_name
         _extra_fields = {}
         _extra_exclude = []
 
@@ -303,8 +302,8 @@ def create_carrier_model_serializers(partial: bool = False):
         )
 
     return {
-        carrier.__name__.lower(): _create_model_serializer(carrier)
-        for carrier in providers.MODELS.values()
+        name: _create_model_serializer(name, model)
+        for name, model in providers.MODELS.items()
     }
 
 
@@ -329,7 +328,10 @@ class ConnectionModelSerializerBase(ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: Context, **kwargs):
-        name = next((k for k in validated_data.keys() if "settings" in k), "")
+        name = next(
+            (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
+            "",
+        )
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_data = validated_data.get(name, {})
         payload = {
@@ -367,7 +369,10 @@ class ConnectionModelSerializerBase(ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data: dict, context: Context, **kwargs):
-        name = next((k for k in validated_data.keys() if "settings" in k), "")
+        name = next(
+            (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
+            "",
+        )
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
 
         payload = {

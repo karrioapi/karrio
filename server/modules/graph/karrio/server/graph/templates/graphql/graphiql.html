@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
+  <meta name="theme-color" content="#ffffff">
+  <title>{{ APP_NAME }} | Graph</title>
+    <style>
+        html, body, #editor {
+          height: 100%;
+          margin: 0;
+          overflow: hidden;
+          width: 100%;
+        }
+        .admin-link {
+          position: fixed;
+          bottom: 44px;
+          right: 30px;
+          width: 40px;
+          height: 40px;
+          background-color: rgba(50, 50, 159, 70%);
+          border-radius: 50%;
+          z-index: 10;
+          box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+        }
+        @media screen and (max-width: 50rem) {
+          .admin-link {
+            bottom: 112px;
+          }
+        }
+
+        #graphiql {
+            height: 100vh;
+        }
+    </style>
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/graphiql-with-extensions@0.14.3/graphiqlWithExtensions.css"
+        integrity="sha384-GBqwox+q8UtVEyBLBKloN5QDlBDsQnuoSUfMeJH1ZtDiCrrk103D7Bg/WjIvl4ya" crossorigin="anonymous" />
+    <script src="https://unpkg.com/whatwg-fetch@2.0.3/fetch.js"
+        integrity="sha384-KaKx4aJnrltBb2dne61B/MRPA4uRfQvv6YW99RgjHax8TRjFxcC4BC19EEX0te/6"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"
+        integrity="sha384-qn+ML/QkkJxqn4LLs1zjaKxlTg2Bl/6yU/xBTJAgxkmNGc6kMZyeskAG0a7eJBR1"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"
+        integrity="sha384-85IMG5rvmoDsmMeWK/qUU4kwnYXVpC+o9hoHMLi4bpNR+gMEiPLrvkZCgsr7WWgV"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/graphiql-with-extensions@0.14.3/graphiqlWithExtensions.min.js"
+        integrity="sha384-TqI6gT2PjmSrnEOTvGHLad1U4Vm5VoyzMmcKK0C/PLCWTnwPyXhCJY6NYhC/tp19"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/js-cookie@3.0.0-rc.2/dist/js.cookie.umd.min.js"></script>
+
+    <!-- breaking changes in subscriptions-transport-ws since 0.9.0 -->
+    <script src="https://unpkg.com/subscriptions-transport-ws@0.8.3/browser/client.js"></script>
+    <script src="https://unpkg.com/graphiql-subscriptions-fetcher@0.0.2/browser/client.js"></script>
+</head>
+
+<body>
+    <div id="graphiql"></div>
+    <script>
+        var fetchURL = window.location.href;
+
+        function graphQLFetcher(graphQLParams) {
+            var headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            };
+
+            var csrfToken = Cookies.get('csrftoken');
+            if (csrfToken) {
+              headers['x-csrftoken'] = csrfToken;
+            }
+
+            return fetch(fetchURL, {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify(graphQLParams),
+            })
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (responseBody) {
+                    try {
+                        return JSON.parse(responseBody);
+                    } catch (error) {
+                        return responseBody;
+                    }
+                });
+        }
+
+        ReactDOM.render(
+            React.createElement(GraphiQLWithExtensions.GraphiQLWithExtensions, {
+                fetcher: graphQLFetcher,
+                graphiqlHeaderEditorEnabled: true,
+            }),
+            document.getElementById('graphiql'),
+        );
+    </script>
+
+    <a class="admin-link" href="{% url 'admin:index' %}" title="Admin Console">
+      <img src="{% static 'img/dashboard.svg' %}" width="26" style="margin: 7px;">
+    </a>
+</body>
+
+</html>

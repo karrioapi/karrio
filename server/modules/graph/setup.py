@@ -16,8 +16,9 @@ setup(
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "karrio.server.core",
-        "graphene-django",
+        # "graphene-django",
         "django-filter",
+        "strawberry-graphql",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
