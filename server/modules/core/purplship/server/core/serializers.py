@@ -441,6 +441,7 @@ class Payment(Serializer):
 
     paid_by = ChoiceField(
         required=False,
+        allow_null=True,
         choices=PAYMENT_TYPES,
         default=PAYMENT_TYPES[0][0],
         help_text="The payor type",
