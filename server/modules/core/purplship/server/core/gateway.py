@@ -171,7 +171,7 @@ class Shipments:
         carrier = (
             carrier
             or models.Carrier.objects.filter(
-                id=selected_rate.meta.get("carrier_connection_id")
+                id=(selected_rate.meta or {}).get("carrier_connection_id")
             ).first()
             or Carriers.first(
                 carrier_id=selected_rate.carrier_id,
