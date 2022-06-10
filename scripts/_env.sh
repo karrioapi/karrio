@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Python virtual environment helpers
-ROOT="$( cd "$( dirname $0 )/../" >/dev/null 2>&1 && pwd )"
+ROOT="$( pwd )"
 BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
 LOG_DIR=".karrio"
