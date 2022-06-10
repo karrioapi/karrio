@@ -540,7 +540,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
         # Update shipment tracking url if different from the current one
         try:
             url = reverse(
-                "purplship.server.manager:shipment-tracker",
+                "karrio.server.manager:shipment-tracker",
                 kwargs=dict(
                     tracking_number=shipment.tracking_number,
                     carrier_name=(
