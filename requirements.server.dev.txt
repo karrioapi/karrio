@@ -6,7 +6,7 @@ Django<=3.2.13
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
-# -e ./sdk/extensions/canadapost
+-e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
@@ -30,7 +30,7 @@ Django<=3.2.13
 karrio
 karrio.aramex
 karrio.australiapost
-karrio.canadapost
+# karrio.canadapost
 karrio.canpar
 karrio.dhl-express
 karrio.dhl-poland
