@@ -8,7 +8,11 @@ import karrio.server.providers.models as carriers
 def model_admin(model):
     class _Admin(admin.ModelAdmin):
         list_display = ("__str__", "test", "active")
-        exclude = ["active_users", "metadata"]
+        exclude = (
+            ["active_users", "metadata"]
+            if model.__name__ not in ["GenericSettings", "CanadaPostSettings"]
+            else ["active_users"]
+        )
         formfield_overrides = {
             models.CharField: {
                 "widget": forms.TextInput(

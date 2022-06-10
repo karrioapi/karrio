@@ -6,6 +6,7 @@ gateway = karrio.gateway["canadapost"].create(
         password="password",
         customer_number="2004381",
         contract_id="42708517",
+        metadata={"cost-center": "karrio-app"},
     )
 )
 

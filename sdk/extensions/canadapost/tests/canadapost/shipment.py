@@ -372,7 +372,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <show-insured-value>true</show-insured-value>
         </preferences>
         <references>
-            <cost-centre></cost-centre>
+            <cost-centre>karrio-app</cost-centre>
             <customer-ref-1></customer-ref-1>
         </references>
         <settlement-info>
