@@ -56,7 +56,7 @@ jstruct==2021.11
 karrio==2022.4
 karrio.aramex==2022.4
 karrio.australiapost==2022.4
-karrio.canadapost==2022.4
+karrio.canadapost==2022.4.1
 karrio.canpar==2022.4
 karrio.dhl-express==2022.4
 karrio.dhl-poland==2022.4
@@ -68,11 +68,11 @@ karrio.freightcom==2022.4
 karrio.purolator==2022.4
 karrio.royalmail==2022.4
 karrio.sendle==2022.4
-karrio.server==2022.4
-karrio.server.core==2022.4
+karrio.server==2022.4.1
+karrio.server.core==2022.4.1
 karrio.server.events==2022.4
 karrio.server.graph==2022.4
-karrio.server.manager==2022.4
+karrio.server.manager==2022.4.1
 karrio.server.pricing==2022.4
 karrio.server.proxy==2022.4
 karrio.sf-express==2022.4
