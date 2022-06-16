@@ -129,7 +129,13 @@ class Carrier(OwnedEntity):
 
     @property
     def gateway(self) -> Gateway:
-        return gateway[self.settings.carrier_name].create({**self.data.to_dict()})
+        _carrier_name = (
+            "generic"
+            if hasattr(self.settings, "custom_carrier_name")
+            else self.settings.carrier_name
+        )
+
+        return gateway[_carrier_name].create({**self.data.to_dict()})
 
 
 class ServiceLevel(OwnedEntity):

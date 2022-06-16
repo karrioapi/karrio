@@ -1,8 +1,6 @@
 import attr
 from typing import List, Dict
-from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
-from karrio.core.utils import DP
 from karrio.core.models import (
     Documents,
     Parcel,
@@ -166,7 +164,7 @@ class RateRequest(BaseRateRequest):
 @attr.s(auto_attribs=True)
 class ShipmentRequest(BaseShipmentRequest):
     service: str
-    selected_rate_id: str
+    selected_rate_id: str  # type: ignore
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]

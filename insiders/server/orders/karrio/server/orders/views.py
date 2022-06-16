@@ -11,7 +11,11 @@ from django_filters import rest_framework as filters
 
 from karrio.core.utils import DP
 from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.serializers import SerializerDecorator, PaginatedResult
+from karrio.server.serializers import (
+    SerializerDecorator,
+    PaginatedResult,
+    process_dictionaries_mutations,
+)
 from karrio.server.orders.router import router
 from karrio.server.orders.serializers import (
     TestFilters,
@@ -107,9 +111,13 @@ class OrderDetail(APIView):
         order = models.Order.access_by(request).get(pk=pk)
         can_mutate_order(order, update=True)
 
-        serializer = SerializerDecorator[OrderUpdateData](data=request.data).data
+        payload = SerializerDecorator[OrderUpdateData](data=request.data).data
         SerializerDecorator[OrderSerializer](
-            order, context=request, data=DP.to_dict(serializer.data)
+            order,
+            context=request,
+            data=process_dictionaries_mutations(
+                ["metadata", "options"], payload, order
+            ),
         ).save()
 
         return Response(Order(order).data)

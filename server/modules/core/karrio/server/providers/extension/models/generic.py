@@ -27,7 +27,7 @@ class GenericSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return "generic"
+        return self.custom_carrier_name  # "generic"
 
     @property
     def default_services(self):

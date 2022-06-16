@@ -19,6 +19,7 @@ from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters, ShipmentModeFilter
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
+    process_dictionaries_mutations,
     SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
@@ -118,12 +119,15 @@ class ShipmentDetail(APIView):
         It is not for editing the parcels of a shipment.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-
         can_mutate_shipment(shipment, update=True)
 
-        serializer = SerializerDecorator[ShipmentUpdateData](data=request.data)
+        payload = SerializerDecorator[ShipmentUpdateData](data=request.data).data
         SerializerDecorator[ShipmentSerializer](
-            shipment, context=request, data=DP.to_dict(serializer.data)
+            shipment,
+            context=request,
+            data=process_dictionaries_mutations(
+                ["metadata", "options"], payload, shipment
+            ),
         ).save()
 
         return Response(Shipment(shipment).data)
@@ -163,10 +167,13 @@ class ShipmentRates(APIView):
         Refresh the list of the shipment rates
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-
         can_mutate_shipment(shipment, update=True)
 
-        rate_payload = SerializerDecorator[ShipmentRateData](data=request.data).data
+        rate_payload = process_dictionaries_mutations(
+            ["metadata"],
+            SerializerDecorator[ShipmentRateData](data=request.data).data,
+            shipment,
+        )
         carrier_ids = (
             rate_payload["carrier_ids"]
             if "carrier_ids" in rate_payload
@@ -217,10 +224,12 @@ class ShipmentPurchase(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, purchase=True, update=True)
 
+        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
+
         update = buy_shipment_label(
             shipment,
             context=request,
-            data=SerializerDecorator[ShipmentPurchaseData](data=request.data).data,
+            data=process_dictionaries_mutations(["metadata"], payload, shipment),
         )
 
         return Response(Shipment(update).data)
