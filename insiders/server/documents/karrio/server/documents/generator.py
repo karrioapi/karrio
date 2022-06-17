@@ -77,7 +77,7 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
         dict(
             shipment=ShipmentSerializer(shipment).data,
             line_items=get_shipment_item_contexts(shipment),
-            carrier=get_carrier_context(shipment.selected_rate_carrier),
+            carrier=get_carrier_context(shipment.selected_rate_carrier.settings),
             orders=OrderSerializer(
                 get_shipment_order_contexts(shipment), many=True
             ).data,
