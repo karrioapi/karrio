@@ -69,7 +69,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
     charges = [
         ("Base charge", shipment_rate.TotalBaseCharge.Amount),
-        ("Discount", shipment_discount.Amount),
+        ("Discount", getattr(shipment_discount, "Amount", None)),
         *(
             (s.Description, s.Amount.Amount)
             for s in shipment_rate.Surcharges + shipment_rate.Taxes

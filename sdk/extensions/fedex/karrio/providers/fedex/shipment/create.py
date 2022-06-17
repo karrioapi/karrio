@@ -146,7 +146,7 @@ def shipment_request(
     label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
     customs = payload.customs
     duty = (customs.duty or Duty(paid_by="sender")) if customs is not None else None
-    bill_to = CompleteAddress(getattr(duty, "bill_to", None))
+    bill_to = CompleteAddress(getattr(duty, "bill_to", None) or shipper)
 
     requests = [
         ProcessShipmentRequest(
@@ -335,12 +335,11 @@ def shipment_request(
                                 Payor=(
                                     Payor(
                                         ResponsibleParty=Party(
-                                            AccountNumber=duty.account_number,
+                                            AccountNumber=duty.account_number
+                                            or settings.account_number,
                                             Tins=bill_to.taxes,
                                         )
                                     )
-                                    if any([duty.account_number, bill_to.taxes])
-                                    else None
                                 ),
                             )
                         ),

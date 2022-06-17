@@ -318,6 +318,11 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
                         <v26:PaymentType>SENDER</v26:PaymentType>
+                        <v26:Payor>
+                            <v26:ResponsibleParty>
+                                <v26:AccountNumber>2349857</v26:AccountNumber>
+                            </v26:ResponsibleParty>
+                        </v26:Payor>
                     </v26:DutiesPayment>
                     <v26:CustomsValue>
                         <v26:Currency>USD</v26:Currency>
@@ -481,6 +486,11 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
                         <v26:PaymentType>SENDER</v26:PaymentType>
+                        <v26:Payor>
+                            <v26:ResponsibleParty>
+                                <v26:AccountNumber>2349857</v26:AccountNumber>
+                            </v26:ResponsibleParty>
+                        </v26:Payor>
                     </v26:DutiesPayment>
                     <v26:CustomsValue>
                         <v26:Currency>USD</v26:Currency>
@@ -644,6 +654,11 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
                         <v26:PaymentType>SENDER</v26:PaymentType>
+                        <v26:Payor>
+                            <v26:ResponsibleParty>
+                                <v26:AccountNumber>2349857</v26:AccountNumber>
+                            </v26:ResponsibleParty>
+                        </v26:Payor>
                     </v26:DutiesPayment>
                     <v26:CustomsValue>
                         <v26:Currency>USD</v26:Currency>

@@ -72,6 +72,12 @@ class OrderData(Serializer):
     ```
     {
         "currency": "USD",
+        "paid_by": "third_party",
+        "payment_account_number": "123456789",
+        "invoice_number": "123456789",
+        "invoice_date": "2020-01-01",
+        "single_item_per_parcel": true,
+        "carrier_ids": ["canadapost-test"],
     }
     ```
 
@@ -128,6 +134,12 @@ class Order(EntitySerializer):
     ```
     {
         "currency": "USD",
+        "paid_by": "third_party",
+        "payment_account_number": "123456789",
+        "invoice_number": "123456789",
+        "invoice_date": "2020-01-01",
+        "single_item_per_parcel": true,
+        "carrier_ids": ["canadapost-test"],
     }
     ```
 

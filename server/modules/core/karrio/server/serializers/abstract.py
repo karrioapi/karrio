@@ -1,11 +1,13 @@
 import pydoc
 import logging
-from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple
+from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple, List
 from django.db import models
 from django.conf import settings
 from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import serializers
+
+from karrio.core.utils import DP
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
@@ -289,3 +291,16 @@ def exclude_id_field(serializer: Type[ModelSerializer]):
         exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
 
     return type(serializer.__name__, (serializer,), dict(Meta=_Meta))
+
+
+def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> dict:
+    """This function checks if the payload contains dictionary with the keys and if so, it
+    mutate the values content by removing any null values and adding the new one.
+    """
+    data = payload.copy()
+
+    for key in [k for k in keys if k in payload]:
+        options = DP.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+        data.update({key: options})
+
+    return data
