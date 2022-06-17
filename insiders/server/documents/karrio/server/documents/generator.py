@@ -123,7 +123,7 @@ def get_carrier_context(carrier=None):
     display_name = getattr(
         carrier,
         "display_name",
-        REFERENCE_MODELS["carriers"][carrier.carrier_name],
+        REFERENCE_MODELS.get("carriers", {}).get(carrier.carrier_name),
     )
 
     return {
