@@ -1,4 +1,5 @@
 import sys
+import logging
 from django.http import JsonResponse
 from django.urls import re_path
 from django.core.files.base import ContentFile
@@ -7,6 +8,8 @@ from rest_framework import status
 
 from karrio.server.documents import models
 from karrio.server.documents.generator import Documents
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentGenerator(VirtualDownloadView):
@@ -30,6 +33,7 @@ class DocumentGenerator(VirtualDownloadView):
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
+            logger.exception(e)
             _, __, exc_traceback = sys.exc_info()
             trace = exc_traceback
             while True:
