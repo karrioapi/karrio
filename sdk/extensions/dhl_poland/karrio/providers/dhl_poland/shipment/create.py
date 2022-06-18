@@ -88,11 +88,19 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[str]:
-    packages = Packages(payload.parcels, required=["weight"])
+    packages = Packages(
+        payload.parcels, required=["weight"], package_option_type=Option
+    )
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
-    options = Options(payload.options, Option)
     customs = CustomsInfo(payload.customs)
+    options = Options(
+        Option.apply_defaults(
+            payload.options,
+            package_options=packages.options,
+        ),
+        Option,
+    )
 
     is_international = shipper.country_code != recipient.country_code
     service_type = Service.map(payload.service).value_or_key or (

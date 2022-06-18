@@ -136,6 +136,9 @@ class Parcel(OwnedEntity):
         "Commodity", blank=True, related_name="commodity_parcel"
     )
     reference_number = models.CharField(max_length=100, null=True, blank=True)
+    options = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     def delete(self, *args, **kwargs):
         self.items.all().delete()

@@ -52,7 +52,7 @@ def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(payload: ShipmentRequest, _) -> Serializable:
-    package = Packages(payload.parcels).single
+    package = Packages(payload.parcels, package_option_type=Options).single
     service = Service.map(payload.service).value_or_key
     constoms_options = getattr(payload.customs, "options", {})
     payment = payload.payment or Payment()
@@ -61,17 +61,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
     )
 
     options = Options(
-        {
-            "easypost_invoice_number": getattr(payload.customs, "invoice", None),
-            "easypost_label_format": LabelType.map(payload.label_type or "PDF").value,
-            "easypost_payment": dict(
-                type=PaymentType.map(payment.paid_by).value,
-                account=getattr(payload.payment, "account", None),
-                country=getattr(payor, "country_code", None),
-                postal_code=getattr(payor, "postal_code", None),
-            ),
-            **payload.options,
-        },
+        Option.apply_defaults(payload, payor=payor, package_options=package.options),
         Option,
     )
 
