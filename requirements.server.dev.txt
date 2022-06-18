@@ -5,7 +5,7 @@ Django<=3.2.13
 
 # Carrier Extenstions in Development
 -e ./sdk/core
--e ./sdk/extensions/amazon_mws
+# -e ./sdk/extensions/amazon_mws
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/canadapost
