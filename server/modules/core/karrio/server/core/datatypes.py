@@ -207,7 +207,7 @@ class Shipment:
     tracking_url: str = None
     tracker_id: str = None
     status: str = ""
-    meta: dict = None
+    meta: dict = {}
     id: str = None
 
     metadata: Dict = {}

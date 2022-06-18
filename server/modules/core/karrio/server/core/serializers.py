@@ -258,9 +258,9 @@ class AddressData(AugmentedAddressSerializer):
         allow_null=True,
         max_length=100,
         help_text="""
-    The address line with street number <br/>
-    **(required for shipment purchase)**
-    """,
+        The address line with street number <br/>
+        **(required for shipment purchase)**
+        """,
     )
     address_line2 = CharField(
         required=False,
@@ -344,21 +344,21 @@ class CommodityData(Serializer):
         required=False,
         allow_null=True,
         help_text="""
-    <details>
-    <summary>Commodity user references metadata.</summary>
+        <details>
+        <summary>Commodity user references metadata.</summary>
 
-    ```
-    {
-        "part_number": "5218487281",
-        "reference1": "# ref 1",
-        "reference2": "# ref 2",
-        "reference3": "# ref 3",
-        "reference4": "# ref 4",
-        ...
-    }
-    ```
-    </details>
-    """,
+        ```
+        {
+            "part_number": "5218487281",
+            "reference1": "# ref 1",
+            "reference2": "# ref 2",
+            "reference3": "# ref 3",
+            "reference4": "# ref 4",
+            ...
+        }
+        ```
+        </details>
+        """,
     )
 
 
@@ -382,15 +382,15 @@ class ParcelData(PresetSerializer):
         allow_null=True,
         max_length=50,
         help_text=f"""
-    The parcel's packaging type.
+        The parcel's packaging type.
 
-    **Note that the packaging is optional when using a package preset**
+        **Note that the packaging is optional when using a package preset**
 
-    values: <br/>
-    {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
+        values: <br/>
+        {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
 
-    For carrier specific packaging types, please consult the reference.
-    """,
+        For carrier specific packaging types, please consult the reference.
+        """,
     )
     package_preset = CharField(
         required=False,
@@ -439,6 +439,24 @@ class ParcelData(PresetSerializer):
         allow_null=True,
         max_length=100,
         help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
+    )
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="""
+        <details>
+        <summary>Parcel specific options.</summary>
+
+        ```
+        {
+            "insurance": "100.00",
+            "insured_by": "carrier",
+        }
+        ```
+
+        Please check the docs for more details.
+        </details>
+        """,
     )
 
 

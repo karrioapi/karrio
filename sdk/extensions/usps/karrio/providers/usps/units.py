@@ -1,5 +1,7 @@
 """Karrio USPS enumerations module"""
 
+import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 
 
@@ -152,6 +154,46 @@ class ShipmentOption(Enum):
     """ Unified Shipment Option type mapping """
     insurance = usps_insurance
 
+    @classmethod
+    def apply_defaults(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> dict:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return options
+
+    @classmethod
+    def options_from(
+        cls, options: units.Options
+    ) -> typing.List[typing.Tuple[str, Spec]]:
+        return [
+            (code, option)
+            for code, option in options
+            if code in cls and "usps_option" not in code  # type: ignore
+        ]
+
+    @classmethod
+    def insurance_from(cls, options: units.Options) -> typing.Optional[float]:
+        return next(
+            (value for key, value in options if "usps_insurance" in key),
+            options.insurance,
+        )
+
+    @classmethod
+    def non_delivery_from(cls, options: units.Options) -> typing.Optional[str]:
+        # Gets the first provided non delivery option or default to "RETURN"
+        return next(
+            (value for name, value in options if "non_delivery" in name),
+            "RETURN",
+        )
+
 
 class ShipmentService(Enum):
     usps_first_class = "First Class"
@@ -261,13 +303,21 @@ class ServiceType(Enum):
     usps_priority_mail_medium_flat_rate_box = usps_priority_mail_cubic
     usps_priority_mail_large_flat_rate_box = usps_priority_mail_cubic
     usps_priority_mail_express_sunday_holiday_delivery = usps_priority_mail_express
-    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_envelope = usps_priority_mail_express
-    usps_priority_mail_express_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_envelope = (
+        usps_priority_mail_express
+    )
+    usps_priority_mail_express_flat_rate_envelope_hold_for_pickup = (
+        usps_priority_mail_express
+    )
     usps_priority_mail_small_flat_rate_box = usps_priority
     usps_priority_mail_padded_flat_rate_envelope = usps_priority
     usps_priority_mail_express_legal_flat_rate_envelope = usps_priority_mail_express
-    usps_priority_mail_express_legal_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
-    usps_priority_mail_express_sunday_holiday_delivery_legal_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_express_legal_flat_rate_envelope_hold_for_pickup = (
+        usps_priority_mail_express
+    )
+    usps_priority_mail_express_sunday_holiday_delivery_legal_flat_rate_envelope = (
+        usps_priority_mail_express
+    )
     usps_priority_mail_hold_for_pickup = usps_priority_mail_cubic
     usps_priority_mail_large_flat_rate_box_hold_for_pickup = usps_priority_mail_cubic
     usps_priority_mail_medium_flat_rate_box_hold_for_pickup = usps_priority_mail_cubic
@@ -288,11 +338,19 @@ class ServiceType(Enum):
     usps_priority_mail_regional_rate_box_b_hold_for_pickup = usps_priority_mail_cubic
     usps_first_class_package_service_hold_for_pickup = usps_first_class
     usps_priority_mail_express_flat_rate_boxes = usps_priority_mail_express
-    usps_priority_mail_express_flat_rate_boxes_hold_for_pickup = usps_priority_mail_express
-    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_boxes = usps_priority_mail_express
+    usps_priority_mail_express_flat_rate_boxes_hold_for_pickup = (
+        usps_priority_mail_express
+    )
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_boxes = (
+        usps_priority_mail_express
+    )
     usps_priority_mail_regional_rate_box_c = usps_priority_mail_cubic
     usps_priority_mail_regional_rate_box_c_hold_for_pickup = usps_priority_mail_cubic
     usps_first_class_package_service = usps_first_class
     usps_priority_mail_express_padded_flat_rate_envelope = usps_priority_mail_express
-    usps_priority_mail_express_padded_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
-    usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_express_padded_flat_rate_envelope_hold_for_pickup = (
+        usps_priority_mail_express
+    )
+    usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = (
+        usps_priority_mail_express
+    )

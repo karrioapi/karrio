@@ -179,13 +179,15 @@ shipment_data = {
             "weight": 20.0,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "options": {
+                "insurance": 70.0,
+            },
         }
     ],
     "service": "canadapost_expedited_parcel",
     "options": {
         "canadapost_signature": True,
         "cash_on_delivery": 10.5,
-        "insurance": 70.0,
         "canadapost_cost_center": "karrio",
     },
     "reference": "#Order 11111",

@@ -90,8 +90,10 @@ class Service(Enum):
     def info(serviceId, carrierId, serviceName, carrierName):
         carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
         service = Service.map(str(serviceId))
-        formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
-        service_name = (service.name or formatted_name).replace('freightcom_', '')
+        formatted_name = re.sub(
+            r"((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))", r" \1", serviceName
+        )
+        service_name = (service.name or formatted_name).replace("freightcom_", "")
 
         return carrier_name, service.name_or_key, service_name
 
@@ -128,6 +130,21 @@ class Option(Flag):
     freightcom_is_saturday_service = Spec.asFlag("isSaturdayService")
     freightcom_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
     freightcom_stackable = Spec.asFlag("stackable")
+
+    @classmethod
+    def apply_defaults(
+        cls,
+        options: dict,
+        package_options: dict = None,
+    ) -> dict:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options)
+
+        return options
 
 
 class FreightClass(Enum):

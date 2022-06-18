@@ -1,3 +1,5 @@
+import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.units import MeasurementOptionsType, PackagePreset
 
@@ -384,6 +386,29 @@ class SpecialServiceType(Enum):
     """ Unified Option type mapping """
     notification = fedex_event_notification
     cash_on_delivery = fedex_cod
+
+    @classmethod
+    def apply_defaults(
+        cls,
+        options: dict,
+        package_options: dict = None,
+    ) -> dict:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options)
+
+        return options
+
+    @classmethod
+    def options_from(
+        cls, options: units.Options
+    ) -> typing.List[typing.Tuple[str, Spec]]:
+        return [
+            (code, option) for code, option in options if code in cls  # type: ignore
+        ]
 
 
 class RateType(Enum):

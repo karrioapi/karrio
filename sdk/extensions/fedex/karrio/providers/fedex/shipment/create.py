@@ -136,17 +136,24 @@ def shipment_request(
 ) -> Serializable[ProcessShipmentRequest]:
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-
+    packages = Packages(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=SpecialServiceType,
+    )
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(payload.options, SpecialServiceType)
-    special_services = [
-        getattr(v, "value", v) for k, v in options if k in SpecialServiceType
-    ]
-    label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
+    options = Options(
+        SpecialServiceType.apply_defaults(
+            payload.options, package_options=packages.options
+        ),
+        SpecialServiceType,
+    )
+
     customs = payload.customs
     duty = (customs.duty or Duty(paid_by="sender")) if customs is not None else None
     bill_to = CompleteAddress(getattr(duty, "bill_to", None) or shipper)
+    label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
 
     requests = [
         ProcessShipmentRequest(
@@ -166,7 +173,8 @@ def shipment_request(
                 TotalWeight=FedexWeight(
                     Units=packages.weight.unit, Value=packages.weight.value
                 ),
-                TotalInsuredValue=options.insurance,
+                # set inurance coverage value on master package only
+                TotalInsuredValue=(options.insurance if package_index == 1 else None),
                 PreferredCurrency=options.currency,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
@@ -255,7 +263,10 @@ def shipment_request(
                 ),
                 SpecialServicesRequested=(
                     ShipmentSpecialServicesRequested(
-                        SpecialServiceTypes=special_services,
+                        SpecialServiceTypes=[
+                            getattr(option, "value", option)
+                            for _, option in SpecialServiceType.options_from(options)
+                        ],
                         CodDetail=(
                             CodDetail(
                                 CodCollectionAmount=Money(
