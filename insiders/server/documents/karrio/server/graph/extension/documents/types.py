@@ -16,6 +16,7 @@ class DocumentTemplateFilter(django_filters.FilterSet):
     related_object = django_filters.CharFilter(
         field_name="related_object", lookup_expr="icontains"
     )
+    active = django_filters.BooleanFilter(field_name="active")
 
     class Meta:
         model = models.DocumentTemplate
