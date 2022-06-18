@@ -69,6 +69,7 @@ shipment_data = {
             "weight": 2.0,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "options": {"usps_insurance_express_mail_international": 50.0},
         }
     ],
     "service": "usps_priority_mail_express_international_legal_flat_rate_envelope",
@@ -151,6 +152,7 @@ ShipmentRequestXML = """<eVSExpressMailIntlRequest USERID="username" PASSWORD="p
             <CountryOfOrigin>United States</CountryOfOrigin>
         </ItemDetail>
     </ShippingContents>
+    <InsuredAmount>50</InsuredAmount>
     <GrossPounds>4.41</GrossPounds>
     <GrossOunces>70.549999999999997</GrossOunces>
     <ContentType>MERCHANDISE</ContentType>
