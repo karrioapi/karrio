@@ -6,7 +6,7 @@ from usps_lib.intl_rate_v2_request import (
     ExtraServicesType,
     GXGType,
 )
-from usps_lib.intl_rate_v2_response import ServiceType, ExtraServiceType
+from usps_lib.intl_rate_v2_response import ServiceType
 
 from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
 from karrio.core.utils import Serializable, Element, NF, XP, DF
@@ -98,16 +98,18 @@ def rate_request(
     if payload.recipient.country_code == Country.US.name:
         raise DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
     recipient = CompleteAddress(payload.recipient)
-    options = Options(payload.options, ShipmentOption)
     services = Services(payload.services, ShipmentService)
+    package = Packages(
+        payload.parcels,
+        package_option_type=ShipmentOption,
+        max_weight=Weight(70, WeightUnit.LB),
+    ).single
+    options = Options(
+        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
+        ShipmentOption,
+    )
 
-    extra_services = [
-        getattr(option, "value", option)
-        for key, option in options
-        if "usps_option" not in key
-    ]
     commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
     commercial_plus = next(("Y" for svc in services if "plus" in svc.name), "N")
 
@@ -145,8 +147,13 @@ def rate_request(
                 ),
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
-                    ExtraServicesType(ExtraService=[s for s in extra_services])
-                    if any(extra_services)
+                    ExtraServicesType(
+                        ExtraService=[
+                            getattr(ShipmentOption.map(code).value, "key", option)
+                            for code, option in ShipmentOption.options_from(options)
+                        ]
+                    )
+                    if any(ShipmentOption.options_from(options))
                     else None
                 ),
                 Content=None,

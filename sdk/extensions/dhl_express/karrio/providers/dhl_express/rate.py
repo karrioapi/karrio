@@ -82,10 +82,12 @@ def _extract_quote(quote: ResponseQtdShpType, settings: Settings) -> RateDetails
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    products = [*Services(payload.services, ProductCode)]
-    options = Options(payload.options, SpecialServiceCode)
-
+    packages = Packages(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=SpecialServiceCode,
+    )
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
     if any(settings.account_country_code or "") and (
@@ -96,39 +98,30 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
         raise DestinationNotServicedError(payload.shipper.country_code)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    is_dutiable = not is_document
+    is_dutiable = not is_document  # parcel and not document only so it is dutiable.
+    products = Services(
+        ProductCode.apply_defaults(
+            payload.services,
+            is_international=is_international,
+            is_document=is_document,
+            is_envelope=("envelope" in packages.package_type),
+        ),
+        ProductCode,
+    )
+    options = Options(
+        SpecialServiceCode.apply_defaults(
+            payload.options,
+            is_international=is_international,
+            is_dutiable=is_dutiable,
+            package_options=packages.options,
+        ),
+        SpecialServiceCode,
+    )
+
     weight_unit, dim_unit = (
         COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
-    paperless = (
-        SpecialServiceCode.dhl_paperless_trade
-        if (is_international and is_dutiable)
-        else None
-    )
-    special_services = [
-        *options,
-        *([(paperless.name, None)] if paperless is not None else []),
-    ]
-    insurance = (
-        options["dhl_shipment_insurance"].value
-        if "dhl_shipment_insurance" in options
-        else None
-    )
-
-    if len(products) == 0:
-        if is_international and is_document:
-            product = "dhl_express_worldwide_doc"
-        elif is_international:
-            product = "dhl_express_worldwide_nondoc"
-        elif is_document and "envelope" in packages[0].packaging_type:
-            product = "dhl_express_envelope_doc"
-        elif is_document:
-            product = "dhl_domestic_express_doc"
-        else:
-            product = "dhl_express_12_00_nondoc"
-
-        products = [ProductCode[product]]
 
     request = DCTRequest(
         GetQuote=GetQuoteType(
@@ -178,8 +171,14 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                 ShipmentWeight=packages.weight[weight_unit.name],
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
-                InsuredCurrency=(options.currency if insurance is not None else None),
-                InsuredValue=insurance,
+                InsuredCurrency=(
+                    options.currency if options.dhl_shipment_insurance else None
+                ),
+                InsuredValue=(
+                    options.dhl_shipment_insurance.value
+                    if options.dhl_shipment_insurance
+                    else None
+                ),
                 PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
@@ -190,8 +189,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                             QtdShpExChrgType(
                                 SpecialServiceType=SpecialServiceCode[key].value.key
                             )
-                            for key, _ in special_services
-                            if key in SpecialServiceCode
+                            for key, _ in SpecialServiceCode.options_from(options)
                         ],
                     )
                     for product in products
@@ -199,7 +197,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             ),
             Dutiable=(
                 DCTDutiable(
-                    DeclaredValue=(insurance or 1.0),
+                    DeclaredValue=(options.declared_value or 1.0),
                     DeclaredCurrency=(
                         options.currency
                         or CountryCurrency[payload.shipper.country_code].value

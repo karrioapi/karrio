@@ -67,9 +67,13 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
 
 
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShipper]:
-    options = Options(payload.options, Option)
     packages = Packages(
-        payload.parcels, required=["weight", "height", "width", "length"]
+        payload.parcels,
+        package_option_type=Option,
+        required=["weight", "height", "width", "length"],
+    )
+    options = Options(
+        Option.apply_defaults(payload.options, package_options=packages.options), Option
     )
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
     packaging = (
@@ -153,8 +157,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
-                        insuranceAmount=None,
-                        codAmount=None,
+                        insuranceAmount=package.options.insurance,
+                        codAmount=package.options.cash_on_delivery,
                         description=package.parcel.description,
                     )
                     for package in packages

@@ -1,5 +1,6 @@
+import typing
 from karrio.core.utils import Enum, Flag, Spec
-from karrio.core.units import MeasurementOptionsType, PackagePreset
+from karrio.core.units import MeasurementOptionsType, PackagePreset, Options
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
@@ -121,6 +122,35 @@ class OptionCode(Enum):
     insurance = canadapost_coverage
     cash_on_delivery = canadapost_collect_on_delivery
     signature_confirmation = canadapost_signature
+
+    @classmethod
+    def apply_defaults(
+        cls,
+        options: dict,
+        package_options: Options = None,
+        is_international: bool = False,
+    ) -> dict:
+        # Apply default non delivery options for if international.
+        no_international_option_specified: bool = not any(
+            key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
+        )
+
+        if is_international and no_international_option_specified:
+            options.update({cls.canadapost_return_to_sender.name: True})
+
+        # Apply package options if specified.
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return options
+
+    @classmethod
+    def options_from(cls, options: Options) -> typing.List[typing.Tuple[str, Spec]]:
+        return [
+            (code, option)
+            for code, option in options
+            if code in cls and code not in CUSTOM_OPTIONS  # type: ignore
+        ]
 
 
 INTERNATIONAL_NON_DELIVERY_OPTION = [

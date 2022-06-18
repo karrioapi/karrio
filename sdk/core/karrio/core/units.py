@@ -310,9 +310,15 @@ class Weight:
 class Package:
     """The parcel common processing helper"""
 
-    def __init__(self, parcel: Parcel, template: PackagePreset = None):
+    def __init__(
+        self,
+        parcel: Parcel,
+        template: PackagePreset = None,
+        package_option_type: Type[Enum] = Enum,
+    ):
         self.parcel: Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
+        self.options: "Options" = Options(parcel.options, package_option_type)
 
         self._dimension_unit = (
             (self.parcel.dimension_unit or self.preset.dimension_unit)
@@ -395,6 +401,7 @@ class Packages(Iterable[Package]):
         presets: Type[Enum] = None,
         required: List[str] = None,
         max_weight: Weight = None,
+        package_option_type: Type[Enum] = Enum,
     ):
         def compute_preset(parcel) -> Optional[PackagePreset]:
             if (presets is None) | (
@@ -404,7 +411,12 @@ class Packages(Iterable[Package]):
 
             return presets[parcel.package_preset].value
 
-        self._items = [Package(parcel, compute_preset(parcel)) for parcel in parcels]
+        self._items = [
+            Package(
+                parcel, compute_preset(parcel), package_option_type=package_option_type
+            )
+            for parcel in parcels
+        ]
         self._required = required
         self._max_weight = max_weight
         self.validate()
@@ -447,6 +459,21 @@ class Packages(Iterable[Package]):
         )
 
     @property
+    def options(self) -> dict:
+        options = {}
+
+        if any(pkg.options.insurance for pkg in self._items):
+            return options.update(
+                {
+                    "insurance": sum(
+                        ((pkg.options.insurance or 0.0) for pkg in self._items), 0.0
+                    )
+                }
+            )
+
+        return options
+
+    @property
     def compatible_units(self) -> Tuple[WeightUnit, DimensionUnit]:
         if any(self._items) and self._items[0].weight_unit == WeightUnit.KG:
             return WeightUnit.KG, DimensionUnit.CM
@@ -486,11 +513,12 @@ class Packages(Iterable[Package]):
         presets: Type[Enum] = None,
         required: List[str] = None,
         max_weight: Weight = None,
+        package_option_type: Type[Enum] = Enum,
     ) -> Union[List[Package], "Packages"]:
 
         return cast(
             Union[List[Package], Packages],
-            Packages(parcels, presets, required, max_weight),
+            Packages(parcels, presets, required, max_weight, package_option_type),
         )
 
 
@@ -535,6 +563,10 @@ class Options:
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         return iter(self._options.items())
+
+    @property
+    def content(self) -> dict:
+        return self._options
 
     @property
     def has_content(self) -> bool:

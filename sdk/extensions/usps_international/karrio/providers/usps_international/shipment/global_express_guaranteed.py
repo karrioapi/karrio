@@ -50,14 +50,18 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[eVSGXGGetLabelRequest]:
-    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
-    options = Options(payload.options, ShipmentOption)
+    package = Packages(
+        payload.parcels,
+        package_option_type=ShipmentOption,
+        max_weight=Weight(70, WeightUnit.LB),
+    ).single
+    options = Options(
+        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
+        ShipmentOption,
+    )
 
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
     incoterm = Incoterm[customs.incoterm or "OTHER"].value
-    insurance = getattr(
-        (options.usps_insurance_global_express_guaranteed), "value", options.insurance
-    )
 
     request = eVSGXGGetLabelRequest(
         USERID=settings.username,
@@ -116,7 +120,7 @@ def shipment_request(
         PartiesToTransaction=None,
         Agreement=("N" if customs.certify else "Y"),
         Postage=None,
-        InsuredValue=insurance,
+        InsuredValue=ShipmentOption.insurance_from(options, "global_express"),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         Length=package.length.IN,

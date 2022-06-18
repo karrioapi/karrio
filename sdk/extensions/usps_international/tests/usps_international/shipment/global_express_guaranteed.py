@@ -15,16 +15,6 @@ class TestUSPSGXGShipment(unittest.TestCase):
         requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         self.assertEqual(requests.serialize(), ShipmentRequestXML)
 
-    # @patch("karrio.mappers.usps_international.proxy.http", return_value="<a></a>")
-    # def test_create_shipment(self, http_mock):
-    #     karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-    #
-    #     url = http_mock.call_args[1]["url"]
-    #     self.assertEqual(
-    #         url,
-    #         f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}",
-    #     )
-
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.usps_international.proxy.http") as mocks:
             mocks.return_value = ShipmentResponseXML
@@ -98,7 +88,7 @@ shipment_data = {
             "certificate_number": "CERT-97865342",
         },
     },
-    "options": {"shipment_date": "2021-05-15"},
+    "options": {"shipment_date": "2021-05-15", "insurance": 75.0},
 }
 
 
@@ -148,19 +138,17 @@ ShipmentRequestXML = """<eVSGXGGetLabelRequest USERID="username" PASSWORD="passw
     </ShippingContents>
     <PurposeOfShipment>MERCHANDISE</PurposeOfShipment>
     <Agreement>N</Agreement>
+    <InsuredValue>75.0</InsuredValue>
     <GrossPounds>4.41</GrossPounds>
     <GrossOunces>70.55</GrossOunces>
     <Length>2.36</Length>
     <Width>4.72</Width>
     <Height>3.54</Height>
-    <CIRequired>false</CIRequired>
     <InvoiceNumber>INV-040903</InvoiceNumber>
     <TermsDelivery>DDU</TermsDelivery>
     <CountryUltDest>Brazil</CountryUltDest>
-    <CIAgreement></CIAgreement>
     <ImageType>PDF</ImageType>
     <ShipDate>05/15/2021</ShipDate>
-    <CommercialShipment>false</CommercialShipment>
     <Machinable>false</Machinable>
     <DestinationRateIndicator>I</DestinationRateIndicator>
     <MID>847654321</MID>

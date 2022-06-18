@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.db.models import Q
 from rest_framework import status
 
 from karrio.server.core.exceptions import KarrioAPIException

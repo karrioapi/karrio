@@ -1,4 +1,7 @@
 import re
+from easypost_lib.shipment_request import ShipmentRequest
+from karrio.core import units
+from karrio.core.models import Address
 from karrio.core.utils import Enum, Flag, Spec
 
 
@@ -988,3 +991,32 @@ class Option(Flag):
     shipment_date = easypost_label_date
     cash_on_delivery = easypost_cod_amount
     signature_confirmation = easypost_delivery_confirmation
+
+    @classmethod
+    def apply_defaults(
+        cls,
+        payload: ShipmentRequest,
+        payor: Address = None,
+        package_options: units.Options = None,
+    ) -> dict:
+        """
+        Apply default values to the given options.
+        """
+        options = {
+            "easypost_invoice_number": getattr(payload.customs, "invoice", None),
+            "easypost_label_format": LabelType.map(payload.label_type or "PDF").value,
+            "easypost_payment": dict(
+                type=units.PaymentType.map(
+                    getattr(payload.payment, "paid_by", "sender")
+                ).value,
+                account=getattr(payload.payment, "account_number", None),
+                country=getattr(payor, "country_code", None),
+                postal_code=getattr(payor, "postal_code", None),
+            ),
+            **payload.options,
+        }
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return options
