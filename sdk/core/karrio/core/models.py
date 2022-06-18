@@ -76,6 +76,7 @@ class Parcel:
 
     items: List[Commodity] = JList[Commodity]
     reference_number: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)

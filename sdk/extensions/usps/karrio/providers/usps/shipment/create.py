@@ -75,25 +75,15 @@ def shipment_request(
     ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
+    package = Packages(payload.parcels, package_option_type=ShipmentOption).single
     service = ServiceType.map(payload.service).value_or_key
-    package = Packages(payload.parcels).single
-    options = Options(payload.options, ShipmentOption)
+    options = Options(
+        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
+        ShipmentOption,
+    )
 
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
-    extra_services = [
-        getattr(option, "value", option)
-        for key, option in options
-        if "usps_option" not in key
-    ]
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
-    insurance = next(
-        (option.value for key, option in options if "usps_insurance" in key),
-        options.insurance,
-    )
-    # Gets the first provided non delivery option or default to "RETURN"
-    non_delivery = next(
-        (option.value for name, option in options if "non_delivery" in name), "RETURN"
-    )
     redirect_address = Address(**(options.usps_option_redirect_non_delivery or {}))
 
     request = eVSRequest(
@@ -139,14 +129,19 @@ def shipment_request(
         Machinable=options.usps_option_machinable_item,
         ProcessingCategory=None,
         PriceOptions=None,
-        InsuredAmount=insurance,
+        InsuredAmount=ShipmentOption.insurance_from(options),
         AddressServiceRequested=None,
         ExpressMailOptions=None,
         ShipDate=options.shipment_date,
         CustomerRefNo=None,
         ExtraServices=(
-            ExtraServicesType(ExtraService=[s for s in extra_services])
-            if any(extra_services)
+            ExtraServicesType(
+                ExtraService=[
+                    getattr(ShipmentOption.map(code).value, "key", option)
+                    for code, option in ShipmentOption.options_from(options)
+                ]
+            )
+            if any(ShipmentOption.options_from(options))
             else None
         ),
         CRID=settings.customer_registration_id,
@@ -206,7 +201,7 @@ def shipment_request(
         InvoiceNumber=customs.invoice,
         LicenseNumber=customs.license_number,
         CertificateNumber=customs.certificate_number,
-        NonDeliveryOption=non_delivery,
+        NonDeliveryOption=ShipmentOption.non_delivery_from(options),
         AltReturnAddress1=redirect_address.address_line1,
         AltReturnAddress2=redirect_address.address_line2,
         AltReturnAddress3=None,

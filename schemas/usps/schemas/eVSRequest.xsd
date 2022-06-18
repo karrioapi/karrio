@@ -79,7 +79,7 @@
                 <xs:element name="ExtraServices">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element type="xs:string" name="ExtraService" />
+                            <xs:element type="xs:string" name="ExtraService" maxOccurs="unbounded" minOccurs="0" />
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

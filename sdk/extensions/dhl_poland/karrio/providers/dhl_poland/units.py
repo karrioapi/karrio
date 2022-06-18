@@ -1,3 +1,5 @@
+import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.models import ServiceLevel
 
@@ -78,6 +80,29 @@ class Option(Flag):
     """ Unified Option type mapping """
     cash_on_delivery = dhl_poland_collect_on_delivery
     insurance = dhl_poland_insuration
+
+    @classmethod
+    def apply_defaults(
+        cls,
+        options: dict,
+        package_options: dict = None,
+    ) -> dict:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options)
+
+        return options
+
+    @classmethod
+    def options_from(
+        cls, options: units.Options
+    ) -> typing.List[typing.Tuple[str, Spec]]:
+        return [
+            (code, option) for code, option in options if code in cls  # type: ignore
+        ]
 
 
 DEFAULT_SERVICES = [

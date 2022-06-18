@@ -50,9 +50,7 @@ class TestUSPSShipment(unittest.TestCase):
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedShipmentResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.usps.proxy.http") as mocks:
@@ -106,6 +104,9 @@ shipment_data = {
             "weight": 20.0,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "options": {
+                "insurance": 75.0,
+            },
         }
     ],
     "service": "usps_priority_mail_express_flat_rate_boxes",
@@ -168,6 +169,10 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <Width>4.72</Width>
     <Length>2.36</Length>
     <Height>3.54</Height>
+    <InsuredAmount>75</InsuredAmount>
+    <ExtraServices>
+        <ExtraService>100</ExtraService>
+    </ExtraServices>
     <MID>847654321</MID>
     <SenderName>Lina Smith</SenderName>
     <RecipientName>Tall Tom</RecipientName>
