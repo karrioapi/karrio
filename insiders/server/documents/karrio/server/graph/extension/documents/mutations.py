@@ -16,6 +16,7 @@ class CreateDocumentTemplate(utils.ClientMutation):
         template = graphene.String(required=True)
         description = graphene.String()
         related_object = types.TemplateRelatedObject(required=True)
+        active = graphene.Boolean(default_value=True)
 
     @classmethod
     @utils.login_required
@@ -41,6 +42,7 @@ class UpdateDocumentTemplate(utils.ClientMutation):
         template = graphene.String()
         description = graphene.String()
         related_object = types.TemplateRelatedObject()
+        active = graphene.Boolean()
 
     @classmethod
     @utils.login_required
