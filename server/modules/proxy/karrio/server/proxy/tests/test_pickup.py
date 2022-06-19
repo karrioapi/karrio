@@ -208,6 +208,7 @@ PICKUP_RESPONSE = {
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
                 "reference_number": None,
+                "options": {},
             }
         ],
         "instruction": "Should not be folded",
@@ -267,6 +268,7 @@ PICKUP_UPDATE_RESPONSE = {
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
                 "reference_number": None,
+                "options": {},
             }
         ],
         "instruction": "Should not be folded",
