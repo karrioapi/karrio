@@ -139,9 +139,9 @@ if len(BASE_PATH) > 0 and not BASE_PATH.endswith("/"):
     BASE_PATH = BASE_PATH + "/"
 
 ROOT_URLCONF = "karrio.server.urls"
-LOGOUT_REDIRECT_URL = BASE_PATH + "/admin/login/"
+LOGIN_URL = BASE_PATH + "/login/"
+LOGOUT_REDIRECT_URL = BASE_PATH + "/login/"
 LOGIN_REDIRECT_URL = BASE_PATH + "/admin/"
-LOGIN_URL = BASE_PATH + "/admin/login/"
 OPEN_API_PATH = "openapi/"
 
 NAMESPACED_URLS = [
@@ -170,6 +170,12 @@ INSTALLED_APPS = [
     "huey.contrib.djhuey",
     "corsheaders",
     "django_filters",
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_email",
+    "two_factor",
+    "two_factor.plugins.email",
 ]
 
 MIDDLEWARE = [
@@ -179,6 +185,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "karrio.server.core.authentication.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
