@@ -352,6 +352,7 @@ SHIPMENT_DATA = {
                     "metadata": {"id": 1071823173},
                 }
             ],
+            "options": {},
         }
     ],
     "options": {"currency": "CAD"},
@@ -497,6 +498,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
@@ -710,6 +712,7 @@ FULFILLED_ORDER_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
@@ -909,6 +912,7 @@ PARTIAL_ORDER_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
