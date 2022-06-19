@@ -24,6 +24,11 @@ def login_required(func):
                 _("You are not authenticated"), code="login_required"
             )
 
+        if not info.context.user.is_verified():
+            raise exceptions.AuthenticationFailed(
+                _("Authentication Token not verified"), code="two_factor_required"
+            )
+
         return func(*args, **kwargs)
 
     return wrapper

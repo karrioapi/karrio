@@ -185,7 +185,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "karrio.server.core.authentication.AuthenticationMiddleware",
-    "django_otp.middleware.OTPMiddleware",
+    "karrio.server.core.authentication.TwoFactorAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
