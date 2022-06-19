@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking.mixins import LoggingMixin
 from rest_framework import status
-
+from two_factor.views.mixins import OTPRequiredMixin
 from karrio.core.utils import DP
 from karrio.server.core.authentication import TokenAuthentication, JWTAuthentication
 from karrio.server.core.models import APILog
@@ -84,5 +84,10 @@ class LoginRequiredView(AccessMixin):
                     error={"message": "Authentication credentials were not provided."}
                 ),
                 status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        if not request.user.is_verified():
+            return JsonResponse(
+                {"detail": "User is not verified"}, status=status.HTTP_403_FORBIDDEN
             )
         return auth
