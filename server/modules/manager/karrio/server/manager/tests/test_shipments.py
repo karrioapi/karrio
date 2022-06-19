@@ -348,6 +348,7 @@ SHIPMENT_RESPONSE = {
             "weight_unit": "KG",
             "dimension_unit": "CM",
             "reference_number": ANY,
+            "options": {},
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -492,6 +493,7 @@ PURCHASED_SHIPMENT = {
             "items": [],
             "reference_number": "123456789012",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],

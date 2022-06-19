@@ -221,6 +221,7 @@ SHIPPING_RESPONSE = {
             "items": [],
             "reference_number": "123456789012",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
