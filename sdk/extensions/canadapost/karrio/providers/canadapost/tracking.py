@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from canadapost_lib.track import significant_events, occurrenceType
+from canadapost_lib.track import occurrenceType
 from karrio.providers.canadapost.utils import Settings
 from karrio.core.utils import Element, Serializable, DF, XP, SF
 from karrio.core.models import (
@@ -28,11 +28,10 @@ def parse_tracking_response(
 def _extract_tracking(detail_node: Element, settings: Settings) -> TrackingDetails:
     pin = XP.find("pin", detail_node, first=True)
     events: List[occurrenceType] = XP.find("occurrence", detail_node, occurrenceType)
+    changed_date = XP.find("changed-expected-date", detail_node, first=True)
+    expected_date = XP.find("expected-delivery-date", detail_node, first=True)
     expected_delivery = getattr(
-        XP.find("changed-expected-date", detail_node, first=True)
-        or XP.find("expected-delivery-date", detail_node, first=True),
-        "text",
-        None,
+        changed_date if len(changed_date) > 0 else expected_date, "text", None
     )
 
     return TrackingDetails(
