@@ -110,7 +110,11 @@ class Spec:
         """
 
         def compute_inner_spec(value: Optional[type]) -> Spec:  # type: ignore
-            computed_value = type(value) if value is not None else None
+            computed_value = (
+                getattr(value, "value", None)
+                if hasattr(value, "value")
+                else (type(value) if value is not None else None)
+            )
 
             return Spec(key, type, lambda *_: computed_value, computed_value)
 
