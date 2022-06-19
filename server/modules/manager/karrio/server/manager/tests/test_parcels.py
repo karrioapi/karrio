@@ -71,6 +71,7 @@ PARCEL_RESPONSE = {
     "weight_unit": "KG",
     "dimension_unit": "CM",
     "reference_number": ANY,
+    "options": {},
 }
 
 PARCEL_UPDATE_DATA = {
@@ -97,4 +98,5 @@ PARCEL_UPDATE_RESPONSE = {
     "weight_unit": "LB",
     "dimension_unit": "IN",
     "reference_number": ANY,
+    "options": {},
 }
