@@ -1,16 +1,21 @@
 import logging
+import functools
 from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.contrib.auth import mixins, get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import (
     AuthenticationMiddleware as BaseAuthenticationMiddleware,
 )
 from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication
+from rest_framework.authentication import (
+    TokenAuthentication as BaseTokenAuthentication,
+)
 from rest_framework_simplejwt.authentication import (
     JWTAuthentication as BaseJWTAuthentication,
 )
+from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
@@ -26,10 +31,13 @@ class TokenAuthentication(BaseTokenAuthentication):
 
     def authenticate(self, request):
         auth = super().authenticate(request)
+
         if auth is not None:
             user, token = auth
             org_id = getattr(token.organization, "id", None)
-            request.org = get_request_org(request, user, org_id)
+            request.org = SimpleLazyObject(
+                functools.partial(get_request_org, request, user, org_id)
+            )
 
         return auth
 
@@ -39,9 +47,18 @@ class JWTAuthentication(BaseJWTAuthentication):
         auth = super().authenticate(request)
 
         if auth is not None:
-            user, validated_token = auth
+            user, token = auth
+            org_id = token.get("org_id")
 
-            request.org = get_request_org(request, user, validated_token.get("org_id"))
+            request.otp_is_verified = token.get("is_verified") or False
+            request.user = user
+            request.org = SimpleLazyObject(
+                functools.partial(get_request_org, request, user, org_id)
+            )
+            if not token.get("is_verified"):
+                raise exceptions.AuthenticationFailed(
+                    _("Authentication token not verified"), code="otp_not_verified"
+                )
 
         return auth
 
@@ -51,15 +68,19 @@ class AccessMixin(mixins.AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            auth = JWTAuthentication().authenticate(
-                request
-            ) or TokenAuthentication().authenticate(request)
+            if not request.user.is_authenticated:
+                auth = JWTAuthentication().authenticate(
+                    request
+                ) or TokenAuthentication().authenticate(request)
 
-            if auth is not None:
-                user, *_ = auth
-                request.user = user
+                if auth is not None:
+                    user, _ = auth
+                    request.user = user
 
         finally:
+            request.user = SimpleLazyObject(
+                functools.partial(get_request_user, request, request.user)
+            )
             return super().dispatch(request, *args, **kwargs)
 
 
@@ -146,3 +167,21 @@ def get_request_org(request, user, default_org_id: str = None):
             pass
 
         return None
+
+
+def get_request_user(request, user):
+    if not getattr(request, "otp_is_verified", True):
+        raise exceptions.AuthenticationFailed(
+            _("Authentication token not verified"), code="otp_not_verified"
+        )
+
+    user.otp_device = None
+    user.is_verified = functools.partial(
+        lambda _: getattr(request, "otp_is_verified", True), user
+    )
+
+    return user
+
+
+class TwoFactorAuthenticationMiddleware(OTPMiddleware):
+    pass
