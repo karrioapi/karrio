@@ -97,6 +97,8 @@ class OrderUpdateData(serializers.Serializer):
             "currency": "USD",
             "paid_by": "third_party",
             "payment_account_number": "123456789",
+            "duty_paid_by": "recipient",
+            "duty_account_number": "123456789",
             "invoice_number": "123456789",
             "invoice_date": "2020-01-01",
             "single_item_per_parcel": true,
