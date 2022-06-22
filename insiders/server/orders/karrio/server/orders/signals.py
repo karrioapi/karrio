@@ -90,6 +90,7 @@ def order_updated(sender, instance, *args, **kwargs):
                 org=instance.link.org,
                 source=instance.source,
                 order_id=instance.order_id,
+                test_mode=instance.test_mode,
             )
             .count()
         )
