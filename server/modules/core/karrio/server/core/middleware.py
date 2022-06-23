@@ -2,11 +2,11 @@ from django.db.models import Q
 
 
 class CreatorAccess:
-    def __call__(self, context, key: str = 'created_by', **kwargs) -> Q:
-        user_key = f'{key}_id'
-        user = getattr(context, 'user', user)
+    def __call__(self, context, key: str = "created_by", **kwargs) -> Q:
+        user_key = f"{key}_id"
+        user = getattr(context, "user", None)
 
-        return Q(**{user_key: getattr(user, 'id', None)})
+        return Q(**{user_key: getattr(user, "id", None)})
 
 
 class WideAccess:
@@ -16,4 +16,4 @@ class WideAccess:
 
 class UserToken:
     def __call__(self, context, **kwargs) -> dict:
-        return dict(user=getattr(context, 'user', context))
+        return dict(user=getattr(context, "user", context))

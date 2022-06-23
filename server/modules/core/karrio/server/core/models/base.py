@@ -1,8 +1,11 @@
 import pydoc
+import typing
+import functools
 from uuid import uuid4
 from django.conf import settings
 
-
+T = typing.TypeVar("T")
+MODEL_TRANSFORMERS = getattr(settings, "MODEL_TRANSFORMERS", [])
 ACCESS_METHOD = getattr(
     settings,
     "KARRIO_ENTITY_ACCESS_METHOD",
@@ -24,3 +27,9 @@ class ControlledAccessModel:
             key = "user"
 
         return cls.objects.filter(get_access_filter(context, key))
+
+
+def register_model(model: T) -> T:
+    transform = lambda model, transformer: pydoc.locate(transformer)(model)
+
+    return functools.reduce(transform, MODEL_TRANSFORMERS, model)

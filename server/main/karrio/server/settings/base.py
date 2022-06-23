@@ -215,6 +215,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Karrio Middleware
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
+MODEL_TRANSFORMERS: list = []
+AUTHENTICATION_METHODS = [
+    "karrio.server.core.authentication.TokenAuthentication",
+    "karrio.server.core.authentication.JWTAuthentication",
+]
 
 
 # Database

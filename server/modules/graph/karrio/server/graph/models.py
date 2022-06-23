@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.db import models
 
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager.models import Customs, Parcel, Address
 
 
+@register_model
 class Template(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
 
