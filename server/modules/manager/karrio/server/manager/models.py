@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from karrio.server.core.utils import identity
 from karrio.server.providers.models import Carrier
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.core.serializers import (
     WEIGHT_UNIT,
     DIMENSION_UNIT,
@@ -18,6 +18,7 @@ from karrio.server.core.serializers import (
 )
 
 
+@register_model
 class Address(OwnedEntity):
     HIDDEN_PROPS = (
         "shipper_shipment",
@@ -97,6 +98,7 @@ class ParcelManager(models.Manager):
         )
 
 
+@register_model
 class Parcel(OwnedEntity):
     HIDDEN_PROPS = (
         "parcel_shipment",
@@ -153,6 +155,7 @@ class Parcel(OwnedEntity):
         return self.parcel_shipment.first()
 
 
+@register_model
 class Commodity(OwnedEntity):
     HIDDEN_PROPS = (
         "children",
@@ -244,6 +247,7 @@ class CustomsManager(models.Manager):
         )
 
 
+@register_model
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
         "content_description",
@@ -329,6 +333,7 @@ class PickupManager(models.Manager):
         )
 
 
+@register_model
 class Pickup(OwnedEntity):
     DIRECT_PROPS = [
         "confirmation_number",
@@ -422,6 +427,7 @@ class TrackingManager(models.Manager):
         )
 
 
+@register_model
 class Tracking(OwnedEntity):
     HIDDEN_PROPS = (
         "tracking_carrier",
@@ -510,6 +516,7 @@ class ShipmentManager(models.Manager):
         )
 
 
+@register_model
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         "options",

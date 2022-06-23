@@ -10,7 +10,7 @@ from karrio import gateway
 from karrio.core.utils import Enum
 from karrio.core.units import Country, Currency, DimensionUnit, WeightUnit
 from karrio.api.gateway import Gateway
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.core.datatypes import CarrierSettings
 from karrio.server.core.fields import MultiChoiceField
 
@@ -138,6 +138,7 @@ class Carrier(OwnedEntity):
         return gateway[_carrier_name].create({**self.data.to_dict()})
 
 
+@register_model
 class ServiceLevel(OwnedEntity):
     class Meta:
         db_table = "service-level"

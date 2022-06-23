@@ -1,5 +1,6 @@
 import logging
 import functools
+import pydoc
 from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.contrib.auth import mixins, get_user_model
@@ -19,6 +20,7 @@ from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
+AUTHENTICATION_METHODS = getattr(settings, "AUTHENTICATION_METHODS", [])
 
 
 class TokenAuthentication(BaseTokenAuthentication):
@@ -63,25 +65,22 @@ class JWTAuthentication(BaseJWTAuthentication):
         return auth
 
 
+class TwoFactorAuthenticationMiddleware(OTPMiddleware):
+    pass
+
+
 class AccessMixin(mixins.AccessMixin):
     """Verify that the current user is authenticated."""
 
     def dispatch(self, request, *args, **kwargs):
-        try:
-            if not request.user.is_authenticated:
-                auth = JWTAuthentication().authenticate(
-                    request
-                ) or TokenAuthentication().authenticate(request)
+        if not request.user.is_authenticated:
+            authenticate_user(request)
 
-                if auth is not None:
-                    user, _ = auth
-                    request.user = user
+        request.user = SimpleLazyObject(
+            functools.partial(get_request_user, request, request.user)
+        )
 
-        finally:
-            request.user = SimpleLazyObject(
-                functools.partial(get_request_user, request, request.user)
-            )
-            return super().dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class AuthenticationMiddleware(BaseAuthenticationMiddleware):
@@ -94,6 +93,8 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 
     def process_request(self, request):
         super().process_request(request)
+
+        request = authenticate_user(request)
 
         if hasattr(request, "user"):
             request.org = self._get_organization(request)
@@ -133,6 +134,23 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
                 pass
 
         return None
+
+
+def authenticate_user(request):
+    def authenticate(request, authenticator):
+        if not request.user.is_authenticated:
+            auth = pydoc.locate(authenticator)().authenticate(request)
+
+            if auth is not None:
+                user, _ = auth
+                request.user = user
+
+        return request
+
+    try:
+        return functools.reduce(authenticate, AUTHENTICATION_METHODS, request)
+    except Exception:
+        return request
 
 
 def get_request_org(request, user, default_org_id: str = None):
@@ -181,7 +199,3 @@ def get_request_user(request, user):
     )
 
     return user
-
-
-class TwoFactorAuthenticationMiddleware(OTPMiddleware):
-    pass

@@ -18,19 +18,3 @@ class OAuth2Authentication(BaseOAuth2Authentication):
             )
 
         return auth
-
-
-class AccessMixin(authentication.AccessMixin):
-    """Verify that the current user is authenticated."""
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            if not request.user.is_authenticated:
-                auth = OAuth2Authentication().authenticate(request)
-
-                if auth is not None:
-                    user, *_ = auth
-                    request.user = user
-
-        finally:
-            return super().dispatch(request, *args, **kwargs)

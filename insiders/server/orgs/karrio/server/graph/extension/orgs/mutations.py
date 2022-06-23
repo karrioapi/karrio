@@ -45,20 +45,24 @@ class UpdateOrganization(utils.ClientMutation):
     @classmethod
     @required_roles(["admin"])
     def mutate_and_get_payload(cls, root, info, id, **data):
-        instance = models.Organization.objects.get(
-            id=id, users__id=info.context.user.id
-        )
-        serializer = serializers.OrganizationModelSerializer(
-            instance,
-            data=data,
-            partial=True,
-            context=info.context,
-        )
+        try:
+            instance = models.Organization.objects.get(
+                id=id, users__id=info.context.user.id
+            )
+            serializer = serializers.OrganizationModelSerializer(
+                instance,
+                data=data,
+                partial=True,
+                context=info.context,
+            )
 
-        if not serializer.is_valid():
-            return cls(errors=ErrorType.from_errors(serializer.errors))
+            if not serializer.is_valid():
+                return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(organization=serializer.save())
+            return cls(organization=serializer.save())
+        except Exception as e:
+            print(e)
+            raise e
 
 
 class DeleteOrganization(utils.ClientMutation):
