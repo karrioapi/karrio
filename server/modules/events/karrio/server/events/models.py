@@ -4,9 +4,10 @@ from django.db import models
 from django.contrib.postgres import fields
 
 from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 
+@register_model
 class Webhook(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
 

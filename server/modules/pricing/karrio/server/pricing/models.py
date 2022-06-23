@@ -10,7 +10,7 @@ from django.contrib.postgres.fields import DecimalRangeField
 from karrio.core.models import ChargeDetails
 from karrio.core.utils import DP, NF
 from karrio.server.core.fields import MultiChoiceField
-from karrio.server.core.models import Entity, uuid
+from karrio.server.core.models import Entity, uuid, register_model
 from karrio.server.core.dataunits import REFERENCE_MODELS
 from karrio.server.core.datatypes import RateResponse, Rate
 from karrio.server.core.serializers import CARRIERS
@@ -28,6 +28,7 @@ SURCHAGE_TYPE = (
 )
 
 
+@register_model
 class Surcharge(Entity):
     class Meta:
         db_table = "surcharge"

@@ -1,4 +1,5 @@
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+# type: ignore
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import importlib.util
 from karrio.server.settings.base import *
@@ -27,6 +28,10 @@ if importlib.util.find_spec("karrio.server.orgs") is not None:
 
 if importlib.util.find_spec("karrio.server.data") is not None:
     from karrio.server.settings.data import *
+
+
+if importlib.util.find_spec("karrio.server.audit") is not None:
+    from karrio.server.settings.audit import *
 
 
 """ Warning:: This section need to be last for settings extensibility """

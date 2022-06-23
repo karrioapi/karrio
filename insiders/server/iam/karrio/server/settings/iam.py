@@ -13,7 +13,7 @@ REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
     *REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
 )
 
-SESSION_ACCESS_MIXIN = "karrio.server.iam.authentication.AccessMixin"
+AUTHENTICATION_METHODS += ["karrio.server.iam.authentication.OAuth2Authentication"]
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 
 OAUTH2_PROVIDER = {
