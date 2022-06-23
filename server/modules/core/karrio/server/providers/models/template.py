@@ -2,7 +2,7 @@ from functools import partial
 from django.db import models
 from django.core.validators import RegexValidator
 
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),
@@ -10,6 +10,7 @@ LABEL_TEMPLATE_TYPES = [
 ]
 
 
+@register_model
 class LabelTemplate(OwnedEntity):
     class Meta:
         db_table = "label-template"

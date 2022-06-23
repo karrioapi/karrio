@@ -3,9 +3,10 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 from karrio.server.orgs.models import Organization
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 
+@register_model
 class DocumentTemplate(OwnedEntity):
     class Meta:
         db_table = "document-template"

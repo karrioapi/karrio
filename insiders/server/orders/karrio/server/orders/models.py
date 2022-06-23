@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 
 from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager import models as manager
 
 from karrio.server.orders.serializers.base import ORDER_STATUS
@@ -50,6 +50,7 @@ class OrderManager(models.Manager):
         )
 
 
+@register_model
 class Order(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [

@@ -17,6 +17,7 @@ import karrio.server.core.models as core
 import karrio.server.user.models as auth
 
 
+@core.register_model
 class Organization(AbstractOrganization):
     id = models.CharField(
         max_length=50,
@@ -80,6 +81,7 @@ class Organization(AbstractOrganization):
         return owner and super().is_owner(user)
 
 
+@core.register_model
 class OrganizationUser(AbstractOrganizationUser):
     @property
     def roles(self):
@@ -99,11 +101,13 @@ class OrganizationUser(AbstractOrganizationUser):
         return f"{self.user.email} ({self.organization.name})"
 
 
+@core.register_model
 class OrganizationOwner(AbstractOrganizationOwner):
     def __str__(self):
         return "{0}: {1}".format(self.organization, self.organization_user.user.email)
 
 
+@core.register_model
 class OrganizationInvitation(AbstractOrganizationInvitation):
     pass
 
