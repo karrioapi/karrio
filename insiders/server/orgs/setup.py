@@ -20,6 +20,7 @@ setup(
         "karrio.server.core",
         "karrio.server.graph",
         "karrio.server.orders",
+        "karrio.server.audit",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
