@@ -23,6 +23,8 @@ class ControlledAccessModel:
     def access_by(cls, context):
         if hasattr(cls, "created_by"):
             key = "created_by"
+        elif hasattr(cls, "actor"):
+            key = "actor"
         else:
             key = "user"
 

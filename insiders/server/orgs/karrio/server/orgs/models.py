@@ -13,6 +13,7 @@ import karrio.server.manager.models as manager
 import karrio.server.events.models as events
 import karrio.server.orders.models as orders
 import karrio.server.graph.models as graph
+import karrio.server.audit.models as audit
 import karrio.server.core.models as core
 import karrio.server.user.models as auth
 
@@ -71,6 +72,10 @@ class Organization(AbstractOrganization):
     )
 
     logs = models.ManyToManyField(core.APILog, related_name="org", through="LogLink")
+
+    auditlogs = models.ManyToManyField(
+        audit.AuditLogEntry, related_name="org", through="AuditLogEntryLink"
+    )
 
     tokens = models.ManyToManyField(auth.Token, related_name="org", through="TokenLink")
 
@@ -220,6 +225,15 @@ class LogLink(models.Model):
     )
     item = models.OneToOneField(
         core.APILog, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class AuditLogEntryLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="auditlog_links"
+    )
+    item = models.OneToOneField(
+        audit.AuditLogEntry, on_delete=models.CASCADE, related_name="link"
     )
 
 

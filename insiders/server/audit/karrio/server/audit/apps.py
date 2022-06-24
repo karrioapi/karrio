@@ -6,3 +6,8 @@ class AuditConfig(AppConfig):
     name = "karrio.server.audit"
     verbose_name = _("Audit Log")
     default_auto_field = "django.db.models.BigAutoField"
+
+    def ready(self):
+        from karrio.server.audit import signals
+
+        signals.register_signals()
