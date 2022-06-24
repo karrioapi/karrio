@@ -17,9 +17,7 @@ setup(
     install_requires=[
         "django-auditlog",
         "karrio.server.core",
-        "karrio.server.orgs",
         "karrio.server.graph",
-        "karrio.server.manager",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
