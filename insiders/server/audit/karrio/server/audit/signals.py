@@ -16,14 +16,20 @@ def register_signals():
 
 @utils.disable_for_loaddata
 def logentry_created(sender, instance, created, *args, **kwargs):
-    _log = models.AuditLogEntry.objects.get(pk=instance.pk)
-    _content = instance.content_type.model_class().objects.get(pk=instance.object_pk)
-
-    if hasattr(_content, "link") and not hasattr(_log, "link"):
-        org = getattr(_content.link, "org", None)
-        _log.link = instance.__class__.link.related.related_model.objects.create(
-            org=org, item=instance
+    try:
+        _log = models.AuditLogEntry.objects.get(pk=instance.pk)
+        _content = instance.content_type.model_class().objects.get(
+            pk=instance.object_pk
         )
-        _log.save()
 
-        logger.debug("auditlog created.")
+        if hasattr(_content, "link") and not hasattr(_log, "link"):
+            org = getattr(_content.link, "org", None)
+            _log.link = instance.__class__.link.related.related_model.objects.create(
+                org=org, item=instance
+            )
+            _log.save()
+
+            logger.debug("auditlog created.")
+    except Exception as e:
+        logger.error(e)
+        raise e
