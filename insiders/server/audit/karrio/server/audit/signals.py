@@ -32,4 +32,3 @@ def logentry_created(sender, instance, created, *args, **kwargs):
             logger.debug("auditlog created.")
     except Exception as e:
         logger.error(e)
-        raise e
