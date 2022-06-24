@@ -27,9 +27,7 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
-    changes = update_fields or {}
-
-    if created or "status" not in changes:
+    if created and instance.status != serializers.ShipmentStatus.purchased.value:
         return
     elif instance.status == serializers.ShipmentStatus.purchased.value:
         event = EventTypes.shipment_purchased.value

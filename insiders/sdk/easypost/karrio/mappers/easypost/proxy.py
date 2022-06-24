@@ -20,7 +20,6 @@ class Proxy(BaseProxy):
         payload = request.serialize()
 
         def create(request) -> str:
-            print(request, "<<<<<<<")
             response = DP.to_dict(
                 self._send_request(
                     path="/shipments", request=Serializable(request, DP.jsonify)
