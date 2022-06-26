@@ -6,7 +6,6 @@ from karrio.core.utils import (
     XP,
 )
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
-from karrio.core.utils.helpers import exec_async
 from karrio.mappers.dhl_poland.settings import Settings
 from karrio.api.proxy import Proxy as BaseProxy
 
@@ -18,11 +17,12 @@ class Proxy(RatingMixinProxy, BaseProxy):
         return http(
             url=f"{self.settings.server_url}",
             data=request.serialize(),
+            trace=self.trace,
+            method="POST",
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
                 "soapaction": soapaction,
             },
-            method="POST",
         )
 
     def get_rates(self, request: Serializable) -> Deserializable:

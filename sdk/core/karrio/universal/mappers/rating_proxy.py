@@ -1,6 +1,7 @@
 import attr
 from typing import List, Tuple
 from karrio.core.utils import (
+    Tracer,
     Serializable,
     Deserializable,
 )
@@ -21,6 +22,10 @@ from karrio.universal.providers.rating import RatingMixinSettings, PackageServic
 @attr.s(auto_attribs=True)
 class RatingMixinProxy:
     settings: RatingMixinSettings
+    tracer: Tracer = attr.field(factory=Tracer)
+
+    def trace(self, *args, **kwargs):
+        return self.tracer.trace(*args, **kwargs)
 
     def get_rates(
         self, request: Serializable[RateRequest]
