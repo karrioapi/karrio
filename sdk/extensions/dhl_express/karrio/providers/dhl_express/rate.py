@@ -24,7 +24,7 @@ from karrio.providers.dhl_express.units import (
     ProductCode,
     DCTPackageType,
     PackagePresets,
-    SpecialServiceCode,
+    ShippingOption,
     NetworkType,
     COUNTRY_PREFERED_UNITS,
     MeasurementOptions,
@@ -86,7 +86,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
         payload.parcels,
         PackagePresets,
         required=["weight"],
-        package_option_type=SpecialServiceCode,
+        package_option_type=ShippingOption,
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
@@ -108,14 +108,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
         ),
         ProductCode,
     )
-    options = Options(
-        SpecialServiceCode.apply_defaults(
-            payload.options,
-            is_international=is_international,
-            is_dutiable=is_dutiable,
-            package_options=packages.options,
-        ),
-        SpecialServiceCode,
+    options = ShippingOption.to_options(
+        payload.options,
+        is_international=is_international,
+        is_dutiable=is_dutiable,
+        package_options=packages.options,
     )
 
     weight_unit, dim_unit = (
@@ -186,10 +183,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                         GlobalProductCode=product.value,
                         LocalProductCode=product.value,
                         QtdShpExChrg=[
-                            QtdShpExChrgType(
-                                SpecialServiceType=SpecialServiceCode[key].value.key
-                            )
-                            for key, _ in SpecialServiceCode.options_from(options)
+                            QtdShpExChrgType(SpecialServiceType=code)
+                            for _, code, _ in options.as_list()
                         ],
                     )
                     for product in products

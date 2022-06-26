@@ -13,13 +13,13 @@ from canadapost_lib.rating import (
 )
 from typing import List, Tuple
 from karrio.core.utils import Serializable, Element, NF, XP
-from karrio.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
 from karrio.core.units import Country, Currency, Packages, Services, Options
 from karrio.core.errors import OriginNotServicedError
 from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.units import (
-    OptionCode,
+    ShippingOption,
     ServiceType,
     PackagePresets,
     MeasurementOptions,
@@ -85,11 +85,14 @@ def rate_request(
 
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     services = Services(payload.services, ServiceType)
-    options = Options(payload.options, OptionCode)
-    recipient_postal_code = (
-        (payload.recipient.postal_code or "").replace(" ", "").upper()
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+        is_international=(
+            payload.recipient.country_code is not None
+            and payload.recipient.country_code != "CA"
+        ),
     )
-    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
@@ -101,14 +104,13 @@ def rate_request(
             optionsType(
                 option=[
                     optionType(
-                        option_code=getattr(option, "key", option),
-                        option_amount=getattr(option, "value", None),
+                        option_code=code,
+                        option_amount=value,
                     )
-                    for code, option in options
-                    if code in OptionCode and code not in CUSTOM_OPTIONS
+                    for _, code, value in options.as_list()
                 ]
             )
-            if any([c in OptionCode for c, _ in options])
+            if any(options.as_list())
             else None
         ),
         parcel_characteristics=parcel_characteristicsType(
@@ -127,20 +129,26 @@ def rate_request(
             if any(services)
             else None
         ),
-        origin_postal_code=shipper_postal_code,
+        origin_postal_code=format_ca_postal_code(payload.shipper.postal_code),
         destination=destinationType(
             domestic=(
-                domesticType(postal_code=recipient_postal_code)
+                domesticType(
+                    postal_code=format_ca_postal_code(payload.recipient.postal_code)
+                )
                 if (payload.recipient.country_code == Country.CA.name)
                 else None
             ),
             united_states=(
-                united_statesType(zip_code=recipient_postal_code)
+                united_statesType(
+                    zip_code=format_ca_postal_code(payload.recipient.postal_code)
+                )
                 if (payload.recipient.country_code == Country.US.name)
                 else None
             ),
             international=(
-                internationalType(country_code=recipient_postal_code)
+                internationalType(
+                    country_code=format_ca_postal_code(payload.recipient.postal_code)
+                )
                 if (
                     payload.recipient.country_code
                     not in [Country.US.name, Country.CA.name]

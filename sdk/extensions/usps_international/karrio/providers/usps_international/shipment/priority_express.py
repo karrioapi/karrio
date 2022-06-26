@@ -26,7 +26,7 @@ from karrio.core.models import (
 )
 from karrio.providers.usps_international.units import (
     LabelFormat,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps_international.error import parse_error_response
@@ -59,18 +59,18 @@ def shipment_request(
 ) -> Serializable[eVSExpressMailIntlRequest]:
     package = Packages(
         payload.parcels,
-        package_option_type=ShipmentOption,
+        package_option_type=ShippingOption,
         max_weight=Weight(70, WeightUnit.LB),
     ).single
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
-    print(options.content)
+
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
     redirect_address = CompleteAddress.map(
-        Address(**(options["usps_option_redirect_non_delivery"] or {}))
+        Address(**(options.usps_option_redirect_non_delivery or {}))
     )
 
     request = eVSExpressMailIntlRequest(
@@ -108,7 +108,7 @@ def shipment_request(
         ToFax=None,
         ToEmail=payload.recipient.email,
         ImportersReferenceNumber=None,
-        NonDeliveryOption=ShipmentOption.non_delivery_from(options),
+        NonDeliveryOption=ShippingOption.non_delivery_from(options),
         RedirectName=redirect_address.person_name,
         RedirectEmail=redirect_address.email,
         RedirectSMS=redirect_address.phone_number,
@@ -136,7 +136,7 @@ def shipment_request(
                 for item in customs.commodities
             ]
         ),
-        InsuredAmount=ShipmentOption.insurance_from(options, "express_mail"),
+        InsuredAmount=ShippingOption.insurance_from(options, "express_mail"),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         ContentType=ContentType[customs.content_type or "other"].value,

@@ -37,10 +37,10 @@ from karrio.providers.eshipper.utils import (
     ceil,
 )
 from karrio.providers.eshipper.units import (
-    Service,
+    ShippingService,
     PackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
     PaymentType,
 )
 from karrio.providers.eshipper.error import parse_error_response
@@ -66,7 +66,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     tracking_number = getattr(
         next(iter(shipping.Package), None), "trackingNumber", None
     )
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -116,14 +116,15 @@ def shipping_request(
 ) -> Serializable[EShipper]:
     packages = Packages(
         payload.parcels,
-        package_option_type=Option,
+        package_option_type=ShippingOption,
         required=["weight", "height", "width", "length"],
     )
-    options = Options(
-        Option.apply_defaults(payload.options, package_options=packages.options), Option
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
     )
 
-    service = Service.map(payload.service).value_or_key
+    service = ShippingService.map(payload.service).value_or_key
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
     packaging = (
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"

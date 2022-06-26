@@ -2,20 +2,18 @@ import attr
 import logging
 from typing import Any, Callable, Generic, TypeVar
 
+from karrio.core.utils.helpers import identity
+
 logger = logging.getLogger(__name__)
 
 XML_str = str
 T = TypeVar("T")
 
 
-def _identity(value: Any) -> Any:
-    return value
-
-
 @attr.s(auto_attribs=True)
 class Serializable(Generic[T]):
     value: T
-    _serializer: Callable[[T], Any] = _identity
+    _serializer: Callable[[T], Any] = identity
     logged: bool = False
 
     def serialize(self) -> Any:
@@ -30,7 +28,7 @@ class Serializable(Generic[T]):
 @attr.s(auto_attribs=True)
 class Deserializable(Generic[T]):
     value: T
-    _deserializer: Callable[[T], Any] = _identity
+    _deserializer: Callable[[T], Any] = identity
     logged: bool = False
 
     def deserialize(self) -> Any:

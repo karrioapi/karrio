@@ -1,3 +1,4 @@
+from karrio.core import units
 from karrio.core.utils import Flag, Enum, Spec
 
 
@@ -24,7 +25,7 @@ class Purpose(Enum):
     ret = "RET"
 
     """ Unified Customs Content Type mapping """
-    
+
     documents = doc
     gift = per
     sample = per
@@ -75,7 +76,7 @@ class Service(Enum):  # DeliveryType
     dicom_ground_delivery = "GRD"
 
 
-class Option(Enum):
+class ShippingOption(Enum):
     dicom_common_declared_value = Spec.asKeyVal("DCV")
     dicom_common_dangerous_goods = Spec.asKey("DGG")
     dicom_common_residential_delivery = Spec.asKey("PHD")
@@ -104,6 +105,21 @@ class Option(Enum):
     dicom_parcel_us_pallet_service_pa = Spec.asKey("PA")
     dicom_parcel_us_pallet_service_rap = Spec.asKey("RAP")
     dicom_parcel_us_pallet_service_nd = Spec.asKey("ND")
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return units.Options(options, cls)
 
 
 class Surcharge(Flag):

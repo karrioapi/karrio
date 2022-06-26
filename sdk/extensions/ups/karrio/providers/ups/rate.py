@@ -31,7 +31,7 @@ from karrio.core.utils import (
 from karrio.core.units import Packages, Services
 from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from karrio.providers.ups.units import (
-    ServiceCode,
+    ShippingService,
     PackagingType,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
@@ -82,7 +82,7 @@ def _extract_package_rate(
             else estimated_arrival.BusinessDaysInTransit
         )
         currency = XP.find("CurrencyCode", detail_node, first=True).text
-        service = ServiceCode.map(rate.Service.Code)
+        service = ShippingService.map(rate.Service.Code)
 
         return rates + [
             RateDetails(
@@ -113,7 +113,7 @@ def rate_request(
 ) -> Serializable[UPSRateRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    service = Services(payload.services, ServiceCode).first
+    service = Services(payload.services, ShippingService).first
     mps_packaging = PackagingType.ups_unknown.value if len(packages) > 1 else None
 
     request = UPSRateRequest(

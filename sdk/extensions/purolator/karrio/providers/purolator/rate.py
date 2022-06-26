@@ -37,11 +37,11 @@ from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.units import (
-    Product,
+    ShippingService,
     PackagePresets,
     DutyPaymentType,
     MeasurementOptions,
-    Service,
+    ShippingOption,
     NON_OFFICIAL_SERVICES,
 )
 
@@ -59,7 +59,7 @@ def parse_rate_response(
 def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     estimate = XP.to_object(ShipmentEstimate, estimate_node)
     currency = Currency.CAD.name
-    service = Product.map(estimate.ServiceID)
+    service = ShippingService.map(estimate.ServiceID)
     charges = [
         ("Base charge", estimate.BasePrice),
         *(
@@ -94,11 +94,13 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = Services(payload.services, Product).first
-    options = Options(payload.options, Service)
+    service = Services(payload.services, ShippingService).first
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
+        service_is_defined=(getattr(service, "value", None) in payload.services),
+    )
 
-    package_description = packages[0].parcel.description if len(packages) == 1 else None
-    is_document = all([parcel.is_document for parcel in payload.parcels])
     shipper_phone = Phone(
         payload.shipper.phone_number, payload.shipper.country_code or "CA"
     )
@@ -106,24 +108,14 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
         payload.recipient.phone_number, payload.recipient.country_code
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    option_ids = [
-        (key, value)
-        for key, value in options
-        if key in Service and key not in NON_OFFICIAL_SERVICES
-    ]
 
     # When no specific service is requested, set a default one.
     if service is None:
-        show_alternate_services = (
-            options["purolator_show_alternative_services"] is not False
-        )
-        service = Product[
+        service = ShippingService[
             "purolator_express_international"
             if is_international
             else "purolator_express"
         ]
-    else:
-        show_alternate_services = options["purolator_show_alternative_services"] is True
 
     request = create_envelope(
         header_content=RequestContext(
@@ -209,7 +201,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 ShipmentDate=options.shipment_date,
                 PackageInformation=PackageInformation(
                     ServiceID=service.value,
-                    Description=package_description,
+                    Description=packages.description,
                     TotalWeight=(
                         TotalWeight(
                             Value=packages.weight.map(MeasurementOptions).LB,
@@ -266,11 +258,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                 ),
                                 Options=ArrayOfOptionIDValuePair(
                                     OptionIDValuePair=[
-                                        OptionIDValuePair(ID=key, Value=value)
-                                        for key, value in option_ids
+                                        OptionIDValuePair(ID=code, Value=value)
+                                        for _, code, value in options.as_list()
                                     ]
                                 )
-                                if any(option_ids)
+                                if any(options.as_list())
                                 else None,
                             )
                             for package in packages
@@ -281,7 +273,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 ),
                 InternationalInformation=(
                     InternationalInformation(
-                        DocumentsOnlyIndicator=is_document,
+                        DocumentsOnlyIndicator=packages.is_document,
                         ContentDetails=None,
                         BuyerInformation=None,
                         PreferredCustomsBroker=None,
@@ -313,7 +305,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
-            ShowAlternativeServicesIndicator=show_alternate_services,
+            ShowAlternativeServicesIndicator=options.purolator_show_alternative_services,
         ),
     )
 

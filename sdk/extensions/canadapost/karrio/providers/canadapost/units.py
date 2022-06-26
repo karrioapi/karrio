@@ -101,7 +101,7 @@ class ServiceType(Enum):
     canadapost_tracked_packet_international = "INT.TP"
 
 
-class OptionCode(Enum):
+class ShippingOption(Enum):
     canadapost_signature = Spec.asKey("SO")
     canadapost_coverage = Spec.asKeyVal("COV", float)
     canadapost_collect_on_delivery = Spec.asKeyVal("COD", float)
@@ -124,12 +124,12 @@ class OptionCode(Enum):
     signature_confirmation = canadapost_signature
 
     @classmethod
-    def apply_defaults(
+    def to_options(
         cls,
         options: dict,
         package_options: Options = None,
         is_international: bool = False,
-    ) -> dict:
+    ) -> Options:
         # Apply default non delivery options for if international.
         no_international_option_specified: bool = not any(
             key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
@@ -142,27 +142,22 @@ class OptionCode(Enum):
         if package_options is not None:
             options.update(package_options.content)
 
-        return options
+        # Define carrier option filter.
+        def option_filter(key: str) -> bool:
+            return key in cls and key not in CUSTOM_OPTIONS  # type:ignore
 
-    @classmethod
-    def options_from(cls, options: Options) -> typing.List[typing.Tuple[str, Spec]]:
-        return [
-            (code, option)
-            for code, option in options
-            if code in cls and code not in CUSTOM_OPTIONS  # type: ignore
-        ]
+        return Options(options, cls, option_filter=option_filter)
 
 
 INTERNATIONAL_NON_DELIVERY_OPTION = [
-    OptionCode.canadapost_return_at_senders_expense.name,
-    OptionCode.canadapost_return_to_sender.name,
-    OptionCode.canadapost_abandon.name,
+    ShippingOption.canadapost_return_at_senders_expense.name,
+    ShippingOption.canadapost_return_to_sender.name,
+    ShippingOption.canadapost_abandon.name,
 ]
 
 CUSTOM_OPTIONS = [
-    OptionCode.canadapost_cost_center.name,
+    ShippingOption.canadapost_cost_center.name,
 ]
-
 
 TRACKING_DELIVERED_EVENT_CODES = [
     "1408",

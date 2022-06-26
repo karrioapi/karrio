@@ -7,7 +7,7 @@ from usps_lib.evs_gxg_get_label_request import (
     ItemDetailType,
 )
 from karrio.core.utils import Serializable, Element, XP, DF, Location
-from karrio.core.units import CustomsInfo, Packages, Options, Weight, WeightUnit
+from karrio.core.units import CustomsInfo, Packages, Weight, WeightUnit
 from karrio.core.models import (
     Documents,
     ShipmentRequest,
@@ -16,7 +16,7 @@ from karrio.core.models import (
     Customs,
 )
 from karrio.providers.usps_international.units import (
-    ShipmentOption,
+    ShippingOption,
     ContentType,
     PackagingType,
     Incoterm,
@@ -52,12 +52,12 @@ def shipment_request(
 ) -> Serializable[eVSGXGGetLabelRequest]:
     package = Packages(
         payload.parcels,
-        package_option_type=ShipmentOption,
+        package_option_type=ShippingOption,
         max_weight=Weight(70, WeightUnit.LB),
     ).single
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
 
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
@@ -120,7 +120,7 @@ def shipment_request(
         PartiesToTransaction=None,
         Agreement=("N" if customs.certify else "Y"),
         Postage=None,
-        InsuredValue=ShipmentOption.insurance_from(options, "global_express"),
+        InsuredValue=ShippingOption.insurance_from(options, "global_express"),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         Length=package.length.IN,

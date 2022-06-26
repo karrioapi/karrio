@@ -80,7 +80,7 @@ class PackagingType(Enum):
     your_packaging = package
 
 
-class ShipmentOption(Enum):
+class ShippingOption(Enum):
     usps_registered_mail = Spec.asKey("103")
     usps_insurance_global_express_guaranteed = Spec.asValue("106", float)
     usps_insurance_express_mail_international = Spec.asValue("107", float)
@@ -96,11 +96,11 @@ class ShipmentOption(Enum):
     usps_option_redirect_non_delivery = Spec.asValue("REDIRECT", Address)
 
     @classmethod
-    def apply_defaults(
+    def to_options(
         cls,
         options: dict,
         package_options: units.Options = None,
-    ) -> dict:
+    ) -> units.Options:
         """
         Apply default values to the given options.
         """
@@ -108,17 +108,10 @@ class ShipmentOption(Enum):
         if package_options is not None:
             options.update(package_options.content)
 
-        return options
+        def option_filter(code: str) -> bool:
+            return code in cls and "usps_option" not in code  # type: ignore
 
-    @classmethod
-    def options_from(
-        cls, options: units.Options
-    ) -> typing.List[typing.Tuple[str, Spec]]:
-        return [
-            (code, option)
-            for code, option in options
-            if code in cls and "usps_option" not in code  # type: ignore
-        ]
+        return units.Options(options, cls, option_filter=option_filter)
 
     @classmethod
     def insurance_from(
@@ -142,7 +135,7 @@ class ShipmentOption(Enum):
         )
 
 
-class ShipmentService(Enum):
+class ShippingService(Enum):
     usps_first_class = "First Class"
     usps_first_class_commercial = "First Class Commercial"
     usps_first_class_hfp_commercial = "First Class HFPCommercial"

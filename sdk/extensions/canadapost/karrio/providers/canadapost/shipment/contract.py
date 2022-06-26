@@ -32,7 +32,7 @@ from karrio.core.models import (
 )
 from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.units import (
-    OptionCode,
+    ShippingOption,
     ServiceType,
     PackagePresets,
     PaymentType,
@@ -75,18 +75,15 @@ def shipment_request(
         payload.parcels,
         PackagePresets,
         required=["weight"],
-        package_option_type=OptionCode,
+        package_option_type=ShippingOption,
     ).single
-    options = Options(
-        OptionCode.apply_defaults(
-            options=payload.options,
-            package_options=package.options,
-            is_international=(
-                payload.recipient.country_code is not None
-                and payload.recipient.country_code != "CA"
-            ),
+    options = ShippingOption.to_options(
+        options=payload.options,
+        package_options=package.options,
+        is_international=(
+            payload.recipient.country_code is not None
+            and payload.recipient.country_code != "CA"
         ),
-        OptionCode,
     )
 
     customs = payload.customs
@@ -156,15 +153,15 @@ def shipment_request(
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=getattr(option, "key", option),
-                            option_amount=getattr(option, "value", None),
+                            option_code=code,
+                            option_amount=value,
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for _, option in OptionCode.options_from(options)
+                        for _, code, value in options.as_list()
                     ]
                 )
-                if any(OptionCode.options_from(options))
+                if any(options.as_list())
                 else None
             ),
             notification=(

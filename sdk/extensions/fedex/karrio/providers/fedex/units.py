@@ -290,7 +290,7 @@ class ServiceType(Enum):
     )
 
 
-class SpecialServiceType(Enum):
+class ShippingOption(Enum):
     fedex_blind_shipment = Spec.asKey("BLIND_SHIPMENT")
     fedex_broker_select_option = Spec.asKey("BROKER_SELECT_OPTION")
     fedex_call_before_delivery = Spec.asKey("CALL_BEFORE_DELIVERY")
@@ -388,27 +388,22 @@ class SpecialServiceType(Enum):
     cash_on_delivery = fedex_cod
 
     @classmethod
-    def apply_defaults(
+    def to_options(
         cls,
         options: dict,
-        package_options: dict = None,
-    ) -> dict:
+        package_options: units.Options = None,
+    ) -> units.Options:
         """
         Apply default values to the given options.
         """
 
         if package_options is not None:
-            options.update(package_options)
+            options.update(package_options.content)
 
-        return options
+        def option_filter(key: str) -> bool:
+            return key in cls  # type: ignore
 
-    @classmethod
-    def options_from(
-        cls, options: units.Options
-    ) -> typing.List[typing.Tuple[str, Spec]]:
-        return [
-            (code, option) for code, option in options if code in cls  # type: ignore
-        ]
+        return units.Options(options, cls, option_filter=option_filter)
 
 
 class RateType(Enum):

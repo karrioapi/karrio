@@ -19,7 +19,7 @@ from karrio.core.models import (
 )
 from karrio.providers.usps_international.units import (
     LabelFormat,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps_international.error import parse_error_response
@@ -51,14 +51,12 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[eVSFirstClassMailIntlRequest]:
     package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
-    options = Options(payload.options, ShipmentOption)
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+    )
 
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
-    extra_services = [
-        getattr(option, "value", option)
-        for key, option in options
-        if key in ShipmentOption and "usps_option" not in key
-    ]
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
 
     request = eVSFirstClassMailIntlRequest(
@@ -140,8 +138,8 @@ def shipment_request(
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         ExtraServices=(
-            ExtraServicesType(ExtraService=[s for s in extra_services])
-            if any(extra_services)
+            ExtraServicesType(ExtraService=[code for _, code, _ in options.as_list()])
+            if any(options.as_list())
             else None
         ),
         PriceOptions=None,
