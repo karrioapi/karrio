@@ -183,7 +183,6 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
             special_prefixes=dict(shipment_children="xsd1"),
         ),
-        logged=True,
     )
     return Job(id="process", data=data)
 

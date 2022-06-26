@@ -54,7 +54,7 @@ def pickup_cancel_request(
         CancelTime=time.strftime("%H:%M:%S"),
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: CancelPURequest) -> str:

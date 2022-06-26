@@ -84,5 +84,4 @@ def pickup_request(
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
             special_prefixes=dict(pickup_children="xsd1"),
         ),
-        logged=True,
     )

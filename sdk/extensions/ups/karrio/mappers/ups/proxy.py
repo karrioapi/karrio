@@ -21,9 +21,10 @@ class Proxy(BaseProxy):
     def _send_request(self, path: str, request: Serializable[Any]) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
+            data=request.serialize(),
+            trace=self.trace,
             method="POST",
+            headers={"Content-Type": "application/xml"},
         )
 
     def validate_address(

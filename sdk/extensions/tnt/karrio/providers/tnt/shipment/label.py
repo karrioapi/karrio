@@ -115,4 +115,4 @@ def create_label_request(
         ]
     )
 
-    return Serializable(request, logged=True)
+    return Serializable(request)

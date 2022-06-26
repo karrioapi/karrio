@@ -17,7 +17,7 @@ class Proxy(RatingMixinProxy, BaseProxy):
     def _send_request(self, request: Serializable[Any], soapaction: str) -> str:
         return http(
             url=f"{self.settings.server_url}",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
                 "soapaction": soapaction,

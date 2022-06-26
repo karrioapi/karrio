@@ -544,7 +544,7 @@ def shipment_request(
         for package_index, package in enumerate(packages, 1)
     ]
 
-    return Serializable(requests, _request_serializer, logged=True)
+    return Serializable(requests, _request_serializer)
 
 
 def _request_serializer(requests: List[ProcessShipmentRequest]) -> List[str]:

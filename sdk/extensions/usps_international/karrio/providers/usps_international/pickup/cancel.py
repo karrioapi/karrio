@@ -44,4 +44,4 @@ def pickup_cancel_request(
         ConfirmationNumber=payload.confirmation_number,
     )
 
-    return Serializable(request, logged=True)
+    return Serializable(request)

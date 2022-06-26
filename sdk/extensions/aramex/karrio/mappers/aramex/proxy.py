@@ -11,11 +11,12 @@ class Proxy(BaseProxy):
     def get_tracking(self, request: Serializable) -> Deserializable[str]:
         response = http(
             url=f"{self.settings.server_url}/ShippingAPI.V2/Tracking/Service_1_0.svc",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
+            trace=self.trace,
+            method="POST",
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
-                "soapAction": "http://ws.aramex.net/ShippingAPI/v1/Service_1_0/TrackShipments"
+                "soapAction": "http://ws.aramex.net/ShippingAPI/v1/Service_1_0/TrackShipments",
             },
-            method="POST",
         )
         return Deserializable(response, XP.to_xml)

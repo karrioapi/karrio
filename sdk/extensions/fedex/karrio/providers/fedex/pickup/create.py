@@ -154,7 +154,7 @@ def _pickup_request(
         CountryRelationship=None,
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: CreatePickupRequest) -> str:

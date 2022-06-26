@@ -57,4 +57,4 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[Request]:
         ),
     )
 
-    return Serializable(request, DP.jsonify, logged=True)
+    return Serializable(request, DP.jsonify)

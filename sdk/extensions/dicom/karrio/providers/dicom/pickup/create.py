@@ -74,7 +74,7 @@ def _create_pickup(payload: PickupRequest) -> Job:
         otherLocation=payload.package_location,
     )
 
-    return Job(id="create_pickup", data=Serializable(request, DP.to_dict, logged=True))
+    return Job(id="create_pickup", data=Serializable(request, DP.to_dict))
 
 
 def _retrieve_pickup(
