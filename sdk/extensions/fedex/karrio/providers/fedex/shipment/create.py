@@ -60,7 +60,7 @@ from karrio.providers.fedex.utils import Settings
 from karrio.providers.fedex.units import (
     PackagingType,
     ServiceType,
-    SpecialServiceType,
+    ShippingOption,
     PackagePresets,
     PaymentType,
     LabelType,
@@ -140,14 +140,11 @@ def shipment_request(
         payload.parcels,
         PackagePresets,
         required=["weight"],
-        package_option_type=SpecialServiceType,
+        package_option_type=ShippingOption,
     )
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(
-        SpecialServiceType.apply_defaults(
-            payload.options, package_options=packages.options
-        ),
-        SpecialServiceType,
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
     )
 
     customs = payload.customs
@@ -263,10 +260,7 @@ def shipment_request(
                 ),
                 SpecialServicesRequested=(
                     ShipmentSpecialServicesRequested(
-                        SpecialServiceTypes=[
-                            getattr(option, "value", option)
-                            for _, option in SpecialServiceType.options_from(options)
-                        ],
+                        SpecialServiceTypes=[code for _, code, _ in options.as_list()],
                         CodDetail=(
                             CodDetail(
                                 CodCollectionAmount=Money(

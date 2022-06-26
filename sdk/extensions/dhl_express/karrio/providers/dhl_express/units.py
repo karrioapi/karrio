@@ -320,7 +320,7 @@ class ProductCode(Enum):
         return products
 
 
-class SpecialServiceCode(Enum):
+class ShippingOption(Enum):
     dhl_logistics_services = Spec.asKey("0A")
     dhl_mailroom_management = Spec.asKey("0B")
     dhl_pallet_administration = Spec.asKey("0C")
@@ -552,14 +552,14 @@ class SpecialServiceCode(Enum):
     cash_on_delivery = dhl_cash_on_delivery
 
     @classmethod
-    def apply_defaults(
+    def to_options(
         cls,
         options: dict,
         is_international: bool = True,
         is_dutiable: bool = True,
-        package_options: dict = None,
+        package_options: units.Options = None,
         shipper_country: str = "",
-    ) -> dict:
+    ) -> units.Options:
         """
         Apply default values to the given options.
         """
@@ -573,17 +573,12 @@ class SpecialServiceCode(Enum):
             options.update({cls.dhl_paperless_trade.name: True})
 
         if package_options is not None:
-            options.update(package_options)
+            options.update(package_options.content)
 
-        return options
+        def option_filter(key: str) -> bool:
+            return key in cls  # type: ignore
 
-    @classmethod
-    def options_from(
-        cls, options: units.Options
-    ) -> typing.List[typing.Tuple[str, Spec]]:
-        return [
-            (code, option) for code, option in options if code in cls  # type: ignore
-        ]
+        return units.Options(options, cls, option_filter=option_filter)
 
 
 COUNTRY_PREFERED_UNITS = dict(

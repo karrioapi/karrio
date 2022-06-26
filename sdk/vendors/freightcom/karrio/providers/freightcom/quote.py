@@ -17,10 +17,10 @@ from karrio.providers.freightcom.utils import (
     ceil,
 )
 from karrio.providers.freightcom.units import (
-    Service,
+    ShippingService,
     FreightPackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
 )
 from karrio.providers.freightcom.error import parse_error_response
 
@@ -37,7 +37,7 @@ def parse_quote_reply(
 
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = XP.build(QuoteType, node)
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -69,17 +69,21 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Freightcom]:
     packages = Packages(
         payload.parcels,
-        package_option_type=Option,
+        package_option_type=ShippingOption,
         required=["weight", "height", "width", "length"],
     )
-    options = Options(
-        Option.apply_defaults(payload.options, package_options=packages.options), Option
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
     )
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
     packaging = (
         "Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package"
     )
-    service = Services(payload.services, Service).first or Service.freightcom_all
+    service = (
+        Services(payload.services, ShippingService).first
+        or ShippingService.freightcom_all
+    )
 
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass),

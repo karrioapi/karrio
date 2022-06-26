@@ -17,6 +17,10 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
+def identity(value: Any) -> Any:
+    return value
+
+
 def image_to_pdf(image_str: str) -> str:
     content = base64.b64decode(image_str)
     buffer = io.BytesIO()

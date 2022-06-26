@@ -39,7 +39,7 @@ def collect_providers_data() -> Dict[str, dict]:
         "universal": dict(
             label="Multi-carrier (karrio)",
             packaging_types=units.PackagingUnit,
-            options=units.Option,
+            options=units.ShippingOption,
         ),
         **{
             carrier_name: attr.asdict(metadata)

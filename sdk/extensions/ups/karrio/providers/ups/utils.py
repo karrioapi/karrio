@@ -40,7 +40,7 @@ def default_request_serializer(
 ) -> Callable[[Envelope], str]:
     def serializer(envelope: Envelope):
         namespace_ = (
-            ' xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
+            'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
             ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
             ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
             ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'

@@ -27,7 +27,7 @@ from karrio.core.models import (
 )
 from karrio.providers.usps_international.units import (
     LabelFormat,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps_international.error import parse_error_response
@@ -60,16 +60,16 @@ def shipment_request(
 ) -> Serializable[eVSPriorityMailIntlRequest]:
     package = Packages(
         payload.parcels,
-        package_option_type=ShipmentOption,
+        package_option_type=ShippingOption,
         max_weight=Weight(70, WeightUnit.LB),
     ).single
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
 
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
-    insurance = ShipmentOption.insurance_from(options, "priority_mail")
+    insurance = ShippingOption.insurance_from(options, "priority_mail")
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
     redirect_address = CompleteAddress.map(
         Address(**(options.usps_option_redirect_non_delivery or {}))
@@ -111,7 +111,7 @@ def shipment_request(
         ToFax=None,
         ToEmail=payload.recipient.email,
         ImportersReferenceNumber=None,
-        NonDeliveryOption=ShipmentOption.non_delivery_from(options),
+        NonDeliveryOption=ShippingOption.non_delivery_from(options),
         RedirectName=redirect_address.person_name,
         RedirectEmail=redirect_address.email,
         RedirectSMS=redirect_address.phone_number,
@@ -170,12 +170,9 @@ def shipment_request(
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         ExtraServices=(
             ExtraServicesType(
-                ExtraService=[
-                    getattr(ShipmentOption.map(code).value, "key", option)
-                    for code, option in ShipmentOption.options_from(options)
-                ]
+                ExtraService=[code for _, code, value in options.as_list()]
             )
-            if any(ShipmentOption.options_from(options))
+            if any(options.as_list())
             else None
         ),
         ActionCode=None,

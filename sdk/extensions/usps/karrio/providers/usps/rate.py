@@ -14,7 +14,7 @@ from karrio.core.units import Packages, Currency, Options, Services, Country
 
 from karrio.providers.usps.units import (
     ShipmentService,
-    ShipmentOption,
+    ShippingOption,
     PackagingType,
     ServiceClassID,
     FirstClassMailType,
@@ -92,11 +92,11 @@ def rate_request(
     ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels, package_option_type=ShipmentOption).single
+    package = Packages(payload.parcels, package_option_type=ShippingOption).single
     container = PackagingType[package.packaging_type or "your_packaging"]
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
     service = (
         Services(payload.services, ShipmentService).first or ShipmentService.usps_all
@@ -127,12 +127,9 @@ def rate_request(
                 AmountToCollect=options.cash_on_delivery,
                 SpecialServices=(
                     SpecialServicesType(
-                        SpecialService=[
-                            getattr(ShipmentOption.map(code).value, "key", option)
-                            for code, option in ShipmentOption.options_from(options)
-                        ]
+                        SpecialService=[code for _, code, value in options.as_list()]
                     )
-                    if any(ShipmentOption.options_from(options))
+                    if any(options.as_list())
                     else None
                 ),
                 Content=None,

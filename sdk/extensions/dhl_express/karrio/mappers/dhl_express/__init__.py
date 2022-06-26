@@ -9,14 +9,12 @@ import karrio.providers.dhl_express.units as units
 METADATA = Metadata(
     id="dhl_express",
     label="DHL Express",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
-    options=units.SpecialServiceCode,
+    options=units.ShippingOption,
     package_presets=units.PackagePresets,
     packaging_types=units.DCTPackageType,
     services=units.ProductCode,

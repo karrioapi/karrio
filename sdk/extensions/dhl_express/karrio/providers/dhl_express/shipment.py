@@ -46,7 +46,7 @@ from karrio.providers.dhl_express.units import (
     ProductCode,
     PaymentType,
     CountryRegion,
-    SpecialServiceCode,
+    ShippingOption,
     PackagePresets,
     LabelType,
     ExportReasonCode,
@@ -108,7 +108,7 @@ def shipment_request(
         payload.parcels,
         PackagePresets,
         required=["weight"],
-        package_option_type=SpecialServiceCode,
+        package_option_type=ShippingOption,
     )
     product = ProductCode.map(payload.service).value_or_key
     shipper = CompleteAddress.map(payload.shipper)
@@ -127,15 +127,13 @@ def shipment_request(
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
     is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
-    options = Options(
-        SpecialServiceCode.apply_defaults(
-            payload.options,
-            is_dutiable=is_dutiable,
-            package_options=packages.options,
-            shipper_country=payload.shipper.country_code,
-        ),
-        SpecialServiceCode,
+    options = ShippingOption.to_options(
+        payload.options,
+        is_dutiable=is_dutiable,
+        package_options=packages.options,
+        shipper_country=payload.shipper.country_code,
     )
+
     duty = customs.duty or Duty(paid_by="sender")
     bill_to = CompleteAddress.map(duty.bill_to)
     content = packages[0].parcel.content or customs.content_description or "N/A"
@@ -381,13 +379,11 @@ def shipment_request(
         ),
         SpecialService=[
             SpecialService(
-                SpecialServiceType=SpecialServiceCode[key].value.key,
-                ChargeValue=getattr(svc, "value", None),
-                CurrencyCode=(
-                    options.currency or "USD" if hasattr(svc, "value") else None
-                ),
+                SpecialServiceType=code,
+                ChargeValue=value,
+                CurrencyCode=(options.currency or "USD" if value else None),
             )
-            for key, svc in SpecialServiceCode.options_from(options)
+            for _, code, value in options.as_list()
         ],
         Notification=(
             Notification(EmailAddress=options.email_notification_to or recipient.email)

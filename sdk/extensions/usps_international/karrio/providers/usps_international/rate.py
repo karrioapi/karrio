@@ -23,8 +23,8 @@ from karrio.core.units import (
 )
 
 from karrio.providers.usps_international.units import (
-    ShipmentService,
-    ShipmentOption,
+    ShippingService,
+    ShippingOption,
     PackagingType,
     ServiceClassID,
 )
@@ -99,15 +99,15 @@ def rate_request(
         raise DestinationNotServicedError(payload.recipient.country_code)
 
     recipient = CompleteAddress(payload.recipient)
-    services = Services(payload.services, ShipmentService)
+    services = Services(payload.services, ShippingService)
     package = Packages(
         payload.parcels,
-        package_option_type=ShipmentOption,
+        package_option_type=ShippingOption,
         max_weight=Weight(70, WeightUnit.LB),
     ).single
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
 
     commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
@@ -148,12 +148,9 @@ def rate_request(
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
                     ExtraServicesType(
-                        ExtraService=[
-                            getattr(ShipmentOption.map(code).value, "key", option)
-                            for code, option in ShipmentOption.options_from(options)
-                        ]
+                        ExtraService=[code for _, code, value in options.as_list()]
                     )
-                    if any(ShipmentOption.options_from(options))
+                    if any(options.as_list())
                     else None
                 ),
                 Content=None,
