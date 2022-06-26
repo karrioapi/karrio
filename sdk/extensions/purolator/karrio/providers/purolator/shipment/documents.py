@@ -47,7 +47,7 @@ def get_shipping_documents_request(
             ),
         ),
     )
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(envelope: Envelope) -> str:

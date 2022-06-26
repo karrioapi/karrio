@@ -55,4 +55,4 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
         EmailAddress=payload.address.email,
     )
 
-    return Serializable(request, logged=True)
+    return Serializable(request)

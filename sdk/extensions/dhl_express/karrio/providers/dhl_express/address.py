@@ -69,7 +69,7 @@ def address_validation_request(
         CountryName=country.value,
         OriginCountryCode=payload.address.country_code,
     )
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: RouteRequest) -> str:

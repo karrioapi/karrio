@@ -125,4 +125,4 @@ def rate_request(
         appointment=None,
     )
 
-    return Serializable(request, DP.to_dict, logged=True)
+    return Serializable(request, DP.to_dict)

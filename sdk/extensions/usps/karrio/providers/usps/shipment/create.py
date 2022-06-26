@@ -211,4 +211,4 @@ def shipment_request(
         TrackingRetentionPeriod=None,
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

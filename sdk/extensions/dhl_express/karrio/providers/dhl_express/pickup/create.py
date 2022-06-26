@@ -116,7 +116,7 @@ def pickup_request(
         ConsigneeDetails=None,
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: BookPURequest) -> str:

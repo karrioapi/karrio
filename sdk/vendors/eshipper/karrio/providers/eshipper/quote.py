@@ -172,4 +172,4 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

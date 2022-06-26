@@ -98,5 +98,4 @@ def tracking_request(
             extra_namespace='xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays',
             special_prefixes=dict(string="arr"),
         ),
-        logged=True,
     )

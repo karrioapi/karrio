@@ -77,4 +77,4 @@ def tracking_request(
 ) -> Serializable[CarrierTrackingRequest]:
     request = CarrierTrackingRequest(tracking_ids=",".join(payload.tracking_numbers))
 
-    return Serializable(request, DP.to_dict, logged=True)
+    return Serializable(request, DP.to_dict)

@@ -51,4 +51,4 @@ def shipment_cancel_request(
         body_content=VoidShipmentRequest(PIN=PIN(Value=payload.shipment_identifier)),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

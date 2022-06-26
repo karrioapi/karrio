@@ -58,4 +58,4 @@ def pickup_update_request(
         EmailAddress=payload.address.email,
     )
 
-    return Serializable(request, logged=True)
+    return Serializable(request)

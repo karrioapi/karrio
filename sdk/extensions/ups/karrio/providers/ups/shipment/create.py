@@ -308,7 +308,6 @@ def shipment_request(
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
-        logged=True,
     )
 
 

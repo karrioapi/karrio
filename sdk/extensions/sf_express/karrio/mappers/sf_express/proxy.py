@@ -12,7 +12,8 @@ class Proxy(BaseProxy):
         data = self.settings.parse(request.serialize(), "EXP_RECE_SEARCH_ROUTES")
         response = http(
             url=self.settings.server_url,
-            data=bytearray(data, "utf-8"),
+            data=data,
+            trace=self.trace,
             method="POST",
         )
 

@@ -65,5 +65,4 @@ def shipment_cancel_request(
         default_request_serializer(
             "void", 'xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1"'
         ),
-        logged=True,
     )

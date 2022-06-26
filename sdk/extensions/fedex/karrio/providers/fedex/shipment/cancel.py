@@ -70,5 +70,4 @@ def shipment_cancel_request(
     return Serializable(
         request,
         default_request_serializer("v23", 'xmlns:v23="http://fedex.com/ws/ship/v23"'),
-        logged=True,
     )

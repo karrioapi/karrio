@@ -97,4 +97,4 @@ def rate_request(payload: RateRequest, _) -> Serializable:
         )
     )
 
-    return Serializable(requests, DP.to_dict, logged=True)
+    return Serializable(requests, DP.to_dict)

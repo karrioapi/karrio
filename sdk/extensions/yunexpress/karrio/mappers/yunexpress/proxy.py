@@ -11,12 +11,13 @@ class Proxy(BaseProxy):
     def get_tracking(self, request: Serializable) -> Deserializable:
         response = http(
             url=f"{self.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber={request.serialize()}",
-            headers={
-                'Authorization': f"basic {self.settings.authorization}",
-                'Accept': "application/json",
-                'Accept-Language': "en-us"
-            },
+            trace=self.trace,
             method="GET",
+            headers={
+                "Authorization": f"basic {self.settings.authorization}",
+                "Accept": "application/json",
+                "Accept-Language": "en-us",
+            },
         )
 
         return Deserializable(response, DP.to_dict)

@@ -4,7 +4,7 @@ import attr
 from abc import ABC
 from karrio.core.settings import Settings
 from karrio.core.errors import MethodNotSupportedError
-from karrio.core.utils.serializable import Deserializable, Serializable
+from karrio.core.utils import Deserializable, Serializable, Tracer
 
 
 @attr.s(auto_attribs=True)
@@ -12,6 +12,10 @@ class Proxy(ABC):
     """Unified Shipping API Proxy (Interface)"""
 
     settings: Settings
+    tracer: Tracer = attr.field(factory=Tracer)
+
+    def trace(self, *args, **kwargs):
+        return self.tracer.trace(*args, **kwargs)
 
     def get_rates(self, request: Serializable) -> Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice

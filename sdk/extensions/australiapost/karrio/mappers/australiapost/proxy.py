@@ -13,13 +13,14 @@ class Proxy(BaseProxy):
         query = urllib.parse.urlencode(request.serialize())
         response = http(
             url=f"{self.settings.server_url}/shipping/v1/track?{query}",
+            trace=self.trace,
+            method="GET",
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "Account-Number": self.settings.account_number,
-                "Authorization": f"Basic {self.settings.authorization}"
+                "Authorization": f"Basic {self.settings.authorization}",
             },
-            method="GET",
         )
 
         return Deserializable(response, DP.to_dict)

@@ -158,4 +158,4 @@ def shipment_request(
         ChargebackCode=None,
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

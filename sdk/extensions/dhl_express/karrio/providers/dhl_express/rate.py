@@ -204,7 +204,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
         ),
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DCTRequest) -> str:
