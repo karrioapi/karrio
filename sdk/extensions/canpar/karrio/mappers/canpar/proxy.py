@@ -21,12 +21,13 @@ class Proxy(BaseProxy):
     ) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
+            trace=self.trace,
+            method="POST",
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
                 "soapaction": soapaction,
             },
-            method="POST",
         )
 
     def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
@@ -58,7 +59,7 @@ class Proxy(BaseProxy):
             return self._send_request(
                 path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
                 soapaction="urn:trackByBarcodeV2",
-                request=Serializable(track_request, logged=True),
+                request=Serializable(track_request),
             )
 
         response: List[str] = exec_parrallel(get_tracking, request.serialize())

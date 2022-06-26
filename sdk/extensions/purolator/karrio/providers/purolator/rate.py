@@ -309,4 +309,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

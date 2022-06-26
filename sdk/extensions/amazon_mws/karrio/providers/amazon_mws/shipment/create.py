@@ -116,4 +116,4 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
         ),
     )
 
-    return Serializable(request, DP.to_dict, logged=True)
+    return Serializable(request, DP.to_dict)

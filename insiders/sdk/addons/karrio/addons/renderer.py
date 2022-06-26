@@ -190,7 +190,7 @@ def render_label(label: str, label_type: str, template_type: str, **kwargs) -> s
         data = DP.jsonify(dict(file=label))
         pdf = request(
             url=f"http://api.labelary.com/v1/printers/12dpmm/labels/{width}x{height}/0/",
-            data=bytearray(data, "utf-8"),
+            data=data,
             headers={"Accept": "application/pdf"},
             decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
         )

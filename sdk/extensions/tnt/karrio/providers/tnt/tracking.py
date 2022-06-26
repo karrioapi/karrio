@@ -68,4 +68,4 @@ def tracking_request(
         ),
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

@@ -4,11 +4,13 @@ from typing import List
 from canadapost_lib.rating import mailing_scenario
 from karrio.api.proxy import Proxy as BaseProxy
 from karrio.core.errors import ShippingSDKError
-from karrio.core.utils.serializable import Serializable, Deserializable
-from karrio.core.utils.pipeline import Pipeline, Job
 from karrio.core.utils import (
     request as http,
     exec_async,
+    Serializable,
+    Deserializable,
+    Pipeline,
+    Job,
     XP,
 )
 from karrio.mappers.canadapost.settings import Settings
@@ -20,15 +22,17 @@ class Proxy(BaseProxy):
     def get_rates(self, request: Serializable[mailing_scenario]) -> Deserializable[str]:
         response = http(
             url=f"{self.settings.server_url}/rs/ship/price",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
+            trace=self.trace,
+            method="POST",
             headers={
                 "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
                 "Accept": "application/vnd.cpc.ship.rate-v4+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
                 "Accept-language": f"{self.settings.language}-CA",
             },
-            method="POST",
         )
+
         return Deserializable(response, XP.to_xml)
 
     def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[str]:
@@ -44,12 +48,13 @@ class Proxy(BaseProxy):
 
             return http(
                 url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/detail",
+                trace=self.trace,
+                method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.track-v2+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="GET",
             )
 
         response: List[str] = exec_async(track, request.serialize())
@@ -60,38 +65,41 @@ class Proxy(BaseProxy):
         def _contract_shipment(job: Job):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment",
-                data=bytearray(job.data.serialize(), "utf-8"),
+                data=job.data.serialize(),
+                trace=self.trace,
+                method="POST",
                 headers={
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
                     "Accept": "application/vnd.cpc.shipment-v8+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="POST",
             )
 
         def _non_contract_shipment(job: Job):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/ncshipment",
-                data=bytearray(job.data.serialize(), "utf-8"),
+                data=job.data.serialize(),
+                trace=self.trace,
+                method="POST",
                 headers={
                     "Accept": "application/vnd.cpc.ncshipment-v4+xml",
                     "Content-Type": "application/vnd.cpc.ncshipment-v4+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="POST",
             )
 
         def _get_label(job: Job):
             label_string = http(
                 decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
                 url=job.data["href"],
+                trace=self.trace,
+                method="GET",
                 headers={
                     "Accept": job.data["media"],
                     "Authorization": f"Basic {self.settings.authorization}",
                 },
-                method="GET",
             )
             return f"<label>{label_string}</label>"
 
@@ -115,18 +123,18 @@ class Proxy(BaseProxy):
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable:
-
-        def _request(method: str, shipment_id: str, path: str = '', **kwargs):
+        def _request(method: str, shipment_id: str, path: str = "", **kwargs):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}{path}",
+                trace=self.trace,
+                method=method,
                 headers={
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
                     "Accept": "application/vnd.cpc.shipment-v8+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method=method,
-                **kwargs
+                **kwargs,
             )
 
         def process(job: Job):
@@ -134,18 +142,19 @@ class Proxy(BaseProxy):
                 return job.fallback
 
             subprocess = {
-                "info": lambda _: _request(
-                    'GET', job.data.serialize()
-                ),
+                "info": lambda _: _request("GET", job.data.serialize()),
                 "refund": lambda _: _request(
-                    'POST', job.data['id'], '/refund', data=bytearray(job.data['payload'].serialize(), "utf-8")
+                    "POST",
+                    job.data["id"],
+                    "/refund",
+                    data=job.data["payload"].serialize(),
                 ),
-                "cancel": lambda _: _request(
-                    'DELETE', job.data.serialize()
-                ),
+                "cancel": lambda _: _request("DELETE", job.data.serialize()),
             }
             if job.id not in subprocess:
-                raise ShippingSDKError(f"Unknown shipment cancel request job id: {job.id}")
+                raise ShippingSDKError(
+                    f"Unknown shipment cancel request job id: {job.id}"
+                )
 
             return subprocess[job.id](job)
 
@@ -157,25 +166,27 @@ class Proxy(BaseProxy):
         def _availability(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
+                trace=self.trace,
+                method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="GET",
             )
 
         def _create_pickup(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
-                data=bytearray(job.data.serialize(), "utf-8"),
+                data=job.data.serialize(),
+                trace=self.trace,
+                method="POST",
                 headers={
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
                     "Content-Type": "application/vnd.cpc.pickuprequest+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="POST",
             )
 
         def process(job: Job):
@@ -200,25 +211,27 @@ class Proxy(BaseProxy):
         def _get_pickup(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}{job.data.serialize()}",
+                trace=self.trace,
+                method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="GET",
             )
 
         def _update_pickup(job: Job) -> str:
             payload = job.data.serialize()
             return http(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
-                data=bytearray(payload["data"], "utf-8"),
+                data=payload["data"],
+                trace=self.trace,
+                method="PUT",
                 headers={
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-                method="PUT",
             )
 
         def process(job: Job):
@@ -243,11 +256,13 @@ class Proxy(BaseProxy):
         pickuprequest = request.serialize()
         response = http(
             url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{pickuprequest}",
+            trace=self.trace,
+            method="DELETE",
             headers={
                 "Accept": "application/vnd.cpc.pickuprequest+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
                 "Accept-language": f"{self.settings.language}-CA",
             },
-            method="DELETE",
         )
+
         return Deserializable(response or "<wrapper></wrapper>", XP.to_xml)

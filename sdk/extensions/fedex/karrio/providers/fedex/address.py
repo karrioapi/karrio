@@ -124,5 +124,4 @@ def address_validation_request(
         default_request_serializer(
             "v4", 'xmlns:v4="http://fedex.com/ws/addressvalidation/v4"'
         ),
-        logged=True,
     )

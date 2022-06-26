@@ -45,4 +45,4 @@ def shipment_cancel_request(
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

@@ -93,6 +93,4 @@ def validate_pickup_request(
         ),
     )
 
-    return Serializable(
-        request, partial(standard_request_serializer, version="v1"), logged=True
-    )
+    return Serializable(request, partial(standard_request_serializer, version="v1"))

@@ -17,12 +17,15 @@ class Proxy(BaseProxy):
     def _send_request(self, request: Serializable[Any]) -> str:
         return http(
             url=self.settings.server_url,
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
             headers={"Content-Type": "application/xml"},
+            trace=self.trace,
             method="POST",
         )
 
-    def validate_address(self, request: Serializable[RouteRequest]) -> Deserializable[str]:
+    def validate_address(
+        self, request: Serializable[RouteRequest]
+    ) -> Deserializable[str]:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)

@@ -367,7 +367,7 @@ def _shipment_request(
             PrinterType=PrinterType(printing).value,
         ),
     )
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)
 
 
 def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
