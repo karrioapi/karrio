@@ -32,7 +32,7 @@ from purolator_lib.shipping_service_2_1_3 import (
     ContentDetail,
     ArrayOfContentDetail,
 )
-from karrio.core.units import Options, Packages, Phone
+from karrio.core.units import Packages, Phone
 from karrio.core.utils import (
     Serializable,
     Element,
@@ -51,8 +51,8 @@ from karrio.providers.purolator.shipment.documents import (
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.units import (
-    Product,
-    Service,
+    ShippingService,
+    ShippingOption,
     PackagePresets,
     PaymentType,
     DutyPaymentType,
@@ -107,11 +107,11 @@ def _shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = Product.map(payload.service).value_or_key
-    options = Options(payload.options, Service)
+    service = ShippingService.map(payload.service).value_or_key
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
 
-    is_document = all([parcel.is_document for parcel in payload.parcels])
-    package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_international = payload.shipper.country_code != payload.recipient.country_code
     shipper_phone_number = Phone(
         payload.shipper.phone_number, payload.shipper.country_code
@@ -120,11 +120,6 @@ def _shipment_request(
         payload.recipient.phone_number, payload.recipient.country_code
     )
     printing = PrintType.map(payload.label_type or "PDF").value
-    option_ids = [
-        (key, value)
-        for key, value in options
-        if key in Service and key not in NON_OFFICIAL_SERVICES
-    ]
 
     request = create_envelope(
         header_content=RequestContext(
@@ -210,7 +205,7 @@ def _shipment_request(
                 ShipmentDate=options.shipment_date,
                 PackageInformation=PackageInformation(
                     ServiceID=service,
-                    Description=package_description,
+                    Description=packages.description,
                     TotalWeight=(
                         TotalWeight(
                             Value=packages.weight.map(MeasurementOptions).LB,
@@ -280,17 +275,17 @@ def _shipment_request(
                     OptionsInformation=(
                         ArrayOfOptionIDValuePair(
                             OptionIDValuePair=[
-                                OptionIDValuePair(ID=key, Value=value)
-                                for key, value in option_ids
+                                OptionIDValuePair(ID=code, Value=value)
+                                for _, code, value in options.as_list()
                             ]
                         )
-                        if any(option_ids)
+                        if any(options.as_list())
                         else None
                     ),
                 ),
                 InternationalInformation=(
                     InternationalInformation(
-                        DocumentsOnlyIndicator=is_document,
+                        DocumentsOnlyIndicator=packages.is_document,
                         ContentDetails=(
                             ArrayOfContentDetail(
                                 ContentDetail=[
@@ -311,7 +306,7 @@ def _shipment_request(
                                     for item in payload.customs.commodities
                                 ]
                             )
-                            if not is_document
+                            if not packages.is_document
                             else None
                         ),
                         BuyerInformation=None,

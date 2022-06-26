@@ -32,7 +32,7 @@ from karrio.providers.usps.units import (
     LabelFormat,
     ServiceType,
     PackagingType,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps.error import parse_error_response
@@ -75,11 +75,11 @@ def shipment_request(
     ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels, package_option_type=ShipmentOption).single
+    package = Packages(payload.parcels, package_option_type=ShippingOption).single
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(
-        ShipmentOption.apply_defaults(payload.options, package_options=package.options),
-        ShipmentOption,
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
     )
 
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
@@ -129,19 +129,16 @@ def shipment_request(
         Machinable=options.usps_option_machinable_item,
         ProcessingCategory=None,
         PriceOptions=None,
-        InsuredAmount=ShipmentOption.insurance_from(options),
+        InsuredAmount=ShippingOption.insurance_from(options),
         AddressServiceRequested=None,
         ExpressMailOptions=None,
         ShipDate=options.shipment_date,
         CustomerRefNo=None,
         ExtraServices=(
             ExtraServicesType(
-                ExtraService=[
-                    getattr(ShipmentOption.map(code).value, "key", option)
-                    for code, option in ShipmentOption.options_from(options)
-                ]
+                ExtraService=[code for _, code, value in options.as_list()]
             )
-            if any(ShipmentOption.options_from(options))
+            if any(options.as_list())
             else None
         ),
         CRID=settings.customer_registration_id,
@@ -201,7 +198,7 @@ def shipment_request(
         InvoiceNumber=customs.invoice,
         LicenseNumber=customs.license_number,
         CertificateNumber=customs.certificate_number,
-        NonDeliveryOption=ShipmentOption.non_delivery_from(options),
+        NonDeliveryOption=ShippingOption.non_delivery_from(options),
         AltReturnAddress1=redirect_address.address_line1,
         AltReturnAddress2=redirect_address.address_line2,
         AltReturnAddress3=None,

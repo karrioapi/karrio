@@ -24,7 +24,7 @@ from karrio.providers.dicom.units import (
     UnitOfMeasurement,
     ParcelType,
     Service,
-    Option,
+    ShippingOption,
     PaymentType,
     Purpose,
 )
@@ -71,9 +71,9 @@ def shipment_request(
     )
     delivery_type = Service[payload.service].value
     options = {
-        key: (value if Option[key].value in ["DCV", "COD"] else None)
+        key: (value if ShippingOption[key].value in ["DCV", "COD"] else None)
         for key, value in payload.options
-        if key in Option.__members__
+        if key in ShippingOption.__members__
     }
 
     request = DicomShipmentRequest(

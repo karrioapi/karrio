@@ -110,7 +110,7 @@ class SortLevelType(Flag):
     regional_rate_box_b = package
 
 
-class ShipmentOption(Enum):
+class ShippingOption(Enum):
     usps_insurance = Spec.asValue("100", float)
     usps_insurance_priority_mail_express = Spec.asValue("101", float)
     usps_return_receipt = Spec.asKey("102")
@@ -155,11 +155,11 @@ class ShipmentOption(Enum):
     insurance = usps_insurance
 
     @classmethod
-    def apply_defaults(
+    def to_options(
         cls,
-        options: dict,
+        options: units.Options,
         package_options: units.Options = None,
-    ) -> dict:
+    ) -> units.Options:
         """
         Apply default values to the given options.
         """
@@ -167,17 +167,10 @@ class ShipmentOption(Enum):
         if package_options is not None:
             options.update(package_options.content)
 
-        return options
+        def option_filter(code: str) -> bool:
+            return code in cls and "usps_option" not in code  # type:ignore
 
-    @classmethod
-    def options_from(
-        cls, options: units.Options
-    ) -> typing.List[typing.Tuple[str, Spec]]:
-        return [
-            (code, option)
-            for code, option in options
-            if code in cls and "usps_option" not in code  # type: ignore
-        ]
+        return units.Options(options, cls, option_filter=option_filter)
 
     @classmethod
     def insurance_from(cls, options: units.Options) -> typing.Optional[float]:

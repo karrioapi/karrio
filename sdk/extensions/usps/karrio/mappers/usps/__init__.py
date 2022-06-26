@@ -9,13 +9,11 @@ import karrio.providers.usps.units as units
 METADATA = Metadata(
     id="usps",
     label="USPS",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
     services=units.ShipmentService,
-    options=units.ShipmentOption,
+    options=units.ShippingOption,
 )

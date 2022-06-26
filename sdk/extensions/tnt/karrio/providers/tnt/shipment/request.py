@@ -24,7 +24,7 @@ from tnt_lib.shipment_request import (
 from karrio.core.utils import Serializable, XP
 from karrio.core.models import ShipmentRequest, Payment
 from karrio.core.units import Options, Packages, Weight, WeightUnit
-from karrio.providers.tnt.units import ShipmentOption, ShipmentService, PaymentType
+from karrio.providers.tnt.units import ShippingOption, ShipmentService, PaymentType
 from karrio.providers.tnt.utils import Settings
 
 
@@ -32,9 +32,11 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ESHIPPER]:
     ref = f"ref_{uuid4()}"
-    options = Options(payload.options, ShipmentOption)
     package = Packages(payload.parcels).single
     service = ShipmentService.map(payload.service).value_or_key
+    options = ShippingOption.to_options(
+        payload.options, package_options=package.options
+    )
 
     payment = payload.payment or Payment(paid_by="sender")
     insurance = getattr(options.tnt_insurance, "value", None)

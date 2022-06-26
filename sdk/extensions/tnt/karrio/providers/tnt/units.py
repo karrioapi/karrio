@@ -1,5 +1,6 @@
 """ TNT Native Types """
 
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.units import PackagePreset
 
@@ -20,19 +21,43 @@ class PackagePresets(Flag):
         **PRESET_DEFAULTS
     )
     tnt_box_B = PackagePreset(
-        **dict(weight=4.0, width=29.5, height=19.0, length=40.0, packaging_type="medium_box"),
+        **dict(
+            weight=4.0,
+            width=29.5,
+            height=19.0,
+            length=40.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     tnt_box_C = PackagePreset(
-        **dict(weight=6.0, width=29.5, height=29.0, length=40.0, packaging_type="medium_box"),
+        **dict(
+            weight=6.0,
+            width=29.5,
+            height=29.0,
+            length=40.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     tnt_box_D = PackagePreset(
-        **dict(weight=10.0, width=39.5, height=29.0, length=50.0, packaging_type="medium_box"),
+        **dict(
+            weight=10.0,
+            width=39.5,
+            height=29.0,
+            length=50.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     tnt_box_E = PackagePreset(
-        **dict(weight=15.0, width=39.5, height=49.5, length=44.0, packaging_type="medium_box"),
+        **dict(
+            weight=15.0,
+            width=39.5,
+            height=49.5,
+            length=44.0,
+            packaging_type="medium_box",
+        ),
         **PRESET_DEFAULTS
     )
     tnt_medpack_ambient = PackagePreset(
@@ -79,22 +104,40 @@ class ShipmentService(Enum):
     tnt_global_express = "15N"
 
 
-class ShipmentOption(Flag):
-    tnt_priority = Spec.asKey('PR')
-    tnt_insurance = Spec.asValue('IN', float)
-    tnt_enhanced_liability = Spec.asKey('EL')
-    tnt_dangerous_goods_fully_regulated = Spec.asKey('HZ')
-    tnt_dangerous_goods_in_limited_quantities = Spec.asKey('LQ')
-    tnt_dry_ice_shipments = Spec.asKey('DI')
-    tnt_biological_substances = Spec.asKey('BB')
-    tnt_lithium_batteries = Spec.asKey('LB')
-    tnt_dangerous_goods_in_excepted_quantities = Spec.asKey('EQ')
-    tnt_radioactive_materials_in_excepted_packages = Spec.asKey('XP')
-    tnt_pre_delivery_notification = Spec.asKey('SMS')
+class ShippingOption(Flag):
+    tnt_priority = Spec.asKey("PR")
+    tnt_insurance = Spec.asValue("IN", float)
+    tnt_enhanced_liability = Spec.asKey("EL")
+    tnt_dangerous_goods_fully_regulated = Spec.asKey("HZ")
+    tnt_dangerous_goods_in_limited_quantities = Spec.asKey("LQ")
+    tnt_dry_ice_shipments = Spec.asKey("DI")
+    tnt_biological_substances = Spec.asKey("BB")
+    tnt_lithium_batteries = Spec.asKey("LB")
+    tnt_dangerous_goods_in_excepted_quantities = Spec.asKey("EQ")
+    tnt_radioactive_materials_in_excepted_packages = Spec.asKey("XP")
+    tnt_pre_delivery_notification = Spec.asKey("SMS")
 
-    tnt_division_international_shipments = Spec.asKey('G')
-    tnt_division_global_link_domestic = Spec.asKey('D')
-    tnt_division_german_domestic = Spec.asKey('H')
-    tnt_division_uk_domestic = Spec.asKey('010')
+    tnt_division_international_shipments = Spec.asKey("G")
+    tnt_division_global_link_domestic = Spec.asKey("D")
+    tnt_division_german_domestic = Spec.asKey("H")
+    tnt_division_uk_domestic = Spec.asKey("010")
 
     insurance = tnt_insurance
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        def option_filter(key: str) -> bool:
+            return key in cls and "division" not in key  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)

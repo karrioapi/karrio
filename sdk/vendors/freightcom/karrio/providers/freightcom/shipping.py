@@ -36,10 +36,10 @@ from karrio.providers.freightcom.utils import (
     ceil,
 )
 from karrio.providers.freightcom.units import (
-    Service,
+    ShippingService,
     FreightPackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
     PaymentType,
 )
 from karrio.providers.freightcom.error import parse_error_response
@@ -65,7 +65,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     tracking_number = getattr(
         next(iter(shipping.Package), None), "trackingNumber", None
     )
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -115,14 +115,15 @@ def shipping_request(
 ) -> Serializable[Freightcom]:
     packages = Packages(
         payload.parcels,
-        package_option_type=Option,
+        package_option_type=ShippingOption,
         required=["weight", "height", "width", "length"],
     )
-    options = Options(
-        Option.apply_defaults(payload.options, package_options=packages.options), Option
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
     )
 
-    service = Service.map(payload.service).value_or_key
+    service = ShippingService.map(payload.service).value_or_key
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
     packaging = (
         "Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package"

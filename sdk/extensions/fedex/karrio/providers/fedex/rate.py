@@ -28,13 +28,14 @@ from karrio.core.utils import (
     XP,
     DF,
 )
-from karrio.core.units import Packages, Options, Services, CompleteAddress
+from karrio.core.units import Packages, Services, CompleteAddress
 from karrio.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from karrio.providers.fedex.units import (
     PackagingType,
     ServiceType,
     PackagePresets,
     MeasurementOptions,
+    ShippingOption,
 )
 from karrio.providers.fedex.error import parse_error_response
 from karrio.providers.fedex.utils import Settings
@@ -109,7 +110,9 @@ def rate_request(
     recipient = CompleteAddress.map(payload.recipient)
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, ServiceType).first
-    options = Options(payload.options)
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
     request = FedexRateRequest(
@@ -283,7 +286,13 @@ def rate_request(
 
 
 def _request_serializer(request: FedexRateRequest) -> str:
-    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v28="http://fedex.com/ws/rate/v28"'
+    namespacedef_ = (
+        'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
+        ' xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"'
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+        ' xmlns:v28="http://fedex.com/ws/rate/v28"'
+    )
 
     envelope = create_envelope(body_content=request)
     envelope.Body.ns_prefix_ = envelope.ns_prefix_

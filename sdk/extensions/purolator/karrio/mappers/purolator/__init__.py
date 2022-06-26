@@ -9,15 +9,13 @@ import karrio.providers.purolator.units as units
 METADATA = Metadata(
     id="purolator",
     label="Purolator",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
-    options=units.Service,
+    options=units.ShippingOption,
     package_presets=units.PackagePresets,
     packaging_types=units.PackagingType,
-    services=units.Product,
+    services=units.ShippingService,
 )

@@ -9,15 +9,13 @@ import karrio.providers.ups.units as units
 METADATA = Metadata(
     id="ups",
     label="UPS",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
-    options=units.ServiceOption,
+    options=units.ShippingOption,
     package_presets=units.PackagePresets,
     packaging_types=units.PackagingType,
-    services=units.ServiceCode,
+    services=units.ShippingService,
 )

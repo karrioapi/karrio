@@ -53,7 +53,8 @@ from karrio.core.models import (
 )
 from karrio.providers.ups.units import (
     PackagingType,
-    ServiceCode,
+    ShippingService,
+    ShippingOption,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
     LabelType,
@@ -94,10 +95,10 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets)
-    is_document = all([parcel.is_document for parcel in payload.parcels])
-    package_description = packages[0].parcel.description if len(packages) == 1 else None
-    options = Options(payload.options)
-    service = ServiceCode.map(payload.service).value_or_key
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
+    service = ShippingService.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
@@ -122,8 +123,8 @@ def shipment_request(
             ),
         ),
         Shipment=ShipmentType(
-            Description=package_description,
-            DocumentsOnlyIndicator="" if is_document else None,
+            Description=packages.description,
+            DocumentsOnlyIndicator="" if packages.is_document else None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
                 AttentionName=payload.shipper.person_name,

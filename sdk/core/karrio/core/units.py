@@ -1,7 +1,9 @@
 """Karrio universal data types and units definitions"""
+import functools
 import attr
 import phonenumbers
 from typing import (
+    Callable,
     List,
     Type,
     Optional,
@@ -13,7 +15,7 @@ from typing import (
     cast,
     NamedTuple,
 )
-from karrio.core.utils import NF, Enum, Spec, SF
+from karrio.core.utils import NF, Enum, Spec, SF, identity
 from karrio.core.models import Customs, Parcel, Address, AddressExtra
 from karrio.core.errors import (
     FieldError,
@@ -419,6 +421,7 @@ class Packages(Iterable[Package]):
         ]
         self._required = required
         self._max_weight = max_weight
+        self._package_option_type = package_option_type
         self.validate()
 
     def __getitem__(self, index: int) -> Package:
@@ -459,19 +462,39 @@ class Packages(Iterable[Package]):
         )
 
     @property
-    def options(self) -> dict:
-        options = {}
+    def is_document(self) -> bool:
+        return all([pkg.parcel.is_document for pkg in self._items])
 
-        if any(pkg.options.insurance for pkg in self._items):
-            return options.update(
-                {
-                    "insurance": sum(
-                        ((pkg.options.insurance or 0.0) for pkg in self._items), 0.0
+    @property
+    def description(self) -> Optional[str]:
+        return functools.reduce(
+            lambda acc, item: SF.concat_str(acc, item.parcel.description, join=True),
+            self._items,
+            None,
+        )
+
+    @property
+    def options(self) -> "Options":
+        def merge_options(acc, pkg) -> dict:
+            """Merge package options into one
+            if an item exists in one and is of type int or float,
+            add them up.
+            """
+            return {
+                **acc,
+                **{
+                    key: (
+                        (val + acc[key])
+                        if (key in acc and type(val) in [int, float])
+                        else val
                     )
-                }
-            )
+                    for key, val in pkg.options
+                },
+            }
 
-        return options
+        options: dict = functools.reduce(merge_options, self._items, {})
+
+        return Options(options, self._package_option_type)
 
     @property
     def compatible_units(self) -> Tuple[WeightUnit, DimensionUnit]:
@@ -522,7 +545,7 @@ class Packages(Iterable[Package]):
         )
 
 
-class Option(Enum):
+class ShippingOption(Enum):
     """universal shipment options (special services)"""
 
     currency = Spec.asValue("currency")
@@ -539,15 +562,38 @@ class Option(Enum):
 class Options:
     """The options common processing helper"""
 
-    def __init__(self, options: dict, option_type: Type[Enum] = Enum):
-        option_values = {}
+    def __init__(
+        self,
+        options: dict,
+        option_type: Type[Enum] = Enum,
+        option_filter: Callable[[str], bool] = identity,
+    ):
+        option_values = {}  # Deprecate this in favor of tuple for 3 values.
+        option_definitions: List[Tuple[str, Optional[str], Any]] = []
+
         for key, val in options.items():
+            _spec: Spec = None
+
             if option_type is not None and key in option_type:
-                option_values[option_type[key].name] = option_type[key].value.apply(val)
-            elif key in Option and key:
-                option_values[key] = Option[key].value.apply(val)
+                _spec = option_type[key].value
+                _key = option_type[key].name
+                _code = _spec.key
+                _val = _spec.apply(val)
+            elif key in ShippingOption and key:
+                _spec = ShippingOption[key].value
+                _key = key
+                _code = None
+                _val = _spec.apply(val)
+            else:
+                _key = key
+                _code = None
+                _val = val
+
+            option_values[_key] = _val
+            option_definitions += [(_key, _code, getattr(_val, "value", None))]
 
         self._options = option_values
+        self._option_list = self._filter(option_definitions, option_filter)
 
     def __getitem__(self, item):
         return self._options.get(item)
@@ -564,6 +610,16 @@ class Options:
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         return iter(self._options.items())
 
+    def _filter(self, option_definitions, option_filter):
+        return [
+            (key, code, value)
+            for key, code, value in option_definitions
+            if option_filter(key)
+        ]
+
+    def as_list(self) -> List[Tuple[str, Optional[str], Any]]:
+        return self._option_list
+
     @property
     def content(self) -> dict:
         return self._options
@@ -574,42 +630,42 @@ class Options:
 
     @property
     def cash_on_delivery(self) -> float:
-        return self[Option.cash_on_delivery.name]
+        return self[ShippingOption.cash_on_delivery.name]
 
     @property
     def currency(self) -> str:
-        return self[Option.currency.name]
+        return self[ShippingOption.currency.name]
 
     @property
     def insurance(self) -> float:
-        return self[Option.insurance.name]
+        return self[ShippingOption.insurance.name]
 
     @property
     def declared_value(self) -> float:
-        return self[Option.declared_value.name]
+        return self[ShippingOption.declared_value.name]
 
     @property
     def dangerous_good(self) -> float:
-        return self[Option.dangerous_good.name]
+        return self[ShippingOption.dangerous_good.name]
 
     @property
     def email_notification(self) -> bool:
-        if Option.email_notification.name in self:
-            return self[Option.email_notification.name]
+        if ShippingOption.email_notification.name in self:
+            return self[ShippingOption.email_notification.name]
 
         return True
 
     @property
     def email_notification_to(self) -> str:
-        return self[Option.email_notification_to.name]
+        return self[ShippingOption.email_notification_to.name]
 
     @property
     def shipment_date(self) -> str:
-        return self[Option.shipment_date.name]
+        return self[ShippingOption.shipment_date.name]
 
     @property
     def signature_confirmation(self) -> str:
-        return self[Option.signature_confirmation.name]
+        return self[ShippingOption.signature_confirmation.name]
 
 
 class Services:

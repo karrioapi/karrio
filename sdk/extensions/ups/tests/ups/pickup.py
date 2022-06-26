@@ -158,7 +158,7 @@ ParsedPickupCancelResponse = [
 ]
 
 
-PickupRateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+PickupRateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -200,7 +200,7 @@ PickupRateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/s
 </tns:Envelope>
 """
 
-PickupRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+PickupRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -254,7 +254,7 @@ PickupRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/
 </tns:Envelope>
 """
 
-PickupUpdateRateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+PickupUpdateRateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -290,7 +290,7 @@ PickupUpdateRateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap
 </tns:Envelope>
 """
 
-PickupUpdateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+PickupUpdateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -339,7 +339,7 @@ PickupUpdateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org
 </tns:Envelope>
 """
 
-PickupCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
+PickupCancelRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
