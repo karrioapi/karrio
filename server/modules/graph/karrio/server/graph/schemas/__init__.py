@@ -1,4 +1,5 @@
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+# type: ignore
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import strawberry
 from strawberry.schema.config import StrawberryConfig
