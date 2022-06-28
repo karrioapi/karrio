@@ -307,25 +307,20 @@ def shipment_request(
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
-        logged=True,
     )
 
 
 def _request_serializer(envelope: Envelope) -> str:
-    namespace_ = """
-        xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
-        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
-        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
-        xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
-        xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"
-    """.replace(
-        " ", ""
-    ).replace(
-        "\n", " "
+    namespace_ = (
+        'xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"'
+        ' xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
+        ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+        ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
+        ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        ' xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"'
+        ' xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"'
+        ' xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"'
     )
 
     envelope.Body.ns_prefix_ = envelope.ns_prefix_

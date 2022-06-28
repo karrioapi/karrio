@@ -296,7 +296,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                             WeightUnit[item.weight_unit or "KG"],
                                         ).KG,
                                         value=item.value_amount,
-                                        tariffCode=item.sku,
+                                        tariffCode=item.hs_code or item.sku,
                                     )
                                     for item in customs.commodities
                                 ]

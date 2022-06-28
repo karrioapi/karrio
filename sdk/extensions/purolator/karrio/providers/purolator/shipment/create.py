@@ -295,12 +295,12 @@ def _shipment_request(
                             ArrayOfContentDetail(
                                 ContentDetail=[
                                     ContentDetail(
-                                        Description=c.description,
-                                        HarmonizedCode=None,
-                                        CountryOfManufacture=c.origin_country,
-                                        ProductCode=c.sku,
-                                        UnitValue=c.value_amount,
-                                        Quantity=c.quantity,
+                                        Description=item.description,
+                                        HarmonizedCode=item.hs_code,
+                                        CountryOfManufacture=item.origin_country,
+                                        ProductCode=item.sku,
+                                        UnitValue=item.value_amount,
+                                        Quantity=item.quantity,
                                         NAFTADocumentIndicator=None,
                                         FDADocumentIndicator=None,
                                         FCCDocumentIndicator=None,
@@ -308,7 +308,7 @@ def _shipment_request(
                                         TextileIndicator=None,
                                         TextileManufacturer=None,
                                     )
-                                    for c in payload.customs.commodities
+                                    for item in payload.customs.commodities
                                 ]
                             )
                             if not is_document

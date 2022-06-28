@@ -99,7 +99,7 @@ def create_label_request(
                             [
                                 pieceType(
                                     sequenceNumbers=(index + 1),
-                                    pieceReference=piece.sku,
+                                    pieceReference=piece.sku or piece.hs_code,
                                 )
                                 for index, piece in enumerate(
                                     payload.customs.commodities
