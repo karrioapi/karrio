@@ -60,7 +60,7 @@ class References(Serializer):
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
-    return Response(dataunits.contextual_reference(request), status=status.HTTP_200_OK)
+    return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
 
 
 router.urls.append(path("references", references))

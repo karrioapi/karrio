@@ -15,7 +15,9 @@ class Proxy(ABC):
     tracer: Tracer = attr.field(factory=Tracer)
 
     def trace(self, *args, **kwargs):
-        return self.tracer.trace(*args, **kwargs)
+        return self.tracer.with_metadata(dict(connection=self.settings))(
+            *args, **kwargs
+        )
 
     def get_rates(self, request: Serializable) -> Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice

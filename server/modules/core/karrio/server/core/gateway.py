@@ -187,7 +187,7 @@ class Shipments:
             {**DP.to_dict(payload), "service": selected_rate.service},
         )
 
-        # The request is wrapped in identity to simplify mocking in tests
+        # The request is wrapped in identity to simplify mocking in tests.
         shipment, messages = identity(
             lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
         )
@@ -373,15 +373,16 @@ class Shipments:
         }
 
         return datatypes.TrackingResponse(
-            tracking=datatypes.Tracking(
-                **{
+            tracking=DP.to_object(
+                datatypes.Tracking,
+                {
                     **DP.to_dict(details),
                     "id": f"trk_{uuid.uuid4().hex}",
                     "test_mode": carrier.test,
                     "status": compute_tracking_status(result).value,
                     "meta": details.meta or {},
                     "options": options,
-                }
+                },
             ),
             messages=messages,
         )

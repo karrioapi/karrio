@@ -1,4 +1,3 @@
-import importlib
 import pydoc
 import typing
 from django.conf import settings
@@ -6,19 +5,19 @@ from django.http import JsonResponse
 from rest_framework import generics, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from rest_framework_tracking.mixins import LoggingMixin
+from rest_framework_tracking import mixins
 from rest_framework import status
-from two_factor.views.mixins import OTPRequiredMixin
 from karrio.core.utils import DP
 from karrio.server.core.authentication import TokenAuthentication, JWTAuthentication
 from karrio.server.core.models import APILog
+from karrio.server.tracing.utils import set_tracing_context
 
 AccessMixin: typing.Any = pydoc.locate(
     getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
 )
 
 
-class KarrioLoggingMixin(LoggingMixin):
+class LoggingMixin(mixins.LoggingMixin):
     def handle_log(self):
         data = None if "data" not in self.log else DP.jsonify(self.log["data"])
         query_params = (
@@ -40,13 +39,15 @@ class KarrioLoggingMixin(LoggingMixin):
         )
         log.save()
 
-        if (importlib.util.find_spec("karrio.server.orgs") is not None) and (
+        if (settings.MULTI_ORGANIZATIONS) and (
             getattr(self.request, "org", None) is not None
         ):
             log.link = log.__class__.link.related.related_model.objects.create(
                 org=self.request.org, item=log
             )
             log.save()
+
+        set_tracing_context(request_log_id=log.id)
 
 
 class BaseView:
@@ -67,11 +68,11 @@ class BaseGenericAPIView(generics.GenericAPIView, BaseView):
         return getattr(self, "queryset", None)
 
 
-class GenericAPIView(KarrioLoggingMixin, BaseGenericAPIView):
+class GenericAPIView(LoggingMixin, BaseGenericAPIView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
 
 
-class APIView(KarrioLoggingMixin, views.APIView, BaseView):
+class APIView(LoggingMixin, views.APIView, BaseView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
 
 

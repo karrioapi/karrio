@@ -5,6 +5,8 @@ from auditlog.registry import auditlog
 
 def register_model(model: models.Model) -> models.Model:
 
-    auditlog.register(model)
+    exclude_fields = ["link"]
+
+    auditlog.register(model, exclude_fields=exclude_fields)
 
     return model

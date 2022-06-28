@@ -110,7 +110,12 @@ class XMLPARSER:
         :param xml_str:
         :return: Node Element
         """
-        element = etree.fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
+        _formated_str = (
+            xml_str
+            if isinstance(xml_str, bytes)
+            else bytearray(xml_str, encoding="utf-8")
+        )
+        element = etree.fromstring(bytes(_formated_str))
         return cast(Element, element)
 
     @staticmethod
