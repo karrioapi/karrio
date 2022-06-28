@@ -7,7 +7,7 @@ from django.forms.models import model_to_dict
 from django.core.validators import RegexValidator
 
 from karrio import gateway
-from karrio.core.utils import Enum
+from karrio.core.utils import Enum, Tracer
 from karrio.core.units import Country, Currency, DimensionUnit, WeightUnit
 from karrio.api.gateway import Gateway
 from karrio.server.core.models import OwnedEntity, uuid, register_model
@@ -129,13 +129,17 @@ class Carrier(OwnedEntity):
 
     @property
     def gateway(self) -> Gateway:
+        from karrio.server.core import middleware
+
+        _context = middleware.SessionContext.get_current_request()
+        _tracer = getattr(_context, "tracer", Tracer())
         _carrier_name = (
             "generic"
             if hasattr(self.settings, "custom_carrier_name")
             else self.settings.carrier_name
         )
 
-        return gateway[_carrier_name].create({**self.data.to_dict()})
+        return gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
 
 
 @register_model

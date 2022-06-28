@@ -10,6 +10,7 @@ from organizations.abstract import (
 import karrio.server.providers.models as providers
 import karrio.server.pricing.models as pricing
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.events.models as events
 import karrio.server.orders.models as orders
 import karrio.server.graph.models as graph
@@ -80,6 +81,8 @@ class Organization(AbstractOrganization):
     tokens = models.ManyToManyField(auth.Token, related_name="org", through="TokenLink")
 
     surcharges = models.ManyToManyField(pricing.Surcharge, related_name="org")
+
+    tracing_records = models.ManyToManyField(tracing.TracingRecord, related_name="org")
 
     def is_owner(self, user):
         owner = getattr(self, "owner", None)
@@ -252,4 +255,13 @@ class OrderLink(models.Model):
     )
     item = models.OneToOneField(
         orders.Order, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class TracingRecordLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="tracking_record_links"
+    )
+    item = models.OneToOneField(
+        tracing.TracingRecord, on_delete=models.CASCADE, related_name="link"
     )

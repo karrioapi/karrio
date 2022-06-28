@@ -79,6 +79,10 @@ KARRIO_CONF = [
             "urls": "karrio.server.providers.urls",
         },
         {
+            "app": "karrio.server.tracing",
+            "module": "karrio.server.tracing",
+        },
+        {
             "app": "karrio.server.graph",
             "module": "karrio.server.graph",
             "urls": "karrio.server.graph.urls",
@@ -188,6 +192,7 @@ MIDDLEWARE = [
     "karrio.server.core.authentication.TwoFactorAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "karrio.server.core.middleware.SessionContext",
 ]
 
 
@@ -288,9 +293,9 @@ STATICFILES_DIRS = [
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
         "karrio.server.core.authentication.TokenAuthentication",
         "karrio.server.core.authentication.JWTAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",

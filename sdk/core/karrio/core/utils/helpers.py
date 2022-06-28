@@ -102,14 +102,18 @@ def process_request(
     trace: Callable[[Any, str], Any] = None,
     **kwargs,
 ) -> Request:
-    payload = dict(data=bytearray(kwargs["data"])) if "data" in kwargs else {}
+    payload = (
+        dict(data=bytearray(kwargs["data"], encoding="utf-8"))
+        if "data" in kwargs
+        else {}
+    )
 
     if trace:
         trace(
             {
                 "request_id": request_id,
                 "url": urllib.parse.unquote(kwargs.get("url")),
-                **payload,
+                **({"data": kwargs.get("data")} if "data" in kwargs else {}),
             },
             "request",
         )
@@ -130,15 +134,16 @@ def process_response(
     try:
         _response = decoder(response)
     except Exception as e:
-        logger.error(e, exc_info=False)
+        logger.error(e)
         _response = response
 
     if trace:
-        trace({"request_id": request_id, "response": _response}, "response")
+        _content = _response if isinstance(_response, str) else "undecoded bytes..."
+        trace({"request_id": request_id, "response": _content}, "response")
 
-    logger.debug(f"Response content:: {_response}")
+    # logger.debug(f"Response content:: {_response}")
 
-    return response
+    return _response
 
 
 def process_error(

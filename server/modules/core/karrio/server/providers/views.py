@@ -115,7 +115,7 @@ class CarrierServices(APIView):
         """
         Retrieve a carrier's services
         """
-        references = dataunits.contextual_reference(request)
+        references = dataunits.contextual_reference()
 
         if carrier_name not in references["carriers"]:
             raise Exception(f"Unknown carrier: {carrier_name}")

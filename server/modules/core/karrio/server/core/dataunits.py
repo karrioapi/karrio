@@ -54,10 +54,12 @@ def contextual_metadata(request: Request):
     }
 
 
-def contextual_reference(request: Request, reduced: bool = True):
+def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
+    import karrio.server.core.middleware as middleware
 
+    request = request or middleware.SessionContext.get_current_request()
     is_authenticated = (
         request.user.is_authenticated if hasattr(request, "user") else False
     )

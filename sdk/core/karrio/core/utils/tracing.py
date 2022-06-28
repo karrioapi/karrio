@@ -5,8 +5,7 @@ import typing
 import functools
 import concurrent.futures as futures
 
-T = typing.TypeVar("T")
-Trace = typing.Callable[[T, str], T]
+Trace = typing.Callable[[typing.Any, str], typing.Any]
 
 
 @attr.s(auto_attribs=True)
@@ -20,26 +19,28 @@ class Record:
 @attr.s(auto_attribs=True)
 class Tracer:
     id: str = attr.ib(factory=lambda: str(uuid.uuid4()))
-    callback: typing.Callable[[Record], typing.Any] = None
-    records: typing.List[Record] = attr.field(default=[])
+    _recordings: typing.Dict[futures.Future, dict] = {}
+    _context: typing.Dict[str, typing.Any] = {}
 
-    def trace(self, data: typing.Any, key: str, metadata: dict = None) -> typing.Any:
-        self._save(Record(key=key, data=data, metadata=metadata, timestamp=time.time()))
+    def trace(self, data: typing.Any, key: str, metadata: dict = {}) -> typing.Any:
+        def _save():
+            return Record(key=key, data=data, timestamp=time.time(), metadata=metadata)
+
+        promise = futures.ThreadPoolExecutor(max_workers=1)
+        self._recordings.update({promise.submit(_save): data})
 
         return data
 
-    def with_key(self, key: str):
-        return functools.partial(self.trace, key=key)
+    def with_metadata(self, metadata: dict):
+        return functools.partial(self.trace, metadata=metadata)
 
-    def _save(self, record: Record):
-        def actual_save():
-            if self.callback:
-                self.callback(record)
+    @property
+    def records(self) -> typing.List[Record]:
+        return [rec.result() for rec in futures.as_completed(self._recordings)]
 
-            self.records = [
-                *(self.records or []),
-                record,
-            ]
+    @property
+    def context(self) -> typing.Dict[str, typing.Any]:
+        return self._context
 
-        with futures.ThreadPoolExecutor(max_workers=1) as promise:
-            promise.submit(actual_save)
+    def add_context(self, data: typing.Dict[str, typing.Any]):
+        self._context.update(data)

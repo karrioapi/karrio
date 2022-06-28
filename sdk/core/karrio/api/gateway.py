@@ -3,7 +3,7 @@
 import attr
 import logging
 import warnings
-from typing import Callable, Union, List
+from typing import Callable, Optional, Union, List
 
 from karrio.api.proxy import Proxy
 from karrio.api.mapper import Mapper
@@ -74,9 +74,9 @@ class Gateway:
 class ICreate:
     """A gateway initializer type class"""
 
-    initializer: Callable[[Union[Settings, dict]], Gateway]
+    initializer: Callable[[Union[Settings, dict], Optional[Tracer]], Gateway]
 
-    def create(self, settings: Union[Settings, dict]) -> Gateway:
+    def create(self, settings: Union[Settings, dict], tracer: Tracer = None) -> Gateway:
         """A gateway factory with a fluent API interface.
 
         Args:
@@ -85,7 +85,7 @@ class ICreate:
         Returns:
             Gateway: The carrier connection instance
         """
-        return self.initializer(settings)
+        return self.initializer(settings, tracer)
 
 
 class GatewayInitializer:

@@ -66,7 +66,7 @@ def render_schema_description(APP_NAME):
 
 
 def render_reference_descriptions(request):
-    refs = contextual_reference(request, reduced=False)
+    refs = contextual_reference(reduced=False)
 
     def format_preset(preset: dict):
         vals = [
