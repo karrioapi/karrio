@@ -22,12 +22,12 @@ from karrio.server.manager.serializers import (
     process_dictionaries_mutations,
     SerializerDecorator,
     PaginatedResult,
+    ErrorMessages,
     ErrorResponse,
     Shipment,
     ShipmentData,
     RateResponse,
     Rate,
-    OperationResponse,
     buy_shipment_label,
     can_mutate_shipment,
     ShipmentSerializer,
@@ -57,21 +57,31 @@ class ShipmentList(GenericAPIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
-        responses={200: Shipments(), 400: ErrorResponse()},
+        responses={
+            200: Shipments(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
-    def get(self, request: Request):
+    def get(self, _: Request):
         """
         Retrieve all shipments.
         """
         shipments = self.filter_queryset(self.get_queryset())
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
+
         return self.get_paginated_response(response)
 
     @swagger_auto_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment",
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={
+            201: Shipment(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=ShipmentData(),
         query_serializer=ShipmentModeFilter(),
     )
@@ -91,12 +101,16 @@ class ShipmentList(GenericAPIView):
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
 
-class ShipmentDetail(APIView):
+class ShipmentDetails(APIView):
     @swagger_auto_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a shipment",
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request, pk: str):
         """
@@ -110,7 +124,14 @@ class ShipmentDetail(APIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a shipment",
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=ShipmentUpdateData(),
     )
     def put(self, request: Request, pk: str):
@@ -136,7 +157,14 @@ class ShipmentDetail(APIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a shipment",
-        responses={200: OperationResponse(), 400: ErrorResponse()},
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
     )
     def delete(self, request: Request, pk: str):
         """
@@ -164,7 +192,14 @@ class ShipmentRates(APIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new shipment rates",
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=ShipmentRateData(),
     )
     def post(self, request: Request, pk: str):
@@ -219,7 +254,14 @@ class ShipmentPurchase(APIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}purchase",
         operation_summary="Buy a shipment label",
-        responses={200: Shipment(), 400: ErrorResponse()},
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=ShipmentPurchaseData(),
     )
     def post(self, request: Request, pk: str):
@@ -273,7 +315,7 @@ class ShipmentDocs(VirtualDownloadView):
 
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
 router.urls.append(
-    path("shipments/<str:pk>", ShipmentDetail.as_view(), name="shipment-details")
+    path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details")
 )
 router.urls.append(
     path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates")

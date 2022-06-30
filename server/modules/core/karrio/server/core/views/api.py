@@ -56,6 +56,10 @@ class BaseView:
     authentication_classes = [TokenAuthentication, JWTAuthentication]
 
 
+class BaseAPIView(views.APIView, BaseView):
+    pass
+
+
 class BaseGenericAPIView(generics.GenericAPIView, BaseView):
     def get_queryset(self):
         if hasattr(self, "model") and getattr(self, "swagger_fake_view", False):
@@ -72,7 +76,7 @@ class GenericAPIView(LoggingMixin, BaseGenericAPIView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
 
 
-class APIView(LoggingMixin, views.APIView, BaseView):
+class APIView(LoggingMixin, BaseAPIView):
     logging_methods = ["POST", "PUT", "PATCH", "DELETE"]
 
 
@@ -82,13 +86,16 @@ class LoginRequiredView(AccessMixin):
         if not request.user.is_authenticated:
             return JsonResponse(
                 dict(
-                    error={"message": "Authentication credentials were not provided."}
+                    errors=[
+                        {"message": "Authentication credentials were not provided."}
+                    ]
                 ),
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
         if not request.user.is_verified():
             return JsonResponse(
-                {"detail": "User is not verified"}, status=status.HTTP_403_FORBIDDEN
+                dict(errors=[{"message": "User is not verified."}]),
+                status=status.HTTP_403_FORBIDDEN,
             )
         return auth

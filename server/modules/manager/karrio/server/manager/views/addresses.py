@@ -14,7 +14,6 @@ from karrio.server.manager.serializers import (
     ErrorResponse,
     AddressData,
     Address,
-    Operation,
     AddressSerializer,
     can_mutate_address,
 )
@@ -37,7 +36,11 @@ class AddressList(GenericAPIView):
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all addresses",
-        responses={200: Addresses(), 400: ErrorResponse()},
+        responses={
+            200: Addresses(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -68,7 +71,11 @@ class AddressList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an address",
         request_body=AddressData(),
-        responses={200: Address(), 400: ErrorResponse()},
+        responses={
+            201: Address(),
+            400: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -109,7 +116,11 @@ class AddressDetail(APIView):
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an address",
-        responses={200: Address(), 400: ErrorResponse()},
+        responses={
+            200: Address(),
+            400: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -133,7 +144,13 @@ class AddressDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an address",
         request_body=AddressData(),
-        responses={200: Address(), 400: ErrorResponse()},
+        responses={
+            200: Address(),
+            400: ErrorResponse(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -164,7 +181,12 @@ class AddressDetail(APIView):
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Discard an address",
-        responses={200: Operation(), 400: ErrorResponse()},
+        responses={
+            200: Address(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -185,7 +207,7 @@ class AddressDetail(APIView):
 
         address.delete(keep_parents=True)
 
-        return Response(Operation(dict(operation="Discard address", success=True)).data)
+        return Response(Address(address).data)
 
 
 router.urls.append(path("addresses", AddressList.as_view(), name="address-list"))

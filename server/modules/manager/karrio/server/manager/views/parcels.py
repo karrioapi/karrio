@@ -14,7 +14,6 @@ from karrio.server.manager.serializers import (
     ErrorResponse,
     ParcelData,
     Parcel,
-    Operation,
     ParcelSerializer,
     can_mutate_parcel,
 )
@@ -36,7 +35,11 @@ class ParcelList(GenericAPIView):
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all parcels",
-        responses={200: Parcels(), 400: ErrorResponse()},
+        responses={
+            200: Parcels(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -69,7 +72,11 @@ class ParcelList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a parcel",
         request_body=ParcelData(),
-        responses={200: Parcel(), 400: ErrorResponse()},
+        responses={
+            201: Parcel(),
+            400: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -104,7 +111,11 @@ class ParcelDetail(APIView):
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a parcel",
-        responses={200: Parcel(), 400: ErrorResponse()},
+        responses={
+            200: Parcel(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -128,7 +139,13 @@ class ParcelDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a parcel",
         request_body=ParcelData(),
-        responses={200: Parcel(), 400: ErrorResponse()},
+        responses={
+            200: Parcel(),
+            400: ErrorResponse(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -159,7 +176,12 @@ class ParcelDetail(APIView):
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Remove a parcel",
-        responses={200: Operation(), 400: ErrorResponse()},
+        responses={
+            200: Parcel(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -180,7 +202,7 @@ class ParcelDetail(APIView):
 
         parcel.delete(keep_parents=True)
 
-        return Response(Operation(dict(operation="Remove parcel", success=True)).data)
+        return Response(Parcel(parcel).data)
 
 
 router.urls.append(path("parcels", ParcelList.as_view(), name="parcel-list"))

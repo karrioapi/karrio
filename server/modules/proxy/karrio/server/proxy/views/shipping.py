@@ -23,6 +23,7 @@ from karrio.server.core.serializers import (
     ShipmentDetails,
     OperationResponse,
     Address as BaseAddress,
+    ErrorMessages,
     ErrorResponse,
     TestFilters,
 )
@@ -62,7 +63,12 @@ class ShippingDetails(APIView):
         operation_id=f"{ENDPOINT_ID}buy_label",
         operation_summary="Buy a shipment label",
         request_body=ShippingRequest(),
-        responses={200: ShippingResponse(), 400: ErrorResponse()},
+        responses={
+            200: ShippingResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
     )
     def post(self, request: Request):
         """
@@ -83,7 +89,7 @@ class ShippingDetails(APIView):
             ),
         )
 
-        return Response(ShippingResponse(response).data, status=status.HTTP_201_CREATED)
+        return Response(ShippingResponse(response).data, status=status.HTTP_200_OK)
 
 
 class ShippingCancel(APIView):
@@ -93,7 +99,11 @@ class ShippingCancel(APIView):
         operation_summary="Void a shipment label",
         query_serializer=TestFilters(),
         request_body=ShipmentCancelRequest(),
-        responses={200: OperationResponse(), 400: ErrorResponse()},
+        responses={
+            202: OperationResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+        },
         manual_parameters=[
             openapi.Parameter(
                 "carrier_name",

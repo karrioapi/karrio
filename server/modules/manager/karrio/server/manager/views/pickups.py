@@ -16,8 +16,8 @@ from karrio.server.manager.serializers import (
     SerializerDecorator,
     PaginatedResult,
     Pickup,
+    ErrorMessages,
     ErrorResponse,
-    OperationConfirmation,
     TestFilters,
     PickupData,
     PickupUpdateData,
@@ -43,7 +43,11 @@ class PickupList(GenericAPIView):
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
-        responses={200: Pickups(), 400: ErrorResponse()},
+        responses={
+            200: Pickups(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         manual_parameters=PickupFilters.parameters,
         code_examples=[
             {
@@ -70,7 +74,12 @@ class PickupRequest(APIView):
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
-        responses={200: Pickup(), 400: ErrorResponse()},
+        responses={
+            201: Pickup(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         query_serializer=TestFilters(),
         request_body=PickupData(),
         code_examples=[
@@ -125,7 +134,11 @@ class PickupDetails(APIView):
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a pickup",
-        responses={200: Pickup(), 400: ErrorResponse()},
+        responses={
+            200: Pickup(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -146,7 +159,13 @@ class PickupDetails(APIView):
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
-        responses={200: OperationConfirmation(), 400: ErrorResponse()},
+        responses={
+            200: Pickup(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=PickupUpdateData(),
         code_examples=[
             {
@@ -168,7 +187,7 @@ class PickupDetails(APIView):
             }
         ],
     )
-    def patch(self, request: Request, pk: str):
+    def post(self, request: Request, pk: str):
         """
         Modify a pickup for one or many shipments with labels already purchased.
         """
@@ -189,7 +208,13 @@ class PickupCancel(APIView):
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
-        responses={200: OperationConfirmation(), 400: ErrorResponse()},
+        responses={
+            200: Pickup(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=PickupCancelData(),
         code_examples=[
             {
@@ -207,7 +232,7 @@ class PickupCancel(APIView):
         Cancel a pickup of one or more shipments.
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
-        confirmation = (
+        (
             SerializerDecorator[PickupCancelData](
                 pickup, data=request.data, context=request
             )
@@ -215,9 +240,7 @@ class PickupCancel(APIView):
             .instance
         )
 
-        return Response(
-            OperationConfirmation(confirmation).data, status=status.HTTP_200_OK
-        )
+        return Response(Pickup(pickup).data)
 
 
 router.urls.append(path("pickups", PickupList.as_view(), name="shipment-pickup-list"))

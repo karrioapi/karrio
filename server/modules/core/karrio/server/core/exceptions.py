@@ -47,45 +47,86 @@ def custom_exception_handler(exc, context):
     status_code = None
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, KarrioValidationError):
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        code = "validation"
+        response = Response(
+            dict(
+                errors=[
+                    Error(
+                        code="validation",
+                        details=exc.detail,
+                    )
+                ]
+            ),
+            status=status.HTTP_400_BAD_REQUEST,
+            headers=getattr(response, "headers", None),
+        )
 
     if isinstance(exc, ObjectDoesNotExist):
-        status_code = status.HTTP_404_NOT_FOUND
-        code = "not_found"
+        response = Response(
+            dict(
+                errors=[
+                    Error(
+                        code="not_found",
+                        message=exc.detail if isinstance(exc.detail, str) else None,
+                        details=(
+                            DP.to_dict(exc.detail)
+                            if not isinstance(exc.detail, str)
+                            else None
+                        ),
+                    )
+                ]
+            ),
+            status=status.HTTP_404_NOT_FOUND,
+            headers=getattr(response, "headers", None),
+        )
 
     if isinstance(exc, KarrioAPIException):
-        response.status_code = exc.status_code
-        response.data = dict(
-            error=DP.to_dict(
-                Error(
-                    code=exc.code,
-                    message=exc.detail if isinstance(exc.detail, str) else None,
-                    details=DP.to_dict(exc.detail)
-                    if not isinstance(exc.detail, str)
-                    else None,
-                )
-            )
+        response = Response(
+            dict(
+                errors=[
+                    DP.to_dict(
+                        Error(
+                            code=exc.code,
+                            message=exc.detail if isinstance(exc.detail, str) else None,
+                            details=(
+                                DP.to_dict(exc.detail)
+                                if not isinstance(exc.detail, str)
+                                else None
+                            ),
+                        )
+                    )
+                ]
+            ),
+            status=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers=getattr(response, "headers", None),
         )
 
     elif isinstance(exc, APIException):
-        response.data = dict(
-            error=DP.to_dict(
-                Error(
-                    code=code,
-                    message=exc.detail if isinstance(exc.detail, str) else None,
-                    details=DP.to_dict(exc.get_full_details())
-                    if not isinstance(exc.detail, str)
-                    else None,
-                )
-            )
+        response = Response(
+            dict(
+                errors=[
+                    DP.to_dict(
+                        Error(
+                            code=code,
+                            message=exc.detail if isinstance(exc.detail, str) else None,
+                            details=(
+                                DP.to_dict(exc.get_full_details())
+                                if not isinstance(exc.detail, str)
+                                else None
+                            ),
+                        )
+                    )
+                ]
+            ),
+            status=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers=getattr(response, "headers", None),
         )
 
     elif isinstance(exc, Exception):
         message, *_ = list(exc.args)
         response = Response(
-            dict(error=DP.to_dict(Error(code=code, message=message))),
+            dict(errors=[DP.to_dict(Error(code=code, message=message))]),
             status=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers=getattr(response, "headers", None),
         )
 
     return response

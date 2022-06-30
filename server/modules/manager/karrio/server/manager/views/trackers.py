@@ -16,9 +16,9 @@ import karrio.server.core.dataunits as dataunits
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
     TrackingStatus,
+    ErrorMessages,
     ErrorResponse,
     TestFilters,
-    Operation,
     TrackerStatus,
     CharField,
 )
@@ -113,7 +113,11 @@ class TrackerList(GenericAPIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
-        responses={200: Trackers(), 400: ErrorResponse()},
+        responses={
+            200: Trackers(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         manual_parameters=TrackersFilter.parameters,
     )
     def get(self, request: Request):
@@ -133,7 +137,12 @@ class TrackersCreate(APIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment tracker",
         query_serializer=TrackerFilter(),
-        responses={200: TrackingStatus(), 404: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         manual_parameters=[
             openapi.Parameter(
                 "carrier_name",
@@ -185,7 +194,11 @@ class TrackersDetails(APIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
         operation_summary="Retrieves a shipment tracker",
-        responses={200: TrackingStatus(), 404: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            404: ErrorMessages(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request, id_or_tracking_number: str):
         """
@@ -205,7 +218,11 @@ class TrackersDetails(APIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
         operation_summary="Discard a shipment tracker",
-        responses={200: Operation(), 400: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def delete(self, request: Request, id_or_tracking_number: str):
         """
@@ -216,8 +233,8 @@ class TrackersDetails(APIView):
         )
 
         tracker.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Discard a tracker", success=True))
-        return Response(serializer.data)
+
+        return Response(TrackingStatus(tracker).data)
 
 
 router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))
