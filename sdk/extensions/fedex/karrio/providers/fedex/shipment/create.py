@@ -374,7 +374,16 @@ def shipment_request(
                                     customs.content_type or "other"
                                 ].value,
                                 PurposeOfShipmentDescription=None,
-                                CustomerReferences=None,
+                                CustomerReferences=(
+                                    [
+                                        CustomerReference(
+                                            CustomerReferenceType=CustomerReferenceType.INVOICE_NUMBER.value,
+                                            Value=customs.invoice,
+                                        )
+                                    ]
+                                    if customs.invoice is not None
+                                    else None
+                                ),
                                 OriginatorName=(
                                     shipper.company_name or shipper.person_name
                                 ),
