@@ -5359,6 +5359,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "hs_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "value_amount",
               "type": {
                 "kind": "SCALAR",
@@ -11408,6 +11420,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "hs_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "value_amount",
               "type": {
                 "kind": "SCALAR",
@@ -16747,6 +16771,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "hs_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "value_amount",
               "type": {
                 "kind": "SCALAR",
@@ -17190,6 +17224,16 @@
               "defaultValue": null,
               "description": null,
               "name": "sku",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "hs_code",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

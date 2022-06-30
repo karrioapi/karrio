@@ -311,6 +311,13 @@ class CommodityData(Serializer):
         max_length=100,
         help_text="The commodity's sku number",
     )
+    hs_code = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=100,
+        help_text="The commodity's hs_code number",
+    )
     value_amount = FloatField(
         required=False, allow_null=True, help_text="The monetary value of the commodity"
     )
@@ -321,11 +328,11 @@ class CommodityData(Serializer):
         max_length=3,
         help_text="The currency of the commodity value amount",
     )
-    origin_country = CharField(
+    origin_country = ChoiceField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=3,
+        choices=COUNTRIES,
         help_text="The origin or manufacture country",
     )
     parent_id = CharField(

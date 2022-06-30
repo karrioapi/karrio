@@ -175,6 +175,7 @@ class Commodity(OwnedEntity):
     description = models.CharField(max_length=250, null=True, blank=True)
     quantity = models.IntegerField(blank=True, null=True)
     sku = models.CharField(max_length=100, null=True, blank=True)
+    hs_code = models.CharField(max_length=50, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=WEIGHT_UNIT, null=True, blank=True

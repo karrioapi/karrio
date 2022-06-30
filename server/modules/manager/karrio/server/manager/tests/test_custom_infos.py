@@ -56,6 +56,7 @@ CUSTOMS_RESPONSE = {
             "quantity": 1,
             "metadata": {},
             "sku": "cc",
+            "hs_code": None,
             "value_amount": None,
             "value_currency": None,
             "weight": 4.0,
