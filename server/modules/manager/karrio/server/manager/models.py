@@ -632,7 +632,7 @@ class Shipment(OwnedEntity):
 
     @property
     def tracker_id(self) -> Optional[str]:
-        return getattr(self.tracker.first(), "id", None)
+        return getattr(self.tracker, "id", None)
 
     @property
     def carrier_ids(self) -> List[str]:
