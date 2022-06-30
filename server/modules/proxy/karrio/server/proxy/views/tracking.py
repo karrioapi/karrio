@@ -12,6 +12,7 @@ import karrio.server.core.dataunits as dataunits
 from karrio.server.core.serializers import (
     TrackingResponse,
     TestFilters,
+    ErrorMessages,
     ErrorResponse,
     CharField,
 )
@@ -40,7 +41,12 @@ class TrackingAPIView(APIView):
         operation_id=f"{ENDPOINT_ID}track_shipment",
         operation_summary="Track a shipment",
         query_serializer=TrackerFilter(),
-        responses={200: TrackingResponse(), 400: ErrorResponse()},
+        responses={
+            200: TrackingResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         manual_parameters=[
             openapi.Parameter(
                 "carrier_name",

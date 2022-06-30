@@ -503,17 +503,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
         try:
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
-                events=[
-                    DP.to_dict(
-                        datatypes.TrackingEvent(
-                            date=DF.fdate(shipment.updated_at),
-                            description="Label created and ready for shipment",
-                            location="",
-                            code="CREATED",
-                            time=DF.ftime(shipment.updated_at),
-                        )
-                    )
-                ],
+                events=utils.default_tracking_event(event_at=shipment.updated_at),
                 delivered=False,
                 status=TrackerStatus.pending.value,
                 test_mode=carrier.test,

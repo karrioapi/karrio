@@ -253,7 +253,7 @@ class Tracking:
 
 
 @attr.s(auto_attribs=True)
-class ErrorResponse:
+class ErrorMessages:
     messages: List[Message] = JList[Message]
 
 

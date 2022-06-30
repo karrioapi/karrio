@@ -1,4 +1,3 @@
-import typing
 import json
 from django.db.models import Q
 from import_export import resources

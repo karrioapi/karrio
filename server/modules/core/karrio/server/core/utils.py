@@ -1,7 +1,7 @@
-from datetime import timedelta
 import inspect
 import functools
 import logging
+from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
@@ -12,6 +12,7 @@ from django_email_verification.confirm import (
 )
 import rest_framework_simplejwt.tokens as jwt
 
+from karrio.core.utils import DP, DF
 from karrio.server.core import datatypes, serializers
 
 T = TypeVar("T")
@@ -186,3 +187,22 @@ def app_tracking_query_params(url: str, carrier) -> str:
     hub_flag = f"&hub={carrier.carrier_name}" if carrier.gateway.is_hub else ""
 
     return f"{url}{test_flag}{hub_flag}"
+
+
+def default_tracking_event(
+    event_at: datetime = None,
+    code: str = None,
+    description: str = None,
+):
+
+    return [
+        DP.to_dict(
+            datatypes.TrackingEvent(
+                date=DF.fdate(event_at or datetime.now()),
+                description=(description or "Label created and ready for shipment"),
+                location="",
+                code=(code or "CREATED"),
+                time=DF.ftime(event_at or datetime.now()),
+            )
+        )
+    ]

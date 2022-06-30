@@ -141,15 +141,18 @@ class CarrierSettings(Serializer):
     object_type = CharField(default="carrier", help_text="Specifies the object type")
 
 
-class Message(Serializer):
+class APIError(Serializer):
+    message = CharField(required=False, help_text="The error or warning message")
+    code = CharField(required=False, help_text="The message code")
+    details = DictField(required=False, help_text="any additional details")
+
+
+class Message(APIError):
 
     carrier_name = CharField(required=False, help_text="The targeted carrier")
     carrier_id = CharField(
         required=False, help_text="The targeted carrier name (unique identifier)"
     )
-    message = CharField(required=False, help_text="The error or warning message")
-    code = CharField(required=False, help_text="The message code")
-    details = DictField(required=False, help_text="any additional details")
 
 
 class AddressValidation(Serializer):
@@ -1451,7 +1454,11 @@ class TrackingResponse(Serializer):
     )
 
 
-class ErrorResponse(Serializer):
+class ErrorMessages(Serializer):
     messages = Message(
         many=True, required=False, help_text="The list of error messages"
     )
+
+
+class ErrorResponse(Serializer):
+    errors = APIError(many=True, required=False, help_text="The list of API errors")

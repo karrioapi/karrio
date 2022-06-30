@@ -194,8 +194,8 @@ class Shipments:
 
         if shipment is None:
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         def process_meta(parent) -> dict:
@@ -310,8 +310,8 @@ class Shipments:
 
         if confirmation is None:
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.ConfirmationResponse(
@@ -344,7 +344,7 @@ class Shipments:
 
         if not any(results or []) and (raise_on_error or is_sdk_message(messages)):
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
+                detail=datatypes.ErrorMessages(messages=messages),
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -410,8 +410,8 @@ class Pickups:
 
         if pickup is None:
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.PickupResponse(
@@ -449,8 +449,8 @@ class Pickups:
 
         if pickup is None:
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.PickupResponse(
@@ -499,8 +499,8 @@ class Pickups:
 
         if confirmation is None:
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.ConfirmationResponse(
@@ -545,8 +545,8 @@ class Rates:
 
         if not any(rates) and any(messages):
             raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=datatypes.ErrorMessages(messages=messages),
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:

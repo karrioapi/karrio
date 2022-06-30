@@ -68,7 +68,10 @@ class CarrierList(GenericAPIView):
         tags=["Carriers"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all carriers",
-        responses={200: CarriersSettingsList(), 400: ErrorResponse()},
+        responses={
+            200: CarriersSettingsList(),
+            400: ErrorResponse(),
+        },
         query_serializer=CarrierFilters,
         code_examples=[
             {
@@ -108,7 +111,9 @@ class CarrierServices(APIView):
             )
         ],
         responses={
-            200: openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True)
+            200: openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
         },
     )
     def get(self, request: Request, carrier_name: str):

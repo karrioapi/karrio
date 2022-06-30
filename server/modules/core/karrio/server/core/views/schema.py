@@ -33,6 +33,13 @@ def render_schema_description(APP_NAME):
     As a precaution, use API versioning to check a new API version before committing to an upgrade.
 
 
+    ## Environments
+
+    The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
+    In development, it is therefore possible to add carrier connections, get live rates,
+    buy labels, create trackers and schedule pickups in `test_mode`.
+
+
     ## Pagination
 
     All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses,
@@ -56,11 +63,16 @@ def render_schema_description(APP_NAME):
     }}
     ```
 
-    ## Environments
+    ## Metadata
 
-    The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
-    In development, it is therefore possible to add carrier connections, get live rates,
-    buy labels, create trackers and schedule pickups in `test_mode`.
+    Updateable {APP_NAME} objects—including Shipment and Order—have a metadata parameter.
+    You can use this parameter to attach key-value data to these {APP_NAME} objects.
+
+    Metadata is useful for storing additional, structured information on an object.
+    As an example, you could store your user's full name and corresponding unique identifier
+    from your system on a {APP_NAME} Order object.
+
+    Do not store any sensitive information as metadata.
 
     """
 
@@ -241,6 +253,13 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                     else None
                 ),
                 {
+                    "name": "Pickups",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} pickup booking.
+                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
+                """,
+                },
+                {
                     "name": "Proxy",
                     "description": f"""
                 In some scenarios, all we need is to send request to a carrier using the {APP_NAME} unified API.
@@ -254,10 +273,16 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 """,
                 },
                 {
-                    "name": "Pickups",
+                    "name": "Data",
                     "description": f"""
-                This is an object representing your a {APP_NAME} pickup booking.
-                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
+                These operations allow you import or export data from your {APP_NAME} account.
+                """,
+                },
+                {
+                    "name": "Batches",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} batch operation.
+                You can retrieve all batch operations historically for your {APP_NAME} account.
                 """,
                 },
                 {
