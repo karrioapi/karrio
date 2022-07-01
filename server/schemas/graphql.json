@@ -1940,6 +1940,16 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "tracking_number",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "test_mode",
                   "type": {
                     "kind": "SCALAR",
@@ -2038,6 +2048,16 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "tracking_number",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },

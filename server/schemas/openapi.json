@@ -2368,6 +2368,13 @@
                         }
                     },
                     {
+                        "name": "tracking_number",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "test_mode",
                         "in": "query",
                         "description": "test mode flag",

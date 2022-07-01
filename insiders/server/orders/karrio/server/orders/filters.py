@@ -8,8 +8,7 @@ import karrio.server.orders.models as models
 
 class OrderFilters(filters.FilterSet):
     address = filters.CharFilter(
-        field_name="shipping_to__address_line1",
-        lookup_expr="icontains",
+        method="address_filter",
         help_text="customer address line",
     )
     id = CharInFilter(
@@ -70,6 +69,18 @@ class OrderFilters(filters.FilterSet):
     class Meta:
         model = models.Order
         fields: list = []
+
+    def address_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(shipping_to__address_line1__icontains=value)
+            | Q(shipping_to__address_line2__icontains=value)
+            | Q(shipping_to__postal_code__icontains=value)
+            | Q(shipping_to__person_name__icontains=value)
+            | Q(shipping_to__company_name__icontains=value)
+            | Q(shipping_to__city__icontains=value)
+            | Q(shipping_to__email__icontains=value)
+            | Q(shipping_to__phone_number__icontains=value)
+        )
 
     def id_filter(self, queryset, name, value):
         return queryset.filter(Q(id__in=value))
