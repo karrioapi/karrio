@@ -463,7 +463,7 @@ class Tracking(OwnedEntity):
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    shipment = models.ForeignKey(
+    shipment = models.OneToOneField(
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
 
@@ -656,7 +656,10 @@ class Shipment(OwnedEntity):
 
     @property
     def tracker(self):
-        return self.shipment_tracker.first()
+        if hasattr(self, "shipment_tracker"):
+            return self.shipment_tracker
+
+        return None
 
     @property
     def label_url(self) -> str:
