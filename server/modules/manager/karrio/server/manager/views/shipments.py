@@ -146,10 +146,15 @@ class ShipmentDetail(APIView):
 
         can_mutate_shipment(shipment, delete=True)
 
-        confirmation = SerializerDecorator[ShipmentCancelSerializer](
-            shipment, data={}, context=request
-        ).save()
-        return Response(OperationResponse(confirmation.instance).data)
+        update = (
+            SerializerDecorator[ShipmentCancelSerializer](
+                shipment, data={}, context=request
+            )
+            .save()
+            .instance
+        )
+
+        return Response(Shipment(update).data)
 
 
 class ShipmentRates(APIView):
