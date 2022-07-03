@@ -145,9 +145,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
                                 currency=item.value_currency,
                                 eccn=(item.metadata or {}).get("eccn"),
                                 printed_commodity_identifier=(item.sku or item.id),
-                                hs_tariff_number=(item.metadata or {}).get(
-                                    "hs_tariff_number"
-                                ),
+                                hs_tariff_number=item.hs_code,
                             )
                             for item in payload.customs.commodities
                         ],
@@ -159,4 +157,4 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
         ),
     )
 
-    return Serializable(requests, DP.to_dict, logged=True)
+    return Serializable(requests, DP.to_dict)

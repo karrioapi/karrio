@@ -1940,6 +1940,16 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "tracking_number",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "test_mode",
                   "type": {
                     "kind": "SCALAR",
@@ -2038,6 +2048,16 @@
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "tracking_number",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -5348,6 +5368,18 @@
               "description": "",
               "isDeprecated": false,
               "name": "sku",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "hs_code",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -11408,6 +11440,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "hs_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "value_amount",
               "type": {
                 "kind": "SCALAR",
@@ -16747,6 +16791,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "hs_code",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "value_amount",
               "type": {
                 "kind": "SCALAR",
@@ -17190,6 +17244,16 @@
               "defaultValue": null,
               "description": null,
               "name": "sku",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "hs_code",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

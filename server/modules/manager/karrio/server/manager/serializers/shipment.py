@@ -353,26 +353,16 @@ class ShipmentCancelSerializer(Shipment):
         self, instance: models.Shipment, validated_data: dict, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
-            response = Shipments.cancel(
+            Shipments.cancel(
                 payload=ShipmentCancelRequest(instance).data,
                 carrier=instance.selected_rate_carrier,
-            )
-        else:
-            response = datatypes.ConfirmationResponse(
-                messages=[],
-                confirmation=datatypes.Confirmation(
-                    operation="Cancel Shipment",
-                    carrier_name="None Selected",
-                    carrier_id="None Selected",
-                    success=True,
-                ),
             )
 
         instance.status = ShipmentStatus.cancelled.value
         instance.save(update_fields=["status"])
         remove_shipment_tracker(instance)
 
-        return response
+        return instance
 
 
 def buy_shipment_label(
@@ -475,8 +465,8 @@ def can_mutate_shipment(
 
 
 def remove_shipment_tracker(shipment: models.Shipment):
-    if any(shipment.shipment_tracker.all()):
-        shipment.shipment_tracker.all().delete()
+    if hasattr(shipment, "shipment_tracker"):
+        shipment.shipment_tracker.delete()
 
 
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):

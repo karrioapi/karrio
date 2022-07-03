@@ -175,6 +175,7 @@ class Commodity(OwnedEntity):
     description = models.CharField(max_length=250, null=True, blank=True)
     quantity = models.IntegerField(blank=True, null=True)
     sku = models.CharField(max_length=100, null=True, blank=True)
+    hs_code = models.CharField(max_length=50, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=WEIGHT_UNIT, null=True, blank=True
@@ -462,7 +463,7 @@ class Tracking(OwnedEntity):
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    shipment = models.ForeignKey(
+    shipment = models.OneToOneField(
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
 
@@ -631,7 +632,7 @@ class Shipment(OwnedEntity):
 
     @property
     def tracker_id(self) -> Optional[str]:
-        return getattr(self.tracker.first(), "id", None)
+        return getattr(self.tracker, "id", None)
 
     @property
     def carrier_ids(self) -> List[str]:
@@ -655,7 +656,10 @@ class Shipment(OwnedEntity):
 
     @property
     def tracker(self):
-        return self.shipment_tracker.first()
+        if hasattr(self, "shipment_tracker"):
+            return self.shipment_tracker
+
+        return None
 
     @property
     def label_url(self) -> str:

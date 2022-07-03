@@ -144,8 +144,10 @@ shipment_data = {
     "options": {"currency": "USD"},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {
+        "invoice": "123456789",
         "duty": {"paid_by": "sender", "declared_value": 100.0},
-        "commodities": [{"weight": "10", "description": "test"}],
+        "commodities": [{"weight": "10", "description": "test", "hs_code": "00339BB"}],
+        "commercial_invoice": True,
     },
     "reference": "#Order 11111",
 }
@@ -328,10 +330,19 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
+                    <v26:CommercialInvoice>
+                        <v26:CustomerReferences>
+                            <v26:CustomerReferenceType>INVOICE_NUMBER</v26:CustomerReferenceType>
+                            <v26:Value>123456789</v26:Value>
+                        </v26:CustomerReferences>
+                        <v26:OriginatorName>Input Your Information</v26:OriginatorName>
+                        <v26:TermsOfSale>DDU</v26:TermsOfSale>
+                    </v26:CommercialInvoice>
                     <v26:Commodities>
                         <v26:NumberOfPieces>1</v26:NumberOfPieces>
                         <v26:Description>test</v26:Description>
                         <v26:CountryOfManufacture>US</v26:CountryOfManufacture>
+                        <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
                         </v26:Weight>
@@ -496,10 +507,19 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
+                    <v26:CommercialInvoice>
+                        <v26:CustomerReferences>
+                            <v26:CustomerReferenceType>INVOICE_NUMBER</v26:CustomerReferenceType>
+                            <v26:Value>123456789</v26:Value>
+                        </v26:CustomerReferences>
+                        <v26:OriginatorName>Input Your Information</v26:OriginatorName>
+                        <v26:TermsOfSale>DDU</v26:TermsOfSale>
+                    </v26:CommercialInvoice>
                     <v26:Commodities>
                         <v26:NumberOfPieces>1</v26:NumberOfPieces>
                         <v26:Description>test</v26:Description>
                         <v26:CountryOfManufacture>US</v26:CountryOfManufacture>
+                        <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
                         </v26:Weight>
@@ -664,10 +684,19 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
+                    <v26:CommercialInvoice>
+                        <v26:CustomerReferences>
+                            <v26:CustomerReferenceType>INVOICE_NUMBER</v26:CustomerReferenceType>
+                            <v26:Value>123456789</v26:Value>
+                        </v26:CustomerReferences>
+                        <v26:OriginatorName>Input Your Information</v26:OriginatorName>
+                        <v26:TermsOfSale>DDU</v26:TermsOfSale>
+                    </v26:CommercialInvoice>
                     <v26:Commodities>
                         <v26:NumberOfPieces>1</v26:NumberOfPieces>
                         <v26:Description>test</v26:Description>
                         <v26:CountryOfManufacture>US</v26:CountryOfManufacture>
+                        <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
                         </v26:Weight>

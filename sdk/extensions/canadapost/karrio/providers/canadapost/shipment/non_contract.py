@@ -204,7 +204,7 @@ def shipment_request(
                                 customs_number_of_units=item.quantity,
                                 customs_description=item.description,
                                 sku=item.sku,
-                                hs_tariff_code=None,
+                                hs_tariff_code=item.hs_code,
                                 unit_weight=WeightUnit.KG.value,
                                 customs_value_per_unit=item.value_amount,
                                 customs_unit_of_measure=None,

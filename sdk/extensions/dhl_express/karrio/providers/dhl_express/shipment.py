@@ -268,7 +268,7 @@ def shipment_request(
                         ).as_country_name,
                         ImportTaxManagedOutsideDhlExpress=None,
                         AdditionalInformation=None,
-                        ImportCommodityCode=None,
+                        ImportCommodityCode=item.hs_code,
                         ItemReferences=None,
                         CustomsPaperworks=None,
                     )

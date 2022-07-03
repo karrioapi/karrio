@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.tnt"
-version = "2022.4"
+version = "2022.4.6"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - TNT Shipping Extension"

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.easypost"
-version = "2022.4"
+version = "2022.4.6"
 homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/easypost"
 repository="https://github.com/karrioapi/karrio"
 description = "EasyPost karrio extension"

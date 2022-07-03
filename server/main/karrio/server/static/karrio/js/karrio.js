@@ -1069,7 +1069,247 @@
     (function (CommodityWeightUnitEnum) {
         CommodityWeightUnitEnum["Kg"] = "KG";
         CommodityWeightUnitEnum["Lb"] = "LB";
-    })(CommodityWeightUnitEnum || (CommodityWeightUnitEnum = {}));
+    })(CommodityWeightUnitEnum || (CommodityWeightUnitEnum = {})); /**
+    * @export
+    * @enum {string}
+    */
+    var CommodityOriginCountryEnum;
+    (function (CommodityOriginCountryEnum) {
+        CommodityOriginCountryEnum["Ad"] = "AD";
+        CommodityOriginCountryEnum["Ae"] = "AE";
+        CommodityOriginCountryEnum["Af"] = "AF";
+        CommodityOriginCountryEnum["Ag"] = "AG";
+        CommodityOriginCountryEnum["Ai"] = "AI";
+        CommodityOriginCountryEnum["Al"] = "AL";
+        CommodityOriginCountryEnum["Am"] = "AM";
+        CommodityOriginCountryEnum["An"] = "AN";
+        CommodityOriginCountryEnum["Ao"] = "AO";
+        CommodityOriginCountryEnum["Ar"] = "AR";
+        CommodityOriginCountryEnum["As"] = "AS";
+        CommodityOriginCountryEnum["At"] = "AT";
+        CommodityOriginCountryEnum["Au"] = "AU";
+        CommodityOriginCountryEnum["Aw"] = "AW";
+        CommodityOriginCountryEnum["Az"] = "AZ";
+        CommodityOriginCountryEnum["Ba"] = "BA";
+        CommodityOriginCountryEnum["Bb"] = "BB";
+        CommodityOriginCountryEnum["Bd"] = "BD";
+        CommodityOriginCountryEnum["Be"] = "BE";
+        CommodityOriginCountryEnum["Bf"] = "BF";
+        CommodityOriginCountryEnum["Bg"] = "BG";
+        CommodityOriginCountryEnum["Bh"] = "BH";
+        CommodityOriginCountryEnum["Bi"] = "BI";
+        CommodityOriginCountryEnum["Bj"] = "BJ";
+        CommodityOriginCountryEnum["Bm"] = "BM";
+        CommodityOriginCountryEnum["Bn"] = "BN";
+        CommodityOriginCountryEnum["Bo"] = "BO";
+        CommodityOriginCountryEnum["Br"] = "BR";
+        CommodityOriginCountryEnum["Bs"] = "BS";
+        CommodityOriginCountryEnum["Bt"] = "BT";
+        CommodityOriginCountryEnum["Bw"] = "BW";
+        CommodityOriginCountryEnum["By"] = "BY";
+        CommodityOriginCountryEnum["Bz"] = "BZ";
+        CommodityOriginCountryEnum["Ca"] = "CA";
+        CommodityOriginCountryEnum["Cd"] = "CD";
+        CommodityOriginCountryEnum["Cf"] = "CF";
+        CommodityOriginCountryEnum["Cg"] = "CG";
+        CommodityOriginCountryEnum["Ch"] = "CH";
+        CommodityOriginCountryEnum["Ci"] = "CI";
+        CommodityOriginCountryEnum["Ck"] = "CK";
+        CommodityOriginCountryEnum["Cl"] = "CL";
+        CommodityOriginCountryEnum["Cm"] = "CM";
+        CommodityOriginCountryEnum["Cn"] = "CN";
+        CommodityOriginCountryEnum["Co"] = "CO";
+        CommodityOriginCountryEnum["Cr"] = "CR";
+        CommodityOriginCountryEnum["Cu"] = "CU";
+        CommodityOriginCountryEnum["Cv"] = "CV";
+        CommodityOriginCountryEnum["Cy"] = "CY";
+        CommodityOriginCountryEnum["Cz"] = "CZ";
+        CommodityOriginCountryEnum["De"] = "DE";
+        CommodityOriginCountryEnum["Dj"] = "DJ";
+        CommodityOriginCountryEnum["Dk"] = "DK";
+        CommodityOriginCountryEnum["Dm"] = "DM";
+        CommodityOriginCountryEnum["Do"] = "DO";
+        CommodityOriginCountryEnum["Dz"] = "DZ";
+        CommodityOriginCountryEnum["Ec"] = "EC";
+        CommodityOriginCountryEnum["Ee"] = "EE";
+        CommodityOriginCountryEnum["Eg"] = "EG";
+        CommodityOriginCountryEnum["Er"] = "ER";
+        CommodityOriginCountryEnum["Es"] = "ES";
+        CommodityOriginCountryEnum["Et"] = "ET";
+        CommodityOriginCountryEnum["Fi"] = "FI";
+        CommodityOriginCountryEnum["Fj"] = "FJ";
+        CommodityOriginCountryEnum["Fk"] = "FK";
+        CommodityOriginCountryEnum["Fm"] = "FM";
+        CommodityOriginCountryEnum["Fo"] = "FO";
+        CommodityOriginCountryEnum["Fr"] = "FR";
+        CommodityOriginCountryEnum["Ga"] = "GA";
+        CommodityOriginCountryEnum["Gb"] = "GB";
+        CommodityOriginCountryEnum["Gd"] = "GD";
+        CommodityOriginCountryEnum["Ge"] = "GE";
+        CommodityOriginCountryEnum["Gf"] = "GF";
+        CommodityOriginCountryEnum["Gg"] = "GG";
+        CommodityOriginCountryEnum["Gh"] = "GH";
+        CommodityOriginCountryEnum["Gi"] = "GI";
+        CommodityOriginCountryEnum["Gl"] = "GL";
+        CommodityOriginCountryEnum["Gm"] = "GM";
+        CommodityOriginCountryEnum["Gn"] = "GN";
+        CommodityOriginCountryEnum["Gp"] = "GP";
+        CommodityOriginCountryEnum["Gq"] = "GQ";
+        CommodityOriginCountryEnum["Gr"] = "GR";
+        CommodityOriginCountryEnum["Gt"] = "GT";
+        CommodityOriginCountryEnum["Gu"] = "GU";
+        CommodityOriginCountryEnum["Gw"] = "GW";
+        CommodityOriginCountryEnum["Gy"] = "GY";
+        CommodityOriginCountryEnum["Hk"] = "HK";
+        CommodityOriginCountryEnum["Hn"] = "HN";
+        CommodityOriginCountryEnum["Hr"] = "HR";
+        CommodityOriginCountryEnum["Ht"] = "HT";
+        CommodityOriginCountryEnum["Hu"] = "HU";
+        CommodityOriginCountryEnum["Ic"] = "IC";
+        CommodityOriginCountryEnum["Id"] = "ID";
+        CommodityOriginCountryEnum["Ie"] = "IE";
+        CommodityOriginCountryEnum["Il"] = "IL";
+        CommodityOriginCountryEnum["In"] = "IN";
+        CommodityOriginCountryEnum["Iq"] = "IQ";
+        CommodityOriginCountryEnum["Ir"] = "IR";
+        CommodityOriginCountryEnum["Is"] = "IS";
+        CommodityOriginCountryEnum["It"] = "IT";
+        CommodityOriginCountryEnum["Je"] = "JE";
+        CommodityOriginCountryEnum["Jm"] = "JM";
+        CommodityOriginCountryEnum["Jo"] = "JO";
+        CommodityOriginCountryEnum["Jp"] = "JP";
+        CommodityOriginCountryEnum["Ke"] = "KE";
+        CommodityOriginCountryEnum["Kg"] = "KG";
+        CommodityOriginCountryEnum["Kh"] = "KH";
+        CommodityOriginCountryEnum["Ki"] = "KI";
+        CommodityOriginCountryEnum["Km"] = "KM";
+        CommodityOriginCountryEnum["Kn"] = "KN";
+        CommodityOriginCountryEnum["Kp"] = "KP";
+        CommodityOriginCountryEnum["Kr"] = "KR";
+        CommodityOriginCountryEnum["Kv"] = "KV";
+        CommodityOriginCountryEnum["Kw"] = "KW";
+        CommodityOriginCountryEnum["Ky"] = "KY";
+        CommodityOriginCountryEnum["Kz"] = "KZ";
+        CommodityOriginCountryEnum["La"] = "LA";
+        CommodityOriginCountryEnum["Lb"] = "LB";
+        CommodityOriginCountryEnum["Lc"] = "LC";
+        CommodityOriginCountryEnum["Li"] = "LI";
+        CommodityOriginCountryEnum["Lk"] = "LK";
+        CommodityOriginCountryEnum["Lr"] = "LR";
+        CommodityOriginCountryEnum["Ls"] = "LS";
+        CommodityOriginCountryEnum["Lt"] = "LT";
+        CommodityOriginCountryEnum["Lu"] = "LU";
+        CommodityOriginCountryEnum["Lv"] = "LV";
+        CommodityOriginCountryEnum["Ly"] = "LY";
+        CommodityOriginCountryEnum["Ma"] = "MA";
+        CommodityOriginCountryEnum["Mc"] = "MC";
+        CommodityOriginCountryEnum["Md"] = "MD";
+        CommodityOriginCountryEnum["Me"] = "ME";
+        CommodityOriginCountryEnum["Mg"] = "MG";
+        CommodityOriginCountryEnum["Mh"] = "MH";
+        CommodityOriginCountryEnum["Mk"] = "MK";
+        CommodityOriginCountryEnum["Ml"] = "ML";
+        CommodityOriginCountryEnum["Mm"] = "MM";
+        CommodityOriginCountryEnum["Mn"] = "MN";
+        CommodityOriginCountryEnum["Mo"] = "MO";
+        CommodityOriginCountryEnum["Mp"] = "MP";
+        CommodityOriginCountryEnum["Mq"] = "MQ";
+        CommodityOriginCountryEnum["Mr"] = "MR";
+        CommodityOriginCountryEnum["Ms"] = "MS";
+        CommodityOriginCountryEnum["Mt"] = "MT";
+        CommodityOriginCountryEnum["Mu"] = "MU";
+        CommodityOriginCountryEnum["Mv"] = "MV";
+        CommodityOriginCountryEnum["Mw"] = "MW";
+        CommodityOriginCountryEnum["Mx"] = "MX";
+        CommodityOriginCountryEnum["My"] = "MY";
+        CommodityOriginCountryEnum["Mz"] = "MZ";
+        CommodityOriginCountryEnum["Na"] = "NA";
+        CommodityOriginCountryEnum["Nc"] = "NC";
+        CommodityOriginCountryEnum["Ne"] = "NE";
+        CommodityOriginCountryEnum["Ng"] = "NG";
+        CommodityOriginCountryEnum["Ni"] = "NI";
+        CommodityOriginCountryEnum["Nl"] = "NL";
+        CommodityOriginCountryEnum["No"] = "NO";
+        CommodityOriginCountryEnum["Np"] = "NP";
+        CommodityOriginCountryEnum["Nr"] = "NR";
+        CommodityOriginCountryEnum["Nu"] = "NU";
+        CommodityOriginCountryEnum["Nz"] = "NZ";
+        CommodityOriginCountryEnum["Om"] = "OM";
+        CommodityOriginCountryEnum["Pa"] = "PA";
+        CommodityOriginCountryEnum["Pe"] = "PE";
+        CommodityOriginCountryEnum["Pf"] = "PF";
+        CommodityOriginCountryEnum["Pg"] = "PG";
+        CommodityOriginCountryEnum["Ph"] = "PH";
+        CommodityOriginCountryEnum["Pk"] = "PK";
+        CommodityOriginCountryEnum["Pl"] = "PL";
+        CommodityOriginCountryEnum["Pr"] = "PR";
+        CommodityOriginCountryEnum["Pt"] = "PT";
+        CommodityOriginCountryEnum["Pw"] = "PW";
+        CommodityOriginCountryEnum["Py"] = "PY";
+        CommodityOriginCountryEnum["Qa"] = "QA";
+        CommodityOriginCountryEnum["Re"] = "RE";
+        CommodityOriginCountryEnum["Ro"] = "RO";
+        CommodityOriginCountryEnum["Rs"] = "RS";
+        CommodityOriginCountryEnum["Ru"] = "RU";
+        CommodityOriginCountryEnum["Rw"] = "RW";
+        CommodityOriginCountryEnum["Sa"] = "SA";
+        CommodityOriginCountryEnum["Sb"] = "SB";
+        CommodityOriginCountryEnum["Sc"] = "SC";
+        CommodityOriginCountryEnum["Sd"] = "SD";
+        CommodityOriginCountryEnum["Se"] = "SE";
+        CommodityOriginCountryEnum["Sg"] = "SG";
+        CommodityOriginCountryEnum["Sh"] = "SH";
+        CommodityOriginCountryEnum["Si"] = "SI";
+        CommodityOriginCountryEnum["Sk"] = "SK";
+        CommodityOriginCountryEnum["Sl"] = "SL";
+        CommodityOriginCountryEnum["Sm"] = "SM";
+        CommodityOriginCountryEnum["Sn"] = "SN";
+        CommodityOriginCountryEnum["So"] = "SO";
+        CommodityOriginCountryEnum["Sr"] = "SR";
+        CommodityOriginCountryEnum["Ss"] = "SS";
+        CommodityOriginCountryEnum["St"] = "ST";
+        CommodityOriginCountryEnum["Sv"] = "SV";
+        CommodityOriginCountryEnum["Sy"] = "SY";
+        CommodityOriginCountryEnum["Sz"] = "SZ";
+        CommodityOriginCountryEnum["Tc"] = "TC";
+        CommodityOriginCountryEnum["Td"] = "TD";
+        CommodityOriginCountryEnum["Tg"] = "TG";
+        CommodityOriginCountryEnum["Th"] = "TH";
+        CommodityOriginCountryEnum["Tj"] = "TJ";
+        CommodityOriginCountryEnum["Tl"] = "TL";
+        CommodityOriginCountryEnum["Tn"] = "TN";
+        CommodityOriginCountryEnum["To"] = "TO";
+        CommodityOriginCountryEnum["Tr"] = "TR";
+        CommodityOriginCountryEnum["Tt"] = "TT";
+        CommodityOriginCountryEnum["Tv"] = "TV";
+        CommodityOriginCountryEnum["Tw"] = "TW";
+        CommodityOriginCountryEnum["Tz"] = "TZ";
+        CommodityOriginCountryEnum["Ua"] = "UA";
+        CommodityOriginCountryEnum["Ug"] = "UG";
+        CommodityOriginCountryEnum["Us"] = "US";
+        CommodityOriginCountryEnum["Uy"] = "UY";
+        CommodityOriginCountryEnum["Uz"] = "UZ";
+        CommodityOriginCountryEnum["Va"] = "VA";
+        CommodityOriginCountryEnum["Vc"] = "VC";
+        CommodityOriginCountryEnum["Ve"] = "VE";
+        CommodityOriginCountryEnum["Vg"] = "VG";
+        CommodityOriginCountryEnum["Vi"] = "VI";
+        CommodityOriginCountryEnum["Vn"] = "VN";
+        CommodityOriginCountryEnum["Vu"] = "VU";
+        CommodityOriginCountryEnum["Ws"] = "WS";
+        CommodityOriginCountryEnum["Xb"] = "XB";
+        CommodityOriginCountryEnum["Xc"] = "XC";
+        CommodityOriginCountryEnum["Xe"] = "XE";
+        CommodityOriginCountryEnum["Xm"] = "XM";
+        CommodityOriginCountryEnum["Xn"] = "XN";
+        CommodityOriginCountryEnum["Xs"] = "XS";
+        CommodityOriginCountryEnum["Xy"] = "XY";
+        CommodityOriginCountryEnum["Ye"] = "YE";
+        CommodityOriginCountryEnum["Yt"] = "YT";
+        CommodityOriginCountryEnum["Za"] = "ZA";
+        CommodityOriginCountryEnum["Zm"] = "ZM";
+        CommodityOriginCountryEnum["Zw"] = "ZW";
+    })(CommodityOriginCountryEnum || (CommodityOriginCountryEnum = {}));
     function CommodityFromJSON(json) {
         return CommodityFromJSONTyped(json);
     }
@@ -1084,6 +1324,7 @@
             'description': !exists(json, 'description') ? undefined : json['description'],
             'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
             'sku': !exists(json, 'sku') ? undefined : json['sku'],
+            'hs_code': !exists(json, 'hs_code') ? undefined : json['hs_code'],
             'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
             'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
             'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
@@ -1106,6 +1347,7 @@
             'description': value.description,
             'quantity': value.quantity,
             'sku': value.sku,
+            'hs_code': value.hs_code,
             'value_amount': value.value_amount,
             'value_currency': value.value_currency,
             'origin_country': value.origin_country,
@@ -1124,7 +1366,247 @@
     (function (CommodityDataWeightUnitEnum) {
         CommodityDataWeightUnitEnum["Kg"] = "KG";
         CommodityDataWeightUnitEnum["Lb"] = "LB";
-    })(CommodityDataWeightUnitEnum || (CommodityDataWeightUnitEnum = {}));
+    })(CommodityDataWeightUnitEnum || (CommodityDataWeightUnitEnum = {})); /**
+    * @export
+    * @enum {string}
+    */
+    var CommodityDataOriginCountryEnum;
+    (function (CommodityDataOriginCountryEnum) {
+        CommodityDataOriginCountryEnum["Ad"] = "AD";
+        CommodityDataOriginCountryEnum["Ae"] = "AE";
+        CommodityDataOriginCountryEnum["Af"] = "AF";
+        CommodityDataOriginCountryEnum["Ag"] = "AG";
+        CommodityDataOriginCountryEnum["Ai"] = "AI";
+        CommodityDataOriginCountryEnum["Al"] = "AL";
+        CommodityDataOriginCountryEnum["Am"] = "AM";
+        CommodityDataOriginCountryEnum["An"] = "AN";
+        CommodityDataOriginCountryEnum["Ao"] = "AO";
+        CommodityDataOriginCountryEnum["Ar"] = "AR";
+        CommodityDataOriginCountryEnum["As"] = "AS";
+        CommodityDataOriginCountryEnum["At"] = "AT";
+        CommodityDataOriginCountryEnum["Au"] = "AU";
+        CommodityDataOriginCountryEnum["Aw"] = "AW";
+        CommodityDataOriginCountryEnum["Az"] = "AZ";
+        CommodityDataOriginCountryEnum["Ba"] = "BA";
+        CommodityDataOriginCountryEnum["Bb"] = "BB";
+        CommodityDataOriginCountryEnum["Bd"] = "BD";
+        CommodityDataOriginCountryEnum["Be"] = "BE";
+        CommodityDataOriginCountryEnum["Bf"] = "BF";
+        CommodityDataOriginCountryEnum["Bg"] = "BG";
+        CommodityDataOriginCountryEnum["Bh"] = "BH";
+        CommodityDataOriginCountryEnum["Bi"] = "BI";
+        CommodityDataOriginCountryEnum["Bj"] = "BJ";
+        CommodityDataOriginCountryEnum["Bm"] = "BM";
+        CommodityDataOriginCountryEnum["Bn"] = "BN";
+        CommodityDataOriginCountryEnum["Bo"] = "BO";
+        CommodityDataOriginCountryEnum["Br"] = "BR";
+        CommodityDataOriginCountryEnum["Bs"] = "BS";
+        CommodityDataOriginCountryEnum["Bt"] = "BT";
+        CommodityDataOriginCountryEnum["Bw"] = "BW";
+        CommodityDataOriginCountryEnum["By"] = "BY";
+        CommodityDataOriginCountryEnum["Bz"] = "BZ";
+        CommodityDataOriginCountryEnum["Ca"] = "CA";
+        CommodityDataOriginCountryEnum["Cd"] = "CD";
+        CommodityDataOriginCountryEnum["Cf"] = "CF";
+        CommodityDataOriginCountryEnum["Cg"] = "CG";
+        CommodityDataOriginCountryEnum["Ch"] = "CH";
+        CommodityDataOriginCountryEnum["Ci"] = "CI";
+        CommodityDataOriginCountryEnum["Ck"] = "CK";
+        CommodityDataOriginCountryEnum["Cl"] = "CL";
+        CommodityDataOriginCountryEnum["Cm"] = "CM";
+        CommodityDataOriginCountryEnum["Cn"] = "CN";
+        CommodityDataOriginCountryEnum["Co"] = "CO";
+        CommodityDataOriginCountryEnum["Cr"] = "CR";
+        CommodityDataOriginCountryEnum["Cu"] = "CU";
+        CommodityDataOriginCountryEnum["Cv"] = "CV";
+        CommodityDataOriginCountryEnum["Cy"] = "CY";
+        CommodityDataOriginCountryEnum["Cz"] = "CZ";
+        CommodityDataOriginCountryEnum["De"] = "DE";
+        CommodityDataOriginCountryEnum["Dj"] = "DJ";
+        CommodityDataOriginCountryEnum["Dk"] = "DK";
+        CommodityDataOriginCountryEnum["Dm"] = "DM";
+        CommodityDataOriginCountryEnum["Do"] = "DO";
+        CommodityDataOriginCountryEnum["Dz"] = "DZ";
+        CommodityDataOriginCountryEnum["Ec"] = "EC";
+        CommodityDataOriginCountryEnum["Ee"] = "EE";
+        CommodityDataOriginCountryEnum["Eg"] = "EG";
+        CommodityDataOriginCountryEnum["Er"] = "ER";
+        CommodityDataOriginCountryEnum["Es"] = "ES";
+        CommodityDataOriginCountryEnum["Et"] = "ET";
+        CommodityDataOriginCountryEnum["Fi"] = "FI";
+        CommodityDataOriginCountryEnum["Fj"] = "FJ";
+        CommodityDataOriginCountryEnum["Fk"] = "FK";
+        CommodityDataOriginCountryEnum["Fm"] = "FM";
+        CommodityDataOriginCountryEnum["Fo"] = "FO";
+        CommodityDataOriginCountryEnum["Fr"] = "FR";
+        CommodityDataOriginCountryEnum["Ga"] = "GA";
+        CommodityDataOriginCountryEnum["Gb"] = "GB";
+        CommodityDataOriginCountryEnum["Gd"] = "GD";
+        CommodityDataOriginCountryEnum["Ge"] = "GE";
+        CommodityDataOriginCountryEnum["Gf"] = "GF";
+        CommodityDataOriginCountryEnum["Gg"] = "GG";
+        CommodityDataOriginCountryEnum["Gh"] = "GH";
+        CommodityDataOriginCountryEnum["Gi"] = "GI";
+        CommodityDataOriginCountryEnum["Gl"] = "GL";
+        CommodityDataOriginCountryEnum["Gm"] = "GM";
+        CommodityDataOriginCountryEnum["Gn"] = "GN";
+        CommodityDataOriginCountryEnum["Gp"] = "GP";
+        CommodityDataOriginCountryEnum["Gq"] = "GQ";
+        CommodityDataOriginCountryEnum["Gr"] = "GR";
+        CommodityDataOriginCountryEnum["Gt"] = "GT";
+        CommodityDataOriginCountryEnum["Gu"] = "GU";
+        CommodityDataOriginCountryEnum["Gw"] = "GW";
+        CommodityDataOriginCountryEnum["Gy"] = "GY";
+        CommodityDataOriginCountryEnum["Hk"] = "HK";
+        CommodityDataOriginCountryEnum["Hn"] = "HN";
+        CommodityDataOriginCountryEnum["Hr"] = "HR";
+        CommodityDataOriginCountryEnum["Ht"] = "HT";
+        CommodityDataOriginCountryEnum["Hu"] = "HU";
+        CommodityDataOriginCountryEnum["Ic"] = "IC";
+        CommodityDataOriginCountryEnum["Id"] = "ID";
+        CommodityDataOriginCountryEnum["Ie"] = "IE";
+        CommodityDataOriginCountryEnum["Il"] = "IL";
+        CommodityDataOriginCountryEnum["In"] = "IN";
+        CommodityDataOriginCountryEnum["Iq"] = "IQ";
+        CommodityDataOriginCountryEnum["Ir"] = "IR";
+        CommodityDataOriginCountryEnum["Is"] = "IS";
+        CommodityDataOriginCountryEnum["It"] = "IT";
+        CommodityDataOriginCountryEnum["Je"] = "JE";
+        CommodityDataOriginCountryEnum["Jm"] = "JM";
+        CommodityDataOriginCountryEnum["Jo"] = "JO";
+        CommodityDataOriginCountryEnum["Jp"] = "JP";
+        CommodityDataOriginCountryEnum["Ke"] = "KE";
+        CommodityDataOriginCountryEnum["Kg"] = "KG";
+        CommodityDataOriginCountryEnum["Kh"] = "KH";
+        CommodityDataOriginCountryEnum["Ki"] = "KI";
+        CommodityDataOriginCountryEnum["Km"] = "KM";
+        CommodityDataOriginCountryEnum["Kn"] = "KN";
+        CommodityDataOriginCountryEnum["Kp"] = "KP";
+        CommodityDataOriginCountryEnum["Kr"] = "KR";
+        CommodityDataOriginCountryEnum["Kv"] = "KV";
+        CommodityDataOriginCountryEnum["Kw"] = "KW";
+        CommodityDataOriginCountryEnum["Ky"] = "KY";
+        CommodityDataOriginCountryEnum["Kz"] = "KZ";
+        CommodityDataOriginCountryEnum["La"] = "LA";
+        CommodityDataOriginCountryEnum["Lb"] = "LB";
+        CommodityDataOriginCountryEnum["Lc"] = "LC";
+        CommodityDataOriginCountryEnum["Li"] = "LI";
+        CommodityDataOriginCountryEnum["Lk"] = "LK";
+        CommodityDataOriginCountryEnum["Lr"] = "LR";
+        CommodityDataOriginCountryEnum["Ls"] = "LS";
+        CommodityDataOriginCountryEnum["Lt"] = "LT";
+        CommodityDataOriginCountryEnum["Lu"] = "LU";
+        CommodityDataOriginCountryEnum["Lv"] = "LV";
+        CommodityDataOriginCountryEnum["Ly"] = "LY";
+        CommodityDataOriginCountryEnum["Ma"] = "MA";
+        CommodityDataOriginCountryEnum["Mc"] = "MC";
+        CommodityDataOriginCountryEnum["Md"] = "MD";
+        CommodityDataOriginCountryEnum["Me"] = "ME";
+        CommodityDataOriginCountryEnum["Mg"] = "MG";
+        CommodityDataOriginCountryEnum["Mh"] = "MH";
+        CommodityDataOriginCountryEnum["Mk"] = "MK";
+        CommodityDataOriginCountryEnum["Ml"] = "ML";
+        CommodityDataOriginCountryEnum["Mm"] = "MM";
+        CommodityDataOriginCountryEnum["Mn"] = "MN";
+        CommodityDataOriginCountryEnum["Mo"] = "MO";
+        CommodityDataOriginCountryEnum["Mp"] = "MP";
+        CommodityDataOriginCountryEnum["Mq"] = "MQ";
+        CommodityDataOriginCountryEnum["Mr"] = "MR";
+        CommodityDataOriginCountryEnum["Ms"] = "MS";
+        CommodityDataOriginCountryEnum["Mt"] = "MT";
+        CommodityDataOriginCountryEnum["Mu"] = "MU";
+        CommodityDataOriginCountryEnum["Mv"] = "MV";
+        CommodityDataOriginCountryEnum["Mw"] = "MW";
+        CommodityDataOriginCountryEnum["Mx"] = "MX";
+        CommodityDataOriginCountryEnum["My"] = "MY";
+        CommodityDataOriginCountryEnum["Mz"] = "MZ";
+        CommodityDataOriginCountryEnum["Na"] = "NA";
+        CommodityDataOriginCountryEnum["Nc"] = "NC";
+        CommodityDataOriginCountryEnum["Ne"] = "NE";
+        CommodityDataOriginCountryEnum["Ng"] = "NG";
+        CommodityDataOriginCountryEnum["Ni"] = "NI";
+        CommodityDataOriginCountryEnum["Nl"] = "NL";
+        CommodityDataOriginCountryEnum["No"] = "NO";
+        CommodityDataOriginCountryEnum["Np"] = "NP";
+        CommodityDataOriginCountryEnum["Nr"] = "NR";
+        CommodityDataOriginCountryEnum["Nu"] = "NU";
+        CommodityDataOriginCountryEnum["Nz"] = "NZ";
+        CommodityDataOriginCountryEnum["Om"] = "OM";
+        CommodityDataOriginCountryEnum["Pa"] = "PA";
+        CommodityDataOriginCountryEnum["Pe"] = "PE";
+        CommodityDataOriginCountryEnum["Pf"] = "PF";
+        CommodityDataOriginCountryEnum["Pg"] = "PG";
+        CommodityDataOriginCountryEnum["Ph"] = "PH";
+        CommodityDataOriginCountryEnum["Pk"] = "PK";
+        CommodityDataOriginCountryEnum["Pl"] = "PL";
+        CommodityDataOriginCountryEnum["Pr"] = "PR";
+        CommodityDataOriginCountryEnum["Pt"] = "PT";
+        CommodityDataOriginCountryEnum["Pw"] = "PW";
+        CommodityDataOriginCountryEnum["Py"] = "PY";
+        CommodityDataOriginCountryEnum["Qa"] = "QA";
+        CommodityDataOriginCountryEnum["Re"] = "RE";
+        CommodityDataOriginCountryEnum["Ro"] = "RO";
+        CommodityDataOriginCountryEnum["Rs"] = "RS";
+        CommodityDataOriginCountryEnum["Ru"] = "RU";
+        CommodityDataOriginCountryEnum["Rw"] = "RW";
+        CommodityDataOriginCountryEnum["Sa"] = "SA";
+        CommodityDataOriginCountryEnum["Sb"] = "SB";
+        CommodityDataOriginCountryEnum["Sc"] = "SC";
+        CommodityDataOriginCountryEnum["Sd"] = "SD";
+        CommodityDataOriginCountryEnum["Se"] = "SE";
+        CommodityDataOriginCountryEnum["Sg"] = "SG";
+        CommodityDataOriginCountryEnum["Sh"] = "SH";
+        CommodityDataOriginCountryEnum["Si"] = "SI";
+        CommodityDataOriginCountryEnum["Sk"] = "SK";
+        CommodityDataOriginCountryEnum["Sl"] = "SL";
+        CommodityDataOriginCountryEnum["Sm"] = "SM";
+        CommodityDataOriginCountryEnum["Sn"] = "SN";
+        CommodityDataOriginCountryEnum["So"] = "SO";
+        CommodityDataOriginCountryEnum["Sr"] = "SR";
+        CommodityDataOriginCountryEnum["Ss"] = "SS";
+        CommodityDataOriginCountryEnum["St"] = "ST";
+        CommodityDataOriginCountryEnum["Sv"] = "SV";
+        CommodityDataOriginCountryEnum["Sy"] = "SY";
+        CommodityDataOriginCountryEnum["Sz"] = "SZ";
+        CommodityDataOriginCountryEnum["Tc"] = "TC";
+        CommodityDataOriginCountryEnum["Td"] = "TD";
+        CommodityDataOriginCountryEnum["Tg"] = "TG";
+        CommodityDataOriginCountryEnum["Th"] = "TH";
+        CommodityDataOriginCountryEnum["Tj"] = "TJ";
+        CommodityDataOriginCountryEnum["Tl"] = "TL";
+        CommodityDataOriginCountryEnum["Tn"] = "TN";
+        CommodityDataOriginCountryEnum["To"] = "TO";
+        CommodityDataOriginCountryEnum["Tr"] = "TR";
+        CommodityDataOriginCountryEnum["Tt"] = "TT";
+        CommodityDataOriginCountryEnum["Tv"] = "TV";
+        CommodityDataOriginCountryEnum["Tw"] = "TW";
+        CommodityDataOriginCountryEnum["Tz"] = "TZ";
+        CommodityDataOriginCountryEnum["Ua"] = "UA";
+        CommodityDataOriginCountryEnum["Ug"] = "UG";
+        CommodityDataOriginCountryEnum["Us"] = "US";
+        CommodityDataOriginCountryEnum["Uy"] = "UY";
+        CommodityDataOriginCountryEnum["Uz"] = "UZ";
+        CommodityDataOriginCountryEnum["Va"] = "VA";
+        CommodityDataOriginCountryEnum["Vc"] = "VC";
+        CommodityDataOriginCountryEnum["Ve"] = "VE";
+        CommodityDataOriginCountryEnum["Vg"] = "VG";
+        CommodityDataOriginCountryEnum["Vi"] = "VI";
+        CommodityDataOriginCountryEnum["Vn"] = "VN";
+        CommodityDataOriginCountryEnum["Vu"] = "VU";
+        CommodityDataOriginCountryEnum["Ws"] = "WS";
+        CommodityDataOriginCountryEnum["Xb"] = "XB";
+        CommodityDataOriginCountryEnum["Xc"] = "XC";
+        CommodityDataOriginCountryEnum["Xe"] = "XE";
+        CommodityDataOriginCountryEnum["Xm"] = "XM";
+        CommodityDataOriginCountryEnum["Xn"] = "XN";
+        CommodityDataOriginCountryEnum["Xs"] = "XS";
+        CommodityDataOriginCountryEnum["Xy"] = "XY";
+        CommodityDataOriginCountryEnum["Ye"] = "YE";
+        CommodityDataOriginCountryEnum["Yt"] = "YT";
+        CommodityDataOriginCountryEnum["Za"] = "ZA";
+        CommodityDataOriginCountryEnum["Zm"] = "ZM";
+        CommodityDataOriginCountryEnum["Zw"] = "ZW";
+    })(CommodityDataOriginCountryEnum || (CommodityDataOriginCountryEnum = {}));
     function CommodityDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1138,6 +1620,7 @@
             'description': value.description,
             'quantity': value.quantity,
             'sku': value.sku,
+            'hs_code': value.hs_code,
             'value_amount': value.value_amount,
             'value_currency': value.value_currency,
             'origin_country': value.origin_country,
@@ -1505,7 +1988,247 @@
     (function (LineItemWeightUnitEnum) {
         LineItemWeightUnitEnum["Kg"] = "KG";
         LineItemWeightUnitEnum["Lb"] = "LB";
-    })(LineItemWeightUnitEnum || (LineItemWeightUnitEnum = {}));
+    })(LineItemWeightUnitEnum || (LineItemWeightUnitEnum = {})); /**
+    * @export
+    * @enum {string}
+    */
+    var LineItemOriginCountryEnum;
+    (function (LineItemOriginCountryEnum) {
+        LineItemOriginCountryEnum["Ad"] = "AD";
+        LineItemOriginCountryEnum["Ae"] = "AE";
+        LineItemOriginCountryEnum["Af"] = "AF";
+        LineItemOriginCountryEnum["Ag"] = "AG";
+        LineItemOriginCountryEnum["Ai"] = "AI";
+        LineItemOriginCountryEnum["Al"] = "AL";
+        LineItemOriginCountryEnum["Am"] = "AM";
+        LineItemOriginCountryEnum["An"] = "AN";
+        LineItemOriginCountryEnum["Ao"] = "AO";
+        LineItemOriginCountryEnum["Ar"] = "AR";
+        LineItemOriginCountryEnum["As"] = "AS";
+        LineItemOriginCountryEnum["At"] = "AT";
+        LineItemOriginCountryEnum["Au"] = "AU";
+        LineItemOriginCountryEnum["Aw"] = "AW";
+        LineItemOriginCountryEnum["Az"] = "AZ";
+        LineItemOriginCountryEnum["Ba"] = "BA";
+        LineItemOriginCountryEnum["Bb"] = "BB";
+        LineItemOriginCountryEnum["Bd"] = "BD";
+        LineItemOriginCountryEnum["Be"] = "BE";
+        LineItemOriginCountryEnum["Bf"] = "BF";
+        LineItemOriginCountryEnum["Bg"] = "BG";
+        LineItemOriginCountryEnum["Bh"] = "BH";
+        LineItemOriginCountryEnum["Bi"] = "BI";
+        LineItemOriginCountryEnum["Bj"] = "BJ";
+        LineItemOriginCountryEnum["Bm"] = "BM";
+        LineItemOriginCountryEnum["Bn"] = "BN";
+        LineItemOriginCountryEnum["Bo"] = "BO";
+        LineItemOriginCountryEnum["Br"] = "BR";
+        LineItemOriginCountryEnum["Bs"] = "BS";
+        LineItemOriginCountryEnum["Bt"] = "BT";
+        LineItemOriginCountryEnum["Bw"] = "BW";
+        LineItemOriginCountryEnum["By"] = "BY";
+        LineItemOriginCountryEnum["Bz"] = "BZ";
+        LineItemOriginCountryEnum["Ca"] = "CA";
+        LineItemOriginCountryEnum["Cd"] = "CD";
+        LineItemOriginCountryEnum["Cf"] = "CF";
+        LineItemOriginCountryEnum["Cg"] = "CG";
+        LineItemOriginCountryEnum["Ch"] = "CH";
+        LineItemOriginCountryEnum["Ci"] = "CI";
+        LineItemOriginCountryEnum["Ck"] = "CK";
+        LineItemOriginCountryEnum["Cl"] = "CL";
+        LineItemOriginCountryEnum["Cm"] = "CM";
+        LineItemOriginCountryEnum["Cn"] = "CN";
+        LineItemOriginCountryEnum["Co"] = "CO";
+        LineItemOriginCountryEnum["Cr"] = "CR";
+        LineItemOriginCountryEnum["Cu"] = "CU";
+        LineItemOriginCountryEnum["Cv"] = "CV";
+        LineItemOriginCountryEnum["Cy"] = "CY";
+        LineItemOriginCountryEnum["Cz"] = "CZ";
+        LineItemOriginCountryEnum["De"] = "DE";
+        LineItemOriginCountryEnum["Dj"] = "DJ";
+        LineItemOriginCountryEnum["Dk"] = "DK";
+        LineItemOriginCountryEnum["Dm"] = "DM";
+        LineItemOriginCountryEnum["Do"] = "DO";
+        LineItemOriginCountryEnum["Dz"] = "DZ";
+        LineItemOriginCountryEnum["Ec"] = "EC";
+        LineItemOriginCountryEnum["Ee"] = "EE";
+        LineItemOriginCountryEnum["Eg"] = "EG";
+        LineItemOriginCountryEnum["Er"] = "ER";
+        LineItemOriginCountryEnum["Es"] = "ES";
+        LineItemOriginCountryEnum["Et"] = "ET";
+        LineItemOriginCountryEnum["Fi"] = "FI";
+        LineItemOriginCountryEnum["Fj"] = "FJ";
+        LineItemOriginCountryEnum["Fk"] = "FK";
+        LineItemOriginCountryEnum["Fm"] = "FM";
+        LineItemOriginCountryEnum["Fo"] = "FO";
+        LineItemOriginCountryEnum["Fr"] = "FR";
+        LineItemOriginCountryEnum["Ga"] = "GA";
+        LineItemOriginCountryEnum["Gb"] = "GB";
+        LineItemOriginCountryEnum["Gd"] = "GD";
+        LineItemOriginCountryEnum["Ge"] = "GE";
+        LineItemOriginCountryEnum["Gf"] = "GF";
+        LineItemOriginCountryEnum["Gg"] = "GG";
+        LineItemOriginCountryEnum["Gh"] = "GH";
+        LineItemOriginCountryEnum["Gi"] = "GI";
+        LineItemOriginCountryEnum["Gl"] = "GL";
+        LineItemOriginCountryEnum["Gm"] = "GM";
+        LineItemOriginCountryEnum["Gn"] = "GN";
+        LineItemOriginCountryEnum["Gp"] = "GP";
+        LineItemOriginCountryEnum["Gq"] = "GQ";
+        LineItemOriginCountryEnum["Gr"] = "GR";
+        LineItemOriginCountryEnum["Gt"] = "GT";
+        LineItemOriginCountryEnum["Gu"] = "GU";
+        LineItemOriginCountryEnum["Gw"] = "GW";
+        LineItemOriginCountryEnum["Gy"] = "GY";
+        LineItemOriginCountryEnum["Hk"] = "HK";
+        LineItemOriginCountryEnum["Hn"] = "HN";
+        LineItemOriginCountryEnum["Hr"] = "HR";
+        LineItemOriginCountryEnum["Ht"] = "HT";
+        LineItemOriginCountryEnum["Hu"] = "HU";
+        LineItemOriginCountryEnum["Ic"] = "IC";
+        LineItemOriginCountryEnum["Id"] = "ID";
+        LineItemOriginCountryEnum["Ie"] = "IE";
+        LineItemOriginCountryEnum["Il"] = "IL";
+        LineItemOriginCountryEnum["In"] = "IN";
+        LineItemOriginCountryEnum["Iq"] = "IQ";
+        LineItemOriginCountryEnum["Ir"] = "IR";
+        LineItemOriginCountryEnum["Is"] = "IS";
+        LineItemOriginCountryEnum["It"] = "IT";
+        LineItemOriginCountryEnum["Je"] = "JE";
+        LineItemOriginCountryEnum["Jm"] = "JM";
+        LineItemOriginCountryEnum["Jo"] = "JO";
+        LineItemOriginCountryEnum["Jp"] = "JP";
+        LineItemOriginCountryEnum["Ke"] = "KE";
+        LineItemOriginCountryEnum["Kg"] = "KG";
+        LineItemOriginCountryEnum["Kh"] = "KH";
+        LineItemOriginCountryEnum["Ki"] = "KI";
+        LineItemOriginCountryEnum["Km"] = "KM";
+        LineItemOriginCountryEnum["Kn"] = "KN";
+        LineItemOriginCountryEnum["Kp"] = "KP";
+        LineItemOriginCountryEnum["Kr"] = "KR";
+        LineItemOriginCountryEnum["Kv"] = "KV";
+        LineItemOriginCountryEnum["Kw"] = "KW";
+        LineItemOriginCountryEnum["Ky"] = "KY";
+        LineItemOriginCountryEnum["Kz"] = "KZ";
+        LineItemOriginCountryEnum["La"] = "LA";
+        LineItemOriginCountryEnum["Lb"] = "LB";
+        LineItemOriginCountryEnum["Lc"] = "LC";
+        LineItemOriginCountryEnum["Li"] = "LI";
+        LineItemOriginCountryEnum["Lk"] = "LK";
+        LineItemOriginCountryEnum["Lr"] = "LR";
+        LineItemOriginCountryEnum["Ls"] = "LS";
+        LineItemOriginCountryEnum["Lt"] = "LT";
+        LineItemOriginCountryEnum["Lu"] = "LU";
+        LineItemOriginCountryEnum["Lv"] = "LV";
+        LineItemOriginCountryEnum["Ly"] = "LY";
+        LineItemOriginCountryEnum["Ma"] = "MA";
+        LineItemOriginCountryEnum["Mc"] = "MC";
+        LineItemOriginCountryEnum["Md"] = "MD";
+        LineItemOriginCountryEnum["Me"] = "ME";
+        LineItemOriginCountryEnum["Mg"] = "MG";
+        LineItemOriginCountryEnum["Mh"] = "MH";
+        LineItemOriginCountryEnum["Mk"] = "MK";
+        LineItemOriginCountryEnum["Ml"] = "ML";
+        LineItemOriginCountryEnum["Mm"] = "MM";
+        LineItemOriginCountryEnum["Mn"] = "MN";
+        LineItemOriginCountryEnum["Mo"] = "MO";
+        LineItemOriginCountryEnum["Mp"] = "MP";
+        LineItemOriginCountryEnum["Mq"] = "MQ";
+        LineItemOriginCountryEnum["Mr"] = "MR";
+        LineItemOriginCountryEnum["Ms"] = "MS";
+        LineItemOriginCountryEnum["Mt"] = "MT";
+        LineItemOriginCountryEnum["Mu"] = "MU";
+        LineItemOriginCountryEnum["Mv"] = "MV";
+        LineItemOriginCountryEnum["Mw"] = "MW";
+        LineItemOriginCountryEnum["Mx"] = "MX";
+        LineItemOriginCountryEnum["My"] = "MY";
+        LineItemOriginCountryEnum["Mz"] = "MZ";
+        LineItemOriginCountryEnum["Na"] = "NA";
+        LineItemOriginCountryEnum["Nc"] = "NC";
+        LineItemOriginCountryEnum["Ne"] = "NE";
+        LineItemOriginCountryEnum["Ng"] = "NG";
+        LineItemOriginCountryEnum["Ni"] = "NI";
+        LineItemOriginCountryEnum["Nl"] = "NL";
+        LineItemOriginCountryEnum["No"] = "NO";
+        LineItemOriginCountryEnum["Np"] = "NP";
+        LineItemOriginCountryEnum["Nr"] = "NR";
+        LineItemOriginCountryEnum["Nu"] = "NU";
+        LineItemOriginCountryEnum["Nz"] = "NZ";
+        LineItemOriginCountryEnum["Om"] = "OM";
+        LineItemOriginCountryEnum["Pa"] = "PA";
+        LineItemOriginCountryEnum["Pe"] = "PE";
+        LineItemOriginCountryEnum["Pf"] = "PF";
+        LineItemOriginCountryEnum["Pg"] = "PG";
+        LineItemOriginCountryEnum["Ph"] = "PH";
+        LineItemOriginCountryEnum["Pk"] = "PK";
+        LineItemOriginCountryEnum["Pl"] = "PL";
+        LineItemOriginCountryEnum["Pr"] = "PR";
+        LineItemOriginCountryEnum["Pt"] = "PT";
+        LineItemOriginCountryEnum["Pw"] = "PW";
+        LineItemOriginCountryEnum["Py"] = "PY";
+        LineItemOriginCountryEnum["Qa"] = "QA";
+        LineItemOriginCountryEnum["Re"] = "RE";
+        LineItemOriginCountryEnum["Ro"] = "RO";
+        LineItemOriginCountryEnum["Rs"] = "RS";
+        LineItemOriginCountryEnum["Ru"] = "RU";
+        LineItemOriginCountryEnum["Rw"] = "RW";
+        LineItemOriginCountryEnum["Sa"] = "SA";
+        LineItemOriginCountryEnum["Sb"] = "SB";
+        LineItemOriginCountryEnum["Sc"] = "SC";
+        LineItemOriginCountryEnum["Sd"] = "SD";
+        LineItemOriginCountryEnum["Se"] = "SE";
+        LineItemOriginCountryEnum["Sg"] = "SG";
+        LineItemOriginCountryEnum["Sh"] = "SH";
+        LineItemOriginCountryEnum["Si"] = "SI";
+        LineItemOriginCountryEnum["Sk"] = "SK";
+        LineItemOriginCountryEnum["Sl"] = "SL";
+        LineItemOriginCountryEnum["Sm"] = "SM";
+        LineItemOriginCountryEnum["Sn"] = "SN";
+        LineItemOriginCountryEnum["So"] = "SO";
+        LineItemOriginCountryEnum["Sr"] = "SR";
+        LineItemOriginCountryEnum["Ss"] = "SS";
+        LineItemOriginCountryEnum["St"] = "ST";
+        LineItemOriginCountryEnum["Sv"] = "SV";
+        LineItemOriginCountryEnum["Sy"] = "SY";
+        LineItemOriginCountryEnum["Sz"] = "SZ";
+        LineItemOriginCountryEnum["Tc"] = "TC";
+        LineItemOriginCountryEnum["Td"] = "TD";
+        LineItemOriginCountryEnum["Tg"] = "TG";
+        LineItemOriginCountryEnum["Th"] = "TH";
+        LineItemOriginCountryEnum["Tj"] = "TJ";
+        LineItemOriginCountryEnum["Tl"] = "TL";
+        LineItemOriginCountryEnum["Tn"] = "TN";
+        LineItemOriginCountryEnum["To"] = "TO";
+        LineItemOriginCountryEnum["Tr"] = "TR";
+        LineItemOriginCountryEnum["Tt"] = "TT";
+        LineItemOriginCountryEnum["Tv"] = "TV";
+        LineItemOriginCountryEnum["Tw"] = "TW";
+        LineItemOriginCountryEnum["Tz"] = "TZ";
+        LineItemOriginCountryEnum["Ua"] = "UA";
+        LineItemOriginCountryEnum["Ug"] = "UG";
+        LineItemOriginCountryEnum["Us"] = "US";
+        LineItemOriginCountryEnum["Uy"] = "UY";
+        LineItemOriginCountryEnum["Uz"] = "UZ";
+        LineItemOriginCountryEnum["Va"] = "VA";
+        LineItemOriginCountryEnum["Vc"] = "VC";
+        LineItemOriginCountryEnum["Ve"] = "VE";
+        LineItemOriginCountryEnum["Vg"] = "VG";
+        LineItemOriginCountryEnum["Vi"] = "VI";
+        LineItemOriginCountryEnum["Vn"] = "VN";
+        LineItemOriginCountryEnum["Vu"] = "VU";
+        LineItemOriginCountryEnum["Ws"] = "WS";
+        LineItemOriginCountryEnum["Xb"] = "XB";
+        LineItemOriginCountryEnum["Xc"] = "XC";
+        LineItemOriginCountryEnum["Xe"] = "XE";
+        LineItemOriginCountryEnum["Xm"] = "XM";
+        LineItemOriginCountryEnum["Xn"] = "XN";
+        LineItemOriginCountryEnum["Xs"] = "XS";
+        LineItemOriginCountryEnum["Xy"] = "XY";
+        LineItemOriginCountryEnum["Ye"] = "YE";
+        LineItemOriginCountryEnum["Yt"] = "YT";
+        LineItemOriginCountryEnum["Za"] = "ZA";
+        LineItemOriginCountryEnum["Zm"] = "ZM";
+        LineItemOriginCountryEnum["Zw"] = "ZW";
+    })(LineItemOriginCountryEnum || (LineItemOriginCountryEnum = {}));
     function LineItemFromJSON(json) {
         return LineItemFromJSONTyped(json);
     }
@@ -1520,6 +2243,7 @@
             'description': !exists(json, 'description') ? undefined : json['description'],
             'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
             'sku': !exists(json, 'sku') ? undefined : json['sku'],
+            'hs_code': !exists(json, 'hs_code') ? undefined : json['hs_code'],
             'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
             'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
             'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
@@ -1558,9 +2282,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4.4
+     * The version of the OpenAPI document: 2022.4.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1584,9 +2308,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4.4
+     * The version of the OpenAPI document: 2022.4.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2340,9 +3064,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4.4
+     * The version of the OpenAPI document: 2022.4.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2637,9 +3361,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.4`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
      *
-     * The version of the OpenAPI document: 2022.4.4
+     * The version of the OpenAPI document: 2022.4.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).

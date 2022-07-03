@@ -106,7 +106,7 @@ def shipment_request(
                     NetOunces=Weight(
                         item.weight, WeightUnit[item.weight_unit or "LB"]
                     ).OZ,
-                    HSTariffNumber=item.sku,
+                    HSTariffNumber=item.hs_code or item.sku,
                     CountryOfOrigin=Location(item.origin_country).as_country_name,
                 )
                 for item in payload.customs.commodities

@@ -106,7 +106,7 @@ def shipment_request(
                         item.weight, WeightUnit[item.weight_unit or "LB"]
                     ).OZ,
                     UnitOfMeasure=None,
-                    HSTariffNumber=item.sku,
+                    HSTariffNumber=item.hs_code or item.sku,
                     CountryofManufacture=Location(item.origin_country).as_country_name,
                 )
                 for item in customs.commodities

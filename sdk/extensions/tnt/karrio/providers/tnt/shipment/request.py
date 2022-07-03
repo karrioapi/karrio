@@ -125,8 +125,8 @@ def shipment_request(
                                         article.weight, WeightUnit[article.weight_unit]
                                     ).KG,
                                     INVOICEVALUE=article.value_amount,
-                                    INVOICEDESC=None,
-                                    HTS=article.sku,
+                                    INVOICEDESC=article.description,
+                                    HTS=article.hs_code or article.sku,
                                     COUNTRY=article.origin_country,
                                 )
                                 for article in payload.customs.commodities

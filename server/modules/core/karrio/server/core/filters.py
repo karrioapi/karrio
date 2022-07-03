@@ -16,8 +16,7 @@ class CharInFilter(filters.BaseInFilter, filters.CharFilter):
 
 class ShipmentFilters(filters.FilterSet):
     address = filters.CharFilter(
-        field_name="recipient__address_line1",
-        lookup_expr="icontains",
+        method="address_filter",
         help_text="shipment recipient address line",
     )
     created_after = filters.DateTimeFilter(
@@ -71,6 +70,9 @@ class ShipmentFilters(filters.FilterSet):
         method="metadata_value_filter",
         help_text="shipment metadata value",
     )
+    tracking_number = filters.CharFilter(
+        field_name="tracking_number", lookup_expr="icontains"
+    )
     test_mode = filters.BooleanFilter(
         field_name="test_mode",
         help_text="test mode flag",
@@ -79,6 +81,19 @@ class ShipmentFilters(filters.FilterSet):
     class Meta:
         model = manager.Shipment
         fields: typing.List[str] = []
+
+    def address_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(recipient__address_line1__icontains=value)
+            | Q(recipient__address_line2__icontains=value)
+            | Q(recipient__postal_code__icontains=value)
+            | Q(recipient__person_name__icontains=value)
+            | Q(recipient__company_name__icontains=value)
+            | Q(recipient__city__icontains=value)
+            | Q(recipient__email__icontains=value)
+            | Q(recipient__phone_number__icontains=value)
+            | Q(reference__icontains=value)
+        )
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
@@ -134,6 +149,9 @@ class ShipmentModeFilter(serializers.Serializer):
 
 
 class TrackerFilter(filters.FilterSet):
+    tracking_number = filters.CharFilter(
+        field_name="tracking_number", lookup_expr="icontains"
+    )
     created_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
     created_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
     carrier_name = filters.MultipleChoiceFilter(
