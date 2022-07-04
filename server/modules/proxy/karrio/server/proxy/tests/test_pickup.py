@@ -9,7 +9,7 @@ from karrio.server.core.tests import APITestCase
 class TesPickup(APITestCase):
     def test_schedule_pickup(self):
         url = reverse(
-            "karrio.server.proxy:pickup-details",
+            "karrio.server.proxy:pickup-schedule",
             kwargs=dict(carrier_name="canadapost"),
         )
 
@@ -29,7 +29,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
-            response = self.client.put(f"{url}?test", PICKUP_UPDATE_DATA)
+            response = self.client.post(f"{url}?test", PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)

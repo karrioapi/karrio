@@ -137,11 +137,15 @@ class PickupCancel(APIView):
 
 router.urls.append(
     path(
-        "proxy/pickups/<carrier_name>", PickupSchedule.as_view(), name="pickup-details"
+        "proxy/pickups/<carrier_name>", PickupSchedule.as_view(), name="pickup-schedule"
     )
 )
 router.urls.append(
-    path("proxy/pickups/<carrier_name>", PickupUpdate.as_view(), name="pickup-details")
+    path(
+        "proxy/pickups/<carrier_name>/update",
+        PickupUpdate.as_view(),
+        name="pickup-details",
+    )
 )
 router.urls.append(
     path(
