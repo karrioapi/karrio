@@ -1,4 +1,5 @@
 import json
+import logging
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
@@ -79,7 +80,7 @@ class TestPickupDetails(TestFixture):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
-            response = self.client.patch(url, PICKUP_UPDATE_DATA)
+            response = self.client.post(url, PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -283,8 +284,58 @@ PICKUP_UPDATE_RESPONSE = {
 }
 
 PICKUP_CANCEL_RESPONSE = {
+    "id": ANY,
+    "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
-    "operation": "Cancel Pickup",
-    "success": True,
+    "confirmation_number": "00110215",
+    "pickup_date": "2020-10-25",
+    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD"},
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "address": {
+        "id": None,
+        "postal_code": "E1C4Z8",
+        "city": "Moncton",
+        "federal_tax_id": None,
+        "state_tax_id": None,
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "country_code": "CA",
+        "email": "john@a.com",
+        "phone_number": "514 000 0000",
+        "state_code": "NB",
+        "suburb": None,
+        "residential": False,
+        "address_line1": "125 Church St",
+        "address_line2": None,
+        "validate_location": False,
+        "object_type": "address",
+        "validation": None,
+    },
+    "parcels": [
+        {
+            "id": ANY,
+            "weight": 1.0,
+            "width": None,
+            "height": None,
+            "length": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "weight_unit": "KG",
+            "dimension_unit": None,
+            "items": [],
+            "reference_number": "0000000002",
+            "options": {},
+            "object_type": "parcel",
+        }
+    ],
+    "instruction": "Should not be folded",
+    "package_location": "At the main entrance hall",
+    "options": {},
+    "metadata": {},
+    "test_mode": True,
 }

@@ -16,7 +16,7 @@ class TestShipping(APITestCase):
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, SHIPPING_RESPONSE)
 
     def test_shipping_cancel(self):
@@ -46,7 +46,7 @@ class TestShipping(APITestCase):
             response = self.client.post(f"{url}?test", data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(response.status_code, status.HTTP_424_FAILED_DEPENDENCY)
             self.assertDictEqual(response_data, SHIPPING_CANCEL_FAILED_RESPONSE)
 
 
@@ -308,17 +308,19 @@ SHIPPING_CANCEL_SUCCESS_RESPONSE = {
 }
 
 SHIPPING_CANCEL_FAILED_RESPONSE = {
-    "error": {
-        "code": "failure",
-        "details": {
-            "messages": [
-                {
-                    "carrier_id": "canadapost",
-                    "carrier_name": "canadapost",
-                    "code": "404",
-                    "message": "Not Found",
-                }
-            ]
-        },
-    }
+    "errors": [
+        {
+            "code": "failure",
+            "details": {
+                "messages": [
+                    {
+                        "carrier_id": "canadapost",
+                        "carrier_name": "canadapost",
+                        "code": "404",
+                        "message": "Not Found",
+                    }
+                ]
+            },
+        }
+    ]
 }
