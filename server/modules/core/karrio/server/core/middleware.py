@@ -53,4 +53,4 @@ class SessionContext:
 
     @classmethod
     def get_current_request(cls):
-        return cls._threadmap[threading.get_ident()]
+        return cls._threadmap.get(threading.get_ident())

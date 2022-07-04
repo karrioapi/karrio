@@ -629,6 +629,7 @@ CANCEL_RESPONSE = {
             "items": [],
             "reference_number": "0000000002",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -653,9 +654,9 @@ CANCEL_RESPONSE = {
                 {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
             ],
             "meta": {
-                "service_name": "CANADAPOST PRIORITY",
-                "rate_provider": "canadapost",
                 "carrier_connection_id": ANY,
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
             },
             "test_mode": True,
         }
@@ -742,6 +743,7 @@ CANCEL_PURCHASED_RESPONSE = {
             "items": [],
             "reference_number": "0000000002",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -766,9 +768,9 @@ CANCEL_PURCHASED_RESPONSE = {
                 {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
             ],
             "meta": {
-                "service_name": "CANADAPOST PRIORITY",
-                "rate_provider": "canadapost",
                 "carrier_connection_id": ANY,
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
             },
             "test_mode": True,
         }
