@@ -14,3 +14,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "easypost"
     account_country_code: str = None
+    metadata: dict = {}

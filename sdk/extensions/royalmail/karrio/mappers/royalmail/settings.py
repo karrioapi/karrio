@@ -17,3 +17,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "royalmail"
     account_country_code: str = "UK"
+    metadata: dict = {}

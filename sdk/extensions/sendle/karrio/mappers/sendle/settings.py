@@ -17,3 +17,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "sendle"
     account_country_code: str = "AU"
+    metadata: dict = {}

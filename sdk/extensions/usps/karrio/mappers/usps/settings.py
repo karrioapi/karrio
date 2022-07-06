@@ -20,3 +20,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "usps"
     account_country_code: str = "US"
+    metadata: dict = {}

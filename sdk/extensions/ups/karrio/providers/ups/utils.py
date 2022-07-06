@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     access_license_number: str
     account_number: str = None
     account_country_code: str = None
+    metadata: dict = {}
 
     id: str = None
 

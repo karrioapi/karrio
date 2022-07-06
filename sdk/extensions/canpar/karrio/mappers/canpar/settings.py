@@ -16,3 +16,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "canpar"
     account_country_code: str = "CA"
+    metadata: dict = {}

@@ -15,3 +15,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "freightcom"
     account_country_code: str = None
+    metadata: dict = {}

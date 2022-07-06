@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "AU"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):

@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "fedex"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):

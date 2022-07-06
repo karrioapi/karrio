@@ -21,5 +21,6 @@ class Settings(BaseSettings, RatingMixinSettings):
     test: bool = False
     carrier_id: str = "dhl_poland"
     account_country_code: str = "PL"
+    metadata: dict = {}
 
     services: List[ServiceLevel] = JList[ServiceLevel, False, dict(default=DEFAULT_SERVICES)]  # type: ignore

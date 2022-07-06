@@ -20,3 +20,4 @@ class Settings(BaseSettings):
     id: str = None
     test: bool = False
     carrier_id: str = "aramex"
+    metadata: dict = {}

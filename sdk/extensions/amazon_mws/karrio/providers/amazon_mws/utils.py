@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     x_amz_access_token: str  # This is the access token retrieved from oauth flow
     aws_region: str = "us-east-1"
     account_country_code: str = None
+    metadata: dict = {}
 
     @property
     def server_url(self):

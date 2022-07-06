@@ -15,6 +15,7 @@ class Settings(ABC):
     id: str = None
     test: bool = False
     account_country_code: str = None
+    metadata: dict = {}
 
     @property
     def server_url(self) -> Optional[str]:

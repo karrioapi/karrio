@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     test: bool = False
     carrier_id: str = "australiapost"
     account_country_code: str = "AU"
+    metadata: dict = {}
