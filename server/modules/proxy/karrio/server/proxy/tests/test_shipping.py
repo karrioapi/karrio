@@ -308,19 +308,12 @@ SHIPPING_CANCEL_SUCCESS_RESPONSE = {
 }
 
 SHIPPING_CANCEL_FAILED_RESPONSE = {
-    "errors": [
+    "messages": [
         {
-            "code": "failure",
-            "details": {
-                "messages": [
-                    {
-                        "carrier_id": "canadapost",
-                        "carrier_name": "canadapost",
-                        "code": "404",
-                        "message": "Not Found",
-                    }
-                ]
-            },
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "code": "404",
+            "message": "Not Found",
         }
     ]
 }
