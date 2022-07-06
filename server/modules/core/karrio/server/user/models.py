@@ -6,7 +6,11 @@ from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserM
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.authtoken.models import Token as BaseToken
 
-from karrio.server.core.models import ControlledAccessModel, register_model
+from karrio.server.core.models import (
+    ControlledAccessModel,
+    register_model,
+    field_default,
+)
 
 
 class UserManager(DefaultUserManager):
@@ -70,6 +74,7 @@ class Token(BaseToken, ControlledAccessModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
+    test_mode = models.BooleanField(null=False, default=field_default(False))
 
     class Meta:
         verbose_name = _("Token")

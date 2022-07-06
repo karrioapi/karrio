@@ -76,9 +76,7 @@ class TestDHLPolandShipment(unittest.TestCase):
         with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                karrio.Shipment.cancel(self.VoidShipmentRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(
@@ -120,7 +118,7 @@ shipment_data = {
     "parcels": [
         {
             "height": 3,
-            "length": 10,
+            "length": 10.0,
             "width": 3,
             "weight": 1.0,
         }
