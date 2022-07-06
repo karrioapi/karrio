@@ -8,7 +8,7 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 
 from karrio.core.utils import DP, DF
 from karrio.server.core.gateway import Shipments, Carriers
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
@@ -430,14 +430,14 @@ def can_mutate_shipment(
     purchase: bool = False,
 ):
     if purchase and shipment.status == ShipmentStatus.purchased.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"The shipment is '{shipment.status}' and cannot be purchased again",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if update and shipment.status != ShipmentStatus.draft.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"Shipment is {shipment.status} and cannot be updated anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
@@ -447,14 +447,14 @@ def can_mutate_shipment(
         ShipmentStatus.purchased.value,
         ShipmentStatus.draft.value,
     ]:
-        raise KarrioAPIException(
+        raise APIException(
             f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if delete and shipment.shipment_pickup.exists():
-        raise KarrioAPIException(
+        raise APIException(
             (
                 f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
                 "Please cancel this shipment pickup before."

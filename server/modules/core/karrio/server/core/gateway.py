@@ -148,9 +148,7 @@ class Address:
         validation = validators.Address.validate(datatypes.Address(**payload))
 
         if validation.success is False:
-            raise exceptions.KarrioAPIException(
-                detail=validation, code="invalid_address"
-            )
+            raise exceptions.APIException(detail=validation, code="invalid_address")
 
         return validation
 
@@ -193,8 +191,8 @@ class Shipments:
         )
 
         if shipment is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
@@ -309,8 +307,8 @@ class Shipments:
         )
 
         if confirmation is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
@@ -343,8 +341,8 @@ class Shipments:
         results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if not any(results or []) and (raise_on_error or is_sdk_message(messages)):
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -409,8 +407,8 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
@@ -448,8 +446,8 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
@@ -498,8 +496,8 @@ class Pickups:
         )
 
         if confirmation is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
@@ -544,8 +542,8 @@ class Rates:
         rates, messages = identity(lambda: request.from_(*gateways).parse())
 
         if not any(rates) and any(messages):
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorMessages(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 

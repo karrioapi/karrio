@@ -10,14 +10,13 @@ from django.urls import path
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.serializers import SerializerDecorator, PaginatedResult
 from karrio.server.core.serializers import (
-    ErrorMessages,
     Operation,
     FlagField,
     PlainDictField,
     ErrorResponse,
 )
 from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
-from karrio.server.events.tasks.webhook import notify_subscribers
+from karrio.server.events.tasks_definitions.base.webhook import notify_subscribers
 from karrio.server.events.router import router
 from karrio.server.events import models
 
