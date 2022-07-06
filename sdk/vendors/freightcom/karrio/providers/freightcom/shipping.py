@@ -18,7 +18,6 @@ from freightcom_lib.shipping_request import (
 from freightcom_lib.shipping_reply import (
     ShippingReplyType,
     QuoteType,
-    SurchargeType,
 )
 from karrio.core.utils import Element, Serializable, XP, SF, NF
 from karrio.core.models import (
@@ -174,7 +173,7 @@ def shipping_request(
             serviceId=service,
             stackable=options.freightcom_stackable,
             From=FromType(
-                id=payload.shipper.id,
+                id=None,
                 company=payload.shipper.company_name,
                 instructions=None,
                 email=payload.shipper.email,
@@ -190,7 +189,7 @@ def shipping_request(
                 country=payload.shipper.country_code,
             ),
             To=ToType(
-                id=payload.recipient.id,
+                id=None,
                 company=payload.recipient.company_name,
                 notifyRecipient=None,
                 instructions=None,

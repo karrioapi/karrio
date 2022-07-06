@@ -173,7 +173,7 @@ def shipping_request(
             serviceId=service,
             stackable=options.eshipper_stackable,
             From=FromType(
-                id=payload.shipper.id,
+                id=None,
                 company=payload.shipper.company_name,
                 instructions=None,
                 email=payload.shipper.email,
@@ -189,7 +189,7 @@ def shipping_request(
                 country=payload.shipper.country_code,
             ),
             To=ToType(
-                id=payload.recipient.id,
+                id=None,
                 company=payload.recipient.company_name,
                 notifyRecipient=None,
                 instructions=None,

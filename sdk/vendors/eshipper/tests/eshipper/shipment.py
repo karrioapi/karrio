@@ -68,7 +68,6 @@ shipment_cancel_data = {"shipment_identifier": "383363"}
 
 shipment_data = {
     "shipper": {
-        "id": "123",
         "company_name": "Test Company",
         "address_line1": "650 CIT Drive",
         "city": "Livingston",
@@ -168,7 +167,7 @@ ParsedCancelShipmentResponse = [
 
 ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
     <ShippingRequest serviceId="3" insuranceType="True">
-        <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
+        <From company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
         <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <COD paymentType="Receiver">
             <CODReturnAddress codCompany="Test Company" codName="RizTo" codAddress1="650 CIT Drive" codCity="Livingston" codStateCode="BC" codZip="V3N4R3" codCountry="CA"/>
