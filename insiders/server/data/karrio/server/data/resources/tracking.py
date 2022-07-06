@@ -1,100 +1,94 @@
 from import_export import resources
 
-from karrio.server.core import gateway
-from karrio.server.core import utils, dataunits as units
-from karrio.server.manager import models
+from karrio.server.core import utils, gateway, exceptions
+import karrio.server.manager.models as manager
 
 DEFAULT_HEADERS = {
-    "id": "id",
-    "tracking_number": "tracking_number",
-    "carrier": "carrier",
-    "status": "status",
-    "test_mode": "test_mode",
-    "tracking_carrier": "tracking_carrier",
-    "created_by": "created_by",
+    "id": "ID",
+    "tracking_number": "Tracking Number",
+    "status": "Status",
+    "tracking_carrier": "Carrier",
 }
 
 
-def tracking_resource(query_params: dict, context):
-    queryset = models.Tracking.access_by(context)
+def tracking_resource(query_params: dict, context, data_fields: dict = None):
+    queryset = manager.Tracking.access_by(context)
+    field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (
         "id",
         "tracking_number",
         "status",
-        "test_mode",
         "tracking_carrier",
-        "created_by",
     )
 
     class Resource(resources.ModelResource):
         class Meta:
-            model = models.Tracking
+            model = manager.Tracking
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in DEFAULT_HEADERS.keys() if k not in _exclude]
+            export_order = [k for k in field_headers.keys() if k not in _exclude]
 
         def get_queryset(self):
             return queryset
 
         def get_export_headers(self):
             headers = super().get_export_headers()
-            return [DEFAULT_HEADERS.get(k, k) for k in headers]
+            return [field_headers.get(k, k) for k in headers]
 
-        def before_import(self, dataset, using_transactions, dry_run, **kwargs):
-            # Retrieve requested carriers from the database to set their id in the tracking_carrier column
-            carrier_col = dataset.get_col(dataset.headers.index("carrier"))
-            carriers = {
-                carrier_name: gateway.Carriers.first(
-                    context=context, carrier_name=carrier_name
-                )
-                for carrier_name in set(carrier_col)
-            }
-
-            dataset.append_col(
-                [
-                    getattr(carriers.get(carrier_name), "id", None)
-                    for carrier_name in carrier_col
-                ],
-                header="tracking_carrier",
-            )
-
-            del dataset["carrier"]
-
-            # Set test_mode column if not defined
-            if "test_mode" not in dataset.headers:
-                dataset.append_col(
-                    [True for _ in range(len(dataset._data))], header="test_mode"
-                )
-
-            # Set created_by (actor) column
-            dataset.append_col(
-                [context.user.id for _ in range(len(dataset._data))],
-                header="created_by",
-            )
-
-            # Set events column
-            events = utils.default_tracking_event(
+        def before_save_instance(self, instance, using_transactions, dry_run):
+            instance.created_by_id = context.user.id
+            instance.test_mode = query_params.get("test_mode") or True
+            instance.events = utils.default_tracking_event(
                 code="UNKNOWN",
                 description="Tracker created awaiting carrier update",
             )
-            dataset.append_col(
-                [events for _ in range(len(dataset._data))],
-                header="events",
-            )
-            print(dataset._data)
-            return super().before_import(dataset, using_transactions, dry_run, **kwargs)
 
-        if "carrier" not in _exclude:
-            carrier = resources.Field()
+            return super().before_save_instance(instance, using_transactions, dry_run)
 
-            def dehydrate_carrier(self, row):
-                carrier = getattr(row, "tracking_carrier", None)
-                settings = getattr(carrier, "settings", None)
-                return getattr(
-                    settings,
-                    "display_name",
-                    units.REFERENCE_MODELS["carriers"][carrier.carrier_name],
+        def before_import(self, dataset, using_transactions, dry_run, **kwargs):
+            if dry_run:
+                # Retrieve requested carriers from the database to set their id in the tracking_carrier column
+                carrier_col = dataset.get_col(
+                    dataset.headers.index(data_fields.get("tracking_carrier"))
                 )
+                carriers = {
+                    carrier_name: gateway.Carriers.first(
+                        context=context, carrier_name=carrier_name
+                    )
+                    for carrier_name in set(carrier_col)
+                }
+
+                del dataset[data_fields.get("tracking_carrier")]
+                dataset.append_col(
+                    [
+                        getattr(carriers.get(carrier_name), "id", None)
+                        for carrier_name in carrier_col
+                    ],
+                    header="tracking_carrier",
+                )
+
+                # set actual fields name to headers
+                dataset.headers = [
+                    next(
+                        (key for key, value in data_fields.items() if value == header),
+                        header,
+                    )
+                    for header in dataset.headers
+                ]
+
+                unknown_headers = [
+                    header
+                    for header in dataset.headers
+                    if header not in manager.Tracking.__dict__
+                ]
+
+                if any(unknown_headers):
+                    raise exceptions.APIException(
+                        code="unknown_headers",
+                        detail=unknown_headers,
+                    )
+
+            return super().before_import(dataset, using_transactions, dry_run, **kwargs)
 
     return Resource()

@@ -16,6 +16,10 @@ class EventTypes(Enum):
     order_fulfilled = "order_fulfilled"
     order_cancelled = "order_cancelled"
     order_delivered = "order_delivered"
+    batch_queued = "batch_queued"
+    batch_failed = "batch_failed"
+    batch_running = "batch_running"
+    batch_completed = "batch_completed"
 
 
 EVENT_TYPES = [(c.value, c.value) for c in list(EventTypes)]

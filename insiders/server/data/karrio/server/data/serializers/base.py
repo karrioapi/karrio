@@ -22,6 +22,23 @@ class ResourceType(Enum):
 
         return {}
 
+    @classmethod
+    def get_model(cls, resource_type: str) -> dict:
+        if resource_type == "order":
+            from karrio.server.orders.models import Order
+
+            return Order
+        if resource_type == "shipment":
+            from karrio.server.manager.models import Shipment
+
+            return Shipment
+        if resource_type == "tracking":
+            from karrio.server.manager.models import Tracking
+
+            return Tracking
+
+        return None
+
 
 class ResourceStatus(Enum):
     queued = "queued"
@@ -32,7 +49,7 @@ class ResourceStatus(Enum):
 class BatchOperationStatus(Enum):
     queued = "queued"
     running = "running"
-    succeeded = "succeeded"
+    completed = "completed"
     failed = "failed"
 
 

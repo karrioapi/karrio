@@ -115,24 +115,34 @@ KARRIO_CONF = [
         {"app": "karrio.server.pricing", "module": "karrio.server.pricing"},
         {"app": "karrio.server.apps", "module": "karrio.server.apps"},
     ]
-    if importlib.util.find_spec(app["module"]) is not None
+    if importlib.util.find_spec(app["module"]) is not None  # type:ignore
 ]
 
 KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
 KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
-MULTI_ORGANIZATIONS = importlib.util.find_spec("karrio.server.orgs") is not None
-ORDERS_MANAGEMENT = importlib.util.find_spec("karrio.server.orders") is not None
-APPS_MANAGEMENT = importlib.util.find_spec("karrio.server.apps") is not None
-DOCUMENTS_MANAGEMENT = importlib.util.find_spec("karrio.server.documents") is not None
-DATA_IMPORT_EXPORT = importlib.util.find_spec("karrio.server.data") is not None
-CUSTOM_CARRIER_DEFINITION = (
-    importlib.util.find_spec("karrio.mappers.generic") is not None
+ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
+MULTI_ORGANIZATIONS = (
+    importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
-MULTI_TENANTS = importlib.util.find_spec(
+ORDERS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
+)
+APPS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.apps") is not None  # type:ignore
+)
+DOCUMENTS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
+)
+DATA_IMPORT_EXPORT = (
+    importlib.util.find_spec("karrio.server.data") is not None  # type:ignore
+)
+CUSTOM_CARRIER_DEFINITION = (
+    importlib.util.find_spec("karrio.mappers.generic") is not None  # type:ignore
+)
+MULTI_TENANTS = importlib.util.find_spec(  # type:ignore
     "karrio.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
-ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
 
 
 # components path settings

@@ -14,7 +14,7 @@ from drf_yasg import openapi
 import karrio.server.core.views.api as api
 import karrio.server.data.serializers as serializers
 import karrio.server.data.resources as resources
-from karrio.server.data.serializers.batch import ImportDataSerializer
+from karrio.server.data.serializers.data import ImportDataSerializer
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DataImportParameters = [
@@ -33,7 +33,7 @@ DataImportParameters = [
         description="""
         A data template slug to use for the import.
 
-        **When none is specified, the system default headers are expected.**
+        **When nothing is specified, the system default headers are expected.**
         """,
     ),
     openapi.Parameter(name="data_file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE),
@@ -49,7 +49,7 @@ class DataImport(api.BaseAPIView):
         operation_id=f"{ENDPOINT_ID}import_file",
         operation_summary="Import data files",
         responses={
-            201: serializers.BatchOperation(),
+            202: serializers.BatchOperation(),
             400: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
@@ -74,7 +74,7 @@ class DataImport(api.BaseAPIView):
         )
 
         return Response(
-            serializers.BatchOperation(operation).data, status=status.HTTP_201_CREATED
+            serializers.BatchOperation(operation).data, status=status.HTTP_202_ACCEPTED
         )
 
 
@@ -99,7 +99,7 @@ DataExportParameters = [
         description="""
         A data template slug to use for the import.
 
-        **When none is specified, the system default headers are expected.**
+        **When nothing is specified, the system default headers are expected.**
         """,
     ),
 ]

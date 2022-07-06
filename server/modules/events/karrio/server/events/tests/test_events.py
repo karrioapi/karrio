@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from karrio.server.graph.tests.base import GraphTestCase
 from karrio.server.events import serializers
-from karrio.server.events.tasks import webhook
+from karrio.server.events.tasks_definitions.base.webhook importwebhook
 
 
 class TestEventCreation(GraphTestCase):

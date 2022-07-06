@@ -8,7 +8,9 @@ from rest_framework import status
 
 from karrio.server.core.tests import APITestCase
 from karrio.server.events.models import Webhook
-from karrio.server.events.tasks.webhook import notify_webhook_subscribers
+from karrio.server.events.tasks_definitions.base.webhook import (
+    notify_webhook_subscribers,
+)
 
 NOTIFICATION_DATETIME = timezone.now()
 

@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import status
 
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
     save_many_to_many_data,
     owned_model_serializer,
@@ -70,7 +70,7 @@ def can_mutate_customs(customs: models.Customs, **kwargs):
     shipment = customs.shipment
 
     if shipment is not None and shipment.status != ShipmentStatus.create.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",

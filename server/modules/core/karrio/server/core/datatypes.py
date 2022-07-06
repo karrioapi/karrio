@@ -253,11 +253,6 @@ class Tracking:
 
 
 @attr.s(auto_attribs=True)
-class ErrorMessages:
-    messages: List[Message] = JList[Message]
-
-
-@attr.s(auto_attribs=True)
 class ConfirmationResponse:
     messages: List[Message] = JList[Message]
     confirmation: Confirmation = JStruct[Confirmation]
