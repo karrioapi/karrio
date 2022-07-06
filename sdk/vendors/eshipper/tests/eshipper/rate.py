@@ -43,7 +43,6 @@ if __name__ == "__main__":
 
 RatePayload = {
     "shipper": {
-        "id": "123",
         "company_name": "Test Company",
         "address_line1": "650 CIT Drive",
         "city": "Livingston",
@@ -182,7 +181,7 @@ ParsedQuoteResponse = [
 
 RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
     <QuoteRequest serviceId="0" insuranceType="True" insideDelivery="True">
-        <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
+        <From company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
         <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <Packages type="Pallet">
             <Package length="3" width="5" height="4" weight="5" type="Pallet" description="desc."/>

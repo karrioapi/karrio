@@ -2,27 +2,27 @@ Django<=3.2.13
 
 
 # Carrier Extenstions in Development
--e ./sdk/core
+# -e ./sdk/core
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
--e ./sdk/extensions/canadapost
+# -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
--e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_poland
+# -e ./sdk/extensions/dhl_express
+# -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
-# -e ./sdk/vendors/eshipper
--e ./sdk/extensions/fedex
-# -e ./sdk/vendors/freightcom
--e ./sdk/extensions/purolator
+-e ./sdk/vendors/eshipper
+# -e ./sdk/extensions/fedex
+-e ./sdk/vendors/freightcom
+# -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/sf_express
--e ./sdk/extensions/tnt
--e ./sdk/extensions/ups
--e ./sdk/extensions/usps
--e ./sdk/extensions/usps_international
+# -e ./sdk/extensions/tnt
+# -e ./sdk/extensions/ups
+# -e ./sdk/extensions/usps
+# -e ./sdk/extensions/usps_international
 # -e ./sdk/extensions/yanwen
 # -e ./sdk/extensions/yunexpress
 

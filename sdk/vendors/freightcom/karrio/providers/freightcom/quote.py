@@ -110,7 +110,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             serviceId=service.value,
             stackable=options.freightcom_stackable,
             From=FromType(
-                id=payload.shipper.id,
+                id=None,
                 company=payload.shipper.company_name or " ",
                 instructions=None,
                 email=payload.shipper.email,
@@ -126,7 +126,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 country=payload.shipper.country_code,
             ),
             To=ToType(
-                id=payload.recipient.id,
+                id=None,
                 company=payload.recipient.company_name or " ",
                 notifyRecipient=None,
                 instructions=None,
