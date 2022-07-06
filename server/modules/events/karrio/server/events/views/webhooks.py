@@ -16,7 +16,7 @@ from karrio.server.core.serializers import (
     ErrorResponse,
 )
 from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
-from karrio.server.events.tasks_definitions.base.webhook import notify_subscribers
+from karrio.server.events.task_definitions.base.webhook import notify_subscribers
 from karrio.server.events.router import router
 from karrio.server.events import models
 

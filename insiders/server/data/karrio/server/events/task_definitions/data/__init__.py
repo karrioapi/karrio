@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 @db_task()
 def queue_batch(*args, **kwargs):
-    from karrio.server.events.tasks_definitions.data.batch import (
+    from karrio.server.events.tasks_definition.data.batch import (
         trigger_batch_processing,
     )
 

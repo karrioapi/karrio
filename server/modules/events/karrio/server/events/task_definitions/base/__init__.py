@@ -11,7 +11,7 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
 
 @db_periodic_task(crontab(minute=f"*/{DEFAULT_TRACKERS_UPDATE_INTERVAL}"))
 def crawl_tracking_statuses():
-    from karrio.server.events.tasks_definitions.base.tracking import update_trackers
+    from karrio.server.events.task_definitions.base.tracking import update_trackers
 
     try:
         if settings.MULTI_TENANTS:
@@ -31,7 +31,7 @@ def crawl_tracking_statuses():
 
 @db_task()
 def notify_webhooks(*args, **kwargs):
-    from karrio.server.events.tasks_definitions.base.webhook import (
+    from karrio.server.events.task_definitions.base.webhook import (
         notify_webhook_subscribers,
     )
 

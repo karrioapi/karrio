@@ -1,7 +1,7 @@
 import logging
 import pkgutil
 import typing
-import karrio.server.events.tasks_definitions as definitions
+import karrio.server.events.task_definitions as definitions
 
 logger = logging.getLevelName(__name__)
 DEFINITIONS: typing.List[typing.Any] = []
