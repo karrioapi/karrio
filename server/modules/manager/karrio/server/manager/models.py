@@ -83,6 +83,8 @@ class Address(OwnedEntity):
             return self.shipper_order
         if hasattr(self, "recipient_order"):
             return self.recipient_order
+        if hasattr(self, "bill_to_order"):
+            return self.bill_to_order
 
         return None
 

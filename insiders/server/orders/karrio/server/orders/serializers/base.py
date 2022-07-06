@@ -59,6 +59,11 @@ class OrderData(Serializer):
         allow_null=True,
         help_text="The origin or warehouse address of the order items.",
     )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The customer' or shipping billing address.",
+    )
     line_items = CommodityData(
         many=True, allow_empty=False, help_text="The order line items."
     )
@@ -122,6 +127,11 @@ class Order(EntitySerializer):
         required=False,
         allow_null=True,
         help_text="The origin or warehouse address of the order items.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The customer' or shipping billing address.",
     )
     line_items = LineItem(
         many=True, allow_empty=False, help_text="The order line items."

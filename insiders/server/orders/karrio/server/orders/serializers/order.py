@@ -47,6 +47,12 @@ class OrderSerializer(serializers.OrderData):
                 payload=validated_data,
                 context=context,
             ),
+            "billing_address": save_one_to_one_data(
+                "billing_address",
+                serializers.AddressSerializer,
+                payload=validated_data,
+                context=context,
+            ),
         }
 
         order = models.Order.objects.create(**order_data)

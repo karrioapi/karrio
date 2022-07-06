@@ -251,6 +251,7 @@ ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -392,6 +393,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -595,6 +597,7 @@ FULFILLED_ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -813,6 +816,7 @@ PARTIAL_ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,

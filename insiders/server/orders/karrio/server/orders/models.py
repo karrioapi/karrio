@@ -92,6 +92,12 @@ class Order(OwnedEntity):
         on_delete=models.CASCADE,
         related_name="shipper_order",
     )
+    billing_address = models.OneToOneField(
+        "manager.Address",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="bill_to_order",
+    )
     line_items = models.ManyToManyField(
         LineItem, related_name="commodity_order", through="OrderLineItemLink"
     )

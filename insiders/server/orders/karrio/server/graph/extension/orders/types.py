@@ -25,6 +25,7 @@ class LineItemType(types.CommodityType):
 class OrderType(utils.BaseObjectType):
     shipping_to = graphene.Field(graphene.NonNull(types.AddressType))
     shipping_from = graphene.Field(types.AddressType)
+    billing_address = graphene.Field(types.AddressType)
     line_items = graphene.List(
         graphene.NonNull(LineItemType), required=True, default_value=[]
     )
