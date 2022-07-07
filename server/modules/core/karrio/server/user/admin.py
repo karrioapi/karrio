@@ -58,24 +58,6 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
 
 
-# TODO:: move this to the org module
-class TokenLinkInline(admin.TabularInline):
-    import karrio.server.orgs.models as orgs
-
-    model = orgs.Organization.tokens.through
-    max_num = 1
-    min_num = 1
-
-    def get_formset(self, request, obj, **kwargs):
-        import karrio.server.orgs.models as orgs
-
-        formset = super().get_formset(request, obj, **kwargs)
-        formset.form.base_fields["org"].queryset = orgs.Organization.objects.filter(
-            users__id=request.user.id
-        )
-        return formset
-
-
 class TokenAdmin(admin.ModelAdmin):
     list_display = (
         "key",
@@ -86,9 +68,11 @@ class TokenAdmin(admin.ModelAdmin):
     )
     fields = ("user", "test_mode")
     ordering = ("-created",)
-    inlines = [
-        *([TokenLinkInline] if settings.MULTI_ORGANIZATIONS else []),
-    ]
+
+    if settings.MULTI_ORGANIZATIONS:
+        from karrio.server.orgs.admin import TokenLinkInline
+
+        inlines = [TokenLinkInline]
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
@@ -98,7 +82,7 @@ class TokenAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, change, **kwargs)
         form.base_fields["user"].queryset = User.objects.filter(
             orgs_organization__users__id=request.user.id
-        )
+        ).distinct()
         return form
 
 
