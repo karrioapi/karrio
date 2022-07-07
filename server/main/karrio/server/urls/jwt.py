@@ -1,5 +1,4 @@
 from django.urls import path
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from drf_yasg import openapi
@@ -7,10 +6,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, exceptions
 from rest_framework_simplejwt import views as jwt_views, serializers as jwt
 from two_factor.utils import default_device
-from django_otp.oath import totp
-
-import karrio.server.conf as conf
-import karrio.server.core.utils as utils
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 User = get_user_model()
@@ -25,58 +20,19 @@ class TokenPair(AccessToken):
 
 
 class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["org_id"] = serializers.CharField(
-            required=False,
-            help_text="""
-            **should be specified only in a multi-org deployment.**
-
-            Note the first org related to the user is selected by default.
-            """,
-        )
-
     @classmethod
-    def get_token(cls, user, org: str = None):
+    def get_token(cls, user):
         token = super().get_token(user)
 
         # Set is_verified to False if the user has Two Factor enabled
         token["is_verified"] = False if default_device(user) else True
 
-        if hasattr(org, "id"):
-            token["org_id"] = org.id
-
         return token
 
     def validate(self, attrs):
-        if not settings.MULTI_ORGANIZATIONS:
-            return super().validate(attrs)
-
-        from karrio.server.orgs.models import Organization
-
         data = super().validate(attrs)
-        org_id = attrs.get("org_id")
 
-        orgs = Organization.objects.filter(users__id=self.user.id)
-        self.org = (
-            orgs.filter(id=org_id).first()
-            if (any(org_id or "") and orgs.filter(id=org_id).exists())
-            else orgs.first()
-        )
-
-        if self.org is not None and not self.org.is_active:
-            raise exceptions.AuthenticationFailed(
-                _("Organization is inactive"), code="organization_inactive"
-            )
-
-        if self.org is None and any(org_id or ""):
-            raise exceptions.AuthenticationFailed(
-                _("No active organization found with the given credentials"),
-                code="organization_invalid",
-            )
-
-        refresh = self.get_token(self.user, self.org)
+        refresh = self.get_token(self.user)
 
         data["refresh"] = str(refresh)
         data["access"] = str(refresh.access_token)
@@ -92,16 +48,6 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
 
 
 class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["org_id"] = serializers.CharField(
-            required=False,
-            help_text="""
-            **should be specified only in a multi-org deployment.**
-            """,
-        )
-
     def validate(self, attrs: dict):
         refresh = jwt.RefreshToken(attrs["refresh"])
 
@@ -110,26 +56,6 @@ class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
                 {"refresh": _("This refresh token is not verified.")},
                 code="unverified_refresh_token",
             )
-
-        if settings.MULTI_ORGANIZATIONS and attrs.get("org_id") is not None:
-            from karrio.server.orgs.models import Organization
-
-            org = Organization.objects.filter(
-                id=attrs.get("org_id"), users__id=refresh.payload["user_id"]
-            ).first()
-
-            if org is not None and not org.is_active:
-                raise exceptions.AuthenticationFailed(
-                    _("Organization is inactive"), code="organization_inactive"
-                )
-
-            if org is None:
-                raise exceptions.AuthenticationFailed(
-                    _("No active organization found with the given credentials"),
-                    code="organization_invalid",
-                )
-
-            refresh.payload["org_id"] = attrs.get("org_id")
 
         data = {"access": str(refresh.access_token), "refresh": str(refresh)}
 

@@ -18,7 +18,6 @@ from karrio.server.serializers import (
 )
 from karrio.server.orders.router import router
 from karrio.server.orders.serializers import (
-    TestFilters,
     OrderStatus,
     ErrorResponse,
     Order,
@@ -74,7 +73,6 @@ class OrderList(GenericAPIView):
             500: ErrorResponse(),
         },
         request_body=OrderData(),
-        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         """
@@ -82,7 +80,7 @@ class OrderList(GenericAPIView):
         """
         order = (
             SerializerDecorator[OrderSerializer](data=request.data, context=request)
-            .save(mode_filter=request.query_params)
+            .save()
             .instance
         )
 

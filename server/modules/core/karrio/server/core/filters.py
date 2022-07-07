@@ -32,7 +32,10 @@ class ShipmentFilters(filters.FilterSet):
     carrier_name = filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
-        help_text="carrier_name used to fulfill the shipment",
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
     )
     reference = filters.CharFilter(
         field_name="reference",
@@ -48,7 +51,10 @@ class ShipmentFilters(filters.FilterSet):
     status = filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
-        help_text="shipment statuses.",
+        help_text=f"""
+        shipment status
+        Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
+        """,
     )
     option_key = CharInFilter(
         field_name="options",
@@ -72,10 +78,6 @@ class ShipmentFilters(filters.FilterSet):
     )
     tracking_number = filters.CharFilter(
         field_name="tracking_number", lookup_expr="icontains"
-    )
-    test_mode = filters.BooleanFilter(
-        field_name="test_mode",
-        help_text="test mode flag",
     )
 
     class Meta:
@@ -148,21 +150,38 @@ class ShipmentModeFilter(serializers.Serializer):
     )
 
 
-class TrackerFilter(filters.FilterSet):
+class TrackerFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
-        field_name="tracking_number", lookup_expr="icontains"
+        field_name="tracking_number",
+        lookup_expr="icontains",
+        help_text="a tracking number",
     )
-    created_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
-    created_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
+    created_after = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="gte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    created_before = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="lte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
     carrier_name = filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
     )
     status = filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
+        help_text=f"""
+        tracker status
+        Values: {', '.join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
+        """,
     )
-    test_mode = filters.BooleanFilter(field_name="test_mode")
 
     class Meta:
         model = manager.Tracking
@@ -222,10 +241,8 @@ class LogFilter(filters.FilterSet):
 
 
 class PickupFilters(filters.FilterSet):
-    parameters = [
-        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-    ]
+    parameters: list = []
 
     class Meta:
         model = models.Pickup
-        fields = ["test_mode"]
+        fields: list = []

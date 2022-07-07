@@ -224,7 +224,6 @@ class ShipmentRates(APIView):
             active=True,
             capability="shipping",
             context=request,
-            test=shipment.test_mode,
             carrier_ids=carrier_ids,
         )
 

@@ -40,10 +40,6 @@ class WebhookData(serializers.Serializer):
         child=serializers.ChoiceField(choices=EVENT_TYPES),
         help_text="The list of events to enable for this endpoint.",
     )
-    test_mode = serializers.BooleanField(
-        required=True,
-        help_text="Specified whether it was created with a carrier in test mode",
-    )
     disabled = serializers.BooleanField(
         required=False,
         allow_null=True,
@@ -61,3 +57,6 @@ class Webhook(EntitySerializer, WebhookData):
         help_text="The datetime of the last event sent.",
     )
     secret = serializers.CharField(help_text="Header signature secret")
+    test_mode = serializers.BooleanField(
+        help_text="Specified whether it was created with a carrier in test mode",
+    )

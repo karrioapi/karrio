@@ -37,7 +37,6 @@ DataImportParameters = [
         """,
     ),
     openapi.Parameter(name="data_file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE),
-    openapi.Parameter(name="test_mode", in_=openapi.IN_FORM, type=openapi.TYPE_BOOLEAN),
 ]
 
 
@@ -140,7 +139,7 @@ class DataExport(api.LoginRequiredView, VirtualDownloadView):
             return response
         except Exception as e:
             return JsonResponse(
-                serializers.ErrorResponse(messages=[{"message": str(e)}]),
+                dict(errors=[{"message": str(e)}]),
                 status=status.HTTP_409_CONFLICT,
             )
 

@@ -109,15 +109,6 @@ class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
 
-class TestFilters(FlagsSerializer):
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=False,
-        help_text="The test flag indicates whether to use a carrier configured for test.",
-    )
-
-
 class CarrierSettings(Serializer):
     id = CharField(required=True, help_text="A unique address identifier")
     carrier_name = ChoiceField(

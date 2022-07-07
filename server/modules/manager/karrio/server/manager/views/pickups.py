@@ -18,7 +18,6 @@ from karrio.server.manager.serializers import (
     Pickup,
     ErrorResponse,
     ErrorMessages,
-    TestFilters,
     PickupData,
     PickupUpdateData,
     PickupCancelData,
@@ -80,7 +79,6 @@ class PickupRequest(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        query_serializer=TestFilters(),
         request_body=PickupData(),
         code_examples=[
             {
@@ -116,7 +114,6 @@ class PickupRequest(APIView):
         Schedule a pickup for one or many shipments with labels already purchased.
         """
         carrier_filter = {
-            **SerializerDecorator[TestFilters](data=request.query_params).data,
             "carrier_name": carrier_name,
         }
 

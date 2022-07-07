@@ -39,6 +39,7 @@ class Carriers:
         query: Any = tuple()
         list_filter = kwargs.copy()
         user_filter = get_access_filter(context) if context is not None else []
+        test_mode = list_filter.get("test") or getattr(context, "test_mode", None)
         active_key = (
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
@@ -67,8 +68,8 @@ class Carriers:
             query += (Q(created_by__isnull=True, active=True),)
 
         # Check if the test filter is specified then set it otherwise return all carriers live and test mode
-        if list_filter.get("test") is not None:
-            query += (Q(test=list_filter["test"]),)
+        if test_mode is not None:
+            query += (Q(test=test_mode),)
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get("active") is not None:

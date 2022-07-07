@@ -61,7 +61,6 @@ class ImportData(serializers.Serializer):
     resource_type = fields.ChoiceField(required=True, choices=RESOURCE_TYPE)
     data_template = fields.CharField(required=False)
     data_file = fields.FileField(required=True)
-    test_mode = fields.BooleanField(required=True)
 
 
 class BatchObject(serializers.EntitySerializer):
@@ -74,9 +73,9 @@ class BatchOperationData(serializers.Serializer):
     status = fields.ChoiceField(choices=OPERATION_STATUS)
     resource_type = fields.ChoiceField(required=True, choices=RESOURCE_TYPE)
     resources = BatchObject(many=True)
-    test_mode = fields.BooleanField(required=True)
 
 
 class BatchOperation(serializers.EntitySerializer, BatchOperationData):
     created_at = fields.DateTimeField()
     updated_at = fields.DateTimeField()
+    test_mode = fields.BooleanField(required=True)

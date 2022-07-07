@@ -71,8 +71,10 @@ class TestWebhookDetails(APITestCase):
                 event="shipment.purchased",
                 data={"shipment": "content"},
                 event_at=NOTIFICATION_DATETIME,
-                test_mode=True,
-                ctx=dict(user_id=self.user.id),
+                ctx=dict(
+                    user_id=self.user.id,
+                    test_mode=True,
+                ),
             )
 
         response = self.client.get(url)

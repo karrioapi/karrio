@@ -1,6 +1,7 @@
+import yaml
+import pydoc
 import logging
 import functools
-import pydoc
 from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.contrib.auth import mixins, get_user_model
@@ -9,6 +10,7 @@ from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import (
     AuthenticationMiddleware as BaseAuthenticationMiddleware,
 )
+from rest_framework import status
 from rest_framework import exceptions
 from rest_framework.authentication import (
     TokenAuthentication as BaseTokenAuthentication,
@@ -23,6 +25,23 @@ UserModel = get_user_model()
 AUTHENTICATION_METHODS = getattr(settings, "AUTHENTICATION_METHODS", [])
 
 
+def catch_auth_exception(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except exceptions.AuthenticationFailed:
+            from karrio.server.core.exceptions import APIException
+
+            raise APIException(
+                "The given token is invalid or expired",
+                code="invalid_token",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+            )
+
+    return wrapper
+
+
 class TokenAuthentication(BaseTokenAuthentication):
     def get_model(self):
         if self.model is not None:
@@ -31,32 +50,45 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         return Token
 
+    @catch_auth_exception
     def authenticate(self, request):
         auth = super().authenticate(request)
 
         if auth is not None:
             user, token = auth
-            org_id = getattr(token.organization, "id", None)
+            request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
-                functools.partial(get_request_org, request, user, org_id)
+                functools.partial(
+                    get_request_org,
+                    request,
+                    user,
+                    org_id=getattr(token.organization, "id", None),
+                )
             )
 
         return auth
 
 
 class JWTAuthentication(BaseJWTAuthentication):
+    @catch_auth_exception
     def authenticate(self, request):
         auth = super().authenticate(request)
 
         if auth is not None:
             user, token = auth
-            org_id = token.get("org_id")
 
-            request.otp_is_verified = token.get("is_verified") or False
             request.user = user
+            request.test_mode = get_request_test_mode(request)
+            request.otp_is_verified = token.get("is_verified") or False
             request.org = SimpleLazyObject(
-                functools.partial(get_request_org, request, user, org_id)
+                functools.partial(
+                    get_request_org,
+                    request,
+                    user,
+                    org_id=request.META.get("HTTP_X_ORG_ID"),
+                )
             )
+
             if not token.get("is_verified"):
                 raise exceptions.AuthenticationFailed(
                     _("Authentication token not verified"), code="otp_not_verified"
@@ -87,7 +119,11 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
     def process_response(self, request, response):
         if getattr(request, "org", None) is not None:
             response.set_cookie("org_id", getattr(request.org, "id", None))
-            response["X-Org-Id"] = getattr(request.org, "id", None)
+            response["X-org-id"] = getattr(request.org, "id", None)
+
+        if getattr(request, "test_mode", None) is not None:
+            response.set_cookie("test_mode", request.test_mode)
+            response["X-test-mode"] = request.test_mode
 
         return response
 
@@ -96,8 +132,11 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 
         request = authenticate_user(request)
 
-        if hasattr(request, "user"):
+        if hasattr(request, "user") and getattr(request, "org", None) is None:
             request.org = self._get_organization(request)
+
+        if not hasattr(request, "test_mode"):
+            request.test_mode = get_request_test_mode(request)
 
     def _get_organization(self, request):
         """
@@ -130,7 +169,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
                     request.COOKIES.pop("org_id")
 
                 return org
-            except ProgrammingError as e:
+            except ProgrammingError:
                 pass
 
         return None
@@ -138,7 +177,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 
 def authenticate_user(request):
     def authenticate(request, authenticator):
-        if not request.user.is_authenticated:
+        if request.user.is_authenticated is False:
             auth = pydoc.locate(authenticator)().authenticate(request)
 
             if auth is not None:
@@ -153,7 +192,7 @@ def authenticate_user(request):
         return request
 
 
-def get_request_org(request, user, default_org_id: str = None):
+def get_request_org(request, user, org_id: str = None):
     """
     Attempts to find and return an organization.
     """
@@ -161,7 +200,6 @@ def get_request_org(request, user, default_org_id: str = None):
         try:
             from karrio.server.orgs.models import Organization
 
-            org_id = request.META.get("HTTP_X_ORG_ID") or default_org_id
             orgs = Organization.objects.filter(users__id=user.id)
             org = (
                 orgs.filter(id=org_id).first()
@@ -171,17 +209,17 @@ def get_request_org(request, user, default_org_id: str = None):
 
             if org is not None and not org.is_active:
                 raise exceptions.AuthenticationFailed(
-                    _("Organization is inactive"), code="organization_inactive"
+                    _("Organization is inactive"), code="inactive_organization"
                 )
 
             if org is None and org_id is not None:
                 raise exceptions.AuthenticationFailed(
                     _("No active organization found with the given credentials"),
-                    code="organization_invalid",
+                    code="invalid_organization",
                 )
 
             return org
-        except ProgrammingError as e:
+        except ProgrammingError:
             pass
 
         return None
@@ -199,3 +237,7 @@ def get_request_user(request, user):
     )
 
     return user
+
+
+def get_request_test_mode(request):
+    return yaml.safe_load(request.META.get("HTTP_X_TEST_MODE", "")) or False

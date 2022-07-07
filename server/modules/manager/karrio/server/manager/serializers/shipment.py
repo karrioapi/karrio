@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from karrio.core.utils import DP, DF
+from karrio.core.utils import DP
 from karrio.server.core.gateway import Shipments, Carriers
 from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (

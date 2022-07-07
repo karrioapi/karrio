@@ -38,7 +38,7 @@ DEFAULT_HEADERS = {
 }
 
 
-def order_resource(query_params: dict, context):
+def order_resource(query_params: dict, context, **kwargs):
     queryset = models.LineItem.access_by(context)
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (

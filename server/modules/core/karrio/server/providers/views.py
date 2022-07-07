@@ -3,7 +3,6 @@ import io
 import logging
 from django.conf import settings
 from django.http import JsonResponse
-
 from drf_yasg import openapi
 from django.urls import path, re_path
 from django.core.files.base import ContentFile
@@ -39,12 +38,6 @@ class CarrierFilters(FlagsSerializer):
 
     carrier_name = serializers.ChoiceField(
         choices=CARRIERS, required=False, help_text="Indicates a carrier (type)"
-    )
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="This flag filter out carriers in test or live mode",
     )
     active = FlagField(
         required=False,
@@ -88,11 +81,12 @@ class CarrierList(GenericAPIView):
         """
         Returns the list of configured carriers
         """
-        query = SerializerDecorator[CarrierFilters](data=request.query_params).data
+        filter = {
+            **SerializerDecorator[CarrierFilters](data=request.query_params).data,
+            "context": request,
+        }
 
-        carriers = [
-            carrier.data for carrier in Carriers.list(**{**query, "context": request})
-        ]
+        carriers = [carrier.data for carrier in Carriers.list(**filter)]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return self.get_paginated_response(response)
 

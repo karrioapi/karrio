@@ -25,8 +25,7 @@ class LineItemModelSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
-        mode_filter = validated_data.get("mode_filter") or {}
-        test_mode = "test" in mode_filter and mode_filter.get("test") is not False
+        test_mode = getattr(context, "test_mode", False)
 
         order_data = {
             **{

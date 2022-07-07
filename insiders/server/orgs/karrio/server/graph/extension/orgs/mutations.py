@@ -61,7 +61,6 @@ class UpdateOrganization(utils.ClientMutation):
 
             return cls(organization=serializer.save())
         except Exception as e:
-            print(e)
             raise e
 
 

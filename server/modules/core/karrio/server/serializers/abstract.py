@@ -24,6 +24,7 @@ class AbstractSerializer:
 class Context(NamedTuple):
     user: Any
     org: Any = None
+    test_mode: bool = None
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -121,6 +122,11 @@ def owned_model_serializer(serializer: Type[Serializer]):
                     context.get("user") if isinstance(context, dict) else context.user
                 )
                 org = context.get("org") if isinstance(context, dict) else context.org
+                test_mode = (
+                    context.get("test_mode")
+                    if isinstance(context, dict)
+                    else context.test_mode
+                )
 
                 if settings.MULTI_ORGANIZATIONS and org is None:
                     import karrio.server.orgs.models as orgs
@@ -129,7 +135,7 @@ def owned_model_serializer(serializer: Type[Serializer]):
                         users__id=getattr(user, "id", None)
                     ).first()
 
-                self.__context: Context = Context(user, org)
+                self.__context: Context = Context(user, org, test_mode)
             else:
                 self.__context: Context = getattr(self, "__context", None)
                 kwargs.update({"context": self.__context})

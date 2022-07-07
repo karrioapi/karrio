@@ -87,7 +87,10 @@ class LoginRequiredView(AccessMixin):
             return JsonResponse(
                 dict(
                     errors=[
-                        {"message": "Authentication credentials were not provided."}
+                        {
+                            "code": "not_authenticated",
+                            "message": "Authentication credentials were not provided.",
+                        }
                     ]
                 ),
                 status=status.HTTP_401_UNAUTHORIZED,
@@ -95,7 +98,11 @@ class LoginRequiredView(AccessMixin):
 
         if not request.user.is_verified():
             return JsonResponse(
-                dict(errors=[{"message": "User is not verified."}]),
+                dict(
+                    errors=[
+                        {"code": "not_verified", "message": "User is not verified."}
+                    ]
+                ),
                 status=status.HTTP_403_FORBIDDEN,
             )
         return auth

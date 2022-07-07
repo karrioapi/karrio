@@ -18,7 +18,6 @@ from karrio.server.core.serializers import (
     PickupRequest,
     ErrorResponse,
     ErrorMessages,
-    TestFilters,
     MODELS,
 )
 
@@ -32,7 +31,6 @@ class PickupSchedule(APIView):
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
         operation_summary="Schedule a pickup",
-        query_serializer=TestFilters(),
         request_body=PickupRequest(),
         responses={
             201: PickupResponse(),
@@ -53,12 +51,9 @@ class PickupSchedule(APIView):
         """
         Schedule one or many parcels pickup
         """
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupRequest](data=request.data).data
 
-        response = Pickups.schedule(
-            payload, context=request, carrier_name=carrier_name, **test_filter
-        )
+        response = Pickups.schedule(payload, context=request, carrier_name=carrier_name)
 
         return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
 
@@ -68,7 +63,6 @@ class PickupUpdate(APIView):
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
         operation_summary="Update a pickup",
-        query_serializer=TestFilters(),
         request_body=PickupUpdateRequest(),
         responses={
             200: PickupResponse(),
@@ -89,12 +83,9 @@ class PickupUpdate(APIView):
         """
         Modify a scheduled pickup
         """
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupUpdateRequest](data=request.data).data
 
-        response = Pickups.update(
-            payload, context=request, carrier_name=carrier_name, **test_filter
-        )
+        response = Pickups.update(payload, context=request, carrier_name=carrier_name)
 
         return Response(PickupResponse(response).data, status=status.HTTP_200_OK)
 
@@ -104,7 +95,6 @@ class PickupCancel(APIView):
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",
         operation_summary="Cancel a pickup",
-        query_serializer=TestFilters(),
         request_body=PickupCancelRequest(),
         responses={
             200: OperationResponse(),
@@ -125,12 +115,9 @@ class PickupCancel(APIView):
         """
         Cancel a pickup previously scheduled
         """
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupCancelRequest](data=request.data).data
 
-        response = Pickups.cancel(
-            payload, context=request, carrier_name=carrier_name, **test_filter
-        )
+        response = Pickups.cancel(payload, context=request, carrier_name=carrier_name)
 
         return Response(OperationResponse(response).data, status=status.HTTP_200_OK)
 

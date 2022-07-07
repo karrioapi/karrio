@@ -62,10 +62,16 @@ class OrganizationType(utils.BaseObjectType):
         )
 
     def resolve_token(self, info, **kwargs):
+        context = Context(
+            org=self,
+            user=info.context.user,
+            test_mode=info.context.test_mode,
+        )
+
         return (
             SerializerDecorator[TokenSerializer](
                 data=dict(user=info.context.user),
-                context=Context(user=info.context.user, org=self),
+                context=context,
             )
             .save()
             .instance

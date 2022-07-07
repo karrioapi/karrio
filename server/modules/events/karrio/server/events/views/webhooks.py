@@ -30,15 +30,6 @@ class WebhookTestRequest(serializers.Serializer):
     payload = PlainDictField(required=True)
 
 
-class WebhookFilters(serializers.Serializer):
-    test_mode = FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="This flag filter out webhooks created in test or live mode",
-    )
-
-
 class WebhookList(GenericAPIView):
     pagination_class = LimitOffsetPagination
     default_limit = 20
@@ -52,18 +43,12 @@ class WebhookList(GenericAPIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        query_serializer=WebhookFilters,
     )
     def get(self, request: Request):
         """
         Retrieve all webhooks.
         """
-        query = (
-            SerializerDecorator[WebhookFilters](data=request.query_params).data
-            if any(request.query_params)
-            else {}
-        )
-        webhooks = models.Webhook.access_by(request).filter(**query)
+        webhooks = models.Webhook.access_by(request)
         response = self.paginate_queryset(Webhook(webhooks, many=True).data)
         return self.get_paginated_response(response)
 

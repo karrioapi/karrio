@@ -11,10 +11,10 @@ from karrio.server.core.views.api import APIView
 import karrio.server.core.dataunits as dataunits
 from karrio.server.core.serializers import (
     TrackingResponse,
-    TestFilters,
     ErrorResponse,
     ErrorMessages,
     CharField,
+    Serializer,
 )
 from karrio.server.core.gateway import Shipments
 from karrio.server.proxy.router import router
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class TrackerFilter(TestFilters):
+class TrackerFilter(Serializer):
     hub = CharField(
         required=False,
         allow_blank=False,

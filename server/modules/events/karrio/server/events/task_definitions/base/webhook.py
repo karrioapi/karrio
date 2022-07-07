@@ -22,7 +22,6 @@ def notify_webhook_subscribers(
     data: dict,
     event_at: datetime,
     ctx: dict,
-    test_mode: bool = None,
     **kwargs,
 ):
     logger.info(f"> starting {event} subscribers notification")
@@ -32,15 +31,12 @@ def notify_webhook_subscribers(
         (Q(disabled__isnull=True) | Q(disabled=False)),
     )
 
-    if test_mode is not None:
-        query += (Q(test_mode=test_mode),)  # type:ignore
-
     webhooks = models.Webhook.access_by(context).filter(*query)
     SerializerDecorator[serializers.EventSerializer](
         data=dict(
             type=event,
             data=data,
-            test_mode=test_mode,
+            test_mode=context.test_mode,
             pending_webhooks=webhooks.count(),
         ),
         context=context,
@@ -116,4 +112,5 @@ def retrieve_context(info: dict) -> Context:
     return Context(
         org=org,
         user=User.objects.filter(id=info["user_id"]).first(),
+        test_mode=info.get("test_mode"),
     )

@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "Karrio API",
-        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4.6`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4.6`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Metadata\n\nUpdateable Karrio objects\u2014including Shipment and Order\u2014have a metadata parameter.\nYou can use this parameter to attach key-value data to these Karrio objects.\n\nMetadata is useful for storing additional, structured information on an object.\nAs an example, you could store your user's full name and corresponding unique identifier\nfrom your system on a Karrio Order object.\n\nDo not store any sensitive information as metadata.\n\n",
         "contact": {
             "email": ""
         },
@@ -111,10 +111,39 @@
             },
             "parameters": []
         },
+        "/api/token/verified": {
+            "post": {
+                "operationId": "&&get_verified_token",
+                "summary": "Get verified JWT token",
+                "description": "\nGet a verified JWT token pair by submitting a Two-Factor authentication code.\n",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/VerifiedTokenObtainPair"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/TokenPair"
+                        }
+                    }
+                },
+                "tags": [
+                    "API"
+                ]
+            },
+            "parameters": []
+        },
         "/api/token/verify": {
             "post": {
                 "operationId": "&&verify_token",
-                "summary": "Verify auth token",
+                "summary": "Verify token",
                 "description": "Verify an existent authentication token",
                 "parameters": [
                     {
@@ -169,7 +198,13 @@
                             "$ref": "#/definitions/AddressList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -201,13 +236,19 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Address"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -240,6 +281,12 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -282,6 +329,24 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -303,10 +368,22 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Operation"
+                            "$ref": "#/definitions/Address"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -321,6 +398,92 @@
                         "lang": "bash",
                         "source": "\ncurl --request DELETE \\\n  --url /v1/addresses/<ADDRESS_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
                     }
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/v1/batches": {
+            "get": {
+                "operationId": "&&&&$list",
+                "summary": "List all batch operations",
+                "description": "Retrieve all batch operations.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "The initial index from which to return the results.",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/BatchOperations"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Batches"
+                ]
+            },
+            "parameters": []
+        },
+        "/v1/batches/{id}": {
+            "get": {
+                "operationId": "&&&&$retrieve",
+                "summary": "Retrieve a batch operation",
+                "description": "Retrieve a batch operation.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/BatchOperation"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Batches"
                 ]
             },
             "parameters": [
@@ -383,14 +546,6 @@
                             "yanwen",
                             "yunexpress"
                         ]
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "This flag filter out carriers in test or live mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
                     },
                     {
                         "name": "active",
@@ -481,6 +636,18 @@
                             "type": "object",
                             "additionalProperties": true
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -524,7 +691,13 @@
                             "$ref": "#/definitions/CustomsList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -556,13 +729,19 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Customs"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -594,7 +773,13 @@
                             "$ref": "#/definitions/Customs"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -637,6 +822,24 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -658,10 +861,22 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Operation"
+                            "$ref": "#/definitions/Customs"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -686,6 +901,67 @@
                     "type": "string"
                 }
             ]
+        },
+        "/v1/data/import": {
+            "post": {
+                "operationId": "&&&&$import_file",
+                "summary": "Import data files",
+                "description": "Import csv, xls and xlsx data files for:\n- tracking data\n- orders data\n- shipments data\n- billing data (soon)\n\n**This operation will return a batch operation that you can poll to follow\nthe import progression.**",
+                "parameters": [
+                    {
+                        "name": "resource_type",
+                        "in": "formData",
+                        "description": "The type of the resource to import",
+                        "type": "string",
+                        "enum": [
+                            "order",
+                            "shipment",
+                            "tracking",
+                            "billing"
+                        ]
+                    },
+                    {
+                        "name": "data_template",
+                        "in": "formData",
+                        "description": "\nA data template slug to use for the import.\n\n**When nothing is specified, the system default headers are expected.**\n",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "data_file",
+                        "in": "formData",
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/BatchOperation"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "consumes": [
+                    "multipart/form-data",
+                    "application/x-www-form-urlencoded"
+                ],
+                "tags": [
+                    "Data"
+                ]
+            },
+            "parameters": []
         },
         "/v1/orders": {
             "get": {
@@ -799,7 +1075,13 @@
                             "$ref": "#/definitions/OrderList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -822,25 +1104,22 @@
                         "schema": {
                             "$ref": "#/definitions/OrderData"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Order"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -866,7 +1145,13 @@
                             "$ref": "#/definitions/Order"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -898,7 +1183,25 @@
                             "$ref": "#/definitions/Order"
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -921,7 +1224,19 @@
                             "$ref": "#/definitions/Order"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -969,7 +1284,13 @@
                             "$ref": "#/definitions/ParcelList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1001,13 +1322,19 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Parcel"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1039,7 +1366,13 @@
                             "$ref": "#/definitions/Parcel"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1082,6 +1415,24 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -1103,10 +1454,22 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Operation"
+                            "$ref": "#/definitions/Parcel"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1139,11 +1502,6 @@
                 "description": "Retrieve all scheduled pickups.",
                 "parameters": [
                     {
-                        "name": "test_mode",
-                        "in": "query",
-                        "type": "boolean"
-                    },
-                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1165,7 +1523,13 @@
                             "$ref": "#/definitions/PickupList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1197,25 +1561,28 @@
                         "schema": {
                             "$ref": "#/definitions/PickupData"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Pickup"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1254,7 +1621,13 @@
                             "$ref": "#/definitions/Pickup"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1271,7 +1644,7 @@
                     }
                 ]
             },
-            "patch": {
+            "post": {
                 "operationId": "$$$$update",
                 "summary": "Update a pickup",
                 "description": "Modify a pickup for one or many shipments with labels already purchased.",
@@ -1289,10 +1662,28 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/OperationConfirmation"
+                            "$ref": "#/definitions/Pickup"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1337,10 +1728,28 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/OperationConfirmation"
+                            "$ref": "#/definitions/Pickup"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1381,15 +1790,6 @@
                         }
                     },
                     {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
-                    },
-                    {
                         "name": "carrier_name",
                         "in": "path",
                         "type": "string",
@@ -1422,7 +1822,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/PickupResponse"
@@ -1433,74 +1833,14 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
-                    }
-                },
-                "tags": [
-                    "Proxy"
-                ]
-            },
-            "put": {
-                "operationId": "@update_pickup",
-                "summary": "Update a pickup",
-                "description": "Modify a scheduled pickup",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/PickupUpdateRequest"
-                        }
                     },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "type": "string",
-                        "enum": [
-                            "aramex",
-                            "australiapost",
-                            "canadapost",
-                            "canpar",
-                            "dhl_express",
-                            "dhl_poland",
-                            "dhl_universal",
-                            "dicom",
-                            "easypost",
-                            "eshipper",
-                            "fedex",
-                            "freightcom",
-                            "generic",
-                            "purolator",
-                            "royalmail",
-                            "sendle",
-                            "sf_express",
-                            "tnt",
-                            "ups",
-                            "usps",
-                            "usps_international",
-                            "yanwen",
-                            "yunexpress"
-                        ],
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
+                    "424": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/PickupResponse"
+                            "$ref": "#/definitions/ErrorMessages"
                         }
                     },
-                    "400": {
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1533,15 +1873,6 @@
                         "schema": {
                             "$ref": "#/definitions/PickupCancelRequest"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
                     },
                     {
                         "name": "carrier_name",
@@ -1587,6 +1918,103 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Proxy"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "carrier_name",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/v1/proxy/pickups/{carrier_name}/update": {
+            "post": {
+                "operationId": "@update_pickup",
+                "summary": "Update a pickup",
+                "description": "Modify a scheduled pickup",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PickupUpdateRequest"
+                        }
+                    },
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "type": "string",
+                        "enum": [
+                            "aramex",
+                            "australiapost",
+                            "canadapost",
+                            "canpar",
+                            "dhl_express",
+                            "dhl_poland",
+                            "dhl_universal",
+                            "dicom",
+                            "easypost",
+                            "eshipper",
+                            "fedex",
+                            "freightcom",
+                            "generic",
+                            "purolator",
+                            "royalmail",
+                            "sendle",
+                            "sf_express",
+                            "tnt",
+                            "ups",
+                            "usps",
+                            "usps_international",
+                            "yanwen",
+                            "yunexpress"
+                        ],
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PickupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -1615,15 +2043,6 @@
                         "schema": {
                             "$ref": "#/definitions/RateRequest"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -1634,6 +2053,18 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1673,6 +2104,18 @@
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
                     }
                 },
                 "tags": [
@@ -1694,15 +2137,6 @@
                         "schema": {
                             "$ref": "#/definitions/ShipmentCancelRequest"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
                     },
                     {
                         "name": "carrier_name",
@@ -1737,7 +2171,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "202": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/OperationResponse"
@@ -1747,6 +2181,12 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
                         }
                     }
                 },
@@ -1769,15 +2209,6 @@
                 "summary": "Track a shipment",
                 "description": "You can track a shipment by specifying the carrier and the shipment tracking number.",
                 "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
-                    },
                     {
                         "name": "hub",
                         "in": "query",
@@ -1824,6 +2255,18 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -1899,7 +2342,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "carrier_name used to fulfill the shipment",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "required": false,
                         "type": "string"
                     },
@@ -1920,7 +2363,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "shipment statuses.",
+                        "description": "\nshipment status\nValues: `draft`, `purchased`, `cancelled`, `shipped`, `in_transit`, `delivered`\n",
                         "required": false,
                         "type": "string"
                     },
@@ -1960,13 +2403,6 @@
                         "type": "string"
                     },
                     {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "test mode flag",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1988,7 +2424,13 @@
                             "$ref": "#/definitions/ShipmentList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2022,13 +2464,25 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Shipment"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2054,7 +2508,13 @@
                             "$ref": "#/definitions/Shipment"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2086,7 +2546,31 @@
                             "$ref": "#/definitions/Shipment"
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2106,10 +2590,34 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/OperationResponse"
+                            "$ref": "#/definitions/Shipment"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2151,7 +2659,31 @@
                             "$ref": "#/definitions/Shipment"
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2193,7 +2725,31 @@
                             "$ref": "#/definitions/Shipment"
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2220,38 +2776,38 @@
                 "description": "Retrieve all shipment trackers.",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "tracking_number",
                         "in": "query",
-                        "type": "boolean"
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "pending",
-                            "in_transit",
-                            "incident",
-                            "delivered"
-                        ]
+                        "description": "a tracking number",
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_after",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
                         "name": "created_before",
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
-                        "type": "string",
-                        "format": "date-time"
+                        "required": false,
+                        "type": "string"
                     },
                     {
-                        "name": "carrier_id",
+                        "name": "carrier_name",
                         "in": "query",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`\n",
+                        "required": false,
                         "type": "string"
                     },
                     {
@@ -2267,36 +2823,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "query",
-                        "type": "string",
-                        "enum": [
-                            "aramex",
-                            "australiapost",
-                            "canadapost",
-                            "canpar",
-                            "dhl_express",
-                            "dhl_poland",
-                            "dhl_universal",
-                            "dicom",
-                            "easypost",
-                            "eshipper",
-                            "fedex",
-                            "freightcom",
-                            "generic",
-                            "purolator",
-                            "royalmail",
-                            "sendle",
-                            "sf_express",
-                            "tnt",
-                            "ups",
-                            "usps",
-                            "usps_international",
-                            "yanwen",
-                            "yunexpress"
-                        ]
                     }
                 ],
                 "responses": {
@@ -2306,7 +2832,13 @@
                             "$ref": "#/definitions/TrackerList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2325,15 +2857,6 @@
                 "summary": "Create a shipment tracker",
                 "description": "This API creates or retrieves (if existent) a tracking status object containing the\ndetails and events of a shipping in progress.",
                 "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "required": false,
-                        "type": "boolean",
-                        "default": false,
-                        "x-nullable": true
-                    },
                     {
                         "name": "hub",
                         "in": "query",
@@ -2379,7 +2902,19 @@
                             "$ref": "#/definitions/TrackingStatus"
                         }
                     },
-                    "404": {
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2421,6 +2956,12 @@
                     "404": {
                         "description": "",
                         "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
                     }
@@ -2438,10 +2979,16 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/Operation"
+                            "$ref": "#/definitions/TrackingStatus"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2480,14 +3027,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "This flag filter out webhooks created in test or live mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -2497,7 +3036,13 @@
                             "$ref": "#/definitions/WebhookList"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2523,13 +3068,19 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Webhook"
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2549,13 +3100,19 @@
                 "description": "Retrieve a webhook.",
                 "parameters": [],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/Webhook"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2587,7 +3144,19 @@
                             "$ref": "#/definitions/Webhook"
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2610,7 +3179,13 @@
                             "$ref": "#/definitions/Operation"
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2653,6 +3228,12 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2763,12 +3344,6 @@
                     "title": "Password",
                     "type": "string",
                     "minLength": 1
-                },
-                "org_id": {
-                    "title": "Org id",
-                    "description": "\n**should be specified only in a multi-org deployment.**\n\nNote the first org related to the user is selected by default.\n",
-                    "type": "string",
-                    "minLength": 1
                 }
             }
         },
@@ -2807,10 +3382,30 @@
                     "type": "string",
                     "readOnly": true,
                     "minLength": 1
+                }
+            }
+        },
+        "VerifiedTokenObtainPair": {
+            "required": [
+                "refresh",
+                "otp_token"
+            ],
+            "type": "object",
+            "properties": {
+                "refresh": {
+                    "title": "Refresh",
+                    "type": "string",
+                    "minLength": 1
                 },
-                "org_id": {
-                    "title": "Org id",
-                    "description": "\n**should be specified only in a multi-org deployment.**\n",
+                "access": {
+                    "title": "Access",
+                    "type": "string",
+                    "readOnly": true,
+                    "minLength": 1
+                },
+                "otp_token": {
+                    "title": "Otp token",
+                    "description": "\nThe OTP (One Time Password) token received by the user from the\nconfigured Two Factor Authentication method.\n",
                     "type": "string",
                     "minLength": 1
                 }
@@ -3244,22 +3839,10 @@
                 }
             }
         },
-        "Message": {
-            "description": "The list of error messages",
+        "APIError": {
+            "description": "The list of API errors",
             "type": "object",
             "properties": {
-                "carrier_name": {
-                    "title": "Carrier name",
-                    "description": "The targeted carrier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "carrier_id": {
-                    "title": "Carrier id",
-                    "description": "The targeted carrier name (unique identifier)",
-                    "type": "string",
-                    "minLength": 1
-                },
                 "message": {
                     "title": "Message",
                     "description": "The error or warning message",
@@ -3286,11 +3869,11 @@
         "ErrorResponse": {
             "type": "object",
             "properties": {
-                "messages": {
-                    "description": "The list of error messages",
+                "errors": {
+                    "description": "The list of API errors",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Message"
+                        "$ref": "#/definitions/APIError"
                     }
                 }
             }
@@ -3641,23 +4224,118 @@
                 }
             }
         },
-        "Operation": {
+        "BatchObject": {
             "required": [
-                "operation",
-                "success"
+                "status"
             ],
             "type": "object",
             "properties": {
-                "operation": {
-                    "title": "Operation",
-                    "description": "Operation performed",
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
                     "type": "string",
                     "minLength": 1
                 },
-                "success": {
-                    "title": "Success",
-                    "description": "Specify whether the operation was successful",
+                "status": {
+                    "title": "Status",
+                    "description": "The batch operation resource status",
+                    "type": "string",
+                    "enum": [
+                        "queued",
+                        "running",
+                        "completed",
+                        "failed"
+                    ]
+                }
+            }
+        },
+        "BatchOperation": {
+            "required": [
+                "status",
+                "resource_type",
+                "resources",
+                "created_at",
+                "updated_at",
+                "test_mode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "enum": [
+                        "queued",
+                        "running",
+                        "completed",
+                        "failed"
+                    ]
+                },
+                "resource_type": {
+                    "title": "Resource type",
+                    "type": "string",
+                    "enum": [
+                        "order",
+                        "shipment",
+                        "tracking",
+                        "billing"
+                    ]
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/BatchObject"
+                    }
+                },
+                "created_at": {
+                    "title": "Created at",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "title": "Updated at",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "test_mode": {
+                    "title": "Test mode",
                     "type": "boolean"
+                }
+            }
+        },
+        "BatchOperations": {
+            "required": [
+                "results"
+            ],
+            "type": "object",
+            "properties": {
+                "count": {
+                    "title": "Count",
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "next": {
+                    "title": "Next",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "previous": {
+                    "title": "Previous",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/BatchOperation"
+                    }
                 }
             }
         },
@@ -5275,6 +5953,13 @@
                     "minLength": 1,
                     "x-nullable": true
                 },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>Parcel specific options.</summary>\n\n```\n{\n    \"insurance\": \"100.00\",\n    \"insured_by\": \"carrier\",\n}\n```\n\nPlease check the docs for more details.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
+                },
                 "object_type": {
                     "title": "Object type",
                     "description": "Specifies the object type",
@@ -5573,6 +6258,46 @@
                 }
             }
         },
+        "Message": {
+            "description": "The list of note or warning messages",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "title": "Message",
+                    "description": "The error or warning message",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "code": {
+                    "title": "Code",
+                    "description": "The message code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "details": {
+                    "title": "Details",
+                    "description": "any additional details",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string",
+                        "x-nullable": true
+                    }
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The targeted carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "default": {}
+        },
         "Shipment": {
             "description": "The shipments associated with the order.",
             "required": [
@@ -5843,6 +6568,9 @@
                 "shipping_from": {
                     "$ref": "#/definitions/Address"
                 },
+                "billing_address": {
+                    "$ref": "#/definitions/AddressData"
+                },
                 "line_items": {
                     "description": "The order line items.",
                     "type": "array",
@@ -5946,6 +6674,9 @@
                     "$ref": "#/definitions/AddressData"
                 },
                 "shipping_from": {
+                    "$ref": "#/definitions/AddressData"
+                },
+                "billing_address": {
                     "$ref": "#/definitions/AddressData"
                 },
                 "line_items": {
@@ -6118,6 +6849,13 @@
                     "maxLength": 100,
                     "minLength": 1,
                     "x-nullable": true
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\n<details>\n<summary>Parcel specific options.</summary>\n\n```\n{\n    \"insurance\": \"100.00\",\n    \"insured_by\": \"carrier\",\n}\n```\n\nPlease check the docs for more details.\n</details>\n",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "default": {}
                 }
             }
         },
@@ -6327,6 +7065,18 @@
                 }
             }
         },
+        "ErrorMessages": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of error messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                }
+            }
+        },
         "PickupUpdateData": {
             "required": [
                 "confirmation_number"
@@ -6391,40 +7141,6 @@
                 "confirmation_number": {
                     "title": "Confirmation number",
                     "description": "pickup identification number",
-                    "type": "string",
-                    "minLength": 1
-                }
-            }
-        },
-        "OperationConfirmation": {
-            "required": [
-                "operation",
-                "success",
-                "carrier_name",
-                "carrier_id"
-            ],
-            "type": "object",
-            "properties": {
-                "operation": {
-                    "title": "Operation",
-                    "description": "Operation performed",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "success": {
-                    "title": "Success",
-                    "description": "Specify whether the operation was successful",
-                    "type": "boolean"
-                },
-                "carrier_name": {
-                    "title": "Carrier name",
-                    "description": "The operation carrier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "carrier_id": {
-                    "title": "Carrier id",
-                    "description": "The targeted carrier's name (unique identifier)",
                     "type": "string",
                     "minLength": 1
                 }
@@ -6515,6 +7231,86 @@
                 }
             }
         },
+        "PickupCancelRequest": {
+            "required": [
+                "confirmation_number"
+            ],
+            "type": "object",
+            "properties": {
+                "confirmation_number": {
+                    "title": "Confirmation number",
+                    "description": "The pickup confirmation identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "address": {
+                    "$ref": "#/definitions/AddressData"
+                },
+                "pickup_date": {
+                    "title": "Pickup date",
+                    "description": "\nThe pickup date\n\nDate Format: `YYYY-MM-DD`\n",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "reason": {
+                    "title": "Reason",
+                    "description": "The reason of the pickup cancellation",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "OperationConfirmation": {
+            "description": "The operation details",
+            "required": [
+                "operation",
+                "success",
+                "carrier_name",
+                "carrier_id"
+            ],
+            "type": "object",
+            "properties": {
+                "operation": {
+                    "title": "Operation",
+                    "description": "Operation performed",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "success": {
+                    "title": "Success",
+                    "description": "Specify whether the operation was successful",
+                    "type": "boolean"
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The operation carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier's name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "OperationResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                },
+                "confirmation": {
+                    "$ref": "#/definitions/OperationConfirmation"
+                }
+            }
+        },
         "PickupUpdateRequest": {
             "required": [
                 "pickup_date",
@@ -6578,51 +7374,6 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
-                }
-            }
-        },
-        "PickupCancelRequest": {
-            "required": [
-                "confirmation_number"
-            ],
-            "type": "object",
-            "properties": {
-                "confirmation_number": {
-                    "title": "Confirmation number",
-                    "description": "The pickup confirmation identifier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "address": {
-                    "$ref": "#/definitions/AddressData"
-                },
-                "pickup_date": {
-                    "title": "Pickup date",
-                    "description": "\nThe pickup date\n\nDate Format: `YYYY-MM-DD`\n",
-                    "type": "string",
-                    "minLength": 1,
-                    "x-nullable": true
-                },
-                "reason": {
-                    "title": "Reason",
-                    "description": "The reason of the pickup cancellation",
-                    "type": "string",
-                    "minLength": 1
-                }
-            }
-        },
-        "OperationResponse": {
-            "type": "object",
-            "properties": {
-                "messages": {
-                    "description": "The list of note or warning messages",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Message"
-                    }
-                },
-                "confirmation": {
-                    "$ref": "#/definitions/OperationConfirmation"
                 }
             }
         },
@@ -7603,8 +8354,8 @@
             "required": [
                 "url",
                 "enabled_events",
-                "test_mode",
-                "secret"
+                "secret",
+                "test_mode"
             ],
             "type": "object",
             "properties": {
@@ -7643,14 +8394,13 @@
                             "order_updated",
                             "order_fulfilled",
                             "order_cancelled",
-                            "order_delivered"
+                            "order_delivered",
+                            "batch_queued",
+                            "batch_failed",
+                            "batch_running",
+                            "batch_completed"
                         ]
                     }
-                },
-                "test_mode": {
-                    "title": "Test mode",
-                    "description": "Specified whether it was created with a carrier in test mode",
-                    "type": "boolean"
                 },
                 "disabled": {
                     "title": "Disabled",
@@ -7677,6 +8427,11 @@
                     "description": "Header signature secret",
                     "type": "string",
                     "minLength": 1
+                },
+                "test_mode": {
+                    "title": "Test mode",
+                    "description": "Specified whether it was created with a carrier in test mode",
+                    "type": "boolean"
                 }
             }
         },
@@ -7714,8 +8469,7 @@
         "WebhookData": {
             "required": [
                 "url",
-                "enabled_events",
-                "test_mode"
+                "enabled_events"
             ],
             "type": "object",
             "properties": {
@@ -7748,20 +8502,39 @@
                             "order_updated",
                             "order_fulfilled",
                             "order_cancelled",
-                            "order_delivered"
+                            "order_delivered",
+                            "batch_queued",
+                            "batch_failed",
+                            "batch_running",
+                            "batch_completed"
                         ]
                     }
-                },
-                "test_mode": {
-                    "title": "Test mode",
-                    "description": "Specified whether it was created with a carrier in test mode",
-                    "type": "boolean"
                 },
                 "disabled": {
                     "title": "Disabled",
                     "description": "Indicates that the webhook is disabled",
                     "type": "boolean",
                     "x-nullable": true
+                }
+            }
+        },
+        "Operation": {
+            "required": [
+                "operation",
+                "success"
+            ],
+            "type": "object",
+            "properties": {
+                "operation": {
+                    "title": "Operation",
+                    "description": "Operation performed",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "success": {
+                    "title": "Success",
+                    "description": "Specify whether the operation was successful",
+                    "type": "boolean"
                 }
             }
         },

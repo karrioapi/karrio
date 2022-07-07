@@ -36,9 +36,9 @@ def batch_operation_updated(sender, instance, *args, **kwargs):
 
     data = serializers.BatchOperation(instance).data
     event_at = instance.updated_at
-    test_mode = instance.test_mode
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
+        test_mode=instance.test_mode,
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
@@ -47,6 +47,4 @@ def batch_operation_updated(sender, instance, *args, **kwargs):
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
         return
 
-    tasks.notify_webhooks(
-        event, data, event_at, context, test_mode, schema=settings.schema
-    )
+    tasks.notify_webhooks(event, data, event_at, context, schema=settings.schema)

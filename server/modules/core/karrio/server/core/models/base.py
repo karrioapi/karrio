@@ -21,6 +21,12 @@ def uuid(prefix: str = None):
 class ControlledAccessModel:
     @classmethod
     def access_by(cls, context):
+        test_mode = (
+            context.get("test_mode")
+            if isinstance(context, dict)
+            else getattr(context, "test_mode", None)
+        )
+
         if hasattr(cls, "created_by"):
             key = "created_by"
         elif hasattr(cls, "actor"):
@@ -28,7 +34,13 @@ class ControlledAccessModel:
         else:
             key = "user"
 
-        return cls.objects.filter(get_access_filter(context, key))
+        extra = (
+            dict(test_mode=context.test_mode)
+            if hasattr(cls, "test_mode") and test_mode is not None
+            else {}
+        )
+
+        return cls.objects.filter(get_access_filter(context, key), **extra)
 
 
 def register_model(model: T) -> T:

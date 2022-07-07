@@ -65,7 +65,7 @@ class Query:
         types.TrackerType,
         required=True,
         default_value=[],
-        filterset_class=filters.TrackerFilter,
+        filterset_class=filters.TrackerFilters,
     )
 
     @utils.login_required
@@ -79,13 +79,17 @@ class Query:
     @utils.login_required
     def resolve_user_connections(self, info, **kwargs):
         connections = providers.Carrier.access_by(info.context).filter(
-            created_by__isnull=False, **kwargs
+            created_by__isnull=False,
+            test=getattr(info.context, "test_mode", False),
         )
         return [connection.settings for connection in connections]
 
     @utils.login_required
     def resolve_system_connections(self, info, **kwargs):
-        return gateway.Carriers.list(context=info.context, system_only=True, **kwargs)
+        return gateway.Carriers.list(
+            context=info.context,
+            system_only=True,
+        )
 
     @utils.login_required
     def resolve_default_templates(self, info, **kwargs):

@@ -19,7 +19,6 @@ def trigger_batch_processing(
     batch_id: str,
     data: dict,
     ctx: dict,
-    test_mode: bool = None,
     **kwargs,
 ):
     logger.info(f"> starting batch operation processing ({batch_id})")
@@ -103,4 +102,5 @@ def retrieve_context(info: dict) -> serializers.Context:
     return serializers.Context(
         org=org,
         user=User.objects.filter(id=info["user_id"]).first(),
+        test_mode=(info.get("test_mode") or False),
     )

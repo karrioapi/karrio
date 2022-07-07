@@ -12,7 +12,6 @@ from karrio.server.core.serializers import (
     RateResponse,
     ErrorResponse,
     ErrorMessages,
-    TestFilters,
 )
 from karrio.server.core.gateway import Rates
 from karrio.server.proxy.router import router
@@ -39,13 +38,11 @@ class RateViewAPI(APIView):
             500: ErrorResponse(),
         },
         request_body=RateRequest(),
-        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         payload = SerializerDecorator[RateRequest](data=request.data).data
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
 
-        response = Rates.fetch(payload, context=request, **test_filter)
+        response = Rates.fetch(payload, context=request)
 
         return Response(
             RateResponse(response).data,

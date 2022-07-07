@@ -2,7 +2,7 @@
     "openapi": "3.0.1",
     "info": {
         "title": "Karrio API",
-        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4.6`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.4.6`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Metadata\n\nUpdateable Karrio objects\u2014including Shipment and Order\u2014have a metadata parameter.\nYou can use this parameter to attach key-value data to these Karrio objects.\n\nMetadata is useful for storing additional, structured information on an object.\nAs an example, you could store your user's full name and corresponding unique identifier\nfrom your system on a Karrio Order object.\n\nDo not store any sensitive information as metadata.\n\n",
         "contact": {
             "email": ""
         },
@@ -106,12 +106,45 @@
                 "x-codegen-request-body-name": "data"
             }
         },
+        "/api/token/verified": {
+            "post": {
+                "tags": [
+                    "API"
+                ],
+                "summary": "Get verified JWT token",
+                "description": "\nGet a verified JWT token pair by submitting a Two-Factor authentication code.\n",
+                "operationId": "&&get_verified_token",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifiedTokenObtainPair"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenPair"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-codegen-request-body-name": "data"
+            }
+        },
         "/api/token/verify": {
             "post": {
                 "tags": [
                     "API"
                 ],
-                "summary": "Verify auth token",
+                "summary": "Verify token",
                 "description": "Verify an existent authentication token",
                 "operationId": "&&verify_token",
                 "requestBody": {
@@ -179,7 +212,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -215,7 +258,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -226,6 +269,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -283,6 +336,16 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codeSamples": [
@@ -315,12 +378,32 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Operation"
+                                    "$ref": "#/components/schemas/Address"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -385,6 +468,36 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codeSamples": [
@@ -394,6 +507,118 @@
                     }
                 ],
                 "x-codegen-request-body-name": "data"
+            }
+        },
+        "/v1/batches": {
+            "get": {
+                "tags": [
+                    "Batches"
+                ],
+                "summary": "List all batch operations",
+                "description": "Retrieve all batch operations.",
+                "operationId": "&&&&$list",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "The initial index from which to return the results.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchOperations"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/batches/{id}": {
+            "get": {
+                "tags": [
+                    "Batches"
+                ],
+                "summary": "Retrieve a batch operation",
+                "description": "Retrieve a batch operation.",
+                "operationId": "&&&&$retrieve",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchOperation"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/v1/carriers": {
@@ -452,15 +677,6 @@
                                 "yanwen",
                                 "yunexpress"
                             ]
-                        }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "This flag filter out carriers in test or live mode",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
                         }
                     },
                     {
@@ -569,6 +785,26 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -610,7 +846,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -646,7 +892,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -657,6 +903,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -705,7 +961,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -746,12 +1012,32 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Operation"
+                                    "$ref": "#/components/schemas/Customs"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -816,6 +1102,36 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codeSamples": [
@@ -825,6 +1141,100 @@
                     }
                 ],
                 "x-codegen-request-body-name": "data"
+            }
+        },
+        "/v1/data/import": {
+            "post": {
+                "tags": [
+                    "Data"
+                ],
+                "summary": "Import data files",
+                "description": "Import csv, xls and xlsx data files for:\n- tracking data\n- orders data\n- shipments data\n- billing data (soon)\n\n**This operation will return a batch operation that you can poll to follow\nthe import progression.**",
+                "operationId": "&&&&$import_file",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "resource_type": {
+                                        "type": "string",
+                                        "description": "The type of the resource to import",
+                                        "enum": [
+                                            "order",
+                                            "shipment",
+                                            "tracking",
+                                            "billing"
+                                        ]
+                                    },
+                                    "data_template": {
+                                        "type": "string",
+                                        "description": "\nA data template slug to use for the import.\n\n**When nothing is specified, the system default headers are expected.**\n"
+                                    },
+                                    "data_file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "resource_type": {
+                                        "type": "string",
+                                        "description": "The type of the resource to import",
+                                        "enum": [
+                                            "order",
+                                            "shipment",
+                                            "tracking",
+                                            "billing"
+                                        ]
+                                    },
+                                    "data_template": {
+                                        "type": "string",
+                                        "description": "\nA data template slug to use for the import.\n\n**When nothing is specified, the system default headers are expected.**\n"
+                                    },
+                                    "data_file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchOperation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/v1/orders": {
@@ -960,7 +1370,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -979,18 +1399,6 @@
                 "summary": "Create an order",
                 "description": "Create a new order object.",
                 "operationId": "&&&&create",
-                "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    }
-                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1002,7 +1410,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1013,6 +1421,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1055,7 +1473,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1114,6 +1542,36 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -1146,7 +1604,27 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1196,7 +1674,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1232,7 +1720,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1243,6 +1731,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1291,7 +1789,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1332,12 +1840,32 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Operation"
+                                    "$ref": "#/components/schemas/Parcel"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1402,6 +1930,36 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codeSamples": [
@@ -1422,13 +1980,6 @@
                 "description": "Retrieve all scheduled pickups.",
                 "operationId": "$$$$list",
                 "parameters": [
-                    {
-                        "name": "test_mode",
-                        "in": "query",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
                     {
                         "name": "limit",
                         "in": "query",
@@ -1457,7 +2008,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1492,16 +2053,6 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
                     }
                 ],
                 "requestBody": {
@@ -1515,7 +2066,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1526,6 +2077,26 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1574,7 +2145,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1592,7 +2173,7 @@
                     }
                 ]
             },
-            "patch": {
+            "post": {
                 "tags": [
                     "Pickups"
                 ],
@@ -1625,12 +2206,42 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OperationConfirmation"
+                                    "$ref": "#/components/schemas/Pickup"
                                 }
                             }
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1684,12 +2295,42 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OperationConfirmation"
+                                    "$ref": "#/components/schemas/Pickup"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1710,92 +2351,6 @@
             }
         },
         "/v1/proxy/pickups/{carrier_name}": {
-            "put": {
-                "tags": [
-                    "Proxy"
-                ],
-                "summary": "Update a pickup",
-                "description": "Modify a scheduled pickup",
-                "operationId": "@update_pickup",
-                "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "aramex",
-                                "australiapost",
-                                "canadapost",
-                                "canpar",
-                                "dhl_express",
-                                "dhl_poland",
-                                "dhl_universal",
-                                "dicom",
-                                "easypost",
-                                "eshipper",
-                                "fedex",
-                                "freightcom",
-                                "generic",
-                                "purolator",
-                                "royalmail",
-                                "sendle",
-                                "sf_express",
-                                "tnt",
-                                "ups",
-                                "usps",
-                                "usps_international",
-                                "yanwen",
-                                "yunexpress"
-                            ]
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PickupUpdateRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PickupResponse"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "x-codegen-request-body-name": "data"
-            },
             "post": {
                 "tags": [
                     "Proxy"
@@ -1804,16 +2359,6 @@
                 "description": "Schedule one or many parcels pickup",
                 "operationId": "@schedule_pickup",
                 "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    },
                     {
                         "name": "carrier_name",
                         "in": "path",
@@ -1859,7 +2404,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1870,6 +2415,26 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1892,16 +2457,6 @@
                 "description": "Cancel a pickup previously scheduled",
                 "operationId": "@cancel_pickup",
                 "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    },
                     {
                         "name": "carrier_name",
                         "in": "path",
@@ -1966,6 +2521,124 @@
                                 }
                             }
                         }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-codegen-request-body-name": "data"
+            }
+        },
+        "/v1/proxy/pickups/{carrier_name}/update": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "summary": "Update a pickup",
+                "description": "Modify a scheduled pickup",
+                "operationId": "@update_pickup",
+                "parameters": [
+                    {
+                        "name": "carrier_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "aramex",
+                                "australiapost",
+                                "canadapost",
+                                "canpar",
+                                "dhl_express",
+                                "dhl_poland",
+                                "dhl_universal",
+                                "dicom",
+                                "easypost",
+                                "eshipper",
+                                "fedex",
+                                "freightcom",
+                                "generic",
+                                "purolator",
+                                "royalmail",
+                                "sendle",
+                                "sf_express",
+                                "tnt",
+                                "ups",
+                                "usps",
+                                "usps_international",
+                                "yanwen",
+                                "yunexpress"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PickupUpdateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PickupResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -1979,18 +2652,6 @@
                 "summary": "Fetch shipment rates",
                 "description": "\nThe Shipping process begins by fetching rates for your shipment.\nUse this service to fetch a shipping rates available.\n",
                 "operationId": "@@fetch_rates",
-                "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    }
-                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -2013,6 +2674,26 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2064,6 +2745,26 @@
                                 }
                             }
                         }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -2078,16 +2779,6 @@
                 "description": "Cancel a shipment and the label previously created",
                 "operationId": "@@@void_label",
                 "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
-                        }
-                    },
                     {
                         "name": "carrier_name",
                         "in": "path",
@@ -2133,7 +2824,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "202": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2149,6 +2840,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
                                 }
                             }
                         }
@@ -2172,16 +2873,6 @@
                         "required": true,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
                         }
                     },
                     {
@@ -2237,6 +2928,26 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2306,7 +3017,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "carrier_name used to fulfill the shipment",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -2330,7 +3041,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "shipment statuses.",
+                        "description": "\nshipment status\nValues: `draft`, `purchased`, `cancelled`, `shipped`, `in_transit`, `delivered`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -2375,14 +3086,6 @@
                         }
                     },
                     {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "test mode flag",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -2410,7 +3113,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2451,7 +3164,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2462,6 +3175,26 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2504,7 +3237,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2563,6 +3306,46 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -2590,12 +3373,52 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OperationResponse"
+                                    "$ref": "#/components/schemas/Shipment"
                                 }
                             }
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2648,6 +3471,46 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2709,6 +3572,46 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -2724,23 +3627,11 @@
                 "operationId": "$$$$$$list",
                 "parameters": [
                     {
-                        "name": "test_mode",
+                        "name": "tracking_number",
                         "in": "query",
+                        "description": "a tracking number",
                         "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "pending",
-                                "in_transit",
-                                "incident",
-                                "delivered"
-                            ]
+                            "type": "string"
                         }
                     },
                     {
@@ -2748,8 +3639,7 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
+                            "type": "string"
                         }
                     },
                     {
@@ -2757,13 +3647,21 @@
                         "in": "query",
                         "description": "DateTime in format `YYYY-MM-DD H:M:S.fz`",
                         "schema": {
-                            "type": "string",
-                            "format": "date-time"
+                            "type": "string"
                         }
                     },
                     {
-                        "name": "carrier_id",
+                        "name": "carrier_name",
                         "in": "query",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -2783,38 +3681,6 @@
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "name": "carrier_name",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "aramex",
-                                "australiapost",
-                                "canadapost",
-                                "canpar",
-                                "dhl_express",
-                                "dhl_poland",
-                                "dhl_universal",
-                                "dicom",
-                                "easypost",
-                                "eshipper",
-                                "fedex",
-                                "freightcom",
-                                "generic",
-                                "purolator",
-                                "royalmail",
-                                "sendle",
-                                "sf_express",
-                                "tnt",
-                                "ups",
-                                "usps",
-                                "usps_international",
-                                "yanwen",
-                                "yunexpress"
-                            ]
-                        }
                     }
                 ],
                 "responses": {
@@ -2828,7 +3694,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2856,16 +3732,6 @@
                         "required": true,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "The test flag indicates whether to use a carrier configured for test.",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true,
-                            "default": false
                         }
                     },
                     {
@@ -2920,7 +3786,27 @@
                             }
                         }
                     },
-                    "404": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2967,6 +3853,16 @@
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "$ref": "#/components/schemas/ErrorMessages"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
@@ -2997,12 +3893,22 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Operation"
+                                    "$ref": "#/components/schemas/TrackingStatus"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3039,15 +3945,6 @@
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "This flag filter out webhooks created in test or live mode",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
                     }
                 ],
                 "responses": {
@@ -3061,7 +3958,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3091,7 +3998,7 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3102,6 +4009,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3134,7 +4051,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3144,7 +4061,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3184,7 +4111,17 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3243,6 +4180,26 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "x-codegen-request-body-name": "data"
@@ -3288,6 +4245,16 @@
                         }
                     },
                     "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3393,12 +4360,6 @@
                         "title": "Password",
                         "minLength": 1,
                         "type": "string"
-                    },
-                    "org_id": {
-                        "title": "Org id",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "\n**should be specified only in a multi-org deployment.**\n\nNote the first org related to the user is selected by default.\n"
                     }
                 }
             },
@@ -3437,12 +4398,32 @@
                         "minLength": 1,
                         "type": "string",
                         "readOnly": true
+                    }
+                }
+            },
+            "VerifiedTokenObtainPair": {
+                "required": [
+                    "otp_token",
+                    "refresh"
+                ],
+                "type": "object",
+                "properties": {
+                    "refresh": {
+                        "title": "Refresh",
+                        "minLength": 1,
+                        "type": "string"
                     },
-                    "org_id": {
-                        "title": "Org id",
+                    "access": {
+                        "title": "Access",
                         "minLength": 1,
                         "type": "string",
-                        "description": "\n**should be specified only in a multi-org deployment.**\n"
+                        "readOnly": true
+                    },
+                    "otp_token": {
+                        "title": "Otp token",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "\nThe OTP (One Time Password) token received by the user from the\nconfigured Two Factor Authentication method.\n"
                     }
                 }
             },
@@ -3875,21 +4856,9 @@
                     }
                 }
             },
-            "Message": {
+            "APIError": {
                 "type": "object",
                 "properties": {
-                    "carrier_name": {
-                        "title": "Carrier name",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The targeted carrier"
-                    },
-                    "carrier_id": {
-                        "title": "Carrier id",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The targeted carrier name (unique identifier)"
-                    },
                     "message": {
                         "title": "Message",
                         "minLength": 1,
@@ -3912,16 +4881,16 @@
                         "description": "any additional details"
                     }
                 },
-                "description": "The list of error messages"
+                "description": "The list of API errors"
             },
             "ErrorResponse": {
                 "type": "object",
                 "properties": {
-                    "messages": {
+                    "errors": {
                         "type": "array",
-                        "description": "The list of error messages",
+                        "description": "The list of API errors",
                         "items": {
-                            "$ref": "#/components/schemas/Message"
+                            "$ref": "#/components/schemas/APIError"
                         }
                     }
                 }
@@ -4272,23 +5241,118 @@
                     }
                 }
             },
-            "Operation": {
+            "BatchObject": {
                 "required": [
-                    "operation",
-                    "success"
+                    "status"
                 ],
                 "type": "object",
                 "properties": {
-                    "operation": {
-                        "title": "Operation",
+                    "id": {
+                        "title": "Id",
                         "minLength": 1,
                         "type": "string",
-                        "description": "Operation performed"
+                        "description": "A unique identifier"
                     },
-                    "success": {
-                        "title": "Success",
-                        "type": "boolean",
-                        "description": "Specify whether the operation was successful"
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "The batch operation resource status",
+                        "enum": [
+                            "queued",
+                            "running",
+                            "completed",
+                            "failed"
+                        ]
+                    }
+                }
+            },
+            "BatchOperation": {
+                "required": [
+                    "created_at",
+                    "resource_type",
+                    "resources",
+                    "status",
+                    "test_mode",
+                    "updated_at"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "A unique identifier"
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "enum": [
+                            "queued",
+                            "running",
+                            "completed",
+                            "failed"
+                        ]
+                    },
+                    "resource_type": {
+                        "title": "Resource type",
+                        "type": "string",
+                        "enum": [
+                            "order",
+                            "shipment",
+                            "tracking",
+                            "billing"
+                        ]
+                    },
+                    "resources": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BatchObject"
+                        }
+                    },
+                    "created_at": {
+                        "title": "Created at",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "title": "Updated at",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "test_mode": {
+                        "title": "Test mode",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "BatchOperations": {
+                "required": [
+                    "results"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "next": {
+                        "title": "Next",
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "previous": {
+                        "title": "Previous",
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BatchOperation"
+                        }
                     }
                 }
             },
@@ -5900,6 +6964,12 @@
                         "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
                         "nullable": true
                     },
+                    "options": {
+                        "title": "Options",
+                        "type": "object",
+                        "properties": {},
+                        "description": "\n<details>\n<summary>Parcel specific options.</summary>\n\n```\n{\n    \"insurance\": \"100.00\",\n    \"insured_by\": \"carrier\",\n}\n```\n\nPlease check the docs for more details.\n</details>\n"
+                    },
                     "object_type": {
                         "title": "Object type",
                         "minLength": 1,
@@ -6187,6 +7257,45 @@
                 },
                 "description": "The list for shipment rates fetched previously"
             },
+            "Message": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "title": "Message",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The error or warning message"
+                    },
+                    "code": {
+                        "title": "Code",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The message code"
+                    },
+                    "details": {
+                        "title": "Details",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "nullable": true
+                        },
+                        "description": "any additional details"
+                    },
+                    "carrier_name": {
+                        "title": "Carrier name",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The targeted carrier"
+                    },
+                    "carrier_id": {
+                        "title": "Carrier id",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The targeted carrier name (unique identifier)"
+                    }
+                },
+                "description": "The list of note or warning messages"
+            },
             "Shipment": {
                 "required": [
                     "created_at",
@@ -6451,6 +7560,9 @@
                     "shipping_from": {
                         "$ref": "#/components/schemas/Address"
                     },
+                    "billing_address": {
+                        "$ref": "#/components/schemas/AddressData"
+                    },
                     "line_items": {
                         "type": "array",
                         "description": "The order line items.",
@@ -6553,6 +7665,9 @@
                         "$ref": "#/components/schemas/AddressData"
                     },
                     "shipping_from": {
+                        "$ref": "#/components/schemas/AddressData"
+                    },
+                    "billing_address": {
                         "$ref": "#/components/schemas/AddressData"
                     },
                     "line_items": {
@@ -6724,6 +7839,12 @@
                         "type": "string",
                         "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
                         "nullable": true
+                    },
+                    "options": {
+                        "title": "Options",
+                        "type": "object",
+                        "properties": {},
+                        "description": "\n<details>\n<summary>Parcel specific options.</summary>\n\n```\n{\n    \"insurance\": \"100.00\",\n    \"insured_by\": \"carrier\",\n}\n```\n\nPlease check the docs for more details.\n</details>\n"
                     }
                 }
             },
@@ -6931,6 +8052,18 @@
                     }
                 }
             },
+            "ErrorMessages": {
+                "type": "object",
+                "properties": {
+                    "messages": {
+                        "type": "array",
+                        "description": "The list of error messages",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    }
+                }
+            },
             "PickupUpdateData": {
                 "required": [
                     "confirmation_number"
@@ -6996,40 +8129,6 @@
                         "minLength": 1,
                         "type": "string",
                         "description": "pickup identification number"
-                    }
-                }
-            },
-            "OperationConfirmation": {
-                "required": [
-                    "carrier_id",
-                    "carrier_name",
-                    "operation",
-                    "success"
-                ],
-                "type": "object",
-                "properties": {
-                    "operation": {
-                        "title": "Operation",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "Operation performed"
-                    },
-                    "success": {
-                        "title": "Success",
-                        "type": "boolean",
-                        "description": "Specify whether the operation was successful"
-                    },
-                    "carrier_name": {
-                        "title": "Carrier name",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The operation carrier"
-                    },
-                    "carrier_id": {
-                        "title": "Carrier id",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The targeted carrier's name (unique identifier)"
                     }
                 }
             },
@@ -7118,6 +8217,86 @@
                     }
                 }
             },
+            "PickupCancelRequest": {
+                "required": [
+                    "confirmation_number"
+                ],
+                "type": "object",
+                "properties": {
+                    "confirmation_number": {
+                        "title": "Confirmation number",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The pickup confirmation identifier"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/AddressData"
+                    },
+                    "pickup_date": {
+                        "title": "Pickup date",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "\nThe pickup date\n\nDate Format: `YYYY-MM-DD`\n",
+                        "nullable": true
+                    },
+                    "reason": {
+                        "title": "Reason",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The reason of the pickup cancellation"
+                    }
+                }
+            },
+            "OperationConfirmation": {
+                "required": [
+                    "carrier_id",
+                    "carrier_name",
+                    "operation",
+                    "success"
+                ],
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "title": "Operation",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Operation performed"
+                    },
+                    "success": {
+                        "title": "Success",
+                        "type": "boolean",
+                        "description": "Specify whether the operation was successful"
+                    },
+                    "carrier_name": {
+                        "title": "Carrier name",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The operation carrier"
+                    },
+                    "carrier_id": {
+                        "title": "Carrier id",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The targeted carrier's name (unique identifier)"
+                    }
+                },
+                "description": "The operation details"
+            },
+            "OperationResponse": {
+                "type": "object",
+                "properties": {
+                    "messages": {
+                        "type": "array",
+                        "description": "The list of note or warning messages",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    },
+                    "confirmation": {
+                        "$ref": "#/components/schemas/OperationConfirmation"
+                    }
+                }
+            },
             "PickupUpdateRequest": {
                 "required": [
                     "address",
@@ -7181,51 +8360,6 @@
                         "properties": {},
                         "description": "Advanced carrier specific pickup options",
                         "nullable": true
-                    }
-                }
-            },
-            "PickupCancelRequest": {
-                "required": [
-                    "confirmation_number"
-                ],
-                "type": "object",
-                "properties": {
-                    "confirmation_number": {
-                        "title": "Confirmation number",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The pickup confirmation identifier"
-                    },
-                    "address": {
-                        "$ref": "#/components/schemas/AddressData"
-                    },
-                    "pickup_date": {
-                        "title": "Pickup date",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "\nThe pickup date\n\nDate Format: `YYYY-MM-DD`\n",
-                        "nullable": true
-                    },
-                    "reason": {
-                        "title": "Reason",
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "The reason of the pickup cancellation"
-                    }
-                }
-            },
-            "OperationResponse": {
-                "type": "object",
-                "properties": {
-                    "messages": {
-                        "type": "array",
-                        "description": "The list of note or warning messages",
-                        "items": {
-                            "$ref": "#/components/schemas/Message"
-                        }
-                    },
-                    "confirmation": {
-                        "$ref": "#/components/schemas/OperationConfirmation"
                     }
                 }
             },
@@ -8233,14 +9367,13 @@
                                 "order_updated",
                                 "order_fulfilled",
                                 "order_cancelled",
-                                "order_delivered"
+                                "order_delivered",
+                                "batch_queued",
+                                "batch_failed",
+                                "batch_running",
+                                "batch_completed"
                             ]
                         }
-                    },
-                    "test_mode": {
-                        "title": "Test mode",
-                        "type": "boolean",
-                        "description": "Specified whether it was created with a carrier in test mode"
                     },
                     "disabled": {
                         "title": "Disabled",
@@ -8267,6 +9400,11 @@
                         "minLength": 1,
                         "type": "string",
                         "description": "Header signature secret"
+                    },
+                    "test_mode": {
+                        "title": "Test mode",
+                        "type": "boolean",
+                        "description": "Specified whether it was created with a carrier in test mode"
                     }
                 }
             },
@@ -8304,7 +9442,6 @@
             "WebhookData": {
                 "required": [
                     "enabled_events",
-                    "test_mode",
                     "url"
                 ],
                 "type": "object",
@@ -8338,20 +9475,39 @@
                                 "order_updated",
                                 "order_fulfilled",
                                 "order_cancelled",
-                                "order_delivered"
+                                "order_delivered",
+                                "batch_queued",
+                                "batch_failed",
+                                "batch_running",
+                                "batch_completed"
                             ]
                         }
-                    },
-                    "test_mode": {
-                        "title": "Test mode",
-                        "type": "boolean",
-                        "description": "Specified whether it was created with a carrier in test mode"
                     },
                     "disabled": {
                         "title": "Disabled",
                         "type": "boolean",
                         "description": "Indicates that the webhook is disabled",
                         "nullable": true
+                    }
+                }
+            },
+            "Operation": {
+                "required": [
+                    "operation",
+                    "success"
+                ],
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "title": "Operation",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Operation performed"
+                    },
+                    "success": {
+                        "title": "Success",
+                        "type": "boolean",
+                        "description": "Specify whether the operation was successful"
                     }
                 }
             },

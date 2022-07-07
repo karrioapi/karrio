@@ -19,8 +19,8 @@ class ImportDataSerializer(serializers.ImportData):
     def create(
         self, validated_data: dict, context: serializers.Context, **kwargs
     ) -> models.BatchOperation:
+        test_mode = getattr(context, "test_mode", False)
         resource_type = validated_data["resource_type"]
-        test_mode = validated_data.get("test_mode")
         data_field = validated_data["data_file"]
         template = (
             models.DataTemplate.access_by(context).first(
@@ -60,7 +60,6 @@ class ImportDataSerializer(serializers.ImportData):
 
         tasks.queue_batch(
             operation.id,
-            test_mode=test_mode,
             schema=settings.schema,
             data=dict(
                 dataset=dataset,

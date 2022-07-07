@@ -25,7 +25,6 @@ from karrio.server.core.serializers import (
     Address as BaseAddress,
     ErrorResponse,
     ErrorMessages,
-    TestFilters,
 )
 
 logger = logging.getLogger(__name__)
@@ -97,7 +96,6 @@ class ShippingCancel(APIView):
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
         operation_summary="Void a shipment label",
-        query_serializer=TestFilters(),
         request_body=ShipmentCancelRequest(),
         responses={
             202: OperationResponse(),
@@ -117,12 +115,9 @@ class ShippingCancel(APIView):
         """
         Cancel a shipment and the label previously created
         """
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(
-            payload, context=request, carrier_name=carrier_name, **test_filter
-        )
+        response = Shipments.cancel(payload, context=request, carrier_name=carrier_name)
 
         return Response(
             OperationResponse(response).data, status=status.HTTP_202_ACCEPTED
