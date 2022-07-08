@@ -47,7 +47,7 @@ class TestPickupSchedule(TestFixture):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_DATA)
+            response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)

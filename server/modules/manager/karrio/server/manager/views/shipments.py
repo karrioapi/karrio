@@ -83,18 +83,14 @@ class ShipmentList(GenericAPIView):
             500: ErrorResponse(),
         },
         request_body=ShipmentData(),
-        query_serializer=ShipmentModeFilter(),
     )
     def post(self, request: Request):
         """
         Create a new shipment instance.
         """
-        carrier_filter = {
-            **SerializerDecorator[ShipmentModeFilter](data=request.query_params).data
-        }
         shipment = (
             SerializerDecorator[ShipmentSerializer](data=request.data, context=request)
-            .save(carrier_filter=carrier_filter)
+            .save()
             .instance
         )
 

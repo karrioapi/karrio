@@ -22,13 +22,11 @@ class Query:
         graphene.NonNull(types.ConnectionType),
         required=True,
         default_value=[],
-        test=graphene.Boolean(required=False),
     )
     system_connections = graphene.List(
         graphene.NonNull(types.SystemConnectionType),
         required=True,
         default_value=[],
-        test=graphene.Boolean(required=False),
     )
 
     default_templates = graphene.Field(
@@ -80,7 +78,7 @@ class Query:
     def resolve_user_connections(self, info, **kwargs):
         connections = providers.Carrier.access_by(info.context).filter(
             created_by__isnull=False,
-            test=getattr(info.context, "test_mode", False),
+            test_mode=getattr(info.context, "test_mode", False),
         )
         return [connection.settings for connection in connections]
 

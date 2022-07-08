@@ -96,7 +96,7 @@ SHIPMENT_SAMPLE = {
     "shipment": {
         "id": "shp_f49473b250ae45bcb7e2a671f54f40ca",
         "object_type": "shipment",
-        "tracking_url": "/v1/trackers/tst_overland/0000000135?test",
+        "tracking_url": "/v1/trackers/tst_overland/0000000135",
         "shipper": {
             "id": "adr_77cf815a63904280acb908b9357b727b",
             "postal_code": "E1C4Z8",
@@ -429,7 +429,7 @@ SHIPMENT_SAMPLE = {
                     {
                         "id": "shp_ff474b4a2ed34b7396c5c282b66c8593",
                         "object_type": "shipment",
-                        "tracking_url": "/v1/trackers/tst_overland/0000000136?test",
+                        "tracking_url": "/v1/trackers/tst_overland/0000000136",
                         "shipper": {
                             "id": "adr_e0f0c569e7f7465e86655673d62064ac",
                             "postal_code": "E1C4Z8",
@@ -613,7 +613,7 @@ SHIPMENT_SAMPLE = {
                     {
                         "id": "shp_f49473b250ae45bcb7e2a671f54f40ca",
                         "object_type": "shipment",
-                        "tracking_url": "/v1/trackers/tst_overland/0000000135?test",
+                        "tracking_url": "/v1/trackers/tst_overland/0000000135",
                         "shipper": {
                             "id": "adr_77cf815a63904280acb908b9357b727b",
                             "postal_code": "E1C4Z8",
@@ -929,7 +929,7 @@ SHIPMENT_SAMPLE = {
                     {
                         "id": "shp_ff474b4a2ed34b7396c5c282b66c8593",
                         "object_type": "shipment",
-                        "tracking_url": "/v1/trackers/tst_overland/0000000136?test",
+                        "tracking_url": "/v1/trackers/tst_overland/0000000136",
                         "shipper": {
                             "id": "adr_e0f0c569e7f7465e86655673d62064ac",
                             "postal_code": "E1C4Z8",
@@ -1113,7 +1113,7 @@ SHIPMENT_SAMPLE = {
                     {
                         "id": "shp_f49473b250ae45bcb7e2a671f54f40ca",
                         "object_type": "shipment",
-                        "tracking_url": "/v1/trackers/tst_overland/0000000135?test",
+                        "tracking_url": "/v1/trackers/tst_overland/0000000135",
                         "shipper": {
                             "id": "adr_77cf815a63904280acb908b9357b727b",
                             "postal_code": "E1C4Z8",
@@ -1441,7 +1441,7 @@ SHIPMENT_SAMPLE = {
                 {
                     "id": "shp_ff474b4a2ed34b7396c5c282b66c8593",
                     "object_type": "shipment",
-                    "tracking_url": "/v1/trackers/tst_overland/0000000136?test",
+                    "tracking_url": "/v1/trackers/tst_overland/0000000136",
                     "shipper": {
                         "id": "adr_e0f0c569e7f7465e86655673d62064ac",
                         "postal_code": "E1C4Z8",
@@ -1625,7 +1625,7 @@ SHIPMENT_SAMPLE = {
                 {
                     "id": "shp_f49473b250ae45bcb7e2a671f54f40ca",
                     "object_type": "shipment",
-                    "tracking_url": "/v1/trackers/tst_overland/0000000135?test",
+                    "tracking_url": "/v1/trackers/tst_overland/0000000135",
                     "shipper": {
                         "id": "adr_77cf815a63904280acb908b9357b727b",
                         "postal_code": "E1C4Z8",
@@ -1915,7 +1915,7 @@ SHIPMENT_SAMPLE = {
                 {
                     "id": "shp_ff474b4a2ed34b7396c5c282b66c8593",
                     "object_type": "shipment",
-                    "tracking_url": "/v1/trackers/tst_overland/0000000136?test",
+                    "tracking_url": "/v1/trackers/tst_overland/0000000136",
                     "shipper": {
                         "id": "adr_e0f0c569e7f7465e86655673d62064ac",
                         "postal_code": "E1C4Z8",
@@ -2099,7 +2099,7 @@ SHIPMENT_SAMPLE = {
                 {
                     "id": "shp_f49473b250ae45bcb7e2a671f54f40ca",
                     "object_type": "shipment",
-                    "tracking_url": "/v1/trackers/tst_overland/0000000135?test",
+                    "tracking_url": "/v1/trackers/tst_overland/0000000135",
                     "shipper": {
                         "id": "adr_77cf815a63904280acb908b9357b727b",
                         "postal_code": "E1C4Z8",

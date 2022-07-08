@@ -18,7 +18,7 @@ class GraphTestCase(GraphQLTestCase):
 
         self.carrier = MODELS["canadapost"].objects.create(
             carrier_id="canadapost",
-            test=False,
+            test_mode=False,
             username="6e93d53968881714",
             customer_number="2004381",
             contract_id="42708517",
@@ -27,7 +27,7 @@ class GraphTestCase(GraphQLTestCase):
         )
         self.ups_carrier = MODELS["ups"].objects.create(
             carrier_id="ups_package",
-            test=False,
+            test_mode=False,
             username="test",
             account_number="000000",
             access_license_number="000000",
@@ -36,7 +36,7 @@ class GraphTestCase(GraphQLTestCase):
         )
         self.fedex_carrier = MODELS["fedex"].objects.create(
             carrier_id="fedex_express",
-            test=False,
+            test_mode=False,
             user_key="test",
             password="password",
             meter_number="000000",
@@ -44,7 +44,7 @@ class GraphTestCase(GraphQLTestCase):
         )
         self.dhl_carrier = MODELS["dhl_universal"].objects.create(
             carrier_id="dhl_universal",
-            test=False,
+            test_mode=False,
             consumer_key="test",
             consumer_secret="password",
         )

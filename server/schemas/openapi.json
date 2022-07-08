@@ -3142,17 +3142,6 @@
                 "summary": "Create a shipment",
                 "description": "Create a new shipment instance.",
                 "operationId": "$$$$$create",
-                "parameters": [
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "Create shipment in test or live mode",
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    }
-                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -5362,7 +5351,7 @@
                     "carrier_id",
                     "carrier_name",
                     "id",
-                    "test"
+                    "test_mode"
                 ],
                 "type": "object",
                 "properties": {
@@ -5408,8 +5397,8 @@
                         "type": "string",
                         "description": "Indicates a specific carrier configuration name."
                     },
-                    "test": {
-                        "title": "Test",
+                    "test_mode": {
+                        "title": "Test mode",
                         "type": "boolean",
                         "description": "\nThe test flag indicates whether to use a carrier configured for test.\n"
                     },

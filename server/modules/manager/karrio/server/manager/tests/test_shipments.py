@@ -435,7 +435,7 @@ RETURNED_CANCEL_VALUE = (
 PURCHASED_SHIPMENT = {
     "id": ANY,
     "object_type": "shipment",
-    "tracking_url": "/v1/trackers/canadapost/123456789012?test",
+    "tracking_url": "/v1/trackers/canadapost/123456789012",
     "shipper": {
         "id": ANY,
         "postal_code": "E1C4Z8",

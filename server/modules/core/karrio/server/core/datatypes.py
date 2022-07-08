@@ -29,7 +29,7 @@ class CarrierSettings:
         self,
         carrier_name: str,
         carrier_id: str,
-        test: bool = None,
+        test_mode: bool = None,
         active: bool = None,
         id: str = None,
         **kwargs
@@ -37,7 +37,7 @@ class CarrierSettings:
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
         self.active = active
-        self.test = test
+        self.test_mode = test_mode
         self.id = id
 
         for name, value in kwargs.items():

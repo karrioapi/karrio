@@ -79,7 +79,6 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
-        carrier_filter = validated_data.get("carrier_filter") or {}
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
@@ -87,7 +86,7 @@ class ShipmentSerializer(ShipmentData):
             context=context,
             carrier_ids=carrier_ids,
             **({"services": services} if any(services) else {}),
-            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
+            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
         payment = validated_data.get("payment") or DP.to_dict(
             datatypes.Payment(
@@ -475,12 +474,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
 
     # Get rate provider carrier if supported instead of carrier account
     if (rate_provider != shipment.carrier_name) and rate_provider in MODELS:
-        carrier = (
-            MODELS[rate_provider]
-            .access_by(context)
-            .filter(test=shipment.test_mode)
-            .first()
-        )
+        carrier = MODELS[rate_provider].access_by(context).first()
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
@@ -494,7 +488,6 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     ):
         carrier = Carriers.first(
             carrier_name="dhl_universal",
-            test=shipment.test_mode,
             context=context,
         )
 
@@ -506,7 +499,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                 events=utils.default_tracking_event(event_at=shipment.updated_at),
                 delivered=False,
                 status=TrackerStatus.pending.value,
-                test_mode=carrier.test,
+                test_mode=carrier.test_mode,
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,
                 shipment=shipment,

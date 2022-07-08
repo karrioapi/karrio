@@ -15,7 +15,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_DATA)
+            response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -29,7 +29,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_UPDATE_DATA)
+            response = self.client.post(f"{url}", PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -43,7 +43,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_CANCEL_DATA)
+            response = self.client.post(f"{url}", PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)

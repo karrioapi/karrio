@@ -39,7 +39,7 @@ class Carriers:
         query: Any = tuple()
         list_filter = kwargs.copy()
         user_filter = get_access_filter(context) if context is not None else []
-        test_mode = list_filter.get("test") or getattr(context, "test_mode", None)
+        test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
         active_key = (
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
@@ -69,7 +69,7 @@ class Carriers:
 
         # Check if the test filter is specified then set it otherwise return all carriers live and test mode
         if test_mode is not None:
-            query += (Q(test=test_mode),)
+            query += (Q(test_mode=test_mode),)
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get("active") is not None:
@@ -213,7 +213,7 @@ class Shipments:
                 {
                     **DP.to_dict(shipment.selected_rate),
                     "id": f"rat_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
                 if shipment.selected_rate is not None
                 else DP.to_dict(selected_rate)
@@ -263,7 +263,7 @@ class Shipments:
                 "id": f"shp_{uuid.uuid4().hex}",
                 **payload,
                 **DP.to_dict(shipment),
-                "test_mode": carrier.test,
+                "test_mode": carrier.test_mode,
                 "selected_rate": shipment_rate,
                 "service": shipment_rate["service"],
                 "selected_rate_id": shipment_rate["id"],
@@ -377,7 +377,7 @@ class Shipments:
                 {
                     **DP.to_dict(details),
                     "id": f"trk_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                     "status": compute_tracking_status(result).value,
                     "meta": details.meta or {},
                     "options": options,
@@ -419,7 +419,7 @@ class Pickups:
                     **payload,
                     **DP.to_dict(pickup),
                     "id": f"pck_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
             ),
             messages=messages,
@@ -457,7 +457,7 @@ class Pickups:
                 **{
                     **payload,
                     **DP.to_dict(pickup),
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
             ),
             messages=messages,
@@ -564,7 +564,7 @@ class Rates:
                 **{
                     **DP.to_dict(rate),
                     "id": f"rat_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                     "meta": {
                         **meta,
                         "carrier_connection_id": carrier.id,

@@ -183,10 +183,9 @@ class ConfirmationToken(jwt.Token):
 
 
 def app_tracking_query_params(url: str, carrier) -> str:
-    test_flag = "?test" if carrier.test else ""
     hub_flag = f"&hub={carrier.carrier_name}" if carrier.gateway.is_hub else ""
 
-    return f"{url}{test_flag}{hub_flag}"
+    return f"{url}{hub_flag}"
 
 
 def default_tracking_event(

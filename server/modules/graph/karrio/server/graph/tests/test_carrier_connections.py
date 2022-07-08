@@ -12,7 +12,7 @@ class TestSystemConnections(GraphTestCase):
                 id
                 carrier_id
                 carrier_name
-                test
+                test_mode
                 active
               }
             }
@@ -36,7 +36,7 @@ class TestUserConnections(GraphTestCase):
                     id
                     carrier_id
                     carrier_name
-                    test
+                    test_mode
                     active
                     username
                     password
@@ -45,7 +45,7 @@ class TestUserConnections(GraphTestCase):
                     id
                     carrier_id
                     carrier_name
-                    test
+                    test_mode
                     active
                     username
                     password
@@ -69,7 +69,7 @@ class TestUserConnections(GraphTestCase):
               create_connection(input: $data) {
                 sendlesettings {
                     id
-                    test
+                    test_mode
                     active
                     carrier_id
                     sendle_id
@@ -120,14 +120,14 @@ SYSTEM_CONNECTIONS = {
                 "id": ANY,
                 "carrier_id": "dhl_universal",
                 "carrier_name": "dhl_universal",
-                "test": False,
+                "test_mode": False,
                 "active": True,
             },
             {
                 "id": ANY,
                 "carrier_id": "fedex_express",
                 "carrier_name": "fedex",
-                "test": False,
+                "test_mode": False,
                 "active": True,
             },
         ]
@@ -142,7 +142,7 @@ USER_CONNECTIONS = {
                 "id": ANY,
                 "carrier_id": "ups_package",
                 "carrier_name": "ups",
-                "test": False,
+                "test_mode": False,
                 "active": True,
                 "username": "test",
                 "password": "test",
@@ -154,7 +154,7 @@ USER_CONNECTIONS = {
                 "id": ANY,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
-                "test": False,
+                "test_mode": False,
                 "active": True,
                 "username": "6e93d53968881714",
                 "password": "0bfa9fcb9853d1f51ee57a",
@@ -166,7 +166,7 @@ USER_CONNECTIONS = {
 CONNECTION_DATA = {
     "data": {
         "sendlesettings": {
-            "test": False,
+            "test_mode": False,
             "carrier_id": "sendle",
             "sendle_id": "test_sendle_id",
             "api_key": "test_api_key",
@@ -183,7 +183,7 @@ CONNECTION_RESPONSE = {
                 "carrier_id": "sendle",
                 "id": ANY,
                 "sendle_id": "test_sendle_id",
-                "test": False,
+                "test_mode": False,
             }
         }
     }

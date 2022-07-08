@@ -117,7 +117,7 @@ class CarrierSettings(Serializer):
     carrier_id = CharField(
         required=True, help_text="Indicates a specific carrier configuration name."
     )
-    test = BooleanField(
+    test_mode = BooleanField(
         required=True,
         help_text="""
     The test flag indicates whether to use a carrier configured for test.

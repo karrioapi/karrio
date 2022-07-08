@@ -16,7 +16,7 @@ class TestTrackers(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.get(f"{url}?test")
+            response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -30,9 +30,9 @@ class TestTrackers(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            self.client.get(f"{url}?test")
+            self.client.get(f"{url}")
             sleep(0.1)
-            response = self.client.get(f"{url}?test")
+            response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -30,7 +30,7 @@ class TestPricing(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -45,7 +45,7 @@ class TestPricing(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)

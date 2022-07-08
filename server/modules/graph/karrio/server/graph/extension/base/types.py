@@ -317,11 +317,10 @@ class SystemConnectionType(BaseConnectionType, utils.BaseObjectType):
             "created_at",
             "updated_at",
             "id",
-            "test",
+            "test_mode",
             "carrier_id",
             "carrier_name",
             "active",
-            "test",
             "capabilities",
         )
 

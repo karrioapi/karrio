@@ -2453,14 +2453,6 @@
                         "schema": {
                             "$ref": "#/definitions/ShipmentData"
                         }
-                    },
-                    {
-                        "name": "test",
-                        "in": "query",
-                        "description": "Create shipment in test or live mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -4344,7 +4336,7 @@
                 "id",
                 "carrier_name",
                 "carrier_id",
-                "test",
+                "test_mode",
                 "active"
             ],
             "type": "object",
@@ -4391,8 +4383,8 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "test": {
-                    "title": "Test",
+                "test_mode": {
+                    "title": "Test mode",
                     "description": "\nThe test flag indicates whether to use a carrier configured for test.\n",
                     "type": "boolean"
                 },

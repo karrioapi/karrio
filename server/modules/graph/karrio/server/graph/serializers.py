@@ -321,7 +321,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
             "updated_at",
             "created_by",
             "carrier_id",
-            "test",
+            "test_mode",
             "active",
             "capabilities",
             "active_users",

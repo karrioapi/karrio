@@ -46,7 +46,7 @@ class CarrierManager(models.Manager):
 
 class Carrier(OwnedEntity):
     class Meta:
-        ordering = ["test", "-created_at"]
+        ordering = ["test_mode", "-created_at"]
 
     id = models.CharField(
         max_length=50,
@@ -58,7 +58,9 @@ class Carrier(OwnedEntity):
         max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
     )
-    test = models.BooleanField(default=True, help_text="Toggle carrier connection mode")
+    test_mode = models.BooleanField(
+        default=True, db_column="test_mode", help_text="Toggle carrier connection mode"
+    )
     active = models.BooleanField(
         default=True, help_text="Disable/Hide carrier from clients"
     )

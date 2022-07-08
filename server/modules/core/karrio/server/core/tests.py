@@ -14,7 +14,7 @@ class APITestCase(BaseAPITestCase):
         self.token = Token.objects.create(user=self.user, test_mode=True)
         self.carrier = MODELS["canadapost"].objects.create(
             carrier_id="canadapost",
-            test=True,
+            test_mode=True,
             username="6e93d53968881714",
             customer_number="2004381",
             contract_id="42708517",
@@ -23,7 +23,7 @@ class APITestCase(BaseAPITestCase):
         )
         self.ups_carrier = MODELS["ups"].objects.create(
             carrier_id="ups_package",
-            test=True,
+            test_mode=True,
             username="test",
             account_number="000000",
             access_license_number="000000",
@@ -32,7 +32,7 @@ class APITestCase(BaseAPITestCase):
         )
         self.fedex_carrier = MODELS["fedex"].objects.create(
             carrier_id="fedex_express",
-            test=True,
+            test_mode=True,
             user_key="test",
             password="password",
             meter_number="000000",
@@ -40,7 +40,7 @@ class APITestCase(BaseAPITestCase):
         )
         self.dhl_carrier = MODELS["dhl_universal"].objects.create(
             carrier_id="dhl_universal",
-            test=True,
+            test_mode=True,
             consumer_key="test",
             consumer_secret="password",
         )

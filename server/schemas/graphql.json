@@ -1354,18 +1354,7 @@
               }
             },
             {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": null,
-                  "name": "test",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                }
-              ],
+              "args": [],
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
@@ -1389,18 +1378,7 @@
               }
             },
             {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": null,
-                  "name": "test",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                }
-              ],
+              "args": [],
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
@@ -5029,7 +5007,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -19796,7 +19774,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -20085,7 +20063,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -20326,7 +20304,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -20583,7 +20561,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -20808,7 +20786,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -21065,7 +21043,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -22550,7 +22528,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -23039,7 +23017,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -23264,7 +23242,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -23505,7 +23483,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -23714,7 +23692,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -23939,7 +23917,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -24212,7 +24190,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -24437,7 +24415,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -24690,7 +24668,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -24915,7 +24893,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -25140,7 +25118,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -25365,7 +25343,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -25622,7 +25600,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -25895,7 +25873,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -26156,7 +26134,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -26417,7 +26395,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -26642,7 +26620,7 @@
               "deprecationReason": null,
               "description": "Toggle carrier connection mode",
               "isDeprecated": false,
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -27091,7 +27069,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27226,7 +27204,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27333,7 +27311,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27446,7 +27424,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27549,7 +27527,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27666,7 +27644,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -27938,7 +27916,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28031,7 +28009,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28138,7 +28116,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28217,7 +28195,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28320,7 +28298,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28437,7 +28415,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28564,7 +28542,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28746,7 +28724,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28863,7 +28841,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -28956,7 +28934,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29049,7 +29027,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29156,7 +29134,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29273,7 +29251,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29394,7 +29372,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29517,7 +29495,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29640,7 +29618,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -29733,7 +29711,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30416,7 +30394,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30527,7 +30505,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30618,7 +30596,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30719,7 +30697,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30810,7 +30788,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -30915,7 +30893,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31177,7 +31155,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31258,7 +31236,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31349,7 +31327,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31420,7 +31398,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31511,7 +31489,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31612,7 +31590,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31727,7 +31705,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -31899,7 +31877,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32000,7 +31978,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32081,7 +32059,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32162,7 +32140,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32257,7 +32235,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32358,7 +32336,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32459,7 +32437,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32570,7 +32548,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32681,7 +32659,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -32762,7 +32740,7 @@
             {
               "defaultValue": null,
               "description": "Toggle carrier connection mode",
-              "name": "test",
+              "name": "test_mode",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
