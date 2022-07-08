@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://digitalapi.auspost.com.au/test"
-            if self.test
+            if self.test_mode
             else "https://digitalapi.auspost.com.au"
         )
 

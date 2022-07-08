@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # Base properties
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "sendle"
     account_country_code: str = "AU"
     metadata: dict = {}

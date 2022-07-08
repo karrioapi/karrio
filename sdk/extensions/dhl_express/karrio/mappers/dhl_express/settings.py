@@ -15,5 +15,5 @@ class Settings(BaseSettings):
     metadata: dict = {}
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "dhl_express"

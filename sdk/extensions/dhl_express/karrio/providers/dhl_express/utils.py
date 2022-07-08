@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
-            if self.test
+            if self.test_mode
             else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
         )
 

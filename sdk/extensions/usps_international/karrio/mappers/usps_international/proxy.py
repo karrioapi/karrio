@@ -37,7 +37,7 @@ class Proxy(BaseProxy):
 
     def create_shipment(self, request: Serializable) -> Deserializable:
         tag = request.value.__class__.__name__.replace("Request", "")
-        api = f"{tag}Certify" if self.settings.test else tag
+        api = f"{tag}Certify" if self.settings.test_mode else tag
         serialized_request = request.serialize().replace(tag, api)
         query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
         response = http(
@@ -50,7 +50,7 @@ class Proxy(BaseProxy):
 
     def cancel_shipment(self, request: Serializable) -> Deserializable:
         tag = request.value.__class__.__name__.replace("Request", "")
-        api = f"{tag}Certify" if self.settings.test else tag
+        api = f"{tag}Certify" if self.settings.test_mode else tag
         serialized_request = request.serialize().replace(tag, api)
         query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
         response = http(

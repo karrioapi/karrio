@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "amazon_mws"
     account_country_code: str = None
     metadata: dict = {}

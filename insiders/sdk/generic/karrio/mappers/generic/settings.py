@@ -18,7 +18,7 @@ class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
     custom_carrier_name: str
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "custom-carrier"
     account_number: str = None
     account_country_code: str = None

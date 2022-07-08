@@ -34,7 +34,7 @@ class Proxy(BaseProxy):
         return Deserializable(response, XP.to_xml)
 
     def create_shipment(self, request: Serializable) -> Deserializable:
-        api = "eVSCertify" if self.settings.test else "eVS"
+        api = "eVSCertify" if self.settings.test_mode else "eVS"
         serialized_request = request.serialize().replace("eVSRequest", f"{api}Request")
         query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
         response = http(

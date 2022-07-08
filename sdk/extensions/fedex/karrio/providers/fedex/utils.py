@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://wsbeta.fedex.com:443/web-services"
-            if self.test
+            if self.test_mode
             else "https://ws.fedex.com:443/web-services"
         )
 

@@ -13,7 +13,7 @@ class Settings(ABC):
 
     carrier_id: str
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     account_country_code: str = None
     metadata: dict = {}
 

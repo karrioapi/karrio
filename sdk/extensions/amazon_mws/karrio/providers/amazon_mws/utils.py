@@ -16,19 +16,19 @@ class Settings(BaseSettings):
         if self.aws_region == "eu-west-1":
             return (
                 "https://sandbox.sellingpartnerapi-eu.amazon.com"
-                if self.test
+                if self.test_mode
                 else "https://sellingpartnerapi-eu.amazon.com"
             )
         if self.aws_region == "us-west-2":
             return (
                 "https://sandbox.sellingpartnerapi-fe.amazon.com"
-                if self.test
+                if self.test_mode
                 else "https://sellingpartnerapi-fe.amazon.com"
             )
 
         return (
             "https://sandbox.sellingpartnerapi-na.amazon.com"
-            if self.test
+            if self.test_mode
             else "https://sellingpartnerapi-na.amazon.com"
         )
 

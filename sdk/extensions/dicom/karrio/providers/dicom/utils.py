@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://sandbox-smart4i.dicom.com"
-            if self.test
+            if self.test_mode
             else "https://smart4i.dicom.com"
         )
 

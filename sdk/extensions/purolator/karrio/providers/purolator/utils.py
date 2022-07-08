@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://devwebservices.purolator.com"
-            if self.test
+            if self.test_mode
             else "https://webservices.purolator.com"
         )
 

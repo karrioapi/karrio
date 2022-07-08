@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     password: str
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "eshipper"
     account_country_code: str = None
     metadata: dict = {}

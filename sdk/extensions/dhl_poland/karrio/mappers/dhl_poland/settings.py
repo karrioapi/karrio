@@ -18,7 +18,7 @@ class Settings(BaseSettings, RatingMixinSettings):
     account_number: str = None
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "dhl_poland"
     account_country_code: str = "PL"
     metadata: dict = {}

@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "http://ws.dev.aramex.net" if self.test else "http://ws.aramex.net"
+        return "http://ws.dev.aramex.net" if self.test_mode else "http://ws.aramex.net"
 
     @staticmethod
     def standard_request_serializer(

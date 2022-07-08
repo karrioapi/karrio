@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://ct.soa-gw.canadapost.ca"
-            if self.test
+            if self.test_mode
             else "https://soa-gw.canadapost.ca"
         )
 

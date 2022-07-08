@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     account_country_code: str = None
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "fedex"
     metadata: dict = {}
 

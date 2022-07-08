@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://test.freightcom.com/rpc2"
-            if self.test
+            if self.test_mode
             else "https://app.freightcom.com/rpc2"
         )
 

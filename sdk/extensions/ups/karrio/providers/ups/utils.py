@@ -22,7 +22,11 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://wwwcie.ups.com" if self.test else "https://onlinetools.ups.com"
+        return (
+            "https://wwwcie.ups.com"
+            if self.test_mode
+            else "https://onlinetools.ups.com"
+        )
 
     @property
     def Security(self):

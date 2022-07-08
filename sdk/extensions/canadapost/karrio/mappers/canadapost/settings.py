@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     language: str = "en"
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "canadapost"
     account_country_code: str = "CA"
     metadata: dict = {}
