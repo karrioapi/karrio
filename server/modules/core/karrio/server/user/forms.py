@@ -1,13 +1,16 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from django.contrib.auth.views import LoginView
+
+# from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import (
     UserCreationForm,
     AuthenticationForm,
     ValidationError,
 )
 from django.utils.translation import gettext_lazy as _
+from two_factor.views import LoginView
+
 from karrio.server.conf import settings
 from karrio.server.user.utils import send_email
 

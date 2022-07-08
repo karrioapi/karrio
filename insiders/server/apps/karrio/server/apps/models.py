@@ -45,6 +45,10 @@ class App(OwnedEntity):
     )
     org = models.ManyToManyField(Organization, related_name="apps", through="AppLink")
 
+    def delete(self, *args, **kwargs):
+        self.registration.delete()
+        return super().delete(*args, **kwargs)
+
     @property
     def object_type(self):
         return "app"

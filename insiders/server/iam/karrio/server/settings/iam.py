@@ -17,6 +17,7 @@ AUTHENTICATION_METHODS += ["karrio.server.iam.authentication.OAuth2Authenticatio
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 
 OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "SCOPES": {
@@ -25,4 +26,10 @@ OAUTH2_PROVIDER = {
         "openid": "OpenID connect",
     },
     "OAUTH2_VALIDATOR_CLASS": "karrio.server.iam.oauth_validators.CustomOAuth2Validator",
+}
+
+LOGGING["loggers"]["oauthlib"] = {
+    "handlers": ["console"],
+    "level": "DEBUG",
+    "propagate": True,
 }

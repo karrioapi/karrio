@@ -33,11 +33,11 @@ class Query:
         return models.App.access_by(info.context).filter(**kwargs).first()
 
     @utils.login_required
-    def resolve_apps(self, info, **kwargs):
+    def resolve_private_apps(self, info, **kwargs):
         return models.App.access_by(info.context)
 
     @utils.login_required
-    def resolve_public_apps(self, info, **kwargs):
+    def resolve_apps(self, info, **kwargs):
         return models.App.objects.filter(
             is_public=True,
             is_published=True,

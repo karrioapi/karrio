@@ -27,7 +27,6 @@ BASE_PATH = getattr(settings, "BASE_PATH", "")
 admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
-admin.site.index_template = "karrio/admin.html"
 
 try:
     admin.site.unregister(Group)

@@ -1,4 +1,4 @@
-{% extends "karrio/admin.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n static %}
 
 {% block extrastyle %}
@@ -66,7 +66,6 @@
         <div class="form-row">
           {{ form.password.errors }}
           {{ form.password.label_tag }} {{ form.password }}
-          <input type="hidden" name="next" value="{{ next }}">
         </div>
         <div class="submit-row">
           <input type="submit" value="{% translate 'Log in' %}">
@@ -100,6 +99,7 @@
         </p>
       {% endif %}
 
+      <input type="hidden" name="next" value="{{ request.GET.next }}"/>
       {# hidden submit button to enable [enter] key #}
       <input type="submit" value="" style="display: none;" />
     </form>
