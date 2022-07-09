@@ -27,9 +27,3 @@ OAUTH2_PROVIDER = {
     },
     "OAUTH2_VALIDATOR_CLASS": "karrio.server.iam.oauth_validators.CustomOAuth2Validator",
 }
-
-LOGGING["loggers"]["oauthlib"] = {
-    "handlers": ["console"],
-    "level": "DEBUG",
-    "propagate": True,
-}

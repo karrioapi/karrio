@@ -61,10 +61,6 @@ class OrderFilters(filters.FilterSet):
         method="metadata_value_filter",
         help_text="order metadata value",
     )
-    test_mode = filters.BooleanFilter(
-        field_name="test_mode",
-        help_text="test mode flag",
-    )
 
     class Meta:
         model = models.Order

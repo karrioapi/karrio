@@ -232,6 +232,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 MODEL_TRANSFORMERS: list = []
 AUTHENTICATION_METHODS = [
+    "karrio.server.core.authentication.TokenBasicAuthentication",
     "karrio.server.core.authentication.TokenAuthentication",
     "karrio.server.core.authentication.JWTAuthentication",
 ]
@@ -302,11 +303,7 @@ STATICFILES_DIRS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "karrio.server.core.authentication.TokenAuthentication",
-        "karrio.server.core.authentication.JWTAuthentication",
-        # "rest_framework.authentication.SessionAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_METHODS,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -372,10 +369,20 @@ SWAGGER_SETTINGS = {
                 Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
                 API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
 
-                Authentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.
-                To authenticate via bearer auth (e.g., for a cross-origin request),
-                use `-H "Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660"`.
+                Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
+                the basic auth username value. You do not need to provide a password.
 
+                ```shell
+                $ curl https://instance.api.com/v1/shipments \\
+                  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:
+                # The colon prevents curl from asking for a password.
+                ```
+
+                If you need to authenticate via bearer auth (e.g., for a cross-origin request),
+                use `-H "Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e"`
+                instead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.
+
+                All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
                 API requests without authentication will also fail.
             """,
         }

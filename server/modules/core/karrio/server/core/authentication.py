@@ -14,6 +14,7 @@ from rest_framework import status
 from rest_framework import exceptions
 from rest_framework.authentication import (
     TokenAuthentication as BaseTokenAuthentication,
+    BasicAuthentication as BaseBasicAuthentication,
 )
 from rest_framework_simplejwt.authentication import (
     JWTAuthentication as BaseJWTAuthentication,
@@ -30,11 +31,12 @@ def catch_auth_exception(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except exceptions.AuthenticationFailed:
+        except exceptions.AuthenticationFailed as e:
             from karrio.server.core.exceptions import APIException
 
+            message, *_ = list(e.args)
             raise APIException(
-                "The given token is invalid or expired",
+                message or "The given token is invalid or expired",
                 code="invalid_token",
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )
@@ -62,11 +64,48 @@ class TokenAuthentication(BaseTokenAuthentication):
                     get_request_org,
                     request,
                     user,
-                    org_id=getattr(token.organization, "id", None),
+                    default_org=token.organization,
                 )
             )
 
         return auth
+
+
+class TokenBasicAuthentication(BaseBasicAuthentication):
+    @catch_auth_exception
+    def authenticate(self, request):
+        auth = super(TokenBasicAuthentication, self).authenticate(request)
+
+        if auth is not None:
+            user, token = auth
+            request.test_mode = token.test_mode
+            request.org = SimpleLazyObject(
+                functools.partial(
+                    get_request_org,
+                    request,
+                    user,
+                    default_org=token.organization,
+                )
+            )
+
+        return auth
+
+    def authenticate_credentials(self, api_key, *_, **__):
+        """
+        Authenticate the api token with optional request for context.
+        """
+        from karrio.server.user.models import Token
+
+        token = Token.objects.filter(key=api_key).first()
+        user = getattr(token, "user", None)
+
+        if user is None:
+            raise exceptions.AuthenticationFailed(_("Invalid username/password."))
+
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed(_("User inactive or deleted."))
+
+        return (user, token)
 
 
 class JWTAuthentication(BaseJWTAuthentication):
@@ -192,7 +231,7 @@ def authenticate_user(request):
         return request
 
 
-def get_request_org(request, user, org_id: str = None):
+def get_request_org(request, user, org_id: str = None, default_org=None):
     """
     Attempts to find and return an organization.
     """
@@ -200,12 +239,16 @@ def get_request_org(request, user, org_id: str = None):
         try:
             from karrio.server.orgs.models import Organization
 
-            orgs = Organization.objects.filter(users__id=user.id)
-            org = (
-                orgs.filter(id=org_id).first()
-                if org_id is not None
-                else orgs.filter(is_active=True).first()
-            )
+            if default_org is not None:
+                org = default_org
+
+            else:
+                orgs = Organization.objects.filter(users__id=user.id)
+                org = (
+                    orgs.filter(id=org_id).first()
+                    if org_id is not None
+                    else orgs.filter(is_active=True).first()
+                )
 
             if org is not None and not org.is_active:
                 raise exceptions.AuthenticationFailed(

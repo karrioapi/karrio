@@ -1335,14 +1335,6 @@
                         }
                     },
                     {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "test mode flag",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -9517,7 +9509,7 @@
         "securitySchemes": {
             "Token": {
                 "type": "apiKey",
-                "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
+                "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Basic Auth. Provide your API token as\nthe basic auth username value. You do not need to provide a password.\n\n```shell\n$ curl https://instance.api.com/v1/shipments \\\n  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:\n# The colon prevents curl from asking for a password.\n```\n\nIf you need to authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e\"`\ninstead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.\n\nAll API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).\nAPI requests without authentication will also fail.\n",
                 "name": "Authorization",
                 "in": "header"
             }

@@ -8,7 +8,11 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking import mixins
 from rest_framework import status
 from karrio.core.utils import DP
-from karrio.server.core.authentication import TokenAuthentication, JWTAuthentication
+from karrio.server.core.authentication import (
+    TokenAuthentication,
+    JWTAuthentication,
+    TokenBasicAuthentication,
+)
 from karrio.server.core.models import APILog
 from karrio.server.tracing.utils import set_tracing_context
 
@@ -53,7 +57,11 @@ class LoggingMixin(mixins.LoggingMixin):
 class BaseView:
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    authentication_classes = [
+        TokenBasicAuthentication,
+        TokenAuthentication,
+        JWTAuthentication,
+    ]
 
 
 class BaseAPIView(views.APIView, BaseView):

@@ -173,7 +173,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
                 The JWT tokens changes for every new session and have an expiration timestamp.
 
-                To authenticate via JWT access key, use `-H "Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U"`.
+                To authenticate via JWT access key, use `-H "Authorization: Bearer key_c2760bb43...671ce3c09b6e"`.
                 """,
                 },
                 {
@@ -272,19 +272,27 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 > When using the proxy API, no objects are created in the {APP_NAME} system.
                 """,
                 },
-                {
-                    "name": "Data",
-                    "description": f"""
-                These operations allow you import or export data from your {APP_NAME} account.
-                """,
-                },
-                {
-                    "name": "Batches",
-                    "description": f"""
-                This is an object representing your a {APP_NAME} batch operation.
-                You can retrieve all batch operations historically for your {APP_NAME} account.
-                """,
-                },
+                (
+                    {
+                        "name": "Data",
+                        "description": f"""
+                    These operations allow you import or export data from your {APP_NAME} account.
+                    """,
+                    }
+                    if settings.DATA_IMPORT_EXPORT
+                    else None
+                ),
+                (
+                    {
+                        "name": "Batches",
+                        "description": f"""
+                    This is an object representing your a {APP_NAME} batch operation.
+                    You can retrieve all batch operations historically for your {APP_NAME} account.
+                    """,
+                    }
+                    if settings.DATA_IMPORT_EXPORT
+                    else None
+                ),
                 {
                     "name": "Reference & Enums",
                     "description": render_reference_descriptions(request),
