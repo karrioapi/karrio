@@ -11,7 +11,7 @@ class Proxy(BaseProxy):
     def get_tracking(self, request: Serializable) -> Deserializable:
         response = http(
             url=f"{self.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber={request.serialize()}",
-            trace=self.trace,
+            trace=self.trace_as("json"),
             method="GET",
             headers={
                 "Authorization": f"basic {self.settings.authorization}",

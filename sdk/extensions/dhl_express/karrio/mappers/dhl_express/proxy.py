@@ -19,7 +19,7 @@ class Proxy(BaseProxy):
             url=self.settings.server_url,
             data=request.serialize(),
             headers={"Content-Type": "application/xml"},
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
         )
 

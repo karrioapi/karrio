@@ -86,7 +86,7 @@ class Proxy(BaseProxy):
         return http(
             **{
                 "url": f"{self.settings.server_url}{path}",
-                "trace": self.trace,
+                "trace": self.trace_as("json"),
                 "method": method,
                 "headers": {
                     "Content-Type": "application/json",

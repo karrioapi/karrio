@@ -22,7 +22,7 @@ class Proxy(BaseProxy):
         return http(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={"Content-Type": "application/xml"},
         )
@@ -49,6 +49,7 @@ class Proxy(BaseProxy):
         def get_tracking(tracking_number: str):
             return tracking_number, http(
                 url=f"{self.settings.server_url}/track/v1/details/{tracking_number}",
+                trace=self.trace_as("json"),
                 headers={
                     "Accept": "application/json",
                     "Content-Type": "application/json",

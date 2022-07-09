@@ -1,6 +1,7 @@
 """Karrio Proxy abstract class definition module."""
 
 import attr
+import functools
 from abc import ABC
 from karrio.core.settings import Settings
 from karrio.core.errors import MethodNotSupportedError
@@ -18,6 +19,9 @@ class Proxy(ABC):
         return self.tracer.with_metadata(dict(connection=self.settings))(
             *args, **kwargs
         )
+
+    def trace_as(self, format: str):
+        return functools.partial(self.trace, format=format)
 
     def get_rates(self, request: Serializable) -> Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice

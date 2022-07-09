@@ -23,7 +23,7 @@ class Proxy(BaseProxy):
         response = http(
             url=f"{self.settings.server_url}/rs/ship/price",
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={
                 "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
@@ -48,7 +48,7 @@ class Proxy(BaseProxy):
 
             return http(
                 url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/detail",
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.track-v2+xml",
@@ -66,7 +66,7 @@ class Proxy(BaseProxy):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment",
                 data=job.data.serialize(),
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="POST",
                 headers={
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
@@ -80,7 +80,7 @@ class Proxy(BaseProxy):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/ncshipment",
                 data=job.data.serialize(),
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="POST",
                 headers={
                     "Accept": "application/vnd.cpc.ncshipment-v4+xml",
@@ -94,7 +94,6 @@ class Proxy(BaseProxy):
             label_string = http(
                 decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
                 url=job.data["href"],
-                trace=self.trace,
                 method="GET",
                 headers={
                     "Accept": job.data["media"],
@@ -126,7 +125,7 @@ class Proxy(BaseProxy):
         def _request(method: str, shipment_id: str, path: str = "", **kwargs):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}{path}",
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method=method,
                 headers={
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
@@ -166,7 +165,7 @@ class Proxy(BaseProxy):
         def _availability(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
@@ -179,7 +178,7 @@ class Proxy(BaseProxy):
             return http(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
                 data=job.data.serialize(),
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="POST",
                 headers={
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
@@ -211,7 +210,7 @@ class Proxy(BaseProxy):
         def _get_pickup(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}{job.data.serialize()}",
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="GET",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
@@ -225,7 +224,7 @@ class Proxy(BaseProxy):
             return http(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
                 data=payload["data"],
-                trace=self.trace,
+                trace=self.trace_as("xml"),
                 method="PUT",
                 headers={
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
@@ -256,7 +255,7 @@ class Proxy(BaseProxy):
         pickuprequest = request.serialize()
         response = http(
             url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{pickuprequest}",
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="DELETE",
             headers={
                 "Accept": "application/vnd.cpc.pickuprequest+xml",

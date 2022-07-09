@@ -12,7 +12,7 @@ class Proxy(BaseProxy):
         response = http(
             url=f"{self.settings.server_url}/ShippingAPI.V2/Tracking/Service_1_0.svc",
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={
                 "Content-Type": "text/xml; charset=utf-8",

@@ -13,7 +13,7 @@ class Proxy(BaseProxy):
         response = http(
             url=self.settings.server_url,
             data=data,
-            trace=self.trace,
+            trace=self.trace_as("json"),
             method="POST",
         )
 

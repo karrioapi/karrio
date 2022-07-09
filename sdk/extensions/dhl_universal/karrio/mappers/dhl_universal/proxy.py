@@ -21,7 +21,7 @@ class Proxy(BaseProxy):
             query = urllib.parse.urlencode(tracking_request)
             return http(
                 url=f"{self.settings.server_url}/track/shipments?{query}",
-                trace=self.trace,
+                trace=self.trace_as("json"),
                 method="GET",
                 headers={
                     "Accept": "application/json",

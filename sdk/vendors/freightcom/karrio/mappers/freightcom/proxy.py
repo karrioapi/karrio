@@ -11,7 +11,7 @@ class Proxy(BaseProxy):
         response = http(
             url=self.settings.server_url,
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={"Content-Type": "application/xml"},
         )
@@ -21,7 +21,7 @@ class Proxy(BaseProxy):
         response = http(
             url=self.settings.server_url,
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={"Content-Type": "application/xml"},
         )
@@ -31,7 +31,7 @@ class Proxy(BaseProxy):
         response = http(
             url=self.settings.server_url,
             data=request.serialize(),
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="POST",
             headers={"Content-Type": "application/xml"},
         )

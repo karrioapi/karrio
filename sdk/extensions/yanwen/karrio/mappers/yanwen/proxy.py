@@ -13,7 +13,7 @@ class Proxy(BaseProxy):
         query = urllib.parse.urlencode(request.serialize())
         response = http(
             url=f"http://trackapi.yanwentech.com/api/tracking?{query}",
-            trace=self.trace,
+            trace=self.trace_as("json"),
             method="GET",
             headers={
                 "Content-Type": "application/json",

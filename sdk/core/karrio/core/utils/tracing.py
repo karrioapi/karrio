@@ -22,9 +22,16 @@ class Tracer:
     _recordings: typing.Dict[futures.Future, dict] = {}
     _context: typing.Dict[str, typing.Any] = {}
 
-    def trace(self, data: typing.Any, key: str, metadata: dict = {}) -> typing.Any:
+    def trace(
+        self, data: typing.Any, key: str, metadata: dict = {}, format: str = None
+    ) -> typing.Any:
         def _save():
-            return Record(key=key, data=data, timestamp=time.time(), metadata=metadata)
+            return Record(
+                key=key,
+                data={"format": format, **data},
+                timestamp=time.time(),
+                metadata=metadata,
+            )
 
         promise = futures.ThreadPoolExecutor(max_workers=1)
         self._recordings.update({promise.submit(_save): data})

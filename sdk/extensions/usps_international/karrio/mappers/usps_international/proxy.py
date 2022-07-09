@@ -17,7 +17,7 @@ class Proxy(BaseProxy):
         query = urllib.parse.urlencode({"API": "TrackV2", "XML": request.serialize()})
         response = http(
             url=f"{self.settings.server_url}?{query}",
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="GET",
         )
 
@@ -29,7 +29,7 @@ class Proxy(BaseProxy):
         )
         response = http(
             url=f"{self.settings.server_url}?{query}",
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="GET",
         )
 
@@ -42,7 +42,7 @@ class Proxy(BaseProxy):
         query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
         response = http(
             url=f"{self.settings.server_url}?{query}",
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="GET",
         )
 
@@ -55,7 +55,7 @@ class Proxy(BaseProxy):
         query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
         response = http(
             url=f"{self.settings.server_url}?{query}",
-            trace=self.trace,
+            trace=self.trace_as("xml"),
             method="GET",
         )
 
