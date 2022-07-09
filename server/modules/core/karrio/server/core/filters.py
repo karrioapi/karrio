@@ -6,7 +6,7 @@ from django_filters import rest_framework as filters
 from karrio.server.core import dataunits
 from karrio.server.core import serializers
 import karrio.server.manager.models as manager
-import karrio.server.manager.models as models
+import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
 
 
@@ -237,12 +237,34 @@ class LogFilter(filters.FilterSet):
         return queryset
 
     def entity_filter(self, queryset, name, value):
-        return queryset.filter(response__icontains=value)
+        return queryset.filter(response__id__icontains=value)
+
+
+class TracingRecordFilter(filters.FilterSet):
+    key = filters.CharFilter(
+        field_name="key",
+        help_text="the tacing log key.",
+    )
+    request_log_id = filters.CharFilter(
+        method="request_log_id_filter",
+        field_name="meta__request_log_id",
+        lookup_expr="icontains",
+        help_text="related request API log.",
+    )
+    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
+    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+
+    class Meta:
+        model = tracing.TracingRecord
+        fields: list = []
+
+    def request_log_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_log_id__icontains=value)
 
 
 class PickupFilters(filters.FilterSet):
     parameters: list = []
 
     class Meta:
-        model = models.Pickup
+        model = manager.Pickup
         fields: list = []

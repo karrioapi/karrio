@@ -6,6 +6,7 @@ import karrio.server.core.views.api as api
 import karrio.server.graph.models as graph
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.providers.models as providers
 import karrio.server.user.serializers as user_serializers
 import karrio.server.manager.serializers as manager_serializers
@@ -48,6 +49,16 @@ class Query:
         required=True,
         default_value=[],
         filterset_class=filters.LogFilter,
+    )
+
+    tracingrecord = graphene.Field(
+        types.TracingRecordType, id=graphene.String(required=True)
+    )
+    tracingrecords = django_filter.DjangoFilterConnectionField(
+        types.TracingRecordType,
+        required=True,
+        default_value=[],
+        filterset_class=filters.TracingRecordFilter,
     )
 
     shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
@@ -118,6 +129,14 @@ class Query:
     @utils.login_required
     def resolve_logs(self, info, **kwargs):
         return api.APILog.access_by(info.context)
+
+    @utils.login_required
+    def resolve_tacingrecord(self, info, **kwargs):
+        return tracing.TracingRecord.access_by(info.context).filter(**kwargs).first()
+
+    @utils.login_required
+    def resolve_tracingrecords(self, info, **kwargs):
+        return tracing.TracingRecord.access_by(info.context)
 
     @utils.login_required
     def resolve_shipment(self, info, **kwargs):

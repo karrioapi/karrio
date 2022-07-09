@@ -1,12 +1,13 @@
+from django.conf import settings
 import graphene
 from graphene.types import generic
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from karrio.core.utils import DP
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.graph.models as graph
 import karrio.server.user.models as auth
 import karrio.server.core.models as core
@@ -52,6 +53,28 @@ class LogType(utils.BaseObjectType):
             return DP.to_dict(self.query_params)
         except:
             return self.query_params
+
+
+class TracingRecordType(utils.BaseObjectType):
+    record = generic.GenericScalar()
+    meta = generic.GenericScalar()
+
+    class Meta:
+        model = tracing.TracingRecord
+        exclude = [*(["org"] if settings.MULTI_ORGANIZATIONS else [])]
+        interfaces = (utils.CustomNode,)
+
+    def resolve_record(self, info):
+        try:
+            return DP.to_dict(self.record)
+        except:
+            return self.record
+
+    def resolve_meta(self, info):
+        try:
+            return DP.to_dict(self.meta)
+        except:
+            return self.meta
 
 
 class TokenType(utils.BaseObjectType):
