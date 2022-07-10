@@ -8,13 +8,14 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking import mixins
 from rest_framework import status
 from karrio.core.utils import DP
+from karrio.server.tracing.utils import set_tracing_context
+from karrio.server.core.utils import failsafe
 from karrio.server.core.authentication import (
     TokenAuthentication,
     JWTAuthentication,
     TokenBasicAuthentication,
 )
 from karrio.server.core.models import APILog
-from karrio.server.tracing.utils import set_tracing_context
 
 AccessMixin: typing.Any = pydoc.locate(
     getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
@@ -51,7 +52,10 @@ class LoggingMixin(mixins.LoggingMixin):
             )
             log.save()
 
-        set_tracing_context(request_log_id=log.id)
+        set_tracing_context(
+            request_log_id=getattr(log, "id", None),
+            object_id=failsafe(lambda: (self.log.get("response") or {}).get("id")),
+        )
 
 
 class BaseView:

@@ -1,4 +1,3 @@
-from django.conf import settings
 import graphene
 from graphene.types import generic
 from django.contrib.auth import get_user_model
@@ -61,7 +60,7 @@ class TracingRecordType(utils.BaseObjectType):
 
     class Meta:
         model = tracing.TracingRecord
-        exclude = [*(["org"] if settings.MULTI_ORGANIZATIONS else [])]
+        exclude = (*tracing.TracingRecord.HIDDEN_PROPS,)
         interfaces = (utils.CustomNode,)
 
     def resolve_record(self, info):

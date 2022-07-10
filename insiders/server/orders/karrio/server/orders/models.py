@@ -70,6 +70,9 @@ class Order(OwnedEntity):
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["order_id"], name="order_id_idx"),
+        ]
 
     id = models.CharField(
         max_length=50,

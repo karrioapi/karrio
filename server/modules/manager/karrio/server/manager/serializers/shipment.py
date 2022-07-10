@@ -15,6 +15,7 @@ from karrio.server.serializers import (
     save_one_to_one_data,
     save_many_to_many_data,
     link_org,
+    Context,
 )
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.utils as utils
@@ -78,7 +79,9 @@ class ShipmentSerializer(ShipmentData):
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
-    def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
+    def create(
+        self, validated_data: dict, context: Context, **kwargs
+    ) -> models.Shipment:
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
@@ -128,7 +131,7 @@ class ShipmentSerializer(ShipmentData):
                 "payment": payment,
                 "rates": DP.to_dict(rate_response.rates),
                 "messages": DP.to_dict(rate_response.messages),
-                "test_mode": all([r.test_mode for r in rate_response.rates]),
+                "test_mode": context.test_mode,
             }
         )
 
@@ -150,7 +153,7 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def update(
-        self, instance: models.Shipment, validated_data: dict, context: dict
+        self, instance: models.Shipment, validated_data: dict, context: Context
     ) -> models.Shipment:
         changes = []
         data = validated_data.copy()

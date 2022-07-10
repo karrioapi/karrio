@@ -1,17 +1,32 @@
 from functools import partial
 from django.conf import settings
 from django.db import models
+from django.db.models.fields import json
 
 from karrio.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid
 
 
 class TracingRecord(OwnedEntity):
+    HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
+
     class Meta:
         db_table = "tracing-record"
         verbose_name = "Tracing Record"
         verbose_name_plural = "Tracing Records"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                json.KeyTextTransform("object_id", "meta"),
+                condition=models.Q(meta__object_id__isnull=False),
+                name="trace_object_idx",
+            ),
+            models.Index(
+                json.KeyTextTransform("request_log_id", "meta"),
+                condition=models.Q(meta__request_log_id__isnull=False),
+                name="request_log_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,

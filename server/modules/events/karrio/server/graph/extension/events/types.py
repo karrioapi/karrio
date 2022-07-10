@@ -50,13 +50,13 @@ class WebhookType(utils.BaseObjectType):
 
 
 class EventFilter(django_filters.FilterSet):
+    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
     date_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
     date_before = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
     type = django_filters.MultipleChoiceFilter(
         field_name="type",
         method="types_filter",
@@ -73,7 +73,7 @@ class EventFilter(django_filters.FilterSet):
 
     def entity_filter(self, queryset, name, value):
         try:
-            return queryset.filter(data__icontains=value)
+            return queryset.filter(data__id=value)
         except:
             return queryset
 
