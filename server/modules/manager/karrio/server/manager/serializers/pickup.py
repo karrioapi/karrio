@@ -255,7 +255,7 @@ class PickupCancelData(serializers.Serializer):
         request = PickupCancelRequest(
             {**PickupCancelRequest(instance).data, **validated_data}
         )
-        response = Pickups.cancel(payload=request.data, carrier=instance.pickup_carrier)
+        Pickups.cancel(payload=request.data, carrier=instance.pickup_carrier)
         instance.delete()
 
-        return response.confirmation
+        return instance

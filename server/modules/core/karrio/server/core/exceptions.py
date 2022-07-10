@@ -48,6 +48,7 @@ def custom_exception_handler(exc, context):
     logger.exception(exc)
 
     response = exception_handler(exc, context)
+    detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
     status_code = None
     code = None
@@ -60,10 +61,8 @@ def custom_exception_handler(exc, context):
                     [
                         Error(
                             code=getattr(exc, "code", "validation"),
-                            message=exc.detail if isinstance(exc.detail, str) else None,
-                            details=(
-                                exc.detail if not isinstance(exc.detail, str) else None
-                            ),
+                            message=detail if isinstance(detail, str) else None,
+                            details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )
@@ -79,10 +78,8 @@ def custom_exception_handler(exc, context):
                     [
                         Error(
                             code=getattr(exc, "code", "not_found"),
-                            message=exc.detail if isinstance(exc.detail, str) else None,
-                            details=(
-                                exc.detail if not isinstance(exc.detail, str) else None
-                            ),
+                            message=detail if isinstance(detail, str) else None,
+                            details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )
@@ -108,10 +105,8 @@ def custom_exception_handler(exc, context):
                     [
                         Error(
                             code=getattr(exc, "code", code),
-                            message=exc.detail if isinstance(exc.detail, str) else None,
-                            details=(
-                                exc.detail if not isinstance(exc.detail, str) else None
-                            ),
+                            message=detail if isinstance(detail, str) else None,
+                            details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )

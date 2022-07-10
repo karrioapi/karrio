@@ -365,7 +365,7 @@ class Pickup(OwnedEntity):
         default=partial(uuid, prefix="pck_"),
         editable=False,
     )
-    confirmation_number = models.CharField(max_length=50, unique=True, blank=False)
+    confirmation_number = models.CharField(max_length=50, blank=False)
     test_mode = models.BooleanField(null=False)
     pickup_date = models.DateField(blank=False)
     ready_time = models.CharField(max_length=5, blank=False)

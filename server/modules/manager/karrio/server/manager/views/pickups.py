@@ -229,7 +229,8 @@ class PickupCancel(APIView):
         Cancel a pickup of one or more shipments.
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
-        (
+
+        update = (
             SerializerDecorator[PickupCancelData](
                 pickup, data=request.data, context=request
             )
@@ -237,7 +238,7 @@ class PickupCancel(APIView):
             .instance
         )
 
-        return Response(Pickup(pickup).data)
+        return Response(Pickup(update).data)
 
 
 router.urls.append(path("pickups", PickupList.as_view(), name="shipment-pickup-list"))

@@ -94,7 +94,7 @@ class TestPickupDetails(TestFixture):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
-            response = self.client.post(url, PICKUP_CANCEL_DATA)
+            response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -130,10 +130,8 @@ PICKUP_UPDATE_DATA = {
     "address": {"person_name": "Janet Jackson"},
 }
 
-PICKUP_CANCEL_DATA = {}
 
-
-SCHEDULE_RETURNED_VALUE = (
+SCHEDULE_RETURNED_VALUE = [
     PickupDetails(
         carrier_id="canadapost",
         carrier_name="canadapost",
@@ -144,9 +142,9 @@ SCHEDULE_RETURNED_VALUE = (
         closing_time="17:00",
     ),
     [],
-)
+]
 
-UPDATE_RETURNED_VALUE = (
+UPDATE_RETURNED_VALUE = [
     PickupDetails(
         carrier_id="canadapost",
         carrier_name="canadapost",
@@ -156,9 +154,9 @@ UPDATE_RETURNED_VALUE = (
         closing_time="17:00",
     ),
     [],
-)
+]
 
-CANCEL_RETURNED_VALUE = (
+CANCEL_RETURNED_VALUE = [
     ConfirmationDetails(
         carrier_id="canadapost",
         carrier_name="canadapost",
@@ -166,7 +164,7 @@ CANCEL_RETURNED_VALUE = (
         success=True,
     ),
     [],
-)
+]
 
 
 PICKUP_RESPONSE = {

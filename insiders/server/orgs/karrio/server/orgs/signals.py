@@ -29,7 +29,8 @@ def user_updated(sender, instance, *args, **kwargs):
 
     # user created
     if created:
-        org_name = instance.full_name.split(" ")[0]
+        _user_name = instance.full_name.split(" ")[0]
+        org_name = _user_name if any(_user_name) else instance.email.split("@")[0]
         invitation = models.OrganizationInvitation.objects.filter(
             invitee_identifier=instance.email
         ).first()
