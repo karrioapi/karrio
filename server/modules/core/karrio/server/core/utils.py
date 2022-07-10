@@ -129,12 +129,20 @@ def filter_rate_carrier_compatible_gateways(
     ]
 
 
+def is_system_loading_data() -> bool:
+    for fr in inspect.stack():
+        if inspect.getmodulename(fr[1]) == "loaddata":
+            return True
+
+    return False
+
+
 def disable_for_loaddata(signal_handler):
     @functools.wraps(signal_handler)
     def wrapper(*args, **kwargs):
-        for fr in inspect.stack():
-            if inspect.getmodulename(fr[1]) == "loaddata":
-                return
+        if is_system_loading_data():
+            return
+
         signal_handler(*args, **kwargs)
 
     return wrapper
