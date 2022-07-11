@@ -16,7 +16,7 @@ from django_downloadview import VirtualDownloadView
 from karrio.core.utils import DP
 from karrio.server.core.gateway import Carriers
 from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.core.filters import ShipmentFilters, ShipmentModeFilter
+from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     process_dictionaries_mutations,

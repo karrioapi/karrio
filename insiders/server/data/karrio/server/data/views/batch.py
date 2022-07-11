@@ -5,6 +5,7 @@ from rest_framework.request import Request
 from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 
+from karrio.server.data.filters import BatchOperationFilter
 import karrio.server.core.views.api as api
 import karrio.server.data.models as models
 import karrio.server.data.serializers as serializers
@@ -20,6 +21,7 @@ class BatchList(api.GenericAPIView):
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
     filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = BatchOperationFilter
     serializer_class = BatchOperations
     model = models.BatchOperation
 

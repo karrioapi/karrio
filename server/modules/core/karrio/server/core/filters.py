@@ -1,5 +1,4 @@
 import typing
-from drf_yasg import openapi
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
@@ -139,15 +138,6 @@ class ShipmentFilters(filters.FilterSet):
 
     def service_filter(self, queryset, name, values):
         return queryset.filter(Q(selected_rate__service__in=values))
-
-
-class ShipmentModeFilter(serializers.Serializer):
-    test = serializers.FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="Create shipment in test or live mode",
-    )
 
 
 class TrackerFilters(filters.FilterSet):

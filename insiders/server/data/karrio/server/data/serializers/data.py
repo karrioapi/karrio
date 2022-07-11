@@ -74,6 +74,13 @@ class ImportDataSerializer(serializers.ImportData):
         return operation
 
 
+@serializers.owned_model_serializer
+class DataTemplateModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DataTemplate
+        exclude = ["created_at", "updated_at", "created_by", "org"]
+
+
 def check_dataset_validation_errors(validation):
 
     errors = [
