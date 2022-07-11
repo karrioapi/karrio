@@ -519,6 +519,22 @@
                 "operationId": "&&&&$list",
                 "parameters": [
                     {
+                        "name": "resource_type",
+                        "in": "query",
+                        "description": "\nthe batch resource type\nValues: `order`, `shipment`, `tracking`, `billing`\n",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "\nthe batch operation status\nValues: `queued`, `running`, `completed`, `failed`\n",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",

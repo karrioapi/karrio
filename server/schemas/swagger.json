@@ -416,6 +416,20 @@
                 "description": "Retrieve all batch operations.",
                 "parameters": [
                     {
+                        "name": "resource_type",
+                        "in": "query",
+                        "description": "\nthe batch resource type\nValues: `order`, `shipment`, `tracking`, `billing`\n",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "\nthe batch operation status\nValues: `queued`, `running`, `completed`, `failed`\n",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
