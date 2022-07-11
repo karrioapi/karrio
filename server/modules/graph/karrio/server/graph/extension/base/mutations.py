@@ -208,7 +208,7 @@ class RequestEmailChange(utils.ClientMutation):
             logger.exception(e)
             raise e
 
-        return cls(user=info.context.user.id)
+        return cls(user=info.context.user)
 
 
 class ConfirmEmailChange(utils.ClientMutation):

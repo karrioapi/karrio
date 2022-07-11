@@ -2,6 +2,7 @@ import graphene
 from graphene.types import generic
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from two_factor.utils import default_device
 
 from karrio.core.utils import DP
 import karrio.server.providers.models as providers
@@ -15,10 +16,25 @@ import karrio.server.graph.utils as utils
 User = get_user_model()
 
 
+class MultiFactorType(graphene.ObjectType):
+    name = graphene.String()
+    confirmed = graphene.Boolean()
+
+
 class UserType(utils.BaseObjectType):
+    multi_factor = graphene.Field(MultiFactorType)
+
     class Meta:
         model = User
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
+
+    def resolve_multi_factor(self, info):
+        device = default_device(self)
+
+        if device is not None:
+            return device.__dict__
+
+        return device
 
 
 class LogType(utils.BaseObjectType):
