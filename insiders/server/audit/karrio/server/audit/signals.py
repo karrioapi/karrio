@@ -14,6 +14,7 @@ def register_signals():
     logger.info("karrio.audit signals registered...")
 
 
+@utils.async_warpper
 @utils.disable_for_loaddata
 def logentry_created(sender, instance, created, *args, **kwargs):
     try:
@@ -23,7 +24,9 @@ def logentry_created(sender, instance, created, *args, **kwargs):
             instance.content_type.model_class()
             .objects.filter(pk=instance.object_pk)
             .first()
-            or models.AuditLogEntry.objects.filter(object_pk=instance.object_pk).first()
+            or models.AuditLogEntry.objects.filter(
+                object_pk=instance.object_pk, link__isnull=False
+            ).first()
         )
 
         if (

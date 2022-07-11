@@ -1,5 +1,5 @@
-import concurrent.futures as futures
 import logging
+import concurrent.futures as futures
 from django.conf import settings
 from karrio.core.settings import Settings
 

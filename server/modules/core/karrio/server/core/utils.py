@@ -1,3 +1,4 @@
+from concurrent import futures
 import inspect
 import functools
 import logging
@@ -28,12 +29,36 @@ def identity(value: Union[Any, Callable]) -> T:
 
 
 def failsafe(callable: Callable[[], T], warning: str = None) -> T:
+    """This higher order function wraps a callable in a try..except
+    scope to capture any exception raised.
+    Only use it when you are running something unstable that you
+    don't mind if it fails.
+    """
     try:
         return callable()
     except Exception:
         if warning:
             logger.warning(warning)
         return None
+
+
+def run_async(callable: Callable[[], Any]) -> futures.Future:
+    """This higher order function initiate the execution
+    of a callable in a non-blocking thread and return a
+    handle for a future response.
+    """
+    return futures.ThreadPoolExecutor(max_workers=1).submit(callable)
+
+
+def async_warpper(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        def _run():
+            func(*args, **kwargs)
+
+        return run_async(_run)
+
+    return wrapper
 
 
 def post_processing(methods: List[str] = None):
