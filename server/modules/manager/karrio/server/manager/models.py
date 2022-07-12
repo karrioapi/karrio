@@ -427,7 +427,11 @@ class TrackingManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related("tracking_carrier", "created_by", "shipment")
+            .prefetch_related(
+                "tracking_carrier",
+                "created_by",
+                "shipment",
+            )
         )
 
 
@@ -518,6 +522,7 @@ class ShipmentManager(models.Manager):
                 "recipient",
                 "parcels",
                 "parcels__items",
+                "customs",
                 "carriers",
                 "selected_rate_carrier",
                 "created_by",

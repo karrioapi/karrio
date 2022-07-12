@@ -232,11 +232,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 MODEL_TRANSFORMERS: list = []
-AUTHENTICATION_METHODS = [
-    "karrio.server.core.authentication.TokenBasicAuthentication",
-    "karrio.server.core.authentication.TokenAuthentication",
-    "karrio.server.core.authentication.JWTAuthentication",
-]
 
 
 # Database
@@ -301,6 +296,12 @@ STATICFILES_DIRS = [
 
 
 # Django REST framework
+AUTHENTICATION_METHODS = [
+    "karrio.server.core.authentication.TokenBasicAuthentication",
+    "karrio.server.core.authentication.TokenAuthentication",
+    "karrio.server.core.authentication.JWTAuthentication",
+    "rest_framework.authentication.SessionAuthentication",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),

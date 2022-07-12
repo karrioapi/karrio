@@ -31,6 +31,7 @@ class AddressList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
+    serializer_class = Addresses
 
     @swagger_auto_schema(
         tags=["Addresses"],

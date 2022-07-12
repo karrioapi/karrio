@@ -33,6 +33,7 @@ class WebhookTestRequest(serializers.Serializer):
 class WebhookList(GenericAPIView):
     pagination_class = LimitOffsetPagination
     default_limit = 20
+    serializer_class = Webhooks
 
     @swagger_auto_schema(
         tags=["Webhooks"],

@@ -41,11 +41,14 @@ class OrderManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related(
+            .select_related(
+                "created_by",
                 "shipping_to",
                 "shipping_from",
+                "billing_address",
+            )
+            .prefetch_related(
                 "line_items",
-                "line_items__children__commodity_parcel__parcel_shipment",
             )
         )
 

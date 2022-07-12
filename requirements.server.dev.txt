@@ -1,4 +1,5 @@
 Django<=3.2.13
+django-debug-toolbar
 
 # Schemas update
 -e ./schemas/usps

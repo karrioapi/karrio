@@ -30,6 +30,7 @@ class ParcelList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
+    serializer_class = Parcels
 
     @swagger_auto_schema(
         tags=["Parcels"],
