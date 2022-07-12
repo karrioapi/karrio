@@ -1,5 +1,5 @@
 import graphene
-from django.db.models import Q
+from django.db import models as django, transaction
 from graphene.types import generic
 from graphene_django.types import ErrorType
 
@@ -11,6 +11,7 @@ import karrio.server.graph.extension.apps.types as types
 
 class CreateApp(utils.ClientMutation):
     app = graphene.Field(types.PrivateAppType)
+    raw_secret = graphene.String()
 
     class Input:
         display_name = graphene.String(required=True)
@@ -24,8 +25,9 @@ class CreateApp(utils.ClientMutation):
 
     @classmethod
     @utils.login_required
+    @transaction.atomic
     def mutate_and_get_payload(cls, root, info, **data):
-        registration = models.Application.objects.create(
+        registration = models.Application(
             user=info.context.user,
             name=data["display_name"],
             redirect_uris=data["redirect_uris"],
@@ -33,6 +35,9 @@ class CreateApp(utils.ClientMutation):
             client_type=models.Application.CLIENT_PUBLIC,
             authorization_grant_type=models.Application.GRANT_AUTHORIZATION_CODE,
         )
+        raw_secret = registration.secret
+        registration.save()
+
         serializer = serializers.AppModelSerializer(
             data={**data, "registration": registration.pk},
             context=info.context,
@@ -41,7 +46,7 @@ class CreateApp(utils.ClientMutation):
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(app=serializer.save())
+        return cls(app=serializer.save(), raw_secet=raw_secret)
 
 
 class UpdateApp(utils.ClientMutation):
@@ -110,8 +115,8 @@ class InstallApp(utils.ClientMutation):
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, app_id, **inputs):
         app = models.App.objects.get(
-            Q(id=app_id, link__org=info.context.org)
-            | Q(id=app_id, is_public=True, is_published=True)
+            django.Q(id=app_id, link__org=info.context.org)
+            | django.Q(id=app_id, is_public=True, is_published=True)
         )
 
         if app.installations.filter(org=info.context.org).exists():

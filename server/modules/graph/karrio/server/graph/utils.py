@@ -125,7 +125,7 @@ def create_delete_mutation(
             if shipment is not None:
                 reset_related_shipment_rates(shipment)
 
-            return cls(id=id)
+            return cls(id=id)  # type:ignore
 
     return type(name, (_DeleteMutation, ClientMutation), {})
 

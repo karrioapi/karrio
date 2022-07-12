@@ -2,7 +2,7 @@ import graphene
 from graphene.types import generic
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from two_factor.utils import default_device
+from django_otp.plugins.otp_email import models as otp
 
 from karrio.core.utils import DP
 import karrio.server.providers.models as providers
@@ -29,7 +29,7 @@ class UserType(utils.BaseObjectType):
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
 
     def resolve_multi_factor(self, info):
-        device = default_device(self)
+        device = otp.EmailDevice.objects.filter(user__id=self.id).first()
 
         if device is not None:
             return device.__dict__
