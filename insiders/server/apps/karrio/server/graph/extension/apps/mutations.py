@@ -11,7 +11,7 @@ import karrio.server.graph.extension.apps.types as types
 
 class CreateApp(utils.ClientMutation):
     app = graphene.Field(types.PrivateAppType)
-    raw_secret = graphene.String()
+    client_secret = graphene.String()
 
     class Input:
         display_name = graphene.String(required=True)
@@ -35,7 +35,7 @@ class CreateApp(utils.ClientMutation):
             client_type=models.Application.CLIENT_PUBLIC,
             authorization_grant_type=models.Application.GRANT_AUTHORIZATION_CODE,
         )
-        raw_secret = registration.secret
+        client_secret = registration.client_secret
         registration.save()
 
         serializer = serializers.AppModelSerializer(
@@ -46,7 +46,7 @@ class CreateApp(utils.ClientMutation):
         if not serializer.is_valid():
             return cls(errors=ErrorType.from_errors(serializer.errors))
 
-        return cls(app=serializer.save(), raw_secet=raw_secret)
+        return cls(app=serializer.save(), client_secret=client_secret)
 
 
 class UpdateApp(utils.ClientMutation):
