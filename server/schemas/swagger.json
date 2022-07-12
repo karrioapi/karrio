@@ -1061,6 +1061,13 @@
                         "type": "string"
                     },
                     {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "order' keyword and indexes search",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -2406,6 +2413,13 @@
                         "name": "tracking_number",
                         "in": "query",
                         "description": "",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "shipment' keyword and indexes search",
                         "required": false,
                         "type": "string"
                     },

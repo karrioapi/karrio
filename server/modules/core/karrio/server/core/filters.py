@@ -78,6 +78,10 @@ class ShipmentFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
         field_name="tracking_number", lookup_expr="icontains"
     )
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="shipment' keyword and indexes search",
+    )
 
     class Meta:
         model = manager.Shipment
@@ -93,7 +97,20 @@ class ShipmentFilters(filters.FilterSet):
             | Q(recipient__city__icontains=value)
             | Q(recipient__email__icontains=value)
             | Q(recipient__phone_number__icontains=value)
+        )
+
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(recipient__address_line1__icontains=value)
+            | Q(recipient__address_line2__icontains=value)
+            | Q(recipient__postal_code__icontains=value)
+            | Q(recipient__person_name__icontains=value)
+            | Q(recipient__company_name__icontains=value)
+            | Q(recipient__city__icontains=value)
+            | Q(recipient__email__icontains=value)
+            | Q(recipient__phone_number__icontains=value)
             | Q(reference__icontains=value)
+            | Q(tracking_number__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):

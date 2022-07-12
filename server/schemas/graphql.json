@@ -982,6 +982,16 @@
                     "name": "String",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "keyword",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 }
               ],
               "deprecationReason": null,
@@ -2386,6 +2396,16 @@
                   "defaultValue": null,
                   "description": null,
                   "name": "tracking_number",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "keyword",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",

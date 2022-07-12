@@ -61,10 +61,28 @@ class OrderFilters(filters.FilterSet):
         method="metadata_value_filter",
         help_text="order metadata value",
     )
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="order' keyword and indexes search",
+    )
 
     class Meta:
         model = models.Order
         fields: list = []
+
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(shipping_to__address_line1__icontains=value)
+            | Q(shipping_to__address_line2__icontains=value)
+            | Q(shipping_to__postal_code__icontains=value)
+            | Q(shipping_to__person_name__icontains=value)
+            | Q(shipping_to__company_name__icontains=value)
+            | Q(shipping_to__city__icontains=value)
+            | Q(shipping_to__email__icontains=value)
+            | Q(shipping_to__phone_number__icontains=value)
+            | Q(order_id__icontains=value)
+            | Q(source__icontains=value)
+        )
 
     def address_filter(self, queryset, name, value):
         return queryset.filter(
