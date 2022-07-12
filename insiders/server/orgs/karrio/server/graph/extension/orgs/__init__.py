@@ -14,9 +14,7 @@ class Query:
         is_active=graphene.Boolean(required=False),
         default_value=[],
     )
-    organization = graphene.Field(
-        types.OrganizationType, id=graphene.String(required=True)
-    )
+    organization = graphene.Field(types.OrganizationType, id=graphene.String())
     organization_invitation = graphene.Field(
         types.OrganizationInvitationType,
         id=graphene.String(required=False),
@@ -28,9 +26,12 @@ class Query:
 
     @utils.login_required
     def resolve_organization(self, info, **kwargs):
-        return models.Organization.objects.get(
-            users__id=info.context.user.id, is_active=True, **kwargs
-        )
+        if any(kwargs.keys()):
+            return models.Organization.objects.get(
+                users__id=info.context.user.id, is_active=True, **kwargs
+            )
+
+        return info.context.org
 
     @utils.login_required
     def resolve_organizations(self, info, **kwargs):
