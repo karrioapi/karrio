@@ -388,6 +388,30 @@ class ConfirmMultiFactor(utils.ClientMutation):
         return cls(user=types.User.objects.get(pk=info.context.user.id))
 
 
+class DisableMultiFactor(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        password = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    @utils.password_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        try:
+            # Retrieve a default device or create a new one.
+            device = otp.EmailDevice.objects.filter(
+                user__id=info.context.user.id
+            ).first()
+            if device is not None:
+                device.delete()
+        except Exception as e:
+            logger.exception(e)
+            raise e
+
+        return cls(user=types.User.objects.get(pk=info.context.user.id))
+
+
 class MutateMetadata(utils.ClientMutation):
     id = graphene.String()
     metadata = generic.GenericScalar()

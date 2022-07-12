@@ -168,6 +168,7 @@ class Mutation:
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
     enable_multi_factor = mutations.EnableMultiFactor.Field()
     confirm_multi_factor = mutations.ConfirmMultiFactor.Field()
+    disable_multi_factor = mutations.DisableMultiFactor.Field()
 
     # Carrier connection related mutations
     create_connection = mutations.CreateCarrierConnection.Field()

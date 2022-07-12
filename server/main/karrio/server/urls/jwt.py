@@ -25,9 +25,7 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Set is_verified to False if the user has Two Factor enabled and confirmed
-        token["is_verified"] = (
-            False if getattr(default_device(user), "confirmed", True) == True else True
-        )
+        token["is_verified"] = False if default_device(user) else True
 
         return token
 
