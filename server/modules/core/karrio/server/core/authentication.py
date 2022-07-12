@@ -200,12 +200,12 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
                     )
 
                 # org id has been passed, but org is None and the are no existing org id affiliated with user
-                if (
-                    (org_id is not None)
-                    and (org is None)
-                    and (not orgs.filter(id=org_id).exists())
-                ):
-                    request.COOKIES.pop("org_id")
+                # if (
+                #     (org_id is not None)
+                #     and (org is None)
+                #     and (not orgs.filter(id=org_id).exists())
+                # ):
+                #     request.COOKIES.pop("orgId")
 
                 return org
             except ProgrammingError:

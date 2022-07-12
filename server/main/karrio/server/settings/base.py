@@ -44,6 +44,7 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
 
 # HTTPS configuration
 if USE_HTTPS is True:
