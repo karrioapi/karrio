@@ -48,6 +48,6 @@ def shipment_cancel_request(
     return Serializable(
         request,
         lambda request: settings.serialize(
-            request, "createShipment", settings.server_url
+            request, "deleteShipment", settings.server_url
         ),
     )
