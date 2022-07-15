@@ -1,9 +1,11 @@
-import typing
+import sys
 from django.db import models
 from auditlog.registry import auditlog
 
 
 def register_model(model: models.Model) -> models.Model:
+    if "loaddata" in sys.argv:
+        return model
 
     exclude_fields = ["link"]
 
