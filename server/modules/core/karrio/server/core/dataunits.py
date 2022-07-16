@@ -45,6 +45,7 @@ def contextual_metadata(request: Request):
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",
         "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
+        "ALLOW_MULTI_ACCOUNT": settings.ALLOW_MULTI_ACCOUNT,
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,

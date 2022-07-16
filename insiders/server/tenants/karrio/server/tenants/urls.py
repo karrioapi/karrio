@@ -19,11 +19,14 @@ from karrio.server.tenants import admin as tenants_admin
 
 
 BASE_PATH = getattr(settings, "BASE_PATH", "")
+tenants_admin.site.site_url = f"/{BASE_PATH}"
+
 urlpatterns = [
     path(
         BASE_PATH,
         include(
             [
+                path("", include("karrio.server.user.views")),
                 path("status/", include("health_check.urls")),
                 path("", tenants_admin.site.urls, name="tenants_admin"),
             ]
@@ -31,3 +34,8 @@ urlpatterns = [
         name="karrio:tenants:index",
     ),
 ]
+
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]

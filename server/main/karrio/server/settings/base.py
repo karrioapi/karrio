@@ -131,6 +131,7 @@ ALLOW_SIGNUP = (
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
+ALLOW_MULTI_ACCOUNT = MULTI_ORGANIZATIONS
 ORDERS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
 )
@@ -178,6 +179,16 @@ BASE_APPS = [
     "django.contrib.admin",
 ]
 
+OTP_APPS = [
+    "django_filters",
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_email",
+    "two_factor",
+    "two_factor.plugins.email",
+]
+
 INSTALLED_APPS = [
     "constance",
     *KARRIO_APPS,
@@ -189,13 +200,7 @@ INSTALLED_APPS = [
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
-    "django_filters",
-    "django_otp",
-    "django_otp.plugins.otp_static",
-    "django_otp.plugins.otp_totp",
-    "django_otp.plugins.otp_email",
-    "two_factor",
-    "two_factor.plugins.email",
+    *OTP_APPS,
 ]
 
 MIDDLEWARE = [

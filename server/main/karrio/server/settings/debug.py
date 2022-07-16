@@ -12,6 +12,3 @@ if DEBUG and importlib.util.find_spec("debug_toolbar") is not None:
     ]
     MIDDLEWARE.insert(0, "karrio.server.core.middleware.NonHtmlDebugToolbarMiddleware")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    NAMESPACED_URLS += [
-        ("__debug__/", "debug_toolbar.urls", "debug"),
-    ]

@@ -24,6 +24,7 @@ class References(Serializer):
     CUSTOM_CARRIER_DEFINITION = BooleanField()
     DATA_IMPORT_EXPORT = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
+    ALLOW_MULTI_ACCOUNT = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()
     ALLOW_SIGNUP = BooleanField()

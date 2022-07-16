@@ -58,3 +58,8 @@ urlpatterns = [
         name="karrio:index",
     ),
 ]
+
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]
