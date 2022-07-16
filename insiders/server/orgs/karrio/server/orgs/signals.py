@@ -2,15 +2,17 @@ import logging
 from django.db.models import signals
 from django.contrib.auth import get_user_model
 
-from karrio.server.core import utils
 from karrio.server.conf import settings
+import karrio.server.core.utils as utils
 import karrio.server.orgs.models as models
+import karrio.server.events.tasks as tasks
 
 logger = logging.getLogger(__name__)
 
 
 def register_all():
     signals.post_save.connect(user_updated, sender=get_user_model())
+    signals.post_delete.connect(owner_deleted, sender=models.OrganizationOwner)
 
     logger.info("karrio.orgs signals registered...")
 
@@ -21,14 +23,14 @@ def user_updated(sender, instance, *args, **kwargs):
     - user created (if signup create org when no invites are available)
     - user updated (if user set back to active, ensure orgs where owner are active)
     """
-    created = kwargs.get("created", False)
-    changes = kwargs.get("update_fields") or []
-
     if settings.MULTI_TENANTS and settings.schema == "public":
         return
 
-    # user created
-    if created:
+    changes = kwargs.get("update_fields") or []
+    has_org = models.Organization.objects.filter(users__id=instance.id).exists()
+
+    # user made active
+    if instance.is_active and not has_org:
         _user_name = instance.full_name.split(" ")[0]
         org_name = _user_name if any(_user_name) else instance.email.split("@")[0]
         invitation = models.OrganizationInvitation.objects.filter(
@@ -60,3 +62,8 @@ def user_updated(sender, instance, *args, **kwargs):
             is_active=not instance.is_active,
             owner__organization_user__user__id=instance.id,
         ).update(is_active=instance.is_active)
+
+
+@utils.disable_for_loaddata
+def owner_deleted(sender, instance, **kwargs):
+    tasks.cleanup_orgs(schema=settings.schema)

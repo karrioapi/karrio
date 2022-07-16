@@ -122,7 +122,12 @@ KARRIO_CONF = [
 KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
 KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
-ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
+ALLOW_ADMIN_APPROVED_SIGNUP = config(
+    "ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool
+)
+ALLOW_SIGNUP = (
+    config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
+)
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )

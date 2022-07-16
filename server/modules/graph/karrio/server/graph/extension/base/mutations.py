@@ -245,7 +245,7 @@ class RegisterUser(DjangoFormMutation):
 
     @classmethod
     def perform_mutate(cls, form, info):
-        if not settings.ALLOW_SIGNUP:
+        if settings.ALLOW_SIGNUP == False:
             raise Exception(
                 "Signup is not allowed. "
                 "Please contact your administrator to create an account."

@@ -24,7 +24,7 @@ class SignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self, commit=True):
-        if not settings.ALLOW_SIGNUP:
+        if settings.ALLOW_SIGNUP == False:
             raise Exception(
                 "Signup is not allowed. "
                 "Please contact your administrator to create an account."
@@ -35,6 +35,9 @@ class SignUpForm(UserCreationForm):
         if commit and settings.EMAIL_ENABLED:
             user.is_active = False
             send_email(user, self.cleaned_data["redirect_url"])
+
+        if commit and settings.ALLOW_ADMIN_APPROVED_SIGNUP:
+            user.is_active = False
 
         return user
 

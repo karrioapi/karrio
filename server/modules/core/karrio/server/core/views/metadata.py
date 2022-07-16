@@ -22,6 +22,7 @@ class Metadata(Serializer):
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()
     ALLOW_SIGNUP = BooleanField()
+    ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()

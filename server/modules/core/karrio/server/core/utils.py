@@ -1,16 +1,13 @@
-from concurrent import futures
 import inspect
 import functools
 import logging
+from string import Template
+from concurrent import futures
 from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from django_email_verification.confirm import (
-    _get_validated_field,
-    EmailMultiAlternatives,
-    render_to_string,
-)
+import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
 
 from karrio.core.utils import DP, DF
@@ -209,11 +206,11 @@ def send_email(
     context: dict = {},
     text_template: str = None,
 ):
-    sender = _get_validated_field("EMAIL_FROM_ADDRESS")
-    html = render_to_string(email_template, context)
-    text = render_to_string(text_template or email_template, context)
+    sender = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
+    html = confirm.render_to_string(email_template, context)
+    text = confirm.render_to_string(text_template or email_template, context)
 
-    msg = EmailMultiAlternatives(subject, text, sender, emails)
+    msg = confirm.EmailMultiAlternatives(subject, text, sender, emails)
     msg.attach_alternative(html, "text/html")
     msg.send()
 
