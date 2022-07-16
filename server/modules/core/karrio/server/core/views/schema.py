@@ -1,10 +1,11 @@
-from django.urls import path, re_path
 from jinja2 import Template
-from karrio.server.core.dataunits import contextual_reference
+from django import conf as django
+from django.urls import path, re_path
 from rest_framework import permissions
 from drf_yasg import views, openapi, generators, inspectors
 
 from karrio.server.conf import settings
+from karrio.server.core.dataunits import contextual_reference
 
 VERSION = getattr(settings, "VERSION", "")
 non_null = lambda items: [i for i in items if i is not None]
@@ -154,7 +155,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
     def get_schema(self, request=None, public=False):
         """Generate a :class:`.Swagger` object with custom tags"""
         tenant = getattr(request, "tenant", None)
-        APP_NAME = settings.get("APP_NAME", tenant)
+        APP_NAME = settings.APP_NAME
 
         if tenant:
             self.info = openapi.Info(
@@ -249,7 +250,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
                     }
-                    if settings.ORDERS_MANAGEMENT
+                    if django.settings.ORDERS_MANAGEMENT
                     else None
                 ),
                 {
@@ -279,7 +280,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                     These operations allow you import or export data from your {APP_NAME} account.
                     """,
                     }
-                    if settings.DATA_IMPORT_EXPORT
+                    if django.settings.DATA_IMPORT_EXPORT
                     else None
                 ),
                 (
@@ -290,7 +291,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                     You can retrieve all batch operations historically for your {APP_NAME} account.
                     """,
                     }
-                    if settings.DATA_IMPORT_EXPORT
+                    if django.settings.DATA_IMPORT_EXPORT
                     else None
                 ),
                 {

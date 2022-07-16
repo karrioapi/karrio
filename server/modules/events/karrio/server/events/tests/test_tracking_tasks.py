@@ -64,7 +64,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
         url = reverse("karrio.server.manager:trackers-list")
 
         with patch(
-            "karrio.server.events.task_definitions.base.tracking.identity"
+            "karrio.server.events.task_definitions.base.tracking.utils.identity"
         ) as mocks:
             mocks.return_value = RETURNED_UPDATED_VALUE
             sleep(0.1)
