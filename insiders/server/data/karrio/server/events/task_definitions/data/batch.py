@@ -2,11 +2,10 @@ import typing
 import logging
 import tablib
 from django.conf import settings
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from import_export.resources import ModelResource
 
-import karrio.server.manager.models as manager
+import karrio.server.core.utils as utils
 import karrio.server.data.serializers as serializers
 import karrio.server.data.resources as resources
 import karrio.server.data.models as models
@@ -15,6 +14,7 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+@utils.tenant_wrapper
 def trigger_batch_processing(
     batch_id: str,
     data: dict,

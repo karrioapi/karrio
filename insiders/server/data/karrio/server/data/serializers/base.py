@@ -43,7 +43,8 @@ class ResourceType(Enum):
 class ResourceStatus(Enum):
     queued = "queued"
     created = "created"
-    creation_failed = "creation_failed"
+    failed = "failed"
+    processed = "processed"
 
 
 class BatchOperationStatus(Enum):

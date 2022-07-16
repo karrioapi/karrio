@@ -3,7 +3,6 @@ from typing import List, cast, Optional
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.db.models import functions
 from django.db.models.fields import json
 
 from karrio.server.core.utils import identity

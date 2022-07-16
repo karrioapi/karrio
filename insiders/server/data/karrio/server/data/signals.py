@@ -29,6 +29,7 @@ def batch_operation_updated(sender, instance, *args, **kwargs):
     elif instance.status == serializers.BatchOperationStatus.running.value:
         event = serializers.EventTypes.batch_running.value
         # Run post creation processing for batch_operation resources
+        tasks.process_batch_resources(instance.id, schema=settings.schema)
     elif instance.status == serializers.BatchOperationStatus.completed.value:
         event = serializers.EventTypes.batch_completed.value
     else:

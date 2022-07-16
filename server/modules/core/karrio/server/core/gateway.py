@@ -171,10 +171,7 @@ class Shipments:
         )
 
         if selected_rate is None:
-            raise NotFound(
-                f'Invalid selected_rate_id "{payload.get("selected_rate_id")}" \n '
-                f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
-            )
+            raise NotFound("Invalid selected rate")
 
         carrier = carrier or Carriers.first(
             carrier_id=selected_rate.carrier_id,
@@ -355,7 +352,7 @@ class Shipments:
             events=[
                 datatypes.TrackingEvent(
                     date=datetime.now().strftime("%Y-%m-%d"),
-                    description="Awaiting package update...",
+                    description="Awaiting update from carrier...",
                     code="UNKNOWN",
                     time=datetime.now().strftime("%H:%M"),
                 )

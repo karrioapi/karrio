@@ -3,6 +3,8 @@ from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import db_task, db_periodic_task
 
+import karrio.server.core.utils as utils
+
 logger = logging.getLogger(__name__)
 DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
     getattr(settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200) / 60
@@ -10,7 +12,7 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
 
 
 @db_periodic_task(crontab(minute=f"*/{DEFAULT_TRACKERS_UPDATE_INTERVAL}"))
-def crawl_tracking_statuses():
+def background_trackers_update():
     from karrio.server.events.task_definitions.base.tracking import update_trackers
 
     try:
@@ -30,25 +32,19 @@ def crawl_tracking_statuses():
 
 
 @db_task()
+@utils.tenant_wrapper
 def notify_webhooks(*args, **kwargs):
     from karrio.server.events.task_definitions.base.webhook import (
         notify_webhook_subscribers,
     )
 
-    try:
-        if settings.MULTI_TENANTS:
-            import django_tenants.utils as tenant_utils
-
-            with tenant_utils.schema_context(kwargs.get("schema")):
-                notify_webhook_subscribers(*args, **kwargs)
-
-        else:
-            notify_webhook_subscribers(*args, **kwargs)
-    except Exception as e:
-        logger.error(f"failed to notify webhooks: {e}")
+    utils.failsafe(
+        lambda: notify_webhook_subscribers(*args, **kwargs),
+        "An error occured during webhook notification: $error",
+    )
 
 
 TASK_DEFINITIONS = [
-    crawl_tracking_statuses,
+    background_trackers_update,
     notify_webhooks,
 ]

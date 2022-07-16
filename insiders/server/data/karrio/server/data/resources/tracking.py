@@ -37,11 +37,12 @@ def tracking_resource(query_params: dict, context, data_fields: dict = None):
             return [field_headers.get(k, k) for k in headers]
 
         def before_save_instance(self, instance, using_transactions, dry_run):
+            instance.status = "unknown"
             instance.created_by_id = context.user.id
             instance.test_mode = query_params.get("test_mode") or True
             instance.events = utils.default_tracking_event(
+                description="Awaiting update from carrier...",
                 code="UNKNOWN",
-                description="Tracker created awaiting carrier update",
             )
 
             return super().before_save_instance(instance, using_transactions, dry_run)

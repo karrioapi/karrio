@@ -36,9 +36,9 @@ def failsafe(callable: Callable[[], T], warning: str = None) -> T:
     """
     try:
         return callable()
-    except Exception:
+    except Exception as e:
         if warning:
-            logger.warning(warning)
+            logger.warning(Template(warning).substitute(error=e))
         return None
 
 
@@ -57,6 +57,20 @@ def async_warpper(func):
             func(*args, **kwargs)
 
         return run_async(_run)
+
+    return wrapper
+
+
+def tenant_wrapper(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if settings.MULTI_TENANTS:
+            import django_tenants.utils as tenant_utils
+
+            with tenant_utils.schema_context(kwargs.get("schema")):
+                return func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
 
     return wrapper
 
@@ -155,9 +169,12 @@ def filter_rate_carrier_compatible_gateways(
 
 
 def is_system_loading_data() -> bool:
-    for fr in inspect.stack():
-        if inspect.getmodulename(fr[1]) == "loaddata":
-            return True
+    try:
+        for fr in inspect.stack():
+            if inspect.getmodulename(fr[1]) == "loaddata":
+                return True
+    except:
+        pass
 
     return False
 

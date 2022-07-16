@@ -44,6 +44,8 @@ class ControlledAccessModel:
 
 
 def register_model(model: T) -> T:
-    transform = lambda model, transformer: pydoc.locate(transformer)(model)
+    transform = lambda model, transformer: (
+        model if transformer is None else pydoc.locate(transformer)(model)
+    )
 
     return functools.reduce(transform, MODEL_TRANSFORMERS, model)

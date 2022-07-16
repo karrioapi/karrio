@@ -48,6 +48,7 @@ class TrackerStatus(Enum):
     in_transit = "in_transit"
     incident = "incident"
     delivered = "delivered"
+    unknown = "unknown"
 
 
 HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
