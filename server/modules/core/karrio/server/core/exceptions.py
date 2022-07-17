@@ -48,10 +48,10 @@ def custom_exception_handler(exc, context):
     logger.exception(exc)
 
     response = exception_handler(exc, context)
+    code = getattr(exc, "code", getattr(exc, "default_code", None))
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
     status_code = None
-    code = None
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, SDKValidationError):
         return Response(

@@ -2,12 +2,13 @@ import functools
 import typing
 import graphene
 import graphene_django
+from django import conf as django
 from rest_framework import exceptions
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
 
 from karrio.core.utils import Enum
+from karrio.server.conf import settings
 from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -48,6 +49,21 @@ def password_required(func):
     return wrapper
 
 
+def api_permissions(api: str):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+
+            if settings.get(api) is False:
+                raise exceptions.PermissionDenied()
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 def metadata_object_types() -> Enum:
     _types = [
         ("carrier", providers.Carrier),
@@ -56,12 +72,12 @@ def metadata_object_types() -> Enum:
         ("tracker", manager.Tracking),
     ]
 
-    if settings.ORDERS_MANAGEMENT:
+    if django.settings.ORDERS_MANAGEMENT:
         import karrio.server.orders.models as orders
 
         _types.append(("order", orders.Order))
 
-    if settings.APPS_MANAGEMENT:
+    if django.settings.APPS_MANAGEMENT:
         import karrio.server.apps.models as apps
 
         _types.append(("app", apps.App))

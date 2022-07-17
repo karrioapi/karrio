@@ -22,6 +22,7 @@ class CreateOrganization(utils.ClientMutation):
         name = graphene.String(required=True)
 
     @classmethod
+    @utils.api_permissions("ALLOW_MULTI_ACCOUNT")
     @utils.login_required
     def mutate_and_get_payload(cls, root, info, **data):
         serializer = serializers.OrganizationModelSerializer(
