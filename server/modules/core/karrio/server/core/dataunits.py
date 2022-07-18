@@ -48,6 +48,7 @@ def contextual_metadata(request: Request):
         "ALLOW_MULTI_ACCOUNT": settings.ALLOW_MULTI_ACCOUNT,
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
+        "AUDIT_LOGGING": settings.AUDIT_LOGGING,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
         "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
         "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,

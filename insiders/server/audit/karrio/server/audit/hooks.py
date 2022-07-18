@@ -1,10 +1,11 @@
 import sys
 from django.db import models
 from auditlog.registry import auditlog
+from karrio.server.conf import settings
 
 
 def register_model(model: models.Model) -> models.Model:
-    if "loaddata" in sys.argv:
+    if ("loaddata" in sys.argv) or (settings.AUDIT_LOGGING is False):
         return model
 
     exclude_fields = ["link"]

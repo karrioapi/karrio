@@ -150,6 +150,9 @@ CUSTOM_CARRIER_DEFINITION = (
 MULTI_TENANTS = importlib.util.find_spec(  # type:ignore
     "karrio.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
+AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
+    "karrio.server.audit"
+) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
 
 
 # components path settings

@@ -2,6 +2,7 @@ from django.db import connection
 from django.conf import settings as base_settings
 
 FEATURE_FLAGS = [
+    "AUDIT_LOGGING",
     "ALLOW_SIGNUP",
     "ALLOW_ADMIN_APPROVED_SIGNUP",
     "ALLOW_MULTI_ACCOUNT",

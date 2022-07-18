@@ -22,6 +22,7 @@ class Metadata(Serializer):
     ALLOW_MULTI_ACCOUNT = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()
+    AUDIT_LOGGING = BooleanField()
     ALLOW_SIGNUP = BooleanField()
     ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
     ADMIN = CharField()
