@@ -16,7 +16,7 @@ from karrio.server.core.authentication import (
     TokenBasicAuthentication,
 )
 from karrio.server.core.permissions import APIAccessPermissions
-from karrio.server.core.models import APILog
+from karrio.server.core.models import APILogIndex, APILog
 
 AccessMixin: typing.Any = pydoc.locate(
     getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
@@ -32,15 +32,25 @@ class LoggingMixin(mixins.LoggingMixin):
             else DP.jsonify(self.log["query_params"])
         )
         response = (
-            None if "response" not in self.log else DP.jsonify(self.log["response"])
+            None
+            if "response" not in self.log
+            else (
+                DP.jsonify(self.log["response"])
+                if isinstance(DP.to_object(self.log["response"]), dict)
+                else self.log["response"]
+            )
+        )
+        entity_id = failsafe(
+            lambda: None if response is None else DP.to_dict(response)["id"]
         )
 
-        log = APILog(
+        log = APILogIndex(
             **{
                 **self.log,
                 "data": data,
                 "response": response,
                 "query_params": query_params,
+                "entity_id": entity_id,
             }
         )
         log.save()

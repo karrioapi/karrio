@@ -211,7 +211,7 @@ class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
-    entity_id = filters.CharFilter(method="entity_filter", field_name="response")
+    entity_id = filters.CharFilter(field_name="apilogindex__entity_id")
     method = filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
@@ -242,9 +242,6 @@ class LogFilter(filters.FilterSet):
             return queryset.filter(status_code__range=[400, 599])
 
         return queryset
-
-    def entity_filter(self, queryset, name, value):
-        return queryset.filter(response__id__icontains=value)
 
 
 class TracingRecordFilter(filters.FilterSet):

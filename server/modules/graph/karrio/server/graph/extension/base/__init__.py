@@ -1,9 +1,9 @@
 import graphene
 import graphene_django.filter as django_filter
 
-import karrio.server.core.filters as filters
-import karrio.server.core.views.api as api
+import karrio.server.core.models as core
 import karrio.server.graph.models as graph
+import karrio.server.core.filters as filters
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as manager
 import karrio.server.tracing.models as tracing
@@ -124,11 +124,11 @@ class Query:
 
     @utils.login_required
     def resolve_log(self, info, **kwargs):
-        return api.APILog.access_by(info.context).filter(**kwargs).first()
+        return core.APILog.access_by(info.context).filter(**kwargs).first()
 
     @utils.login_required
     def resolve_logs(self, info, **kwargs):
-        return api.APILog.access_by(info.context)
+        return core.APILog.access_by(info.context)
 
     @utils.login_required
     def resolve_tacingrecord(self, info, **kwargs):

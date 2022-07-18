@@ -8,6 +8,7 @@ from karrio.server.core.models.base import (
 )
 from karrio.server.core.models.third_party import (
     APILog,
+    APILogIndex,
 )
 from karrio.server.core.models.entity import Entity, OwnedEntity
 
