@@ -2819,7 +2819,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`\n",
+                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`, `unknown`\n",
                         "required": false,
                         "type": "string"
                     },
@@ -3275,9 +3275,12 @@
                 "CUSTOM_CARRIER_DEFINITION",
                 "DATA_IMPORT_EXPORT",
                 "MULTI_ORGANIZATIONS",
+                "ALLOW_MULTI_ACCOUNT",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
+                "AUDIT_LOGGING",
                 "ALLOW_SIGNUP",
+                "ALLOW_ADMIN_APPROVED_SIGNUP",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL"
@@ -3312,6 +3315,10 @@
                     "title": "Multi organizations",
                     "type": "boolean"
                 },
+                "ALLOW_MULTI_ACCOUNT": {
+                    "title": "Allow multi account",
+                    "type": "boolean"
+                },
                 "ORDERS_MANAGEMENT": {
                     "title": "Orders management",
                     "type": "boolean"
@@ -3320,8 +3327,16 @@
                     "title": "Apps management",
                     "type": "boolean"
                 },
+                "AUDIT_LOGGING": {
+                    "title": "Audit logging",
+                    "type": "boolean"
+                },
                 "ALLOW_SIGNUP": {
                     "title": "Allow signup",
+                    "type": "boolean"
+                },
+                "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                    "title": "Allow admin approved signup",
                     "type": "boolean"
                 },
                 "ADMIN": {
@@ -7876,7 +7891,8 @@
                         "pending",
                         "in_transit",
                         "incident",
-                        "delivered"
+                        "delivered",
+                        "unknown"
                     ],
                     "default": "pending"
                 },
@@ -7940,9 +7956,12 @@
                 "CUSTOM_CARRIER_DEFINITION",
                 "DATA_IMPORT_EXPORT",
                 "MULTI_ORGANIZATIONS",
+                "ALLOW_MULTI_ACCOUNT",
                 "ORDERS_MANAGEMENT",
                 "APPS_MANAGEMENT",
+                "AUDIT_LOGGING",
                 "ALLOW_SIGNUP",
+                "ALLOW_ADMIN_APPROVED_SIGNUP",
                 "ADMIN",
                 "OPENAPI",
                 "GRAPHQL",
@@ -7992,6 +8011,10 @@
                     "title": "Multi organizations",
                     "type": "boolean"
                 },
+                "ALLOW_MULTI_ACCOUNT": {
+                    "title": "Allow multi account",
+                    "type": "boolean"
+                },
                 "ORDERS_MANAGEMENT": {
                     "title": "Orders management",
                     "type": "boolean"
@@ -8000,8 +8023,16 @@
                     "title": "Apps management",
                     "type": "boolean"
                 },
+                "AUDIT_LOGGING": {
+                    "title": "Audit logging",
+                    "type": "boolean"
+                },
                 "ALLOW_SIGNUP": {
                     "title": "Allow signup",
+                    "type": "boolean"
+                },
+                "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                    "title": "Allow admin approved signup",
                     "type": "boolean"
                 },
                 "ADMIN": {

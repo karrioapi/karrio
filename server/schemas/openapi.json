@@ -3674,7 +3674,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`\n",
+                        "description": "\ntracker status\nValues: `pending`, `in_transit`, `incident`, `delivered`, `unknown`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -4287,9 +4287,12 @@
             "Metadata": {
                 "required": [
                     "ADMIN",
+                    "ALLOW_ADMIN_APPROVED_SIGNUP",
+                    "ALLOW_MULTI_ACCOUNT",
                     "ALLOW_SIGNUP",
                     "APPS_MANAGEMENT",
                     "APP_NAME",
+                    "AUDIT_LOGGING",
                     "CUSTOM_CARRIER_DEFINITION",
                     "DATA_IMPORT_EXPORT",
                     "GRAPHQL",
@@ -4328,6 +4331,10 @@
                         "title": "Multi organizations",
                         "type": "boolean"
                     },
+                    "ALLOW_MULTI_ACCOUNT": {
+                        "title": "Allow multi account",
+                        "type": "boolean"
+                    },
                     "ORDERS_MANAGEMENT": {
                         "title": "Orders management",
                         "type": "boolean"
@@ -4336,8 +4343,16 @@
                         "title": "Apps management",
                         "type": "boolean"
                     },
+                    "AUDIT_LOGGING": {
+                        "title": "Audit logging",
+                        "type": "boolean"
+                    },
                     "ALLOW_SIGNUP": {
                         "title": "Allow signup",
+                        "type": "boolean"
+                    },
+                    "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                        "title": "Allow admin approved signup",
                         "type": "boolean"
                     },
                     "ADMIN": {
@@ -8855,7 +8870,8 @@
                             "pending",
                             "in_transit",
                             "incident",
-                            "delivered"
+                            "delivered",
+                            "unknown"
                         ]
                     },
                     "estimated_delivery": {
@@ -8913,10 +8929,13 @@
                 "required": [
                     "ADDRESS_AUTO_COMPLETE",
                     "ADMIN",
+                    "ALLOW_ADMIN_APPROVED_SIGNUP",
+                    "ALLOW_MULTI_ACCOUNT",
                     "ALLOW_SIGNUP",
                     "APPS_MANAGEMENT",
                     "APP_NAME",
                     "APP_WEBSITE",
+                    "AUDIT_LOGGING",
                     "CUSTOM_CARRIER_DEFINITION",
                     "DATA_IMPORT_EXPORT",
                     "GRAPHQL",
@@ -8969,6 +8988,10 @@
                         "title": "Multi organizations",
                         "type": "boolean"
                     },
+                    "ALLOW_MULTI_ACCOUNT": {
+                        "title": "Allow multi account",
+                        "type": "boolean"
+                    },
                     "ORDERS_MANAGEMENT": {
                         "title": "Orders management",
                         "type": "boolean"
@@ -8977,8 +9000,16 @@
                         "title": "Apps management",
                         "type": "boolean"
                     },
+                    "AUDIT_LOGGING": {
+                        "title": "Audit logging",
+                        "type": "boolean"
+                    },
                     "ALLOW_SIGNUP": {
                         "title": "Allow signup",
+                        "type": "boolean"
+                    },
+                    "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                        "title": "Allow admin approved signup",
                         "type": "boolean"
                     },
                     "ADMIN": {
