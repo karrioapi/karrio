@@ -1,4 +1,3 @@
-from attr import has
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -53,6 +52,7 @@ def contextual_metadata(request: Request):
         "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
         "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
+        "ALLOW_ADMIN_APPROVED_SIGNUP": settings.ALLOW_ADMIN_APPROVED_SIGNUP,
     }
 
 
