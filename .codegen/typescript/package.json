@@ -20,6 +20,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "glob-parent": "^5.1.2"
+    "glob-parent": "^6.0.1"
   }
 }
