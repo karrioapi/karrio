@@ -1,3 +1,4 @@
+import functools
 import time
 import logging
 import datetime
@@ -73,7 +74,9 @@ def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatch
             # Collect the 5 trackers between the start and end indexes
             batch_trackers = trackers[start:end]
             tracking_numbers = [t.tracking_number for t in batch_trackers]
-            options: Dict = {t.tracking_number: t.options for t in batch_trackers}
+            options: dict = functools.reduce(
+                lambda acc, t: {**acc, **(t.options or {})}, batch_trackers, {}
+            )
 
             logger.debug(f"prepare tracking request for {tracking_numbers}")
 
@@ -131,10 +134,22 @@ def save_updated_trackers(
                         response_events=details.events,
                         current_events=tracker.events,
                     )
+                    options = {
+                        **(tracker.options or {}),
+                        tracker.tracking_number: details.meta,
+                    }
 
                     if events != tracker.events:
                         tracker.events = events
                         changes.append("events")
+
+                    if options != tracker.options:
+                        tracker.options = options
+                        changes.append("options")
+
+                    if details.meta != tracker.meta:
+                        tracker.meta = details.meta
+                        changes.append("meta")
 
                     if details.delivered != tracker.delivered:
                         tracker.delivered = details.delivered
