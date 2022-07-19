@@ -1,15 +1,19 @@
 import logging
 import concurrent.futures as futures
-from django.conf import settings
-from karrio.core.settings import Settings
 
+from karrio.core.settings import Settings
 from karrio.core.utils import DP, Tracer
+from karrio.server.conf import settings
+from karrio.server.core import utils
 from karrio.server.tracing import models
 
 logger = logging.getLogger(__name__)
 
 
-def save_tracing_records(context, tracer: Tracer = None):
+def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
+    if settings.PERSIST_SDK_TRACING is False:
+        return
+
     tracer = tracer or getattr(context, "tracer", Tracer())
 
     # Process Karrio SDK tracing records to persist records of interest.

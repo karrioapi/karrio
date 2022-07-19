@@ -153,6 +153,7 @@ MULTI_TENANTS = importlib.util.find_spec(  # type:ignore
 AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
     "karrio.server.audit"
 ) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
+PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 
 
 # components path settings

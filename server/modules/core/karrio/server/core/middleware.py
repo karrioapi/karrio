@@ -3,6 +3,7 @@ import threading
 from django.db.models import Q
 from django.http import HttpResponse
 from karrio.core.utils import Tracer
+from karrio.server.conf import settings
 
 
 class CreatorAccess:

@@ -53,6 +53,7 @@ def contextual_metadata(request: Request):
         "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
         "ALLOW_ADMIN_APPROVED_SIGNUP": settings.ALLOW_ADMIN_APPROVED_SIGNUP,
+        "PERSIST_SDK_TRACING": settings.PERSIST_SDK_TRACING,
     }
 
 
