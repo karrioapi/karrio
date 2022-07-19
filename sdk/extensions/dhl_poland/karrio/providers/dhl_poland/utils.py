@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "PL"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1"
-            if self.test
+            if self.test_mode
             else "https://dhl24.com.pl/webapi2/provider/service.html?ws=1"
         )
 

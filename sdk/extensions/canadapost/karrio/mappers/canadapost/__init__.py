@@ -9,14 +9,12 @@ import karrio.providers.canadapost.units as units
 METADATA = Metadata(
     id="canadapost",
     label="Canada Post",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
-    options=units.OptionCode,
+    options=units.ShippingOption,
     package_presets=units.PackagePresets,
     services=units.ServiceType,
 )

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "CA"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -22,7 +23,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://sandbox.canpar.com/canshipws/services"
-            if self.test
+            if self.test_mode
             else "https://canship.canpar.com/canshipws/services"
         )
 

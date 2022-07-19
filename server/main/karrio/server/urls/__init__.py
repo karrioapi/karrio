@@ -14,10 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
-from django.contrib.auth.models import Group
 from django.conf import settings
 from django.urls import include, path
+from django.contrib import admin
+from django.contrib.auth.models import Group
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from constance.admin import Config
 
@@ -27,7 +27,6 @@ BASE_PATH = getattr(settings, "BASE_PATH", "")
 admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
-admin.site.index_template = "karrio/admin.html"
 
 try:
     admin.site.unregister(Group)
@@ -59,3 +58,8 @@ urlpatterns = [
         name="karrio:index",
     ),
 ]
+
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]

@@ -30,10 +30,10 @@ class TestPricing(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, RATING_RESPONSE)
 
     def test_apply_surcharge_percentage_to_shipment_rates(self):
@@ -45,10 +45,10 @@ class TestPricing(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, RATING_WITH_PERCENTAGE_RESPONSE)
 
 

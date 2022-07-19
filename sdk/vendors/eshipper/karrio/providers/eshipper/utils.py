@@ -11,12 +11,13 @@ class Settings(BaseSettings):
     password: str
 
     account_country_code: str = None
+    metadata: dict = {}
 
     @property
     def server_url(self):
         return (
             "http://test.eshipper.com/rpc2"
-            if self.test
+            if self.test_mode
             else "http://web.eshipper.com/rpc2"
         )
 

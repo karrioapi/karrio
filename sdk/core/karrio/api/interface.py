@@ -25,7 +25,9 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def abort(error: ShippingSDKDetailedError, gateway: Gateway) -> Tuple[None, List[Message]]:
+def abort(
+    error: ShippingSDKDetailedError, gateway: Gateway
+) -> Tuple[None, List[Message]]:
     """Process aborting helper
 
     Args:
@@ -62,6 +64,7 @@ def fail_safe(gateway: Gateway):
     Returns:
         Decorator
     """
+
     def catcher(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -91,6 +94,7 @@ def check_operation(gateway: Gateway, request: str, **kwargs):
 @attr.s(auto_attribs=True)
 class IDeserialize:
     """A lazy deserializer type class"""
+
     deserialize: Callable[[], S]
 
     def parse(self):
@@ -104,6 +108,7 @@ class IDeserialize:
 @attr.s(auto_attribs=True)
 class IRequestFrom:
     """A lazy request (from) type class"""
+
     action: Callable[[Gateway], IDeserialize]
 
     def from_(self, gateway: Gateway) -> IDeserialize:
@@ -114,6 +119,7 @@ class IRequestFrom:
 @attr.s(auto_attribs=True)
 class IRequestFromMany:
     """A lazy request (from one or many) type class"""
+
     action: Callable[[List[Gateway]], IDeserialize]
 
     def from_(self, *gateways: Gateway) -> IDeserialize:
@@ -134,17 +140,21 @@ class Address:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f'validate an address. payload: {DP.jsonify(args)}')
+        logger.debug(f"validate an address. payload: {DP.jsonify(args)}")
         payload = (
-            args if isinstance(args, AddressValidationRequest) else AddressValidationRequest(**args)
+            args
+            if isinstance(args, AddressValidationRequest)
+            else AddressValidationRequest(**args)
         )
 
         def action(gateway: Gateway) -> IDeserialize:
-            is_valid, abortion = check_operation(gateway, 'validate_address')
+            is_valid, abortion = check_operation(gateway, "validate_address")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_address_validation_request(payload)
+            request: Serializable = gateway.mapper.create_address_validation_request(
+                payload
+            )
             response: Deserializable = gateway.proxy.validate_address(request)
 
             @fail_safe(gateway)
@@ -173,7 +183,7 @@ class Pickup:
         payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
 
         def action(gateway: Gateway):
-            is_valid, abortion = check_operation(gateway, 'schedule_pickup')
+            is_valid, abortion = check_operation(gateway, "schedule_pickup")
             if not is_valid:
                 return abortion
 
@@ -206,7 +216,7 @@ class Pickup:
         )
 
         def action(gateway: Gateway):
-            is_valid, abortion = check_operation(gateway, 'cancel_pickup')
+            is_valid, abortion = check_operation(gateway, "cancel_pickup")
             if not is_valid:
                 return abortion
 
@@ -239,7 +249,7 @@ class Pickup:
         )
 
         def action(gateway: Gateway):
-            is_valid, abortion = check_operation(gateway, 'modify_pickup')
+            is_valid, abortion = check_operation(gateway, "modify_pickup")
             if not is_valid:
                 return abortion
 
@@ -274,7 +284,10 @@ class Rating:
         def action(gateways: List[Gateway]):
             def process(gateway: Gateway):
                 is_valid, abortion = check_operation(
-                    gateway, 'get_rates', origin_country_code=payload.shipper.country_code)
+                    gateway,
+                    "get_rates",
+                    origin_country_code=payload.shipper.country_code,
+                )
                 if not is_valid:
                     return abortion
 
@@ -287,7 +300,9 @@ class Rating:
 
                 return IDeserialize(deserialize)
 
-            deserializable_collection: List[IDeserialize] = exec_async(lambda g: fail_safe(g)(process)(g), gateways)
+            deserializable_collection: List[IDeserialize] = exec_async(
+                lambda g: fail_safe(g)(process)(g), gateways
+            )
 
             def flatten():
                 responses = [p.parse() for p in deserializable_collection]
@@ -319,7 +334,10 @@ class Shipment:
 
         def action(gateway: Gateway):
             is_valid, abortion = check_operation(
-                gateway, 'create_shipment', origin_country_code=payload.shipper.country_code)
+                gateway,
+                "create_shipment",
+                origin_country_code=payload.shipper.country_code,
+            )
             if not is_valid:
                 return abortion
 
@@ -345,14 +363,20 @@ class Shipment:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"void a shipment. payload: {DP.jsonify(args)}")
-        payload = args if isinstance(args, ShipmentCancelRequest) else ShipmentCancelRequest(**args)
+        payload = (
+            args
+            if isinstance(args, ShipmentCancelRequest)
+            else ShipmentCancelRequest(**args)
+        )
 
         def action(gateway: Gateway):
-            is_valid, abortion = check_operation(gateway, 'cancel_shipment')
+            is_valid, abortion = check_operation(gateway, "cancel_shipment")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_cancel_shipment_request(payload)
+            request: Serializable = gateway.mapper.create_cancel_shipment_request(
+                payload
+            )
             response: Deserializable = gateway.proxy.cancel_shipment(request)
 
             @fail_safe(gateway)
@@ -381,7 +405,7 @@ class Tracking:
         payload = args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
 
         def action(gateway: Gateway) -> IDeserialize:
-            is_valid, abortion = check_operation(gateway, 'get_tracking')
+            is_valid, abortion = check_operation(gateway, "get_tracking")
             if not is_valid:
                 return abortion
 

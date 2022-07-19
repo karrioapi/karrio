@@ -1,4 +1,5 @@
 import re
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 
 
@@ -39,7 +40,7 @@ class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
     credit_card = "Card"
 
 
-class Service(Enum):
+class ShippingService(Enum):
     freightcom_all = "0"
     freightcom_usf_holland = "1911"
     freightcom_central_transport = "2029"
@@ -86,12 +87,14 @@ class Service(Enum):
     freightcom_canadapost_xpresspost = "6303"
     freightcom_canadapost_priority = "6302"
 
-    @staticmethod
-    def info(serviceId, carrierId, serviceName, carrierName):
+    @classmethod
+    def info(cls, serviceId, carrierId, serviceName, carrierName):
         carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
-        service = Service.map(str(serviceId))
-        formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
-        service_name = (service.name or formatted_name).replace('freightcom_', '')
+        service = cls.map(str(serviceId))
+        formatted_name = re.sub(
+            r"((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))", r" \1", serviceName
+        )
+        service_name = (service.name or formatted_name).replace("freightcom_", "")
 
         return carrier_name, service.name_or_key, service_name
 
@@ -108,7 +111,7 @@ CARRIER_IDS = {
 }
 
 
-class Option(Flag):
+class ShippingOption(Flag):
     freightcom_saturday_pickup_required = Spec.asFlag("saturdayPickupRequired")
     freightcom_homeland_security = Spec.asFlag("homelandSecurity")
     freightcom_exhibition_convention_site = Spec.asFlag("exhibitionConventionSite")
@@ -128,6 +131,21 @@ class Option(Flag):
     freightcom_is_saturday_service = Spec.asFlag("isSaturdayService")
     freightcom_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
     freightcom_stackable = Spec.asFlag("stackable")
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return units.Options(options, cls)
 
 
 class FreightClass(Enum):

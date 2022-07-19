@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     api_key: str
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "easypost"
     account_country_code: str = None
+    metadata: dict = {}

@@ -39,6 +39,7 @@ class Carriers:
         query: Any = tuple()
         list_filter = kwargs.copy()
         user_filter = get_access_filter(context) if context is not None else []
+        test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
         active_key = (
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
@@ -67,8 +68,8 @@ class Carriers:
             query += (Q(created_by__isnull=True, active=True),)
 
         # Check if the test filter is specified then set it otherwise return all carriers live and test mode
-        if list_filter.get("test") is not None:
-            query += (Q(test=list_filter["test"]),)
+        if test_mode is not None:
+            query += (Q(test_mode=test_mode),)
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get("active") is not None:
@@ -148,9 +149,7 @@ class Address:
         validation = validators.Address.validate(datatypes.Address(**payload))
 
         if validation.success is False:
-            raise exceptions.KarrioAPIException(
-                detail=validation, code="invalid_address"
-            )
+            raise exceptions.APIException(detail=validation, code="invalid_address")
 
         return validation
 
@@ -172,10 +171,7 @@ class Shipments:
         )
 
         if selected_rate is None:
-            raise NotFound(
-                f'Invalid selected_rate_id "{payload.get("selected_rate_id")}" \n '
-                f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
-            )
+            raise NotFound("Invalid selected rate")
 
         carrier = carrier or Carriers.first(
             carrier_id=selected_rate.carrier_id,
@@ -187,15 +183,15 @@ class Shipments:
             {**DP.to_dict(payload), "service": selected_rate.service},
         )
 
-        # The request is wrapped in identity to simplify mocking in tests
+        # The request is wrapped in identity to simplify mocking in tests.
         shipment, messages = identity(
             lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
         )
 
         if shipment is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         def process_meta(parent) -> dict:
@@ -214,7 +210,7 @@ class Shipments:
                 {
                     **DP.to_dict(shipment.selected_rate),
                     "id": f"rat_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
                 if shipment.selected_rate is not None
                 else DP.to_dict(selected_rate)
@@ -264,7 +260,7 @@ class Shipments:
                 "id": f"shp_{uuid.uuid4().hex}",
                 **payload,
                 **DP.to_dict(shipment),
-                "test_mode": carrier.test,
+                "test_mode": carrier.test_mode,
                 "selected_rate": shipment_rate,
                 "service": shipment_rate["service"],
                 "selected_rate_id": shipment_rate["id"],
@@ -309,9 +305,9 @@ class Shipments:
         )
 
         if confirmation is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.ConfirmationResponse(
@@ -343,8 +339,8 @@ class Shipments:
         results, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if not any(results or []) and (raise_on_error or is_sdk_message(messages)):
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
+            raise exceptions.APIException(
+                detail=messages,
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -356,7 +352,7 @@ class Shipments:
             events=[
                 datatypes.TrackingEvent(
                     date=datetime.now().strftime("%Y-%m-%d"),
-                    description="Awaiting package update...",
+                    description="Awaiting update from carrier...",
                     code="UNKNOWN",
                     time=datetime.now().strftime("%H:%M"),
                 )
@@ -373,15 +369,16 @@ class Shipments:
         }
 
         return datatypes.TrackingResponse(
-            tracking=datatypes.Tracking(
-                **{
+            tracking=DP.to_object(
+                datatypes.Tracking,
+                {
                     **DP.to_dict(details),
                     "id": f"trk_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                     "status": compute_tracking_status(result).value,
                     "meta": details.meta or {},
                     "options": options,
-                }
+                },
             ),
             messages=messages,
         )
@@ -408,9 +405,9 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.PickupResponse(
@@ -419,7 +416,7 @@ class Pickups:
                     **payload,
                     **DP.to_dict(pickup),
                     "id": f"pck_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
             ),
             messages=messages,
@@ -447,9 +444,9 @@ class Pickups:
         pickup, messages = identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.PickupResponse(
@@ -457,7 +454,7 @@ class Pickups:
                 **{
                     **payload,
                     **DP.to_dict(pickup),
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                 }
             ),
             messages=messages,
@@ -497,9 +494,9 @@ class Pickups:
         )
 
         if confirmation is None:
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         return datatypes.ConfirmationResponse(
@@ -543,9 +540,9 @@ class Rates:
         rates, messages = identity(lambda: request.from_(*gateways).parse())
 
         if not any(rates) and any(messages):
-            raise exceptions.KarrioAPIException(
-                detail=datatypes.ErrorResponse(messages=messages),
-                status_code=status.HTTP_400_BAD_REQUEST,
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
@@ -564,7 +561,7 @@ class Rates:
                 **{
                     **DP.to_dict(rate),
                     "id": f"rat_{uuid.uuid4().hex}",
-                    "test_mode": carrier.test,
+                    "test_mode": carrier.test_mode,
                     "meta": {
                         **meta,
                         "carrier_connection_id": carrier.id,

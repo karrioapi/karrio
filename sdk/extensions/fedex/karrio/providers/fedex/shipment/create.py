@@ -60,7 +60,7 @@ from karrio.providers.fedex.utils import Settings
 from karrio.providers.fedex.units import (
     PackagingType,
     ServiceType,
-    SpecialServiceType,
+    ShippingOption,
     PackagePresets,
     PaymentType,
     LabelType,
@@ -136,17 +136,21 @@ def shipment_request(
 ) -> Serializable[ProcessShipmentRequest]:
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-
+    packages = Packages(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=ShippingOption,
+    )
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(payload.options, SpecialServiceType)
-    special_services = [
-        getattr(v, "value", v) for k, v in options if k in SpecialServiceType
-    ]
-    label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
+
     customs = payload.customs
     duty = (customs.duty or Duty(paid_by="sender")) if customs is not None else None
     bill_to = CompleteAddress(getattr(duty, "bill_to", None) or shipper)
+    label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
 
     requests = [
         ProcessShipmentRequest(
@@ -166,7 +170,8 @@ def shipment_request(
                 TotalWeight=FedexWeight(
                     Units=packages.weight.unit, Value=packages.weight.value
                 ),
-                TotalInsuredValue=options.insurance,
+                # set inurance coverage value on master package only
+                TotalInsuredValue=(options.insurance if package_index == 1 else None),
                 PreferredCurrency=options.currency,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
@@ -255,7 +260,7 @@ def shipment_request(
                 ),
                 SpecialServicesRequested=(
                     ShipmentSpecialServicesRequested(
-                        SpecialServiceTypes=special_services,
+                        SpecialServiceTypes=[code for _, code, _ in options.as_list()],
                         CodDetail=(
                             CodDetail(
                                 CodCollectionAmount=Money(
@@ -539,7 +544,7 @@ def shipment_request(
         for package_index, package in enumerate(packages, 1)
     ]
 
-    return Serializable(requests, _request_serializer, logged=True)
+    return Serializable(requests, _request_serializer)
 
 
 def _request_serializer(requests: List[ProcessShipmentRequest]) -> List[str]:

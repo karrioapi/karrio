@@ -18,12 +18,13 @@ class Settings(BaseSettings):
     account_country_code: str = None
 
     id: str = None
+    metadata: dict = {}
 
     @property
     def server_url(self):
         return (
             "https://wsbeta.fedex.com:443/web-services"
-            if self.test
+            if self.test_mode
             else "https://ws.fedex.com:443/web-services"
         )
 

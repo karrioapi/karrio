@@ -1,3 +1,4 @@
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.units import MeasurementOptionsType, PackagePreset
 
@@ -69,7 +70,7 @@ class CreditCardType(Flag):
     american_express = "AmericanExpress"
 
 
-class Service(Enum):
+class ShippingOption(Enum):
     purolator_dangerous_goods = Spec.asKey("Dangerous Goods")
     purolator_chain_of_signature = Spec.asKey("Chain of Signature")
     purolator_express_cheque = Spec.asKey("ExpressCheque")
@@ -85,11 +86,40 @@ class Service(Enum):
     """Karrio specific option"""
     purolator_show_alternative_services = Spec.asFlag("Show Alternate Services")
 
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+        service_is_defined: bool = False,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
 
-NON_OFFICIAL_SERVICES = [Service.purolator_show_alternative_services.name]
+        if package_options is not None:
+            options.update(package_options.content)
+
+        # When no specific service is requested, set a default one.
+        options.update(
+            {
+                "purolator_show_alternative_services": options.get(
+                    "purolator_show_alternative_services"
+                )
+                or (not service_is_defined)
+            }
+        )
+
+        def option_filter(key: str) -> bool:
+            return key in cls and key not in NON_OFFICIAL_SERVICES  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)
 
 
-class Product(Enum):
+NON_OFFICIAL_SERVICES = [ShippingOption.purolator_show_alternative_services.name]
+
+
+class ShippingService(Enum):
     purolator_express_9_am = "PurolatorExpress9AM"
     purolator_express_us = "PurolatorExpressU.S."
     purolator_express_10_30_am = "PurolatorExpress10:30AM"

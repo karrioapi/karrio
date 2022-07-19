@@ -1,10 +1,11 @@
-from django.urls import path, re_path
 from jinja2 import Template
-from karrio.server.core.dataunits import contextual_reference
+from django import conf as django
+from django.urls import path, re_path
 from rest_framework import permissions
 from drf_yasg import views, openapi, generators, inspectors
 
 from karrio.server.conf import settings
+from karrio.server.core.dataunits import contextual_reference
 
 VERSION = getattr(settings, "VERSION", "")
 non_null = lambda items: [i for i in items if i is not None]
@@ -33,6 +34,13 @@ def render_schema_description(APP_NAME):
     As a precaution, use API versioning to check a new API version before committing to an upgrade.
 
 
+    ## Environments
+
+    The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
+    In development, it is therefore possible to add carrier connections, get live rates,
+    buy labels, create trackers and schedule pickups in `test_mode`.
+
+
     ## Pagination
 
     All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses,
@@ -56,17 +64,22 @@ def render_schema_description(APP_NAME):
     }}
     ```
 
-    ## Environments
+    ## Metadata
 
-    The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
-    In development, it is therefore possible to add carrier connections, get live rates,
-    buy labels, create trackers and schedule pickups in `test_mode`.
+    Updateable {APP_NAME} objects—including Shipment and Order—have a metadata parameter.
+    You can use this parameter to attach key-value data to these {APP_NAME} objects.
+
+    Metadata is useful for storing additional, structured information on an object.
+    As an example, you could store your user's full name and corresponding unique identifier
+    from your system on a {APP_NAME} Order object.
+
+    Do not store any sensitive information as metadata.
 
     """
 
 
 def render_reference_descriptions(request):
-    refs = contextual_reference(request, reduced=False)
+    refs = contextual_reference(reduced=False)
 
     def format_preset(preset: dict):
         vals = [
@@ -142,7 +155,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
     def get_schema(self, request=None, public=False):
         """Generate a :class:`.Swagger` object with custom tags"""
         tenant = getattr(request, "tenant", None)
-        APP_NAME = settings.get("APP_NAME", tenant)
+        APP_NAME = settings.APP_NAME
 
         if tenant:
             self.info = openapi.Info(
@@ -161,7 +174,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
                 The JWT tokens changes for every new session and have an expiration timestamp.
 
-                To authenticate via JWT access key, use `-H "Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U"`.
+                To authenticate via JWT access key, use `-H "Authorization: Bearer key_c2760bb43...671ce3c09b6e"`.
                 """,
                 },
                 {
@@ -237,9 +250,16 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
                     }
-                    if settings.ORDERS_MANAGEMENT
+                    if django.settings.ORDERS_MANAGEMENT
                     else None
                 ),
+                {
+                    "name": "Pickups",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} pickup booking.
+                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
+                """,
+                },
                 {
                     "name": "Proxy",
                     "description": f"""
@@ -253,13 +273,27 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 > When using the proxy API, no objects are created in the {APP_NAME} system.
                 """,
                 },
-                {
-                    "name": "Pickups",
-                    "description": f"""
-                This is an object representing your a {APP_NAME} pickup booking.
-                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
-                """,
-                },
+                (
+                    {
+                        "name": "Data",
+                        "description": f"""
+                    These operations allow you import or export data from your {APP_NAME} account.
+                    """,
+                    }
+                    if django.settings.DATA_IMPORT_EXPORT
+                    else None
+                ),
+                (
+                    {
+                        "name": "Batches",
+                        "description": f"""
+                    This is an object representing your a {APP_NAME} batch operation.
+                    You can retrieve all batch operations historically for your {APP_NAME} account.
+                    """,
+                    }
+                    if django.settings.DATA_IMPORT_EXPORT
+                    else None
+                ),
                 {
                     "name": "Reference & Enums",
                     "description": render_reference_descriptions(request),

@@ -1,8 +1,12 @@
 from rest_framework import status
 
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.core.serializers import ParcelData, ShipmentStatus
-from karrio.server.serializers import owned_model_serializer, save_many_to_many_data
+from karrio.server.serializers import (
+    owned_model_serializer,
+    save_many_to_many_data,
+    process_dictionaries_mutations,
+)
 
 from karrio.server.manager.serializers.commodity import CommoditySerializer
 import karrio.server.manager.models as models
@@ -45,9 +49,10 @@ class ParcelSerializer(ParcelData):
     def update(
         self, instance: models.Parcel, validated_data: dict, **kwargs
     ) -> models.Parcel:
+        data = process_dictionaries_mutations(["options"], validated_data, instance)
         changes = []
 
-        for key, val in validated_data.items():
+        for key, val in data.items():
             if getattr(instance, key) != val and key != "items":
                 changes.append(key)
                 setattr(instance, key, val)
@@ -65,14 +70,14 @@ def can_mutate_parcel(
         return
 
     if update and shipment.status != ShipmentStatus.draft.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if delete and len(shipment.parcels.all()) == 1:
-        raise KarrioAPIException(
+        raise APIException(
             f"Operation not permitted. The related shipment needs at least one parcel.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",

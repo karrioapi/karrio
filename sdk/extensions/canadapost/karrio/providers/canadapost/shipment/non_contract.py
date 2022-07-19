@@ -28,13 +28,11 @@ from karrio.core.models import (
 )
 from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.units import (
-    OptionCode,
+    ShippingOption,
     ServiceType,
     PackagePresets,
-    CUSTOM_OPTIONS,
-    INTERNATIONAL_NON_DELIVERY_OPTION,
 )
-from karrio.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
 
 
 def parse_shipment_response(
@@ -70,31 +68,22 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, _
 ) -> Serializable[NonContractShipmentType]:
-    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(payload.options, OptionCode)
     customs = CustomsInfo(payload.customs)
-
-    is_intl = (
-        payload.recipient.country_code is not None
-        and payload.recipient.country_code != "CA"
+    package = Packages(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=ShippingOption,
+    ).single
+    options = ShippingOption.to_options(
+        options=payload.options,
+        package_options=package.options,
+        is_international=(
+            payload.recipient.country_code is not None
+            and payload.recipient.country_code != "CA"
+        ),
     )
-    all_options = (
-        [*options]
-        + [
-            (
-                OptionCode.canadapost_return_to_sender.name,
-                OptionCode.canadapost_return_to_sender.value.apply(True),
-            )
-        ]
-        if is_intl
-        and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
-        else [*options]
-    )
-    recipient_postal_code = (
-        (payload.recipient.postal_code or "").replace(" ", "").upper()
-    )
-    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = NonContractShipmentType(
         requested_shipping_point=None,
@@ -113,7 +102,7 @@ def shipment_request(
                     ),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    postal_zip_code=shipper_postal_code,
+                    postal_zip_code=format_ca_postal_code(payload.shipper.postal_code),
                 ),
             ),
             destination=DestinationType(
@@ -131,29 +120,24 @@ def shipment_request(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=recipient_postal_code,
+                    postal_zip_code=format_ca_postal_code(
+                        payload.recipient.postal_code
+                    ),
                 ),
             ),
             options=(
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=getattr(option, "key", option),
-                            option_amount=getattr(option, "value", None),
+                            option_code=code,
+                            option_amount=value,
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for code, option in all_options
-                        if code in OptionCode and code not in CUSTOM_OPTIONS
+                        for _, code, value in options.as_list()
                     ]
                 )
-                if any(
-                    [
-                        code
-                        for code, _ in all_options
-                        if code in OptionCode and code not in CUSTOM_OPTIONS
-                    ]
-                )
+                if any(options.as_list())
                 else None
             ),
             parcel_characteristics=ParcelCharacteristicsType(
@@ -179,7 +163,7 @@ def shipment_request(
             preferences=PreferencesType(
                 show_packing_instructions=False,
                 show_postage_rate=True,
-                show_insured_value=("insurance" in payload.options),
+                show_insured_value=True,
             ),
             references=ReferencesType(
                 cost_centre=options.canadapost_cost_center or payload.reference,
@@ -221,7 +205,7 @@ def shipment_request(
             settlement_info=None,
         ),
     )
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: NonContractShipmentType) -> str:

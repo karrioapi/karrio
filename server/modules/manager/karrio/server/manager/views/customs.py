@@ -14,7 +14,6 @@ from karrio.server.manager.serializers import (
     ErrorResponse,
     CustomsData,
     Customs,
-    Operation,
     CustomsSerializer,
     can_mutate_customs,
 )
@@ -31,12 +30,17 @@ class CustomsList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
+    serializer_class = CustomsInfoList
 
     @swagger_auto_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all customs info",
-        responses={200: CustomsInfoList(), 400: ErrorResponse()},
+        responses={
+            200: CustomsInfoList(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -68,7 +72,11 @@ class CustomsList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a customs info",
         request_body=CustomsData(),
-        responses={200: Customs(), 400: ErrorResponse()},
+        responses={
+            201: Customs(),
+            400: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -120,7 +128,11 @@ class CustomsDetail(APIView):
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a customs info",
-        responses={200: Customs(), 400: ErrorResponse()},
+        responses={
+            200: Customs(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -144,7 +156,13 @@ class CustomsDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a customs info",
         request_body=CustomsData(),
-        responses={200: Customs(), 400: ErrorResponse()},
+        responses={
+            200: Customs(),
+            400: ErrorResponse(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -182,7 +200,12 @@ class CustomsDetail(APIView):
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Discard a customs info",
-        responses={200: Operation(), 400: ErrorResponse()},
+        responses={
+            200: Customs(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         code_examples=[
             {
                 "lang": "bash",
@@ -203,9 +226,7 @@ class CustomsDetail(APIView):
 
         customs.delete(keep_parents=True)
 
-        return Response(
-            Operation(dict(operation="Discard customs info", success=True)).data
-        )
+        return Response(Customs(customs).data)
 
 
 router.urls.append(path("customs_info", CustomsList.as_view(), name="customs-list"))

@@ -6,7 +6,11 @@ from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserM
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.authtoken.models import Token as BaseToken
 
-from karrio.server.core.models import ControlledAccessModel
+from karrio.server.core.models import (
+    ControlledAccessModel,
+    register_model,
+    field_default,
+)
 
 
 class UserManager(DefaultUserManager):
@@ -39,12 +43,13 @@ class UserManager(DefaultUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+@register_model
 class User(AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: list = []
 
     objects = UserManager()
 
@@ -64,10 +69,12 @@ class User(AbstractUser):
         return "user"
 
 
+@register_model
 class Token(BaseToken, ControlledAccessModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
+    test_mode = models.BooleanField(null=False, default=field_default(False))
 
     class Meta:
         verbose_name = _("Token")

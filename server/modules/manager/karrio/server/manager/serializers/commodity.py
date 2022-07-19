@@ -1,8 +1,6 @@
-from django.conf import settings
-from django.db.models import Q
 from rest_framework import status
 
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.core.serializers import CommodityData, ShipmentStatus
 from karrio.server.serializers import owned_model_serializer
 import karrio.server.manager.models as models
@@ -39,14 +37,14 @@ def can_mutate_commodity(
         return
 
     if update and shipment and shipment.status != ShipmentStatus.draft.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"Operation not permitted. The related shipment is '{shipment.status}'.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )
 
     if delete and order and len(order.line_items.all()) == 1:
-        raise KarrioAPIException(
+        raise APIException(
             f"Operation not permitted. The related order needs at least one line_item.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",

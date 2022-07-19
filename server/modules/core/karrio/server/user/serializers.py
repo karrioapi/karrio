@@ -15,16 +15,22 @@ class TokenSerializer(Serializer):
             if hasattr(Token, "org")
             else {}
         )
-        token = Token.objects.filter(user=context.user, **extra).first()
+        token = Token.objects.filter(
+            user=context.user,
+            test_mode=context.test_mode,
+            **extra,
+        ).first()
 
         if token:
             return token
 
-        return Token.objects.create(user=context.user)
+        return Token.objects.create(user=context.user, test_mode=context.test_mode)
 
     @staticmethod
     def retrieve_token(context, org_id: str = None):
         user = getattr(context, "user", None)
+        test_mode = getattr(context, "test_mode", None)
+
         if org_id is not None and hasattr(Token, "org"):
             import karrio.server.orgs.models as orgs
 
@@ -34,13 +40,12 @@ class TokenSerializer(Serializer):
         else:
             org = getattr(context, "org", None)
 
-        ctx = Context(user, org)
+        ctx = Context(user, org, test_mode)
         tokens = Token.access_by(ctx)
 
+        if tokens.exists():
+            return tokens.first()
+
         return (
-            tokens.first()
-            if tokens.exists()
-            else SerializerDecorator[TokenSerializer](data={}, context=ctx)
-            .save()
-            .instance
+            SerializerDecorator[TokenSerializer](data={}, context=ctx).save().instance
         )

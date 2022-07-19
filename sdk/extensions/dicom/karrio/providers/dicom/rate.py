@@ -7,7 +7,7 @@ from dicom_lib.rates import (
     Rate,
     RateResponse,
 )
-from karrio.core.units import Packages, Services, Options
+from karrio.core.units import Packages, Services
 from karrio.core.utils import Serializable, DP, NF
 from karrio.core.models import ChargeDetails, RateRequest, RateDetails, Message
 
@@ -15,7 +15,7 @@ from karrio.providers.dicom.units import (
     UnitOfMeasurement,
     ParcelType,
     Service,
-    Option,
+    ShippingOption,
     PaymentType,
 )
 from karrio.providers.dicom.error import parse_error_response
@@ -74,7 +74,9 @@ def rate_request(
     service = (
         Services(payload.services, Service).first or Service.dicom_ground_delivery
     ).value
-    options = Options(payload.options, Option)
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
 
     request = DicomRateRequest(
         category="Parcel",
@@ -115,12 +117,12 @@ def rate_request(
         promoCodes=None,
         surcharges=[
             Surcharge(
-                type=getattr(option, "key", option),
-                value=getattr(option, "value", None),
+                type=code,
+                value=value,
             )
-            for _, option in options
+            for _, code, value in options.as_list()
         ],
         appointment=None,
     )
 
-    return Serializable(request, DP.to_dict, logged=True)
+    return Serializable(request, DP.to_dict)

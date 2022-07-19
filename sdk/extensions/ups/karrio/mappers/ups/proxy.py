@@ -21,9 +21,10 @@ class Proxy(BaseProxy):
     def _send_request(self, path: str, request: Serializable[Any]) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
             method="POST",
+            headers={"Content-Type": "application/xml"},
         )
 
     def validate_address(
@@ -48,6 +49,7 @@ class Proxy(BaseProxy):
         def get_tracking(tracking_number: str):
             return tracking_number, http(
                 url=f"{self.settings.server_url}/track/v1/details/{tracking_number}",
+                trace=self.trace_as("json"),
                 headers={
                     "Accept": "application/json",
                     "Content-Type": "application/json",

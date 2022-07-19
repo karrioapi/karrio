@@ -10,26 +10,29 @@ class Proxy(BaseProxy):
     def get_rates(self, request: Serializable) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
             method="POST",
+            headers={"Content-Type": "application/xml"},
         )
         return Deserializable(response, XP.to_xml)
 
     def create_shipment(self, request: Serializable) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
             method="POST",
+            headers={"Content-Type": "application/xml"},
         )
         return Deserializable(response, XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
             method="POST",
+            headers={"Content-Type": "application/xml"},
         )
         return Deserializable(response, XP.to_xml)

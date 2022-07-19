@@ -2,39 +2,30 @@ import attr
 import logging
 from typing import Any, Callable, Generic, TypeVar
 
+from karrio.core.utils.helpers import identity
+
 logger = logging.getLogger(__name__)
 
 XML_str = str
 T = TypeVar("T")
 
 
-def _identity(value: Any) -> Any:
-    return value
-
-
 @attr.s(auto_attribs=True)
 class Serializable(Generic[T]):
     value: T
-    _serializer: Callable[[T], Any] = _identity
-    logged: bool = False
+    _serializer: Callable[[T], Any] = identity
 
     def serialize(self) -> Any:
         serialized_value = self._serializer(self.value)
-
-        if self.logged:
-            logger.info("serialized request::" f"{serialized_value}")
-
+        logger.debug(serialized_value)
         return serialized_value
 
 
 @attr.s(auto_attribs=True)
 class Deserializable(Generic[T]):
     value: T
-    _deserializer: Callable[[T], Any] = _identity
-    logged: bool = False
+    _deserializer: Callable[[T], Any] = identity
 
     def deserialize(self) -> Any:
-        if self.logged:
-            logger.info("deserialized response::" f"{self.value}")
-
+        logger.debug(self.value)
         return self._deserializer(self.value)

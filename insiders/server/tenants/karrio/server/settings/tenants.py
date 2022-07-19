@@ -19,6 +19,7 @@ SHARED_APPS = [
     *BASE_APPS,
     "constance.backends.database",
     *HEALTH_CHECK_APPS,
+    *OTP_APPS,
 ]
 
 EXCLUDED_TENANT_APPS = ["constance", "constance.backends.database"]
@@ -26,7 +27,6 @@ EXCLUDED_TENANT_APPS = ["constance", "constance.backends.database"]
 TENANT_APPS = [app for app in INSTALLED_APPS if app not in EXCLUDED_TENANT_APPS]
 
 INSTALLED_APPS = ["django_tenants", "karrio.server.tenants", *INSTALLED_APPS]
-
 
 TENANT_MODEL = "tenants.Client"  # app.Model
 TENANT_DOMAIN_MODEL = "tenants.Domain"  # app.Model

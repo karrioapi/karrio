@@ -8,7 +8,10 @@ from django.urls import path
 from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
-    RateRequest, RateResponse, ErrorResponse, TestFilters
+    RateRequest,
+    RateResponse,
+    ErrorResponse,
+    ErrorMessages,
 )
 from karrio.server.core.gateway import Rates
 from karrio.server.proxy.router import router
@@ -23,26 +26,30 @@ Use this service to fetch a shipping rates available.
 
 
 class RateViewAPI(APIView):
-
     @swagger_auto_schema(
-        tags=['Proxy'],
+        tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
         operation_summary="Fetch shipment rates",
         operation_description=DESCRIPTIONS,
-        responses={200: RateResponse(), 400: ErrorResponse()},
+        responses={
+            200: RateResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         request_body=RateRequest(),
-        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         payload = SerializerDecorator[RateRequest](data=request.data).data
-        test_filter = SerializerDecorator[TestFilters](data=request.query_params).data
 
-        response = Rates.fetch(payload, context=request, **test_filter)
+        response = Rates.fetch(payload, context=request)
 
         return Response(
             RateResponse(response).data,
-            status=status.HTTP_207_MULTI_STATUS if len(response.messages) > 0 else status.HTTP_201_CREATED
+            status=status.HTTP_207_MULTI_STATUS
+            if len(response.messages) > 0
+            else status.HTTP_200_OK,
         )
 
 
-router.urls.append(path('proxy/rates', RateViewAPI.as_view(), name="shipment-rates"))
+router.urls.append(path("proxy/rates", RateViewAPI.as_view(), name="shipment-rates"))

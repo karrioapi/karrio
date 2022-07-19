@@ -7,7 +7,7 @@ from usps_lib.evs_gxg_get_label_request import (
     ItemDetailType,
 )
 from karrio.core.utils import Serializable, Element, XP, DF, Location
-from karrio.core.units import CustomsInfo, Packages, Options, Weight, WeightUnit
+from karrio.core.units import CustomsInfo, Packages, Weight, WeightUnit
 from karrio.core.models import (
     Documents,
     ShipmentRequest,
@@ -16,7 +16,7 @@ from karrio.core.models import (
     Customs,
 )
 from karrio.providers.usps_international.units import (
-    ShipmentOption,
+    ShippingOption,
     ContentType,
     PackagingType,
     Incoterm,
@@ -50,14 +50,18 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[eVSGXGGetLabelRequest]:
-    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
-    options = Options(payload.options, ShipmentOption)
+    package = Packages(
+        payload.parcels,
+        package_option_type=ShippingOption,
+        max_weight=Weight(70, WeightUnit.LB),
+    ).single
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+    )
 
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
     incoterm = Incoterm[customs.incoterm or "OTHER"].value
-    insurance = getattr(
-        (options.usps_insurance_global_express_guaranteed), "value", options.insurance
-    )
 
     request = eVSGXGGetLabelRequest(
         USERID=settings.username,
@@ -116,7 +120,7 @@ def shipment_request(
         PartiesToTransaction=None,
         Agreement=("N" if customs.certify else "Y"),
         Postage=None,
-        InsuredValue=insurance,
+        InsuredValue=ShippingOption.insurance_from(options, "global_express"),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         Length=package.length.IN,
@@ -167,4 +171,4 @@ def shipment_request(
         ChargebackCode=None,
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

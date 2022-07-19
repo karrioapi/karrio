@@ -29,7 +29,7 @@ class CarrierSettings:
         self,
         carrier_name: str,
         carrier_id: str,
-        test: bool = None,
+        test_mode: bool = None,
         active: bool = None,
         id: str = None,
         **kwargs
@@ -37,7 +37,7 @@ class CarrierSettings:
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
         self.active = active
-        self.test = test
+        self.test_mode = test_mode
         self.id = id
 
         for name, value in kwargs.items():
@@ -207,7 +207,7 @@ class Shipment:
     tracking_url: str = None
     tracker_id: str = None
     status: str = ""
-    meta: dict = None
+    meta: dict = {}
     id: str = None
 
     metadata: Dict = {}
@@ -250,11 +250,6 @@ class Tracking:
     test_mode: bool = None
     options: Dict = {}
     meta: dict = None
-
-
-@attr.s(auto_attribs=True)
-class ErrorResponse:
-    messages: List[Message] = JList[Message]
 
 
 @attr.s(auto_attribs=True)

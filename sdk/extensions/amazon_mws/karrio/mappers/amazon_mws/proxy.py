@@ -50,15 +50,12 @@ class Proxy(BaseProxy):
     def _send_request(
         self, path: str, request: Serializable = None, method: str = "POST"
     ) -> str:
-        data: dict = (
-            dict(data=bytearray(request.serialize(), "utf-8"))
-            if request is not None
-            else dict()
-        )
+        data: dict = dict(data=request.serialize()) if request is not None else dict()
         return http(
             **{
-                "method": method,
                 "url": f"{self.settings.server_url}{path}",
+                "trace": self.trace_as("json"),
+                "method": method,
                 "headers": {
                     "Content-Type": "application/json",
                     "x-amz-access-token": self.settings.x_amz_access_token,

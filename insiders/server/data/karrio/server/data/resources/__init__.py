@@ -1,17 +1,37 @@
 from django.contrib.auth import get_user_model
-from karrio.server.data.resources.shipments import shipment_resource
-from karrio.server.data.resources.orders import order_resource
+from import_export import resources
+
+import karrio.server.data.resources.shipments as shipments
+import karrio.server.data.resources.orders as orders
+import karrio.server.data.resources.tracking as tracking
+import karrio.server.data.models as models
 
 User = get_user_model()
 
 
-def export(resource: str, query_params: dict, context) -> dict:
+def export(
+    resource_type: str, query_params: dict, context, data_fields: dict = None
+) -> dict:
     """Generate a file to export."""
 
-    if resource == "orders":
-        return order_resource(query_params, context).export()
+    resource = get_resource(
+        resource_type, query_params, context, data_fields=data_fields
+    )
 
-    if resource == "shipments":
-        return shipment_resource(query_params, context).export()
+    return resource.export()
 
-    raise Exception("Unknown resource")
+
+def get_resource(
+    resource_type: str, params: dict, context, data_fields: dict = None
+) -> resources.ModelResource:
+
+    if resource_type == "orders":
+        return orders.order_resource(params, context, data_fields=data_fields)
+
+    if resource_type == "tracking":
+        return tracking.tracking_resource(params, context, data_fields=data_fields)
+
+    if resource_type == "shipments":
+        return shipments.shipment_resource(params, context, data_fields=data_fields)
+
+    raise Exception("Unsupported resource")

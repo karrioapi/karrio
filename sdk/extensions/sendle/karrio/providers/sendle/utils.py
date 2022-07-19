@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "AU"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -18,7 +19,9 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://sandbox.sendle.com" if self.test else "https://api.sendle.com"
+        return (
+            "https://sandbox.sendle.com" if self.test_mode else "https://api.sendle.com"
+        )
 
     @property
     def authorization(self):

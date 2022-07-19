@@ -14,7 +14,7 @@ from karrio.core.units import Packages, Currency, Options, Services, Country
 
 from karrio.providers.usps.units import (
     ShipmentService,
-    ShipmentOption,
+    ShippingOption,
     PackagingType,
     ServiceClassID,
     FirstClassMailType,
@@ -92,31 +92,14 @@ def rate_request(
     ):
         raise DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels).single
-    options = Options(payload.options, ShipmentOption)
+    package = Packages(payload.parcels, package_option_type=ShippingOption).single
+    container = PackagingType[package.packaging_type or "your_packaging"]
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+    )
     service = (
         Services(payload.services, ShipmentService).first or ShipmentService.usps_all
-    )
-    special_services = [
-        getattr(option, "value", option)
-        for key, option in options
-        if "usps_option" not in key
-    ]
-    insurance = next(
-        (option.value for key, option in options if "usps_insurance" in key),
-        options.insurance,
-    )
-
-    container = PackagingType[package.packaging_type or "your_packaging"]
-    sort_level = (
-        SortLevelType[container.name].value
-        if service.value in ["All", "Online"]
-        else None
-    )
-    mail_type = (
-        FirstClassMailType[container.name].value
-        if "first_class" in service.value
-        else None
     )
 
     request = RateV4Request(
@@ -126,7 +109,11 @@ def rate_request(
             PackageType(
                 ID=0,
                 Service=service.value,
-                FirstClassMailType=mail_type,
+                FirstClassMailType=(
+                    FirstClassMailType[container.name].value
+                    if "first_class" in service.value
+                    else None
+                ),
                 ZipOrigination=payload.shipper.postal_code,
                 ZipDestination=payload.recipient.postal_code,
                 Pounds=package.weight.LB,
@@ -136,16 +123,22 @@ def rate_request(
                 Length=package.length.IN,
                 Height=package.height.IN,
                 Girth=package.girth.value,
-                Value=insurance,
+                Value=options.declared_value,
                 AmountToCollect=options.cash_on_delivery,
                 SpecialServices=(
-                    SpecialServicesType(SpecialService=[s for s in special_services])
-                    if any(special_services)
+                    SpecialServicesType(
+                        SpecialService=[code for _, code, value in options.as_list()]
+                    )
+                    if any(options.as_list())
                     else None
                 ),
                 Content=None,
                 GroundOnly=options.usps_option_ground_only,
-                SortBy=sort_level,
+                SortBy=(
+                    SortLevelType[container.name].value
+                    if service.value in ["All", "Online"]
+                    else None
+                ),
                 Machinable=(options.usps_option_machinable_item or False),
                 ReturnLocations=options.usps_option_return_service_info,
                 ReturnServiceInfo=options.usps_option_return_service_info,
@@ -159,4 +152,4 @@ def rate_request(
         ],
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

@@ -1,4 +1,3 @@
-from attr import has
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -45,19 +44,24 @@ def contextual_metadata(request: Request):
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",
         "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
+        "ALLOW_MULTI_ACCOUNT": settings.ALLOW_MULTI_ACCOUNT,
         "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
         "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
+        "AUDIT_LOGGING": settings.AUDIT_LOGGING,
         "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
         "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
         "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
         "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
+        "ALLOW_ADMIN_APPROVED_SIGNUP": settings.ALLOW_ADMIN_APPROVED_SIGNUP,
     }
 
 
-def contextual_reference(request: Request, reduced: bool = True):
+def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
+    import karrio.server.core.middleware as middleware
 
+    request = request or middleware.SessionContext.get_current_request()
     is_authenticated = (
         request.user.is_authenticated if hasattr(request, "user") else False
     )

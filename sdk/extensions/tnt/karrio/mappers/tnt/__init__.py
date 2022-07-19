@@ -9,14 +9,12 @@ import karrio.providers.tnt.units as units
 METADATA = Metadata(
     id="tnt",
     label="TNT",
-
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
-
     # Data Units
-    options=units.ShipmentOption,
+    options=units.ShippingOption,
     package_presets=units.PackagePresets,
     packaging_types=units.PackageType,
     services=units.ShipmentService,

@@ -48,6 +48,7 @@ class TrackerStatus(Enum):
     in_transit = "in_transit"
     incident = "incident"
     delivered = "delivered"
+    unknown = "unknown"
 
 
 HTTP_STATUS = [getattr(http_status, a) for a in dir(http_status) if "HTTP" in a]
@@ -109,15 +110,6 @@ class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
 
-class TestFilters(FlagsSerializer):
-    test = FlagField(
-        required=False,
-        allow_null=True,
-        default=False,
-        help_text="The test flag indicates whether to use a carrier configured for test.",
-    )
-
-
 class CarrierSettings(Serializer):
     id = CharField(required=True, help_text="A unique address identifier")
     carrier_name = ChoiceField(
@@ -126,7 +118,7 @@ class CarrierSettings(Serializer):
     carrier_id = CharField(
         required=True, help_text="Indicates a specific carrier configuration name."
     )
-    test = BooleanField(
+    test_mode = BooleanField(
         required=True,
         help_text="""
     The test flag indicates whether to use a carrier configured for test.
@@ -141,15 +133,18 @@ class CarrierSettings(Serializer):
     object_type = CharField(default="carrier", help_text="Specifies the object type")
 
 
-class Message(Serializer):
+class APIError(Serializer):
+    message = CharField(required=False, help_text="The error or warning message")
+    code = CharField(required=False, help_text="The message code")
+    details = DictField(required=False, help_text="any additional details")
+
+
+class Message(APIError):
 
     carrier_name = CharField(required=False, help_text="The targeted carrier")
     carrier_id = CharField(
         required=False, help_text="The targeted carrier name (unique identifier)"
     )
-    message = CharField(required=False, help_text="The error or warning message")
-    code = CharField(required=False, help_text="The message code")
-    details = DictField(required=False, help_text="any additional details")
 
 
 class AddressValidation(Serializer):
@@ -258,9 +253,9 @@ class AddressData(AugmentedAddressSerializer):
         allow_null=True,
         max_length=100,
         help_text="""
-    The address line with street number <br/>
-    **(required for shipment purchase)**
-    """,
+        The address line with street number <br/>
+        **(required for shipment purchase)**
+        """,
     )
     address_line2 = CharField(
         required=False,
@@ -344,21 +339,21 @@ class CommodityData(Serializer):
         required=False,
         allow_null=True,
         help_text="""
-    <details>
-    <summary>Commodity user references metadata.</summary>
+        <details>
+        <summary>Commodity user references metadata.</summary>
 
-    ```
-    {
-        "part_number": "5218487281",
-        "reference1": "# ref 1",
-        "reference2": "# ref 2",
-        "reference3": "# ref 3",
-        "reference4": "# ref 4",
-        ...
-    }
-    ```
-    </details>
-    """,
+        ```
+        {
+            "part_number": "5218487281",
+            "reference1": "# ref 1",
+            "reference2": "# ref 2",
+            "reference3": "# ref 3",
+            "reference4": "# ref 4",
+            ...
+        }
+        ```
+        </details>
+        """,
     )
 
 
@@ -382,15 +377,15 @@ class ParcelData(PresetSerializer):
         allow_null=True,
         max_length=50,
         help_text=f"""
-    The parcel's packaging type.
+        The parcel's packaging type.
 
-    **Note that the packaging is optional when using a package preset**
+        **Note that the packaging is optional when using a package preset**
 
-    values: <br/>
-    {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
+        values: <br/>
+        {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
 
-    For carrier specific packaging types, please consult the reference.
-    """,
+        For carrier specific packaging types, please consult the reference.
+        """,
     )
     package_preset = CharField(
         required=False,
@@ -439,6 +434,24 @@ class ParcelData(PresetSerializer):
         allow_null=True,
         max_length=100,
         help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
+    )
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="""
+        <details>
+        <summary>Parcel specific options.</summary>
+
+        ```
+        {
+            "insurance": "100.00",
+            "insured_by": "carrier",
+        }
+        ```
+
+        Please check the docs for more details.
+        </details>
+        """,
     )
 
 
@@ -1433,7 +1446,11 @@ class TrackingResponse(Serializer):
     )
 
 
-class ErrorResponse(Serializer):
+class ErrorMessages(Serializer):
     messages = Message(
         many=True, required=False, help_text="The list of error messages"
     )
+
+
+class ErrorResponse(Serializer):
+    errors = APIError(many=True, required=False, help_text="The list of API errors")

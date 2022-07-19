@@ -100,6 +100,7 @@ shipment_data = {
             "dimension_unit": "CM",
             "description": "desc.",
             "packaging_type": "eshipper_pallet",
+            "options": {"insurance": 100},
         }
     ],
     "service": "eshipper_fedex_ground",
@@ -173,7 +174,7 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
             <CODReturnAddress codCompany="Test Company" codName="RizTo" codAddress1="650 CIT Drive" codCity="Livingston" codStateCode="BC" codZip="V3N4R3" codCountry="CA"/>
         </COD>
         <Packages type="Pallet">
-            <Package length="3" width="5" height="4" weight="5" type="Pallet" freightClass="70" description="desc."/>
+            <Package length="3" width="5" height="4" weight="5" type="Pallet" freightClass="70" insuranceAmount="100." description="desc."/>
         </Packages>
         <Payment type="3rd Party"/>
         <CustomsInvoice>

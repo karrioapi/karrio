@@ -24,7 +24,7 @@ from karrio.providers.canpar.utils import Settings
 from karrio.providers.canpar.units import (
     WeightUnit,
     DimensionUnit,
-    Option,
+    ShippingOption,
     Service,
     Charges,
 )
@@ -81,36 +81,14 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels)
     service_type = Services(payload.services, Service).first
-    options = Options(payload.options, Option)
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
+    )
 
     shipment_date = DF.fdatetime(
         options.shipment_date or time.strftime("%Y-%m-%d"),
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%S",
-    )
-    premium: Optional[bool] = next(
-        (
-            True
-            for option, _ in options
-            if option
-            in [
-                Option.canpar_ten_am.name,
-                Option.canpar_noon.name,
-                Option.canpar_saturday.name,
-            ]
-        ),
-        None,
-    )
-    nsr = next(
-        (
-            Option[o].value
-            for o in [
-                "canpar_no_signature_required",
-                "canpar_not_no_signature_required",
-            ]
-            if o in options
-        ),
-        None,
     )
 
     request = create_envelope(
@@ -143,7 +121,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                     handling=None,
                     handling_type=None,
                     instruction=None,
-                    nsr=nsr,
+                    nsr=ShippingOption.is_nsr(options),
                     packages=[
                         Package(
                             alternative_reference=None,
@@ -176,7 +154,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         province=payload.shipper.state_code,
                         residential=payload.shipper.residential,
                     ),
-                    premium=premium,
+                    premium=ShippingOption.is_premium(options),
                     proforma=None,
                     reported_weight_unit=WeightUnit.LB.value,
                     send_email_to_delivery=payload.recipient.email,
@@ -202,5 +180,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
             special_prefixes=dict(shipment_children="xsd1"),
         ),
-        logged=True,
     )

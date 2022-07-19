@@ -104,6 +104,7 @@ shipment_data = {
             "weight": 2.0,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "options": {"insurance": 90.0},
         }
     ],
     "service": "usps_priority_mail_international_large_flat_rate_box",
@@ -195,7 +196,8 @@ ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
             <CountryOfOrigin>United States</CountryOfOrigin>
         </ItemDetail>
     </ShippingContents>
-    <Insured>n</Insured>
+    <Insured>y</Insured>
+    <InsuredAmount>90.0</InsuredAmount>
     <GrossPounds>4</GrossPounds>
     <GrossOunces>70</GrossOunces>
     <ContentType>MERCHANDISE</ContentType>

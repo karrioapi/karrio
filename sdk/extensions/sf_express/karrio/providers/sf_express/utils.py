@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = None
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -25,7 +26,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://sfapi-sbox.sf-express.com/std/service"
-            if self.test
+            if self.test_mode
             else "https://sfapi.sf-express.com/std/service"
         )
 

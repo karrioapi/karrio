@@ -2,12 +2,13 @@ from functools import partial
 from django.db import models
 from oauth2_provider.models import Application
 
-from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid
-from karrio.server.orgs.models import Organization
+import karrio.server.core.utils as utils
+import karrio.server.orgs.models as orgs
+import karrio.server.core.models as core
 
 
-class App(OwnedEntity):
+@core.register_model
+class App(core.OwnedEntity):
     class Meta:
         db_table = "app"
         verbose_name = "App"
@@ -18,7 +19,7 @@ class App(OwnedEntity):
         max_length=50,
         editable=False,
         primary_key=True,
-        default=partial(uuid, prefix="app_"),
+        default=partial(core.uuid, prefix="app_"),
     )
 
     display_name = models.CharField(max_length=50)
@@ -34,16 +35,22 @@ class App(OwnedEntity):
     features = models.JSONField(
         blank=True,
         null=True,
-        default=partial(identity, value=[]),
+        default=partial(utils.identity, value=[]),
     )
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=partial(utils.identity, value={})
     )
 
     registration = models.OneToOneField(
         Application, on_delete=models.CASCADE, related_name="app"
     )
-    org = models.ManyToManyField(Organization, related_name="apps", through="AppLink")
+    org = models.ManyToManyField(
+        orgs.Organization, related_name="apps", through="AppLink"
+    )
+
+    def delete(self, *args, **kwargs):
+        self.registration.delete()
+        return super().delete(*args, **kwargs)
 
     @property
     def object_type(self):
@@ -62,7 +69,8 @@ class App(OwnedEntity):
         return self.registration.redirect_uris
 
 
-class AppInstallation(OwnedEntity):
+@core.register_model
+class AppInstallation(core.OwnedEntity):
     class Meta:
         db_table = "app-installation"
         verbose_name = "App Installation"
@@ -73,16 +81,16 @@ class AppInstallation(OwnedEntity):
         max_length=50,
         editable=False,
         primary_key=True,
-        default=partial(uuid, prefix="ins_"),
+        default=partial(core.uuid, prefix="ins_"),
     )
 
     access_scopes = models.JSONField(
         blank=True,
         null=True,
-        default=partial(identity, value=[]),
+        default=partial(utils.identity, value=[]),
     )
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=partial(utils.identity, value={})
     )
 
     app = models.ForeignKey(
@@ -92,7 +100,7 @@ class AppInstallation(OwnedEntity):
         related_name="installations",
     )
     org = models.ManyToManyField(
-        Organization, related_name="installations", through="AppInstallationLink"
+        orgs.Organization, related_name="installations", through="AppInstallationLink"
     )
 
     @property
@@ -106,14 +114,16 @@ class AppInstallation(OwnedEntity):
 
 class AppLink(models.Model):
     org = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, related_name="app_links"
+        orgs.Organization, on_delete=models.CASCADE, related_name="app_links"
     )
     item = models.OneToOneField(App, on_delete=models.CASCADE, related_name="link")
 
 
 class AppInstallationLink(models.Model):
     org = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, related_name="app_installation_links"
+        orgs.Organization,
+        on_delete=models.CASCADE,
+        related_name="app_installation_links",
     )
     item = models.OneToOneField(
         AppInstallation, on_delete=models.CASCADE, related_name="link"

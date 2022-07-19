@@ -24,9 +24,12 @@ class References(Serializer):
     CUSTOM_CARRIER_DEFINITION = BooleanField()
     DATA_IMPORT_EXPORT = BooleanField()
     MULTI_ORGANIZATIONS = BooleanField()
+    ALLOW_MULTI_ACCOUNT = BooleanField()
     ORDERS_MANAGEMENT = BooleanField()
     APPS_MANAGEMENT = BooleanField()
+    AUDIT_LOGGING = BooleanField()
     ALLOW_SIGNUP = BooleanField()
+    ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()
@@ -60,7 +63,7 @@ class References(Serializer):
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
-    return Response(dataunits.contextual_reference(request), status=status.HTTP_200_OK)
+    return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
 
 
 router.urls.append(path("references", references))

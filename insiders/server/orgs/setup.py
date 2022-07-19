@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.orgs",
-    version="2022.4",
+    version="2022.6",
     description="Multi-carrier shipping API organization module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,6 +20,7 @@ setup(
         "karrio.server.core",
         "karrio.server.graph",
         "karrio.server.orders",
+        "karrio.server.audit",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

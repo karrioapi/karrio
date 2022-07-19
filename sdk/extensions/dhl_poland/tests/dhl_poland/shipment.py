@@ -76,9 +76,7 @@ class TestDHLPolandShipment(unittest.TestCase):
         with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                karrio.Shipment.cancel(self.VoidShipmentRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(
@@ -120,7 +118,7 @@ shipment_data = {
     "parcels": [
         {
             "height": 3,
-            "length": 10,
+            "length": 10.0,
             "width": 3,
             "weight": 1.0,
         }
@@ -397,7 +395,7 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="utf-8"?>
 
 VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
     <soap-env:Body>
-        <soap-env:deleteShipment>
+        <deleteShipment>
             <authData>
                 <username>username</username>
                 <password>password</password>
@@ -405,7 +403,7 @@ VoidShipmentRequestXML = """<soap-env:Envelope xmlns:soap-env="http://schemas.xm
             <shipment>
                 <shipmentIdentificationNumber>10000696</shipmentIdentificationNumber>
             </shipment>
-        </soap-env:deleteShipment>
+        </deleteShipment>
     </soap-env:Body>
 </soap-env:Envelope>
 """

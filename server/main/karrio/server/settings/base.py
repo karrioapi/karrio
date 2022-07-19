@@ -44,6 +44,7 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
 
 # HTTPS configuration
 if USE_HTTPS is True:
@@ -79,6 +80,10 @@ KARRIO_CONF = [
             "urls": "karrio.server.providers.urls",
         },
         {
+            "app": "karrio.server.tracing",
+            "module": "karrio.server.tracing",
+        },
+        {
             "app": "karrio.server.graph",
             "module": "karrio.server.graph",
             "urls": "karrio.server.graph.urls",
@@ -111,24 +116,43 @@ KARRIO_CONF = [
         {"app": "karrio.server.pricing", "module": "karrio.server.pricing"},
         {"app": "karrio.server.apps", "module": "karrio.server.apps"},
     ]
-    if importlib.util.find_spec(app["module"]) is not None
+    if importlib.util.find_spec(app["module"]) is not None  # type:ignore
 ]
 
 KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
 KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
-MULTI_ORGANIZATIONS = importlib.util.find_spec("karrio.server.orgs") is not None
-ORDERS_MANAGEMENT = importlib.util.find_spec("karrio.server.orders") is not None
-APPS_MANAGEMENT = importlib.util.find_spec("karrio.server.apps") is not None
-DOCUMENTS_MANAGEMENT = importlib.util.find_spec("karrio.server.documents") is not None
-DATA_IMPORT_EXPORT = importlib.util.find_spec("karrio.server.data") is not None
-CUSTOM_CARRIER_DEFINITION = (
-    importlib.util.find_spec("karrio.mappers.generic") is not None
+ALLOW_ADMIN_APPROVED_SIGNUP = config(
+    "ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool
 )
-MULTI_TENANTS = importlib.util.find_spec(
+ALLOW_SIGNUP = (
+    config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
+)
+MULTI_ORGANIZATIONS = (
+    importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
+)
+ALLOW_MULTI_ACCOUNT = MULTI_ORGANIZATIONS
+ORDERS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
+)
+APPS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.apps") is not None  # type:ignore
+)
+DOCUMENTS_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
+)
+DATA_IMPORT_EXPORT = (
+    importlib.util.find_spec("karrio.server.data") is not None  # type:ignore
+)
+CUSTOM_CARRIER_DEFINITION = (
+    importlib.util.find_spec("karrio.mappers.generic") is not None  # type:ignore
+)
+MULTI_TENANTS = importlib.util.find_spec(  # type:ignore
     "karrio.server.tenants"
 ) is not None and config("MULTI_TENANT_ENABLE", default=False, cast=bool)
-ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool)
+AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
+    "karrio.server.audit"
+) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
 
 
 # components path settings
@@ -139,9 +163,9 @@ if len(BASE_PATH) > 0 and not BASE_PATH.endswith("/"):
     BASE_PATH = BASE_PATH + "/"
 
 ROOT_URLCONF = "karrio.server.urls"
-LOGOUT_REDIRECT_URL = BASE_PATH + "/admin/login/"
+LOGIN_URL = BASE_PATH + "/login/"
+LOGOUT_REDIRECT_URL = BASE_PATH + "/login/"
 LOGIN_REDIRECT_URL = BASE_PATH + "/admin/"
-LOGIN_URL = BASE_PATH + "/admin/login/"
 OPEN_API_PATH = "openapi/"
 
 NAMESPACED_URLS = [
@@ -158,6 +182,16 @@ BASE_APPS = [
     "django.contrib.admin",
 ]
 
+OTP_APPS = [
+    "django_filters",
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_email",
+    "two_factor",
+    "two_factor.plugins.email",
+]
+
 INSTALLED_APPS = [
     "constance",
     *KARRIO_APPS,
@@ -169,7 +203,7 @@ INSTALLED_APPS = [
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
-    "django_filters",
+    *OTP_APPS,
 ]
 
 MIDDLEWARE = [
@@ -179,8 +213,10 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "karrio.server.core.authentication.AuthenticationMiddleware",
+    "karrio.server.core.authentication.TwoFactorAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "karrio.server.core.middleware.SessionContext",
 ]
 
 
@@ -208,6 +244,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Karrio Middleware
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
+MODEL_TRANSFORMERS: list = []
 
 
 # Database
@@ -272,14 +309,19 @@ STATICFILES_DIRS = [
 
 
 # Django REST framework
+AUTHENTICATION_METHODS = [
+    "karrio.server.core.authentication.TokenBasicAuthentication",
+    "karrio.server.core.authentication.TokenAuthentication",
+    "karrio.server.core.authentication.JWTAuthentication",
+    "rest_framework.authentication.SessionAuthentication",
+]
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "karrio.server.core.authentication.TokenAuthentication",
-        "karrio.server.core.authentication.JWTAuthentication",
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+        "karrio.server.core.permissions.APIAccessPermissions",
     ),
+    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_METHODS,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -345,10 +387,20 @@ SWAGGER_SETTINGS = {
                 Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
                 API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
 
-                Authentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.
-                To authenticate via bearer auth (e.g., for a cross-origin request),
-                use `-H "Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660"`.
+                Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
+                the basic auth username value. You do not need to provide a password.
 
+                ```shell
+                $ curl https://instance.api.com/v1/shipments \\
+                  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:
+                # The colon prevents curl from asking for a password.
+                ```
+
+                If you need to authenticate via bearer auth (e.g., for a cross-origin request),
+                use `-H "Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e"`
+                instead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.
+
+                All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
                 API requests without authentication will also fail.
             """,
         }

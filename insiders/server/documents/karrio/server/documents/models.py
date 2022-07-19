@@ -3,9 +3,10 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 from karrio.server.orgs.models import Organization
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 
+@register_model
 class DocumentTemplate(OwnedEntity):
     class Meta:
         db_table = "document-template"
@@ -24,6 +25,10 @@ class DocumentTemplate(OwnedEntity):
     template = models.TextField()
     description = models.CharField(max_length=50, null=True, blank=True)
     related_object = models.CharField(max_length=25, blank=False)
+    active = models.BooleanField(
+        default=True,
+        help_text="disable template flag. to filter out from active document downloads",
+    )
 
     org = models.ManyToManyField(
         Organization, related_name="document_templates", through="DocumentTemplateLink"

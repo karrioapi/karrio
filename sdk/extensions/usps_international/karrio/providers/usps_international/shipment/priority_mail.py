@@ -27,7 +27,7 @@ from karrio.core.models import (
 )
 from karrio.providers.usps_international.units import (
     LabelFormat,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps_international.error import parse_error_response
@@ -58,23 +58,19 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[eVSPriorityMailIntlRequest]:
-    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
-    options = Options(payload.options, ShipmentOption)
+    package = Packages(
+        payload.parcels,
+        package_option_type=ShippingOption,
+        max_weight=Weight(70, WeightUnit.LB),
+    ).single
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+    )
 
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
-    extra_services = [
-        getattr(option, "value", option)
-        for key, option in options
-        if key in ShipmentOption and "usps_option" not in key
-    ]
+    insurance = ShippingOption.insurance_from(options, "priority_mail")
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
-    insurance = getattr(
-        (options.usps_insurance_priority_mail_international), "value", options.insurance
-    )
-    # Gets the first provided non delivery option or default to "RETURN"
-    non_delivery = next(
-        (option.value for name, option in options if "non_delivery" in name), "RETURN"
-    )
     redirect_address = CompleteAddress.map(
         Address(**(options.usps_option_redirect_non_delivery or {}))
     )
@@ -115,7 +111,7 @@ def shipment_request(
         ToFax=None,
         ToEmail=payload.recipient.email,
         ImportersReferenceNumber=None,
-        NonDeliveryOption=non_delivery,
+        NonDeliveryOption=ShippingOption.non_delivery_from(options),
         RedirectName=redirect_address.person_name,
         RedirectEmail=redirect_address.email,
         RedirectSMS=redirect_address.phone_number,
@@ -173,8 +169,10 @@ def shipment_request(
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         ExtraServices=(
-            ExtraServicesType(ExtraService=[s for s in extra_services])
-            if any(extra_services)
+            ExtraServicesType(
+                ExtraService=[code for _, code, value in options.as_list()]
+            )
+            if any(options.as_list())
             else None
         ),
         ActionCode=None,
@@ -195,4 +193,4 @@ def shipment_request(
         ChargebackCode=None,
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

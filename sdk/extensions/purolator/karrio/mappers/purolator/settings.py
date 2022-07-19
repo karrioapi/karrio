@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     user_token: str = None
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "purolator"
     account_country_code: str = "CA"
+    metadata: dict = {}

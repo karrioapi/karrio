@@ -3,10 +3,11 @@ from typing import List, cast, Optional
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.db.models.fields import json
 
 from karrio.server.core.utils import identity
 from karrio.server.providers.models import Carrier
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.core.serializers import (
     WEIGHT_UNIT,
     DIMENSION_UNIT,
@@ -18,6 +19,7 @@ from karrio.server.core.serializers import (
 )
 
 
+@register_model
 class Address(OwnedEntity):
     HIDDEN_PROPS = (
         "shipper_shipment",
@@ -82,6 +84,8 @@ class Address(OwnedEntity):
             return self.shipper_order
         if hasattr(self, "recipient_order"):
             return self.recipient_order
+        if hasattr(self, "bill_to_order"):
+            return self.bill_to_order
 
         return None
 
@@ -97,6 +101,7 @@ class ParcelManager(models.Manager):
         )
 
 
+@register_model
 class Parcel(OwnedEntity):
     HIDDEN_PROPS = (
         "parcel_shipment",
@@ -136,6 +141,9 @@ class Parcel(OwnedEntity):
         "Commodity", blank=True, related_name="commodity_parcel"
     )
     reference_number = models.CharField(max_length=100, null=True, blank=True)
+    options = models.JSONField(
+        blank=True, null=True, default=partial(identity, value={})
+    )
 
     def delete(self, *args, **kwargs):
         self.items.all().delete()
@@ -150,6 +158,7 @@ class Parcel(OwnedEntity):
         return self.parcel_shipment.first()
 
 
+@register_model
 class Commodity(OwnedEntity):
     HIDDEN_PROPS = (
         "children",
@@ -241,6 +250,7 @@ class CustomsManager(models.Manager):
         )
 
 
+@register_model
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
         "content_description",
@@ -326,6 +336,7 @@ class PickupManager(models.Manager):
         )
 
 
+@register_model
 class Pickup(OwnedEntity):
     DIRECT_PROPS = [
         "confirmation_number",
@@ -353,7 +364,7 @@ class Pickup(OwnedEntity):
         default=partial(uuid, prefix="pck_"),
         editable=False,
     )
-    confirmation_number = models.CharField(max_length=50, unique=True, blank=False)
+    confirmation_number = models.CharField(max_length=50, blank=False)
     test_mode = models.BooleanField(null=False)
     pickup_date = models.DateField(blank=False)
     ready_time = models.CharField(max_length=5, blank=False)
@@ -415,10 +426,15 @@ class TrackingManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related("tracking_carrier", "created_by", "shipment")
+            .prefetch_related(
+                "tracking_carrier",
+                "created_by",
+                "shipment",
+            )
         )
 
 
+@register_model
 class Tracking(OwnedEntity):
     HIDDEN_PROPS = (
         "tracking_carrier",
@@ -431,6 +447,12 @@ class Tracking(OwnedEntity):
         verbose_name = "Tracking Status"
         verbose_name_plural = "Tracking Statuses"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                fields=["tracking_number"],
+                name="tracker_tracking_number_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,
@@ -499,6 +521,7 @@ class ShipmentManager(models.Manager):
                 "recipient",
                 "parcels",
                 "parcels__items",
+                "customs",
                 "carriers",
                 "selected_rate_carrier",
                 "created_by",
@@ -507,6 +530,7 @@ class ShipmentManager(models.Manager):
         )
 
 
+@register_model
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         "options",
@@ -542,6 +566,18 @@ class Shipment(OwnedEntity):
         verbose_name = "Shipment"
         verbose_name_plural = "Shipments"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                fields=["tracking_number"],
+                condition=models.Q(tracking_number__isnull=False),
+                name="shipment_tracking_number_idx",
+            ),
+            models.Index(
+                json.KeyTextTransform("service", "selected_rate"),
+                condition=models.Q(meta__object_id__isnull=False),
+                name="shipment_service_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,

@@ -1,17 +1,16 @@
-from datetime import timedelta
 import inspect
 import functools
 import logging
+from string import Template
+from concurrent import futures
+from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from django_email_verification.confirm import (
-    _get_validated_field,
-    EmailMultiAlternatives,
-    render_to_string,
-)
+import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
 
+from karrio.core.utils import DP, DF
 from karrio.server.core import datatypes, serializers
 
 T = TypeVar("T")
@@ -27,12 +26,50 @@ def identity(value: Union[Any, Callable]) -> T:
 
 
 def failsafe(callable: Callable[[], T], warning: str = None) -> T:
+    """This higher order function wraps a callable in a try..except
+    scope to capture any exception raised.
+    Only use it when you are running something unstable that you
+    don't mind if it fails.
+    """
     try:
         return callable()
-    except Exception:
+    except Exception as e:
         if warning:
-            logger.warning(warning)
+            logger.warning(Template(warning).substitute(error=e))
         return None
+
+
+def run_async(callable: Callable[[], Any]) -> futures.Future:
+    """This higher order function initiate the execution
+    of a callable in a non-blocking thread and return a
+    handle for a future response.
+    """
+    return futures.ThreadPoolExecutor(max_workers=1).submit(callable)
+
+
+def async_warpper(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        def _run():
+            func(*args, **kwargs)
+
+        return run_async(_run)
+
+    return wrapper
+
+
+def tenant_wrapper(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if settings.MULTI_TENANTS:
+            import django_tenants.utils as tenant_utils
+
+            with tenant_utils.schema_context(kwargs.get("schema")):
+                return func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
+
+    return wrapper
 
 
 def post_processing(methods: List[str] = None):
@@ -128,12 +165,23 @@ def filter_rate_carrier_compatible_gateways(
     ]
 
 
+def is_system_loading_data() -> bool:
+    try:
+        for fr in inspect.stack():
+            if inspect.getmodulename(fr[1]) == "loaddata":
+                return True
+    except:
+        pass
+
+    return False
+
+
 def disable_for_loaddata(signal_handler):
     @functools.wraps(signal_handler)
     def wrapper(*args, **kwargs):
-        for fr in inspect.stack():
-            if inspect.getmodulename(fr[1]) == "loaddata":
-                return
+        if is_system_loading_data():
+            return
+
         signal_handler(*args, **kwargs)
 
     return wrapper
@@ -158,11 +206,11 @@ def send_email(
     context: dict = {},
     text_template: str = None,
 ):
-    sender = _get_validated_field("EMAIL_FROM_ADDRESS")
-    html = render_to_string(email_template, context)
-    text = render_to_string(text_template or email_template, context)
+    sender = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
+    html = confirm.render_to_string(email_template, context)
+    text = confirm.render_to_string(text_template or email_template, context)
 
-    msg = EmailMultiAlternatives(subject, text, sender, emails)
+    msg = confirm.EmailMultiAlternatives(subject, text, sender, emails)
     msg.attach_alternative(html, "text/html")
     msg.send()
 
@@ -182,7 +230,25 @@ class ConfirmationToken(jwt.Token):
 
 
 def app_tracking_query_params(url: str, carrier) -> str:
-    test_flag = "?test" if carrier.test else ""
     hub_flag = f"&hub={carrier.carrier_name}" if carrier.gateway.is_hub else ""
 
-    return f"{url}{test_flag}{hub_flag}"
+    return f"{url}{hub_flag}"
+
+
+def default_tracking_event(
+    event_at: datetime = None,
+    code: str = None,
+    description: str = None,
+):
+
+    return [
+        DP.to_dict(
+            datatypes.TrackingEvent(
+                date=DF.fdate(event_at or datetime.now()),
+                description=(description or "Label created and ready for shipment"),
+                location="",
+                code=(code or "CREATED"),
+                time=DF.ftime(event_at or datetime.now()),
+            )
+        )
+    ]

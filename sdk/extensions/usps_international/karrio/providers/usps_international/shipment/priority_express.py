@@ -26,7 +26,7 @@ from karrio.core.models import (
 )
 from karrio.providers.usps_international.units import (
     LabelFormat,
-    ShipmentOption,
+    ShippingOption,
     ContentType,
 )
 from karrio.providers.usps_international.error import parse_error_response
@@ -57,22 +57,20 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[eVSExpressMailIntlRequest]:
-    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
-    options = Options(payload.options, ShipmentOption)
+    package = Packages(
+        payload.parcels,
+        package_option_type=ShippingOption,
+        max_weight=Weight(70, WeightUnit.LB),
+    ).single
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=package.options,
+    )
 
     label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
-    insurance = getattr(
-        (options["usps_insurance_express_mail_international"]),
-        "value",
-        options.insurance,
-    )
-    # Gets the first provided non delivery option or default to "RETURN"
-    non_delivery = next(
-        (option.value for name, option in options if "non_delivery" in name), "RETURN"
-    )
     redirect_address = CompleteAddress.map(
-        Address(**(options["usps_option_redirect_non_delivery"] or {}))
+        Address(**(options.usps_option_redirect_non_delivery or {}))
     )
 
     request = eVSExpressMailIntlRequest(
@@ -110,7 +108,7 @@ def shipment_request(
         ToFax=None,
         ToEmail=payload.recipient.email,
         ImportersReferenceNumber=None,
-        NonDeliveryOption=non_delivery,
+        NonDeliveryOption=ShippingOption.non_delivery_from(options),
         RedirectName=redirect_address.person_name,
         RedirectEmail=redirect_address.email,
         RedirectSMS=redirect_address.phone_number,
@@ -138,7 +136,7 @@ def shipment_request(
                 for item in customs.commodities
             ]
         ),
-        InsuredAmount=insurance,
+        InsuredAmount=ShippingOption.insurance_from(options, "express_mail"),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         ContentType=ContentType[customs.content_type or "other"].value,
@@ -186,4 +184,4 @@ def shipment_request(
         VendorProductVersionNumber=None,
     )
 
-    return Serializable(request, XP.export, logged=True)
+    return Serializable(request, XP.export)

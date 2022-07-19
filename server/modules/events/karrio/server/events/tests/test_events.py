@@ -1,11 +1,9 @@
 import json
 from datetime import datetime
-from unittest.mock import patch, ANY
-from django.urls import reverse
-from rest_framework import status
+from unittest.mock import ANY
 from karrio.server.graph.tests.base import GraphTestCase
 from karrio.server.events import serializers
-from karrio.server.events.tasks import webhook
+from karrio.server.events.task_definitions.base import webhook
 
 
 class TestEventCreation(GraphTestCase):
@@ -15,12 +13,12 @@ class TestEventCreation(GraphTestCase):
         event_type = serializers.EventTypes.tracker_created.value
         event_data = TRACKER_VALUE
         event_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z")
-        test_mode = True
-        context = dict(user_id=self.user.id)
-
-        webhook.notify_webhook_subscribers(
-            event_type, event_data, event_at, context, test_mode
+        context = dict(
+            user_id=self.user.id,
+            test_mode=False,
         )
+
+        webhook.notify_webhook_subscribers(event_type, event_data, event_at, context)
 
     def test_query_events(self):
         response = self.query(
@@ -70,7 +68,7 @@ class TestEventCreation(GraphTestCase):
 
 TRACKER_VALUE = {
     "tracking_number": "1Z12345E6205277936",
-    "test_mode": True,
+    "test_mode": False,
     "delivered": False,
     "events": [
         {
@@ -104,10 +102,10 @@ EVENTS_RESPONSE = {
                             ],
                             "status": "in_transit",
                             "delivered": False,
-                            "test_mode": True,
+                            "test_mode": False,
                             "tracking_number": "1Z12345E6205277936",
                         },
-                        "test_mode": True,
+                        "test_mode": False,
                         "pending_webhooks": 0,
                     }
                 }
@@ -133,10 +131,10 @@ EVENT_RESPONSE = {
                 ],
                 "status": "in_transit",
                 "delivered": False,
-                "test_mode": True,
+                "test_mode": False,
                 "tracking_number": "1Z12345E6205277936",
             },
-            "test_mode": True,
+            "test_mode": False,
             "pending_webhooks": 0,
         }
     }

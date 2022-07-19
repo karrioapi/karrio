@@ -1,4 +1,4 @@
-Django<=3.2.13
+Django<=3.2.14
 
 karrio
 karrio.server

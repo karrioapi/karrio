@@ -7,10 +7,10 @@ from django.forms.models import model_to_dict
 from django.core.validators import RegexValidator
 
 from karrio import gateway
-from karrio.core.utils import Enum
+from karrio.core.utils import Enum, Tracer
 from karrio.core.units import Country, Currency, DimensionUnit, WeightUnit
 from karrio.api.gateway import Gateway
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.core.datatypes import CarrierSettings
 from karrio.server.core.fields import MultiChoiceField
 
@@ -46,7 +46,7 @@ class CarrierManager(models.Manager):
 
 class Carrier(OwnedEntity):
     class Meta:
-        ordering = ["test", "-created_at"]
+        ordering = ["test_mode", "-created_at"]
 
     id = models.CharField(
         max_length=50,
@@ -58,7 +58,9 @@ class Carrier(OwnedEntity):
         max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
     )
-    test = models.BooleanField(default=True, help_text="Toggle carrier connection mode")
+    test_mode = models.BooleanField(
+        default=True, db_column="test_mode", help_text="Toggle carrier connection mode"
+    )
     active = models.BooleanField(
         default=True, help_text="Disable/Hide carrier from clients"
     )
@@ -129,15 +131,20 @@ class Carrier(OwnedEntity):
 
     @property
     def gateway(self) -> Gateway:
+        from karrio.server.core import middleware
+
+        _context = middleware.SessionContext.get_current_request()
+        _tracer = getattr(_context, "tracer", Tracer())
         _carrier_name = (
             "generic"
             if hasattr(self.settings, "custom_carrier_name")
             else self.settings.carrier_name
         )
 
-        return gateway[_carrier_name].create({**self.data.to_dict()})
+        return gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
 
 
+@register_model
 class ServiceLevel(OwnedEntity):
     class Meta:
         db_table = "service-level"

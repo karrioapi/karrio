@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     access_license_number: str
     account_number: str = None
     account_country_code: str = None
+    metadata: dict = {}
 
     id: str = None
 
@@ -21,7 +22,11 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://wwwcie.ups.com" if self.test else "https://onlinetools.ups.com"
+        return (
+            "https://wwwcie.ups.com"
+            if self.test_mode
+            else "https://onlinetools.ups.com"
+        )
 
     @property
     def Security(self):
@@ -40,7 +45,7 @@ def default_request_serializer(
 ) -> Callable[[Envelope], str]:
     def serializer(envelope: Envelope):
         namespace_ = (
-            ' xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
+            'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
             ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
             ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
             ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'

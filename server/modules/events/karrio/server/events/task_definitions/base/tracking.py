@@ -8,13 +8,13 @@ from django.conf import settings
 from django.utils import timezone
 
 import karrio
-from karrio.core.models import TrackingDetails, Message
 from karrio.core.utils import exec_parrallel, DP
+from karrio.core.models import TrackingDetails, Message, TrackingEvent
 from karrio.api.interface import Gateway, IRequestFrom
 
-from karrio.server.core import datatypes
-from karrio.server.core.utils import identity, compute_tracking_status
 from karrio.server.manager import models, serializers
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.utils as utils
 
 logger = logging.getLogger(__name__)
 Delay = int
@@ -30,12 +30,17 @@ def update_trackers(
     delta: datetime.timedelta = datetime.timedelta(
         seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
     ),
+    tracker_ids: List[str] = [],
 ):
     logger.info("> starting scheduled trackers update")
-    time_threshold = timezone.now() - delta
 
-    active_trackers = models.Tracking.objects.filter(
-        delivered=False, updated_at__lt=time_threshold
+    active_trackers = (
+        models.Tracking.objects.filter(id__in=tracker_ids)
+        if any(tracker_ids)
+        else models.Tracking.objects.filter(
+            delivered=False,
+            updated_at__lt=timezone.now() - delta,
+        )
     )
 
     if any(active_trackers):
@@ -98,7 +103,7 @@ def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
     time.sleep(delay)  # apply delay before request
 
     try:
-        return identity(lambda: request.from_(gateway).parse())
+        return utils.identity(lambda: request.from_(gateway).parse())
     except Exception as request_error:
         logger.warning("batch request failed")
         logger.error(request_error, exc_info=True)
@@ -121,11 +126,10 @@ def save_updated_trackers(
                 for tracker in related_trackers:
                     # update values only if changed; This is important for webhooks notification
                     changes = []
-                    status = compute_tracking_status(details).value
-                    events = (
-                        DP.to_dict(details.events)
-                        if any(details.events)
-                        else tracker.events
+                    status = utils.compute_tracking_status(details).value
+                    events = process_events(
+                        response_events=details.events,
+                        current_events=tracker.events,
                     )
 
                     if events != tracker.events:
@@ -158,3 +162,12 @@ def save_updated_trackers(
                     f"failed to update tracker with tracking number: {details.tracking_number}"
                 )
                 logger.error(update_error, exc_info=True)
+
+
+def process_events(
+    response_events: List[TrackingEvent], current_events: List[dict]
+) -> List[dict]:
+    if any(response_events):
+        return DP.to_dict(response_events)
+
+    return current_events

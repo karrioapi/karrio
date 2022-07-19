@@ -2,7 +2,7 @@ import logging
 from django.db import transaction
 from rest_framework import status
 
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
     save_many_to_many_data,
     owned_model_serializer,
@@ -25,8 +25,7 @@ class LineItemModelSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
-        mode_filter = validated_data.get("mode_filter") or {}
-        test_mode = "test" in mode_filter and mode_filter.get("test") is not False
+        test_mode = getattr(context, "test_mode", False)
 
         order_data = {
             **{
@@ -43,6 +42,12 @@ class OrderSerializer(serializers.OrderData):
             ),
             "shipping_from": save_one_to_one_data(
                 "shipping_from",
+                serializers.AddressSerializer,
+                payload=validated_data,
+                context=context,
+            ),
+            "billing_address": save_one_to_one_data(
+                "billing_address",
                 serializers.AddressSerializer,
                 payload=validated_data,
                 context=context,
@@ -173,7 +178,7 @@ def can_mutate_order(
         serializers.OrderStatus.delivered.value,
         serializers.OrderStatus.fulfilled.value,
     ]:
-        raise KarrioAPIException(
+        raise APIException(
             f"The order is '{order.status}' and cannot be updated anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
@@ -183,7 +188,7 @@ def can_mutate_order(
         serializers.OrderStatus.delivered.value,
         serializers.OrderStatus.cancelled.value,
     ]:
-        raise KarrioAPIException(
+        raise APIException(
             f"The order is '{order.status}' and can not be cancelled anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
@@ -193,7 +198,7 @@ def can_mutate_order(
         serializers.OrderStatus.fulfilled.value,
         serializers.OrderStatus.partial.value,
     ]:
-        raise KarrioAPIException(
+        raise APIException(
             f"The order is '{order.status}' please cancel all related shipments before...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,

@@ -1,3 +1,5 @@
+import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.units import MeasurementOptionsType, PackagePreset
 
@@ -288,7 +290,7 @@ class ServiceType(Enum):
     )
 
 
-class SpecialServiceType(Enum):
+class ShippingOption(Enum):
     fedex_blind_shipment = Spec.asKey("BLIND_SHIPMENT")
     fedex_broker_select_option = Spec.asKey("BROKER_SELECT_OPTION")
     fedex_call_before_delivery = Spec.asKey("CALL_BEFORE_DELIVERY")
@@ -384,6 +386,24 @@ class SpecialServiceType(Enum):
     """ Unified Option type mapping """
     notification = fedex_event_notification
     cash_on_delivery = fedex_cod
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        def option_filter(key: str) -> bool:
+            return key in cls  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)
 
 
 class RateType(Enum):

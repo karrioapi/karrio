@@ -1,12 +1,13 @@
 import graphene
 from graphene.types import generic
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django_otp.plugins.otp_email import models as otp
 
 from karrio.core.utils import DP
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.graph.models as graph
 import karrio.server.user.models as auth
 import karrio.server.core.models as core
@@ -15,10 +16,25 @@ import karrio.server.graph.utils as utils
 User = get_user_model()
 
 
+class MultiFactorType(graphene.ObjectType):
+    name = graphene.String()
+    confirmed = graphene.Boolean()
+
+
 class UserType(utils.BaseObjectType):
+    multi_factor = graphene.Field(MultiFactorType)
+
     class Meta:
         model = User
         fields = ("email", "full_name", "is_staff", "last_login", "date_joined")
+
+    def resolve_multi_factor(self, info):
+        device = otp.EmailDevice.objects.filter(user__id=self.id).first()
+
+        if device is not None:
+            return device.__dict__
+
+        return device
 
 
 class LogType(utils.BaseObjectType):
@@ -52,6 +68,28 @@ class LogType(utils.BaseObjectType):
             return DP.to_dict(self.query_params)
         except:
             return self.query_params
+
+
+class TracingRecordType(utils.BaseObjectType):
+    record = generic.GenericScalar()
+    meta = generic.GenericScalar()
+
+    class Meta:
+        model = tracing.TracingRecord
+        exclude = (*tracing.TracingRecord.HIDDEN_PROPS,)
+        interfaces = (utils.CustomNode,)
+
+    def resolve_record(self, info):
+        try:
+            return DP.to_dict(self.record)
+        except:
+            return self.record
+
+    def resolve_meta(self, info):
+        try:
+            return DP.to_dict(self.meta)
+        except:
+            return self.meta
 
 
 class TokenType(utils.BaseObjectType):
@@ -317,11 +355,10 @@ class SystemConnectionType(BaseConnectionType, utils.BaseObjectType):
             "created_at",
             "updated_at",
             "id",
-            "test",
+            "test_mode",
             "carrier_id",
             "carrier_name",
             "active",
-            "test",
             "capabilities",
         )
 

@@ -10,13 +10,16 @@ from organizations.abstract import (
 import karrio.server.providers.models as providers
 import karrio.server.pricing.models as pricing
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.events.models as events
 import karrio.server.orders.models as orders
 import karrio.server.graph.models as graph
+import karrio.server.audit.models as audit
 import karrio.server.core.models as core
 import karrio.server.user.models as auth
 
 
+@core.register_model
 class Organization(AbstractOrganization):
     id = models.CharField(
         max_length=50,
@@ -71,15 +74,22 @@ class Organization(AbstractOrganization):
 
     logs = models.ManyToManyField(core.APILog, related_name="org", through="LogLink")
 
+    auditlogs = models.ManyToManyField(
+        audit.AuditLogEntry, related_name="org", through="AuditLogEntryLink"
+    )
+
     tokens = models.ManyToManyField(auth.Token, related_name="org", through="TokenLink")
 
     surcharges = models.ManyToManyField(pricing.Surcharge, related_name="org")
+
+    tracing_records = models.ManyToManyField(tracing.TracingRecord, related_name="org")
 
     def is_owner(self, user):
         owner = getattr(self, "owner", None)
         return owner and super().is_owner(user)
 
 
+@core.register_model
 class OrganizationUser(AbstractOrganizationUser):
     @property
     def roles(self):
@@ -99,11 +109,13 @@ class OrganizationUser(AbstractOrganizationUser):
         return f"{self.user.email} ({self.organization.name})"
 
 
+@core.register_model
 class OrganizationOwner(AbstractOrganizationOwner):
     def __str__(self):
         return "{0}: {1}".format(self.organization, self.organization_user.user.email)
 
 
+@core.register_model
 class OrganizationInvitation(AbstractOrganizationInvitation):
     pass
 
@@ -219,6 +231,15 @@ class LogLink(models.Model):
     )
 
 
+class AuditLogEntryLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="auditlog_links"
+    )
+    item = models.OneToOneField(
+        audit.AuditLogEntry, on_delete=models.CASCADE, related_name="link"
+    )
+
+
 class TokenLink(models.Model):
     org = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name="token_links"
@@ -234,4 +255,13 @@ class OrderLink(models.Model):
     )
     item = models.OneToOneField(
         orders.Order, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class TracingRecordLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="tracking_record_links"
+    )
+    item = models.OneToOneField(
+        tracing.TracingRecord, on_delete=models.CASCADE, related_name="link"
     )

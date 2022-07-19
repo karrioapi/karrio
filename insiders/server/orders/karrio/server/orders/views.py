@@ -18,7 +18,6 @@ from karrio.server.serializers import (
 )
 from karrio.server.orders.router import router
 from karrio.server.orders.serializers import (
-    TestFilters,
     OrderStatus,
     ErrorResponse,
     Order,
@@ -50,7 +49,11 @@ class OrderList(GenericAPIView):
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all orders",
-        responses={200: Orders(), 400: ErrorResponse()},
+        responses={
+            200: Orders(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request):
         """
@@ -64,9 +67,12 @@ class OrderList(GenericAPIView):
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an order",
-        responses={200: Order(), 400: ErrorResponse()},
+        responses={
+            201: Order(),
+            400: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         request_body=OrderData(),
-        query_serializer=TestFilters(),
     )
     def post(self, request: Request):
         """
@@ -74,7 +80,7 @@ class OrderList(GenericAPIView):
         """
         order = (
             SerializerDecorator[OrderSerializer](data=request.data, context=request)
-            .save(mode_filter=request.query_params)
+            .save()
             .instance
         )
 
@@ -86,7 +92,11 @@ class OrderDetail(APIView):
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an order",
-        responses={200: Order(), 400: ErrorResponse()},
+        responses={
+            200: Order(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request, pk: str):
         """
@@ -100,7 +110,13 @@ class OrderDetail(APIView):
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an order",
-        responses={200: Order(), 400: ErrorResponse()},
+        responses={
+            200: Order(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
         request_body=OrderUpdateData(),
     )
     def put(self, request: Request, pk: str):
@@ -126,7 +142,12 @@ class OrderDetail(APIView):
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel an order",
-        responses={200: Order(), 400: ErrorResponse()},
+        responses={
+            200: Order(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def delete(self, request: Request, pk: str):
         """

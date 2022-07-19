@@ -32,16 +32,15 @@ from karrio.core.models import (
 )
 from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.units import (
-    OptionCode,
+    ShippingOption,
     ServiceType,
     PackagePresets,
     PaymentType,
     LabelType,
     CUSTOM_OPTIONS,
-    INTERNATIONAL_NON_DELIVERY_OPTION,
     MeasurementOptions,
 )
-from karrio.providers.canadapost.utils import Settings
+from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
 
 
 def parse_shipment_response(
@@ -71,41 +70,32 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ShipmentType]:
-    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType.map(payload.service).value_or_key
-    options = Options(payload.options, OptionCode)
+    package = Packages(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=ShippingOption,
+    ).single
+    options = ShippingOption.to_options(
+        options=payload.options,
+        package_options=package.options,
+        is_international=(
+            payload.recipient.country_code is not None
+            and payload.recipient.country_code != "CA"
+        ),
+    )
 
-    is_intl = (
-        payload.recipient.country_code is not None
-        and payload.recipient.country_code != "CA"
-    )
-    payment_type = PaymentType.map(getattr(payload.payment, "paid_by", None)).value
-    all_options = (
-        [
-            *options,
-            (
-                OptionCode.canadapost_return_to_sender.name,
-                OptionCode.canadapost_return_to_sender.value.apply(True),
-            ),
-        ]
-        if is_intl
-        and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
-        else [*options]
-    )
     customs = payload.customs
     duty = getattr(customs, "duty", Duty())
     label_encoding, label_format = LabelType[payload.label_type or "PDF_4x6"].value
-    recipient_postal_code = (
-        (payload.recipient.postal_code or "").replace(" ", "").upper()
-    )
-    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "").upper()
 
     request = ShipmentType(
         customer_request_id=None,
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
-        requested_shipping_point=shipper_postal_code,
+        requested_shipping_point=format_ca_postal_code(payload.shipper.postal_code),
         shipping_point_id=None,
         expected_mailing_date=options.shipment_date,
         provide_pricing_info=True,
@@ -120,7 +110,7 @@ def shipment_request(
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
-                    postal_zip_code=shipper_postal_code,
+                    postal_zip_code=format_ca_postal_code(payload.shipper.postal_code),
                     address_line_1=SF.concat_str(
                         payload.shipper.address_line1, join=True
                     ),
@@ -138,7 +128,9 @@ def shipment_request(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=recipient_postal_code,
+                    postal_zip_code=format_ca_postal_code(
+                        payload.recipient.postal_code
+                    ),
                     address_line_1=SF.concat_str(
                         payload.recipient.address_line1, join=True
                     ),
@@ -161,22 +153,15 @@ def shipment_request(
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=getattr(option, "key", option),
-                            option_amount=getattr(option, "value", None),
+                            option_code=code,
+                            option_amount=value,
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for code, option in all_options
-                        if code in OptionCode and code not in CUSTOM_OPTIONS
+                        for _, code, value in options.as_list()
                     ]
                 )
-                if any(
-                    [
-                        code
-                        for code, _ in all_options
-                        if code in OptionCode and code not in CUSTOM_OPTIONS
-                    ]
-                )
+                if any(options.as_list())
                 else None
             ),
             notification=(
@@ -244,14 +229,14 @@ def shipment_request(
                 customer_ref_2=None,
             ),
             settlement_info=SettlementInfoType(
-                paid_by_customer=(
-                    payload.payment.account_number
-                    if payload.payment is not None
-                    else settings.customer_number
+                paid_by_customer=getattr(
+                    payload.payment, "account_number", settings.customer_number
                 ),
                 contract_id=settings.contract_id,
                 cif_shipment=None,
-                intended_method_of_payment=payment_type,
+                intended_method_of_payment=PaymentType.map(
+                    getattr(payload.payment, "paid_by", None)
+                ).value,
                 promo_code=None,
             ),
         ),
@@ -260,7 +245,7 @@ def shipment_request(
     )
     request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: ShipmentType) -> str:

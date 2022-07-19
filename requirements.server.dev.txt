@@ -1,5 +1,8 @@
-Django<=3.2.13
+Django<=3.2.14
+django-debug-toolbar
 
+# Schemas update
+# -e ./schemas/usps
 
 # Carrier Extenstions in Development
 # -e ./sdk/core

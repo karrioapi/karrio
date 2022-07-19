@@ -11,17 +11,16 @@ from django.urls import path
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
-from karrio.core.utils import DP
 import karrio.server.core.dataunits as dataunits
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
     TrackingStatus,
     ErrorResponse,
-    TestFilters,
-    Operation,
-    TrackerStatus,
+    ErrorMessages,
     CharField,
+    Serializer,
 )
+from karrio.server.core.filters import TrackerFilters
 from karrio.server.serializers import SerializerDecorator, PaginatedResult
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import TrackingSerializer
@@ -32,7 +31,7 @@ ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique 
 Trackers = PaginatedResult("TrackerList", TrackingStatus)
 
 
-class TrackerFilter(TestFilters):
+class TrackerFilter(Serializer):
     hub = CharField(
         required=False,
         allow_blank=False,
@@ -42,53 +41,12 @@ class TrackerFilter(TestFilters):
     )
 
 
-class TrackersFilter(filters.FilterSet):
-    created_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
-    created_before = filters.DateFilter(field_name="created_at", lookup_expr="lte")
-    carrier_id = filters.CharFilter(field_name="tracking_carrier__carrier_id")
-
-    parameters = [
-        openapi.Parameter(
-            "carrier_name",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            enum=dataunits.CARRIER_NAMES,
-        ),
-        openapi.Parameter("carrier_id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
-        openapi.Parameter(
-            "status",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            enum=[k.value for k in list(TrackerStatus)],
-        ),
-        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-        openapi.Parameter(
-            "created_before",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATETIME,
-            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
-        ),
-        openapi.Parameter(
-            "created_after",
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            format=openapi.FORMAT_DATETIME,
-            description="DateTime in format `YYYY-MM-DD H:M:S.fz`",
-        ),
-    ]
-
-    class Meta:
-        model = models.Tracking
-        fields = ["test_mode", "status"]
-
-
 class TrackerList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = TrackersFilter
+    filterset_class = TrackerFilters
     serializer_class = Trackers
     model = models.Tracking
 
@@ -113,8 +71,11 @@ class TrackerList(GenericAPIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
-        responses={200: Trackers(), 400: ErrorResponse()},
-        manual_parameters=TrackersFilter.parameters,
+        responses={
+            200: Trackers(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request):
         """
@@ -133,7 +94,12 @@ class TrackersCreate(APIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment tracker",
         query_serializer=TrackerFilter(),
-        responses={200: TrackingStatus(), 404: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
         manual_parameters=[
             openapi.Parameter(
                 "carrier_name",
@@ -185,7 +151,11 @@ class TrackersDetails(APIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
         operation_summary="Retrieves a shipment tracker",
-        responses={200: TrackingStatus(), 404: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            404: ErrorMessages(),
+            500: ErrorResponse(),
+        },
     )
     def get(self, request: Request, id_or_tracking_number: str):
         """
@@ -205,7 +175,11 @@ class TrackersDetails(APIView):
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
         operation_summary="Discard a shipment tracker",
-        responses={200: Operation(), 400: ErrorResponse()},
+        responses={
+            200: TrackingStatus(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
     )
     def delete(self, request: Request, id_or_tracking_number: str):
         """
@@ -216,8 +190,8 @@ class TrackersDetails(APIView):
         )
 
         tracker.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Discard a tracker", success=True))
-        return Response(serializer.data)
+
+        return Response(TrackingStatus(tracker).data)
 
 
 router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))

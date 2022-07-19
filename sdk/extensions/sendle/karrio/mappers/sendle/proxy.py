@@ -21,11 +21,12 @@ class Proxy(BaseProxy):
         def _get_tracking(ref: str):
             response = http(
                 url=f"{self.settings.server_url}/api/tracking/{ref}",
+                trace=self.trace_as("json"),
+                method="GET",
                 headers={
                     "Accept": "application/json",
                     "Authorization": f"Basic {self.settings.authorization}",
                 },
-                method="GET",
             )
             return ref, response
 

@@ -7,7 +7,7 @@ import karrio.server.providers.models as carriers
 
 def model_admin(model):
     class _Admin(admin.ModelAdmin):
-        list_display = ("__str__", "test", "active")
+        list_display = ("__str__", "test_mode", "active")
         exclude = (
             ["active_users", "metadata"]
             if model.__name__ not in ["GenericSettings", "CanadaPostSettings"]

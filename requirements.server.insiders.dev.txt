@@ -13,6 +13,7 @@
 # karrio enterprise modules
 -e ./insiders/server/tenants
 -e ./insiders/server/orders
+-e ./insiders/server/audit
 -e ./insiders/server/orgs
 -e ./insiders/server/iam
 -e ./insiders/server/apps

@@ -37,10 +37,10 @@ from karrio.providers.eshipper.utils import (
     ceil,
 )
 from karrio.providers.eshipper.units import (
-    Service,
+    ShippingService,
     PackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
     PaymentType,
 )
 from karrio.providers.eshipper.error import parse_error_response
@@ -66,7 +66,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     tracking_number = getattr(
         next(iter(shipping.Package), None), "trackingNumber", None
     )
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -115,11 +115,16 @@ def shipping_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[EShipper]:
     packages = Packages(
-        payload.parcels, required=["weight", "height", "width", "length"]
+        payload.parcels,
+        package_option_type=ShippingOption,
+        required=["weight", "height", "width", "length"],
     )
-    options = Options(payload.options, Option)
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
+    )
 
-    service = Service.map(payload.service).value_or_key
+    service = ShippingService.map(payload.service).value_or_key
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
     packaging = (
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
@@ -233,8 +238,8 @@ def shipping_request(
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
-                        insuranceAmount=None,
-                        codAmount=None,
+                        insuranceAmount=package.options.insurance,
+                        codAmount=package.options.cash_on_delivery,
                         description=package.parcel.description,
                     )
                     for package in packages
@@ -279,4 +284,4 @@ def shipping_request(
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

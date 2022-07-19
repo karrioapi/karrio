@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "CA"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://devwebservices.purolator.com"
-            if self.test
+            if self.test_mode
             else "https://webservices.purolator.com"
         )
 

@@ -1,11 +1,12 @@
 import graphene
 import graphene_django.filter as django_filter
 
-import karrio.server.core.filters as filters
-import karrio.server.core.views.api as api
+import karrio.server.core.models as core
 import karrio.server.graph.models as graph
+import karrio.server.core.filters as filters
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
 import karrio.server.providers.models as providers
 import karrio.server.user.serializers as user_serializers
 import karrio.server.manager.serializers as manager_serializers
@@ -22,13 +23,11 @@ class Query:
         graphene.NonNull(types.ConnectionType),
         required=True,
         default_value=[],
-        test=graphene.Boolean(required=False),
     )
     system_connections = graphene.List(
         graphene.NonNull(types.SystemConnectionType),
         required=True,
         default_value=[],
-        test=graphene.Boolean(required=False),
     )
 
     default_templates = graphene.Field(
@@ -52,6 +51,16 @@ class Query:
         filterset_class=filters.LogFilter,
     )
 
+    tracingrecord = graphene.Field(
+        types.TracingRecordType, id=graphene.String(required=True)
+    )
+    tracingrecords = django_filter.DjangoFilterConnectionField(
+        types.TracingRecordType,
+        required=True,
+        default_value=[],
+        filterset_class=filters.TracingRecordFilter,
+    )
+
     shipment = graphene.Field(types.ShipmentType, id=graphene.String(required=True))
     shipments = django_filter.DjangoFilterConnectionField(
         types.ShipmentType,
@@ -65,7 +74,7 @@ class Query:
         types.TrackerType,
         required=True,
         default_value=[],
-        filterset_class=filters.TrackerFilter,
+        filterset_class=filters.TrackerFilters,
     )
 
     @utils.login_required
@@ -79,13 +88,17 @@ class Query:
     @utils.login_required
     def resolve_user_connections(self, info, **kwargs):
         connections = providers.Carrier.access_by(info.context).filter(
-            created_by__isnull=False, **kwargs
+            created_by__isnull=False,
+            test_mode=getattr(info.context, "test_mode", False),
         )
         return [connection.settings for connection in connections]
 
     @utils.login_required
     def resolve_system_connections(self, info, **kwargs):
-        return gateway.Carriers.list(context=info.context, system_only=True, **kwargs)
+        return gateway.Carriers.list(
+            context=info.context,
+            system_only=True,
+        )
 
     @utils.login_required
     def resolve_default_templates(self, info, **kwargs):
@@ -111,11 +124,19 @@ class Query:
 
     @utils.login_required
     def resolve_log(self, info, **kwargs):
-        return api.APILog.access_by(info.context).filter(**kwargs).first()
+        return core.APILog.access_by(info.context).filter(**kwargs).first()
 
     @utils.login_required
     def resolve_logs(self, info, **kwargs):
-        return api.APILog.access_by(info.context)
+        return core.APILog.access_by(info.context)
+
+    @utils.login_required
+    def resolve_tacingrecord(self, info, **kwargs):
+        return tracing.TracingRecord.access_by(info.context).filter(**kwargs).first()
+
+    @utils.login_required
+    def resolve_tracingrecords(self, info, **kwargs):
+        return tracing.TracingRecord.access_by(info.context)
 
     @utils.login_required
     def resolve_shipment(self, info, **kwargs):
@@ -145,6 +166,9 @@ class Mutation:
     confirm_email_change = mutations.ConfirmEmailChange.Field()
     request_password_reset = mutations.RequestPasswordReset.Field()
     confirm_password_reset = mutations.ConfirmPasswordReset.Field()
+    enable_multi_factor = mutations.EnableMultiFactor.Field()
+    confirm_multi_factor = mutations.ConfirmMultiFactor.Field()
+    disable_multi_factor = mutations.DisableMultiFactor.Field()
 
     # Carrier connection related mutations
     create_connection = mutations.CreateCarrierConnection.Field()

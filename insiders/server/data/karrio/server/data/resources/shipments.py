@@ -1,4 +1,3 @@
-import typing
 import json
 from django.db.models import Q
 from import_export import resources
@@ -48,7 +47,7 @@ DEFAULT_HEADERS = {
 }
 
 
-def shipment_resource(query_params: dict, context):
+def shipment_resource(query_params: dict, context, **kwargs):
     queryset = models.Shipment.access_by(context)
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (

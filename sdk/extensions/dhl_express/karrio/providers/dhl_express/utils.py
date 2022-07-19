@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     password: str
     account_number: str = None
     account_country_code: str = None
+    metadata: dict = {}
 
     id: str = None
 
@@ -21,7 +22,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
-            if self.test
+            if self.test_mode
             else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
         )
 

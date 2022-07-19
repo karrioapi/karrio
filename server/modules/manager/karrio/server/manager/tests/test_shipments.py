@@ -348,6 +348,7 @@ SHIPMENT_RESPONSE = {
             "weight_unit": "KG",
             "dimension_unit": "CM",
             "reference_number": ANY,
+            "options": {},
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -434,7 +435,7 @@ RETURNED_CANCEL_VALUE = (
 PURCHASED_SHIPMENT = {
     "id": ANY,
     "object_type": "shipment",
-    "tracking_url": "/v1/trackers/canadapost/123456789012?test",
+    "tracking_url": "/v1/trackers/canadapost/123456789012",
     "shipper": {
         "id": ANY,
         "postal_code": "E1C4Z8",
@@ -492,6 +493,7 @@ PURCHASED_SHIPMENT = {
             "items": [],
             "reference_number": "123456789012",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -627,6 +629,7 @@ CANCEL_RESPONSE = {
             "items": [],
             "reference_number": "0000000002",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -651,9 +654,9 @@ CANCEL_RESPONSE = {
                 {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
             ],
             "meta": {
-                "service_name": "CANADAPOST PRIORITY",
-                "rate_provider": "canadapost",
                 "carrier_connection_id": ANY,
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
             },
             "test_mode": True,
         }
@@ -740,6 +743,7 @@ CANCEL_PURCHASED_RESPONSE = {
             "items": [],
             "reference_number": "0000000002",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -764,9 +768,9 @@ CANCEL_PURCHASED_RESPONSE = {
                 {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
             ],
             "meta": {
-                "service_name": "CANADAPOST PRIORITY",
-                "rate_provider": "canadapost",
                 "carrier_connection_id": ANY,
+                "rate_provider": "canadapost",
+                "service_name": "CANADAPOST PRIORITY",
             },
             "test_mode": True,
         }

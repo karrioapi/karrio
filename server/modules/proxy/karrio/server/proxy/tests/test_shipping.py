@@ -16,7 +16,7 @@ class TestShipping(APITestCase):
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, SHIPPING_RESPONSE)
 
     def test_shipping_cancel(self):
@@ -28,7 +28,7 @@ class TestShipping(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_SUCCESS_CANCEL_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
@@ -43,10 +43,10 @@ class TestShipping(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = RETURNED_FAILED_CANCEL_VALUE
-            response = self.client.post(f"{url}?test", data)
+            response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(response.status_code, status.HTTP_424_FAILED_DEPENDENCY)
             self.assertDictEqual(response_data, SHIPPING_CANCEL_FAILED_RESPONSE)
 
 
@@ -163,7 +163,7 @@ RETURNED_FAILED_CANCEL_VALUE = [
 SHIPPING_RESPONSE = {
     "id": ANY,
     "object_type": "shipment",
-    "tracking_url": "/v1/proxy/tracking/canadapost/123456789012?test",
+    "tracking_url": "/v1/proxy/tracking/canadapost/123456789012",
     "shipper": {
         "id": None,
         "postal_code": "V6M2V9",
@@ -221,6 +221,7 @@ SHIPPING_RESPONSE = {
             "items": [],
             "reference_number": "123456789012",
             "object_type": "parcel",
+            "options": {},
         }
     ],
     "services": [],
@@ -307,17 +308,12 @@ SHIPPING_CANCEL_SUCCESS_RESPONSE = {
 }
 
 SHIPPING_CANCEL_FAILED_RESPONSE = {
-    "error": {
-        "code": "failure",
-        "details": {
-            "messages": [
-                {
-                    "carrier_id": "canadapost",
-                    "carrier_name": "canadapost",
-                    "code": "404",
-                    "message": "Not Found",
-                }
-            ]
-        },
-    }
+    "messages": [
+        {
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "code": "404",
+            "message": "Not Found",
+        }
+    ]
 }

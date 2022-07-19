@@ -89,7 +89,6 @@ class AppType(utils.BaseObjectType):
 
 class PrivateAppType(utils.BaseObjectType):
     client_id = graphene.String(required=True)
-    client_secret = graphene.String(required=True)
     features = graphene.List(graphene.String, default_value=[])
     installation = graphene.Field(AppInstallationType)
     redirect_uris = graphene.String(required=True)
@@ -97,5 +96,5 @@ class PrivateAppType(utils.BaseObjectType):
 
     class Meta:
         model = models.App
-        exclude = ("installations", "registration", "org")
+        exclude = ("installations", "registration", "client_secret", "org")
         interfaces = (utils.CustomNode,)

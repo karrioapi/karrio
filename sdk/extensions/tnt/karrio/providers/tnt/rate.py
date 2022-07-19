@@ -19,7 +19,7 @@ from tnt_lib.pricing_request import (
 from karrio.core.utils import Serializable, Element, XP, DF, NF
 from karrio.core.units import Options, Packages, Services
 from karrio.core.models import RateDetails, Message, ChargeDetails, RateRequest
-from karrio.providers.tnt.units import ShipmentOption, PaymentType, ShipmentService
+from karrio.providers.tnt.units import ShippingOption, PaymentType, ShipmentService
 from karrio.providers.tnt.utils import Settings
 from karrio.providers.tnt.error import parse_error_response
 
@@ -75,11 +75,11 @@ def _extract_detail(
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[priceRequest]:
-    options = Options(payload.options, ShipmentOption)
     package = Packages(payload.parcels).single
     service = Services(payload.services, ShipmentService).first
-
-    option_codes = [code for label, code in options if "division" not in label]
+    options = ShippingOption.to_options(
+        payload.options, package_options=package.options
+    )
 
     request = priceRequest(
         appId=settings.username,
@@ -108,9 +108,11 @@ def rate_request(
                 type_=("D" if package.parcel.is_document else "N"),
                 options=(
                     optionsType(
-                        option=[option(optionCode=code) for code in option_codes]
+                        option=[
+                            option(optionCode=code) for _, code, _ in options.as_list()
+                        ]
                     )
-                    if any(option_codes)
+                    if any(options.as_list())
                     else None
                 ),
             ),
@@ -141,4 +143,4 @@ def rate_request(
         ),
     )
 
-    return Serializable(request, XP.to_xml, logged=True)
+    return Serializable(request, XP.to_xml)

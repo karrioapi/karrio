@@ -9,13 +9,13 @@ from karrio.server.core.tests import APITestCase
 class TesPickup(APITestCase):
     def test_schedule_pickup(self):
         url = reverse(
-            "karrio.server.proxy:pickup-details",
+            "karrio.server.proxy:pickup-schedule",
             kwargs=dict(carrier_name="canadapost"),
         )
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_DATA)
+            response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -29,7 +29,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
-            response = self.client.put(f"{url}?test", PICKUP_UPDATE_DATA)
+            response = self.client.post(f"{url}", PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -43,7 +43,7 @@ class TesPickup(APITestCase):
 
         with patch("karrio.server.core.gateway.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_CANCEL_DATA)
+            response = self.client.post(f"{url}", PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -208,6 +208,7 @@ PICKUP_RESPONSE = {
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
                 "reference_number": None,
+                "options": {},
             }
         ],
         "instruction": "Should not be folded",
@@ -267,6 +268,7 @@ PICKUP_UPDATE_RESPONSE = {
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
                 "reference_number": None,
+                "options": {},
             }
         ],
         "instruction": "Should not be folded",

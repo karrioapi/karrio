@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.usps"
-version = "2021.6"
+version = "2022.6"
 description = "USPS Web API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
 homepage="https://github.com/karrioapi/karrio/tree/main/schemas/usps"

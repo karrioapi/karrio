@@ -14,12 +14,6 @@ import karrio.server.orders.models as models
 
 
 class TestOrderFixture(APITestCase):
-    def setUp(self) -> None:
-        super().setUp()
-
-        self.carrier.test = False
-        self.carrier.save()
-
     def create_order(self) -> Tuple[HttpResponse, dict]:
         url = reverse("karrio.server.orders:order-list")
         data = ORDER_DATA
@@ -251,6 +245,7 @@ ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -288,7 +283,7 @@ ORDER_RESPONSE = {
     "options": {},
     "metadata": {},
     "shipments": [],
-    "test_mode": False,
+    "test_mode": True,
     "created_at": ANY,
 }
 
@@ -357,6 +352,7 @@ SHIPMENT_DATA = {
                     "metadata": {"id": 1071823173},
                 }
             ],
+            "options": {},
         }
     ],
     "options": {"currency": "CAD"},
@@ -391,6 +387,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -505,6 +502,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
@@ -537,7 +535,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
                     },
-                    "test_mode": False,
+                    "test_mode": True,
                 }
             ],
             "reference": None,
@@ -556,12 +554,12 @@ ORDER_SHIPMENTS_RESPONSE = {
             "meta": {},
             "service": None,
             "selected_rate_id": None,
-            "test_mode": False,
+            "test_mode": True,
             "label_url": None,
             "invoice_url": None,
         }
     ],
-    "test_mode": False,
+    "test_mode": True,
     "created_at": ANY,
 }
 
@@ -593,6 +591,7 @@ FULFILLED_ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -722,6 +721,7 @@ FULFILLED_ORDER_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
@@ -754,7 +754,7 @@ FULFILLED_ORDER_RESPONSE = {
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
                     },
-                    "test_mode": False,
+                    "test_mode": True,
                 }
             ],
             "reference": None,
@@ -773,12 +773,12 @@ FULFILLED_ORDER_RESPONSE = {
             "meta": {},
             "service": None,
             "selected_rate_id": None,
-            "test_mode": False,
+            "test_mode": True,
             "label_url": None,
             "invoice_url": None,
         }
     ],
-    "test_mode": False,
+    "test_mode": True,
     "created_at": ANY,
 }
 
@@ -810,6 +810,7 @@ PARTIAL_ORDER_RESPONSE = {
         "validation": None,
     },
     "shipping_from": None,
+    "billing_address": None,
     "line_items": [
         {
             "id": ANY,
@@ -924,6 +925,7 @@ PARTIAL_ORDER_RESPONSE = {
                     ],
                     "reference_number": ANY,
                     "object_type": "parcel",
+                    "options": {},
                 }
             ],
             "services": [],
@@ -956,7 +958,7 @@ PARTIAL_ORDER_RESPONSE = {
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
                     },
-                    "test_mode": False,
+                    "test_mode": True,
                 }
             ],
             "reference": None,
@@ -975,11 +977,11 @@ PARTIAL_ORDER_RESPONSE = {
             "meta": {},
             "service": None,
             "selected_rate_id": None,
-            "test_mode": False,
+            "test_mode": True,
             "label_url": None,
             "invoice_url": None,
         }
     ],
-    "test_mode": False,
+    "test_mode": True,
     "created_at": ANY,
 }

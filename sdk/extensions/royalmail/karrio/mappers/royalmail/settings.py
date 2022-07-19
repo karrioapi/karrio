@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     # Base properties
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "royalmail"
     account_country_code: str = "UK"
+    metadata: dict = {}

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 
 from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager import models as manager
 
 from karrio.server.orders.serializers.base import ORDER_STATUS
@@ -41,15 +41,19 @@ class OrderManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related(
+            .select_related(
+                "created_by",
                 "shipping_to",
                 "shipping_from",
+                "billing_address",
+            )
+            .prefetch_related(
                 "line_items",
-                "line_items__children__commodity_parcel__parcel_shipment",
             )
         )
 
 
+@register_model
 class Order(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [
@@ -69,6 +73,9 @@ class Order(OwnedEntity):
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["order_id"], name="order_id_idx"),
+        ]
 
     id = models.CharField(
         max_length=50,
@@ -90,6 +97,12 @@ class Order(OwnedEntity):
         null=True,
         on_delete=models.CASCADE,
         related_name="shipper_order",
+    )
+    billing_address = models.OneToOneField(
+        "manager.Address",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="bill_to_order",
     )
     line_items = models.ManyToManyField(
         LineItem, related_name="commodity_order", through="OrderLineItemLink"

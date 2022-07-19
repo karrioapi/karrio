@@ -3,12 +3,12 @@
 import attr
 import logging
 import warnings
-from typing import Callable, Union, List
+from typing import Callable, Optional, Union, List
 
 from karrio.api.proxy import Proxy
 from karrio.api.mapper import Mapper
 from karrio.core import Settings
-from karrio.core.utils import DP
+from karrio.core.utils import DP, Tracer
 from karrio.core.models import Message
 from karrio.core.errors import ShippingSDKError
 from karrio.references import import_extensions, detect_capabilities
@@ -24,6 +24,7 @@ class Gateway:
     mapper: Mapper
     proxy: Proxy
     settings: Settings
+    tracer: Tracer
 
     @property
     def capabilities(self) -> List[str]:
@@ -73,9 +74,9 @@ class Gateway:
 class ICreate:
     """A gateway initializer type class"""
 
-    initializer: Callable[[Union[Settings, dict]], Gateway]
+    initializer: Callable[[Union[Settings, dict], Optional[Tracer]], Gateway]
 
-    def create(self, settings: Union[Settings, dict]) -> Gateway:
+    def create(self, settings: Union[Settings, dict], tracer: Tracer = None) -> Gateway:
         """A gateway factory with a fluent API interface.
 
         Args:
@@ -84,7 +85,7 @@ class ICreate:
         Returns:
             Gateway: The carrier connection instance
         """
-        return self.initializer(settings)
+        return self.initializer(settings, tracer)
 
 
 class GatewayInitializer:
@@ -111,7 +112,9 @@ class GatewayInitializer:
         try:
             provider = self.providers[key]
 
-            def initializer(settings: Union[Settings, dict]) -> Gateway:
+            def initializer(
+                settings: Union[Settings, dict], tracer: Tracer = None
+            ) -> Gateway:
                 """Initialize a provider gateway with the required settings
 
                 Args:
@@ -121,16 +124,18 @@ class GatewayInitializer:
                     Gateway: a gateway instance
                 """
                 try:
+                    _tracer = tracer or Tracer()
                     settings_value: Settings = (
                         DP.to_object(provider.Settings, settings)
                         if isinstance(settings, dict)
                         else settings
                     )
                     return Gateway(
+                        tracer=_tracer,
                         is_hub=provider.is_hub,
                         settings=settings_value,
-                        proxy=provider.Proxy(settings_value),
                         mapper=provider.Mapper(settings_value),
+                        proxy=provider.Proxy(settings_value, tracer=_tracer),
                     )
                 except Exception as er:
                     raise ShippingSDKError(f"Failed to setup provider '{key}'") from er

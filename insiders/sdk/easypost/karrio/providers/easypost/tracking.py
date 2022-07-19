@@ -96,4 +96,4 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[dict]]:
             )
         )
 
-    return Serializable(requests, DP.to_dict, logged=True)
+    return Serializable(requests, DP.to_dict)

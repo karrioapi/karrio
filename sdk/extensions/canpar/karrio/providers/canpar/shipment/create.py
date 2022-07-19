@@ -27,7 +27,12 @@ from karrio.core.units import Packages, Options
 from karrio.providers.canpar.shipment.label import get_label_request, LabelRequest
 from karrio.providers.canpar.error import parse_error_response
 from karrio.providers.canpar.utils import Settings
-from karrio.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
+from karrio.providers.canpar.units import (
+    WeightUnit,
+    DimensionUnit,
+    ShippingOption,
+    Service,
+)
 from karrio.providers.canpar.rate import _extract_rate_details
 
 
@@ -77,23 +82,12 @@ def shipment_request(
 
 
 def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
-    packages = Packages(payload.parcels)
-    options = Options(payload.options, Option)
     service_type = Service.map(payload.service).value_or_key
-
-    premium: Optional[bool] = next(
-        (
-            True
-            for option, _ in options
-            if option
-            in [
-                Option.canpar_ten_am.value,
-                Option.canpar_noon.value,
-                Option.canpar_saturday.value,
-            ]
-        ),
-        None,
+    packages = Packages(payload.parcels)
+    options = ShippingOption.to_options(
+        payload.options, package_options=packages.options
     )
+
     shipping_date = DF.fdatetime(
         options.shipment_date or time.strftime("%Y-%m-%d"),
         current_format="%Y-%m-%d",
@@ -163,7 +157,7 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                         province=payload.shipper.state_code,
                         residential=payload.shipper.residential,
                     ),
-                    premium=premium,
+                    premium=ShippingOption.is_premium(options),
                     proforma=None,
                     reported_weight_unit=WeightUnit.LB.value,
                     send_email_to_delivery=payload.recipient.email,
@@ -189,7 +183,6 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
             extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
             special_prefixes=dict(shipment_children="xsd1"),
         ),
-        logged=True,
     )
     return Job(id="process", data=data)
 

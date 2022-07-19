@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://ct.soa-gw.canadapost.ca"
-            if self.test
+            if self.test_mode
             else "https://soa-gw.canadapost.ca"
         )
 
@@ -33,3 +33,8 @@ class Settings(BaseSettings):
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")
+
+
+def format_ca_postal_code(code: str = None) -> str:
+    """Format canadian postal code."""
+    return (code or "").replace(" ", "").upper()

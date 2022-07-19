@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "AU"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -21,7 +22,7 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://digitalapi.auspost.com.au/test"
-            if self.test
+            if self.test_mode
             else "https://digitalapi.auspost.com.au"
         )
 

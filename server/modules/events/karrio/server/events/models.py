@@ -1,12 +1,14 @@
 from functools import partial
 from django.conf import settings
 from django.db import models
+from django.db.models.fields import json
 from django.contrib.postgres import fields
 
 from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid
+from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 
+@register_model
 class Webhook(OwnedEntity):
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
 
@@ -50,6 +52,13 @@ class Event(OwnedEntity):
         verbose_name = "Event"
         verbose_name_plural = "Events"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                json.KeyTextTransform("id", "data"),
+                condition=models.Q(data__id__isnull=False),
+                name="event_object_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,

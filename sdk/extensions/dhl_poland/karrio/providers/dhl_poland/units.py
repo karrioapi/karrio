@@ -1,3 +1,5 @@
+import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core.models import ServiceLevel
 
@@ -63,7 +65,7 @@ class Service(Enum):
     dhl_poland_international = "PI"
 
 
-class Option(Flag):
+class ShippingOption(Flag):
     dhl_poland_delivery_in_18_22_hours = Spec.asKey("1722")
     dhl_poland_delivery_on_saturday = Spec.asKey("SATURDAY")
     dhl_poland_pickup_on_staturday = Spec.asKey("NAD_SOBOTA")
@@ -78,6 +80,24 @@ class Option(Flag):
     """ Unified Option type mapping """
     cash_on_delivery = dhl_poland_collect_on_delivery
     insurance = dhl_poland_insuration
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        def option_filter(key: str) -> bool:
+            return key in cls  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)
 
 
 DEFAULT_SERVICES = [

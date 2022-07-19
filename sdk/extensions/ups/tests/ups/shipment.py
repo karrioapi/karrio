@@ -527,7 +527,7 @@ ShipmentRequestWithPresetXML = """<tns:Envelope xmlns:auth="http://www.ups.com/s
 </tns:Envelope>
 """
 
-ShipmentCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
+ShipmentCancelRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>

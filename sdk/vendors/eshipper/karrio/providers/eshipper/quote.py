@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast
+from typing import List, Tuple
 from eshipper_lib.quote_request import (
     EShipper,
     QuoteRequestType,
@@ -7,7 +7,7 @@ from eshipper_lib.quote_request import (
     PackagesType,
     PackageType,
 )
-from eshipper_lib.quote_reply import QuoteType, SurchargeType
+from eshipper_lib.quote_reply import QuoteType
 from karrio.core.utils import Element, Serializable, SF, NF, XP
 from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from karrio.core.units import Packages, Options, Services
@@ -17,10 +17,10 @@ from karrio.providers.eshipper.utils import (
     ceil,
 )
 from karrio.providers.eshipper.units import (
-    Service,
+    ShippingService,
     PackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
 )
 from karrio.providers.eshipper.error import parse_error_response
 
@@ -37,7 +37,7 @@ def parse_quote_reply(
 
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = XP.build(QuoteType, node)
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -67,15 +67,23 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
 
 
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShipper]:
-    options = Options(payload.options, Option)
     packages = Packages(
-        payload.parcels, required=["weight", "height", "width", "length"]
+        payload.parcels,
+        package_option_type=ShippingOption,
+        required=["weight", "height", "width", "length"],
+    )
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
     )
     packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
     packaging = (
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     )
-    service = Services(payload.services, Service).first or Service.eshipper_all
+    service = (
+        Services(payload.services, ShippingService).first
+        or ShippingService.eshipper_all
+    )
 
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass),
@@ -153,8 +161,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
-                        insuranceAmount=None,
-                        codAmount=None,
+                        insuranceAmount=package.options.insurance,
+                        codAmount=package.options.cash_on_delivery,
                         description=package.parcel.description,
                     )
                     for package in packages
@@ -164,4 +172,4 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

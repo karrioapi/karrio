@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.forms import models as forms
 from django.utils.translation import ugettext_lazy as _
 
 from karrio.server.user.models import Token
@@ -62,17 +63,27 @@ class TokenAdmin(admin.ModelAdmin):
         "key",
         "user",
         *(["organization"] if settings.MULTI_ORGANIZATIONS else []),
+        "test_mode",
         "created",
     )
-    fields = ("user",)
+    fields = ("user", "test_mode")
     ordering = ("-created",)
 
-    def has_add_permission(self, request, obj=None):
-        return not settings.MULTI_ORGANIZATIONS
+    if settings.MULTI_ORGANIZATIONS:
+        from karrio.server.orgs.admin import TokenLinkInline
+
+        inlines = [TokenLinkInline]
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
         return query.filter(user=request.user)
+
+    def get_form(self, request, obj, change, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        form.base_fields["user"].queryset = User.objects.filter(
+            orgs_organization__users__id=request.user.id
+        ).distinct()
+        return form
 
 
 admin.site.register(Token, TokenAdmin)

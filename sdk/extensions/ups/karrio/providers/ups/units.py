@@ -1,26 +1,26 @@
 from karrio.core.utils import Enum, Flag, Spec
-from karrio.core.units import PackagePreset
+from karrio.core import units
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
 
 class PackagePresets(Flag):
-    ups_small_express_box = PackagePreset(
+    ups_small_express_box = units.PackagePreset(
         **dict(weight=30.0, width=13.0, height=11.0, length=2.0), **PRESET_DEFAULTS
     )
-    ups_medium_express_box = PackagePreset(
+    ups_medium_express_box = units.PackagePreset(
         **dict(weight=30.0, width=16.0, height=11.0, length=3.0), **PRESET_DEFAULTS
     )
-    ups_large_express_box = PackagePreset(
+    ups_large_express_box = units.PackagePreset(
         **dict(weight=30.0, width=18.0, height=13.0, length=3.0), **PRESET_DEFAULTS
     )
-    ups_express_tube = PackagePreset(
+    ups_express_tube = units.PackagePreset(
         **dict(width=38.0, height=6.0, length=6.0), **PRESET_DEFAULTS
     )
-    ups_express_pak = PackagePreset(
+    ups_express_pak = units.PackagePreset(
         **dict(width=16.0, height=11.75, length=1.5), **PRESET_DEFAULTS
     )
-    ups_world_document_box = PackagePreset(
+    ups_world_document_box = units.PackagePreset(
         **dict(width=17.5, height=12.5, length=3.0), **PRESET_DEFAULTS
     )
 
@@ -92,7 +92,7 @@ class PackagingType(Flag):
     your_packaging = ups_customer_supplied_package
 
 
-class ServiceCode(Enum):
+class ShippingService(Enum):
     ups_standard = "11"
     ups_worldwide_expedited = "08"
     ups_worldwide_express = "07"
@@ -127,7 +127,7 @@ class ServiceCode(Enum):
     ups_economy_mail_innovations = "M6"
 
 
-class ServiceOption(Enum):
+class ShippingOption(Enum):
     ups_negotiated_rates_indicator = Spec.asFlag("NegotiatedRatesIndicator")
     ups_frs_shipment_indicator = Spec.asFlag("FRSShipmentIndicator")
     ups_rate_chart_indicator = Spec.asFlag("RateChartIndicator")
@@ -159,3 +159,18 @@ class ServiceOption(Enum):
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        return units.Options(options, cls)

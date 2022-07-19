@@ -46,7 +46,7 @@ from karrio.providers.dhl_express.units import (
     ProductCode,
     PaymentType,
     CountryRegion,
-    SpecialServiceCode,
+    ShippingOption,
     PackagePresets,
     LabelType,
     ExportReasonCode,
@@ -57,9 +57,6 @@ from karrio.providers.dhl_express.units import (
 )
 from karrio.providers.dhl_express.utils import Settings
 from karrio.providers.dhl_express.error import parse_error_response
-
-
-UNSUPPORTED_PAPERLESS_COUNTRIES = ["JM"]
 
 
 def parse_shipment_response(
@@ -107,8 +104,12 @@ def shipment_request(
     ):
         raise OriginNotServicedError(payload.shipper.country_code)
 
-    packages = Packages.map(payload.parcels, PackagePresets, required=["weight"])
-    options = Options(payload.options, SpecialServiceCode)
+    packages = Packages.map(
+        payload.parcels,
+        PackagePresets,
+        required=["weight"],
+        package_option_type=ShippingOption,
+    )
     product = ProductCode.map(payload.service).value_or_key
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
@@ -117,18 +118,22 @@ def shipment_request(
         COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
-    is_document = all(p.parcel.is_document for p in packages)
+
     package_type = PackageType[packages.package_type].value
     label_format, label_template = LabelType[payload.label_type or "PDF_6x4"].value
     payment = payload.payment or Payment(
         paid_by="sender", account_number=settings.account_number
     )
     customs = CustomsInfo(payload.customs or Customs(commodities=[]))
+    is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
-    paperless_supported = (
-        is_dutiable
-        and payload.shipper.country_code not in UNSUPPORTED_PAPERLESS_COUNTRIES
+    options = ShippingOption.to_options(
+        payload.options,
+        is_dutiable=is_dutiable,
+        package_options=packages.options,
+        shipper_country=payload.shipper.country_code,
     )
+
     duty = customs.duty or Duty(paid_by="sender")
     bill_to = CompleteAddress.map(duty.bill_to)
     content = packages[0].parcel.content or customs.content_description or "N/A"
@@ -372,24 +377,14 @@ def shipment_request(
             RegistrationNumbers=None,
             BusinessPartyTypeCode=None,
         ),
-        SpecialService=(
-            [
-                SpecialService(
-                    SpecialServiceType=SpecialServiceCode[key].value.key,
-                    ChargeValue=getattr(svc, "value", None),
-                    CurrencyCode=(
-                        options.currency or "USD" if hasattr(svc, "value") else None
-                    ),
-                )
-                for key, svc in options
-                if key in SpecialServiceCode
-            ]
-            + (  # Add paperless trade if dutiable
-                [SpecialService(SpecialServiceType="WY")]
-                if paperless_supported and "dhl_paperless_trade" not in options
-                else []
+        SpecialService=[
+            SpecialService(
+                SpecialServiceType=code,
+                ChargeValue=value,
+                CurrencyCode=(options.currency or "USD" if value else None),
             )
-        ),
+            for _, code, value in options.as_list()
+        ],
         Notification=(
             Notification(EmailAddress=options.email_notification_to or recipient.email)
             if options.email_notification
@@ -415,7 +410,7 @@ def shipment_request(
         Importer=None,
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DHLShipmentRequest) -> str:

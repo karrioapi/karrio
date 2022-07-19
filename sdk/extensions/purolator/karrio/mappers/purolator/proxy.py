@@ -17,13 +17,14 @@ class Proxy(BaseProxy):
     ) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
+            method="POST",
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
                 "soapaction": soapaction,
                 "Authorization": f"Basic {self.settings.authorization}",
             },
-            method="POST",
         )
 
     def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:

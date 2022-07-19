@@ -1,6 +1,7 @@
 """Karrio USPS International units module"""
 
 import typing
+from karrio.core import units
 from karrio.core.utils import Enum, Spec
 from karrio.core.models import Address
 
@@ -79,14 +80,14 @@ class PackagingType(Enum):
     your_packaging = package
 
 
-class ShipmentOption(Enum):
-    usps_registered_mail = Spec.asKey(103)
-    usps_insurance_global_express_guaranteed = Spec.asKey(106)
-    usps_insurance_express_mail_international = Spec.asKey(107)
-    usps_insurance_priority_mail_international = Spec.asKey(108)
-    usps_return_receipt = Spec.asKey(105)
-    usps_certificate_of_mailing = Spec.asKey(100)
-    usps_electronic_usps_delivery_confirmation_international = Spec.asKey(109)
+class ShippingOption(Enum):
+    usps_registered_mail = Spec.asKey("103")
+    usps_insurance_global_express_guaranteed = Spec.asValue("106", float)
+    usps_insurance_express_mail_international = Spec.asValue("107", float)
+    usps_insurance_priority_mail_international = Spec.asValue("108", float)
+    usps_return_receipt = Spec.asKey("105")
+    usps_certificate_of_mailing = Spec.asKey("100")
+    usps_electronic_usps_delivery_confirmation_international = Spec.asKey("109")
 
     """ Non official options """
     usps_option_machinable_item = Spec.asFlag("usps_option_machinable_item")
@@ -94,8 +95,47 @@ class ShipmentOption(Enum):
     usps_option_return_non_delivery = Spec.asKey("RETURN")
     usps_option_redirect_non_delivery = Spec.asValue("REDIRECT", Address)
 
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        package_options: units.Options = None,
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
 
-class ShipmentService(Enum):
+        if package_options is not None:
+            options.update(package_options.content)
+
+        def option_filter(code: str) -> bool:
+            return code in cls and "usps_option" not in code  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)
+
+    @classmethod
+    def insurance_from(
+        cls, options: units.Options, service_key: str
+    ) -> typing.Optional[float]:
+        return next(
+            (
+                value
+                for key, value in options
+                if "usps_insurance" in key and service_key in key
+            ),
+            options.insurance,
+        )
+
+    @classmethod
+    def non_delivery_from(cls, options: units.Options) -> typing.Optional[str]:
+        # Gets the first provided non delivery option or default to "RETURN"
+        return next(
+            (value for name, value in options if "non_delivery" in name),
+            "RETURN",
+        )
+
+
+class ShippingService(Enum):
     usps_first_class = "First Class"
     usps_first_class_commercial = "First Class Commercial"
     usps_first_class_hfp_commercial = "First Class HFPCommercial"
@@ -160,23 +200,57 @@ class ServiceType(Enum):
     usps_global_express_guaranteed_gxg = usps_global_express_guaranteed
     usps_global_express_guaranteed_document = usps_global_express_guaranteed
     usps_global_express_guaranteed_envelopes = usps_global_express_guaranteed
-    usps_global_express_guaranteed_non_document_rectangular = usps_global_express_guaranteed
-    usps_global_express_guaranteed_non_document_non_rectangular = usps_global_express_guaranteed
-    usps_priority_mail_international_flat_rate_envelope = usps_priority_mail_international
-    usps_priority_mail_international_medium_flat_rate_box = usps_priority_mail_international
-    usps_priority_mail_express_international_flat_rate_envelope = usps_priority_mail_express_international
-    usps_priority_mail_international_large_flat_rate_box = usps_priority_mail_international
+    usps_global_express_guaranteed_non_document_rectangular = (
+        usps_global_express_guaranteed
+    )
+    usps_global_express_guaranteed_non_document_non_rectangular = (
+        usps_global_express_guaranteed
+    )
+    usps_priority_mail_international_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_medium_flat_rate_box = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_express_international_flat_rate_envelope = (
+        usps_priority_mail_express_international
+    )
+    usps_priority_mail_international_large_flat_rate_box = (
+        usps_priority_mail_international
+    )
     usps_first_class_mail_international_letter = usps_first_class_mail_international
-    usps_first_class_mail_international_large_envelope = usps_first_class_mail_international
+    usps_first_class_mail_international_large_envelope = (
+        usps_first_class_mail_international
+    )
     usps_first_class_package_international_service = usps_first_class_mail_international
-    usps_priority_mail_international_small_flat_rate_box = usps_priority_mail_international
-    usps_priority_mail_express_international_legal_flat_rate_envelope = usps_priority_mail_express_international
-    usps_priority_mail_international_gift_card_flat_rate_envelope = usps_priority_mail_international
-    usps_priority_mail_international_window_flat_rate_envelope = usps_priority_mail_international
-    usps_priority_mail_international_small_flat_rate_envelope = usps_priority_mail_international
+    usps_priority_mail_international_small_flat_rate_box = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_express_international_legal_flat_rate_envelope = (
+        usps_priority_mail_express_international
+    )
+    usps_priority_mail_international_gift_card_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_window_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_small_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
     usps_first_class_mail_international_postcard = usps_first_class_mail_international
-    usps_priority_mail_international_legal_flat_rate_envelope = usps_priority_mail_international
-    usps_priority_mail_international_padded_flat_rate_envelope = usps_priority_mail_international
-    usps_priority_mail_international_dvd_flat_rate_priced_box = usps_priority_mail_international
-    usps_priority_mail_international_large_video_flat_rate_priced_box = usps_priority_mail_international
-    usps_priority_mail_express_international_padded_flat_rate_envelope = usps_priority_mail_express_international
+    usps_priority_mail_international_legal_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_padded_flat_rate_envelope = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_dvd_flat_rate_priced_box = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_international_large_video_flat_rate_priced_box = (
+        usps_priority_mail_international
+    )
+    usps_priority_mail_express_international_padded_flat_rate_envelope = (
+        usps_priority_mail_express_international
+    )

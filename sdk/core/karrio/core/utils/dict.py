@@ -45,7 +45,9 @@ class DICTPARSE:
         recursively parse a data type using __dict__ into a JSON
         """
         return json.loads(
-            DICTPARSE.jsonify(entity) if not isinstance(entity, str) else entity,
+            DICTPARSE.jsonify(entity)
+            if not isinstance(entity, (str, bytes))
+            else entity,
             object_hook=lambda d: {
                 k: v for k, v in d.items() if v not in (None, [], "")
             },

@@ -83,4 +83,4 @@ def address_validation_request(
         )
     )
 
-    return Serializable(request, Settings.serialize, logged=True)
+    return Serializable(request, Settings.serialize)

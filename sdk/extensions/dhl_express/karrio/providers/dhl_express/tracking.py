@@ -72,7 +72,7 @@ def tracking_request(
         AWBNumber=payload.tracking_numbers,
     )
 
-    return Serializable(request, _request_serializer, logged=True)
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: KnownTrackingRequest) -> str:

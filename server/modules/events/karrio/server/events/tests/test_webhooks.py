@@ -8,7 +8,9 @@ from rest_framework import status
 
 from karrio.server.core.tests import APITestCase
 from karrio.server.events.models import Webhook
-from karrio.server.events.tasks.webhook import notify_webhook_subscribers
+from karrio.server.events.task_definitions.base.webhook import (
+    notify_webhook_subscribers,
+)
 
 NOTIFICATION_DATETIME = timezone.now()
 
@@ -58,7 +60,9 @@ class TestWebhookDetails(APITestCase):
             "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
         )
 
-        with patch("karrio.server.events.tasks.webhook.identity") as mocks:
+        with patch(
+            "karrio.server.events.task_definitions.base.webhook.identity"
+        ) as mocks:
             response = Response()
             response.status_code = 200
             mocks.return_value = response
@@ -67,8 +71,10 @@ class TestWebhookDetails(APITestCase):
                 event="shipment.purchased",
                 data={"shipment": "content"},
                 event_at=NOTIFICATION_DATETIME,
-                test_mode=True,
-                ctx=dict(user_id=self.user.id),
+                ctx=dict(
+                    user_id=self.user.id,
+                    test_mode=True,
+                ),
             )
 
         response = self.client.get(url)

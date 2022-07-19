@@ -27,6 +27,7 @@ setup(
         "django-email-verification",
         "django-cors-headers",
         "django-redis",
+        "django-two-factor-auth",
         "drf-api-tracking",
         "drf-yasg",
         "gunicorn",
@@ -40,9 +41,6 @@ setup(
         "sentry-sdk",
     ],
     entry_points={"console_scripts": ["karrio = karrio.server.__main__:main"]},
-    dependency_links=[
-        "https://git.io/karrio",
-    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

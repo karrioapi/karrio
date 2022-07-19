@@ -1,5 +1,6 @@
 """ DHL Native Types """
 
+import typing
 from karrio.core.utils import Enum, Flag, Spec
 from karrio.core import units
 
@@ -124,6 +125,7 @@ class PackagePresets(Flag):
 
 
 MeasurementOptions = units.MeasurementOptionsType(min_in=1, min_cm=1)
+UNSUPPORTED_PAPERLESS_COUNTRIES = ["JM"]
 
 
 class LabelType(Flag):
@@ -292,8 +294,33 @@ class ProductCode(Enum):
     dhl_express_12_00_nondoc = "Y"
     dhl_destination_charges = "Z"
 
+    @classmethod
+    def apply_defaults(
+        cls,
+        products: typing.List[str],
+        is_international: bool = True,
+        is_document: bool = False,
+        is_envelope: bool = False,
+    ) -> typing.List[str]:
+        """
+        Apply default product codes to the list of products.
+        """
+        if not any(_ for _ in products if _ in cls):  # type: ignore
+            if is_international and is_document:
+                products.append("dhl_express_worldwide_doc")
+            elif is_international:
+                products.append("dhl_express_worldwide_nondoc")
+            elif is_document and is_envelope:
+                products.append("dhl_express_envelope_doc")
+            elif is_document:
+                products.append("dhl_domestic_express_doc")
+            else:
+                products.append("dhl_express_12_00_nondoc")
 
-class SpecialServiceCode(Enum):
+        return products
+
+
+class ShippingOption(Enum):
     dhl_logistics_services = Spec.asKey("0A")
     dhl_mailroom_management = Spec.asKey("0B")
     dhl_pallet_administration = Spec.asKey("0C")
@@ -523,6 +550,35 @@ class SpecialServiceCode(Enum):
     """ Unified Option type mapping """
     insurance = dhl_shipment_insurance
     cash_on_delivery = dhl_cash_on_delivery
+
+    @classmethod
+    def to_options(
+        cls,
+        options: dict,
+        is_international: bool = True,
+        is_dutiable: bool = True,
+        package_options: units.Options = None,
+        shipper_country: str = "",
+    ) -> units.Options:
+        """
+        Apply default values to the given options.
+        """
+
+        if (
+            is_international
+            and is_dutiable
+            and cls.dhl_paperless_trade.name not in options
+            and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
+        ):
+            options.update({cls.dhl_paperless_trade.name: True})
+
+        if package_options is not None:
+            options.update(package_options.content)
+
+        def option_filter(key: str) -> bool:
+            return key in cls  # type: ignore
+
+        return units.Options(options, cls, option_filter=option_filter)
 
 
 COUNTRY_PREFERED_UNITS = dict(

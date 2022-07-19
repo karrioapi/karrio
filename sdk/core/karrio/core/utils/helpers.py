@@ -3,6 +3,8 @@ import re
 import asyncio
 import logging
 import base64
+import uuid
+import urllib.parse
 from PIL import Image, ImageFile
 from PyPDF2 import PdfFileMerger
 from simple_zpl2 import ZPLDocument
@@ -15,6 +17,10 @@ logger = logging.getLogger(__name__)
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
+
+
+def identity(value: Any) -> Any:
+    return value
 
 
 def image_to_pdf(image_str: str) -> str:
@@ -91,37 +97,99 @@ def decode_bytes(byte):
     return byte.decode("utf-8")
 
 
+def process_request(
+    request_id: str,
+    trace: Callable[[Any, str], Any] = None,
+    **kwargs,
+) -> Request:
+    payload = (
+        dict(data=bytearray(kwargs["data"], encoding="utf-8"))
+        if "data" in kwargs
+        else {}
+    )
+
+    if trace:
+        trace(
+            {
+                "request_id": request_id,
+                "url": urllib.parse.unquote(kwargs.get("url")),
+                **({"data": kwargs.get("data")} if "data" in kwargs else {}),
+            },
+            "request",
+        )
+
+    _request = Request(**{**kwargs, **payload})
+
+    logger.info(f"Request URL:: {_request.full_url}")
+
+    return _request
+
+
+def process_response(
+    request_id: str,
+    response,
+    decoder: Callable,
+    trace: Callable[[Any, str], Any] = None,
+) -> str:
+    try:
+        _response = decoder(response)
+    except Exception as e:
+        logger.error(e)
+        _response = response
+
+    if trace:
+        _content = _response if isinstance(_response, str) else "undecoded bytes..."
+        trace({"request_id": request_id, "response": _content}, "response")
+
+    # logger.debug(f"Response content:: {_response}")
+
+    return _response
+
+
+def process_error(
+    request_id: str,
+    error: HTTPError,
+    on_error: Callable[[HTTPError], str] = None,
+    trace: Callable[[Any, str], Any] = None,
+) -> str:
+    logger.error(error, exc_info=False)
+
+    if on_error is not None:
+        _error = on_error(error)
+    else:
+        _error = error.read().decode("utf-8")
+
+    if trace:
+        trace({"request_id": request_id, "error": _error}, "error")
+
+    logger.debug(f"Error content:: {error}")
+
+    return _error
+
+
 def request(
     decoder: Callable = decode_bytes,
     on_error: Callable[[HTTPError], str] = None,
-    **args,
+    trace: Callable[[Any, str], Any] = None,
+    **kwargs,
 ) -> str:
     """Return an HTTP response body.
 
     make a http request (wrapper around Request method from built in urllib)
     """
-    logger.debug(f"sending request")
+
+    _request_id = str(uuid.uuid4())
+    logger.debug(f"sending request ({_request_id})...")
+
     try:
-        req = Request(**args)
-        logger.info(f"Request URL:: {req.full_url}")
-        with urlopen(req) as f:
-            res = f.read()
-            try:
-                res = decoder(res)
-            except Exception as e:
-                logger.exception(e)
+        _request = process_request(_request_id, trace, **kwargs)
 
-            logger.debug(f"response content {res}")
-            return res
+        with urlopen(_request) as f:
+            _response = process_response(_request_id, f.read(), decoder, trace)
     except HTTPError as e:
-        logger.exception(e)
+        _response = process_error(_request_id, e, on_error)
 
-        if on_error is not None:
-            return on_error(e)
-
-        error = e.read().decode("utf-8")
-        logger.debug(f"error response content {error}")
-        return error
+    return _response
 
 
 def exec_parrallel(

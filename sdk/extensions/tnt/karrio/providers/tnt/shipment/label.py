@@ -15,7 +15,7 @@ from tnt_lib.label_request import (
 from karrio.core.utils import Serializable
 from karrio.core.units import Packages
 from karrio.core.models import ShipmentRequest, Payment
-from karrio.providers.tnt.units import PaymentType, ShipmentOption, ShipmentService
+from karrio.providers.tnt.units import PaymentType, ShippingOption, ShipmentService
 from karrio.providers.tnt.utils import Settings
 
 
@@ -115,4 +115,4 @@ def create_label_request(
         ]
     )
 
-    return Serializable(request, logged=True)
+    return Serializable(request)

@@ -1,12 +1,11 @@
 import typing
-from drf_yasg import openapi
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
 from karrio.server.core import dataunits
 from karrio.server.core import serializers
 import karrio.server.manager.models as manager
-import karrio.server.manager.models as models
+import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
 
 
@@ -32,7 +31,10 @@ class ShipmentFilters(filters.FilterSet):
     carrier_name = filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
-        help_text="carrier_name used to fulfill the shipment",
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
     )
     reference = filters.CharFilter(
         field_name="reference",
@@ -48,7 +50,10 @@ class ShipmentFilters(filters.FilterSet):
     status = filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
-        help_text="shipment statuses.",
+        help_text=f"""
+        shipment status
+        Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
+        """,
     )
     option_key = CharInFilter(
         field_name="options",
@@ -73,9 +78,9 @@ class ShipmentFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
         field_name="tracking_number", lookup_expr="icontains"
     )
-    test_mode = filters.BooleanFilter(
-        field_name="test_mode",
-        help_text="test mode flag",
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="shipment' keyword and indexes search",
     )
 
     class Meta:
@@ -92,7 +97,20 @@ class ShipmentFilters(filters.FilterSet):
             | Q(recipient__city__icontains=value)
             | Q(recipient__email__icontains=value)
             | Q(recipient__phone_number__icontains=value)
+        )
+
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(recipient__address_line1__icontains=value)
+            | Q(recipient__address_line2__icontains=value)
+            | Q(recipient__postal_code__icontains=value)
+            | Q(recipient__person_name__icontains=value)
+            | Q(recipient__company_name__icontains=value)
+            | Q(recipient__city__icontains=value)
+            | Q(recipient__email__icontains=value)
+            | Q(recipient__phone_number__icontains=value)
             | Q(reference__icontains=value)
+            | Q(tracking_number__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):
@@ -139,30 +157,38 @@ class ShipmentFilters(filters.FilterSet):
         return queryset.filter(Q(selected_rate__service__in=values))
 
 
-class ShipmentModeFilter(serializers.Serializer):
-    test = serializers.FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="Create shipment in test or live mode",
-    )
-
-
-class TrackerFilter(filters.FilterSet):
+class TrackerFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
-        field_name="tracking_number", lookup_expr="icontains"
+        field_name="tracking_number",
+        lookup_expr="icontains",
+        help_text="a tracking number",
     )
-    created_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
-    created_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
+    created_after = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="gte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    created_before = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="lte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
     carrier_name = filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
     )
     status = filters.MultipleChoiceFilter(
         field_name="status",
         choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
+        help_text=f"""
+        tracker status
+        Values: {', '.join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
+        """,
     )
-    test_mode = filters.BooleanFilter(field_name="test_mode")
 
     class Meta:
         model = manager.Tracking
@@ -185,7 +211,7 @@ class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
-    entity_id = filters.CharFilter(method="entity_filter", field_name="response")
+    entity_id = filters.CharFilter(field_name="apilogindex__entity_id")
     method = filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
@@ -217,15 +243,32 @@ class LogFilter(filters.FilterSet):
 
         return queryset
 
-    def entity_filter(self, queryset, name, value):
-        return queryset.filter(response__icontains=value)
+
+class TracingRecordFilter(filters.FilterSet):
+    key = filters.CharFilter(
+        field_name="key",
+        help_text="the tacing log key.",
+    )
+    request_log_id = filters.CharFilter(
+        method="request_log_id_filter",
+        field_name="meta__request_log_id",
+        lookup_expr="icontains",
+        help_text="related request API log.",
+    )
+    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
+    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+
+    class Meta:
+        model = tracing.TracingRecord
+        fields: list = []
+
+    def request_log_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_log_id__icontains=value)
 
 
 class PickupFilters(filters.FilterSet):
-    parameters = [
-        openapi.Parameter("test_mode", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
-    ]
+    parameters: list = []
 
     class Meta:
-        model = models.Pickup
-        fields = ["test_mode"]
+        model = manager.Pickup
+        fields: list = []

@@ -49,7 +49,7 @@ from karrio.providers.dhl_poland.error import parse_error_response
 from karrio.providers.dhl_poland.utils import Settings
 from karrio.providers.dhl_poland.units import (
     PackagingType,
-    Option,
+    ShippingOption,
     Service,
     LabelType,
     PaymentType,
@@ -88,11 +88,16 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[str]:
-    packages = Packages(payload.parcels, required=["weight"])
+    packages = Packages(
+        payload.parcels, required=["weight"], package_option_type=ShippingOption
+    )
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
-    options = Options(payload.options, Option)
     customs = CustomsInfo(payload.customs)
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
+    )
 
     is_international = shipper.country_code != recipient.country_code
     service_type = Service.map(payload.service).value_or_key or (
@@ -124,15 +129,15 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ArrayOfService(
                             item=[
                                 DhlService(
-                                    serviceType=getattr(option, "key", option),
-                                    serviceValue=getattr(option, "value", None),
+                                    serviceType=code,
+                                    serviceValue=value,
                                     textInstruction=None,
                                     collectOnDeliveryForm=None,
                                 )
-                                for _, option in options
+                                for _, code, value in options.as_list()
                             ]
                         )
-                        if any(options)
+                        if any(options.as_list())
                         else None
                     ),
                     shipmentTime=(
@@ -320,5 +325,4 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     return Serializable(
         request,
         lambda req: settings.serialize(req, "createShipment", settings.server_url),
-        logged=True,
     )

@@ -36,10 +36,10 @@ from karrio.providers.freightcom.utils import (
     ceil,
 )
 from karrio.providers.freightcom.units import (
-    Service,
+    ShippingService,
     FreightPackagingType,
     FreightClass,
-    Option,
+    ShippingOption,
     PaymentType,
 )
 from karrio.providers.freightcom.error import parse_error_response
@@ -65,7 +65,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     tracking_number = getattr(
         next(iter(shipping.Package), None), "trackingNumber", None
     )
-    rate_provider, service, service_name = Service.info(
+    rate_provider, service, service_name = ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     charges = [
@@ -114,11 +114,16 @@ def shipping_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Freightcom]:
     packages = Packages(
-        payload.parcels, required=["weight", "height", "width", "length"]
+        payload.parcels,
+        package_option_type=ShippingOption,
+        required=["weight", "height", "width", "length"],
     )
-    options = Options(payload.options, Option)
+    options = ShippingOption.to_options(
+        payload.options,
+        package_options=packages.options,
+    )
 
-    service = Service.map(payload.service).value_or_key
+    service = ShippingService.map(payload.service).value_or_key
     packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
     packaging = (
         "Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package"
@@ -233,8 +238,8 @@ def shipping_request(
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
-                        insuranceAmount=None,
-                        codAmount=None,
+                        insuranceAmount=package.options.insurance,
+                        codAmount=package.options.cash_on_delivery,
                         description=package.parcel.description,
                     )
                     for package in packages
@@ -278,4 +283,4 @@ def shipping_request(
         ),
     )
 
-    return Serializable(request, standard_request_serializer, logged=True)
+    return Serializable(request, standard_request_serializer)

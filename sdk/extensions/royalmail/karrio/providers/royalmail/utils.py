@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     id: str = None
     account_country_code: str = "UK"
+    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -17,4 +18,8 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://api.royalmail.net" if self.test else "https://api.royalmail.net"
+        return (
+            "https://api.royalmail.net"
+            if self.test_mode
+            else "https://api.royalmail.net"
+        )

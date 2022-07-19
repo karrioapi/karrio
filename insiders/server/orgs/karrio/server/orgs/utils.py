@@ -81,7 +81,7 @@ def send_invitation_emails(
     organization: models.Organization,
     emails: typing.List[str],
     redirect_url: str,
-    invited_by: User,
+    invited_by: User,  # type:ignore
 ):
     @transaction.atomic
     def action(email: str):

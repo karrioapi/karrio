@@ -7,7 +7,7 @@ from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 from karrio.server.manager import models
-from karrio.server.events.tasks import tracking
+from karrio.server.events.task_definitions.base import tracking
 
 
 class TestTrackersBackgroundUpdate(APITestCase):
@@ -63,7 +63,9 @@ class TestTrackersBackgroundUpdate(APITestCase):
     def test_get_updated_trackers(self):
         url = reverse("karrio.server.manager:trackers-list")
 
-        with patch("karrio.server.events.tasks.tracking.identity") as mocks:
+        with patch(
+            "karrio.server.events.task_definitions.base.tracking.utils.identity"
+        ) as mocks:
             mocks.return_value = RETURNED_UPDATED_VALUE
             sleep(0.1)
             tracking.update_trackers(delta=datetime.timedelta(seconds=0.1))

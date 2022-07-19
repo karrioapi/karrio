@@ -6,15 +6,16 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from karrio.core.utils import DP, DF
+from karrio.core.utils import DP
 from karrio.server.core.gateway import Shipments, Carriers
-from karrio.server.core.exceptions import KarrioAPIException
+from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
     link_org,
+    Context,
 )
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.utils as utils
@@ -78,8 +79,9 @@ class ShipmentSerializer(ShipmentData):
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
-    def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
-        carrier_filter = validated_data.get("carrier_filter") or {}
+    def create(
+        self, validated_data: dict, context: Context, **kwargs
+    ) -> models.Shipment:
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
@@ -87,7 +89,7 @@ class ShipmentSerializer(ShipmentData):
             context=context,
             carrier_ids=carrier_ids,
             **({"services": services} if any(services) else {}),
-            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
+            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
         payment = validated_data.get("payment") or DP.to_dict(
             datatypes.Payment(
@@ -129,7 +131,7 @@ class ShipmentSerializer(ShipmentData):
                 "payment": payment,
                 "rates": DP.to_dict(rate_response.rates),
                 "messages": DP.to_dict(rate_response.messages),
-                "test_mode": all([r.test_mode for r in rate_response.rates]),
+                "test_mode": context.test_mode,
             }
         )
 
@@ -151,7 +153,7 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def update(
-        self, instance: models.Shipment, validated_data: dict, context: dict
+        self, instance: models.Shipment, validated_data: dict, context: Context
     ) -> models.Shipment:
         changes = []
         data = validated_data.copy()
@@ -430,14 +432,14 @@ def can_mutate_shipment(
     purchase: bool = False,
 ):
     if purchase and shipment.status == ShipmentStatus.purchased.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"The shipment is '{shipment.status}' and cannot be purchased again",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if update and shipment.status != ShipmentStatus.draft.value:
-        raise KarrioAPIException(
+        raise APIException(
             f"Shipment is {shipment.status} and cannot be updated anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
@@ -447,14 +449,14 @@ def can_mutate_shipment(
         ShipmentStatus.purchased.value,
         ShipmentStatus.draft.value,
     ]:
-        raise KarrioAPIException(
+        raise APIException(
             f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if delete and shipment.shipment_pickup.exists():
-        raise KarrioAPIException(
+        raise APIException(
             (
                 f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
                 "Please cancel this shipment pickup before."
@@ -475,12 +477,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
 
     # Get rate provider carrier if supported instead of carrier account
     if (rate_provider != shipment.carrier_name) and rate_provider in MODELS:
-        carrier = (
-            MODELS[rate_provider]
-            .access_by(context)
-            .filter(test=shipment.test_mode)
-            .first()
-        )
+        carrier = MODELS[rate_provider].access_by(context).first()
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
@@ -494,7 +491,6 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     ):
         carrier = Carriers.first(
             carrier_name="dhl_universal",
-            test=shipment.test_mode,
             context=context,
         )
 
@@ -503,20 +499,10 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
         try:
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
-                events=[
-                    DP.to_dict(
-                        datatypes.TrackingEvent(
-                            date=DF.fdate(shipment.updated_at),
-                            description="Label created and ready for shipment",
-                            location="",
-                            code="CREATED",
-                            time=DF.ftime(shipment.updated_at),
-                        )
-                    )
-                ],
+                events=utils.default_tracking_event(event_at=shipment.updated_at),
                 delivered=False,
                 status=TrackerStatus.pending.value,
-                test_mode=carrier.test,
+                test_mode=carrier.test_mode,
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,
                 shipment=shipment,

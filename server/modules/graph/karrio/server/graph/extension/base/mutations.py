@@ -5,8 +5,10 @@ from graphene.types import generic
 from graphene_django.types import ErrorType
 from graphene_django.forms.mutation import DjangoFormMutation
 from django_email_verification import confirm as email_verification
+from django.utils.translation import gettext_lazy as _
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import exceptions
+from django_otp.plugins.otp_email import models as otp
 
 from karrio.core.utils import DP
 from karrio.server.conf import settings
@@ -208,7 +210,7 @@ class RequestEmailChange(utils.ClientMutation):
             logger.exception(e)
             raise e
 
-        return cls(user=info.context.user.id)
+        return cls(user=info.context.user)
 
 
 class ConfirmEmailChange(utils.ClientMutation):
@@ -243,7 +245,7 @@ class RegisterUser(DjangoFormMutation):
 
     @classmethod
     def perform_mutate(cls, form, info):
-        if not settings.ALLOW_SIGNUP:
+        if settings.ALLOW_SIGNUP == False:
             raise Exception(
                 "Signup is not allowed. "
                 "Please contact your administrator to create an account."
@@ -317,6 +319,97 @@ class ConfirmPasswordReset(DjangoFormMutation):
         ):
             user = None
         return user
+
+
+class EnableMultiFactor(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        password = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    @utils.password_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        try:
+            # Retrieve a default device or create a new one.
+            device = otp.EmailDevice.objects.filter(
+                user__id=info.context.user.id
+            ).first()
+            if device is None:
+                device = otp.EmailDevice.objects.create(
+                    name="default",
+                    confirmed=False,
+                    user=info.context.user,
+                )
+
+            # Send and email challenge if the device isn't confirmed yet.
+            if device.confirmed == False:
+                device.generate_challenge()
+        except Exception as e:
+            logger.exception(e)
+            raise e
+
+        return cls(user=types.User.objects.get(pk=info.context.user.id))
+
+
+class ConfirmMultiFactor(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        token = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    def mutate_and_get_payload(cls, root, info, token, **kwargs):
+        try:
+            # Retrieve a default device or create a new one.
+            device = otp.EmailDevice.objects.filter(
+                user__id=info.context.user.id
+            ).first()
+
+            if device is None:
+                raise exceptions.APIException(
+                    _("You need to enable Two factor auth first."), code="2fa_disabled"
+                )
+
+            # check if token is valid
+            if device.verify_token(token) is False:
+                raise exceptions.ValidationError(
+                    {"otp_token": _("Invalid or Expired OTP token")}, code="otp_invalid"
+                )
+
+            device.confirmed = True
+            device.save()
+        except Exception as e:
+            logger.exception(e)
+            raise e
+
+        return cls(user=types.User.objects.get(pk=info.context.user.id))
+
+
+class DisableMultiFactor(utils.ClientMutation):
+    user = graphene.Field(types.UserType)
+
+    class Input:
+        password = graphene.String(required=True)
+
+    @classmethod
+    @utils.login_required
+    @utils.password_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        try:
+            # Retrieve a default device or create a new one.
+            device = otp.EmailDevice.objects.filter(
+                user__id=info.context.user.id
+            ).first()
+            if device is not None:
+                device.delete()
+        except Exception as e:
+            logger.exception(e)
+            raise e
+
+        return cls(user=types.User.objects.get(pk=info.context.user.id))
 
 
 class MutateMetadata(utils.ClientMutation):

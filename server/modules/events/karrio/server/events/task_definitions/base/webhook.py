@@ -22,25 +22,21 @@ def notify_webhook_subscribers(
     data: dict,
     event_at: datetime,
     ctx: dict,
-    test_mode: bool = None,
     **kwargs,
 ):
     logger.info(f"> starting {event} subscribers notification")
-    context = retrive_context(ctx)
+    context = retrieve_context(ctx)
     query = (
         (Q(enabled_events__contains=[event]) | Q(enabled_events__contains=["all"])),
         (Q(disabled__isnull=True) | Q(disabled=False)),
     )
-
-    if test_mode is not None:
-        query += (Q(test_mode=test_mode),)
 
     webhooks = models.Webhook.access_by(context).filter(*query)
     SerializerDecorator[serializers.EventSerializer](
         data=dict(
             type=event,
             data=data,
-            test_mode=test_mode,
+            test_mode=context.test_mode,
             pending_webhooks=webhooks.count(),
         ),
         context=context,
@@ -105,7 +101,7 @@ def update_notified_webhooks(
             logger.error(update_error, exc_info=True)
 
 
-def retrive_context(info: dict) -> Context:
+def retrieve_context(info: dict) -> Context:
     org = None
 
     if settings.MULTI_ORGANIZATIONS and "org_id" in info:
@@ -116,4 +112,5 @@ def retrive_context(info: dict) -> Context:
     return Context(
         org=org,
         user=User.objects.filter(id=info["user_id"]).first(),
+        test_mode=info.get("test_mode"),
     )

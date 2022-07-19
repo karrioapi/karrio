@@ -1,3 +1,5 @@
+# Schemas update
+-e ./schemas/usps
 
 # SDK extentions
 -e ./sdk/core
