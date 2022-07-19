@@ -926,6 +926,31 @@
         AddressDataCountryCodeEnum["Zm"] = "ZM";
         AddressDataCountryCodeEnum["Zw"] = "ZW";
     })(AddressDataCountryCodeEnum || (AddressDataCountryCodeEnum = {}));
+    function AddressDataFromJSON(json) {
+        return AddressDataFromJSONTyped(json);
+    }
+    function AddressDataFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+        };
+    }
     function AddressDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -973,6 +998,42 @@
     * @export
     * @enum {string}
     */
+    var BatchObjectStatusEnum;
+    (function (BatchObjectStatusEnum) {
+        BatchObjectStatusEnum["Queued"] = "queued";
+        BatchObjectStatusEnum["Running"] = "running";
+        BatchObjectStatusEnum["Completed"] = "completed";
+        BatchObjectStatusEnum["Failed"] = "failed";
+    })(BatchObjectStatusEnum || (BatchObjectStatusEnum = {}));
+
+    /* tslint:disable */
+    /**
+    * @export
+    * @enum {string}
+    */
+    var BatchOperationStatusEnum;
+    (function (BatchOperationStatusEnum) {
+        BatchOperationStatusEnum["Queued"] = "queued";
+        BatchOperationStatusEnum["Running"] = "running";
+        BatchOperationStatusEnum["Completed"] = "completed";
+        BatchOperationStatusEnum["Failed"] = "failed";
+    })(BatchOperationStatusEnum || (BatchOperationStatusEnum = {})); /**
+    * @export
+    * @enum {string}
+    */
+    var BatchOperationResourceTypeEnum;
+    (function (BatchOperationResourceTypeEnum) {
+        BatchOperationResourceTypeEnum["Order"] = "order";
+        BatchOperationResourceTypeEnum["Shipment"] = "shipment";
+        BatchOperationResourceTypeEnum["Tracking"] = "tracking";
+        BatchOperationResourceTypeEnum["Billing"] = "billing";
+    })(BatchOperationResourceTypeEnum || (BatchOperationResourceTypeEnum = {}));
+
+    /* tslint:disable */
+    /**
+    * @export
+    * @enum {string}
+    */
     var CarrierSettingsCarrierNameEnum;
     (function (CarrierSettingsCarrierNameEnum) {
         CarrierSettingsCarrierNameEnum["Aramex"] = "aramex";
@@ -1010,7 +1071,7 @@
             'id': json['id'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'test': json['test'],
+            'test_mode': json['test_mode'],
             'active': json['active'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
         };
@@ -1971,11 +2032,11 @@
             return json;
         }
         return {
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
             'message': !exists(json, 'message') ? undefined : json['message'],
             'code': !exists(json, 'code') ? undefined : json['code'],
             'details': !exists(json, 'details') ? undefined : json['details'],
+            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
+            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
         };
     }
 
@@ -2269,9 +2330,12 @@
             'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
             'data_import_export': json['DATA_IMPORT_EXPORT'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
+            'allow_multi_account': json['ALLOW_MULTI_ACCOUNT'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
+            'audit_logging': json['AUDIT_LOGGING'],
             'allow_signup': json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': json['ALLOW_ADMIN_APPROVED_SIGNUP'],
             'admin': json['ADMIN'],
             'openapi': json['OPENAPI'],
             'graphql': json['GRAPHQL'],
@@ -2282,9 +2346,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
      *
-     * The version of the OpenAPI document: 2022.4.6
+     * The version of the OpenAPI document: 2022.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2308,9 +2372,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
      *
-     * The version of the OpenAPI document: 2022.4.6
+     * The version of the OpenAPI document: 2022.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2386,6 +2450,7 @@
             'dimension_unit': !exists(json, 'dimension_unit') ? undefined : json['dimension_unit'],
             'items': !exists(json, 'items') ? undefined : (json['items'].map(CommodityFromJSON)),
             'reference_number': !exists(json, 'reference_number') ? undefined : json['reference_number'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
         };
     }
@@ -2411,6 +2476,7 @@
             'dimension_unit': value.dimension_unit,
             'items': value.items === undefined ? undefined : (value.items.map(CommodityToJSON)),
             'reference_number': value.reference_number,
+            'options': value.options,
             'object_type': value.object_type,
         };
     }
@@ -2739,6 +2805,7 @@
             'status': !exists(json, 'status') ? undefined : json['status'],
             'shipping_to': AddressFromJSON(json['shipping_to']),
             'shipping_from': !exists(json, 'shipping_from') ? undefined : AddressFromJSON(json['shipping_from']),
+            'billing_address': !exists(json, 'billing_address') ? undefined : AddressDataFromJSON(json['billing_address']),
             'line_items': (json['line_items'].map(LineItemFromJSON)),
             'options': !exists(json, 'options') ? undefined : json['options'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
@@ -2762,6 +2829,7 @@
             'source': value.source,
             'shipping_to': AddressDataToJSON(value.shipping_to),
             'shipping_from': AddressDataToJSON(value.shipping_from),
+            'billing_address': AddressDataToJSON(value.billing_address),
             'line_items': (value.line_items.map(CommodityDataToJSON)),
             'options': value.options,
             'metadata': value.metadata,
@@ -2837,6 +2905,7 @@
             'dimension_unit': value.dimension_unit,
             'items': value.items === undefined ? undefined : (value.items.map(CommodityDataToJSON)),
             'reference_number': value.reference_number,
+            'options': value.options,
         };
     }
 
@@ -3064,9 +3133,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
      *
-     * The version of the OpenAPI document: 2022.4.6
+     * The version of the OpenAPI document: 2022.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -3087,9 +3156,12 @@
             'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
             'data_import_export': json['DATA_IMPORT_EXPORT'],
             'multi_organizations': json['MULTI_ORGANIZATIONS'],
+            'allow_multi_account': json['ALLOW_MULTI_ACCOUNT'],
             'orders_management': json['ORDERS_MANAGEMENT'],
             'apps_management': json['APPS_MANAGEMENT'],
+            'audit_logging': json['AUDIT_LOGGING'],
             'allow_signup': json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': json['ALLOW_ADMIN_APPROVED_SIGNUP'],
             'admin': json['ADMIN'],
             'openapi': json['OPENAPI'],
             'graphql': json['GRAPHQL'],
@@ -3353,7 +3425,6 @@
         return {
             'email': value.email,
             'password': value.password,
-            'org_id': value.org_id,
         };
     }
 
@@ -3361,9 +3432,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.4.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
      *
-     * The version of the OpenAPI document: 2022.4.6
+     * The version of the OpenAPI document: 2022.6
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -3393,7 +3464,6 @@
         }
         return {
             'refresh': value.refresh,
-            'org_id': value.org_id,
         };
     }
 
@@ -3438,6 +3508,7 @@
         TrackingStatusStatusEnum["InTransit"] = "in_transit";
         TrackingStatusStatusEnum["Incident"] = "incident";
         TrackingStatusStatusEnum["Delivered"] = "delivered";
+        TrackingStatusStatusEnum["Unknown"] = "unknown";
     })(TrackingStatusStatusEnum || (TrackingStatusStatusEnum = {}));
     function TrackingStatusFromJSON(json) {
         return TrackingStatusFromJSONTyped(json);
@@ -3494,6 +3565,20 @@
     }
 
     /* tslint:disable */
+    function VerifiedTokenObtainPairToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'refresh': value.refresh,
+            'otp_token': value.otp_token,
+        };
+    }
+
+    /* tslint:disable */
     /**
     * @export
     * @enum {string}
@@ -3511,6 +3596,10 @@
         WebhookEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
         WebhookEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
         WebhookEnabledEventsEnum["OrderDelivered"] = "order_delivered";
+        WebhookEnabledEventsEnum["BatchQueued"] = "batch_queued";
+        WebhookEnabledEventsEnum["BatchFailed"] = "batch_failed";
+        WebhookEnabledEventsEnum["BatchRunning"] = "batch_running";
+        WebhookEnabledEventsEnum["BatchCompleted"] = "batch_completed";
     })(WebhookEnabledEventsEnum || (WebhookEnabledEventsEnum = {}));
     function WebhookFromJSON(json) {
         return WebhookFromJSONTyped(json);
@@ -3524,11 +3613,11 @@
             'url': json['url'],
             'description': !exists(json, 'description') ? undefined : json['description'],
             'enabled_events': json['enabled_events'],
-            'test_mode': json['test_mode'],
             'disabled': !exists(json, 'disabled') ? undefined : json['disabled'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'last_event_at': !exists(json, 'last_event_at') ? undefined : (json['last_event_at'] === null ? null : new Date(json['last_event_at'])),
             'secret': json['secret'],
+            'test_mode': json['test_mode'],
         };
     }
 
@@ -3550,6 +3639,10 @@
         WebhookDataEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
         WebhookDataEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
         WebhookDataEnabledEventsEnum["OrderDelivered"] = "order_delivered";
+        WebhookDataEnabledEventsEnum["BatchQueued"] = "batch_queued";
+        WebhookDataEnabledEventsEnum["BatchFailed"] = "batch_failed";
+        WebhookDataEnabledEventsEnum["BatchRunning"] = "batch_running";
+        WebhookDataEnabledEventsEnum["BatchCompleted"] = "batch_completed";
     })(WebhookDataEnabledEventsEnum || (WebhookDataEnabledEventsEnum = {}));
     function WebhookDataToJSON(value) {
         if (value === undefined) {
@@ -3562,7 +3655,6 @@
             'url': value.url,
             'description': value.description,
             'enabled_events': value.enabled_events,
-            'test_mode': value.test_mode,
             'disabled': value.disabled,
         };
     }
@@ -3682,7 +3774,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -3969,6 +4061,57 @@
             });
         };
         /**
+         *  Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * Get verified JWT token
+         */
+        APIApi.prototype.getVerifiedTokenRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (requestParameters.data === null || requestParameters.data === undefined) {
+                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling getVerifiedToken.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/api/token/verified",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: VerifiedTokenObtainPairToJSON(requestParameters.data),
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         *  Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * Get verified JWT token
+         */
+        APIApi.prototype.getVerifiedToken = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.getVerifiedTokenRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
          * Instance Metadata
          */
         APIApi.prototype.pingRaw = function (initOverrides) {
@@ -4065,7 +4208,7 @@
         };
         /**
          * Verify an existent authentication token
-         * Verify auth token
+         * Verify token
          */
         APIApi.prototype.verifyTokenRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4098,7 +4241,7 @@
         };
         /**
          * Verify an existent authentication token
-         * Verify auth token
+         * Verify token
          */
         APIApi.prototype.verifyToken = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4195,9 +4338,6 @@
                             if (requestParameters.carrierName !== undefined) {
                                 queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             if (requestParameters.active !== undefined) {
                                 queryParameters['active'] = requestParameters.active;
                             }
@@ -4276,7 +4416,7 @@
         * @export
         * @enum {string}
         */
-    var ListCarrierNameEnum$1;
+    var ListCarrierNameEnum;
     (function (ListCarrierNameEnum) {
         ListCarrierNameEnum["Aramex"] = "aramex";
         ListCarrierNameEnum["Australiapost"] = "australiapost";
@@ -4301,7 +4441,7 @@
         ListCarrierNameEnum["UspsInternational"] = "usps_international";
         ListCarrierNameEnum["Yanwen"] = "yanwen";
         ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(ListCarrierNameEnum$1 || (ListCarrierNameEnum$1 = {}));
+    })(ListCarrierNameEnum || (ListCarrierNameEnum = {}));
 
     /* tslint:disable */
     /**
@@ -4389,7 +4529,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4657,7 +4797,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4879,7 +5019,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4913,9 +5053,6 @@
                     switch (_a.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
-                            }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;
                             }
@@ -5024,9 +5161,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling schedule.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5088,14 +5222,14 @@
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupUpdateDataToJSON(requestParameters.data),
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationConfirmationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -5198,9 +5332,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling cancelPickup.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5252,9 +5383,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling fetchRates.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5309,9 +5437,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling schedulePickup.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5366,9 +5491,6 @@
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling trackShipment.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             if (requestParameters.hub !== undefined) {
                                 queryParameters['hub'] = requestParameters.hub;
                             }
@@ -5424,17 +5546,14 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling updatePickup.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'PUT',
+                                    path: "/v1/proxy/pickups/{carrier_name}/update".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
                                     body: PickupUpdateRequestToJSON(requestParameters.data),
@@ -5481,9 +5600,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling voidLabel.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5706,7 +5822,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -5743,9 +5859,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -5827,8 +5940,11 @@
                             if (requestParameters.metadataValue !== undefined) {
                                 queryParameters['metadata_value'] = requestParameters.metadataValue;
                             }
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
+                            if (requestParameters.trackingNumber !== undefined) {
+                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
+                            }
+                            if (requestParameters.keyword !== undefined) {
+                                queryParameters['keyword'] = requestParameters.keyword;
                             }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;
@@ -6112,9 +6228,6 @@
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling create.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             if (requestParameters.hub !== undefined) {
                                 queryParameters['hub'] = requestParameters.hub;
                             }
@@ -6164,29 +6277,26 @@
                     switch (_a.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
+                            if (requestParameters.trackingNumber !== undefined) {
+                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
+                            }
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter;
+                            }
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore;
+                            }
+                            if (requestParameters.carrierName !== undefined) {
+                                queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
                             if (requestParameters.status !== undefined) {
                                 queryParameters['status'] = requestParameters.status;
-                            }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
-                            }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
-                            }
-                            if (requestParameters.carrierId !== undefined) {
-                                queryParameters['carrier_id'] = requestParameters.carrierId;
                             }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;
                             }
                             if (requestParameters.offset !== undefined) {
                                 queryParameters['offset'] = requestParameters.offset;
-                            }
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
@@ -6250,7 +6360,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -6351,47 +6461,6 @@
         CreateCarrierNameEnum["Yanwen"] = "yanwen";
         CreateCarrierNameEnum["Yunexpress"] = "yunexpress";
     })(CreateCarrierNameEnum || (CreateCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListStatusEnum;
-    (function (ListStatusEnum) {
-        ListStatusEnum["Pending"] = "pending";
-        ListStatusEnum["InTransit"] = "in_transit";
-        ListStatusEnum["Incident"] = "incident";
-        ListStatusEnum["Delivered"] = "delivered";
-    })(ListStatusEnum || (ListStatusEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListCarrierNameEnum;
-    (function (ListCarrierNameEnum) {
-        ListCarrierNameEnum["Aramex"] = "aramex";
-        ListCarrierNameEnum["Australiapost"] = "australiapost";
-        ListCarrierNameEnum["Canadapost"] = "canadapost";
-        ListCarrierNameEnum["Canpar"] = "canpar";
-        ListCarrierNameEnum["DhlExpress"] = "dhl_express";
-        ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        ListCarrierNameEnum["Dicom"] = "dicom";
-        ListCarrierNameEnum["Easypost"] = "easypost";
-        ListCarrierNameEnum["Eshipper"] = "eshipper";
-        ListCarrierNameEnum["Fedex"] = "fedex";
-        ListCarrierNameEnum["Freightcom"] = "freightcom";
-        ListCarrierNameEnum["Generic"] = "generic";
-        ListCarrierNameEnum["Purolator"] = "purolator";
-        ListCarrierNameEnum["Royalmail"] = "royalmail";
-        ListCarrierNameEnum["Sendle"] = "sendle";
-        ListCarrierNameEnum["SfExpress"] = "sf_express";
-        ListCarrierNameEnum["Tnt"] = "tnt";
-        ListCarrierNameEnum["Ups"] = "ups";
-        ListCarrierNameEnum["Usps"] = "usps";
-        ListCarrierNameEnum["UspsInternational"] = "usps_international";
-        ListCarrierNameEnum["Yanwen"] = "yanwen";
-        ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(ListCarrierNameEnum || (ListCarrierNameEnum = {}));
 
     /* tslint:disable */
     /**
@@ -6469,9 +6538,6 @@
                             }
                             if (requestParameters.offset !== undefined) {
                                 queryParameters['offset'] = requestParameters.offset;
-                            }
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
@@ -6790,9 +6856,6 @@
                                 throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
                             }
                             queryParameters = {};
-                            if (requestParameters.test !== undefined) {
-                                queryParameters['test'] = requestParameters.test;
-                            }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
@@ -6874,8 +6937,8 @@
                             if (requestParameters.metadataValue !== undefined) {
                                 queryParameters['metadata_value'] = requestParameters.metadataValue;
                             }
-                            if (requestParameters.testMode !== undefined) {
-                                queryParameters['test_mode'] = requestParameters.testMode;
+                            if (requestParameters.keyword !== undefined) {
+                                queryParameters['keyword'] = requestParameters.keyword;
                             }
                             if (requestParameters.limit !== undefined) {
                                 queryParameters['limit'] = requestParameters.limit;

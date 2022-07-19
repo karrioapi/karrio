@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.freightcom"
-version = "2022.4.6"
+version = "2022.6"
 homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/freightcom"
 repository="https://github.com/karrioapi/karrio"
 description = "Freightcom karrio extension"
