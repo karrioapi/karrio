@@ -129,6 +129,7 @@ def save_updated_trackers(
                 for tracker in related_trackers:
                     # update values only if changed; This is important for webhooks notification
                     changes = []
+                    meta = details.meta or {}
                     status = utils.compute_tracking_status(details).value
                     events = process_events(
                         response_events=details.events,
@@ -148,7 +149,7 @@ def save_updated_trackers(
                         changes.append("options")
 
                     if details.meta != tracker.meta:
-                        tracker.meta = details.meta
+                        tracker.meta = meta
                         changes.append("meta")
 
                     if details.delivered != tracker.delivered:
