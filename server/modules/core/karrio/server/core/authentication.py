@@ -31,12 +31,11 @@ def catch_auth_exception(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except exceptions.AuthenticationFailed as e:
+        except exceptions.AuthenticationFailed:
             from karrio.server.core.exceptions import APIException
 
-            message, *_ = list(e.args)
             raise APIException(
-                message or "The given token is invalid or expired",
+                "Given token not valid for any token type",
                 code="invalid_token",
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )

@@ -25,6 +25,7 @@ class Metadata(Serializer):
     AUDIT_LOGGING = BooleanField()
     ALLOW_SIGNUP = BooleanField()
     ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
+    PERSIST_SDK_TRACING = BooleanField()
     ADMIN = CharField()
     OPENAPI = CharField()
     GRAPHQL = CharField()

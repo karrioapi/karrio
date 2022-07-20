@@ -1,19 +1,24 @@
 import logging
 import concurrent.futures as futures
-from django.conf import settings
-from karrio.core.settings import Settings
 
+from karrio.core.settings import Settings
 from karrio.core.utils import DP, Tracer
+from karrio.server.conf import settings
+from karrio.server.core import utils
 from karrio.server.tracing import models
 
 logger = logging.getLogger(__name__)
 
 
-def save_tracing_records(context, tracer: Tracer = None):
+def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
+    if settings.PERSIST_SDK_TRACING is False:
+        return
+
     tracer = tracer or getattr(context, "tracer", Tracer())
 
     # Process Karrio SDK tracing records to persist records of interest.
-    def persist_records():
+    @utils.tenant_wrapper
+    def persist_records(**kwarg):
         if len(tracer.records) == 0:
             return
 
@@ -66,7 +71,7 @@ def save_tracing_records(context, tracer: Tracer = None):
         except Exception as e:
             logger.error(e, exc_info=False)
 
-    futures.ThreadPoolExecutor(max_workers=1).submit(persist_records)
+    futures.ThreadPoolExecutor(max_workers=1).submit(persist_records, schema=schema)
 
 
 def set_tracing_context(**kwargs):

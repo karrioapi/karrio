@@ -45,7 +45,7 @@ class APIExceptions(APIException):
 
 
 def custom_exception_handler(exc, context):
-    logger.exception(exc)
+    logger.exception(exc, exc_info=False)
 
     response = exception_handler(exc, context)
     code = getattr(exc, "code", getattr(exc, "default_code", None))

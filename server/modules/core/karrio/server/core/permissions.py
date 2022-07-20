@@ -9,8 +9,6 @@ class APIAccessPermissions(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        print(request.path)
-
         if ("/v1/data" in request.path) and (settings.DATA_IMPORT_EXPORT is False):
             raise exceptions.PermissionDenied()
 

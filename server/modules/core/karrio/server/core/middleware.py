@@ -3,6 +3,7 @@ import threading
 from django.db.models import Q
 from django.http import HttpResponse
 from karrio.core.utils import Tracer
+from karrio.server.conf import settings
 
 
 class CreatorAccess:
@@ -41,17 +42,17 @@ class SessionContext:
         # Code to be executed for each request/response after
         # the view is called.
         try:
-            self._save_tracing_records(request)
+            self._save_tracing_records(request, schema=settings.schema)
             del self._threadmap[threading.get_ident()]
         except KeyError:
             pass
 
         return response
 
-    def _save_tracing_records(self, request):
+    def _save_tracing_records(self, request, schema: str = None):
         from karrio.server.tracing.utils import save_tracing_records
 
-        save_tracing_records(request)
+        save_tracing_records(request, schema=schema)
 
     @classmethod
     def get_current_request(cls):

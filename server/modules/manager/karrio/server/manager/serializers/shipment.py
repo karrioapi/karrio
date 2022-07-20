@@ -506,6 +506,10 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
                 tracking_carrier=carrier,
                 created_by=shipment.created_by,
                 shipment=shipment,
+                meta=dict(carrier=rate_provider),
+                options={
+                    shipment.tracking_number: dict(carrier=rate_provider),
+                },
             )
             tracker.save()
             link_org(tracker, context)
