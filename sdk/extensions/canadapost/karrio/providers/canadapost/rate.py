@@ -14,7 +14,7 @@ from canadapost_lib.rating import (
 from typing import List, Tuple
 from karrio.core.utils import Serializable, Element, NF, XP
 from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
-from karrio.core.units import Country, Currency, Packages, Services, Options
+from karrio.core.units import Country, Currency, Packages, Services
 from karrio.core.errors import OriginNotServicedError
 from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from karrio.providers.canadapost.error import parse_error_response
@@ -23,7 +23,6 @@ from karrio.providers.canadapost.units import (
     ServiceType,
     PackagePresets,
     MeasurementOptions,
-    CUSTOM_OPTIONS,
 )
 
 

@@ -2,7 +2,7 @@ from typing import List, Tuple
 import amazon_mws_lib.rate_request as amazon
 from amazon_mws_lib.rate_response import ServiceRate
 from karrio.core.utils import Serializable, SF, NF, DP, DF
-from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
+from karrio.core.models import RateRequest, RateDetails, Message
 from karrio.core.units import Packages, Options, Services
 from karrio.providers.amazon_mws.utils import Settings
 from karrio.providers.amazon_mws.units import (
