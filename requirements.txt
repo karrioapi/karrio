@@ -62,7 +62,7 @@ karrio.aramex==2022.6
 karrio.australiapost==2022.6
 karrio.canadapost==2022.6
 karrio.canpar==2022.6
-karrio.dhl-express==2022.6
+karrio.dhl-express==2022.6.1
 karrio.dhl-poland==2022.6
 karrio.dhl-universal==2022.6
 karrio.dicom==2022.6
@@ -72,11 +72,11 @@ karrio.freightcom==2022.6
 karrio.purolator==2022.6
 karrio.royalmail==2022.6
 karrio.sendle==2022.6
-karrio.server==2022.6
-karrio.server.core==2022.6
-karrio.server.events==2022.6
+karrio.server==2022.6.1
+karrio.server.core==2022.6.1
+karrio.server.events==2022.6.1
 karrio.server.graph==2022.6
-karrio.server.manager==2022.6
+karrio.server.manager==2022.6.1
 karrio.server.pricing==2022.6
 karrio.server.proxy==2022.6
 karrio.sf-express==2022.6
