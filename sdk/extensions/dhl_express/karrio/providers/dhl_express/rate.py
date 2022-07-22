@@ -104,7 +104,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             payload.services,
             is_international=is_international,
             is_document=is_document,
-            is_envelope=("envelope" in packages.package_type),
+            is_envelope=("envelope" in (packages.package_type or "")),
         ),
         ProductCode,
     )
