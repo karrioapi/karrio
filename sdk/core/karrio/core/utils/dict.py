@@ -9,10 +9,11 @@ T = TypeVar("T")
 
 class DICTPARSE:
     @staticmethod
-    def jsonify(entity: Union[dict, T]) -> str:
-        """Return a JSON.
+    def jsonify(entity: Union[dict, Any]) -> str:
+        """Serialize value to JSON.
 
-        recursively parse a data type using __dict__ into a JSON
+        :param value: a value that can be serialized to JSON.
+        :return: a string.
         """
 
         def _parser(item):
@@ -40,14 +41,17 @@ class DICTPARSE:
 
     @staticmethod
     def to_dict(entity: Any) -> dict:
-        """Return a python dictionary.
+        """Parse value into a Python dictionay.
 
-        recursively parse a data type using __dict__ into a JSON
+        :param value: a value that can converted in dictionary.
+        :return: a dictionary.
         """
         return json.loads(
-            DICTPARSE.jsonify(entity)
-            if not isinstance(entity, (str, bytes))
-            else entity,
+            (
+                DICTPARSE.jsonify(entity)
+                if not isinstance(entity, (str, bytes))
+                else entity
+            ),
             object_hook=lambda d: {
                 k: v for k, v in d.items() if v not in (None, [], "")
             },
@@ -55,6 +59,12 @@ class DICTPARSE:
 
     @staticmethod
     def to_object(object_type: Type[T], data: dict = None) -> Optional[T]:
+        """Create an instance of "object_type" from the "data".
+
+        :param object_type: an object class.
+        :param data: the data to pass for intantiation.
+        :return: an object instance or None.
+        """
         if data is None or object_type is None:
             return None
 

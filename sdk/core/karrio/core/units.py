@@ -467,11 +467,12 @@ class Packages(Iterable[Package]):
 
     @property
     def description(self) -> Optional[str]:
-        return functools.reduce(
-            lambda acc, item: SF.concat_str(acc, item.parcel.description, join=True),
-            self._items,
-            None,
-        )
+        descriptions = [item.parcel.description for item in self._items]
+        description: Optional[str] = SF.concat_str(
+            *descriptions, join=True
+        )  # type:ignore
+
+        return description
 
     @property
     def options(self) -> "Options":
@@ -800,7 +801,9 @@ class CompleteAddress:
 
     @property
     def taxes(self) -> List[str]:
-        return SF.concat_str(self._address.federal_tax_id, self._address.state_tax_id)
+        return SF.concat_str(
+            self._address.federal_tax_id, self._address.state_tax_id
+        )  # type:ignore
 
     @property
     def has_contact_info(self) -> bool:
@@ -821,7 +824,7 @@ class CompleteAddress:
         if any([self._address.address_line1, self._address.address_line2]):
             return SF.concat_str(
                 self._address.address_line1, self._address.address_line2, join=join
-            )
+            )  # type:ignore
 
         if self._address.extra is not None:
             return SF.concat_str(
@@ -830,7 +833,7 @@ class CompleteAddress:
                 self._address.extra.street_name,
                 self._address.extra.street_type,
                 join=True,
-            )
+            )  # type:ignore
 
         return None
 
