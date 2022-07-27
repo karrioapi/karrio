@@ -1,4 +1,4 @@
-from karrio.core.utils import Enum, Spec, Flag
+from karrio.core.utils import Enum, OptionEnum, Flag
 from karrio.core.models import ServiceLevel
 
 
@@ -7,7 +7,7 @@ class Service(Enum):
 
 
 class Option(Flag):
-    tracking_number_reference = Spec.asValue("tracking_number")
+    tracking_number_reference = OptionEnum("tracking_number")
 
 
 DEFAULT_SERVICES = [
