@@ -2,8 +2,9 @@
 
 import typing
 from karrio.core import units
-from karrio.core.utils import Enum, Spec
+from karrio.core.utils import Enum
 from karrio.core.models import Address
+from karrio.core.utils.enum import OptionEnum
 
 
 class Incoterm(Enum):
@@ -81,37 +82,19 @@ class PackagingType(Enum):
 
 
 class ShippingOption(Enum):
-    usps_registered_mail = Spec.asKey("103")
-    usps_insurance_global_express_guaranteed = Spec.asValue("106", float)
-    usps_insurance_express_mail_international = Spec.asValue("107", float)
-    usps_insurance_priority_mail_international = Spec.asValue("108", float)
-    usps_return_receipt = Spec.asKey("105")
-    usps_certificate_of_mailing = Spec.asKey("100")
-    usps_electronic_usps_delivery_confirmation_international = Spec.asKey("109")
+    usps_registered_mail = OptionEnum("103")
+    usps_insurance_global_express_guaranteed = OptionEnum("106", float)
+    usps_insurance_express_mail_international = OptionEnum("107", float)
+    usps_insurance_priority_mail_international = OptionEnum("108", float)
+    usps_return_receipt = OptionEnum("105")
+    usps_certificate_of_mailing = OptionEnum("100")
+    usps_electronic_usps_delivery_confirmation_international = OptionEnum("109")
 
     """ Non official options """
-    usps_option_machinable_item = Spec.asFlag("usps_option_machinable_item")
-    usps_option_abandon_non_delivery = Spec.asKey("ABANDON")
-    usps_option_return_non_delivery = Spec.asKey("RETURN")
-    usps_option_redirect_non_delivery = Spec.asValue("REDIRECT", Address)
-
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
-
-        if package_options is not None:
-            options.update(package_options.content)
-
-        def option_filter(code: str) -> bool:
-            return code in cls and "usps_option" not in code  # type: ignore
-
-        return units.Options(options, cls, option_filter=option_filter)
+    usps_option_machinable_item = OptionEnum("usps_option_machinable_item", bool)
+    usps_option_abandon_non_delivery = OptionEnum("ABANDON")
+    usps_option_return_non_delivery = OptionEnum("RETURN")
+    usps_option_redirect_non_delivery = OptionEnum("REDIRECT", Address)
 
     @classmethod
     def insurance_from(
@@ -119,20 +102,37 @@ class ShippingOption(Enum):
     ) -> typing.Optional[float]:
         return next(
             (
-                value
+                value.state
                 for key, value in options
                 if "usps_insurance" in key and service_key in key
             ),
-            options.insurance,
+            options.insurance.state,
         )
 
     @classmethod
     def non_delivery_from(cls, options: units.Options) -> typing.Optional[str]:
         # Gets the first provided non delivery option or default to "RETURN"
         return next(
-            (value for name, value in options if "non_delivery" in name),
+            (value.state for name, value in options if "non_delivery" in name),
             "RETURN",
         )
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(code: str) -> bool:
+        return code in ShippingOption and "usps_option" not in code  # type: ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)
 
 
 class ShippingService(Enum):

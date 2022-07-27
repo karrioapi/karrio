@@ -1,4 +1,3 @@
-from typing import Tuple, List
 from usps_lib.evs_response import eVSResponse
 from usps_lib.evs_request import (
     eVSRequest,
@@ -8,83 +7,73 @@ from usps_lib.evs_request import (
     ItemDetailType,
     ExtraServicesType,
 )
-from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
-from karrio.core.units import (
-    CustomsInfo,
-    Packages,
-    Options,
-    WeightUnit,
-    Weight,
-    Country,
-)
-from karrio.core.utils import Serializable, Element, Location, XP
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    ShipmentDetails,
-    ChargeDetails,
-    Message,
-    Address,
-    Customs,
-)
 
-from karrio.providers.usps.units import (
-    LabelFormat,
-    ServiceType,
-    PackagingType,
-    ShippingOption,
-    ContentType,
-)
-from karrio.providers.usps.error import parse_error_response
-from karrio.providers.usps.utils import Settings
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.usps.error as provider_error
+import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = parse_error_response(response, settings)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    errors = provider_error.parse_error_response(response, settings)
     details = _extract_details(response, settings)
 
     return details, errors
 
 
-def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.to_object(eVSResponse, response)
+def _extract_details(
+    response: lib.Element, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
+    shipment = lib.to_object(eVSResponse, response)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
-        docs=Documents(label=shipment.LabelImage),
+        docs=models.Documents(label=shipment.LabelImage),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[eVSRequest]:
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[eVSRequest]:
     if (
         payload.shipper.country_code is not None
-        and payload.shipper.country_code != Country.US.name
+        and payload.shipper.country_code != units.Country.US.name
     ):
-        raise OriginNotServicedError(payload.shipper.country_code)
+        raise errors.OriginNotServicedError(payload.shipper.country_code)
 
     if (
         payload.recipient.country_code is not None
-        and payload.recipient.country_code != Country.US.name
+        and payload.recipient.country_code != units.Country.US.name
     ):
-        raise DestinationNotServicedError(payload.recipient.country_code)
+        raise errors.DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels, package_option_type=ShippingOption).single
-    service = ServiceType.map(payload.service).value_or_key
-    options = ShippingOption.to_options(
+    package = lib.to_packages(
+        payload.parcels, package_option_type=provider_units.ShippingOption
+    ).single
+    service = provider_units.ServiceType.map(payload.service).value_or_key
+    options = lib.to_options(
         payload.options,
         package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = CustomsInfo(payload.customs or Customs(commodities=[]))
-    label_format = LabelFormat[payload.label_type or "usps_6_x_4_label"].value
-    redirect_address = Address(**(options.usps_option_redirect_non_delivery or {}))
+    customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
+    label_format = provider_units.LabelFormat[
+        payload.label_type or "usps_6_x_4_label"
+    ].value
+    redirect_address = models.Address(
+        **(options.usps_option_redirect_non_delivery.state or {})
+    )
 
     request = eVSRequest(
         USERID=settings.username,
@@ -100,8 +89,8 @@ def shipment_request(
         FromAddress2=payload.shipper.address_line1,
         FromCity=payload.shipper.city,
         FromState=payload.shipper.state_code,
-        FromZip5=Location(payload.shipper.postal_code).as_zip5 or "",
-        FromZip4=Location(payload.shipper.postal_code).as_zip4 or "",
+        FromZip5=lib.to_zip5(payload.shipper.postal_code) or "",
+        FromZip4=lib.to_zip4(payload.shipper.postal_code) or "",
         FromPhone=payload.shipper.phone_number,
         POZipCode=None,
         AllowNonCleansedOriginAddr=False,
@@ -111,8 +100,8 @@ def shipment_request(
         ToAddress2=payload.recipient.address_line1,
         ToCity=payload.recipient.city,
         ToState=payload.recipient.state_code,
-        ToZip5=Location(payload.recipient.postal_code).as_zip5 or "",
-        ToZip4=Location(payload.recipient.postal_code).as_zip4 or "",
+        ToZip5=lib.to_zip5(payload.recipient.postal_code) or "",
+        ToZip4=lib.to_zip4(payload.recipient.postal_code) or "",
         ToPhone=payload.recipient.phone_number,
         POBox=None,
         ToContactPreference=None,
@@ -121,24 +110,26 @@ def shipment_request(
         AllowNonCleansedDestAddr=False,
         WeightInOunces=package.weight.OZ,
         ServiceType=service,
-        Container=PackagingType[package.packaging_type or "variable"].value,
+        Container=provider_units.PackagingType[
+            package.packaging_type or "variable"
+        ].value,
         Width=package.width.IN,
         Length=package.length.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
-        Machinable=options.usps_option_machinable_item,
+        Machinable=options.usps_option_machinable_item.state,
         ProcessingCategory=None,
         PriceOptions=None,
-        InsuredAmount=ShippingOption.insurance_from(options),
+        InsuredAmount=provider_units.ShippingOption.insurance_from(options),
         AddressServiceRequested=None,
         ExpressMailOptions=None,
-        ShipDate=options.shipment_date,
+        ShipDate=options.shipment_date.state,
         CustomerRefNo=None,
         ExtraServices=(
             ExtraServicesType(
-                ExtraService=[code for _, code, value in options.as_list()]
+                ExtraService=[option.code for _, option in options.items()]
             )
-            if any(options.as_list())
+            if any(options.items())
             else None
         ),
         CRID=settings.customer_registration_id,
@@ -154,7 +145,7 @@ def shipment_request(
         ImageType="PDF",
         HoldForManifest=None,
         NineDigitRoutingZip=None,
-        ShipInfo=options.usps_option_ship_info,
+        ShipInfo=options.usps_option_ship_info.state,
         CarrierRelease=None,
         DropOffTime=None,
         ReturnCommitments=None,
@@ -167,14 +158,14 @@ def shipment_request(
                         Description=item.description,
                         Quantity=item.quantity,
                         Value=item.value_amount,
-                        NetPounds=Weight(
-                            item.weight, WeightUnit[item.weight_unit or "LB"]
+                        NetPounds=units.Weight(
+                            item.weight, units.WeightUnit[item.weight_unit or "LB"]
                         ).LB,
-                        NetOunces=Weight(
-                            item.weight, WeightUnit[item.weight_unit or "LB"]
+                        NetOunces=units.Weight(
+                            item.weight, units.WeightUnit[item.weight_unit or "LB"]
                         ).OZ,
                         HSTariffNumber=item.hs_code or item.sku,
-                        CountryOfOrigin=Location(item.origin_country).as_country_name,
+                        CountryOfOrigin=lib.to_country_name(item.origin_country),
                     )
                     for item in customs.commodities
                 ]
@@ -183,22 +174,22 @@ def shipment_request(
             else None
         ),
         CustomsContentType=(
-            ContentType[customs.content_type or "other"].value
+            provider_units.ContentType[customs.content_type or "other"].value
             if payload.customs is not None
             else None
         ),
         ContentComments=None,
         RestrictionType=None,
         RestrictionComments=None,
-        AESITN=customs.aes,
+        AESITN=customs.aes.state,
         ImportersReference=None,
         ImportersContact=None,
         ExportersReference=None,
         ExportersContact=None,
         InvoiceNumber=customs.invoice,
-        LicenseNumber=customs.license_number,
-        CertificateNumber=customs.certificate_number,
-        NonDeliveryOption=ShippingOption.non_delivery_from(options),
+        LicenseNumber=customs.license_number.state,
+        CertificateNumber=customs.certificate_number.state,
+        NonDeliveryOption=provider_units.ShippingOption.non_delivery_from(options),
         AltReturnAddress1=redirect_address.address_line1,
         AltReturnAddress2=redirect_address.address_line2,
         AltReturnAddress3=None,
@@ -211,4 +202,4 @@ def shipment_request(
         TrackingRetentionPeriod=None,
     )
 
-    return Serializable(request, XP.export)
+    return lib.Serializable(request, lib.to_xml)

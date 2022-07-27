@@ -1,6 +1,7 @@
 import typing
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core.units import Options
+from karrio.core.utils.enum import OptionEnum
 
 
 class WeightUnit(Flag):
@@ -44,29 +45,17 @@ class Service(Enum):
 
 
 class ShippingOption(Flag):
-    canpar_cash_on_delivery = Spec.asKey("Y")
-    canpar_dangerous_goods = Spec.asFlag("dg")
-    canpar_extra_care = Spec.asFlag("xc")
-    canpar_ten_am = Spec.asFlag("A")
-    canpar_noon = Spec.asFlag("B")
-    canpar_no_signature_required = Spec.asFlag("2")
-    canpar_not_no_signature_required = Spec.asFlag("0")
-    canpar_saturday = Spec.asFlag("S")
+    canpar_cash_on_delivery = OptionEnum("Y")
+    canpar_dangerous_goods = OptionEnum("dg", bool)
+    canpar_extra_care = OptionEnum("xc", bool)
+    canpar_ten_am = OptionEnum("A", bool)
+    canpar_noon = OptionEnum("B", bool)
+    canpar_no_signature_required = OptionEnum("2", bool)
+    canpar_not_no_signature_required = OptionEnum("0", bool)
+    canpar_saturday = OptionEnum("S", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = canpar_cash_on_delivery
-
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: Options = None,
-    ) -> Options:
-        # Apply package options if specified.
-        if package_options is not None:
-            options.update(package_options.content)
-
-        return Options(options, cls)
 
     @classmethod
     def is_premium(cls, options: Options) -> typing.Optional[bool]:
@@ -97,3 +86,14 @@ class ShippingOption(Flag):
             ),
             None,
         )
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: Options = None,
+) -> Options:
+    # Apply package options if specified.
+    if package_options is not None:
+        options.update(package_options.content)
+
+    return Options(options, ShippingOption)

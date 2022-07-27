@@ -1,21 +1,24 @@
-from typing import List, Tuple
 import amazon_mws_lib.rate_request as amazon
 from amazon_mws_lib.rate_response import ServiceRate
-from karrio.core.utils import Serializable, SF, NF, DP, DF
-from karrio.core.models import RateRequest, RateDetails, Message
-from karrio.core.units import Packages, Options, Services
-from karrio.providers.amazon_mws.utils import Settings
-from karrio.providers.amazon_mws.units import (
-    Service,
-)
-from karrio.providers.amazon_mws.error import parse_error_response
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.amazon_mws.error as provider_error
+import karrio.providers.amazon_mws.units as provider_units
+import karrio.providers.amazon_mws.utils as provider_utils
 
 
 def parse_rate_response(
-    response: dict, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    errors: List[Message] = sum(
-        [parse_error_response(data, settings) for data in response.get("errors", [])],
+    response: dict, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    errors: typing.List[models.Message] = sum(
+        [
+            provider_error.parse_error_response(data, settings)
+            for data in response.get("errors", [])
+        ],
         [],
     )
     rates = [
@@ -25,18 +28,21 @@ def parse_rate_response(
     return rates, errors
 
 
-def _extract_details(data: dict, settings: Settings) -> RateDetails:
-    rate = DP.to_object(ServiceRate, data)
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    rate = lib.to_object(ServiceRate, data)
     transit = (
-        DF.date(rate.promise.deliveryWindow.start, "%Y-%m-%dT%H:%M:%S.%fZ").date()
-        - DF.date(rate.promise.receiveWindow.end, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        lib.to_date(rate.promise.deliveryWindow.start, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        - lib.to_date(rate.promise.receiveWindow.end, "%Y-%m-%dT%H:%M:%S.%fZ").date()
     ).days
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=Service.map(rate.serviceType).name_or_key,
-        total_charge=NF.decimal(rate.totalCharge.value),
+        service=provider_units.Service.map(rate.serviceType).name_or_key,
+        total_charge=lib.to_decimal(rate.totalCharge.value),
         currency=rate.totalCharge.unit,
         transit_days=transit,
         meta=dict(
@@ -45,10 +51,10 @@ def _extract_details(data: dict, settings: Settings) -> RateDetails:
     )
 
 
-def rate_request(payload: RateRequest, _) -> Serializable:
-    packages = Packages(payload.parcels)
-    options = Options(payload.options)
-    services = Services(payload.services, Service)
+def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_options(payload.options)
+    services = lib.to_services(payload.services, provider_units.Service)
 
     request = amazon.RateRequest(
         shipFrom=amazon.Ship(
@@ -58,7 +64,7 @@ def rate_request(payload: RateRequest, _) -> Serializable:
             addressLine2=payload.shipper.address_line2,
             stateOrRegion=payload.shipper.state_code,
             email=payload.shipper.email,
-            copyEmails=SF.concat_str(payload.shipper.email),
+            copyEmails=lib.join(payload.shipper.email),
             phoneNumber=payload.shipper.phone_number,
         ),
         shipTo=amazon.Ship(
@@ -68,12 +74,12 @@ def rate_request(payload: RateRequest, _) -> Serializable:
             addressLine2=payload.recipient.address_line2,
             stateOrRegion=payload.recipient.state_code,
             email=payload.recipient.email,
-            copyEmails=SF.concat_str(payload.recipient.email),
+            copyEmails=lib.join(payload.recipient.email),
             phoneNumber=payload.recipient.phone_number,
         ),
         serviceTypes=list(services),
-        shipDate=DF.fdatetime(
-            options.shipment_date, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
+        shipDate=lib.fdatetime(
+            options.shipment_date.state, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
         ),
         containerSpecifications=[
             amazon.ContainerSpecification(
@@ -92,4 +98,4 @@ def rate_request(payload: RateRequest, _) -> Serializable:
         ],
     )
 
-    return Serializable(request, DP.to_dict)
+    return lib.Serializable(request, lib.to_dict)

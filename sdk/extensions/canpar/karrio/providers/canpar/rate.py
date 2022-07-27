@@ -1,6 +1,5 @@
 import time
 from functools import partial
-from typing import List, Tuple, Optional
 from canpar_lib.CanparRatingService import (
     rateShipment,
     RateShipmentRq,
@@ -8,65 +7,53 @@ from canpar_lib.CanparRatingService import (
     Package,
     Address,
 )
-from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from karrio.core.units import Packages, Services, Options
-from karrio.core.utils import (
-    Serializable,
-    Envelope,
-    create_envelope,
-    Element,
-    NF,
-    XP,
-    DF,
-)
-from karrio.providers.canpar.error import parse_error_response
-from karrio.providers.canpar.utils import Settings
-from karrio.providers.canpar.units import (
-    WeightUnit,
-    DimensionUnit,
-    ShippingOption,
-    Service,
-    Charges,
-)
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.canpar.error as provider_error
+import karrio.providers.canpar.units as provider_units
+import karrio.providers.canpar.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    shipment_nodes = XP.find("shipment", response)
-    rates: List[RateDetails] = [
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    shipment_nodes = lib.find_element("shipment", response)
+    rates: typing.List[models.RateDetails] = [
         _extract_rate_details(node, settings) for node in shipment_nodes
     ]
-    return rates, parse_error_response(response, settings)
+    return rates, provider_error.parse_error_response(response, settings)
 
 
-def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
-    shipment = XP.to_object(Shipment, node)
-    service = Service.map(shipment.service_type)
+def _extract_rate_details(
+    node: lib.Element, settings: provider_utils.Settings
+) -> models.RateDetails:
+    shipment = lib.to_object(Shipment, node)
+    service = provider_units.Service.map(shipment.service_type)
 
     surcharges = [
-        ChargeDetails(
+        models.ChargeDetails(
             name=charge.value,
-            amount=NF.decimal(getattr(shipment, charge.name)),
+            amount=lib.to_decimal(getattr(shipment, charge.name)),
             currency="CAD",
         )
-        for charge in list(Charges)
-        if NF.decimal(getattr(shipment, charge.name)) > 0.0
+        for charge in list(provider_units.Charges)
+        if lib.to_decimal(getattr(shipment, charge.name)) > 0.0
     ]
     taxes = [
-        ChargeDetails(
+        models.ChargeDetails(
             name=f"{getattr(shipment, code, '')} Tax Charge",
-            amount=NF.decimal(charge),
+            amount=lib.to_decimal(charge),
             currency="CAD",
         )
         for code, charge in [
             ("tax_code_1", shipment.tax_charge_1),
             ("tax_code_2", shipment.tax_charge_2),
         ]
-        if NF.decimal(charge) > 0.0
+        if lib.to_decimal(charge) > 0.0
     ]
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency="CAD",
@@ -78,20 +65,24 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
-    packages = Packages(payload.parcels)
-    service_type = Services(payload.services, Service).first
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+def rate_request(
+    payload: models.RateRequest, settings: provider_utils.Settings
+) -> lib.Serializable[lib.Envelope]:
+    packages = lib.to_packages(payload.parcels)
+    service_type = lib.to_services(payload.services, provider_units.Service).first
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    shipment_date = DF.fdatetime(
-        options.shipment_date or time.strftime("%Y-%m-%d"),
+    shipment_date = lib.fdatetime(
+        options.shipment_date.state or time.strftime("%Y-%m-%d"),
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%S",
     )
 
-    request = create_envelope(
+    request = lib.create_envelope(
         body_content=rateShipment(
             request=RateShipmentRq(
                 apply_association_discount=False,
@@ -99,7 +90,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 apply_invoice_discount=False,
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=options["canpar_cash_on_delivery"],
+                    cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -116,12 +107,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=options["canpar_dangerous_goods"],
-                    dimention_unit=DimensionUnit.IN.value,
+                    dg=options.canpar_dangerous_goods.state,
+                    dimention_unit=provider_units.DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
                     instruction=None,
-                    nsr=ShippingOption.is_nsr(options),
+                    nsr=provider_units.ShippingOption.is_nsr(options),
                     packages=[
                         Package(
                             alternative_reference=None,
@@ -135,7 +126,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=options["canpar_extra_care"],
+                            xc=options.canpar_extra_care.state,
                         )
                         for pkg in packages
                     ],
@@ -154,9 +145,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         province=payload.shipper.state_code,
                         residential=payload.shipper.residential,
                     ),
-                    premium=ShippingOption.is_premium(options),
+                    premium=provider_units.ShippingOption.is_premium(options),
                     proforma=None,
-                    reported_weight_unit=WeightUnit.LB.value,
+                    reported_weight_unit=provider_units.WeightUnit.LB.value,
                     send_email_to_delivery=payload.recipient.email,
                     send_email_to_pickup=payload.shipper.email,
                     service_type=service_type.value,
@@ -173,7 +164,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
         )
     )
 
-    return Serializable(
+    return lib.Serializable(
         request,
         partial(
             settings.serialize,

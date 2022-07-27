@@ -7,6 +7,6 @@ from karrio.core.utils.datetime import DATEFORMAT as DF
 from karrio.core.utils.xml import XMLPARSER as XP, Element
 from karrio.core.utils.serializable import Serializable, Deserializable
 from karrio.core.utils.pipeline import Pipeline, Job
-from karrio.core.utils.enum import Enum, Flag, Spec
+from karrio.core.utils.enum import Enum, Flag, Spec, OptionEnum
 from karrio.core.utils.tracing import Tracer, Record, Trace
 from karrio.core.utils.transformer import to_multi_piece_rates, to_multi_piece_shipment

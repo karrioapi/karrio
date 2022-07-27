@@ -2,7 +2,8 @@
 
 import typing
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
+from karrio.core.utils.enum import OptionEnum
 
 
 class ContentType(Enum):
@@ -111,71 +112,55 @@ class SortLevelType(Flag):
 
 
 class ShippingOption(Enum):
-    usps_insurance = Spec.asValue("100", float)
-    usps_insurance_priority_mail_express = Spec.asValue("101", float)
-    usps_return_receipt = Spec.asKey("102")
-    usps_collect_on_delivery = Spec.asKey("103")
-    usps_certificate_of_mailing_form_3665 = Spec.asKey("104")
-    usps_certified_mail = Spec.asKey("105")
-    usps_tracking = Spec.asKey("106")
-    usps_signature_confirmation = Spec.asKey("108")
-    usps_registered_mail = Spec.asKey("109")
-    usps_return_receipt_electronic = Spec.asKey("110")
-    usps_registered_mail_cod_collection_charge = Spec.asKey("112")
-    usps_return_receipt_priority_mail_express = Spec.asKey("118")
-    usps_adult_signature_required = Spec.asKey("119")
-    usps_adult_signature_restricted_delivery = Spec.asKey("120")
-    usps_insurance_priority_mail = Spec.asValue("125", float)
-    usps_tracking_electronic = Spec.asKey("155")
-    usps_signature_confirmation_electronic = Spec.asKey("156")
-    usps_certificate_of_mailing_form_3817 = Spec.asKey("160")
-    usps_priority_mail_express_10_30_am_delivery = Spec.asKey("161")
-    usps_certified_mail_restricted_delivery = Spec.asKey("170")
-    usps_certified_mail_adult_signature_required = Spec.asKey("171")
-    usps_certified_mail_adult_signature_restricted_delivery = Spec.asKey("172")
-    usps_signature_confirm_restrict_delivery = Spec.asKey("173")
-    usps_signature_confirmation_electronic_restricted_delivery = Spec.asKey("174")
-    usps_collect_on_delivery_restricted_delivery = Spec.asKey("175")
-    usps_registered_mail_restricted_delivery = Spec.asKey("176")
-    usps_insurance_restricted_delivery = Spec.asValue("177", float)
-    usps_insurance_restrict_delivery_priority_mail = Spec.asValue("179", float)
-    usps_insurance_restrict_delivery_priority_mail_express = Spec.asValue("178", float)
-    usps_insurance_restrict_delivery_bulk_only = Spec.asValue("180", float)
-    usps_scan_retention = Spec.asKey("181")
-    usps_scan_signature_retention = Spec.asKey("182")
-    usps_special_handling_fragile = Spec.asKey("190")
+    usps_insurance = OptionEnum("100", float)
+    usps_insurance_priority_mail_express = OptionEnum("101", float)
+    usps_return_receipt = OptionEnum("102")
+    usps_collect_on_delivery = OptionEnum("103")
+    usps_certificate_of_mailing_form_3665 = OptionEnum("104")
+    usps_certified_mail = OptionEnum("105")
+    usps_tracking = OptionEnum("106")
+    usps_signature_confirmation = OptionEnum("108")
+    usps_registered_mail = OptionEnum("109")
+    usps_return_receipt_electronic = OptionEnum("110")
+    usps_registered_mail_cod_collection_charge = OptionEnum("112")
+    usps_return_receipt_priority_mail_express = OptionEnum("118")
+    usps_adult_signature_required = OptionEnum("119")
+    usps_adult_signature_restricted_delivery = OptionEnum("120")
+    usps_insurance_priority_mail = OptionEnum("125", float)
+    usps_tracking_electronic = OptionEnum("155")
+    usps_signature_confirmation_electronic = OptionEnum("156")
+    usps_certificate_of_mailing_form_3817 = OptionEnum("160")
+    usps_priority_mail_express_10_30_am_delivery = OptionEnum("161")
+    usps_certified_mail_restricted_delivery = OptionEnum("170")
+    usps_certified_mail_adult_signature_required = OptionEnum("171")
+    usps_certified_mail_adult_signature_restricted_delivery = OptionEnum("172")
+    usps_signature_confirm_restrict_delivery = OptionEnum("173")
+    usps_signature_confirmation_electronic_restricted_delivery = OptionEnum("174")
+    usps_collect_on_delivery_restricted_delivery = OptionEnum("175")
+    usps_registered_mail_restricted_delivery = OptionEnum("176")
+    usps_insurance_restricted_delivery = OptionEnum("177", float)
+    usps_insurance_restrict_delivery_priority_mail = OptionEnum("179", float)
+    usps_insurance_restrict_delivery_priority_mail_express = OptionEnum("178", float)
+    usps_insurance_restrict_delivery_bulk_only = OptionEnum("180", float)
+    usps_scan_retention = OptionEnum("181")
+    usps_scan_signature_retention = OptionEnum("182")
+    usps_special_handling_fragile = OptionEnum("190")
 
     """ Non official options """
-    usps_option_machinable_item = Spec.asFlag("usps_option_machinable_item")
-    usps_option_ground_only = Spec.asFlag("usps_option_ground_only")
-    usps_option_return_service_info = Spec.asFlag("usps_option_return_service_info")
-    usps_option_ship_info = Spec.asFlag("usps_option_ship_info")
+    usps_option_machinable_item = OptionEnum("usps_option_machinable_item", bool)
+    usps_option_ground_only = OptionEnum("usps_option_ground_only", bool)
+    usps_option_return_service_info = OptionEnum(
+        "usps_option_return_service_info", bool
+    )
+    usps_option_ship_info = OptionEnum("usps_option_ship_info", bool)
 
     """ Unified Shipment Option type mapping """
     insurance = usps_insurance
 
     @classmethod
-    def to_options(
-        cls,
-        options: units.Options,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
-
-        if package_options is not None:
-            options.update(package_options.content)
-
-        def option_filter(code: str) -> bool:
-            return code in cls and "usps_option" not in code  # type:ignore
-
-        return units.Options(options, cls, option_filter=option_filter)
-
-    @classmethod
     def insurance_from(cls, options: units.Options) -> typing.Optional[float]:
         return next(
-            (value for key, value in options if "usps_insurance" in key),
+            (option.state for key, option in options if "usps_insurance" in key),
             options.insurance,
         )
 
@@ -183,9 +168,26 @@ class ShippingOption(Enum):
     def non_delivery_from(cls, options: units.Options) -> typing.Optional[str]:
         # Gets the first provided non delivery option or default to "RETURN"
         return next(
-            (value for name, value in options if "non_delivery" in name),
+            (option.state for name, option in options if "non_delivery" in name),
             "RETURN",
         )
+
+
+def shipping_options_initializer(
+    options: units.Options,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(code: str) -> bool:
+        return code in ShippingOption and "usps_option" not in code  # type:ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)
 
 
 class ShipmentService(Enum):

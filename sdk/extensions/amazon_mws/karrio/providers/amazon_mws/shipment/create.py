@@ -1,29 +1,26 @@
-from typing import List, Tuple
-
 import amazon_mws_lib.purchase_shipment_request as amazon
 from amazon_mws_lib.purchase_shipment_response import LabelResult
-from karrio.core.utils.transformer import to_multi_piece_shipment
-from karrio.core.utils import Serializable, DP, DF, image_to_pdf
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-)
-from karrio.core.units import Packages, Options, Weight
-from karrio.providers.amazon_mws.utils import Settings
-from karrio.providers.amazon_mws.units import Service
-from karrio.providers.amazon_mws.error import parse_error_response
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.amazon_mws.error as provider_error
+import karrio.providers.amazon_mws.units as provider_units
+import karrio.providers.amazon_mws.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: dict, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors: List[Message] = sum(
-        [parse_error_response(data, settings) for data in response.get("errors", [])],
+    response: dict, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    errors: typing.List[models.Message] = sum(
+        [
+            provider_error.parse_error_response(data, settings)
+            for data in response.get("errors", [])
+        ],
         [],
     )
-    shipment = to_multi_piece_shipment(
+    shipment = lib.to_multi_piece_shipment(
         [
             (index, _extract_details(data, data.get("shipmentId"), settings))
             for index, data in enumerate(response.get("labelResults", []))
@@ -34,27 +31,29 @@ def parse_shipment_response(
 
 
 def _extract_details(
-    data: dict, shipment_identifier: str, settings: Settings
-) -> ShipmentDetails:
-    result = DP.to_object(LabelResult, data)
-    label = image_to_pdf(result.label.labelStream)
+    data: dict,
+    shipment_identifier: str,
+    settings: provider_utils.Settings,
+) -> models.ShipmentDetails:
+    result = lib.to_object(LabelResult, data)
+    label = lib.image_to_pdf(result.label.labelStream)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=result.trackingId,
         shipment_identifier=shipment_identifier,
         label_type="PDF",
-        docs=Documents(label=label),
+        docs=models.Documents(label=label),
         meta=dict(
             containerReferenceId=result.containerReferenceId,
         ),
     )
 
 
-def shipment_request(payload: ShipmentRequest, _) -> Serializable:
-    packages = Packages(payload.parcels)
-    options = Options(payload.options)
+def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_options(payload.options)
 
     request = amazon.PurchaseShipmentRequest(
         clientReferenceId=payload.reference or payload.id,
@@ -76,8 +75,8 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
             email=payload.recipient.email,
             phoneNumber=payload.recipient.phone_number,
         ),
-        shipDate=DF.fdatetime(options.shipment_date, "%Y-%m-%d"),
-        serviceType=Service.map(payload.service).name_or_key,
+        shipDate=lib.fdatetime(options.shipment_date.state, "%Y-%m-%d"),
+        serviceType=provider_units.Service.map(payload.service).name_or_key,
         containers=[
             amazon.Container(
                 containerType="PACKAGE",
@@ -101,7 +100,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
                             unit=item.value_currency,
                         ),
                         unitWeight=amazon.UnitWeight(
-                            value=Weight(item.weight, item.weight_unit).LB,
+                            value=units.Weight(item.weight, item.weight_unit).LB,
                             unit="LB",
                         ),
                     )
@@ -116,4 +115,4 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
         ),
     )
 
-    return Serializable(request, DP.to_dict)
+    return lib.Serializable(request, lib.to_dict)

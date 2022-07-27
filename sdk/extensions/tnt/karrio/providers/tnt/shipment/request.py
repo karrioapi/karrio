@@ -21,25 +21,31 @@ from tnt_lib.shipment_request import (
     RATE,
     REQUIRED,
 )
-from karrio.core.utils import Serializable, XP
-from karrio.core.models import ShipmentRequest, Payment
-from karrio.core.units import Options, Packages, Weight, WeightUnit
-from karrio.providers.tnt.units import ShippingOption, ShipmentService, PaymentType
-from karrio.providers.tnt.utils import Settings
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.tnt.error as provider_error
+import karrio.providers.tnt.units as provider_units
+import karrio.providers.tnt.utils as provider_utils
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[ESHIPPER]:
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[ESHIPPER]:
     ref = f"ref_{uuid4()}"
-    package = Packages(payload.parcels).single
-    service = ShipmentService.map(payload.service).value_or_key
-    options = ShippingOption.to_options(
-        payload.options, package_options=package.options
+    package = lib.to_packages(payload.parcels).single
+    service = provider_units.ShipmentService.map(payload.service).value_or_key
+    options = lib.to_options(
+        payload.options,
+        package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    payment = payload.payment or Payment(paid_by="sender")
-    insurance = getattr(options.tnt_insurance, "value", None)
+    payment = payload.payment or models.Payment(paid_by="sender")
+    insurance = options.tnt_insurance.state
 
     request = ESHIPPER(
         LOGIN=LOGIN(
@@ -94,14 +100,16 @@ def shipment_request(
                     CONNUMBER=None,
                     CUSTOMERREF=payload.reference,
                     CONTYPE=("D" if package.parcel.is_document else "N"),
-                    PAYMENTIND=PaymentType[payment.paid_by or "sender"].value,
+                    PAYMENTIND=provider_units.PaymentType[
+                        payment.paid_by or "sender"
+                    ].value,
                     ITEMS=1,
                     TOTALWEIGHT=package.weight.KG,
                     TOTALVOLUME=package.volume,
-                    CURRENCY=options.currency,
+                    CURRENCY=options.currency.state,
                     GOODSVALUE=insurance,
                     INSURANCEVALUE=insurance,
-                    INSURANCECURRENCY=options.currency,
+                    INSURANCECURRENCY=options.currency.state,
                     DIVISION=None,
                     SERVICE=service,
                     OPTION=[getattr(option, "key", option) for _, option in options],
@@ -123,8 +131,9 @@ def shipment_request(
                                 ARTICLE(
                                     ITEMS=article.quantity,
                                     DESCRIPTION=article.description,
-                                    WEIGHT=Weight(
-                                        article.weight, WeightUnit[article.weight_unit]
+                                    WEIGHT=units.Weight(
+                                        article.weight,
+                                        units.WeightUnit[article.weight_unit],
                                     ).KG,
                                     INVOICEVALUE=article.value_amount,
                                     INVOICEDESC=article.description,
@@ -160,4 +169,4 @@ def shipment_request(
         ),
     )
 
-    return Serializable(request, XP.to_xml)
+    return lib.Serializable(request, lib.to_xml)

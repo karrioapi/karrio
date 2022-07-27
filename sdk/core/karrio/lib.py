@@ -1,10 +1,12 @@
 import typing
 import datetime
 import karrio.core.utils as utils
+import karrio.core.units as units
 import karrio.core.models as models
 
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
+apply_namespaceprefix = utils.apply_namespaceprefix
 Deserializable = utils.Deserializable
 Serializable = utils.Serializable
 Pipeline = utils.Pipeline
@@ -19,10 +21,10 @@ Job = utils.Job
 # -----------------------------------------------------------
 
 
-def to_text(
+def join(
     *values: typing.Union[str, None],
-    join: bool = False,
-    separator: str = " ",
+    join: bool = None,
+    separator: str = None,
 ) -> typing.Optional[typing.Union[str, typing.List[str]]]:
     """Concatenate a set of string values into a list of string or a single joined text.
 
@@ -41,7 +43,9 @@ def to_text(
     :param separator: the text separator if joined into a single string.
     :return: a string, list of string or None.
     """
-    return utils.SF.concat_str(*values, join, separator)
+    return utils.SF.concat_str(
+        *values, join=(join or False), separator=(separator or " ")
+    )
 
 
 def to_int(
@@ -243,6 +247,15 @@ def to_element(
     return utils.XP.to_xml(xml_text)
 
 
+def find_element(
+    tag: str,
+    in_element: utils.Element,
+    element_type: typing.Type[typing.Union[T, utils.Element]] = None,
+    first: bool = None,
+):
+    return utils.XP.find(tag, in_element, element_type, first=first)
+
+
 def create_envelope(
     body_content: typing.Any,
     header_content: typing.Any = None,
@@ -269,88 +282,35 @@ def create_envelope(
 # -----------------------------------------------------------
 
 
-def optionFlag(
-    key: str,
-) -> utils.Spec:
-    """Create a wrapper for an option flag.
-    This will return True or False if the value is provided.
+def to_options(
+    options: dict,
+    initializer: typing.Optional[typing.Callable[[dict], units.Options]] = None,
+    **kwargs,
+) -> units.Options:
 
-    Example:
-        option = optionFlag("LAD")
-        option_value = option.apply(True)
+    if initializer is not None:
+        return initializer(options, **kwargs)
 
-        print(option.key)  # "LAD"
-        print(option.value)  # None
-        print(option_value)  # True
+    return units.Options(options)
 
 
-    :param key: the option code name.
-    :return: an option wrapper object.
-    """
-    return utils.Spec.asFlag(key)
+def to_services(
+    services: dict,
+    service_type: typing.Type[utils.Enum] = None,
+    initializer: typing.Optional[typing.Callable[[dict], units.Services]] = None,
+    **kwargs,
+) -> units.Services:
+
+    if initializer is not None:
+        return initializer(services, **kwargs)
+
+    return units.Services(services, service_type=service_type)
 
 
-def optionKey(
-    key: str,
-) -> utils.Spec:
-    """Create a wrapper for an option code.
-    This will return True or False if the value is accessed.
-
-    Example:
-        option = optionKey("LAD")
-        option_value = option.apply(True)
-
-        print(option.key)  # "LAD"
-        print(option.value)  # None
-        print(option_value)  # "LAD"
-
-
-    :param key: the option code name.
-    :return: an option wrapper object.
-    """
-    return utils.Spec.asKey(key)
-
-
-def optionValue(
-    key: str,
-) -> utils.Spec:
-    """Create a wrapper for an option value.
-
-    example:
-        option = optionValue("LAD")
-        option_value = option.apply('always')
-
-        print(option.key)  # "LAD"
-        print(option.value)  # None
-        print(option_value)  # "always"
-
-
-    :param key: the option key name.
-    :return: an option wrapper object.
-    """
-    return utils.Spec.asValue(key)
-
-
-def optionKeyVal(
-    code: str,
-    type: typing.Type = str,
-) -> utils.Spec:
-    """Create a wrapper for an option key pair.
-    This will return the value of the provided type.
-
-    example:
-        option = optionKeyVal("cash_on_delivery", to_money)
-        option_value = option.apply(39.99)
-
-        print(option.key)  # "cash_on_delivery"
-        print(option.value)  # 39.99
-        print(option_value)  # 39.99
-
-
-    :param key: the option code name.
-    :return: an option wrapper object.
-    """
-    return utils.Spec.asKeyVal(code, type)
+def to_customs_info(
+    customs: models.Customs,
+):
+    return units.CustomsInfo(customs)
 
 
 # -----------------------------------------------------------
@@ -385,6 +345,14 @@ def to_state_name(
     **kwargs,
 ) -> typing.Optional[str]:
     return utils.Location(value, **{**kwargs, "country": country}).as_state_name
+
+
+def to_address(
+    address: typing.Optional[models.Address],
+) -> units.ComputedAddress:
+    """Decorate address data with sensible default and None handling."""
+
+    return units.ComputedAddress(address)
 
 
 # -----------------------------------------------------------
@@ -438,6 +406,22 @@ def to_multi_piece_shipment(
     :return: a unified master shipment object.
     """
     return utils.to_multi_piece_shipment(package_shipments)
+
+
+def to_packages(
+    parcels: typing.List[models.Parcel],
+    presets: typing.Type[utils.Enum] = None,
+    required: typing.List[str] = None,
+    max_weight: units.Weight = None,
+    package_option_type: typing.Type[utils.Enum] = utils.Enum,
+) -> units.Packages:
+    return units.Packages(
+        parcels=parcels,
+        presets=presets,
+        required=required,
+        max_weight=max_weight,
+        package_option_type=package_option_type,
+    )
 
 
 # -----------------------------------------------------------

@@ -2,7 +2,7 @@ import re
 from easypost_lib.shipment_request import ShipmentRequest
 from karrio.core import units
 from karrio.core.models import Address
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag, OptionEnum
 
 
 class LabelType(Enum):
@@ -941,50 +941,50 @@ class CarrierId(Flag):
         return {key: enum.value for key, enum in CarrierId.__members__.items()}
 
 
-class Option(Flag):
-    easypost_additional_handling = Spec.asKeyVal("additional_handling", bool)
-    easypost_address_validation_level = Spec.asKeyVal("address_validation_level")
-    easypost_alcohol = Spec.asKeyVal("alcohol", bool)
-    easypost_by_drone = Spec.asKeyVal("by_drone", bool)
-    easypost_carbon_neutral = Spec.asKeyVal("carbon_neutral", bool)
-    easypost_cod_amount = Spec.asKeyVal("cod_amount")
-    easypost_cod_method = Spec.asKeyVal("cod_method")
-    easypost_cod_address_id = Spec.asKeyVal("cod_address_id")
-    easypost_currency = Spec.asKeyVal("currency")
-    easypost_delivery_confirmation = Spec.asKeyVal("delivery_confirmation")
-    easypost_dropoff_type = Spec.asKeyVal("dropoff_type")
-    easypost_dry_ice = Spec.asKeyVal("dry_ice", bool)
-    easypost_dry_ice_medical = Spec.asKeyVal("dry_ice_medical", bool)
-    easypost_dry_ice_weight = Spec.asKeyVal("dry_ice_weight")
-    easypost_endorsement = Spec.asKeyVal("endorsement")
-    easypost_freight_charge = Spec.asKeyVal("freight_charge", float)
-    easypost_handling_instructions = Spec.asKeyVal("handling_instructions")
-    easypost_hazmat = Spec.asKeyVal("hazmat")
-    easypost_hold_for_pickup = Spec.asKeyVal("hold_for_pickup", bool)
-    easypost_incoterm = Spec.asKeyVal("incoterm")
-    easypost_invoice_number = Spec.asKeyVal("invoice_number")
-    easypost_label_date = Spec.asKeyVal("label_date")
-    easypost_label_format = Spec.asKeyVal("label_format")
-    easypost_machinable = Spec.asKeyVal("machinable", bool)
-    easypost_payment = Spec.asKeyVal("payment", dict)
-    easypost_print_custom_1 = Spec.asKeyVal("print_custom_1")
-    easypost_print_custom_2 = Spec.asKeyVal("print_custom_2")
-    easypost_print_custom_3 = Spec.asKeyVal("print_custom_3")
-    easypost_print_custom_1_barcode = Spec.asKeyVal("print_custom_1_barcode")
-    easypost_print_custom_2_barcode = Spec.asKeyVal("print_custom_2_barcode")
-    easypost_print_custom_3_barcode = Spec.asKeyVal("print_custom_3_barcode")
-    easypost_print_custom_1_code = Spec.asKeyVal("print_custom_1_code")
-    easypost_print_custom_2_code = Spec.asKeyVal("print_custom_2_code")
-    easypost_print_custom_3_code = Spec.asKeyVal("print_custom_3_code")
-    easypost_saturday_delivery = Spec.asKeyVal("saturday_delivery", bool)
-    easypost_special_rates_eligibility = Spec.asKeyVal("special_rates_eligibility")
-    easypost_smartpost_hub = Spec.asKeyVal("smartpost_hub")
-    easypost_smartpost_manifest = Spec.asKeyVal("smartpost_manifest")
-    easypost_billing_ref = Spec.asKeyVal("billing_ref")
-    easypost_certified_mail = Spec.asKeyVal("certified_mail", bool)
-    easypost_registered_mail = Spec.asKeyVal("registered_mail", bool)
-    easypost_registered_mail_amount = Spec.asKeyVal("registered_mail_amount", float)
-    easypost_return_receipt = Spec.asKeyVal("return_receipt", bool)
+class ShippingOption(Flag):
+    easypost_additional_handling = OptionEnum("additional_handling", bool)
+    easypost_address_validation_level = OptionEnum("address_validation_level")
+    easypost_alcohol = OptionEnum("alcohol", bool)
+    easypost_by_drone = OptionEnum("by_drone", bool)
+    easypost_carbon_neutral = OptionEnum("carbon_neutral", bool)
+    easypost_cod_amount = OptionEnum("cod_amount")
+    easypost_cod_method = OptionEnum("cod_method")
+    easypost_cod_address_id = OptionEnum("cod_address_id")
+    easypost_currency = OptionEnum("currency")
+    easypost_delivery_confirmation = OptionEnum("delivery_confirmation")
+    easypost_dropoff_type = OptionEnum("dropoff_type")
+    easypost_dry_ice = OptionEnum("dry_ice", bool)
+    easypost_dry_ice_medical = OptionEnum("dry_ice_medical", bool)
+    easypost_dry_ice_weight = OptionEnum("dry_ice_weight")
+    easypost_endorsement = OptionEnum("endorsement")
+    easypost_freight_charge = OptionEnum("freight_charge", float)
+    easypost_handling_instructions = OptionEnum("handling_instructions")
+    easypost_hazmat = OptionEnum("hazmat")
+    easypost_hold_for_pickup = OptionEnum("hold_for_pickup", bool)
+    easypost_incoterm = OptionEnum("incoterm")
+    easypost_invoice_number = OptionEnum("invoice_number")
+    easypost_label_date = OptionEnum("label_date")
+    easypost_label_format = OptionEnum("label_format")
+    easypost_machinable = OptionEnum("machinable", bool)
+    easypost_payment = OptionEnum("payment", dict)
+    easypost_print_custom_1 = OptionEnum("print_custom_1")
+    easypost_print_custom_2 = OptionEnum("print_custom_2")
+    easypost_print_custom_3 = OptionEnum("print_custom_3")
+    easypost_print_custom_1_barcode = OptionEnum("print_custom_1_barcode")
+    easypost_print_custom_2_barcode = OptionEnum("print_custom_2_barcode")
+    easypost_print_custom_3_barcode = OptionEnum("print_custom_3_barcode")
+    easypost_print_custom_1_code = OptionEnum("print_custom_1_code")
+    easypost_print_custom_2_code = OptionEnum("print_custom_2_code")
+    easypost_print_custom_3_code = OptionEnum("print_custom_3_code")
+    easypost_saturday_delivery = OptionEnum("saturday_delivery", bool)
+    easypost_special_rates_eligibility = OptionEnum("special_rates_eligibility")
+    easypost_smartpost_hub = OptionEnum("smartpost_hub")
+    easypost_smartpost_manifest = OptionEnum("smartpost_manifest")
+    easypost_billing_ref = OptionEnum("billing_ref")
+    easypost_certified_mail = OptionEnum("certified_mail", bool)
+    easypost_registered_mail = OptionEnum("registered_mail", bool)
+    easypost_registered_mail_amount = OptionEnum("registered_mail_amount", float)
+    easypost_return_receipt = OptionEnum("return_receipt", bool)
 
     """ Unified Option type mapping """
     currency = easypost_currency
@@ -992,20 +992,30 @@ class Option(Flag):
     cash_on_delivery = easypost_cod_amount
     signature_confirmation = easypost_delivery_confirmation
 
-    @classmethod
-    def apply_defaults(
-        cls,
-        payload: ShipmentRequest,
-        payor: Address = None,
-        package_options: units.Options = None,
-    ) -> dict:
-        """
-        Apply default values to the given options.
-        """
-        options = {
-            "easypost_invoice_number": getattr(payload.customs, "invoice", None),
-            "easypost_label_format": LabelType.map(payload.label_type or "PDF").value,
-            "easypost_payment": dict(
+
+def shipping_options_initializer(
+    payload: ShipmentRequest,
+    payor: Address = None,
+    package_options: units.Options = None,
+) -> dict:
+    """
+    Apply default values to the given options.
+    """
+    options: dict = {}
+
+    if hasattr(payload, "label_type"):
+        options.update(
+            easypost_label_format=LabelType.map(payload.label_type or "PDF").value,
+        )
+
+    if hasattr(payload, "customs"):
+        options.update(
+            easypost_invoice_number=getattr(payload.customs, "invoice", None),
+        )
+
+    if hasattr(payload, "payment"):
+        options.update(
+            easypost_payment=dict(
                 type=units.PaymentType.map(
                     getattr(payload.payment, "paid_by", "sender")
                 ).value,
@@ -1013,10 +1023,15 @@ class Option(Flag):
                 country=getattr(payor, "country_code", None),
                 postal_code=getattr(payor, "postal_code", None),
             ),
-            **payload.options,
-        }
+        )
 
-        if package_options is not None:
-            options.update(package_options.content)
+    options.update(payload.options)
 
-        return options
+    if package_options is not None:
+        options.update(package_options.content)
+
+    # Define carrier option filter.
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type:ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)

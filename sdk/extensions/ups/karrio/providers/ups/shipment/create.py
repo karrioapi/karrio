@@ -1,4 +1,3 @@
-from typing import List, Tuple, Dict, cast
 from ups_lib import common
 from ups_lib.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest,
@@ -33,83 +32,70 @@ from ups_lib.ship_web_service_schema import (
     ImageFormatType,
     ReferenceNumberType,
 )
-from karrio.core.utils import (
-    image_to_pdf,
-    Serializable,
-    apply_namespaceprefix,
-    create_envelope,
-    Element,
-    Envelope,
-    XP,
-    SF,
-)
-from karrio.core.units import Options, Packages, PaymentType
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-    Payment,
-)
-from karrio.providers.ups.units import (
-    PackagingType,
-    ShippingService,
-    ShippingOption,
-    WeightUnit as UPSWeightUnit,
-    PackagePresets,
-    LabelType,
-)
-from karrio.providers.ups.error import parse_error_response
-from karrio.providers.ups.utils import Settings
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.ups.error as provider_error
+import karrio.providers.ups.units as provider_units
+import karrio.providers.ups.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    details = XP.find("ShipmentResults", response, first=True)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    details = lib.find_element("ShipmentResults", response, first=True)
     shipment = _extract_shipment(details, settings) if details is not None else None
-    return shipment, parse_error_response(response, settings)
+    return shipment, provider_error.parse_error_response(response, settings)
 
 
-def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.to_object(ShipmentResultsType, node)
+def _extract_shipment(
+    node: lib.Element, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
+    shipment = lib.to_object(ShipmentResultsType, node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
-    shipping_label = cast(LabelType, package.ShippingLabel)
+    shipping_label = typing.cast(LabelType, package.ShippingLabel)
 
     label = (
-        image_to_pdf(shipping_label.GraphicImage)
-        if cast(ImageFormatType, shipping_label.ImageFormat).Code == "GIF"
+        lib.image_to_pdf(shipping_label.GraphicImage)
+        if typing.cast(ImageFormatType, shipping_label.ImageFormat).Code == "GIF"
         else shipping_label.GraphicImage
     )
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
-        docs=Documents(label=label),
+        docs=models.Documents(label=label),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[UPSShipmentRequest]:
-    packages = Packages(payload.parcels, PackagePresets)
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[UPSShipmentRequest]:
+    packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
-    service = ShippingService.map(payload.service).value_or_key
+    service = provider_units.ShippingService.map(payload.service).value_or_key
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
 
     country_pair = f"{payload.shipper.country_code}/{payload.recipient.country_code}"
-    charges: Dict[str, Payment] = {
+    charges: typing.Dict[str, models.Payment] = {
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
     }
-    mps_packaging = PackagingType.your_packaging.value if len(packages) > 1 else None
-    label_format, label_height, label_width = LabelType[
+    mps_packaging = (
+        provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
+    )
+    label_format, label_height, label_width = provider_units.LabelType[
         payload.label_type or "PDF_6x4"
     ].value
 
@@ -140,7 +126,7 @@ def shipment_request(
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email,
                 Address=ShipAddressType(
-                    AddressLine=SF.concat_str(
+                    AddressLine=lib.join(
                         payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
@@ -163,7 +149,7 @@ def shipment_request(
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
-                    AddressLine=SF.concat_str(
+                    AddressLine=lib.join(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
@@ -184,7 +170,7 @@ def shipment_request(
                                     CreditCard=None,
                                     AlternatePaymentMethod=None,
                                 )
-                                if payment.paid_by == PaymentType.sender.name
+                                if payment.paid_by == units.PaymentType.sender.name
                                 else None
                             ),
                             BillReceiver=(
@@ -194,14 +180,14 @@ def shipment_request(
                                         PostalCode=payload.recipient.postal_code
                                     ),
                                 )
-                                if payment.paid_by == PaymentType.recipient.name
+                                if payment.paid_by == units.PaymentType.recipient.name
                                 else None
                             ),
                             BillThirdParty=(
                                 BillThirdPartyChargeType(
                                     AccountNumber=payment.account_number,
                                 )
-                                if payment.paid_by == PaymentType.third_party.name
+                                if payment.paid_by == units.PaymentType.third_party.name
                                 else None
                             ),
                             ConsigneeBilledIndicator=None,
@@ -234,11 +220,11 @@ def shipment_request(
                         CODType(
                             CODFundsCode=None,
                             CODAmount=CurrencyMonetaryType(
-                                CurrencyCode=options.currency or "USD",
-                                MonetaryValue=options.cash_on_delivery,
+                                CurrencyCode=options.currency.state or "USD",
+                                MonetaryValue=options.cash_on_delivery.state,
                             ),
                         )
-                        if options.cash_on_delivery
+                        if options.cash_on_delivery.state
                         else None
                     ),
                     Notification=(
@@ -247,7 +233,7 @@ def shipment_request(
                                 NotificationCode=event,
                                 EMail=EmailDetailsType(
                                     EMailAddress=[
-                                        options.email_notification_to
+                                        options.email_notification_to.state
                                         or payload.recipient.email
                                     ]
                                 ),
@@ -257,14 +243,19 @@ def shipment_request(
                             )
                             for event in [8]
                         ]
-                        if options.email_notification
+                        if options.email_notification.state
                         and any(
-                            [options.email_notification_to, payload.recipient.email]
+                            [
+                                options.email_notification_to.state,
+                                payload.recipient.email,
+                            ]
                         )
                         else None
                     ),
                 )
-                if any([options.cash_on_delivery, options.email_notification])
+                if any(
+                    [options.cash_on_delivery.state, options.email_notification.state]
+                )
                 else None
             ),
             Package=[
@@ -273,7 +264,7 @@ def shipment_request(
                     Packaging=UPSPackagingType(
                         Code=(
                             mps_packaging
-                            or PackagingType[
+                            or provider_units.PackagingType[
                                 package.packaging_type or "your_packaging"
                             ].value
                         )
@@ -288,7 +279,9 @@ def shipment_request(
                     ),
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=UPSWeightUnit[package.weight_unit.name].value,
+                            Code=provider_units.WeightUnit[
+                                package.weight_unit.name
+                            ].value,
                         ),
                         Weight=package.weight.value,
                     ),
@@ -305,13 +298,13 @@ def shipment_request(
         ),
         ReceiptSpecification=None,
     )
-    return Serializable(
-        create_envelope(header_content=settings.Security, body_content=request),
+    return lib.Serializable(
+        lib.create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
     )
 
 
-def _request_serializer(envelope: Envelope) -> str:
+def _request_serializer(envelope: lib.Envelope) -> str:
     namespace_ = (
         'xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"'
         ' xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
@@ -326,8 +319,8 @@ def _request_serializer(envelope: Envelope) -> str:
 
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "ship")
-    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+    lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "ship")
+    lib.apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
+    lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
 
-    return XP.export(envelope, namespacedef_=namespace_)
+    return lib.to_xml(envelope, namespacedef_=namespace_)

@@ -1,9 +1,7 @@
-from typing import List, Tuple
 from tnt_lib.pricing_response import (
     priceResponse,
     ratedServices,
     ratedService,
-    chargeElement,
 )
 from tnt_lib.pricing_request import (
     priceRequest,
@@ -13,21 +11,24 @@ from tnt_lib.pricing_request import (
     product,
     insurance,
     options as optionsType,
-    option,
     consignmentDetails,
 )
-from karrio.core.utils import Serializable, Element, XP, DF, NF
-from karrio.core.units import Options, Packages, Services
-from karrio.core.models import RateDetails, Message, ChargeDetails, RateRequest
-from karrio.providers.tnt.units import ShippingOption, PaymentType, ShipmentService
-from karrio.providers.tnt.utils import Settings
-from karrio.providers.tnt.error import parse_error_response
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.purolator.error as provider_error
+import karrio.providers.purolator.units as provider_units
+import karrio.providers.purolator.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    price_response = XP.find("priceResponse", response, priceResponse, first=True)
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    price_response = lib.find_element(
+        "priceResponse", response, priceResponse, first=True
+    )
 
     if price_response is not None and price_response.ratedServices is not None:
         rate_details = [
@@ -37,12 +38,13 @@ def parse_rate_response(
     else:
         rate_details = []
 
-    return rate_details, parse_error_response(response, settings)
+    return rate_details, provider_error.parse_error_response(response, settings)
 
 
 def _extract_detail(
-    details: Tuple[ratedServices, ratedService], settings: Settings
-) -> RateDetails:
+    details: typing.Tuple[ratedServices, ratedService],
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
     rate, service = details
     charges = [
         ("Base charge", service.totalPriceExclVat),
@@ -53,16 +55,16 @@ def _extract_detail(
         ),
     ]
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=rate.currency,
         service=str(service.product.id),
-        total_charge=NF.decimal(service.totalPrice),
+        total_charge=lib.to_decimal(service.totalPrice),
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
-                amount=NF.decimal(amount),
+                amount=lib.to_decimal(amount),
                 currency=rate.currency,
             )
             for name, amount in charges
@@ -73,12 +75,15 @@ def _extract_detail(
 
 
 def rate_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[priceRequest]:
-    package = Packages(payload.parcels).single
-    service = Services(payload.services, ShipmentService).first
-    options = ShippingOption.to_options(
-        payload.options, package_options=package.options
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[priceRequest]:
+    package = lib.to_packages(payload.parcels).single
+    service = lib.to_services(payload.services, provider_units.ShipmentService).first
+    options = lib.to_options(
+        payload.options,
+        package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     request = priceRequest(
@@ -96,7 +101,7 @@ def rate_request(
                 town=payload.recipient.city,
                 postcode=payload.recipient.postal_code,
             ),
-            collectionDateTime=DF.fdatetime(
+            collectionDateTime=lib.fdatetime(
                 options.shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
             ),
             product=product(
@@ -109,10 +114,11 @@ def rate_request(
                 options=(
                     optionsType(
                         option=[
-                            option(optionCode=code) for _, code, _ in options.as_list()
+                            option(optionCode=option.code)
+                            for _, option in options.items()
                         ]
                     )
-                    if any(options.as_list())
+                    if any(options.items())
                     else None
                 ),
             ),
@@ -131,7 +137,7 @@ def rate_request(
                 if options.insurance is not None
                 else None
             ),
-            termsOfPayment=PaymentType.sender.value,
+            termsOfPayment=provider_units.PaymentType.sender.value,
             currency=options.currency,
             priceBreakDown=True,
             consignmentDetails=consignmentDetails(
@@ -143,4 +149,4 @@ def rate_request(
         ),
     )
 
-    return Serializable(request, XP.to_xml)
+    return lib.Serializable(request, lib.to_xml)

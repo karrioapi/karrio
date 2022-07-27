@@ -87,3 +87,13 @@ Rating = interface.Rating
 Shipment = interface.Shipment
 Tracking = interface.Tracking
 Address = interface.Address
+
+
+__all__ = [
+    "gateway",
+    "Pickup",
+    "Rating",
+    "Shipment",
+    "Tracking",
+    "Address",
+]

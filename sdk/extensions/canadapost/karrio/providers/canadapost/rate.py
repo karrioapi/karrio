@@ -11,34 +11,32 @@ from canadapost_lib.rating import (
     internationalType,
     price_quoteType,
 )
-from typing import List, Tuple
-from karrio.core.utils import Serializable, Element, NF, XP
-from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
-from karrio.core.units import Country, Currency, Packages, Services
-from karrio.core.errors import OriginNotServicedError
-from karrio.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from karrio.providers.canadapost.error import parse_error_response
-from karrio.providers.canadapost.units import (
-    ShippingOption,
-    ServiceType,
-    PackagePresets,
-    MeasurementOptions,
-)
+import typing
+import numbers
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.providers.canadapost.error as provider_error
+import karrio.providers.canadapost.units as provider_units
+import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    price_quotes = XP.find("price-quote", response)
-    quotes: List[RateDetails] = [
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    price_quotes = lib.find_element("price-quote", response)
+    quotes: typing.List[models.RateDetails] = [
         _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes
     ]
-    return quotes, parse_error_response(response, settings)
+    return quotes, provider_error.parse_error_response(response, settings)
 
 
-def _extract_quote(node: Element, settings: Settings) -> RateDetails:
-    quote = XP.to_object(price_quoteType, node)
-    service = ServiceType.map(quote.service_code)
+def _extract_quote(
+    node: lib.Element, settings: provider_utils.Settings
+) -> models.RateDetails:
+    quote = lib.to_object(price_quoteType, node)
+    service = provider_units.ServiceType.map(quote.service_code)
 
     adjustments = getattr(quote.price_details.adjustments, "adjustment", [])
     charges = [
@@ -49,18 +47,18 @@ def _extract_quote(node: Element, settings: Settings) -> RateDetails:
         *((a.adjustment_name, a.adjustment_cost) for a in adjustments),
     ]
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency=Currency.CAD.name,
+        currency=units.Currency.CAD.name,
         transit_days=quote.service_standard.expected_transit_time,
         service=service.name_or_key,
-        total_charge=NF.decimal(quote.price_details.due or 0),
+        total_charge=lib.to_money(quote.price_details.due or 0),
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
-                currency=Currency.CAD.name,
-                amount=NF.decimal(amount),
+                currency=units.Currency.CAD.name,
+                amount=lib.to_money(amount),
             )
             for name, amount in charges
             if amount
@@ -70,8 +68,9 @@ def _extract_quote(node: Element, settings: Settings) -> RateDetails:
 
 
 def rate_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[mailing_scenario]:
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
     :param settings: Karrio carrier connection settings
@@ -79,18 +78,24 @@ def rate_request(
     :return: a domestic or international Canada post compatible request
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
-    if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
-        raise OriginNotServicedError(payload.shipper.country_code)
+    if (
+        payload.shipper.country_code
+        and payload.shipper.country_code != units.Country.CA.name
+    ):
+        raise errors.OriginNotServicedError(payload.shipper.country_code)
 
-    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
-    services = Services(payload.services, ServiceType)
-    options = ShippingOption.to_options(
+    package = lib.to_packages(
+        payload.parcels, provider_units.PackagePresets, required=["weight"]
+    ).single
+    services = lib.to_services(payload.services, provider_units.ServiceType)
+    options = lib.to_options(
         payload.options,
         package_options=package.options,
         is_international=(
             payload.recipient.country_code is not None
             and payload.recipient.country_code != "CA"
         ),
+        initializer=provider_units.shipping_options_initializer,
     )
 
     request = mailing_scenario(
@@ -98,26 +103,30 @@ def rate_request(
         contract_id=settings.contract_id,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=options.shipment_date,
+        expected_mailing_date=options.shipment_date.state,
         options=(
             optionsType(
                 option=[
                     optionType(
-                        option_code=code,
-                        option_amount=value,
+                        option_code=option.code,
+                        option_amount=(
+                            option.state
+                            if isinstance(option.state, numbers.Number)
+                            else None
+                        ),
                     )
-                    for _, code, value in options.as_list()
+                    for _, option in options.items()
                 ]
             )
-            if any(options.as_list())
+            if any(options.items())
             else None
         ),
         parcel_characteristics=parcel_characteristicsType(
-            weight=package.weight.map(MeasurementOptions).KG,
+            weight=package.weight.map(provider_units.MeasurementOptions).KG,
             dimensions=dimensionsType(
-                length=package.length.map(MeasurementOptions).CM,
-                width=package.width.map(MeasurementOptions).CM,
-                height=package.height.map(MeasurementOptions).CM,
+                length=package.length.map(provider_units.MeasurementOptions).CM,
+                width=package.width.map(provider_units.MeasurementOptions).CM,
+                height=package.height.map(provider_units.MeasurementOptions).CM,
             ),
             unpackaged=None,
             mailing_tube=None,
@@ -128,39 +137,47 @@ def rate_request(
             if any(services)
             else None
         ),
-        origin_postal_code=format_ca_postal_code(payload.shipper.postal_code),
+        origin_postal_code=provider_utils.format_ca_postal_code(
+            payload.shipper.postal_code
+        ),
         destination=destinationType(
             domestic=(
                 domesticType(
-                    postal_code=format_ca_postal_code(payload.recipient.postal_code)
+                    postal_code=provider_utils.format_ca_postal_code(
+                        payload.recipient.postal_code
+                    )
                 )
-                if (payload.recipient.country_code == Country.CA.name)
+                if (payload.recipient.country_code == units.Country.CA.name)
                 else None
             ),
             united_states=(
                 united_statesType(
-                    zip_code=format_ca_postal_code(payload.recipient.postal_code)
+                    zip_code=provider_utils.format_ca_postal_code(
+                        payload.recipient.postal_code
+                    )
                 )
-                if (payload.recipient.country_code == Country.US.name)
+                if (payload.recipient.country_code == units.Country.US.name)
                 else None
             ),
             international=(
                 internationalType(
-                    country_code=format_ca_postal_code(payload.recipient.postal_code)
+                    country_code=provider_utils.format_ca_postal_code(
+                        payload.recipient.postal_code
+                    )
                 )
                 if (
                     payload.recipient.country_code
-                    not in [Country.US.name, Country.CA.name]
+                    not in [units.Country.US.name, units.Country.CA.name]
                 )
                 else None
             ),
         ),
     )
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: mailing_scenario) -> str:
-    return XP.export(
+    return lib.to_xml(
         request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
     )

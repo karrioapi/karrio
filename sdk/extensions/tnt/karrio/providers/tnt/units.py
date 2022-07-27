@@ -1,8 +1,9 @@
 """ TNT Native Types """
 
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core.units import PackagePreset
+from karrio.core.utils.enum import OptionEnum
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
@@ -105,39 +106,38 @@ class ShipmentService(Enum):
 
 
 class ShippingOption(Flag):
-    tnt_priority = Spec.asKey("PR")
-    tnt_insurance = Spec.asValue("IN", float)
-    tnt_enhanced_liability = Spec.asKey("EL")
-    tnt_dangerous_goods_fully_regulated = Spec.asKey("HZ")
-    tnt_dangerous_goods_in_limited_quantities = Spec.asKey("LQ")
-    tnt_dry_ice_shipments = Spec.asKey("DI")
-    tnt_biological_substances = Spec.asKey("BB")
-    tnt_lithium_batteries = Spec.asKey("LB")
-    tnt_dangerous_goods_in_excepted_quantities = Spec.asKey("EQ")
-    tnt_radioactive_materials_in_excepted_packages = Spec.asKey("XP")
-    tnt_pre_delivery_notification = Spec.asKey("SMS")
+    tnt_priority = OptionEnum("PR")
+    tnt_insurance = OptionEnum("IN", float)
+    tnt_enhanced_liability = OptionEnum("EL")
+    tnt_dangerous_goods_fully_regulated = OptionEnum("HZ")
+    tnt_dangerous_goods_in_limited_quantities = OptionEnum("LQ")
+    tnt_dry_ice_shipments = OptionEnum("DI")
+    tnt_biological_substances = OptionEnum("BB")
+    tnt_lithium_batteries = OptionEnum("LB")
+    tnt_dangerous_goods_in_excepted_quantities = OptionEnum("EQ")
+    tnt_radioactive_materials_in_excepted_packages = OptionEnum("XP")
+    tnt_pre_delivery_notification = OptionEnum("SMS")
 
-    tnt_division_international_shipments = Spec.asKey("G")
-    tnt_division_global_link_domestic = Spec.asKey("D")
-    tnt_division_german_domestic = Spec.asKey("H")
-    tnt_division_uk_domestic = Spec.asKey("010")
+    tnt_division_international_shipments = OptionEnum("G")
+    tnt_division_global_link_domestic = OptionEnum("D")
+    tnt_division_german_domestic = OptionEnum("H")
+    tnt_division_uk_domestic = OptionEnum("010")
 
     insurance = tnt_insurance
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        def option_filter(key: str) -> bool:
-            return key in cls and "division" not in key  # type: ignore
+    if package_options is not None:
+        options.update(package_options.content)
 
-        return units.Options(options, cls, option_filter=option_filter)
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption and "division" not in key  # type: ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)

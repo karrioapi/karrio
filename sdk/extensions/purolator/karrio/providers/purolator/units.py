@@ -1,6 +1,7 @@
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core.units import MeasurementOptionsType, PackagePreset
+from karrio.core.utils.enum import OptionEnum
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -71,49 +72,48 @@ class CreditCardType(Flag):
 
 
 class ShippingOption(Enum):
-    purolator_dangerous_goods = Spec.asKey("Dangerous Goods")
-    purolator_chain_of_signature = Spec.asKey("Chain of Signature")
-    purolator_express_cheque = Spec.asKey("ExpressCheque")
-    purolator_hold_for_pickup = Spec.asKey("Hold For Pickup")
-    purolator_return_services = Spec.asKey("Return Services")
-    purolator_saturday_service = Spec.asKey("Saturday Service")
-    purolator_origin_signature_not_required = Spec.asKey(
+    purolator_dangerous_goods = OptionEnum("Dangerous Goods")
+    purolator_chain_of_signature = OptionEnum("Chain of Signature")
+    purolator_express_cheque = OptionEnum("ExpressCheque")
+    purolator_hold_for_pickup = OptionEnum("Hold For Pickup")
+    purolator_return_services = OptionEnum("Return Services")
+    purolator_saturday_service = OptionEnum("Saturday Service")
+    purolator_origin_signature_not_required = OptionEnum(
         "Origin Signature Not Required (OSNR)"
     )
-    purolator_adult_signature_required = Spec.asKey("Adult Signature Required (ASR)")
-    purolator_special_handling = Spec.asKey("Special Handling")
+    purolator_adult_signature_required = OptionEnum("Adult Signature Required (ASR)")
+    purolator_special_handling = OptionEnum("Special Handling")
 
     """Karrio specific option"""
-    purolator_show_alternative_services = Spec.asFlag("Show Alternate Services")
+    purolator_show_alternative_services = OptionEnum("Show Alternate Services", bool)
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-        service_is_defined: bool = False,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+    service_is_defined: bool = False,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        # When no specific service is requested, set a default one.
-        options.update(
-            {
-                "purolator_show_alternative_services": options.get(
-                    "purolator_show_alternative_services"
-                )
-                or (not service_is_defined)
-            }
-        )
+    if package_options is not None:
+        options.update(package_options.content)
 
-        def option_filter(key: str) -> bool:
-            return key in cls and key not in NON_OFFICIAL_SERVICES  # type: ignore
+    # When no specific service is requested, set a default one.
+    options.update(
+        {
+            "purolator_show_alternative_services": options.get(
+                "purolator_show_alternative_services"
+            )
+            or (not service_is_defined)
+        }
+    )
 
-        return units.Options(options, cls, option_filter=option_filter)
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption and key not in NON_OFFICIAL_SERVICES  # type: ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)
 
 
 NON_OFFICIAL_SERVICES = [ShippingOption.purolator_show_alternative_services.name]

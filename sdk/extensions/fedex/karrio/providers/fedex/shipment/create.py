@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List, Tuple
 from fedex_lib.ship_service_v26 import (
     ProcessShipmentRequest,
     TransactionDetail,
@@ -38,36 +37,14 @@ from fedex_lib.ship_service_v26 import (
     CommercialInvoiceDetail,
     ShippingDocumentFormat,
 )
-from karrio.core.utils import (
-    Serializable,
-    apply_namespaceprefix,
-    create_envelope,
-    bundle_base64,
-    Element,
-    XP,
-    DF,
-)
-from karrio.core.units import Options, Packages, CompleteAddress, Weight
-from karrio.core.models import (
-    Documents,
-    Duty,
-    ShipmentDetails,
-    Message,
-    ShipmentRequest,
-)
-from karrio.providers.fedex.error import parse_error_response
-from karrio.providers.fedex.utils import Settings
-from karrio.providers.fedex.units import (
-    PackagingType,
-    ServiceType,
-    ShippingOption,
-    PackagePresets,
-    PaymentType,
-    LabelType,
-    Incoterm,
-    PurposeType,
-    MeasurementOptions,
-)
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.fedex.error as provider_error
+import karrio.providers.fedex.units as provider_units
+import karrio.providers.fedex.utils as provider_utils
 
 
 NOTIFICATION_EVENTS = [
@@ -80,50 +57,57 @@ NOTIFICATION_EVENTS = [
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    details = XP.find("CompletedPackageDetails", response)
-    documents = XP.find("ShipmentDocuments", response)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    details = lib.find_element("CompletedPackageDetails", response)
+    documents = lib.find_element("ShipmentDocuments", response)
 
     shipment = (
         _extract_shipment((details, documents), settings) if len(details) > 0 else None
     )
-    return shipment, parse_error_response(response, settings)
+    return shipment, provider_error.parse_error_response(response, settings)
 
 
 def _extract_shipment(
-    details: Tuple[List[Element], List[Element]], settings: Settings
-) -> ShipmentDetails:
+    details: typing.Tuple[typing.List[lib.Element], typing.List[lib.Element]],
+    settings: provider_utils.Settings,
+) -> models.ShipmentDetails:
     pieces, docs = details
     tracking_numbers = [
-        getattr(XP.find("TrackingNumber", piece, first=True), "text", None)
+        getattr(lib.find_element("TrackingNumber", piece, first=True), "text", None)
         for piece in pieces
     ]
     [master_id, *_] = tracking_numbers
 
     labels = [
-        getattr(XP.find("Image", piece, first=True), "text", None) for piece in pieces
+        getattr(lib.find_element("Image", piece, first=True), "text", None)
+        for piece in pieces
     ]
-    label_type = getattr(XP.find("ImageType", pieces[0], first=True), "text", None)
+    label_type = getattr(
+        lib.find_element("ImageType", pieces[0], first=True), "text", None
+    )
 
     invoices = [
-        getattr(XP.find("Image", doc, first=True), "text", None) for doc in docs
+        getattr(lib.find_element("Image", doc, first=True), "text", None)
+        for doc in docs
     ]
     doc_type = (
-        getattr(XP.find("ImageType", docs[0], first=True), "text", None)
+        getattr(lib.find_element("ImageType", docs[0], first=True), "text", None)
         if len(docs) > 0
         else "PDF"
     )
 
-    label = labels[0] if len(labels) == 1 else bundle_base64(labels, label_type)
-    invoice = invoices[0] if len(invoices) == 1 else bundle_base64(invoices, doc_type)
+    label = labels[0] if len(labels) == 1 else lib.bundle_base64(labels, label_type)
+    invoice = (
+        invoices[0] if len(invoices) == 1 else lib.bundle_base64(invoices, doc_type)
+    )
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=master_id,
         shipment_identifier=master_id,
-        docs=Documents(
+        docs=models.Documents(
             label=label,
             **({"invoice": invoice} if invoice else {}),
         ),
@@ -132,25 +116,32 @@ def _extract_shipment(
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[ProcessShipmentRequest]:
-    shipper = CompleteAddress.map(payload.shipper)
-    recipient = CompleteAddress.map(payload.recipient)
-    packages = Packages(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[ProcessShipmentRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(
         payload.parcels,
-        PackagePresets,
+        provider_units.PackagePresets,
         required=["weight"],
-        package_option_type=ShippingOption,
+        package_option_type=provider_units.ShippingOption,
     )
-    service = ServiceType.map(payload.service).value_or_key
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+    service = provider_units.ServiceType.map(payload.service).value_or_key
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     customs = payload.customs
-    duty = (customs.duty or Duty(paid_by="sender")) if customs is not None else None
-    bill_to = CompleteAddress(getattr(duty, "bill_to", None) or shipper)
-    label_type, label_format = LabelType[payload.label_type or "PDF_4x6"].value
+    duty = (
+        (customs.duty or models.Duty(paid_by="sender")) if customs is not None else None
+    )
+    bill_to = lib.to_address(getattr(duty, "bill_to", None) or shipper)
+    label_type, label_format = provider_units.LabelType[
+        payload.label_type or "PDF_4x6"
+    ].value
 
     requests = [
         ProcessShipmentRequest(
@@ -159,10 +150,12 @@ def shipment_request(
             TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v26_Ship"),
             Version=VersionId(ServiceId="ship", Major=26, Intermediate=0, Minor=0),
             RequestedShipment=RequestedShipment(
-                ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
+                ShipTimestamp=lib.to_date(
+                    options.shipment_date.state or datetime.now()
+                ),
                 DropoffType="REGULAR_PICKUP",
                 ServiceType=service,
-                PackagingType=PackagingType.map(
+                PackagingType=provider_units.PackagingType.map(
                     packages.package_type or "your_packaging"
                 ).value,
                 ManifestDetail=None,
@@ -171,8 +164,10 @@ def shipment_request(
                     Units=packages.weight.unit, Value=packages.weight.value
                 ),
                 # set inurance coverage value on master package only
-                TotalInsuredValue=(options.insurance if package_index == 1 else None),
-                PreferredCurrency=options.currency,
+                TotalInsuredValue=(
+                    options.insurance.state if package_index == 1 else None
+                ),
+                PreferredCurrency=options.currency.state,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
                     AccountNumber=settings.account_number,
@@ -248,7 +243,9 @@ def shipment_request(
                 Origin=None,
                 SoldTo=None,
                 ShippingChargesPayment=Payment(
-                    PaymentType=PaymentType[payload.payment.paid_by or "sender"].value,
+                    PaymentType=provider_units.PaymentType[
+                        payload.payment.paid_by or "sender"
+                    ].value,
                     Payor=Payor(
                         ResponsibleParty=Party(
                             AccountNumber=(
@@ -260,12 +257,12 @@ def shipment_request(
                 ),
                 SpecialServicesRequested=(
                     ShipmentSpecialServicesRequested(
-                        SpecialServiceTypes=[code for _, code, _ in options.as_list()],
+                        SpecialServiceTypes=[code for _, code, _ in options.items()],
                         CodDetail=(
                             CodDetail(
                                 CodCollectionAmount=Money(
-                                    Currency=options.currency or "USD",
-                                    Amount=options.cash_on_delivery,
+                                    Currency=options.currency.state or "USD",
+                                    Amount=options.cash_on_delivery.state,
                                 ),
                                 AddTransportationChargesDetail=None,
                                 CollectionType=CodCollectionType.CASH,
@@ -275,7 +272,7 @@ def shipment_request(
                                 ReferenceIndicator=None,
                                 ReturnTrackingId=None,
                             )
-                            if options.cash_on_delivery
+                            if options.cash_on_delivery.state
                             else None
                         ),
                         DeliveryOnInvoiceAcceptanceDetail=None,
@@ -292,7 +289,7 @@ def shipment_request(
                                             NotificationType="EMAIL",
                                             EmailDetail=EMailDetail(
                                                 EmailAddress=(
-                                                    options.email_notification_to
+                                                    options.email_notification_to.state
                                                     or recipient.email
                                                 ),
                                                 Name=recipient.person_name
@@ -308,8 +305,10 @@ def shipment_request(
                                     )
                                 ],
                             )
-                            if options.email_notification
-                            and any([options.email_notification_to, recipient.email])
+                            if options.email_notification.state
+                            and any(
+                                [options.email_notification_to.state, recipient.email]
+                            )
                             else None
                         ),
                         ReturnShipmentDetail=None,
@@ -336,7 +335,9 @@ def shipment_request(
                         RecipientCustomsId=None,
                         DutiesPayment=(
                             Payment(
-                                PaymentType=PaymentType[duty.paid_by or "sender"].value,
+                                PaymentType=provider_units.PaymentType[
+                                    duty.paid_by or "sender"
+                                ].value,
                                 Payor=(
                                     Payor(
                                         ResponsibleParty=Party(
@@ -352,11 +353,14 @@ def shipment_request(
                         CustomsValue=(
                             Money(
                                 Currency=(
-                                    getattr(duty, "currency", options.currency) or "USD"
+                                    getattr(duty, "currency", options.currency.state)
+                                    or "USD"
                                 ),
                                 Amount=(
                                     getattr(
-                                        duty, "declared_value", options.declared_value
+                                        duty,
+                                        "declared_value",
+                                        options.declared_value.state,
                                     )
                                     or 0.0
                                 ),
@@ -375,7 +379,7 @@ def shipment_request(
                                 SpecialInstructions=None,
                                 DeclarationStatement=None,
                                 PaymentTerms=None,
-                                Purpose=PurposeType[
+                                Purpose=provider_units.PurposeType[
                                     customs.content_type or "other"
                                 ].value,
                                 PurposeOfShipmentDescription=None,
@@ -392,7 +396,9 @@ def shipment_request(
                                 OriginatorName=(
                                     shipper.company_name or shipper.person_name
                                 ),
-                                TermsOfSale=Incoterm[customs.incoterm or "DDU"].value,
+                                TermsOfSale=provider_units.Incoterm[
+                                    customs.incoterm or "DDU"
+                                ].value,
                             )
                             if customs.commercial_invoice
                             else None
@@ -409,7 +415,7 @@ def shipment_request(
                                 HarmonizedCode=item.hs_code,
                                 Weight=FedexWeight(
                                     Units=package.weight_unit.value,
-                                    Value=Weight(item.weight, item.weight_unit)[
+                                    Value=units.Weight(item.weight, item.weight_unit)[
                                         package.weight_unit.value
                                     ],
                                 ),
@@ -417,7 +423,7 @@ def shipment_request(
                                 QuantityUnits="EA",
                                 AdditionalMeasures=None,
                                 UnitPrice=Money(
-                                    Currency=(options.currency or duty.currency),
+                                    Currency=(options.currency.state or duty.currency),
                                     Amount=item.value_amount,
                                 ),
                                 CustomsValue=None,
@@ -507,18 +513,24 @@ def shipment_request(
                         ),
                         Dimensions=(
                             FedexDimensions(
-                                Length=package.length.map(MeasurementOptions).value,
-                                Width=package.width.map(MeasurementOptions).value,
-                                Height=package.height.map(MeasurementOptions).value,
+                                Length=package.length.map(
+                                    provider_units.MeasurementOptions
+                                ).value,
+                                Width=package.width.map(
+                                    provider_units.MeasurementOptions
+                                ).value,
+                                Height=package.height.map(
+                                    provider_units.MeasurementOptions
+                                ).value,
                                 Units=package.dimension_unit.value,
                             )
                             if (
                                 # only set dimensions if the packaging type is set to your_packaging
                                 package.has_dimensions
-                                and PackagingType.map(
+                                and provider_units.PackagingType.map(
                                     package.packaging_type or "your_packaging"
                                 ).value
-                                == PackagingType.your_packaging.value
+                                == provider_units.PackagingType.your_packaging.value
                             )
                             else None
                         ),
@@ -544,17 +556,19 @@ def shipment_request(
         for package_index, package in enumerate(packages, 1)
     ]
 
-    return Serializable(requests, _request_serializer)
+    return lib.Serializable(requests, _request_serializer)
 
 
-def _request_serializer(requests: List[ProcessShipmentRequest]) -> List[str]:
+def _request_serializer(
+    requests: typing.List[ProcessShipmentRequest],
+) -> typing.List[str]:
     namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v26="http://fedex.com/ws/ship/v26"'
 
     def serialize(request: ProcessShipmentRequest):
-        envelope = create_envelope(body_content=request)
+        envelope = lib.create_envelope(body_content=request)
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
+        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
 
-        return XP.export(envelope, namespacedef_=namespacedef_)
+        return lib.to_xml(envelope, namespacedef_=namespacedef_)
 
     return [serialize(request) for request in requests]

@@ -29,13 +29,8 @@ class XMLPARSER:
     @staticmethod
     def isxmlelementtype(element_type: Type[T]):
         """Return True if *element_type* appears to be an GenerateDS generated Type."""
-        return (
-            hasattr(element_type, "build")
-            and hasattr(element_type, "export")
-            and hasattr(element_type, "buildChildren")
-            and hasattr(element_type, "exportChildren")
-            and hasattr(element_type, "buildAttributes")
-        )
+
+        return hasattr(element_type, "build") and hasattr(element_type, "export")
 
     @staticmethod
     def istypedxmlobject(xml_typed_object: T):
@@ -111,7 +106,8 @@ class XMLPARSER:
         bundle = "".join(
             [
                 XMLPARSER.xml_tostring(XMLPARSER.to_xml(x))
-                for x in STRINGFORMAT.concat_str(xml_strings)
+                for x in xml_strings
+                if x is not None and x != ""
             ]
         )
         return f"<wrapper>{bundle}</wrapper>"

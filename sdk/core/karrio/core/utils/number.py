@@ -13,7 +13,7 @@ class NUMBERFORMAT:
         :param quant: decimal places for rounding.
         :return: a valid decimal number or None.
         """
-        if value is None:
+        if value is None or isinstance(value, bool):
             return None
         if quant is not None:
             return float(Decimal(str(value)).quantize(Decimal(str(quant))))
@@ -30,6 +30,6 @@ class NUMBERFORMAT:
         :param base: a rounding base value.
         :return: a valid integer number or None.
         """
-        if value is None:
+        if value is None or isinstance(value, bool):
             return None
         return int(value if base is None else base * round(float(value) / base))
