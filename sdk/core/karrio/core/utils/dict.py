@@ -18,7 +18,7 @@ class DICTPARSE:
 
         def _parser(item):
             if attr.has(item):
-                if isinstance(item, Callable):
+                if isinstance(item, Callable) and hasattr(item, "__name__"):
                     return item.__name__
                 return attr.asdict(item)
             if isinstance(item, types.FunctionType):
