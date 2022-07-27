@@ -1,6 +1,3 @@
-import time
-from base64 import encodebytes
-from typing import List, Tuple, Optional
 from dhl_express_lib.ship_val_global_req_10_0 import (
     ShipmentRequest as DHLShipmentRequest,
     Billing,
@@ -22,120 +19,104 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
 )
 from dhl_express_lib.ship_val_global_res_10_0 import LabelImage, MultiLabelType
 from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
-from karrio.core.errors import OriginNotServicedError
-from karrio.core.utils import Serializable, XP, SF, Location, Element
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    Message,
-    ShipmentDetails,
-    Payment,
-    Customs,
-    Duty,
-)
-from karrio.core.units import (
-    CustomsInfo,
-    Options,
-    Packages,
-    CompleteAddress,
-    Weight,
-    WeightUnit,
-)
-from karrio.providers.dhl_express.units import (
-    PackageType,
-    ProductCode,
-    PaymentType,
-    CountryRegion,
-    ShippingOption,
-    PackagePresets,
-    LabelType,
-    ExportReasonCode,
-    WeightUnit as DHLWeightUnit,
-    DimensionUnit,
-    COUNTRY_PREFERED_UNITS,
-    MeasurementOptions,
-)
-from karrio.providers.dhl_express.utils import Settings
-from karrio.providers.dhl_express.error import parse_error_response
+
+import time
+import typing
+import base64
+import numbers
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.dhl_express.error as provider_error
+import karrio.providers.dhl_express.units as provider_units
+import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    air_way_bill = XP.find("AirwayBillNumber", response, first=True)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    air_way_bill = lib.find_element("AirwayBillNumber", response, first=True)
 
     return (
         _extract_shipment(response, settings) if air_way_bill is not None else None,
-        parse_error_response(response, settings),
+        provider_error.parse_error_response(response, settings),
     )
 
 
-def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDetails]:
-    tracking_number = XP.find("AirwayBillNumber", shipment_node, first=True).text
-    label_image = XP.find("LabelImage", shipment_node, LabelImage, first=True)
-    multilabels: List[MultiLabelType] = XP.find(
+def _extract_shipment(
+    shipment_node, settings: provider_utils.Settings
+) -> typing.Optional[models.ShipmentDetails]:
+    tracking_number = lib.find_element(
+        "AirwayBillNumber", shipment_node, first=True
+    ).text
+    label_image = lib.find_element("LabelImage", shipment_node, LabelImage, first=True)
+    multilabels: typing.List[MultiLabelType] = lib.find_element(
         "MultiLabel", shipment_node, MultiLabelType
     )
     invoice = next(
         (item for item in multilabels if item.DocName == "CustomInvoiceImage"), None
     )
 
-    label = encodebytes(label_image.OutputImage).decode("utf-8")
+    label = base64.encodebytes(label_image.OutputImage).decode("utf-8")
     invoice_data = (
-        dict(invoice=encodebytes(invoice.DocImageVal).decode("utf-8"))
+        dict(invoice=base64.encodebytes(invoice.DocImageVal).decode("utf-8"))
         if invoice is not None
         else {}
     )
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
-        docs=Documents(label=label, **invoice_data),
+        docs=models.Documents(label=label, **invoice_data),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[DHLShipmentRequest]:
+    payload: models.ShipmentRequest, settings: provider_utils.Settings
+) -> lib.Serializable[DHLShipmentRequest]:
     if any(settings.account_country_code or "") and (
         payload.shipper.country_code != settings.account_country_code
     ):
-        raise OriginNotServicedError(payload.shipper.country_code)
+        raise errors.OriginNotServicedError(payload.shipper.country_code)
 
-    packages = Packages.map(
+    packages = lib.to_packages(
         payload.parcels,
-        PackagePresets,
+        provider_units.PackagePresets,
         required=["weight"],
-        package_option_type=ShippingOption,
+        package_option_type=provider_units.ShippingOption,
     )
-    product = ProductCode.map(payload.service).value_or_key
-    shipper = CompleteAddress.map(payload.shipper)
-    recipient = CompleteAddress.map(payload.recipient)
+    product = provider_units.ProductCode.map(payload.service).value_or_key
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
 
     weight_unit, dim_unit = (
-        COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
 
-    package_type = PackageType[packages.package_type].value
-    label_format, label_template = LabelType[payload.label_type or "PDF_6x4"].value
-    payment = payload.payment or Payment(
+    package_type = provider_units.PackageType[packages.package_type].value
+    label_format, label_template = provider_units.LabelType[
+        payload.label_type or "PDF_6x4"
+    ].value
+    payment = payload.payment or models.Payment(
         paid_by="sender", account_number=settings.account_number
     )
-    customs = CustomsInfo(payload.customs or Customs(commodities=[]))
+    customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
     is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
-    options = ShippingOption.to_options(
+    options = lib.to_options(
         payload.options,
         is_dutiable=is_dutiable,
         package_options=packages.options,
         shipper_country=payload.shipper.country_code,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    duty = customs.duty or Duty(paid_by="sender")
-    bill_to = CompleteAddress.map(duty.bill_to)
+    duty = customs.duty or models.Duty(paid_by="sender")
+    bill_to = lib.to_address(duty.bill_to)
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
 
@@ -144,12 +125,12 @@ def shipment_request(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="10.0")
         ),
-        RegionCode=CountryRegion[shipper.country_code].value,
+        RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=settings.account_number,
-            ShippingPaymentType=PaymentType[payment.paid_by].value,
+            ShippingPaymentType=provider_units.PaymentType[payment.paid_by].value,
             BillingAccountNumber=payment.account_number,
             DutyAccountNumber=duty.account_number,
         ),
@@ -157,7 +138,7 @@ def shipment_request(
             CompanyName=recipient.company_name or "N/A",
             SuiteDepartmentName=recipient.suite,
             AddressLine1=recipient.address_line1 or recipient.address_line,
-            AddressLine2=SF.concat_str(recipient.address_line2, join=True),
+            AddressLine2=lib.join(recipient.address_line2, join=True),
             AddressLine3=None,
             City=recipient.city,
             Division=None,
@@ -187,10 +168,12 @@ def shipment_request(
         ),
         Dutiable=(
             Dutiable(
-                DeclaredValue=duty.declared_value or options.declared_value or 1.0,
-                DeclaredCurrency=duty.currency or options.currency or "USD",
+                DeclaredValue=duty.declared_value
+                or options.declared_value.state
+                or 1.0,
+                DeclaredCurrency=duty.currency or options.currency.state or "USD",
                 ScheduleB=None,
-                ExportLicense=customs.license_number,
+                ExportLicense=customs.license_number.state,
                 ShipperEIN=None,
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm,
@@ -213,7 +196,7 @@ def shipment_request(
                 SignatureName=customs.signer,
                 SignatureTitle=None,
                 ExportReason=customs.content_type,
-                ExportReasonCode=ExportReasonCode[
+                ExportReasonCode=provider_units.ExportReasonCode[
                     customs.content_type or "other"
                 ].value,
                 SedNumber=None,
@@ -252,25 +235,27 @@ def shipment_request(
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(
-                            Weight=Weight(
-                                item.weight, WeightUnit[item.weight_unit or "KG"]
+                            Weight=units.Weight(
+                                item.weight, units.WeightUnit[item.weight_unit or "KG"]
                             )[weight_unit.name],
-                            WeightUnit=DHLWeightUnit[weight_unit.name].value,
+                            WeightUnit=provider_units.WeightUnit[
+                                weight_unit.name
+                            ].value,
                         ),
                         GrossWeight=WeightType(
-                            Weight=Weight(
-                                item.weight, WeightUnit[item.weight_unit or "KG"]
+                            Weight=units.Weight(
+                                item.weight, units.WeightUnit[item.weight_unit or "KG"]
                             )[weight_unit.name],
-                            WeightUnit=DHLWeightUnit[weight_unit.name].value,
+                            WeightUnit=provider_units.WeightUnit[
+                                weight_unit.name
+                            ].value,
                         ),
                         License=None,
                         LicenseSymbol=None,
                         ManufactureCountryCode=(
                             item.origin_country or shipper.country_code
                         ),
-                        ManufactureCountryName=Location(
-                            item.origin_country
-                        ).as_country_name,
+                        ManufactureCountryName=lib.to_country_name(item.origin_country),
                         ImportTaxManagedOutsideDhlExpress=None,
                         AdditionalInformation=None,
                         ImportCommodityCode=item.hs_code,
@@ -305,13 +290,19 @@ def shipment_request(
                         PieceID=index,
                         PackageType=(
                             package_type
-                            or PackageType[
+                            or provider_units.PackageType[
                                 package.packaging_type or "your_packaging"
                             ].value
                         ),
-                        Depth=package.length.map(MeasurementOptions)[dim_unit.name],
-                        Width=package.width.map(MeasurementOptions)[dim_unit.name],
-                        Height=package.height.map(MeasurementOptions)[dim_unit.name],
+                        Depth=package.length.map(provider_units.MeasurementOptions)[
+                            dim_unit.name
+                        ],
+                        Width=package.width.map(provider_units.MeasurementOptions)[
+                            dim_unit.name
+                        ],
+                        Height=package.height.map(provider_units.MeasurementOptions)[
+                            dim_unit.name
+                        ],
                         Weight=package.weight[weight_unit.name],
                         PieceContents=(
                             package.parcel.content or package.parcel.description
@@ -332,18 +323,20 @@ def shipment_request(
                     for (index, package) in enumerate(packages, start=1)
                 ]
             ),
-            WeightUnit=DHLWeightUnit[weight_unit.name].value,
+            WeightUnit=provider_units.WeightUnit[weight_unit.name].value,
             GlobalProductCode=product,
             LocalProductCode=product,
-            Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
+            Date=(options.shipment_date.state or time.strftime("%Y-%m-%d")),
             Contents=content,
-            DimensionUnit=DimensionUnit[dim_unit.name].value,
+            DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,
             PackageType=package_type,
             IsDutiable=("Y" if is_dutiable else "N"),
-            CurrencyCode=options.currency or "USD",
+            CurrencyCode=options.currency.state or "USD",
             CustData=getattr(payload, "id", None),
             ShipmentCharges=(
-                options.cash_on_delivery if options.cash_on_delivery else None
+                options.cash_on_delivery.state
+                if options.cash_on_delivery.state
+                else None
             ),
             ParentShipmentIdentificationNumber=None,
             ParentShipmentGlobalProductCode=None,
@@ -355,7 +348,7 @@ def shipment_request(
             SuiteDepartmentName=shipper.suite,
             RegisteredAccount=settings.account_number,
             AddressLine1=shipper.address_line1 or shipper.address_line,
-            AddressLine2=SF.concat_str(shipper.address_line2, join=True),
+            AddressLine2=lib.join(shipper.address_line2, join=True),
             AddressLine3=None,
             City=shipper.city,
             Division=None,
@@ -379,16 +372,24 @@ def shipment_request(
         ),
         SpecialService=[
             SpecialService(
-                SpecialServiceType=code,
-                ChargeValue=value,
-                CurrencyCode=(options.currency or "USD" if value else None),
+                SpecialServiceType=option.code,
+                ChargeValue=(
+                    option.state if isinstance(option.state, numbers.Number) else None
+                ),
+                CurrencyCode=(
+                    options.currency.state or "USD"
+                    if isinstance(option.state, numbers.Number)
+                    else None
+                ),
             )
-            for _, code, value in options.as_list()
+            for _, option in options.items()
         ],
         Notification=(
-            Notification(EmailAddress=options.email_notification_to or recipient.email)
-            if options.email_notification
-            and any([options.email_notification_to, recipient.email])
+            Notification(
+                EmailAddress=options.email_notification_to.state or recipient.email
+            )
+            if options.email_notification.state
+            and any([options.email_notification_to.state, recipient.email])
             else None
         ),
         Place=None,
@@ -410,11 +411,11 @@ def shipment_request(
         Importer=None,
     )
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DHLShipmentRequest) -> str:
-    xml_str = XP.export(
+    xml_str = lib.to_xml(
         request,
         name_="req:ShipmentRequest",
         namespacedef_='xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',

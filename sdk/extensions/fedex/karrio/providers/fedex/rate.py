@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Tuple, List, Optional, cast
 from fedex_lib.rate_service_v28 import (
     RateRequest as FedexRateRequest,
     RateReplyDetail,
@@ -13,61 +12,53 @@ from fedex_lib.rate_service_v28 import (
     Money,
     Weight as FedexWeight,
     ShipmentRateDetail,
-    Surcharge,
     RequestedPackageLineItem,
     Dimensions,
     CustomerReference,
     CustomerReferenceType,
 )
-from karrio.core.utils import (
-    create_envelope,
-    apply_namespaceprefix,
-    Element,
-    Serializable,
-    NF,
-    XP,
-    DF,
-)
-from karrio.core.units import Packages, Services, CompleteAddress
-from karrio.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from karrio.providers.fedex.units import (
-    PackagingType,
-    ServiceType,
-    PackagePresets,
-    MeasurementOptions,
-    ShippingOption,
-)
-from karrio.providers.fedex.error import parse_error_response
-from karrio.providers.fedex.utils import Settings
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.fedex.error as provider_error
+import karrio.providers.fedex.units as provider_units
+import karrio.providers.fedex.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    replys = XP.find("RateReplyDetails", response)
-    rates: List[RateDetails] = [
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    replys = lib.find_element("RateReplyDetails", response)
+    rates: typing.List[models.RateDetails] = [
         _extract_rate(detail_node, settings) for detail_node in replys
     ]
-    return rates, parse_error_response(response, settings)
+    return rates, provider_error.parse_error_response(response, settings)
 
 
-def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDetails]:
-    rate: RateReplyDetail = XP.to_object(RateReplyDetail, detail_node)
-    service = ServiceType.map(rate.ServiceType)
+def _extract_rate(
+    detail_node: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Optional[models.RateDetails]:
+    rate: RateReplyDetail = lib.to_object(RateReplyDetail, detail_node)
+    service = provider_units.ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
 
-    shipment_rate, shipment_discount = cast(
-        Tuple[ShipmentRateDetail, Money],
+    shipment_rate, shipment_discount = typing.cast(
+        typing.Tuple[ShipmentRateDetail, Money],
         next(
             (
                 (r.ShipmentRateDetail, r.EffectiveNetDiscount)
                 for r in rate.RatedShipmentDetails
-                if cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType == rate_type
+                if typing.cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType
+                == rate_type
             ),
             (None, None),
         ),
     )
-    currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
+    currency = typing.cast(Money, shipment_rate.TotalBaseCharge).Currency
     charges = [
         ("Base charge", shipment_rate.TotalBaseCharge.Amount),
         ("Discount", getattr(shipment_discount, "Amount", None)),
@@ -76,24 +67,26 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
             for s in shipment_rate.Surcharges + shipment_rate.Taxes
         ),
     ]
-    estimated_delivery = DF.date(rate.DeliveryTimestamp)
+    estimated_delivery = lib.to_date(rate.DeliveryTimestamp)
     transit = (
         ((estimated_delivery.date() - datetime.today().date()).days or None)
         if estimated_delivery is not None
         else None
     )
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
         currency=currency,
-        total_charge=NF.decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
+        total_charge=lib.to_decimal(
+            shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount
+        ),
         transit_days=transit,
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
-                amount=NF.decimal(amount),
+                amount=lib.to_decimal(amount),
                 currency=currency,
             )
             for name, amount in charges
@@ -104,14 +97,21 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
 
 
 def rate_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[FedexRateRequest]:
-    shipper = CompleteAddress.map(payload.shipper)
-    recipient = CompleteAddress.map(payload.recipient)
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = Services(payload.services, ServiceType).first
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[FedexRateRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(
+        payload.parcels,
+        provider_units.PackagePresets,
+        required=["weight"],
+    )
+    service = units.Services(payload.services, provider_units.ServiceType).first
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
@@ -125,10 +125,10 @@ def rate_request(
         VariableOptions=None,
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
-            ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
+            ShipTimestamp=lib.to_date(options.shipment_date.state or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
-            PackagingType=PackagingType.map(
+            PackagingType=provider_units.PackagingType.map(
                 packages.package_type or "your_packaging"
             ).value,
             VariationOptions=None,
@@ -137,7 +137,7 @@ def rate_request(
                 Value=packages.weight.LB,
             ),
             TotalInsuredValue=None,
-            PreferredCurrency=options.currency,
+            PreferredCurrency=options.currency.state,
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=settings.account_number,
@@ -246,18 +246,24 @@ def rate_request(
                     ),
                     Dimensions=(
                         Dimensions(
-                            Length=package.length.map(MeasurementOptions).value,
-                            Width=package.width.map(MeasurementOptions).value,
-                            Height=package.height.map(MeasurementOptions).value,
+                            Length=package.length.map(
+                                provider_units.MeasurementOptions
+                            ).value,
+                            Width=package.width.map(
+                                provider_units.MeasurementOptions
+                            ).value,
+                            Height=package.height.map(
+                                provider_units.MeasurementOptions
+                            ).value,
                             Units=package.dimension_unit.value,
                         )
                         if (
                             # only set dimensions if the packaging type is set to your_packaging
                             package.has_dimensions
-                            and PackagingType.map(
+                            and provider_units.PackagingType.map(
                                 package.packaging_type or "your_packaging"
                             ).value
-                            == PackagingType.your_packaging.value
+                            == provider_units.PackagingType.your_packaging.value
                         )
                         else None
                     ),
@@ -282,7 +288,7 @@ def rate_request(
         ),
     )
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: FedexRateRequest) -> str:
@@ -294,8 +300,8 @@ def _request_serializer(request: FedexRateRequest) -> str:
         ' xmlns:v28="http://fedex.com/ws/rate/v28"'
     )
 
-    envelope = create_envelope(body_content=request)
+    envelope = lib.create_envelope(body_content=request)
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v28")
+    lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v28")
 
-    return XP.export(envelope, namespacedef_=namespacedef_)
+    return lib.to_xml(envelope, namespacedef_=namespacedef_)

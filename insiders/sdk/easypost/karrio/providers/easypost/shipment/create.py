@@ -1,48 +1,42 @@
-from typing import List, Tuple
-
 import easypost_lib.shipment_request as easypost
 from easypost_lib.shipments_response import Shipment
-from karrio.core.utils import Serializable, DP
-from karrio.core.models import (
-    Documents,
-    Payment,
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-)
-from karrio.core.units import Packages, Options, Weight
-from karrio.providers.easypost.units import (
-    Service,
-    PackagingType,
-    Option,
-    LabelType,
-    PaymentType,
-)
-from karrio.providers.easypost.utils import Settings, download_label
-from karrio.providers.easypost.error import parse_error_response
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.easypost.error as provider_error
+import karrio.providers.easypost.units as provider_units
+import karrio.providers.easypost.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: dict, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = [parse_error_response(response, settings)] if "error" in response else []
+    response: dict, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    errors = (
+        [provider_error.parse_error_response(response, settings)]
+        if "error" in response
+        else []
+    )
     shipment = _extract_details(response, settings) if "error" not in response else None
 
     return shipment, errors
 
 
-def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
-    shipment = DP.to_object(Shipment, response)
+def _extract_details(
+    response: dict, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
+    shipment = lib.to_object(Shipment, response)
     label_type = shipment.postage_label.label_file_type.split("/")[-1]
-    label = download_label(shipment.postage_label.label_url)
+    label = provider_utils.download_label(shipment.postage_label.label_url)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         shipment_identifier=shipment.id,
         tracking_number=shipment.tracking_code,
         label_type=label_type.upper(),
-        docs=Documents(label=label),
+        docs=models.Documents(label=label),
         meta=dict(
             rate_provider=shipment.selected_rate.carrier,
             service_name=shipment.selected_rate.service,
@@ -51,23 +45,27 @@ def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(payload: ShipmentRequest, _) -> Serializable:
-    package = Packages(payload.parcels, package_option_type=Options).single
-    service = Service.map(payload.service).value_or_key
+def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
+    package = lib.to_packages(
+        payload.parcels, package_option_type=provider_units.ShippingOption
+    ).single
+    service = provider_units.Service.map(payload.service).value_or_key
     constoms_options = getattr(payload.customs, "options", {})
-    payment = payload.payment or Payment()
+    payment = payload.payment or models.Payment()
     payor = payment.address or (
         payload.shipper if payment.paid_by == "sender" else payload.recipient
     )
 
-    options = Options(
-        Option.apply_defaults(payload, payor=payor, package_options=package.options),
-        Option,
+    options = lib.to_options(
+        payload,
+        payor=payor,
+        package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     requests = dict(
         service=service,
-        insurance=options.insurance,
+        insurance=options.insurance.state,
         data=easypost.ShipmentRequest(
             shipment=easypost.Shipment(
                 reference=payload.reference,
@@ -106,13 +104,11 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
                     width=package.width.IN,
                     height=package.height.IN,
                     weight=package.weight.OZ,
-                    predefined_package=PackagingType.map(package.packaging_type).value,
+                    predefined_package=provider_units.PackagingType.map(
+                        package.packaging_type
+                    ).value,
                 ),
-                options={
-                    getattr(option, "key", code): getattr(option, "value", option)
-                    for code, option in options
-                    if code in Option
-                },
+                options={option.code: option.state for _, option in options.items()},
                 customs_info=(
                     easypost.CustomsInfo(
                         contents_explanation=payload.customs.content_description,
@@ -129,7 +125,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
                                 origin_country=item.origin_country,
                                 quantity=item.quantity,
                                 value=item.value_amount,
-                                weight=Weight(item.weight, item.weight_unit).OZ,
+                                weight=units.Weight(item.weight, item.weight_unit).OZ,
                                 code=item.sku,
                                 manufacturer=None,
                                 currency=item.value_currency,
@@ -147,4 +143,4 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
         ),
     )
 
-    return Serializable(requests, DP.to_dict)
+    return lib.Serializable(requests, lib.to_dict)

@@ -1,7 +1,7 @@
-import typing
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core.models import ServiceLevel
+from karrio.core.utils.enum import OptionEnum
 
 
 class CustomsContentType(Flag):
@@ -66,38 +66,37 @@ class Service(Enum):
 
 
 class ShippingOption(Flag):
-    dhl_poland_delivery_in_18_22_hours = Spec.asKey("1722")
-    dhl_poland_delivery_on_saturday = Spec.asKey("SATURDAY")
-    dhl_poland_pickup_on_staturday = Spec.asKey("NAD_SOBOTA")
-    dhl_poland_insuration = Spec.asKeyVal("UBEZP")
-    dhl_poland_collect_on_delivery = Spec.asKeyVal("COD")
-    dhl_poland_information_to_receiver = Spec.asKey("PDI")
-    dhl_poland_return_of_document = Spec.asKey("ROD")
-    dhl_poland_proof_of_delivery = Spec.asKey("POD")
-    dhl_poland_delivery_to_neighbour = Spec.asKey("SAS")
-    dhl_poland_self_collect = Spec.asKey("ODB")
+    dhl_poland_delivery_in_18_22_hours = OptionEnum("1722")
+    dhl_poland_delivery_on_saturday = OptionEnum("SATURDAY")
+    dhl_poland_pickup_on_staturday = OptionEnum("NAD_SOBOTA")
+    dhl_poland_insuration = OptionEnum("UBEZP")
+    dhl_poland_collect_on_delivery = OptionEnum("COD")
+    dhl_poland_information_to_receiver = OptionEnum("PDI")
+    dhl_poland_return_of_document = OptionEnum("ROD")
+    dhl_poland_proof_of_delivery = OptionEnum("POD")
+    dhl_poland_delivery_to_neighbour = OptionEnum("SAS")
+    dhl_poland_self_collect = OptionEnum("ODB")
 
     """ Unified Option type mapping """
     cash_on_delivery = dhl_poland_collect_on_delivery
     insurance = dhl_poland_insuration
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        def option_filter(key: str) -> bool:
-            return key in cls  # type: ignore
+    if package_options is not None:
+        options.update(package_options.content)
 
-        return units.Options(options, cls, option_filter=option_filter)
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type: ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)
 
 
 DEFAULT_SERVICES = [

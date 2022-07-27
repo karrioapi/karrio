@@ -1,5 +1,3 @@
-from typing import List, Tuple, cast
-from pysoap.envelope import Envelope
 from purolator_lib.estimate_service_2_1_2 import (
     GetFullEstimateRequest,
     Shipment,
@@ -31,35 +29,34 @@ from purolator_lib.estimate_service_2_1_2 import (
     ArrayOfOptionIDValuePair,
     OptionIDValuePair,
 )
-from karrio.core.units import Currency, Packages, Options, Phone, Services
-from karrio.core.utils import Serializable, Element, SF, NF, XP, create_envelope
-from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from karrio.providers.purolator.utils import Settings, standard_request_serializer
-from karrio.providers.purolator.error import parse_error_response
-from karrio.providers.purolator.units import (
-    ShippingService,
-    PackagePresets,
-    DutyPaymentType,
-    MeasurementOptions,
-    ShippingOption,
-    NON_OFFICIAL_SERVICES,
-)
+
+import typing
+import numbers
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.purolator.error as provider_error
+import karrio.providers.purolator.units as provider_units
+import karrio.providers.purolator.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    estimates = XP.find("ShipmentEstimate", response)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    estimates = lib.find_element("ShipmentEstimate", response)
     return (
         [_extract_rate(node, settings) for node in estimates],
-        parse_error_response(response, settings),
+        provider_error.parse_error_response(response, settings),
     )
 
 
-def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
-    estimate = XP.to_object(ShipmentEstimate, estimate_node)
-    currency = Currency.CAD.name
-    service = ShippingService.map(estimate.ServiceID)
+def _extract_rate(
+    estimate_node: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    estimate = lib.to_object(ShipmentEstimate, estimate_node)
+    currency = units.Currency.CAD.name
+    service = provider_units.ShippingService.map(estimate.ServiceID)
     charges = [
         ("Base charge", estimate.BasePrice),
         *(
@@ -72,17 +69,17 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         ),
     ]
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
         currency=currency,
         transit_days=estimate.EstimatedTransitDays,
-        total_charge=NF.decimal(estimate.TotalPrice),
+        total_charge=lib.to_decimal(estimate.TotalPrice),
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
-                amount=NF.decimal(amount),
+                amount=lib.to_decimal(amount),
                 currency=currency,
             )
             for name, amount in charges
@@ -92,32 +89,40 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = Services(payload.services, ShippingService).first
-    options = ShippingOption.to_options(
+def rate_request(
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[lib.Envelope]:
+    packages = lib.to_packages(
+        payload.parcels,
+        provider_units.PackagePresets,
+        required=["weight"],
+    )
+    service = units.Services(payload.services, provider_units.ShippingService).first
+    options = lib.to_options(
         payload.options,
         package_options=packages.options,
         service_is_defined=(getattr(service, "value", None) in payload.services),
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    shipper_phone = Phone(
+    shipper_phone = units.Phone(
         payload.shipper.phone_number, payload.shipper.country_code or "CA"
     )
-    recipient_phone = Phone(
+    recipient_phone = units.Phone(
         payload.recipient.phone_number, payload.recipient.country_code
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
     # When no specific service is requested, set a default one.
     if service is None:
-        service = ShippingService[
+        service = provider_units.ShippingService[
             "purolator_express_international"
             if is_international
             else "purolator_express"
         ]
 
-    request = create_envelope(
+    request = lib.create_envelope(
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
@@ -134,14 +139,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(
-                            payload.shipper.address_line1, join=True
-                        ),
+                        StreetName=lib.join(payload.shipper.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
+                        StreetAddress2=lib.join(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -168,14 +171,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(
-                            payload.recipient.address_line1, join=True
-                        ),
+                        StreetName=lib.join(payload.recipient.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
+                        StreetAddress2=lib.join(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -198,13 +199,15 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
-                ShipmentDate=options.shipment_date,
+                ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service.value,
                     Description=packages.description,
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.map(MeasurementOptions).LB,
+                            Value=packages.weight.map(
+                                provider_units.MeasurementOptions
+                            ).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value is not None
@@ -217,7 +220,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                 Weight=(
                                     PurolatorWeight(
                                         Value=package.weight.map(
-                                            MeasurementOptions
+                                            provider_units.MeasurementOptions
                                         ).value,
                                         WeightUnit=PurolatorWeightUnit[
                                             package.weight_unit.value
@@ -258,11 +261,20 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                                 ),
                                 Options=ArrayOfOptionIDValuePair(
                                     OptionIDValuePair=[
-                                        OptionIDValuePair(ID=code, Value=value)
-                                        for _, code, value in options.as_list()
+                                        OptionIDValuePair(
+                                            ID=option.code,
+                                            Value=(
+                                                option.state
+                                                if isinstance(
+                                                    option.state, numbers.Number
+                                                )
+                                                else None
+                                            ),
+                                        )
+                                        for _, option in options.items()
                                     ]
                                 )
-                                if any(options.as_list())
+                                if any(options.items())
                                 else None,
                             )
                             for package in packages
@@ -278,9 +290,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         BuyerInformation=None,
                         PreferredCustomsBroker=None,
                         DutyInformation=DutyInformation(
-                            BillDutiesToParty=DutyPaymentType.recipient.value,
+                            BillDutiesToParty=provider_units.DutyPaymentType.recipient.value,
                             BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                            Currency=options.currency,
+                            Currency=options.currency.state,
                         ),
                         ImportExportType=None,
                         CustomsInvoiceDocumentIndicator=None,
@@ -305,8 +317,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
-            ShowAlternativeServicesIndicator=options.purolator_show_alternative_services,
+            ShowAlternativeServicesIndicator=options.purolator_show_alternative_services.state,
         ),
     )
 
-    return Serializable(request, standard_request_serializer)
+    return lib.Serializable(request, provider_utils.standard_request_serializer)

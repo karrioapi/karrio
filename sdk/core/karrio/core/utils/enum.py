@@ -59,6 +59,28 @@ class EnumWrapper:
 
 
 @attr.s(auto_attribs=True)
+class OptionEnum:
+    code: str
+    type: Callable = str
+    state: Any = None
+
+    def __getitem__(self, type: Callable = None) -> "OptionEnum":
+        return OptionEnum("", type or self.type, self.state)
+
+    def __call__(self, value: Any = None) -> "OptionEnum":
+        state = self.state
+
+        # if type is bool we have an option defined as Flag.
+        if self.type is bool:
+            state = value is not False
+
+        else:
+            state = self.type(value) if value is not None else None
+
+        return OptionEnum(self.code, self.type, state)
+
+
+@attr.s(auto_attribs=True)
 class Spec:
     key: str
     type: Type

@@ -1,6 +1,4 @@
-import time
-from functools import partial
-from typing import List, Tuple, Optional
+import numbers
 from dhl_poland_lib.services import (
     Address,
     Addressat,
@@ -23,93 +21,79 @@ from dhl_poland_lib.services import (
     Service as DhlService,
     CreateShipmentResponse,
 )
-from karrio.core.models import (
-    Documents,
-    Message,
-    Payment,
-    ShipmentRequest,
-    ShipmentDetails,
-)
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    create_envelope,
-    XP,
-    DF,
-)
-from karrio.core.units import (
-    CompleteAddress,
-    CustomsInfo,
-    Packages,
-    Options,
-    Weight,
-    WeightUnit,
-)
-from karrio.providers.dhl_poland.error import parse_error_response
-from karrio.providers.dhl_poland.utils import Settings
-from karrio.providers.dhl_poland.units import (
-    PackagingType,
-    ShippingOption,
-    Service,
-    LabelType,
-    PaymentType,
-    CustomsContentType,
-)
+
+import time
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.dhl_poland.error as provider_error
+import karrio.providers.dhl_poland.units as provider_units
+import karrio.providers.dhl_poland.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = parse_error_response(response, settings)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    errors = provider_error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings)
-        if XP.find("createShipmentResult", response, first=True) is not None
+        if lib.find_element("createShipmentResult", response, first=True) is not None
         else None
     )
 
     return shipment, errors
 
 
-def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.find(
+def _extract_details(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.ShipmentDetails:
+    shipment = lib.find_element(
         "createShipmentResult", response, CreateShipmentResponse, first=True
     )
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.shipmentNotificationNumber,
         shipment_identifier=shipment.shipmentTrackingNumber,
-        docs=Documents(
+        docs=models.Documents(
             label=shipment.label.labelContent,
             invoice=shipment.label.fvProformaContent,
         ),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[str]:
-    packages = Packages(
-        payload.parcels, required=["weight"], package_option_type=ShippingOption
+def shipment_request(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[str]:
+    packages = lib.to_packages(
+        payload.parcels,
+        required=["weight"],
+        package_option_type=provider_units.ShippingOption,
     )
-    shipper = CompleteAddress.map(payload.shipper)
-    recipient = CompleteAddress.map(payload.recipient)
-    customs = CustomsInfo(payload.customs)
-    options = ShippingOption.to_options(
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    customs = lib.to_customs_info(payload.customs)
+    options = lib.to_options(
         payload.options,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     is_international = shipper.country_code != recipient.country_code
-    service_type = Service.map(payload.service).value_or_key or (
-        Service.dhl_poland_polska.value
+    service_type = provider_units.Service.map(payload.service).value_or_key or (
+        provider_units.Service.dhl_poland_polska.value
         if is_international
-        else Service.dhl_poland_09.value
+        else provider_units.Service.dhl_poland_09.value
     )
-    label_type = LabelType.map(payload.label_type or "PDF").value
-    payment = payload.payment or Payment()
+    label_type = provider_units.LabelType.map(payload.label_type or "PDF").value
+    payment = payload.payment or models.Payment()
     quantity = len(customs.commodities or []) if customs.is_defined else 1
 
-    request = create_envelope(
+    request = lib.create_envelope(
         body_content=createShipment(
             authData=settings.auth_data,
             shipment=CreateShipmentRequest(
@@ -118,7 +102,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     dropOffType="REGULAR_PICKUP",
                     serviceType=service_type,
                     billing=Billing(
-                        shippingPaymentType=PaymentType[payment.paid_by].value,
+                        shippingPaymentType=provider_units.PaymentType[
+                            payment.paid_by
+                        ].value,
                         billingAccountNumber=(
                             payment.account_number or settings.account_number
                         ),
@@ -129,21 +115,25 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ArrayOfService(
                             item=[
                                 DhlService(
-                                    serviceType=code,
-                                    serviceValue=value,
+                                    serviceType=option.code,
+                                    serviceValue=(
+                                        option.state
+                                        if isinstance(option.state, numbers.Number)
+                                        else None
+                                    ),
                                     textInstruction=None,
                                     collectOnDeliveryForm=None,
                                 )
-                                for _, code, value in options.as_list()
+                                for _, option in options.items()
                             ]
                         )
-                        if any(options.as_list())
+                        if any(options.items())
                         else None
                     ),
                     shipmentTime=(
                         ShipmentTime(
                             shipmentDate=(
-                                options.shipment_date or time.strftime("%Y-%m-%d")
+                                options.shipment_date.state or time.strftime("%Y-%m-%d")
                             ),
                             shipmentStartHour="10:00",
                             shipmentEndHour="10:00",
@@ -245,7 +235,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 pieceList=ArrayOfPackage(
                     item=[
                         Package(
-                            type_=PackagingType[
+                            type_=provider_units.PackagingType[
                                 package.packaging_type or "your_packaging"
                             ].value,
                             euroReturn=None,
@@ -273,14 +263,18 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             "person_name",
                             "N/A",
                         ),
-                        costsOfShipment=getattr(
-                            customs.duty or options, "declared_value", None
+                        costsOfShipment=(
+                            getattr(customs.duty, "declared_value", None)
+                            or options.declard_value.state
                         ),
-                        currency=getattr(customs.duty or options, "currency", "EUR"),
-                        nipNr=customs.nip_number,
-                        eoriNr=customs.eori_number,
-                        vatRegistrationNumber=customs.vat_registration_number,
-                        categoryOfItem=CustomsContentType[
+                        currency=(
+                            getattr(customs.duty, "currency", None)
+                            or options.currency.state
+                        ),
+                        nipNr=customs.nip_number.state,
+                        eoriNr=customs.eori_number.state,
+                        vatRegistrationNumber=customs.vat_registration_number.state,
+                        categoryOfItem=provider_units.CustomsContentType[
                             customs.content_type or "other"
                         ].value,
                         invoiceNr=customs.invoice,
@@ -296,9 +290,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                         nameEn=item.description or "N/A",
                                         namePl=item.description or "N/A",
                                         quantity=item.quantity,
-                                        weight=Weight(
+                                        weight=units.Weight(
                                             item.weight,
-                                            WeightUnit[item.weight_unit or "KG"],
+                                            units.WeightUnit[item.weight_unit or "KG"],
                                         ).KG,
                                         value=item.value_amount,
                                         tariffCode=item.hs_code or item.sku,
@@ -322,7 +316,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         )
     )
 
-    return Serializable(
+    return lib.Serializable(
         request,
         lambda req: settings.serialize(req, "createShipment", settings.server_url),
     )

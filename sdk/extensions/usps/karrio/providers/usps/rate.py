@@ -1,4 +1,3 @@
-from typing import List, Tuple
 from datetime import datetime
 from usps_lib.rate_v4_response import PostageType, SpecialServiceType
 from usps_lib.rate_v4_request import (
@@ -7,42 +6,41 @@ from usps_lib.rate_v4_request import (
     SpecialServicesType,
     ShipDateType,
 )
-from karrio.core.errors import OriginNotServicedError, DestinationNotServicedError
-from karrio.core.utils import Serializable, Element, NF, XP, DF
-from karrio.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from karrio.core.units import Packages, Currency, Options, Services, Country
 
-from karrio.providers.usps.units import (
-    ShipmentService,
-    ShippingOption,
-    PackagingType,
-    ServiceClassID,
-    FirstClassMailType,
-    SortLevelType,
-)
-from karrio.providers.usps.error import parse_error_response
-from karrio.providers.usps.utils import Settings
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.usps.error as provider_error
+import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    rates: List[RateDetails] = [
-        _extract_details(package, settings) for package in XP.find("Postage", response)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    rates: typing.List[models.RateDetails] = [
+        _extract_details(package, settings)
+        for package in lib.find_element("Postage", response)
     ]
-    return rates, parse_error_response(response, settings)
+    return rates, provider_error.parse_error_response(response, settings)
 
 
-def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
-    postage: PostageType = XP.to_object(PostageType, postage_node)
+def _extract_details(
+    postage_node: lib.Element, settings: provider_utils.Settings
+) -> models.RateDetails:
+    postage: PostageType = lib.to_object(PostageType, postage_node)
 
-    service = ServiceClassID.map(str(postage.CLASSID))
-    charges: List[SpecialServiceType] = getattr(
+    service = provider_units.ServiceClassID.map(str(postage.CLASSID))
+    charges: typing.List[SpecialServiceType] = getattr(
         postage.SpecialServices, "SpecialService", []
     )
-    rate = NF.decimal(XP.find("Rate", postage_node, first=True).text)
-    estimated_date = DF.date(
-        getattr(XP.find("CommitmentDate", postage_node, first=True), "text", None)
+    rate = lib.to_decimal(lib.find_element("Rate", postage_node, first=True).text)
+    estimated_date = lib.to_date(
+        getattr(
+            lib.find_element("CommitmentDate", postage_node, first=True), "text", None
+        )
     )
     transit = (
         (estimated_date.date() - datetime.now().date()).days
@@ -50,18 +48,18 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
         else None
     )
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
         total_charge=rate,
-        currency=Currency.USD.name,
+        currency=units.Currency.USD.name,
         transit_days=transit,
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=charge.ServiceName,
-                amount=NF.decimal(charge.Price),
-                currency=Currency.USD.name,
+                amount=lib.to_decimal(charge.Price),
+                currency=units.Currency.USD.name,
             )
             for charge in charges
         ],
@@ -70,8 +68,9 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
 
 
 def rate_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[RateV4Request]:
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[RateV4Request]:
     """Create the appropriate USPS rate request depending on the destination
 
     :param payload: Karrio unified API rate request data
@@ -82,24 +81,28 @@ def rate_request(
 
     if (
         payload.shipper.country_code is not None
-        and payload.shipper.country_code != Country.US.name
+        and payload.shipper.country_code != units.Country.US.name
     ):
-        raise OriginNotServicedError(payload.shipper.country_code)
+        raise errors.OriginNotServicedError(payload.shipper.country_code)
 
     if (
         payload.recipient.country_code is not None
-        and payload.recipient.country_code != Country.US.name
+        and payload.recipient.country_code != units.Country.US.name
     ):
-        raise DestinationNotServicedError(payload.recipient.country_code)
+        raise errors.DestinationNotServicedError(payload.recipient.country_code)
 
-    package = Packages(payload.parcels, package_option_type=ShippingOption).single
-    container = PackagingType[package.packaging_type or "your_packaging"]
-    options = ShippingOption.to_options(
+    package = lib.to_packages(
+        payload.parcels, package_option_type=provider_units.ShippingOption
+    ).single
+    container = provider_units.PackagingType[package.packaging_type or "your_packaging"]
+    options = lib.to_options(
         payload.options,
         package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
     service = (
-        Services(payload.services, ShipmentService).first or ShipmentService.usps_all
+        units.Services(payload.services, provider_units.ShipmentService).first
+        or provider_units.ShipmentService.usps_all
     )
 
     request = RateV4Request(
@@ -110,7 +113,7 @@ def rate_request(
                 ID=0,
                 Service=service.value,
                 FirstClassMailType=(
-                    FirstClassMailType[container.name].value
+                    provider_units.FirstClassMailType[container.name].value
                     if "first_class" in service.value
                     else None
                 ),
@@ -123,33 +126,35 @@ def rate_request(
                 Length=package.length.IN,
                 Height=package.height.IN,
                 Girth=package.girth.value,
-                Value=options.declared_value,
-                AmountToCollect=options.cash_on_delivery,
+                Value=options.declared_value.state,
+                AmountToCollect=options.cash_on_delivery.state,
                 SpecialServices=(
                     SpecialServicesType(
-                        SpecialService=[code for _, code, value in options.as_list()]
+                        SpecialService=[option.code for _, option in options.items()]
                     )
-                    if any(options.as_list())
+                    if any(options.items())
                     else None
                 ),
                 Content=None,
-                GroundOnly=options.usps_option_ground_only,
+                GroundOnly=options.usps_option_ground_only.state,
                 SortBy=(
-                    SortLevelType[container.name].value
+                    provider_units.SortLevelType[container.name].value
                     if service.value in ["All", "Online"]
                     else None
                 ),
-                Machinable=(options.usps_option_machinable_item or False),
-                ReturnLocations=options.usps_option_return_service_info,
-                ReturnServiceInfo=options.usps_option_return_service_info,
-                DropOffTime=("13:30" if options.shipment_date is not None else None),
+                Machinable=(options.usps_option_machinable_item.state or False),
+                ReturnLocations=options.usps_option_return_service_info.state,
+                ReturnServiceInfo=options.usps_option_return_service_info.state,
+                DropOffTime=(
+                    "13:30" if options.shipment_date.state is not None else None
+                ),
                 ShipDate=(
-                    ShipDateType(valueOf_=DF.fdate(options.shipment_date))
-                    if options.shipment_date is not None
+                    ShipDateType(valueOf_=lib.fdate(options.shipment_date.state))
+                    if options.shipment_date.state is not None
                     else None
                 ),
             )
         ],
     )
 
-    return Serializable(request, XP.export)
+    return lib.Serializable(request, lib.to_xml)

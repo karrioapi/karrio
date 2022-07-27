@@ -1,67 +1,61 @@
-import time
-from typing import Tuple, List
 from usps_lib.evs_gxg_get_label_response import eVSGXGGetLabelResponse
 from usps_lib.evs_gxg_get_label_request import (
     eVSGXGGetLabelRequest,
     ShippingContentsType,
     ItemDetailType,
 )
-from karrio.core.utils import Serializable, Element, XP, DF, Location
-from karrio.core.units import CustomsInfo, Packages, Weight, WeightUnit
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-    Customs,
-)
-from karrio.providers.usps_international.units import (
-    ShippingOption,
-    ContentType,
-    PackagingType,
-    Incoterm,
-)
-from karrio.providers.usps_international.error import parse_error_response
-from karrio.providers.usps_international.utils import Settings
+
+import time
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.usps_international.error as provider_error
+import karrio.providers.usps_international.units as provider_units
+import karrio.providers.usps_international.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = parse_error_response(response, settings)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    errors = provider_error.parse_error_response(response, settings)
     details = _extract_details(response, settings)
 
     return details, errors
 
 
-def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.to_object(eVSGXGGetLabelResponse, response)
+def _extract_details(
+    response: lib.Element, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
+    shipment = lib.to_object(eVSGXGGetLabelResponse, response)
     tracking_number = shipment.USPSBarcodeNumber or shipment.FedExBarcodeNumber
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
-        docs=Documents(label=shipment.LabelImage),
+        docs=models.Documents(label=shipment.LabelImage),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[eVSGXGGetLabelRequest]:
-    package = Packages(
+    payload: models.ShipmentRequest, settings: provider_utils.Settings
+) -> lib.Serializable[eVSGXGGetLabelRequest]:
+    package = lib.to_packages(
         payload.parcels,
-        package_option_type=ShippingOption,
-        max_weight=Weight(70, WeightUnit.LB),
+        package_option_type=provider_units.ShippingOption,
+        max_weight=units.Weight(70, units.WeightUnit.LB),
     ).single
-    options = ShippingOption.to_options(
+    options = lib.to_options(
         payload.options,
         package_options=package.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = CustomsInfo(payload.customs or Customs(commodities=[]))
-    incoterm = Incoterm[customs.incoterm or "OTHER"].value
+    customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
+    incoterm = provider_units.Incoterm[customs.incoterm or "OTHER"].value
 
     request = eVSGXGGetLabelRequest(
         USERID=settings.username,
@@ -77,9 +71,9 @@ def shipment_request(
         FromAddress2=payload.shipper.address_line2,
         FromUrbanization=None,
         FromCity=payload.shipper.city,
-        FromState=Location(payload.shipper.state_code, country="US").as_state_name,
-        FromZIP5=Location(payload.shipper.postal_code).as_zip5,
-        FromZIP4=Location(payload.shipper.postal_code).as_zip4,
+        FromState=lib.to_state_name(payload.shipper.state_code, country="US"),
+        FromZIP5=lib.to_zip5(payload.shipper.postal_code),
+        FromZIP4=lib.to_zip4(payload.shipper.postal_code),
         FromPhone=payload.shipper.phone_number,
         ShipFromZIP=None,
         ToFirstName=None,
@@ -94,7 +88,9 @@ def shipment_request(
         ToDPID="000",  # supposedly required test and find a solution
         ToProvince=payload.recipient.state_code,
         ToTaxID=(payload.recipient.federal_tax_id or payload.recipient.state_tax_id),
-        Container=PackagingType[package.packaging_type or "package"].value,
+        Container=provider_units.PackagingType[
+            package.packaging_type or "package"
+        ].value,
         ContentType=("DOCUMENTS" if package.parcel.is_document else "NON-DOC"),
         ShippingContents=ShippingContentsType(
             ItemDetail=[
@@ -103,24 +99,28 @@ def shipment_request(
                     Commodity=item.description or "N/A",
                     Quantity=item.quantity,
                     UnitValue=item.value_amount,
-                    NetPounds=Weight(
-                        item.weight, WeightUnit[item.weight_unit or "LB"]
+                    NetPounds=units.Weight(
+                        item.weight, units.WeightUnit[item.weight_unit or "LB"]
                     ).LB,
-                    NetOunces=Weight(
-                        item.weight, WeightUnit[item.weight_unit or "LB"]
+                    NetOunces=units.Weight(
+                        item.weight, units.WeightUnit[item.weight_unit or "LB"]
                     ).OZ,
                     UnitOfMeasure=None,
                     HSTariffNumber=item.hs_code or item.sku,
-                    CountryofManufacture=Location(item.origin_country).as_country_name,
+                    CountryofManufacture=lib.to_country_name(item.origin_country),
                 )
                 for item in customs.commodities
             ]
         ),
-        PurposeOfShipment=ContentType[customs.content_type or "other"].value,
+        PurposeOfShipment=provider_units.ContentType[
+            customs.content_type or "other"
+        ].value,
         PartiesToTransaction=None,
         Agreement=("N" if customs.certify else "Y"),
         Postage=None,
-        InsuredValue=ShippingOption.insurance_from(options, "global_express"),
+        InsuredValue=provider_units.ShippingOption.insurance_from(
+            options, "global_express"
+        ),
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         Length=package.length.IN,
@@ -128,8 +128,8 @@ def shipment_request(
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         Shape=None,
-        CIRequired=customs.commercial_invoice,
-        InvoiceDate=DF.fdatetime(customs.invoice_date, output_format="%m/%d/%Y"),
+        CIRequired=customs.commercial_invoice or None,
+        InvoiceDate=lib.fdatetime(customs.invoice_date, output_format="%m/%d/%Y"),
         InvoiceNumber=customs.invoice,
         CustomerOrderNumber=None,
         CustOrderNumber=None,
@@ -138,20 +138,20 @@ def shipment_request(
             (customs.incoterm or incoterm) if incoterm == "OTHER" else None
         ),
         PackingCost=None,
-        CountryUltDest=Location(payload.recipient.country_code).as_country_name,
-        CIAgreement=customs.commercial_invoice,
+        CountryUltDest=lib.to_country_name(payload.recipient.country_code),
+        CIAgreement=customs.commercial_invoice or None,
         ImageType="PDF",
         ImageLayout=None,
         CustomerRefNo=None,
         CustomerRefNo2=None,
-        ShipDate=DF.fdatetime(
-            (options.shipment_date or time.strftime("%Y-%m-%d")),
+        ShipDate=lib.fdatetime(
+            (options.shipment_date.state or time.strftime("%Y-%m-%d")),
             current_format="%Y-%m-%d",
             output_format="%m/%d/%Y",
         ),
         HoldForManifest=None,
         PriceOptions=None,
-        CommercialShipment=customs.commercial_invoice,
+        CommercialShipment=customs.commercial_invoice or None,
         BuyerRecipient=(
             customs.commercial_invoice or None
         ),  # Consider recipient as buyer for commercial shipment
@@ -160,7 +160,7 @@ def shipment_request(
         OptOutOfSPE=None,
         PermitNumber=None,
         AccountZipCode=None,
-        Machinable=(options.usps_option_machinable_item or False),
+        Machinable=(options.usps_option_machinable_item.state or False),
         DestinationRateIndicator="I",
         MID=settings.mailer_id,
         LogisticsManagerMID=settings.logistics_manager_mailer_id,
@@ -171,4 +171,4 @@ def shipment_request(
         ChargebackCode=None,
     )
 
-    return Serializable(request, XP.export)
+    return lib.Serializable(request, lib.to_xml)

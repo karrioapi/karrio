@@ -1,4 +1,3 @@
-from typing import List, Tuple, cast
 from freightcom_lib.quote_request import (
     Freightcom,
     QuoteRequestType,
@@ -7,38 +6,36 @@ from freightcom_lib.quote_request import (
     PackagesType,
     PackageType,
 )
-from freightcom_lib.quote_reply import QuoteType, SurchargeType
-from karrio.core.utils import Element, Serializable, SF, NF, XP
-from karrio.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from karrio.core.units import Packages, Options, Services
-from karrio.providers.freightcom.utils import (
-    Settings,
-    standard_request_serializer,
-    ceil,
-)
-from karrio.providers.freightcom.units import (
-    ShippingService,
-    FreightPackagingType,
-    FreightClass,
-    ShippingOption,
-)
-from karrio.providers.freightcom.error import parse_error_response
+from freightcom_lib.quote_reply import QuoteType
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.freightcom.error as provider_error
+import karrio.providers.freightcom.units as provider_units
+import karrio.providers.freightcom.utils as provider_utils
 
 
 def parse_quote_reply(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="Quote")
     return (
         [_extract_rate(node, settings) for node in estimates],
-        parse_error_response(response, settings),
+        provider_error.parse_error_response(response, settings),
     )
 
 
-def _extract_rate(node: Element, settings: Settings) -> RateDetails:
-    quote = XP.build(QuoteType, node)
-    rate_provider, service, service_name = ShippingService.info(
-        quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
+def _extract_rate(
+    node: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    quote = lib.to_object(QuoteType, node)
+    rate_provider, service, service_name = provider_units.ShippingService.info(
+        quote.serviceId,
+        quote.carrierId,
+        quote.serviceName,
+        quote.carrierName,
     )
     charges = [
         ("Base charge", quote.baseCharge),
@@ -46,18 +43,18 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         *((surcharge.name, surcharge.amount) for surcharge in quote.Surcharge),
     ]
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=quote.currency,
         service=service,
-        total_charge=NF.decimal(quote.totalCharge),
+        total_charge=lib.to_decimal(quote.totalCharge),
         transit_days=quote.transitDays,
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
                 currency="CAD",
-                amount=NF.decimal(amount),
+                amount=lib.to_decimal(amount),
             )
             for name, amount in charges
             if amount
@@ -66,27 +63,39 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Freightcom]:
-    packages = Packages(
+def quote_request(
+    payload: models.RateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[Freightcom]:
+    packages = lib.to_packages(
         payload.parcels,
-        package_option_type=ShippingOption,
+        package_option_type=provider_units.ShippingOption,
         required=["weight", "height", "width", "length"],
     )
-    options = ShippingOption.to_options(
+    options = lib.to_options(
         payload.options,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
-    packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
+    packaging_type = provider_units.FreightPackagingType[
+        packages.package_type or "small_box"
+    ].value
     packaging = (
-        "Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package"
+        "Pallet"
+        if packaging_type in [provider_units.FreightPackagingType.pallet.value]
+        else "Package"
     )
     service = (
-        Services(payload.services, ShippingService).first
-        or ShippingService.freightcom_all
+        lib.to_services(payload.services, provider_units.ShippingService).first
+        or provider_units.ShippingService.freightcom_all
     )
 
     freight_class = next(
-        (FreightClass[c].value for c in payload.options.keys() if c in FreightClass),
+        (
+            provider_units.FreightClass[c].value
+            for c in payload.options.keys()
+            if c in provider_units.FreightClass
+        ),
         None,
     )
 
@@ -95,28 +104,28 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         password=settings.password,
         version="3.1.0",
         QuoteRequest=QuoteRequestType(
-            saturdayPickupRequired=options.freightcom_saturday_pickup_required,
-            homelandSecurity=options.freightcom_homeland_security,
+            saturdayPickupRequired=options.freightcom_saturday_pickup_required.state,
+            homelandSecurity=options.freightcom_homeland_security.state,
             pierCharge=None,
-            exhibitionConventionSite=options.freightcom_exhibition_convention_site,
-            militaryBaseDelivery=options.freightcom_military_base_delivery,
-            customsIn_bondFreight=options.freightcom_customs_in_bond_freight,
-            limitedAccess=options.freightcom_limited_access,
-            excessLength=options.freightcom_excess_length,
-            tailgatePickup=options.freightcom_tailgate_pickup,
-            residentialPickup=options.freightcom_residential_pickup,
+            exhibitionConventionSite=options.freightcom_exhibition_convention_site.state,
+            militaryBaseDelivery=options.freightcom_military_base_delivery.state,
+            customsIn_bondFreight=options.freightcom_customs_in_bond_freight.state,
+            limitedAccess=options.freightcom_limited_access.state,
+            excessLength=options.freightcom_excess_length.state,
+            tailgatePickup=options.freightcom_tailgate_pickup.state,
+            residentialPickup=options.freightcom_residential_pickup.state,
             crossBorderFee=None,
-            notifyRecipient=options.freightcom_notify_recipient,
-            singleShipment=options.freightcom_single_shipment,
-            tailgateDelivery=options.freightcom_tailgate_delivery,
-            residentialDelivery=options.freightcom_residential_delivery,
-            insuranceType=options.insurance is not None,
+            notifyRecipient=options.freightcom_notify_recipient.state,
+            singleShipment=options.freightcom_single_shipment.state,
+            tailgateDelivery=options.freightcom_tailgate_delivery.state,
+            residentialDelivery=options.freightcom_residential_delivery.state,
+            insuranceType=options.insurance.state is not None,
             scheduledShipDate=None,
-            insideDelivery=options.freightcom_inside_delivery,
-            isSaturdayService=options.freightcom_is_saturday_service,
-            dangerousGoodsType=options.freightcom_dangerous_goods_type,
+            insideDelivery=options.freightcom_inside_delivery.state,
+            isSaturdayService=options.freightcom_is_saturday_service.state,
+            dangerousGoodsType=options.freightcom_dangerous_goods_type.state,
             serviceId=service.value,
-            stackable=options.freightcom_stackable,
+            stackable=options.freightcom_stackable.state,
             From=FromType(
                 id=None,
                 company=payload.shipper.company_name or " ",
@@ -126,8 +135,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.shipper.phone_number,
                 tailgateRequired=None,
                 residential=payload.shipper.residential,
-                address1=SF.concat_str(payload.shipper.address_line1, join=True),
-                address2=SF.concat_str(payload.shipper.address_line2, join=True),
+                address1=lib.join(payload.shipper.address_line1, join=True),
+                address2=lib.join(payload.shipper.address_line2, join=True),
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
@@ -143,8 +152,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.recipient.phone_number,
                 tailgateRequired=None,
                 residential=payload.recipient.residential,
-                address1=SF.concat_str(payload.recipient.address_line1, join=True),
-                address2=SF.concat_str(payload.recipient.address_line2, join=True),
+                address1=lib.join(payload.recipient.address_line1, join=True),
+                address2=lib.join(payload.recipient.address_line2, join=True),
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
@@ -154,15 +163,15 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=ceil(package.length.IN),
-                        width=ceil(package.width.IN),
-                        height=ceil(package.height.IN),
-                        weight=ceil(package.weight.LB),
+                        length=provider_utils.ceil(package.length.IN),
+                        width=provider_utils.ceil(package.width.IN),
+                        height=provider_utils.ceil(package.height.IN),
+                        weight=provider_utils.ceil(package.weight.LB),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
-                        insuranceAmount=package.options.insurance,
-                        codAmount=package.options.cash_on_delivery,
+                        insuranceAmount=package.options.insurance.state,
+                        codAmount=package.options.cash_on_delivery.state,
                         description=package.parcel.description,
                     )
                     for package in packages
@@ -172,4 +181,4 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         ),
     )
 
-    return Serializable(request, standard_request_serializer)
+    return lib.Serializable(request, provider_utils.standard_request_serializer)

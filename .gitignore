@@ -111,8 +111,11 @@ venv.bak/
 sdk/**/poetry.lock
 schemas/**/poetry.lock
 insiders/sdk/**/poetry.lock
+!sdk/core/karrio/lib
+
 .bash_history
 *.DS_Store
+
 .idea/
 staticfiles/*
 server/main/karrio/server/staticfiles/*

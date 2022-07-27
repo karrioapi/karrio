@@ -1,4 +1,4 @@
-from typing import Tuple, List, Any
+import numbers
 from canadapost_lib.ncshipment import (
     NonContractShipmentType,
     NonContractShipmentInfoType,
@@ -18,71 +18,66 @@ from canadapost_lib.ncshipment import (
     CustomsType,
     PreferencesType,
 )
-from karrio.core.units import Currency, CustomsInfo, WeightUnit, Options, Packages
-from karrio.core.utils import Serializable, Element, SF, XP, NF
-from karrio.core.models import (
-    Documents,
-    Message,
-    ShipmentDetails,
-    ShipmentRequest,
-)
-from karrio.providers.canadapost.error import parse_error_response
-from karrio.providers.canadapost.units import (
-    ShippingOption,
-    ServiceType,
-    PackagePresets,
-)
-from karrio.providers.canadapost.utils import Settings, format_ca_postal_code
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.canadapost.error as provider_error
+import karrio.providers.canadapost.units as provider_units
+import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     shipment = (
         _extract_shipment(response, settings)
         if len(response.xpath(".//*[local-name() = $name]", name="shipment-id")) > 0
         else None
     )
-    return shipment, parse_error_response(response, settings)
+    return shipment, provider_error.parse_error_response(response, settings)
 
 
-def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
+def _extract_shipment(
+    response: lib.Element, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
     info_node = next(
         iter(response.xpath(".//*[local-name() = $name]", name="shipment-info"))
     )
     label_node = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
-    errors = parse_error_response(label_node, settings)
+    errors = provider_error.parse_error_response(label_node, settings)
     label = str(label_node.text) if len(errors) == 0 else None
     info: NonContractShipmentInfoType = NonContractShipmentInfoType()
     info.build(info_node)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        docs=Documents(label=label),
+        docs=models.Documents(label=label),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, _
-) -> Serializable[NonContractShipmentType]:
-    service = ServiceType.map(payload.service).value_or_key
-    customs = CustomsInfo(payload.customs)
-    package = Packages(
+    payload: models.ShipmentRequest, _
+) -> lib.Serializable[NonContractShipmentType]:
+    service = provider_units.ServiceType.map(payload.service).value_or_key
+    customs = lib.to_customs_info(payload.customs)
+    package = lib.to_packages(
         payload.parcels,
-        PackagePresets,
+        provider_units.PackagePresets,
         required=["weight"],
-        package_option_type=ShippingOption,
+        package_option_type=provider_units.ShippingOption,
     ).single
-    options = ShippingOption.to_options(
+    options = lib.to_options(
         options=payload.options,
         package_options=package.options,
         is_international=(
             payload.recipient.country_code is not None
             and payload.recipient.country_code != "CA"
         ),
+        initializer=provider_units.shipping_options_initializer,
     )
 
     request = NonContractShipmentType(
@@ -94,15 +89,13 @@ def shipment_request(
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
                 address_details=DomesticAddressDetailsType(
-                    address_line_1=SF.concat_str(
-                        payload.shipper.address_line1, join=True
-                    ),
-                    address_line_2=SF.concat_str(
-                        payload.shipper.address_line2, join=True
-                    ),
+                    address_line_1=lib.join(payload.shipper.address_line1, join=True),
+                    address_line_2=lib.join(payload.shipper.address_line2, join=True),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    postal_zip_code=format_ca_postal_code(payload.shipper.postal_code),
+                    postal_zip_code=provider_utils.format_ca_postal_code(
+                        payload.shipper.postal_code
+                    ),
                 ),
             ),
             destination=DestinationType(
@@ -111,16 +104,12 @@ def shipment_request(
                 additional_address_info=None,
                 client_voice_number=payload.recipient.phone_number,
                 address_details=DestinationAddressDetailsType(
-                    address_line_1=SF.concat_str(
-                        payload.recipient.address_line1, join=True
-                    ),
-                    address_line_2=SF.concat_str(
-                        payload.recipient.address_line2, join=True
-                    ),
+                    address_line_1=lib.join(payload.recipient.address_line1, join=True),
+                    address_line_2=lib.join(payload.recipient.address_line2, join=True),
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=format_ca_postal_code(
+                    postal_zip_code=provider_utils.format_ca_postal_code(
                         payload.recipient.postal_code
                     ),
                 ),
@@ -129,35 +118,39 @@ def shipment_request(
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=code,
-                            option_amount=value,
+                            option_code=option.code,
+                            option_amount=(
+                                option.state
+                                if isinstance(option.state, numbers.Number)
+                                else None
+                            ),
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for _, code, value in options.as_list()
+                        for _, option in options.items()
                     ]
                 )
-                if any(options.as_list())
+                if any(options.items())
                 else None
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=NF.decimal(package.weight.KG, 0.1),
+                weight=lib.to_decimal(package.weight.KG, 0.1),
                 dimensions=dimensionsType(
-                    length=NF.decimal(package.length.CM, 0.1),
-                    width=NF.decimal(package.width.CM, 0.1),
-                    height=NF.decimal(package.height.CM, 0.1),
+                    length=lib.to_decimal(package.length.CM, 0.1),
+                    width=lib.to_decimal(package.width.CM, 0.1),
+                    height=lib.to_decimal(package.height.CM, 0.1),
                 ),
                 unpackaged=None,
                 mailing_tube=None,
             ),
             notification=(
                 NotificationType(
-                    email=options.notification_email or payload.recipient.email,
+                    email=options.notification_email.state or payload.recipient.email,
                     on_shipment=True,
                     on_exception=True,
                     on_delivery=True,
                 )
-                if any([options.notification_email, payload.recipient.email])
+                if any([options.notification_email.state, payload.recipient.email])
                 else None
             ),
             preferences=PreferencesType(
@@ -166,21 +159,21 @@ def shipment_request(
                 show_insured_value=True,
             ),
             references=ReferencesType(
-                cost_centre=options.canadapost_cost_center or payload.reference,
+                cost_centre=options.canadapost_cost_center.state or payload.reference,
                 customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
             customs=(
                 CustomsType(
-                    currency=Currency.AUD.value,
+                    currency=units.Currency.AUD.value,
                     conversion_from_cad=None,
                     reason_for_export=customs.incoterm,
                     other_reason=customs.content_description,
                     duties_and_taxes_prepaid=getattr(
                         customs.duty, "account_number", None
                     ),
-                    certificate_number=customs.certificate_number,
-                    licence_number=customs.licence_number,
+                    certificate_number=customs.certificate_number.state,
+                    licence_number=customs.licence_number.state,
                     invoice_number=customs.invoice,
                     sku_list=sku_listType(
                         item=[
@@ -189,7 +182,7 @@ def shipment_request(
                                 customs_description=item.description,
                                 sku=item.sku,
                                 hs_tariff_code=item.hs_code,
-                                unit_weight=WeightUnit.KG.value,
+                                unit_weight=units.WeightUnit.KG.value,
                                 customs_value_per_unit=item.value_amount,
                                 customs_unit_of_measure=None,
                                 country_of_origin=payload.shipper.country_code,
@@ -205,11 +198,11 @@ def shipment_request(
             settlement_info=None,
         ),
     )
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: NonContractShipmentType) -> str:
-    return XP.export(
+    return lib.to_xml(
         request,
         name_="non-contract-shipment",
         namespacedef_='xmlns="http://www.canadapost.ca/ws/ncshipment-v4"',

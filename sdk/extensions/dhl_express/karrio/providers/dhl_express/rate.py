@@ -1,6 +1,3 @@
-import time
-from functools import reduce
-from typing import List, Tuple, cast, Iterable
 from dhl_express_lib.dct_req_global_2_0 import (
     DCTRequest,
     DCTTo,
@@ -16,62 +13,58 @@ from dhl_express_lib.dct_req_global_2_0 import (
 from dhl_express_lib.dct_requestdatatypes_global import DCTDutiable
 from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 
-from karrio.core.errors import DestinationNotServicedError, OriginNotServicedError
-from karrio.core.utils import Serializable, Element, NF, XP, DF
-from karrio.core.units import Packages, Options, Package, Services, CountryCurrency
-from karrio.core.models import RateDetails, Message, ChargeDetails, RateRequest
-from karrio.providers.dhl_express.units import (
-    ProductCode,
-    DCTPackageType,
-    PackagePresets,
-    ShippingOption,
-    NetworkType,
-    COUNTRY_PREFERED_UNITS,
-    MeasurementOptions,
-)
-from karrio.providers.dhl_express.utils import Settings
-from karrio.providers.dhl_express.error import parse_error_response
+import time
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.dhl_express.error as provider_error
+import karrio.providers.dhl_express.units as provider_units
+import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Message]]:
-    quotes = XP.find("QtdShp", response, ResponseQtdShpType)
-    rates: List[RateDetails] = [
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    quotes = lib.find_element("QtdShp", response, ResponseQtdShpType)
+    rates: typing.List[models.RateDetails] = [
         _extract_quote(quote, settings)
         for quote in quotes
         if (quote.ShippingCharge is not None) or (quote.ShippingCharge is not None)
     ]
 
-    return rates, parse_error_response(response, settings)
+    return rates, provider_error.parse_error_response(response, settings)
 
 
-def _extract_quote(quote: ResponseQtdShpType, settings: Settings) -> RateDetails:
-    service = ProductCode.map(quote.GlobalProductCode)
+def _extract_quote(
+    quote: ResponseQtdShpType,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    service = provider_units.ProductCode.map(quote.GlobalProductCode)
     charges = [
         ("Base charge", quote.WeightCharge),
         *((s.LocalServiceTypeName, s.ChargeValue) for s in quote.QtdShpExChrg),
     ]
 
-    delivery_date = DF.date(quote.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
-    pricing_date = DF.date(quote.PricingDate)
+    delivery_date = lib.to_date(quote.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
+    pricing_date = lib.to_date(quote.PricingDate)
     transit = (
         (delivery_date.date() - pricing_date.date()).days
         if all([delivery_date, pricing_date])
         else None
     )
 
-    return RateDetails(
+    return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=quote.CurrencyCode,
         transit_days=transit,
         service=service.name_or_key,
-        total_charge=NF.decimal(quote.ShippingCharge),
+        total_charge=lib.to_decimal(quote.ShippingCharge),
         extra_charges=[
-            ChargeDetails(
+            models.ChargeDetails(
                 name=name,
-                amount=NF.decimal(amount),
+                amount=lib.to_decimal(amount),
                 currency=quote.CurrencyCode,
             )
             for name, amount in charges
@@ -81,42 +74,43 @@ def _extract_quote(quote: ResponseQtdShpType, settings: Settings) -> RateDetails
     )
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    packages = Packages(
+def rate_request(
+    payload: models.RateRequest, settings: provider_utils.Settings
+) -> lib.Serializable[DCTRequest]:
+    packages = lib.to_packages(
         payload.parcels,
-        PackagePresets,
+        provider_units.PackagePresets,
         required=["weight"],
-        package_option_type=ShippingOption,
+        package_option_type=provider_units.ShippingOption,
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
     if any(settings.account_country_code or "") and (
         payload.shipper.country_code != settings.account_country_code
     ):
-        raise OriginNotServicedError(payload.shipper.country_code)
+        raise errors.OriginNotServicedError(payload.shipper.country_code)
     if not is_international and payload.shipper.country_code in ["CA"]:
-        raise DestinationNotServicedError(payload.shipper.country_code)
+        raise errors.DestinationNotServicedError(payload.shipper.country_code)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_dutiable = not is_document  # parcel and not document only so it is dutiable.
-    products = Services(
-        ProductCode.apply_defaults(
-            payload.services,
-            is_international=is_international,
-            is_document=is_document,
-            is_envelope=("envelope" in (packages.package_type or "")),
-        ),
-        ProductCode,
+    products = lib.to_services(
+        payload.services,
+        is_international=is_international,
+        is_document=is_document,
+        is_envelope=("envelope" in (packages.package_type or "")),
+        initializer=provider_units.shipping_services_initializer,
     )
-    options = ShippingOption.to_options(
+    options = lib.to_options(
         payload.options,
         is_international=is_international,
         is_dutiable=is_dutiable,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     weight_unit, dim_unit = (
-        COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
 
@@ -139,7 +133,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             ),
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,
-                NetworkTypeCode=NetworkType.both_time_and_day_definite.value,
+                NetworkTypeCode=provider_units.NetworkType.both_time_and_day_definite.value,
                 WeightUnit=weight_unit.value,
                 DimensionUnit=dim_unit.value,
                 ReadyTime=time.strftime("PT%HH%MM"),
@@ -149,19 +143,21 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                     Piece=[
                         PieceType(
                             PieceID=package.parcel.id or f"{index}",
-                            PackageTypeCode=DCTPackageType[
+                            PackageTypeCode=provider_units.DCTPackageType[
                                 package.packaging_type or "your_packaging"
                             ].value,
-                            Depth=package.length.map(MeasurementOptions)[dim_unit.name],
-                            Width=package.width.map(MeasurementOptions)[dim_unit.name],
-                            Height=package.height.map(MeasurementOptions)[
+                            Depth=package.length.map(provider_units.MeasurementOptions)[
                                 dim_unit.name
                             ],
+                            Width=package.width.map(provider_units.MeasurementOptions)[
+                                dim_unit.name
+                            ],
+                            Height=package.height.map(
+                                provider_units.MeasurementOptions
+                            )[dim_unit.name],
                             Weight=package.weight[weight_unit.name],
                         )
-                        for index, package in enumerate(
-                            cast(Iterable[Package], packages), 1
-                        )
+                        for index, package in enumerate(packages, 1)
                     ]
                 ),
                 NumberOfPieces=len(packages),
@@ -169,11 +165,13 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
                 InsuredCurrency=(
-                    options.currency if options.dhl_shipment_insurance else None
+                    options.currency.state
+                    if options.dhl_shipment_insurance.state
+                    else None
                 ),
                 InsuredValue=(
-                    options.dhl_shipment_insurance.value
-                    if options.dhl_shipment_insurance
+                    options.dhl_shipment_insurance.state
+                    if options.dhl_shipment_insurance.state
                     else None
                 ),
                 PaymentType=None,
@@ -183,8 +181,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                         GlobalProductCode=product.value,
                         LocalProductCode=product.value,
                         QtdShpExChrg=[
-                            QtdShpExChrgType(SpecialServiceType=code)
-                            for _, code, _ in options.as_list()
+                            QtdShpExChrgType(SpecialServiceType=option.code)
+                            for _, option in options.items()
                         ],
                     )
                     for product in products
@@ -192,10 +190,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             ),
             Dutiable=(
                 DCTDutiable(
-                    DeclaredValue=(options.declared_value or 1.0),
+                    DeclaredValue=(options.declared_value.state or 1.0),
                     DeclaredCurrency=(
-                        options.currency
-                        or CountryCurrency[payload.shipper.country_code].value
+                        options.currency.state
+                        or provider_units.CountryCurrency[
+                            payload.shipper.country_code
+                        ].value
                     ),
                 )
                 if is_dutiable
@@ -204,7 +204,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
         ),
     )
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DCTRequest) -> str:
@@ -215,7 +215,7 @@ def _request_serializer(request: DCTRequest) -> str:
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         'xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
     )
-    return XP.export(
+    return lib.to_xml(
         request,
         name_="p:DCTRequest",
         namespacedef_=namespacedef_,

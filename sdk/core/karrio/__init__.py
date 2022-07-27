@@ -61,8 +61,6 @@ Example:
                     "carrier_name": "canadapost",
                     "carrier_id": "canadapost",
                     "currency": "CAD",
-                    "discount": 1.38,
-                    "duties_and_taxes": 0.0,
                     "transit_days": 2,
                     "extra_charges": [
                         {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
@@ -80,14 +78,22 @@ Attributes:
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from pathlib import Path
 from karrio.api.gateway import GatewayInitializer
 import karrio.api.interface as interface
 
-VERSION = "2022.4"
 gateway = GatewayInitializer.get_instance()
 Pickup = interface.Pickup
 Rating = interface.Rating
 Shipment = interface.Shipment
 Tracking = interface.Tracking
 Address = interface.Address
+
+
+__all__ = [
+    "gateway",
+    "Pickup",
+    "Rating",
+    "Shipment",
+    "Tracking",
+    "Address",
+]

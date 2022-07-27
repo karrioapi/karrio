@@ -4,7 +4,7 @@ import io
 import warnings
 from lxml import etree
 from xmltodict import parse
-from typing import List, TypeVar, Type, Optional, cast, Union
+from typing import Any, List, TypeVar, Type, Optional, cast, Union
 from pysoap.envelope import Envelope
 from lxml.etree import _Element
 
@@ -21,6 +21,22 @@ class GenerateDSAbstract(Envelope):
 
 
 class XMLPARSER:
+    @staticmethod
+    def iselement(element: Any):
+        """Return True if *element* appears to be an Element."""
+        return isinstance(element, _Element)
+
+    @staticmethod
+    def isxmlelementtype(element_type: Type[T]):
+        """Return True if *element_type* appears to be an GenerateDS generated Type."""
+
+        return hasattr(element_type, "build") and hasattr(element_type, "export")
+
+    @staticmethod
+    def istypedxmlobject(xml_typed_object: T):
+        """Return True if *xml_typed_object* appears to be an GenerateDS generated Type instance."""
+        return XMLPARSER.isxmlelementtype(xml_typed_object.__class__)
+
     @staticmethod
     def build(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
         warnings.warn(
@@ -65,7 +81,7 @@ class XMLPARSER:
         return children
 
     @staticmethod
-    def export(typed_xml_element: Type[GenerateDSAbstract], **kwds) -> str:
+    def export(typed_xml_element: Union[Type[GenerateDSAbstract], Any], **kwds) -> str:
         """Serialize a class instance into XML string.
         => Invoke the export method of generated type to return the subsequent XML represented
 
@@ -85,6 +101,8 @@ class XMLPARSER:
         :param xml_strings:
         :return: a bundled XML text containing all the micro XML string
         """
+        from karrio.core.utils.string import STRINGFORMAT
+
         bundle = "".join(
             [
                 XMLPARSER.xml_tostring(XMLPARSER.to_xml(x))

@@ -1,5 +1,6 @@
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core import units
+from karrio.core.utils.enum import OptionEnum
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -128,49 +129,48 @@ class ShippingService(Enum):
 
 
 class ShippingOption(Enum):
-    ups_negotiated_rates_indicator = Spec.asFlag("NegotiatedRatesIndicator")
-    ups_frs_shipment_indicator = Spec.asFlag("FRSShipmentIndicator")
-    ups_rate_chart_indicator = Spec.asFlag("RateChartIndicator")
-    ups_user_level_discount_indicator = Spec.asFlag("UserLevelDiscountIndicator")
-    ups_saturday_delivery_indicator = Spec.asFlag("SaturdayDeliveryIndicator")
-    ups_access_point_cod = Spec.asValue("AccessPointCOD", float)
-    ups_deliver_to_addressee_only_indicator = Spec.asFlag(
+    ups_negotiated_rates_indicator = OptionEnum("NegotiatedRatesIndicator", bool)
+    ups_frs_shipment_indicator = OptionEnum("FRSShipmentIndicator", bool)
+    ups_rate_chart_indicator = OptionEnum("RateChartIndicator", bool)
+    ups_user_level_discount_indicator = OptionEnum("UserLevelDiscountIndicator", bool)
+    ups_saturday_delivery_indicator = OptionEnum("SaturdayDeliveryIndicator", bool)
+    ups_access_point_cod = OptionEnum("AccessPointCOD", float)
+    ups_deliver_to_addressee_only_indicator = OptionEnum(
         "DeliverToAddresseeOnlyIndicator"
     )
-    ups_direct_delivery_only_indicator = Spec.asFlag("DirectDeliveryOnlyIndicator")
-    ups_cod = Spec.asValue("COD", float)
-    ups_delivery_confirmation = Spec.asFlag("DeliveryConfirmation")
-    ups_return_of_document_indicator = Spec.asFlag("ReturnOfDocumentIndicator")
-    ups_carbonneutral_indicator = Spec.asFlag("UPScarbonneutralIndicator")
-    ups_certificate_of_origin_indicator = Spec.asFlag("CertificateOfOriginIndicator")
-    ups_pickup_options = Spec.asFlag("PickupOptions")
-    ups_delivery_options = Spec.asFlag("DeliveryOptions")
-    ups_restricted_articles = Spec.asFlag("RestrictedArticles")
-    ups_shipper_export_declaration_indicator = Spec.asFlag(
-        "ShipperExportDeclarationIndicator"
+    ups_direct_delivery_only_indicator = OptionEnum("DirectDeliveryOnlyIndicator")
+    ups_cod = OptionEnum("COD", float)
+    ups_delivery_confirmation = OptionEnum("DeliveryConfirmation")
+    ups_return_of_document_indicator = OptionEnum("ReturnOfDocumentIndicator")
+    ups_carbonneutral_indicator = OptionEnum("UPScarbonneutralIndicator")
+    ups_certificate_of_origin_indicator = OptionEnum("CertificateOfOriginIndicator")
+    ups_pickup_options = OptionEnum("PickupOptions")
+    ups_delivery_options = OptionEnum("DeliveryOptions")
+    ups_restricted_articles = OptionEnum("RestrictedArticles")
+    ups_shipper_export_declaration_indicator = OptionEnum(
+        "ShipperExportDeclarationIndicator", bool
     )
-    ups_commercial_invoice_removal_indicator = Spec.asFlag(
-        "CommercialInvoiceRemovalIndicator"
+    ups_commercial_invoice_removal_indicator = OptionEnum(
+        "CommercialInvoiceRemovalIndicator", bool
     )
-    ups_import_control = Spec.asFlag("ImportControl")
-    ups_return_service = Spec.asFlag("ReturnService")
-    ups_sdl_shipment_indicator = Spec.asFlag("SDLShipmentIndicator")
-    ups_epra_indicator = Spec.asFlag("EPRAIndicator")
+    ups_import_control = OptionEnum("ImportControl", bool)
+    ups_return_service = OptionEnum("ReturnService", bool)
+    ups_sdl_shipment_indicator = OptionEnum("SDLShipmentIndicator", bool)
+    ups_epra_indicator = OptionEnum("EPRAIndicator", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        return units.Options(options, cls)
+    if package_options is not None:
+        options.update(package_options.content)
+
+    return units.Options(options, ShippingOption)

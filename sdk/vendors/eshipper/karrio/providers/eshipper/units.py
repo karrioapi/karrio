@@ -1,6 +1,7 @@
 import re
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
+from karrio.core.utils.enum import OptionEnum
 
 
 class PackagingType(Flag):
@@ -212,40 +213,39 @@ CARRIER_IDS = {
 
 
 class ShippingOption(Flag):
-    eshipper_saturday_pickup_required = Spec.asFlag("saturdayPickupRequired")
-    eshipper_homeland_security = Spec.asFlag("homelandSecurity")
-    eshipper_exhibition_convention_site = Spec.asFlag("exhibitionConventionSite")
-    eshipper_military_base_delivery = Spec.asFlag("militaryBaseDelivery")
-    eshipper_customs_in_bond_freight = Spec.asFlag("customsIn_bondFreight")
-    eshipper_limited_access = Spec.asFlag("limitedAccess")
-    eshipper_excess_length = Spec.asFlag("excessLength")
-    eshipper_tailgate_pickup = Spec.asFlag("tailgatePickup")
-    eshipper_residential_pickup = Spec.asFlag("residentialPickup")
-    eshipper_cross_border_fee = Spec.asFlag("crossBorderFee")
-    eshipper_notify_recipient = Spec.asFlag("notifyRecipient")
-    eshipper_single_shipment = Spec.asFlag("singleShipment")
-    eshipper_tailgate_delivery = Spec.asFlag("tailgateDelivery")
-    eshipper_residential_delivery = Spec.asFlag("residentialDelivery")
-    eshipper_insurance_type = Spec.asValue("insuranceType", float)
-    eshipper_inside_delivery = Spec.asFlag("insideDelivery")
-    eshipper_is_saturday_service = Spec.asFlag("isSaturdayService")
-    eshipper_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
-    eshipper_stackable = Spec.asFlag("stackable")
+    eshipper_saturday_pickup_required = OptionEnum("saturdayPickupRequired", bool)
+    eshipper_homeland_security = OptionEnum("homelandSecurity", bool)
+    eshipper_exhibition_convention_site = OptionEnum("exhibitionConventionSite", bool)
+    eshipper_military_base_delivery = OptionEnum("militaryBaseDelivery", bool)
+    eshipper_customs_in_bond_freight = OptionEnum("customsIn_bondFreight", bool)
+    eshipper_limited_access = OptionEnum("limitedAccess", bool)
+    eshipper_excess_length = OptionEnum("excessLength", bool)
+    eshipper_tailgate_pickup = OptionEnum("tailgatePickup", bool)
+    eshipper_residential_pickup = OptionEnum("residentialPickup", bool)
+    eshipper_cross_border_fee = OptionEnum("crossBorderFee", bool)
+    eshipper_notify_recipient = OptionEnum("notifyRecipient", bool)
+    eshipper_single_shipment = OptionEnum("singleShipment", bool)
+    eshipper_tailgate_delivery = OptionEnum("tailgateDelivery", bool)
+    eshipper_residential_delivery = OptionEnum("residentialDelivery", bool)
+    eshipper_insurance_type = OptionEnum("insuranceType", float)
+    eshipper_inside_delivery = OptionEnum("insideDelivery", bool)
+    eshipper_is_saturday_service = OptionEnum("isSaturdayService", bool)
+    eshipper_dangerous_goods_type = OptionEnum("dangerousGoodsType", bool)
+    eshipper_stackable = OptionEnum("stackable", bool)
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        return units.Options(options, cls)
+    if package_options is not None:
+        options.update(package_options.content)
+
+    return units.Options(options, ShippingOption)
 
 
 class FreightClass(Enum):

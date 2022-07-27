@@ -1,105 +1,93 @@
 import time
 from functools import partial
-from typing import List, Tuple, Optional
 from canpar_lib.CanshipBusinessService import (
-    processShipment,
-    ProcessShipmentRq,
-    Shipment,
     Address,
     Package,
+    Shipment,
+    processShipment,
+    ProcessShipmentRq,
 )
-from karrio.core.models import (
-    Documents,
-    Message,
-    ShipmentRequest,
-    ShipmentDetails,
-)
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    create_envelope,
-    Pipeline,
-    XP,
-    Job,
-    DF,
-)
-from karrio.core.units import Packages, Options
-from karrio.providers.canpar.shipment.label import get_label_request, LabelRequest
-from karrio.providers.canpar.error import parse_error_response
-from karrio.providers.canpar.utils import Settings
-from karrio.providers.canpar.units import (
-    WeightUnit,
-    DimensionUnit,
-    ShippingOption,
-    Service,
-)
-from karrio.providers.canpar.rate import _extract_rate_details
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.canpar.error as provider_error
+import karrio.providers.canpar.units as provider_units
+import karrio.providers.canpar.utils as provider_utils
+import karrio.providers.canpar.shipment.label as label
+import karrio.providers.canpar.rate as rate
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    shipment = XP.to_object(
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    shipment = lib.to_object(
         Shipment,
         next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None),
     )
     success = shipment is not None and shipment.id is not None
     shipment_details = _extract_details(response, settings) if success else None
 
-    return shipment_details, parse_error_response(response, settings)
+    return shipment_details, provider_error.parse_error_response(response, settings)
 
 
-def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
+def _extract_details(
+    response: lib.Element, settings: provider_utils.Settings
+) -> models.ShipmentDetails:
     shipment_node = next(
         iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None
     )
     label = next(
         iter(response.xpath(".//*[local-name() = $name]", name="labels")), None
     )
-    shipment = XP.to_object(Shipment, shipment_node)
+    shipment = lib.to_object(Shipment, shipment_node)
     tracking_number = next(iter(shipment.packages), Package()).barcode
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
         shipment_identifier=str(shipment.id),
-        selected_rate=_extract_rate_details(shipment_node, settings),
-        docs=Documents(label=str(label.text)),
+        selected_rate=rate._extract_rate_details(shipment_node, settings),
+        docs=models.Documents(label=str(label.text)),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[Pipeline]:
+    payload: models.ShipmentRequest, settings: provider_utils.Settings
+) -> lib.Serializable[lib.Pipeline]:
 
-    request: Pipeline = Pipeline(
+    request: lib.Pipeline = lib.Pipeline(
         process=lambda *_: _process_shipment(payload, settings),
         get_label=partial(_get_label, settings=settings),
     )
 
-    return Serializable(request)
+    return lib.Serializable(request)
 
 
-def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
-    service_type = Service.map(payload.service).value_or_key
-    packages = Packages(payload.parcels)
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+def _process_shipment(
+    payload: models.ShipmentRequest, settings: provider_utils.Settings
+) -> lib.Job:
+    service_type = provider_units.Service.map(payload.service).value_or_key
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
-    shipping_date = DF.fdatetime(
-        options.shipment_date or time.strftime("%Y-%m-%d"),
+    shipping_date = lib.fdatetime(
+        options.shipment_date.state or time.strftime("%Y-%m-%d"),
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%S",
     )
 
-    request = create_envelope(
+    request = lib.create_envelope(
         body_content=processShipment(
             request=ProcessShipmentRq(
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=options.canpar_cash_on_delivery,
+                    cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -116,14 +104,14 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=options.canpar_dangerous_goods,
-                    dimention_unit=DimensionUnit.IN.value,
+                    dg=options.canpar_dangerous_goods.state,
+                    dimention_unit=provider_units.DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
                     instruction=None,
                     nsr=(
-                        options.canpar_no_signature_required
-                        or options.canpar_not_no_signature_required
+                        options.canpar_no_signature_required.state
+                        or options.canpar_not_no_signature_required.state
                     ),
                     packages=[
                         Package(
@@ -157,9 +145,9 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                         province=payload.shipper.state_code,
                         residential=payload.shipper.residential,
                     ),
-                    premium=ShippingOption.is_premium(options),
+                    premium=provider_units.ShippingOption.is_premium(options),
                     proforma=None,
-                    reported_weight_unit=WeightUnit.LB.value,
+                    reported_weight_unit=provider_units.WeightUnit.LB.value,
                     send_email_to_delivery=payload.recipient.email,
                     send_email_to_pickup=payload.shipper.email,
                     service_type=service_type,
@@ -176,7 +164,7 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
         )
     )
 
-    data = Serializable(
+    data = lib.Serializable(
         request,
         partial(
             settings.serialize,
@@ -184,20 +172,20 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
             special_prefixes=dict(shipment_children="xsd1"),
         ),
     )
-    return Job(id="process", data=data)
+    return lib.Job(id="process", data=data)
 
 
-def _get_label(shipment_response: str, settings: Settings) -> Job:
-    response = XP.to_xml(shipment_response)
-    shipment = XP.to_object(
+def _get_label(shipment_response: str, settings: provider_utils.Settings) -> lib.Job:
+    response = lib.to_element(shipment_response)
+    shipment = lib.to_object(
         Shipment,
         next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None),
     )
     success = shipment is not None and shipment.id is not None
     data = (
-        get_label_request(LabelRequest(shipment_id=shipment.id), settings)
+        label.get_label_request(label.LabelRequest(shipment_id=shipment.id), settings)
         if success
         else None
     )
 
-    return Job(id="get_label", data=data, fallback=("" if not success else None))
+    return lib.Job(id="get_label", data=data, fallback=("" if not success else None))

@@ -1,7 +1,7 @@
-import typing
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
 from karrio.core.units import MeasurementOptionsType, PackagePreset
+from karrio.core.utils.enum import OptionEnum
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -291,119 +291,118 @@ class ServiceType(Enum):
 
 
 class ShippingOption(Enum):
-    fedex_blind_shipment = Spec.asKey("BLIND_SHIPMENT")
-    fedex_broker_select_option = Spec.asKey("BROKER_SELECT_OPTION")
-    fedex_call_before_delivery = Spec.asKey("CALL_BEFORE_DELIVERY")
-    fedex_cod = Spec.asKeyVal("COD")
-    fedex_cod_remittance = Spec.asKey("COD_REMITTANCE")
-    fedex_custom_delivery_window = Spec.asKey("CUSTOM_DELIVERY_WINDOW")
-    fedex_cut_flowers = Spec.asKey("CUT_FLOWERS")
-    fedex_dangerous_goods = Spec.asKey("DANGEROUS_GOODS")
-    fedex_delivery_on_invoice_acceptance = Spec.asKey("DELIVERY_ON_INVOICE_ACCEPTANCE")
-    fedex_detention = Spec.asKey("DETENTION")
-    fedex_do_not_break_down_pallets = Spec.asKey("DO_NOT_BREAK_DOWN_PALLETS")
-    fedex_do_not_stack_pallets = Spec.asKey("DO_NOT_STACK_PALLETS")
-    fedex_dry_ice = Spec.asKey("DRY_ICE")
-    fedex_east_coast_special = Spec.asKey("EAST_COAST_SPECIAL")
-    fedex_electronic_trade_documents = Spec.asKey("ELECTRONIC_TRADE_DOCUMENTS")
-    fedex_event_notification = Spec.asKey("EVENT_NOTIFICATION")
-    fedex_exclude_from_consolidation = Spec.asKey("EXCLUDE_FROM_CONSOLIDATION")
-    fedex_exclusive_use = Spec.asKey("EXCLUSIVE_USE")
-    fedex_exhibition_delivery = Spec.asKey("EXHIBITION_DELIVERY")
-    fedex_exhibition_pickup = Spec.asKey("EXHIBITION_PICKUP")
-    fedex_expedited_alternate_delivery_route = Spec.asKey(
+    fedex_blind_shipment = OptionEnum("BLIND_SHIPMENT")
+    fedex_broker_select_option = OptionEnum("BROKER_SELECT_OPTION")
+    fedex_call_before_delivery = OptionEnum("CALL_BEFORE_DELIVERY")
+    fedex_cod = OptionEnum("COD", float)
+    fedex_cod_remittance = OptionEnum("COD_REMITTANCE")
+    fedex_custom_delivery_window = OptionEnum("CUSTOM_DELIVERY_WINDOW")
+    fedex_cut_flowers = OptionEnum("CUT_FLOWERS")
+    fedex_dangerous_goods = OptionEnum("DANGEROUS_GOODS")
+    fedex_delivery_on_invoice_acceptance = OptionEnum("DELIVERY_ON_INVOICE_ACCEPTANCE")
+    fedex_detention = OptionEnum("DETENTION")
+    fedex_do_not_break_down_pallets = OptionEnum("DO_NOT_BREAK_DOWN_PALLETS")
+    fedex_do_not_stack_pallets = OptionEnum("DO_NOT_STACK_PALLETS")
+    fedex_dry_ice = OptionEnum("DRY_ICE")
+    fedex_east_coast_special = OptionEnum("EAST_COAST_SPECIAL")
+    fedex_electronic_trade_documents = OptionEnum("ELECTRONIC_TRADE_DOCUMENTS")
+    fedex_event_notification = OptionEnum("EVENT_NOTIFICATION")
+    fedex_exclude_from_consolidation = OptionEnum("EXCLUDE_FROM_CONSOLIDATION")
+    fedex_exclusive_use = OptionEnum("EXCLUSIVE_USE")
+    fedex_exhibition_delivery = OptionEnum("EXHIBITION_DELIVERY")
+    fedex_exhibition_pickup = OptionEnum("EXHIBITION_PICKUP")
+    fedex_expedited_alternate_delivery_route = OptionEnum(
         "EXPEDITED_ALTERNATE_DELIVERY_ROUTE"
     )
-    fedex_expedited_one_day_earlier = Spec.asKey("EXPEDITED_ONE_DAY_EARLIER")
-    fedex_expedited_service_monitoring_and_delivery = Spec.asKey(
+    fedex_expedited_one_day_earlier = OptionEnum("EXPEDITED_ONE_DAY_EARLIER")
+    fedex_expedited_service_monitoring_and_delivery = OptionEnum(
         "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY"
     )
-    fedex_expedited_standard_day_early_delivery = Spec.asKey(
+    fedex_expedited_standard_day_early_delivery = OptionEnum(
         "EXPEDITED_STANDARD_DAY_EARLY_DELIVERY"
     )
-    fedex_extra_labor = Spec.asKey("EXTRA_LABOR")
-    fedex_extreme_length = Spec.asKey("EXTREME_LENGTH")
-    fedex_one_rate = Spec.asKey("FEDEX_ONE_RATE")
-    fedex_flatbed_trailer = Spec.asKey("FLATBED_TRAILER")
-    fedex_food = Spec.asKey("FOOD")
-    fedex_freight_guarantee = Spec.asKey("FREIGHT_GUARANTEE")
-    fedex_freight_to_collect = Spec.asKey("FREIGHT_TO_COLLECT")
-    fedex_future_day_shipment = Spec.asKey("FUTURE_DAY_SHIPMENT")
-    fedex_hold_at_location = Spec.asKey("HOLD_AT_LOCATION")
-    fedex_holiday_delivery = Spec.asKey("HOLIDAY_DELIVERY")
-    fedex_holiday_guarantee = Spec.asKey("HOLIDAY_GUARANTEE")
-    fedex_home_delivery_premium = Spec.asKey("HOME_DELIVERY_PREMIUM")
-    fedex_inside_delivery = Spec.asKey("INSIDE_DELIVERY")
-    fedex_inside_pickup = Spec.asKey("INSIDE_PICKUP")
-    fedex_international_controlled_export_service = Spec.asKey(
+    fedex_extra_labor = OptionEnum("EXTRA_LABOR")
+    fedex_extreme_length = OptionEnum("EXTREME_LENGTH")
+    fedex_one_rate = OptionEnum("FEDEX_ONE_RATE")
+    fedex_flatbed_trailer = OptionEnum("FLATBED_TRAILER")
+    fedex_food = OptionEnum("FOOD")
+    fedex_freight_guarantee = OptionEnum("FREIGHT_GUARANTEE")
+    fedex_freight_to_collect = OptionEnum("FREIGHT_TO_COLLECT")
+    fedex_future_day_shipment = OptionEnum("FUTURE_DAY_SHIPMENT")
+    fedex_hold_at_location = OptionEnum("HOLD_AT_LOCATION")
+    fedex_holiday_delivery = OptionEnum("HOLIDAY_DELIVERY")
+    fedex_holiday_guarantee = OptionEnum("HOLIDAY_GUARANTEE")
+    fedex_home_delivery_premium = OptionEnum("HOME_DELIVERY_PREMIUM")
+    fedex_inside_delivery = OptionEnum("INSIDE_DELIVERY")
+    fedex_inside_pickup = OptionEnum("INSIDE_PICKUP")
+    fedex_international_controlled_export_service = OptionEnum(
         "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE"
     )
-    fedex_international_mail_service = Spec.asKey("INTERNATIONAL_MAIL_SERVICE")
-    fedex_international_traffic_in_arms_regulations = Spec.asKey(
+    fedex_international_mail_service = OptionEnum("INTERNATIONAL_MAIL_SERVICE")
+    fedex_international_traffic_in_arms_regulations = OptionEnum(
         "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"
     )
-    fedex_liftgate_delivery = Spec.asKey("LIFTGATE_DELIVERY")
-    fedex_liftgate_pickup = Spec.asKey("LIFTGATE_PICKUP")
-    fedex_limited_access_delivery = Spec.asKey("LIMITED_ACCESS_DELIVERY")
-    fedex_limited_access_pickup = Spec.asKey("LIMITED_ACCESS_PICKUP")
-    fedex_marking_or_tagging = Spec.asKey("MARKING_OR_TAGGING")
-    fedex_non_business_time = Spec.asKey("NON_BUSINESS_TIME")
-    fedex_pallet_shrinkwrap = Spec.asKey("PALLET_SHRINKWRAP")
-    fedex_pallet_weight_allowance = Spec.asKey("PALLET_WEIGHT_ALLOWANCE")
-    fedex_pallets_provided = Spec.asKey("PALLETS_PROVIDED")
-    fedex_pending_complete = Spec.asKey("PENDING_COMPLETE")
-    fedex_pending_shipment = Spec.asKey("PENDING_SHIPMENT")
-    fedex_permit = Spec.asKey("PERMIT")
-    fedex_pharmacy_delivery = Spec.asKey("PHARMACY_DELIVERY")
-    fedex_poison = Spec.asKey("POISON")
-    fedex_port_delivery = Spec.asKey("PORT_DELIVERY")
-    fedex_port_pickup = Spec.asKey("PORT_PICKUP")
-    fedex_pre_delivery_notification = Spec.asKey("PRE_DELIVERY_NOTIFICATION")
-    fedex_pre_eig_processing = Spec.asKey("PRE_EIG_PROCESSING")
-    fedex_pre_multiplier_processing = Spec.asKey("PRE_MULTIPLIER_PROCESSING")
-    fedex_protection_from_freezing = Spec.asKey("PROTECTION_FROM_FREEZING")
-    fedex_regional_mall_delivery = Spec.asKey("REGIONAL_MALL_DELIVERY")
-    fedex_regional_mall_pickup = Spec.asKey("REGIONAL_MALL_PICKUP")
-    fedex_return_shipment = Spec.asKey("RETURN_SHIPMENT")
-    fedex_returns_clearance = Spec.asKey("RETURNS_CLEARANCE")
-    fedex_returns_clearance_special_routing_required = Spec.asKey(
+    fedex_liftgate_delivery = OptionEnum("LIFTGATE_DELIVERY")
+    fedex_liftgate_pickup = OptionEnum("LIFTGATE_PICKUP")
+    fedex_limited_access_delivery = OptionEnum("LIMITED_ACCESS_DELIVERY")
+    fedex_limited_access_pickup = OptionEnum("LIMITED_ACCESS_PICKUP")
+    fedex_marking_or_tagging = OptionEnum("MARKING_OR_TAGGING")
+    fedex_non_business_time = OptionEnum("NON_BUSINESS_TIME")
+    fedex_pallet_shrinkwrap = OptionEnum("PALLET_SHRINKWRAP")
+    fedex_pallet_weight_allowance = OptionEnum("PALLET_WEIGHT_ALLOWANCE")
+    fedex_pallets_provided = OptionEnum("PALLETS_PROVIDED")
+    fedex_pending_complete = OptionEnum("PENDING_COMPLETE")
+    fedex_pending_shipment = OptionEnum("PENDING_SHIPMENT")
+    fedex_permit = OptionEnum("PERMIT")
+    fedex_pharmacy_delivery = OptionEnum("PHARMACY_DELIVERY")
+    fedex_poison = OptionEnum("POISON")
+    fedex_port_delivery = OptionEnum("PORT_DELIVERY")
+    fedex_port_pickup = OptionEnum("PORT_PICKUP")
+    fedex_pre_delivery_notification = OptionEnum("PRE_DELIVERY_NOTIFICATION")
+    fedex_pre_eig_processing = OptionEnum("PRE_EIG_PROCESSING")
+    fedex_pre_multiplier_processing = OptionEnum("PRE_MULTIPLIER_PROCESSING")
+    fedex_protection_from_freezing = OptionEnum("PROTECTION_FROM_FREEZING")
+    fedex_regional_mall_delivery = OptionEnum("REGIONAL_MALL_DELIVERY")
+    fedex_regional_mall_pickup = OptionEnum("REGIONAL_MALL_PICKUP")
+    fedex_return_shipment = OptionEnum("RETURN_SHIPMENT")
+    fedex_returns_clearance = OptionEnum("RETURNS_CLEARANCE")
+    fedex_returns_clearance_special_routing_required = OptionEnum(
         "RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED"
     )
-    fedex_saturday_delivery = Spec.asKey("SATURDAY_DELIVERY")
-    fedex_saturday_pickup = Spec.asKey("SATURDAY_PICKUP")
-    fedex_shipment_assembly = Spec.asKey("SHIPMENT_ASSEMBLY")
-    fedex_sort_and_segregate = Spec.asKey("SORT_AND_SEGREGATE")
-    fedex_special_delivery = Spec.asKey("SPECIAL_DELIVERY")
-    fedex_special_equipment = Spec.asKey("SPECIAL_EQUIPMENT")
-    fedex_storage = Spec.asKey("STORAGE")
-    fedex_sunday_delivery = Spec.asKey("SUNDAY_DELIVERY")
-    fedex_third_party_consignee = Spec.asKey("THIRD_PARTY_CONSIGNEE")
-    fedex_top_load = Spec.asKey("TOP_LOAD")
-    fedex_usps_delivery = Spec.asKey("USPS_DELIVERY")
-    fedex_usps_pickup = Spec.asKey("USPS_PICKUP")
-    fedex_weighing = Spec.asKey("WEIGHING")
+    fedex_saturday_delivery = OptionEnum("SATURDAY_DELIVERY")
+    fedex_saturday_pickup = OptionEnum("SATURDAY_PICKUP")
+    fedex_shipment_assembly = OptionEnum("SHIPMENT_ASSEMBLY")
+    fedex_sort_and_segregate = OptionEnum("SORT_AND_SEGREGATE")
+    fedex_special_delivery = OptionEnum("SPECIAL_DELIVERY")
+    fedex_special_equipment = OptionEnum("SPECIAL_EQUIPMENT")
+    fedex_storage = OptionEnum("STORAGE")
+    fedex_sunday_delivery = OptionEnum("SUNDAY_DELIVERY")
+    fedex_third_party_consignee = OptionEnum("THIRD_PARTY_CONSIGNEE")
+    fedex_top_load = OptionEnum("TOP_LOAD")
+    fedex_usps_delivery = OptionEnum("USPS_DELIVERY")
+    fedex_usps_pickup = OptionEnum("USPS_PICKUP")
+    fedex_weighing = OptionEnum("WEIGHING")
 
     """ Unified Option type mapping """
     notification = fedex_event_notification
     cash_on_delivery = fedex_cod
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        def option_filter(key: str) -> bool:
-            return key in cls  # type: ignore
+    if package_options is not None:
+        options.update(package_options.content)
 
-        return units.Options(options, cls, option_filter=option_filter)
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type: ignore
+
+    return units.Options(options, ShippingOption, items_filter=items_filter)
 
 
 class RateType(Enum):

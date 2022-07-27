@@ -1,6 +1,7 @@
 import re
 from karrio.core import units
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils import Enum, Flag
+from karrio.core.utils.enum import OptionEnum
 
 
 class FreightPackagingType(Flag):
@@ -112,40 +113,39 @@ CARRIER_IDS = {
 
 
 class ShippingOption(Flag):
-    freightcom_saturday_pickup_required = Spec.asFlag("saturdayPickupRequired")
-    freightcom_homeland_security = Spec.asFlag("homelandSecurity")
-    freightcom_exhibition_convention_site = Spec.asFlag("exhibitionConventionSite")
-    freightcom_military_base_delivery = Spec.asFlag("militaryBaseDelivery")
-    freightcom_customs_in_bond_freight = Spec.asFlag("customsIn_bondFreight")
-    freightcom_limited_access = Spec.asFlag("limitedAccess")
-    freightcom_excess_length = Spec.asFlag("excessLength")
-    freightcom_tailgate_pickup = Spec.asFlag("tailgatePickup")
-    freightcom_residential_pickup = Spec.asFlag("residentialPickup")
-    freightcom_cross_border_fee = Spec.asFlag("crossBorderFee")
-    freightcom_notify_recipient = Spec.asFlag("notifyRecipient")
-    freightcom_single_shipment = Spec.asFlag("singleShipment")
-    freightcom_tailgate_delivery = Spec.asFlag("tailgateDelivery")
-    freightcom_residential_delivery = Spec.asFlag("residentialDelivery")
-    freightcom_insurance_type = Spec.asValue("insuranceType", float)
-    freightcom_inside_delivery = Spec.asFlag("insideDelivery")
-    freightcom_is_saturday_service = Spec.asFlag("isSaturdayService")
-    freightcom_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
-    freightcom_stackable = Spec.asFlag("stackable")
+    freightcom_saturday_pickup_required = OptionEnum("saturdayPickupRequired", bool)
+    freightcom_homeland_security = OptionEnum("homelandSecurity", bool)
+    freightcom_exhibition_convention_site = OptionEnum("exhibitionConventionSite", bool)
+    freightcom_military_base_delivery = OptionEnum("militaryBaseDelivery", bool)
+    freightcom_customs_in_bond_freight = OptionEnum("customsIn_bondFreight", bool)
+    freightcom_limited_access = OptionEnum("limitedAccess", bool)
+    freightcom_excess_length = OptionEnum("excessLength", bool)
+    freightcom_tailgate_pickup = OptionEnum("tailgatePickup", bool)
+    freightcom_residential_pickup = OptionEnum("residentialPickup", bool)
+    freightcom_cross_border_fee = OptionEnum("crossBorderFee", bool)
+    freightcom_notify_recipient = OptionEnum("notifyRecipient", bool)
+    freightcom_single_shipment = OptionEnum("singleShipment", bool)
+    freightcom_tailgate_delivery = OptionEnum("tailgateDelivery", bool)
+    freightcom_residential_delivery = OptionEnum("residentialDelivery", bool)
+    freightcom_insurance_type = OptionEnum("insuranceType", float)
+    freightcom_inside_delivery = OptionEnum("insideDelivery", bool)
+    freightcom_is_saturday_service = OptionEnum("isSaturdayService", bool)
+    freightcom_dangerous_goods_type = OptionEnum("dangerousGoodsType", bool)
+    freightcom_stackable = OptionEnum("stackable", bool)
 
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: units.Options = None,
-    ) -> units.Options:
-        """
-        Apply default values to the given options.
-        """
 
-        if package_options is not None:
-            options.update(package_options.content)
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
 
-        return units.Options(options, cls)
+    if package_options is not None:
+        options.update(package_options.content)
+
+    return units.Options(options, ShippingOption)
 
 
 class FreightClass(Enum):

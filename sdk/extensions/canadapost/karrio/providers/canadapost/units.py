@@ -1,5 +1,6 @@
-import typing
-from karrio.core.utils import Enum, Flag, Spec
+from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
+from karrio.core.utils import Enum, Flag
 from karrio.core.units import MeasurementOptionsType, PackagePreset, Options
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
@@ -102,51 +103,26 @@ class ServiceType(Enum):
 
 
 class ShippingOption(Enum):
-    canadapost_signature = Spec.asKey("SO")
-    canadapost_coverage = Spec.asKeyVal("COV", float)
-    canadapost_collect_on_delivery = Spec.asKeyVal("COD", float)
-    canadapost_proof_of_age_required_18 = Spec.asKey("PA18")
-    canadapost_proof_of_age_required_19 = Spec.asKey("PA19")
-    canadapost_card_for_pickup = Spec.asKey("HFP")
-    canadapost_do_not_safe_drop = Spec.asKey("DNS")
-    canadapost_leave_at_door = Spec.asKey("LAD")
-    canadapost_deliver_to_post_office = Spec.asKey("D2PO")
-    canadapost_return_at_senders_expense = Spec.asKey("RASE")
-    canadapost_return_to_sender = Spec.asKey("RTS")
-    canadapost_abandon = Spec.asKey("ABAN")
+    canadapost_signature = OptionEnum("SO")
+    canadapost_coverage = OptionEnum("COV", float)
+    canadapost_collect_on_delivery = OptionEnum("COD", float)
+    canadapost_proof_of_age_required_18 = OptionEnum("PA18")
+    canadapost_proof_of_age_required_19 = OptionEnum("PA19")
+    canadapost_card_for_pickup = OptionEnum("HFP")
+    canadapost_do_not_safe_drop = OptionEnum("DNS")
+    canadapost_leave_at_door = OptionEnum("LAD")
+    canadapost_deliver_to_post_office = OptionEnum("D2PO")
+    canadapost_return_at_senders_expense = OptionEnum("RASE")
+    canadapost_return_to_sender = OptionEnum("RTS")
+    canadapost_abandon = OptionEnum("ABAN")
 
     """ Custom Option """
-    canadapost_cost_center = Spec.asValue("cost-centre")
+    canadapost_cost_center = OptionEnum("cost-centre")
 
     """ Unified Option type mapping """
     insurance = canadapost_coverage
     cash_on_delivery = canadapost_collect_on_delivery
     signature_confirmation = canadapost_signature
-
-    @classmethod
-    def to_options(
-        cls,
-        options: dict,
-        package_options: Options = None,
-        is_international: bool = False,
-    ) -> Options:
-        # Apply default non delivery options for if international.
-        no_international_option_specified: bool = not any(
-            key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
-        )
-
-        if is_international and no_international_option_specified:
-            options.update({cls.canadapost_return_to_sender.name: True})
-
-        # Apply package options if specified.
-        if package_options is not None:
-            options.update(package_options.content)
-
-        # Define carrier option filter.
-        def option_filter(key: str) -> bool:
-            return key in cls and key not in CUSTOM_OPTIONS  # type:ignore
-
-        return Options(options, cls, option_filter=option_filter)
 
 
 INTERNATIONAL_NON_DELIVERY_OPTION = [
@@ -183,3 +159,27 @@ TRACKING_DELIVERED_EVENT_CODES = [
     "1498",
     "1499",
 ]
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: Options = None,
+    is_international: bool = False,
+) -> Options:
+    # Apply default non delivery options for if international.
+    no_international_option_specified: bool = not any(
+        key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
+    )
+
+    if is_international and no_international_option_specified:
+        options.update({ShippingOption.canadapost_return_to_sender.name: True})
+
+    # Apply package options if specified.
+    if package_options is not None:
+        options.update(package_options.content)
+
+    # Define carrier option filter.
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption and key not in CUSTOM_OPTIONS  # type:ignore
+
+    return Options(options, ShippingOption, items_filter=items_filter)

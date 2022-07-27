@@ -1,5 +1,3 @@
-from functools import partial
-from typing import List, Tuple, cast, Union, Type
 from purolator_lib.shipping_documents_service_1_3_0 import DocumentDetail
 from purolator_lib.shipping_service_2_1_3 import (
     CreateShipmentRequest,
@@ -32,96 +30,92 @@ from purolator_lib.shipping_service_2_1_3 import (
     ContentDetail,
     ArrayOfContentDetail,
 )
-from karrio.core.units import Packages, Phone
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    create_envelope,
-    Pipeline,
-    Job,
-    Envelope,
-    XP,
-    SF,
-)
-from karrio.core.models import Documents, ShipmentRequest, ShipmentDetails, Message
 
-from karrio.providers.purolator.shipment.documents import (
-    get_shipping_documents_request,
-)
-from karrio.providers.purolator.utils import Settings, standard_request_serializer
-from karrio.providers.purolator.error import parse_error_response
-from karrio.providers.purolator.units import (
-    ShippingService,
-    ShippingOption,
-    PackagePresets,
-    PaymentType,
-    DutyPaymentType,
-    MeasurementOptions,
-    PrintType,
-    NON_OFFICIAL_SERVICES,
-)
+import typing
+import numbers
+import functools
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.purolator.error as provider_error
+import karrio.providers.purolator.units as provider_units
+import karrio.providers.purolator.utils as provider_utils
+import karrio.providers.purolator.shipment.documents as documents
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    pin = XP.find("ShipmentPIN", response, PIN, first=True)
+    response: lib.Element, settings: provider_utils.Settings
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    pin = lib.find_element("ShipmentPIN", response, PIN, first=True)
     shipment = (
         _extract_shipment(response, settings)
         if (getattr(pin, "Value", None) is not None)
         else None
     )
 
-    return shipment, parse_error_response(response, settings)
+    return shipment, provider_error.parse_error_response(response, settings)
 
 
-def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    pin: PIN = XP.find("ShipmentPIN", response, PIN, first=True)
+def _extract_shipment(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.ShipmentDetails:
+    pin: PIN = lib.find_element("ShipmentPIN", response, PIN, first=True)
     document = (
-        XP.find("DocumentDetail", response, DocumentDetail, first=True)
+        lib.find_element("DocumentDetail", response, DocumentDetail, first=True)
         or DocumentDetail()
     )
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=pin.Value,
         shipment_identifier=pin.Value,
-        docs=Documents(label=document.Data),
+        docs=models.Documents(label=document.Data),
     )
 
 
 def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[Pipeline]:
-    requests: Pipeline = Pipeline(
-        create=lambda *_: partial(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[lib.Pipeline]:
+    requests: lib.Pipeline = lib.Pipeline(
+        create=lambda *_: functools.partial(
             _create_shipment, payload=payload, settings=settings
         )(),
-        document=partial(_get_shipment_label, payload=payload, settings=settings),
+        document=functools.partial(
+            _get_shipment_label, payload=payload, settings=settings
+        ),
     )
-    return Serializable(requests)
+    return lib.Serializable(requests)
 
 
 def _shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[Envelope]:
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    service = ShippingService.map(payload.service).value_or_key
-    options = ShippingOption.to_options(
-        payload.options, package_options=packages.options
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[lib.Envelope]:
+    packages = lib.to_packages(
+        payload.parcels,
+        provider_units.PackagePresets,
+        required=["weight"],
+    )
+    service = provider_units.ShippingService.map(payload.service).value_or_key
+    options = lib.to_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    shipper_phone_number = Phone(
+    shipper_phone_number = units.Phone(
         payload.shipper.phone_number, payload.shipper.country_code
     )
-    recipient_phone_number = Phone(
+    recipient_phone_number = units.Phone(
         payload.recipient.phone_number, payload.recipient.country_code
     )
-    printing = PrintType.map(payload.label_type or "PDF").value
+    printing = provider_units.PrintType.map(payload.label_type or "PDF").value
 
-    request = create_envelope(
+    request = lib.create_envelope(
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
@@ -138,14 +132,12 @@ def _shipment_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(
-                            payload.shipper.address_line1, join=True
-                        ),
+                        StreetName=lib.join(payload.shipper.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
+                        StreetAddress2=lib.join(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -172,14 +164,12 @@ def _shipment_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=SF.concat_str(
-                            payload.recipient.address_line1, join=True
-                        ),
+                        StreetName=lib.join(payload.recipient.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=SF.concat_str(
+                        StreetAddress2=lib.join(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -202,13 +192,15 @@ def _shipment_request(
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
-                ShipmentDate=options.shipment_date,
+                ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service,
                     Description=packages.description,
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.map(MeasurementOptions).LB,
+                            Value=packages.weight.map(
+                                provider_units.MeasurementOptions
+                            ).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value
@@ -221,7 +213,7 @@ def _shipment_request(
                                 Weight=(
                                     PurolatorWeight(
                                         Value=package.weight.map(
-                                            MeasurementOptions
+                                            provider_units.MeasurementOptions
                                         ).value,
                                         WeightUnit=PurolatorWeightUnit[
                                             package.weight_unit.value
@@ -233,7 +225,7 @@ def _shipment_request(
                                 Length=(
                                     PurolatorDimension(
                                         Value=package.length.map(
-                                            MeasurementOptions
+                                            provider_units.MeasurementOptions
                                         ).value,
                                         DimensionUnit=PurolatorDimensionUnit[
                                             package.dimension_unit.value
@@ -245,7 +237,7 @@ def _shipment_request(
                                 Width=(
                                     PurolatorDimension(
                                         Value=package.width.map(
-                                            MeasurementOptions
+                                            provider_units.MeasurementOptions
                                         ).value,
                                         DimensionUnit=PurolatorDimensionUnit[
                                             package.dimension_unit.value
@@ -257,7 +249,7 @@ def _shipment_request(
                                 Height=(
                                     PurolatorDimension(
                                         Value=package.height.map(
-                                            MeasurementOptions
+                                            provider_units.MeasurementOptions
                                         ).value,
                                         DimensionUnit=PurolatorDimensionUnit[
                                             package.dimension_unit.value
@@ -275,11 +267,18 @@ def _shipment_request(
                     OptionsInformation=(
                         ArrayOfOptionIDValuePair(
                             OptionIDValuePair=[
-                                OptionIDValuePair(ID=code, Value=value)
-                                for _, code, value in options.as_list()
+                                OptionIDValuePair(
+                                    ID=option.code,
+                                    Value=(
+                                        option.state
+                                        if isinstance(option.state, numbers.Number)
+                                        else None
+                                    ),
+                                )
+                                for _, option in options.items()
                             ]
                         )
-                        if any(options.as_list())
+                        if any(options.items())
                         else None
                     ),
                 ),
@@ -313,7 +312,7 @@ def _shipment_request(
                         PreferredCustomsBroker=None,
                         DutyInformation=(
                             DutyInformation(
-                                BillDutiesToParty=DutyPaymentType[
+                                BillDutiesToParty=provider_units.DutyPaymentType[
                                     payload.customs.duty.paid_by
                                 ].value,
                                 BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
@@ -331,7 +330,9 @@ def _shipment_request(
                 ReturnShipmentInformation=None,
                 PaymentInformation=(
                     PaymentInformation(
-                        PaymentType=PaymentType[payload.payment.paid_by].value,
+                        PaymentType=provider_units.PaymentType[
+                            payload.payment.paid_by
+                        ].value,
                         RegisteredAccountNumber=(
                             payload.payment.account_number or settings.account_number
                         ),
@@ -349,11 +350,14 @@ def _shipment_request(
                 NotificationInformation=(
                     NotificationInformation(
                         ConfirmationEmailAddress=(
-                            options.email_notification_to or payload.recipient.email
+                            options.email_notification_to.state
+                            or payload.recipient.email
                         )
                     )
-                    if options.email_notification
-                    and any([options.email_notification_to, payload.recipient.email])
+                    if options.email_notification.state
+                    and any(
+                        [options.email_notification_to.state, payload.recipient.email]
+                    )
                     else None
                 ),
                 TrackingReferenceInformation=(
@@ -367,30 +371,37 @@ def _shipment_request(
             PrinterType=PrinterType(printing).value,
         ),
     )
-    return Serializable(request, standard_request_serializer)
+    return lib.Serializable(request, provider_utils.standard_request_serializer)
 
 
-def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
-    return Job(
+def _create_shipment(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Job:
+    return lib.Job(
         id="create",
         data=_shipment_request(payload, settings),
     )
 
 
 def _get_shipment_label(
-    create_response: str, payload: ShipmentRequest, settings: Settings
-) -> Job:
-    response = XP.to_xml(create_response)
-    valid = len(parse_error_response(response, settings)) == 0
+    create_response: str,
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Job:
+    response = lib.to_element(create_response)
+    valid = len(provider_error.parse_error_response(response, settings)) == 0
     shipment_pin = (
-        getattr(XP.find("ShipmentPIN", response, PIN, first=True), "Value", None)
+        getattr(
+            lib.find_element("ShipmentPIN", response, PIN, first=True), "Value", None
+        )
         if valid
         else None
     )
     data = (
-        get_shipping_documents_request(shipment_pin, payload, settings)
+        documents.get_shipping_documents_request(shipment_pin, payload, settings)
         if valid
         else None
     )
 
-    return Job(id="document", data=data, fallback="")
+    return lib.Job(id="document", data=data, fallback="")

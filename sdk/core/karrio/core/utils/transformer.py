@@ -1,41 +1,50 @@
-from functools import reduce
-from typing import Dict, List, Optional, Tuple
-from karrio.core.models import Documents, RateDetails
-from karrio.core.models import ChargeDetails
-from karrio.core.utils import NF
-from karrio.core.models import ShipmentDetails
-from karrio.core.utils.helpers import bundle_base64
+import typing
+import functools
+import karrio.core.utils as utils
+import karrio.core.models as models
 
 
 def to_multi_piece_rates(
-    package_rates: List[Tuple[str, List[RateDetails]]]
-) -> List[RateDetails]:
-    """
-    Convert a list of package rates to a multi-piece combined rates.
+    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]]
+) -> typing.List[models.RateDetails]:
+    """Combine rates received separately per package into a single rate list.
+
+    Example:
+        package_rates = [
+            ("pkg_1_id", { "service": "standard", "total_charge": 10, ... }),
+            ("pkg_2_id", { "service": "standard", "total_charge": 15, ... })
+        ]
+        result = to_multi_piece_rates(package_rates)
+
+        print(result) # [{ "service": "standard", "total_charge": 25, ... }]
+
+
+    :param package_rates: a tuple of a package identifier and the list of rates returned for that package.
+    :return: a unified list of combined rates of same services.
     """
     if len(package_rates) == 0:
         return []
 
     multi_piece_rates = []
     max_rates = max([len(rates) for _, rates in package_rates])
-    main_piece_rates: List[RateDetails] = next(
+    main_piece_rates: typing.List[models.RateDetails] = next(
         (rates for _, rates in package_rates if len(rates) == max_rates), []
     )
 
     for main in main_piece_rates:
-        similar_rates: List[Optional[RateDetails]] = [
+        similar_rates: typing.List[typing.Optional[models.RateDetails]] = [
             next((rate for rate in rates if rate.service == main.service), None)
             for _, rates in package_rates
         ]
 
         if all(rate is not None for rate in similar_rates):
-            all_charges: List[ChargeDetails] = sum(
+            all_charges: typing.List[models.ChargeDetails] = sum(
                 [rate.extra_charges for rate in similar_rates], []
             )
-            extra_charges: Dict[str, ChargeDetails] = reduce(
+            extra_charges: typing.Dict[str, models.ChargeDetails] = functools.reduce(
                 lambda acc, charge: {
                     **acc,
-                    charge.name: ChargeDetails(
+                    charge.name: models.ChargeDetails(
                         name=charge.name,
                         amount=charge.amount
                         + getattr(acc.get(charge.name), "amount", 0.0),
@@ -45,13 +54,19 @@ def to_multi_piece_rates(
                 {},
             )
             total_charge = (
-                sum((NF.decimal(rate.total_charge or 0) for rate in similar_rates), 0.0)
+                sum(
+                    (
+                        utils.NF.decimal(rate.total_charge or 0)
+                        for rate in similar_rates
+                    ),
+                    0.0,
+                )
                 if any(rate.total_charge for rate in similar_rates)
                 else None
             )
 
             multi_piece_rates.append(
-                RateDetails(
+                models.RateDetails(
                     carrier_name=main.carrier_name,
                     carrier_id=main.carrier_id,
                     currency=main.currency,
@@ -67,8 +82,30 @@ def to_multi_piece_rates(
 
 
 def to_multi_piece_shipment(
-    package_shipments: List[Tuple[str, ShipmentDetails]]
-) -> ShipmentDetails:
+    package_shipments: typing.List[typing.Tuple[str, models.ShipmentDetails]]
+) -> models.ShipmentDetails:
+    """Combine shipment received separately per package into a single master shipment.
+
+    Example:
+        package_shipments = [
+            { "tracking_number": "123", "shipment_identifier": "id_123", "docs": { "label": "label1_base64==" }, ... },
+            { "tracking_number": "124", "shipment_identifier": "id_123", "docs": { "label": "label2_base64==" }, ... }
+        ]
+        result = to_multi_piece_shipment(package_shipments)
+
+        print(result)
+        # {
+        #   "tracking_number": "123",
+        #   "docs": { "label": "label1_base64label2_base64==" },
+        #   "meta": { "tracking_numbers": ["123", "124"], "shipment_identifiers": ["id_123", "id_124"] },
+        #   ...
+        # }
+
+
+    :param package_shipments: a tuple of a package identifier and the shipment returned for that package.
+    :return: a unified master shipment object.
+    """
+
     master_shipment = next((shipment for _, shipment in package_shipments), None)
 
     if master_shipment is None or len(package_shipments) == 1:
@@ -86,13 +123,13 @@ def to_multi_piece_shipment(
         if shipment.shipment_identifier:
             shipment_identifiers.add(shipment.shipment_identifier)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=master_shipment.carrier_name,
         carrier_id=master_shipment.carrier_id,
         tracking_number=master_shipment.tracking_number,
         shipment_identifier=master_shipment.shipment_identifier,
         label_type=label_type,
-        docs=Documents(label=bundle_base64(labels, label_type)),
+        docs=models.Documents(label=utils.bundle_base64(labels, label_type)),
         meta={
             **master_shipment.meta,
             "tracking_numbers": list(tracking_numbers),

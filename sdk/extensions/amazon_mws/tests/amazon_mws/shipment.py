@@ -50,7 +50,7 @@ class TestAmazonMwsShipment(unittest.TestCase):
             response = Shipment.create(self.ShipmentRequest).from_(gateway)
 
             with patch(
-                "karrio.providers.amazon_mws.shipment.create.image_to_pdf"
+                "karrio.providers.amazon_mws.shipment.create.lib.image_to_pdf"
             ) as mock:
                 mock.return_value = ""
                 parsed_response = response.parse()

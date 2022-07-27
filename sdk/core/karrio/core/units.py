@@ -1,9 +1,11 @@
 """Karrio universal data types and units definitions"""
 import functools
+import numbers
 import attr
 import phonenumbers
 from typing import (
     Callable,
+    Dict,
     List,
     Type,
     Optional,
@@ -15,8 +17,8 @@ from typing import (
     cast,
     NamedTuple,
 )
-from karrio.core.utils import NF, Enum, Spec, SF, identity
-from karrio.core.models import Customs, Parcel, Address, AddressExtra
+from karrio.core.utils import NF, Enum, OptionEnum, SF, identity
+from karrio.core.models import Customs, Parcel, Address
 from karrio.core.errors import (
     FieldError,
     FieldErrorCode,
@@ -467,11 +469,12 @@ class Packages(Iterable[Package]):
 
     @property
     def description(self) -> Optional[str]:
-        return functools.reduce(
-            lambda acc, item: SF.concat_str(acc, item.parcel.description, join=True),
-            self._items,
-            None,
-        )
+        descriptions = [item.parcel.description for item in self._items]
+        description: Optional[str] = SF.concat_str(
+            *descriptions, join=True
+        )  # type:ignore
+
+        return description
 
     @property
     def options(self) -> "Options":
@@ -485,10 +488,10 @@ class Packages(Iterable[Package]):
                 **{
                     key: (
                         (val + acc[key])
-                        if (key in acc and type(val) in [int, float])
+                        if (key in acc and isinstance(val, numbers.Number))
                         else val
                     )
-                    for key, val in pkg.options
+                    for key, val in pkg.options.content.items()
                 },
             }
 
@@ -548,15 +551,15 @@ class Packages(Iterable[Package]):
 class ShippingOption(Enum):
     """universal shipment options (special services)"""
 
-    currency = Spec.asValue("currency")
-    insurance = Spec.asValue("insurance", float)
-    cash_on_delivery = Spec.asValue("COD", float)
-    shipment_date = Spec.asValue("shipment_date")
-    dangerous_good = Spec.asFlag("dangerous_good")
-    declared_value = Spec.asValue("declared_value", float)
-    email_notification = Spec.asFlag("email_notification")
-    email_notification_to = Spec.asValue("email_notification_to")
-    signature_confirmation = Spec.asFlag("signature_confirmation")
+    currency = OptionEnum("currency")
+    insurance = OptionEnum("insurance", float)
+    cash_on_delivery = OptionEnum("COD", float)
+    shipment_date = OptionEnum("shipment_date")
+    dangerous_good = OptionEnum("dangerous_good", bool)
+    declared_value = OptionEnum("declared_value", float)
+    email_notification = OptionEnum("email_notification", bool)
+    email_notification_to = OptionEnum("email_notification_to")
+    signature_confirmation = OptionEnum("signature_confirmation", bool)
 
 
 class Options:
@@ -566,40 +569,31 @@ class Options:
         self,
         options: dict,
         option_type: Type[Enum] = Enum,
-        option_filter: Callable[[str], bool] = identity,
+        items_filter: Callable[[str], bool] = None,
     ):
-        option_values = {}  # Deprecate this in favor of tuple for 3 values.
-        option_definitions: List[Tuple[str, Optional[str], Any]] = []
+        option_values: Dict[str, OptionEnum] = {}
 
         for key, val in options.items():
-            _spec: Spec = None
-
             if option_type is not None and key in option_type:
-                _spec = option_type[key].value
+                _val = option_type[key].value(val)
                 _key = option_type[key].name
-                _code = _spec.key
-                _val = _spec.apply(val)
             elif key in ShippingOption and key:
-                _spec = ShippingOption[key].value
+                _val = ShippingOption[key].value(val)
                 _key = key
-                _code = None
-                _val = _spec.apply(val)
             else:
                 _key = key
-                _code = None
                 _val = val
 
             option_values[_key] = _val
-            option_definitions += [(_key, _code, getattr(_val, "value", None))]
 
         self._options = option_values
-        self._option_list = self._filter(option_definitions, option_filter)
+        self._option_list = self._filter(option_values, (items_filter or identity))
 
     def __getitem__(self, item):
-        return self._options.get(item)
+        return self._options.get(item) or OptionEnum("")
 
     def __getattr__(self, item):
-        return self._options.get(item)
+        return self._options.get(item) or OptionEnum("")
 
     def __contains__(self, item) -> bool:
         return item in self._options
@@ -610,61 +604,59 @@ class Options:
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         return iter(self._options.items())
 
-    def _filter(self, option_definitions, option_filter):
+    def _filter(self, option_values, items_filter):
         return [
-            (key, code, value)
-            for key, code, value in option_definitions
-            if option_filter(key)
+            (key, option) for key, option in option_values.items() if items_filter(key)
         ]
 
-    def as_list(self) -> List[Tuple[str, Optional[str], Any]]:
+    def items(self) -> List[Tuple[str, Optional[str], Any]]:
         return self._option_list
 
     @property
     def content(self) -> dict:
-        return self._options
+        return {key: option.state for key, option in self._options.items()}
 
     @property
     def has_content(self) -> bool:
         return any(o for o in self._options)
 
     @property
-    def cash_on_delivery(self) -> float:
+    def cash_on_delivery(self) -> OptionEnum:
         return self[ShippingOption.cash_on_delivery.name]
 
     @property
-    def currency(self) -> str:
+    def currency(self) -> OptionEnum:
         return self[ShippingOption.currency.name]
 
     @property
-    def insurance(self) -> float:
+    def insurance(self) -> OptionEnum:
         return self[ShippingOption.insurance.name]
 
     @property
-    def declared_value(self) -> float:
+    def declared_value(self) -> OptionEnum:
         return self[ShippingOption.declared_value.name]
 
     @property
-    def dangerous_good(self) -> float:
+    def dangerous_good(self) -> OptionEnum:
         return self[ShippingOption.dangerous_good.name]
 
     @property
-    def email_notification(self) -> bool:
+    def email_notification(self) -> OptionEnum:
         if ShippingOption.email_notification.name in self:
             return self[ShippingOption.email_notification.name]
 
-        return True
+        return ShippingOption.email_notification.value(True)
 
     @property
-    def email_notification_to(self) -> str:
+    def email_notification_to(self) -> OptionEnum:
         return self[ShippingOption.email_notification_to.name]
 
     @property
-    def shipment_date(self) -> str:
+    def shipment_date(self) -> OptionEnum:
         return self[ShippingOption.shipment_date.name]
 
     @property
-    def signature_confirmation(self) -> str:
+    def signature_confirmation(self) -> OptionEnum:
         return self[ShippingOption.signature_confirmation.name]
 
 
@@ -691,13 +683,13 @@ class Services:
 class CustomsOption(Enum):
     """universal shipment customs identifiers"""
 
-    aes = Spec.asValue("aes")
-    eel_pfc = Spec.asValue("eel_pfc")
-    nip_number = Spec.asValue("eori_number")
-    eori_number = Spec.asValue("eori_number")
-    license_number = Spec.asValue("license_number")
-    certificate_number = Spec.asValue("certificate_number")
-    vat_registration_number = Spec.asValue("vat_registration_number")
+    aes = OptionEnum("aes")
+    eel_pfc = OptionEnum("eel_pfc")
+    nip_number = OptionEnum("eori_number")
+    eori_number = OptionEnum("eori_number")
+    license_number = OptionEnum("license_number")
+    certificate_number = OptionEnum("certificate_number")
+    vat_registration_number = OptionEnum("vat_registration_number")
 
 
 class CustomsInfo:
@@ -708,18 +700,24 @@ class CustomsInfo:
 
         for key, val in getattr(customs, "options", {}).items():
             if option_type is not None and key in option_type:
-                option_values[option_type[key].name] = option_type[key].value.apply(val)
+                option_values[option_type[key].name] = option_type[key].value(val)
             elif key in CustomsOption and key:
-                option_values[key] = CustomsOption[key].value.apply(val)
+                option_values[key] = CustomsOption[key].value(val)
 
         self._customs = customs
         self._options = option_values
 
     def __getitem__(self, item):
-        return getattr(self._customs, item, None) or self._options.get(item)
+        if hasattr(self._customs, item):
+            return getattr(self._customs, item, None)
+
+        return self._options.get(item) or OptionEnum("")
 
     def __getattr__(self, item):
-        return getattr(self._customs, item, None) or self._options.get(item)
+        if hasattr(self._customs, item):
+            return getattr(self._customs, item, None)
+
+        return self._options.get(item) or OptionEnum("")
 
     def __contains__(self, item) -> bool:
         return item in self._options or hasattr(self._customs, item)
@@ -772,19 +770,19 @@ class Phone:
         return str(self.number.national_number)[3:]
 
 
-class CompleteAddress:
+class ComputedAddress(Address):
     def __init__(self, address: Optional[Address]):
-        self._address = address
+        self.address = address
 
     def __getattr__(self, item):
-        if hasattr(self._address, item):
-            return getattr(self._address, item)
+        if hasattr(self.address, item):
+            return getattr(self.address, item)
 
-        return getattr(getattr(self._address, "extra", None), item, None)
+        return getattr(getattr(self.address, "extra", None), item, None)
 
     @property
     def country_name(self):
-        return Country[self._address.country_code].value
+        return Country[self.address.country_code].value
 
     @property
     def address_line(self) -> str:
@@ -796,51 +794,45 @@ class CompleteAddress:
 
     @property
     def tax_id(self) -> Optional[str]:
-        return self._address.federal_tax_id or self._address.state_tax_id
+        return self.address.federal_tax_id or self.address.state_tax_id
 
     @property
     def taxes(self) -> List[str]:
-        return SF.concat_str(self._address.federal_tax_id, self._address.state_tax_id)
+        return SF.concat_str(
+            self.address.federal_tax_id, self.address.state_tax_id
+        )  # type:ignore
 
     @property
     def has_contact_info(self) -> bool:
         return any(
             [
-                self._address.company_name,
-                self._address.phone_number,
-                self._address.person_name,
-                self._address.email,
+                self.address.company_name,
+                self.address.phone_number,
+                self.address.person_name,
+                self.address.email,
             ]
         )
 
     @property
     def has_tax_info(self) -> bool:
-        return any([self._address.federal_tax_id, self._address.state_tax_id])
+        return any([self.address.federal_tax_id, self.address.state_tax_id])
 
     def _compute_address_line(self, join: bool = True) -> Optional[str]:
-        if any([self._address.address_line1, self._address.address_line2]):
+        if any([self.address.address_line1, self.address.address_line2]):
             return SF.concat_str(
-                self._address.address_line1, self._address.address_line2, join=join
-            )
+                self.address.address_line1, self.address.address_line2, join=join
+            )  # type:ignore
 
-        if self._address.extra is not None:
+        if self.address.extra is not None:
             return SF.concat_str(
-                self._address.extra.suite,
-                self._address.extra.street_number,
-                self._address.extra.street_name,
-                self._address.extra.street_type,
+                self.address.extra.suite,
+                self.address.extra.street_number,
+                self.address.extra.street_name,
+                self.address.extra.street_type,
                 join=True,
-            )
+            )  # type:ignore
 
         return None
-
-    @staticmethod
-    def map(
-        address: Optional[Address],
-    ) -> Union[Address, AddressExtra, "CompleteAddress"]:
-        return cast(
-            Union[Address, AddressExtra, CompleteAddress], CompleteAddress(address)
-        )
 
 
 class Currency(Enum):
