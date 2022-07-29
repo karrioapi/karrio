@@ -236,7 +236,7 @@ MAPPER_TEMPLATE = Template('''
 """Karrio {{name}} client mapper."""
 
 import typing
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
 import karrio.providers.{{id}} as providers
@@ -324,7 +324,7 @@ MAPPER_PROXY_TEMPLATE = Template('''
 """Karrio {{name}} client proxy."""
 
 import karrio.api.proxy as proxy
-import karrio.core.lib as lib
+import karrio.lib as lib
 from karrio.mappers.{{id}}.settings import Settings
 
 
@@ -458,7 +458,7 @@ from karrio.providers.{{id}}.tracking import (
 
 PROVIDER_ERROR_TEMPLATE = Template('''
 import typing
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.utils as provider_utils
 
@@ -486,7 +486,7 @@ def parse_error_response(
 PROVIDER_RATE_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -542,7 +542,7 @@ def rate_request(
 PROVIDER_TRACKING_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -656,8 +656,8 @@ class Settings(core.Settings):
 
 PROVIDER_ADDRESS_TEMPLATE = Template('''
 import typing
+import karrio.lib as lib
 import karrio.core.units as units
-import karrio.core.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -710,7 +710,7 @@ from karrio.providers.{{id}}.shipment.cancel import (
 PROVIDER_SHIPMENT_CANCEL_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -751,7 +751,7 @@ def shipment_cancel_request(
 PROVIDER_SHIPMENT_CREATE_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -819,7 +819,7 @@ from karrio.providers.{{id}}.pickup.cancel import parse_pickup_cancel_response, 
 PROVIDER_PICKUP_CANCEL_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -860,7 +860,7 @@ def pickup_cancel_request(
 PROVIDER_PICKUP_CREATE_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -907,7 +907,7 @@ def pickup_request(
 PROVIDER_PICKUP_UPDATE_TEMPLATE = Template('''
 import typing
 import karrio.core.units as units
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -979,7 +979,7 @@ from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
 
 import karrio
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 
 
@@ -1034,7 +1034,7 @@ from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
 
 import karrio
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 
 
@@ -1111,7 +1111,7 @@ from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
 
 import karrio
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 
 
@@ -1209,7 +1209,7 @@ from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
 
 import karrio
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 
 
@@ -1330,7 +1330,7 @@ from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
 
 import karrio
-import karrio.core.lib as lib
+import karrio.lib as lib
 import karrio.core.models as models
 
 
