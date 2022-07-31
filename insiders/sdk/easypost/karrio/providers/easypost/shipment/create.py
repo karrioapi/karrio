@@ -56,7 +56,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         payload.shipper if payment.paid_by == "sender" else payload.recipient
     )
 
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload,
         payor=payor,
         package_options=package.options,

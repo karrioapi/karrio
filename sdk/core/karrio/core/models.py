@@ -398,6 +398,7 @@ class DocumentFile:
     """shipment document unified data type."""
 
     doc_file: str  #  base64 encoded string
+    doc_name: str
     doc_type: str = None
     doc_format: str = None
 

@@ -101,7 +101,7 @@ def rate_request(
         is_envelope=("envelope" in (packages.package_type or "")),
         initializer=provider_units.shipping_services_initializer,
     )
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         is_international=is_international,
         is_dutiable=is_dutiable,

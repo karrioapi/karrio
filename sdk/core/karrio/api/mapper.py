@@ -3,7 +3,7 @@
 import abc
 import attr
 import typing
-import karrio.core.utils as utils
+import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.models as models
 import karrio.core.settings as settings
@@ -17,7 +17,7 @@ class Mapper(abc.ABC):
 
     def create_address_validation_request(
         self, payload: models.AddressValidationRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific address validation request data from the payload
 
         Args:
@@ -34,7 +34,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_rate_request(self, payload: models.RateRequest) -> utils.Serializable:
+    def create_rate_request(self, payload: models.RateRequest) -> lib.Serializable:
         """Create a carrier specific rate request data from payload
 
         Args:
@@ -52,7 +52,7 @@ class Mapper(abc.ABC):
 
     def create_tracking_request(
         self, payload: models.TrackingRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific tracking request data from payload
 
         Args:
@@ -70,7 +70,7 @@ class Mapper(abc.ABC):
 
     def create_shipment_request(
         self, payload: models.ShipmentRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific shipment creation request data from payload
 
         Args:
@@ -88,7 +88,7 @@ class Mapper(abc.ABC):
 
     def create_cancel_shipment_request(
         self, payload: models.ShipmentCancelRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific void shipment request data from payload
 
         Args:
@@ -105,9 +105,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_pickup_request(
-        self, payload: models.PickupRequest
-    ) -> utils.Serializable:
+    def create_pickup_request(self, payload: models.PickupRequest) -> lib.Serializable:
         """Create a carrier specific pickup request xml data from payload
 
         Args:
@@ -125,7 +123,7 @@ class Mapper(abc.ABC):
 
     def create_pickup_update_request(
         self, payload: models.PickupUpdateRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific pickup modification request data from payload
 
         Args:
@@ -144,7 +142,7 @@ class Mapper(abc.ABC):
 
     def create_cancel_pickup_request(
         self, payload: models.PickupCancelRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific pickup cancellation request data from payload
 
         Args:
@@ -163,7 +161,7 @@ class Mapper(abc.ABC):
 
     def create_document_upload_request(
         self, payload: models.DocumentUploadRequest
-    ) -> utils.Serializable:
+    ) -> lib.Serializable:
         """Create a carrier specific document upload request data from payload
 
         Args:
@@ -183,7 +181,7 @@ class Mapper(abc.ABC):
     """Response Parsers"""
 
     def parse_address_validation_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
         """Create a unified API address validation details from the carrier response
 
@@ -203,7 +201,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_shipment_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
         """Create a unified API shipment creation result from carrier response
 
@@ -222,7 +220,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_cancel_shipment_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
         """Create a unified API operation confirmation detail from the carrier response
 
@@ -242,7 +240,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_pickup_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
         """Create a unified API pickup result from carrier response
 
@@ -261,7 +259,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_pickup_update_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
         """Create a unified API pickup result from carrier response
 
@@ -281,7 +279,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_cancel_pickup_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
         """Create a united API pickup cancellation result from carrier response
 
@@ -300,7 +298,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_tracking_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
         """Create a unified API tracking result list from carrier response
 
@@ -319,7 +317,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_rate_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
         """Create a unified API quote result list from carrier response
 
@@ -338,7 +336,7 @@ class Mapper(abc.ABC):
         )
 
     def parse_document_upload_response(
-        self, response: utils.Deserializable
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
         """Create a unified API quote result list from carrier response
 

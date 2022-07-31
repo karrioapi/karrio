@@ -68,7 +68,7 @@ def shipment_request(
         required=["weight"],
         package_option_type=provider_units.ShippingOption,
     ).single
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         options=payload.options,
         package_options=package.options,
         is_international=(
@@ -188,8 +188,8 @@ def shipment_request(
                     reason_for_export="OTH",
                     other_reason=customs.content_type,
                     duties_and_taxes_prepaid=duty.account_number,
-                    certificate_number=customs.certificate_number.state,
-                    licence_number=customs.license_number.state,
+                    certificate_number=customs.options.certificate_number.state,
+                    licence_number=customs.options.license_number.state,
                     invoice_number=customs.invoice,
                     sku_list=(
                         sku_listType(

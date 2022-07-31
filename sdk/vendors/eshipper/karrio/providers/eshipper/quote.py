@@ -67,7 +67,7 @@ def quote_request(
         package_option_type=provider_units.ShippingOption,
         required=["weight", "height", "width", "length"],
     )
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

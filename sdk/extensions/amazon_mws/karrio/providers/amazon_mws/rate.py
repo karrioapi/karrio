@@ -53,7 +53,7 @@ def _extract_details(
 
 def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)
-    options = lib.to_options(payload.options)
+    options = lib.to_shipping_options(payload.options)
     services = lib.to_services(payload.services, provider_units.Service)
 
     request = amazon.RateRequest(

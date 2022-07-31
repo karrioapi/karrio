@@ -63,12 +63,12 @@ def parse_shipment_response(
     documents = lib.find_element("ShipmentDocuments", response)
 
     shipment = (
-        _extract_shipment((details, documents), settings) if len(details) > 0 else None
+        _extract_details((details, documents), settings) if len(details) > 0 else None
     )
     return shipment, provider_error.parse_error_response(response, settings)
 
 
-def _extract_shipment(
+def _extract_details(
     details: typing.Tuple[typing.List[lib.Element], typing.List[lib.Element]],
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
@@ -128,7 +128,7 @@ def shipment_request(
         package_option_type=provider_units.ShippingOption,
     )
     service = provider_units.ServiceType.map(payload.service).value_or_key
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

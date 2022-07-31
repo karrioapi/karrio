@@ -107,7 +107,7 @@ def shipment_request(
     customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
     is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         is_dutiable=is_dutiable,
         package_options=packages.options,
@@ -173,7 +173,7 @@ def shipment_request(
                 or 1.0,
                 DeclaredCurrency=duty.currency or options.currency.state or "USD",
                 ScheduleB=None,
-                ExportLicense=customs.license_number.state,
+                ExportLicense=customs.options.license_number.state,
                 ShipperEIN=None,
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm,

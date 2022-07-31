@@ -1,3 +1,4 @@
+import functools
 import typing
 import datetime
 import karrio.core.utils as utils
@@ -234,7 +235,12 @@ def to_element(
     :param xml_str:
     :return: Node Element
     """
-    xml_strings: typing.List[str] = list(xml_texts)
+    xml_strings: typing.List[str] = functools.reduce(
+        lambda acc, s: [*acc, *s] if isinstance(s, list) else [*acc, s],
+        list(xml_texts),
+        [],
+    )
+
     xml_text = (
         utils.XP.bundle_xml(xml_strings)
         if len(xml_strings) > 1
@@ -282,16 +288,16 @@ def create_envelope(
 # -----------------------------------------------------------
 
 
-def to_options(
+def to_shipping_options(
     options: dict,
-    initializer: typing.Optional[typing.Callable[[dict], units.Options]] = None,
+    initializer: typing.Optional[typing.Callable[[dict], units.ShippingOptions]] = None,
     **kwargs,
-) -> units.Options:
+) -> units.ShippingOptions:
 
     if initializer is not None:
         return initializer(options, **kwargs)
 
-    return units.Options(options)
+    return units.ShippingOptions(options)
 
 
 def to_services(
@@ -309,8 +315,28 @@ def to_services(
 
 def to_customs_info(
     customs: models.Customs,
+    option_type: typing.Type[utils.Enum] = None,
 ):
-    return units.CustomsInfo(customs)
+    return units.CustomsInfo(customs, option_type=option_type or utils.Enum)
+
+
+def to_document_files(
+    document_files: typing.List[models.DocumentFile],
+) -> typing.List[units.ComputedDocumentFile]:
+    return [
+        units.ComputedDocumentFile(document_file) for document_file in document_files
+    ]
+
+
+def to_upload_options(
+    options: dict,
+    option_type: typing.Optional[typing.Type[utils.Enum]] = None,
+):
+    return units.Options(
+        options,
+        option_type=option_type,
+        base_option_type=units.DocumentUploadOption,
+    )
 
 
 # -----------------------------------------------------------

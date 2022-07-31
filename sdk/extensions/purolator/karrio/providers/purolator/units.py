@@ -113,7 +113,7 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in NON_OFFICIAL_SERVICES  # type: ignore
 
-    return units.Options(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 
 NON_OFFICIAL_SERVICES = [ShippingOption.purolator_show_alternative_services.name]

@@ -38,7 +38,7 @@ def shipment_request(
     ref = f"ref_{uuid4()}"
     package = lib.to_packages(payload.parcels).single
     service = provider_units.ShipmentService.map(payload.service).value_or_key
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,

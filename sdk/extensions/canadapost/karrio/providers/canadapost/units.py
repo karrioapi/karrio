@@ -1,61 +1,65 @@
-from karrio.core.utils.enum import OptionEnum
-import karrio.lib as lib
-from karrio.core.utils import Enum, Flag
-from karrio.core.units import MeasurementOptionsType, PackagePreset, Options
+import karrio.core.units as units
+import karrio.core.utils as utils
 
-PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
+PRESET_DEFAULTS = dict(
+    dimension_unit="CM",
+    weight_unit="KG",
+)
+
+MeasurementOptions = units.MeasurementOptionsType(
+    quant=0.1,
+    min_kg=0.01,
+    min_in=0.01,
+)
 
 
-class PackagePresets(Flag):
+class PackagePresets(utils.Flag):
     """
     Note that dimensions are in CM and weight in KG
     """
 
-    canadapost_mailing_box = PackagePreset(
+    canadapost_mailing_box = units.PackagePreset(
         **dict(width=10.2, height=15.2, length=1.0), **PRESET_DEFAULTS
     )
-    canadapost_extra_small_mailing_box = PackagePreset(
+    canadapost_extra_small_mailing_box = units.PackagePreset(
         **dict(width=14.0, height=14.0, length=14.0), **PRESET_DEFAULTS
     )
-    canadapost_small_mailing_box = PackagePreset(
+    canadapost_small_mailing_box = units.PackagePreset(
         **dict(width=28.6, height=22.9, length=6.4), **PRESET_DEFAULTS
     )
-    canadapost_medium_mailing_box = PackagePreset(
+    canadapost_medium_mailing_box = units.PackagePreset(
         **dict(width=31.0, height=23.5, length=13.3), **PRESET_DEFAULTS
     )
-    canadapost_large_mailing_box = PackagePreset(
+    canadapost_large_mailing_box = units.PackagePreset(
         **dict(width=38.1, height=30.5, length=9.5), **PRESET_DEFAULTS
     )
-    canadapost_extra_large_mailing_box = PackagePreset(
+    canadapost_extra_large_mailing_box = units.PackagePreset(
         **dict(width=40.0, height=30.5, length=21.6), **PRESET_DEFAULTS
     )
-    canadapost_corrugated_small_box = PackagePreset(
+    canadapost_corrugated_small_box = units.PackagePreset(
         **dict(width=42.0, height=32.0, length=32.0), **PRESET_DEFAULTS
     )
-    canadapost_corrugated_medium_box = PackagePreset(
+    canadapost_corrugated_medium_box = units.PackagePreset(
         **dict(width=46.0, height=38.0, length=32.0), **PRESET_DEFAULTS
     )
-    canadapost_corrugated_large_box = PackagePreset(
+    canadapost_corrugated_large_box = units.PackagePreset(
         **dict(width=46.0, height=46.0, length=40.6), **PRESET_DEFAULTS
     )
-    canadapost_xexpresspost_certified_envelope = PackagePreset(
+    canadapost_xexpresspost_certified_envelope = units.PackagePreset(
         **dict(width=26.0, height=15.9, weight=0.5, length=1.5), **PRESET_DEFAULTS
     )
-    canadapost_xexpresspost_national_large_envelope = PackagePreset(
+    canadapost_xexpresspost_national_large_envelope = units.PackagePreset(
         **dict(width=40.0, height=29.2, weight=1.36, length=1.5), **PRESET_DEFAULTS
     )
-    canadapost_xexpresspost_regional_small_envelope = PackagePreset(
+    canadapost_xexpresspost_regional_small_envelope = units.PackagePreset(
         **dict(width=26.0, height=15.9, weight=0.5, length=1.5), **PRESET_DEFAULTS
     )
-    canadapost_xexpresspost_regional_large_envelope = PackagePreset(
+    canadapost_xexpresspost_regional_large_envelope = units.PackagePreset(
         **dict(width=40.0, height=29.2, weight=1.36, length=1.5), **PRESET_DEFAULTS
     )
 
 
-MeasurementOptions = MeasurementOptionsType(quant=0.1, min_kg=0.01, min_in=0.01)
-
-
-class LabelType(Enum):
+class LabelType(utils.Enum):
     PDF_4x6 = ("PDF", "4x6")
     PDF_8_5x11 = ("PDF", "8.5x11")
     ZPL_4x6 = ("ZPL", "4x6")
@@ -65,7 +69,7 @@ class LabelType(Enum):
     ZPL = ZPL_4x6
 
 
-class PaymentType(Flag):
+class PaymentType(utils.Flag):
     account = "Account"
     card = "CreditCard"
     supplier_account = "SupplierAccount"
@@ -76,7 +80,7 @@ class PaymentType(Flag):
     credit_card = card
 
 
-class ServiceType(Enum):
+class ServiceType(utils.Enum):
     canadapost_regular_parcel = "DOM.RP"
     canadapost_expedited_parcel = "DOM.EP"
     canadapost_xpresspost = "DOM.XP"
@@ -102,22 +106,22 @@ class ServiceType(Enum):
     canadapost_tracked_packet_international = "INT.TP"
 
 
-class ShippingOption(Enum):
-    canadapost_signature = OptionEnum("SO")
-    canadapost_coverage = OptionEnum("COV", float)
-    canadapost_collect_on_delivery = OptionEnum("COD", float)
-    canadapost_proof_of_age_required_18 = OptionEnum("PA18")
-    canadapost_proof_of_age_required_19 = OptionEnum("PA19")
-    canadapost_card_for_pickup = OptionEnum("HFP")
-    canadapost_do_not_safe_drop = OptionEnum("DNS")
-    canadapost_leave_at_door = OptionEnum("LAD")
-    canadapost_deliver_to_post_office = OptionEnum("D2PO")
-    canadapost_return_at_senders_expense = OptionEnum("RASE")
-    canadapost_return_to_sender = OptionEnum("RTS")
-    canadapost_abandon = OptionEnum("ABAN")
+class ShippingOption(utils.Enum):
+    canadapost_signature = utils.OptionEnum("SO")
+    canadapost_coverage = utils.OptionEnum("COV", float)
+    canadapost_collect_on_delivery = utils.OptionEnum("COD", float)
+    canadapost_proof_of_age_required_18 = utils.OptionEnum("PA18")
+    canadapost_proof_of_age_required_19 = utils.OptionEnum("PA19")
+    canadapost_card_for_pickup = utils.OptionEnum("HFP")
+    canadapost_do_not_safe_drop = utils.OptionEnum("DNS")
+    canadapost_leave_at_door = utils.OptionEnum("LAD")
+    canadapost_deliver_to_post_office = utils.OptionEnum("D2PO")
+    canadapost_return_at_senders_expense = utils.OptionEnum("RASE")
+    canadapost_return_to_sender = utils.OptionEnum("RTS")
+    canadapost_abandon = utils.OptionEnum("ABAN")
 
     """ Custom Option """
-    canadapost_cost_center = OptionEnum("cost-centre")
+    canadapost_cost_center = utils.OptionEnum("cost-centre")
 
     """ Unified Option type mapping """
     insurance = canadapost_coverage
@@ -163,9 +167,9 @@ TRACKING_DELIVERED_EVENT_CODES = [
 
 def shipping_options_initializer(
     options: dict,
-    package_options: Options = None,
+    package_options: units.ShippingOptions = None,
     is_international: bool = False,
-) -> Options:
+) -> units.ShippingOptions:
     # Apply default non delivery options for if international.
     no_international_option_specified: bool = not any(
         key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
@@ -182,4 +186,4 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in CUSTOM_OPTIONS  # type:ignore
 
-    return Options(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)

@@ -52,7 +52,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     package = lib.to_packages(
         payload.parcels, package_option_type=provider_units.ShippingOption
     ).single
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,

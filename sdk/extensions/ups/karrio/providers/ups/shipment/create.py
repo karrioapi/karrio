@@ -77,7 +77,7 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable[UPSShipmentRequest]:
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

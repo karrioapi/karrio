@@ -53,7 +53,7 @@ def _extract_details(
 
 def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)
-    options = lib.to_options(payload.options)
+    options = lib.to_shipping_options(payload.options)
 
     request = amazon.PurchaseShipmentRequest(
         clientReferenceId=payload.reference or payload.id,

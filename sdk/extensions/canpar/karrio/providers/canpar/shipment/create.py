@@ -70,7 +70,7 @@ def _process_shipment(
 ) -> lib.Job:
     service_type = provider_units.Service.map(payload.service).value_or_key
     packages = lib.to_packages(payload.parcels)
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

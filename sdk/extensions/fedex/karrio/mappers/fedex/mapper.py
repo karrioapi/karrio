@@ -45,6 +45,11 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable[str]:
         return providers.shipment_cancel_request(payload, self.settings)
 
+    def create_document_upload_request(
+        self, payload: models.DocumentUploadRequest
+    ) -> lib.Serializable:
+        return providers.document_upload_request(payload, self.settings)
+
     def parse_address_validation_response(
         self, response: lib.Deserializable
     ) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
@@ -92,3 +97,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
         return providers.parse_tracking_response(response.deserialize(), self.settings)
+
+    def parse_document_upload_response(
+        self,
+        response: lib.Deserializable,
+    ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+        return providers.parse_document_upload_response(
+            response.deserialize(), self.settings
+        )

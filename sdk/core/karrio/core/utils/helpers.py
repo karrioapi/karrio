@@ -23,10 +23,16 @@ def identity(value: Any) -> Any:
     return value
 
 
-def image_to_pdf(image_str: str) -> str:
-    content = base64.b64decode(image_str)
+def to_buffer(encoded_file: str) -> io.BytesIO:
+    content = base64.b64decode(encoded_file)
     buffer = io.BytesIO()
     buffer.write(content)
+
+    return buffer
+
+
+def image_to_pdf(image_str: str) -> str:
+    buffer = to_buffer(image_str)
     image = Image.open(buffer)
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF")
@@ -38,9 +44,7 @@ def bundle_pdfs(base64_strings: List[str]) -> PdfFileMerger:
     merger = PdfFileMerger(strict=False)
 
     for b64_str in base64_strings:
-        content = base64.b64decode(b64_str)
-        buffer = io.BytesIO()
-        buffer.write(content)
+        buffer = to_buffer(b64_str)
         merger.append(buffer)
 
     return merger

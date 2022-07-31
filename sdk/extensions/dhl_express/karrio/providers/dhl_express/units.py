@@ -577,7 +577,7 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption  # type: ignore
 
-    return units.Options(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 
 COUNTRY_PREFERED_UNITS = dict(

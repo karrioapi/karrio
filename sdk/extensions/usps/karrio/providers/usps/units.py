@@ -187,7 +187,7 @@ def shipping_options_initializer(
     def items_filter(code: str) -> bool:
         return code in ShippingOption and "usps_option" not in code  # type:ignore
 
-    return units.Options(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 
 class ShipmentService(Enum):

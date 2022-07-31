@@ -61,7 +61,7 @@ def shipment_request(
         payload.parcels, package_option_type=provider_units.ShippingOption
     ).single
     service = provider_units.ServiceType.map(payload.service).value_or_key
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
@@ -74,7 +74,7 @@ def shipment_request(
     redirect_address = models.Address(
         **(options.usps_option_redirect_non_delivery.state or {})
     )
-
+    print(customs._options.content, customs.aes, "<<<,")
     request = eVSRequest(
         USERID=settings.username,
         Option=None,
@@ -181,14 +181,14 @@ def shipment_request(
         ContentComments=None,
         RestrictionType=None,
         RestrictionComments=None,
-        AESITN=customs.aes.state,
+        AESITN=customs.options.aes.state,
         ImportersReference=None,
         ImportersContact=None,
         ExportersReference=None,
         ExportersContact=None,
         InvoiceNumber=customs.invoice,
-        LicenseNumber=customs.license_number.state,
-        CertificateNumber=customs.certificate_number.state,
+        LicenseNumber=customs.options.license_number.state,
+        CertificateNumber=customs.options.certificate_number.state,
         NonDeliveryOption=provider_units.ShippingOption.non_delivery_from(options),
         AltReturnAddress1=redirect_address.address_line1,
         AltReturnAddress2=redirect_address.address_line2,
