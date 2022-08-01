@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from tests.fedex.fixture import gateway
 
 import karrio

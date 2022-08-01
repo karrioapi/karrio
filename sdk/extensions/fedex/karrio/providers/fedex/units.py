@@ -422,15 +422,19 @@ class RateType(utils.Enum):
 
 class UploadDocumentType(utils.Flag):
     fedex_certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
-    fedex_customer = "CUSTOMER"
-    fedex_cafe = "FEDEX_CAFE"
-    fedex_cls = "FEDEX_CLS"
-    fedex_fidt = "FEDEX_FIDT"
-    fedex_fxrs = "FEDEX_FXRS"
-    fedex_gsmw = "FEDEX_GSMW"
-    fedex_gtm = "FEDEX_GTM"
+    fedex_commercial_invoice = "COMMERCIAL_INVOICE"
+    fedex_etd_label = "ETD_LABEL"
+    fedex_nafta_certificate_of_origin = "NAFTA_CERTIFICATE_OF_ORIGIN"
+    fedex_net_rate_sheet = "NET_RATE_SHEET"
     fedex_other = "OTHER"
+    fedex_pro_forma_invoice = "PRO_FORMA_INVOICE"
+
+    """ Unified upload document type mapping """
+    certificate_of_origin = fedex_certificate_of_origin
+    commercial_invoice = fedex_commercial_invoice
+    other = fedex_other
 
 
 class DocumentUploadOption(utils.Enum):
     fedex_document_producer = utils.OptionEnum("fedex_document_producer")
+    fedex_expiration_date = utils.OptionEnum("fedex_expiration_date")

@@ -21,7 +21,7 @@ class TestUPSRating(unittest.TestCase):
         )
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetXML)
 
-    @patch("karrio.mappers.ups.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -29,21 +29,21 @@ class TestUPSRating(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Rate")
 
     def test_parse_package_quote_response(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateteParsingError)
 
     def test_parse_rate_missing_args_error(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

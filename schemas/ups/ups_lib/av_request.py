@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Nov 10 10:00:57 2021 by generateDS.py version 2.40.5.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Mon Aug  1 09:54:31 2022 by generateDS.py version 2.40.13.
+# Python 3.8.7 (v3.8.7:6503f05dd5, Dec 21 2020, 12:45:15)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/AVRequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/av_request.py" ./schemas/AVRequest.xsd
+#   /Users/danielk/Documents/karrio/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/av_request.py" ./schemas/AVRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups
@@ -35,6 +35,7 @@ from lxml import etree as etree_
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -194,13 +195,16 @@ except ModulenotfoundExp_ as exp:
                 'str_pretty_print': True,
                 'str_indent_level': 0,
                 'str_namespaceprefix': '',
-                'str_name': None,
+                'str_name': self.__class__.__name__,
                 'str_namespacedefs': '',
             }
             for n in settings:
                 if hasattr(self, n):
-                    setattr(settings[n], self[n])
-            from io import StringIO
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
             output = StringIO()
             self.export(
                 output,
@@ -343,6 +347,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -522,6 +527,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -767,6 +773,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -1469,9 +1476,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 

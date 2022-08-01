@@ -41,7 +41,7 @@ class TestUPSPickup(unittest.TestCase):
         self.assertEqual(cancel_request.data.serialize(), PickupCancelRequestXML)
 
     def test_create_pickup(self):
-        with patch("karrio.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
 
@@ -56,7 +56,7 @@ class TestUPSPickup(unittest.TestCase):
             )
 
     def test_update_pickup(self):
-        with patch("karrio.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mocks:
             mocks.side_effect = [
                 PickupRateResponseXML,
                 PickupResponseXML,
@@ -79,7 +79,7 @@ class TestUPSPickup(unittest.TestCase):
             )
 
     def test_parse_pickup_reply(self):
-        with patch("karrio.mappers.ups.proxy.http") as mocks:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
@@ -88,7 +88,7 @@ class TestUPSPickup(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_cancel_reply(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponseXML
             parsed_response = (
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()

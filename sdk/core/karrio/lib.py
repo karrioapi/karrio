@@ -13,6 +13,7 @@ Serializable = utils.Serializable
 Pipeline = utils.Pipeline
 Envelope = utils.Envelope
 Element = utils.Element
+Tracer = utils.Tracer
 Trace = utils.Trace
 Job = utils.Job
 

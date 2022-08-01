@@ -1,5 +1,5 @@
-import base64
 import fedex_lib.upload_document_service_v17 as fedex
+import base64
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -92,7 +92,7 @@ def document_upload_request(
                     ),
                     FileName=document.doc_name,
                     DocumentContent=base64.b64decode(document.doc_file),
-                    ExpirationDate=options.expiration_date.state,
+                    ExpirationDate=options.fedex_expiration_date.state,
                 )
                 for index, document in enumerate(document_files, start=1)
             ],

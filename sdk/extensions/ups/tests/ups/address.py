@@ -21,7 +21,7 @@ class TestUPSAddressValidation(unittest.TestCase):
         self.assertEqual(request.serialize(), AddressValidationRequestXML)
 
     def test_validate_address(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
 
@@ -31,7 +31,7 @@ class TestUPSAddressValidation(unittest.TestCase):
             )
 
     def test_parse_address_validation_response(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
                 karrio.Address.validate(self.AddressValidationRequest)

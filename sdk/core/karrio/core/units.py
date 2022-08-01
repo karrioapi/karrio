@@ -100,6 +100,14 @@ class DimensionUnit(utils.Enum):
     IN = "IN"
 
 
+class UploadDocumentType(utils.Enum):
+    """universal upload document types"""
+
+    certificate_of_origin = "certificate_of_origin"
+    commercial_invoice = "commercial_invoice"
+    other = "other"
+
+
 class MeasurementOptionsType(typing.NamedTuple):
     min_in: typing.Optional[float] = None
     min_cm: typing.Optional[float] = None

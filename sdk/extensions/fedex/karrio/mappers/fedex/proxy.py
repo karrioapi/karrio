@@ -1,4 +1,3 @@
-from typing import Any
 from fedex_lib.ship_service_v26 import TrackingId
 
 import karrio.lib as lib
@@ -9,7 +8,7 @@ from karrio.mappers.fedex.settings import Settings
 class Proxy(proxy.Proxy):
     settings: Settings
 
-    def _send_request(self, path: str, request: lib.Serializable[Any]) -> str:
+    def _send_request(self, path: str, request: lib.Serializable) -> str:
         return lib.request(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),

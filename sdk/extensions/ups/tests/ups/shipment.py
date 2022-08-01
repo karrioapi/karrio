@@ -33,7 +33,7 @@ class TestUPSShipment(unittest.TestCase):
         )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetXML)
 
-    @patch("karrio.mappers.ups.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -41,7 +41,7 @@ class TestUPSShipment(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Ship")
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = NegotiatedShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -51,7 +51,7 @@ class TestUPSShipment(unittest.TestCase):
             )
 
     def test_parse_publish_rate_shipment_response(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -59,7 +59,7 @@ class TestUPSShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
-        with patch("karrio.mappers.ups.proxy.http") as mock:
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
