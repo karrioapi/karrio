@@ -1,11 +1,7 @@
 import attr
 import uuid
-from typing import List, Tuple
-from karrio.core.utils import (
-    Serializable,
-    Deserializable,
-)
-from karrio.core.units import Packages, Options
+import typing
+import karrio.lib as lib
 from karrio.core.models import ServiceLabel, ShipmentRequest, Message
 from karrio.universal.providers.shipping import (
     ShippingMixinSettings,
@@ -18,21 +14,23 @@ class ShippingMixinProxy:
     settings: ShippingMixinSettings
 
     def create_shipment(
-        self, request: Serializable[ShipmentRequest]
-    ) -> Deserializable[Tuple[List[Tuple[str, ServiceLabel]], List[Message]]]:
+        self, request: lib.Serializable[ShipmentRequest]
+    ) -> lib.Deserializable[
+        typing.Tuple[typing.List[typing.Tuple[str, ServiceLabel]], typing.List[Message]]
+    ]:
         response = generate_service_label(request.serialize(), self.settings)
 
-        return Deserializable(response)
+        return lib.Deserializable(response)
 
 
 def generate_service_label(
     shipment: ShipmentRequest, settings: ShippingMixinSettings
-) -> Tuple[List[Tuple[str, ServiceLabel]], List[Message]]:
-    messages: List[Message] = []
-    service_labels: List[Tuple[str, ServiceLabel]] = []
+) -> typing.Tuple[typing.List[typing.Tuple[str, ServiceLabel]], typing.List[Message]]:
+    messages: typing.List[Message] = []
+    service_labels: typing.List[typing.Tuple[str, ServiceLabel]] = []
 
-    packages = Packages(shipment.parcels)
-    options = Options(shipment.options)
+    packages = lib.to_packages(shipment.parcels)
+    options = lib.to_shipping_options(shipment.options)
     service = shipment.service
     service_name = next(
         (s.service_name for s in settings.services if s.service_code == service),

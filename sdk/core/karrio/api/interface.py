@@ -1,50 +1,40 @@
 """The Fluent API Abstraction and interfaces definitions."""
 
 import attr
+import typing
 import logging
 import functools
-from typing import Callable, TypeVar, Union, List, Tuple
-from karrio.api.gateway import Gateway
-from karrio.core.utils import Serializable, Deserializable, DP, exec_async
-from karrio.core.errors import ShippingSDKDetailedError
-from karrio.core.models import (
-    AddressValidationRequest,
-    RateRequest,
-    ShipmentRequest,
-    TrackingRequest,
-    PickupRequest,
-    PickupCancelRequest,
-    PickupUpdateRequest,
-    Message,
-    ShipmentCancelRequest,
-)
+import karrio.lib as lib
+import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.api.gateway as gateway
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T")
-S = TypeVar("S")
+T = typing.TypeVar("T")
+S = typing.TypeVar("S")
 
 
 def abort(
-    error: ShippingSDKDetailedError, gateway: Gateway
-) -> Tuple[None, List[Message]]:
+    error: errors.ShippingSDKDetailedError, gateway: gateway.Gateway
+) -> typing.Tuple[None, typing.List[models.Message]]:
     """Process aborting helper
 
     Args:
-        error (ShippingSDKDetailedError): the karrioror raised during the process
-        gateway (Gateway): the gateway in use during on process
+        error (errors.ShippingSDKDetailedError): the karrioror raised during the process
+        gateway (gateway.Gateway): the gateway in use during on process
 
     Returns:
-        Tuple[None, List[Message]]: a tuple of empty response and a list or error messages
+        Tuple[None, List[models.Message]]: a tuple of empty response and a list or error messages
     """
     return (
         None,
         [
-            Message(
+            models.Message(
                 code=(
                     error.code
                     if hasattr(error, "code")
-                    else ShippingSDKDetailedError.code
+                    else errors.ShippingSDKDetailedError.code
                 ),
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,
@@ -55,11 +45,11 @@ def abort(
     )
 
 
-def fail_safe(gateway: Gateway):
+def fail_safe(gateway: gateway.Gateway):
     """Decorate operation and requests calls to enrich any failure context
 
     Args:
-        gateway (Gateway): The gateway in use
+        gateway (gateway.Gateway): The gateway in use
 
     Returns:
         Decorator
@@ -82,7 +72,7 @@ def fail_safe(gateway: Gateway):
     return catcher
 
 
-def check_operation(gateway: Gateway, request: str, **kwargs):
+def check_operation(gateway: gateway.Gateway, request: str, **kwargs):
     errors = gateway.check(request, **kwargs)
 
     if any(errors):
@@ -95,7 +85,7 @@ def check_operation(gateway: Gateway, request: str, **kwargs):
 class IDeserialize:
     """A lazy deserializer type class"""
 
-    deserialize: Callable[[], S]
+    deserialize: typing.Callable[[], S]
 
     def parse(self):
         """Execute the response deserialization"""
@@ -109,9 +99,9 @@ class IDeserialize:
 class IRequestFrom:
     """A lazy request (from) type class"""
 
-    action: Callable[[Gateway], IDeserialize]
+    action: typing.Callable[[gateway.Gateway], IDeserialize]
 
-    def from_(self, gateway: Gateway) -> IDeserialize:
+    def from_(self, gateway: gateway.Gateway) -> IDeserialize:
         """Execute the request action from the provided gateway"""
         return fail_safe(gateway)(self.action)(gateway)
 
@@ -120,9 +110,9 @@ class IRequestFrom:
 class IRequestFromMany:
     """A lazy request (from one or many) type class"""
 
-    action: Callable[[List[Gateway]], IDeserialize]
+    action: typing.Callable[[typing.List[gateway.Gateway]], IDeserialize]
 
-    def from_(self, *gateways: Gateway) -> IDeserialize:
+    def from_(self, *gateways: gateway.Gateway) -> IDeserialize:
         """Execute the request action(s) from the provided gateway(s)"""
         return self.action(list(gateways))
 
@@ -131,7 +121,9 @@ class Address:
     """The unified Address API fluent interface"""
 
     @staticmethod
-    def validate(args: Union[AddressValidationRequest, dict]) -> IRequestFrom:
+    def validate(
+        args: typing.Union[models.AddressValidationRequest, dict]
+    ) -> IRequestFrom:
         """Validate an address
 
         Args:
@@ -140,22 +132,22 @@ class Address:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"validate an address. payload: {DP.jsonify(args)}")
+        logger.debug(f"validate an address. payload: {lib.to_json(args)}")
         payload = (
             args
-            if isinstance(args, AddressValidationRequest)
-            else AddressValidationRequest(**args)
+            if isinstance(args, models.AddressValidationRequest)
+            else models.AddressValidationRequest(**args)
         )
 
-        def action(gateway: Gateway) -> IDeserialize:
+        def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "validate_address")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_address_validation_request(
-                payload
+            request: lib.Serializable = (
+                gateway.mapper.create_address_validation_request(payload)
             )
-            response: Deserializable = gateway.proxy.validate_address(request)
+            response: lib.Deserializable = gateway.proxy.validate_address(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -170,7 +162,7 @@ class Pickup:
     """The unified Pickup API fluent interface"""
 
     @staticmethod
-    def schedule(args: Union[PickupRequest, dict]) -> IRequestFrom:
+    def schedule(args: typing.Union[models.PickupRequest, dict]) -> IRequestFrom:
         """Schedule a pickup for one or many shipments
 
         Args:
@@ -179,16 +171,20 @@ class Pickup:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"book a pickup. payload: {DP.jsonify(args)}")
-        payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
+        logger.debug(f"book a pickup. payload: {lib.to_json(args)}")
+        payload = (
+            args
+            if isinstance(args, models.PickupRequest)
+            else models.PickupRequest(**args)
+        )
 
-        def action(gateway: Gateway):
+        def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "schedule_pickup")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_pickup_request(payload)
-            response: Deserializable = gateway.proxy.schedule_pickup(request)
+            request: lib.Serializable = gateway.mapper.create_pickup_request(payload)
+            response: lib.Deserializable = gateway.proxy.schedule_pickup(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -199,7 +195,7 @@ class Pickup:
         return IRequestFrom(action)
 
     @staticmethod
-    def cancel(args: Union[PickupCancelRequest, dict]) -> IRequestFrom:
+    def cancel(args: typing.Union[models.PickupCancelRequest, dict]) -> IRequestFrom:
         """Cancel a pickup previously scheduled
 
         Args:
@@ -208,20 +204,22 @@ class Pickup:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"cancel a pickup. payload: {DP.jsonify(args)}")
+        logger.debug(f"cancel a pickup. payload: {lib.to_json(args)}")
         payload = (
             args
-            if isinstance(args, PickupCancelRequest)
-            else PickupCancelRequest(**args)
+            if isinstance(args, models.PickupCancelRequest)
+            else models.PickupCancelRequest(**args)
         )
 
-        def action(gateway: Gateway):
+        def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "cancel_pickup")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_cancel_pickup_request(payload)
-            response: Deserializable = gateway.proxy.cancel_pickup(request)
+            request: lib.Serializable = gateway.mapper.create_cancel_pickup_request(
+                payload
+            )
+            response: lib.Deserializable = gateway.proxy.cancel_pickup(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -232,7 +230,7 @@ class Pickup:
         return IRequestFrom(action)
 
     @staticmethod
-    def update(args: Union[PickupUpdateRequest, dict]):
+    def update(args: typing.Union[models.PickupUpdateRequest, dict]):
         """Update a pickup previously scheduled
 
         Args:
@@ -241,20 +239,22 @@ class Pickup:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"update a pickup. payload: {DP.jsonify(args)}")
+        logger.debug(f"update a pickup. payload: {lib.to_json(args)}")
         payload = (
             args
-            if isinstance(args, PickupUpdateRequest)
-            else PickupUpdateRequest(**args)
+            if isinstance(args, models.PickupUpdateRequest)
+            else models.PickupUpdateRequest(**args)
         )
 
-        def action(gateway: Gateway):
+        def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "modify_pickup")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_pickup_update_request(payload)
-            response: Deserializable = gateway.proxy.modify_pickup(request)
+            request: lib.Serializable = gateway.mapper.create_pickup_update_request(
+                payload
+            )
+            response: lib.Deserializable = gateway.proxy.modify_pickup(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -269,7 +269,7 @@ class Rating:
     """The unified Rating API fluent interface"""
 
     @staticmethod
-    def fetch(args: Union[RateRequest, dict]) -> IRequestFromMany:
+    def fetch(args: typing.Union[models.RateRequest, dict]) -> IRequestFromMany:
         """Fetch shipment rates from one or many carriers
 
         Args:
@@ -278,11 +278,13 @@ class Rating:
         Returns:
             IRequestFromMany: a lazy request dataclass instance
         """
-        logger.debug(f"fetch shipment rates. payload: {DP.jsonify(args)}")
-        payload = args if isinstance(args, RateRequest) else RateRequest(**args)
+        logger.debug(f"fetch shipment rates. payload: {lib.to_json(args)}")
+        payload = (
+            args if isinstance(args, models.RateRequest) else models.RateRequest(**args)
+        )
 
-        def action(gateways: List[Gateway]):
-            def process(gateway: Gateway):
+        def action(gateways: typing.List[gateway.Gateway]):
+            def process(gateway: gateway.Gateway):
                 is_valid, abortion = check_operation(
                     gateway,
                     "get_rates",
@@ -291,8 +293,8 @@ class Rating:
                 if not is_valid:
                     return abortion
 
-                request: Serializable = gateway.mapper.create_rate_request(payload)
-                response: Deserializable = gateway.proxy.get_rates(request)
+                request: lib.Serializable = gateway.mapper.create_rate_request(payload)
+                response: lib.Deserializable = gateway.proxy.get_rates(request)
 
                 @fail_safe(gateway)
                 def deserialize():
@@ -300,9 +302,9 @@ class Rating:
 
                 return IDeserialize(deserialize)
 
-            deserializable_collection: List[IDeserialize] = exec_async(
-                lambda g: fail_safe(g)(process)(g), gateways
-            )
+            deserializable_collection: typing.List[
+                IDeserialize
+            ] = lib.run_asynchronously(lambda g: fail_safe(g)(process)(g), gateways)
 
             def flatten():
                 responses = [p.parse() for p in deserializable_collection]
@@ -319,7 +321,7 @@ class Shipment:
     """The unified Shipment API fluent interface"""
 
     @staticmethod
-    def create(args: Union[ShipmentRequest, dict]) -> IRequestFrom:
+    def create(args: typing.Union[models.ShipmentRequest, dict]) -> IRequestFrom:
         """Submit a shipment creation to a carrier.
         This operation is often referred to as Buying a shipping label
 
@@ -329,10 +331,14 @@ class Shipment:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"create a shipment. payload: {DP.jsonify(args)}")
-        payload = args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
+        logger.debug(f"create a shipment. payload: {lib.to_json(args)}")
+        payload = (
+            args
+            if isinstance(args, models.ShipmentRequest)
+            else models.ShipmentRequest(**args)
+        )
 
-        def action(gateway: Gateway):
+        def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(
                 gateway,
                 "create_shipment",
@@ -341,8 +347,8 @@ class Shipment:
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_shipment_request(payload)
-            response: Deserializable = gateway.proxy.create_shipment(request)
+            request: lib.Serializable = gateway.mapper.create_shipment_request(payload)
+            response: lib.Deserializable = gateway.proxy.create_shipment(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -353,7 +359,7 @@ class Shipment:
         return IRequestFrom(action)
 
     @staticmethod
-    def cancel(args: Union[ShipmentCancelRequest, dict]) -> IRequestFrom:
+    def cancel(args: typing.Union[models.ShipmentCancelRequest, dict]) -> IRequestFrom:
         """Cancel a shipment previously created
 
         Args:
@@ -362,22 +368,22 @@ class Shipment:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"void a shipment. payload: {DP.jsonify(args)}")
+        logger.debug(f"void a shipment. payload: {lib.to_json(args)}")
         payload = (
             args
-            if isinstance(args, ShipmentCancelRequest)
-            else ShipmentCancelRequest(**args)
+            if isinstance(args, models.ShipmentCancelRequest)
+            else models.ShipmentCancelRequest(**args)
         )
 
-        def action(gateway: Gateway):
+        def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "cancel_shipment")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_cancel_shipment_request(
+            request: lib.Serializable = gateway.mapper.create_cancel_shipment_request(
                 payload
             )
-            response: Deserializable = gateway.proxy.cancel_shipment(request)
+            response: lib.Deserializable = gateway.proxy.cancel_shipment(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -392,7 +398,7 @@ class Tracking:
     """The unified Tracking API fluent interface"""
 
     @staticmethod
-    def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
+    def fetch(args: typing.Union[models.TrackingRequest, dict]) -> IRequestFrom:
         """Fetch tracking statuses and details from a carrier
 
         Args:
@@ -401,20 +407,67 @@ class Tracking:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"track a shipment. payload: {DP.jsonify(args)}")
-        payload = args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
+        logger.debug(f"track a shipment. payload: {lib.to_json(args)}")
+        payload = (
+            args
+            if isinstance(args, models.TrackingRequest)
+            else models.TrackingRequest(**args)
+        )
 
-        def action(gateway: Gateway) -> IDeserialize:
+        def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "get_tracking")
             if not is_valid:
                 return abortion
 
-            request: Serializable = gateway.mapper.create_tracking_request(payload)
-            response: Deserializable = gateway.proxy.get_tracking(request)
+            request: lib.Serializable = gateway.mapper.create_tracking_request(payload)
+            response: lib.Deserializable = gateway.proxy.get_tracking(request)
 
             @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_tracking_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+
+class Document:
+    """The unified Document API fluent interface"""
+
+    @staticmethod
+    def upload(args: typing.Union[models.DocumentUploadRequest, dict]) -> IRequestFrom:
+        """Submit a shipment document upload to a carrier.
+        This operation is often used to upload customs documents to fast track shipment at borders
+
+        Args:
+            args (Union[DocumentUploadRequest, dict]): the document upload request payload
+
+        Returns:
+            IRequestWith: a lazy request dataclass instance
+        """
+        logger.debug(f"upload a document. payload: {lib.to_json(args)}")
+        payload = (
+            args
+            if isinstance(args, models.DocumentUploadRequest)
+            else models.DocumentUploadRequest(**args)
+        )
+
+        def action(gateway: gateway.Gateway):
+            is_valid, abortion = check_operation(
+                gateway,
+                "upload_document",
+            )
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = gateway.mapper.create_document_upload_request(
+                payload
+            )
+            response: lib.Deserializable = gateway.proxy.upload_document(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_document_upload_response(response)
 
             return IDeserialize(deserialize)
 

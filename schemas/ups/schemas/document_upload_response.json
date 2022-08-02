@@ -1,0 +1,16 @@
+{
+  "UploadResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "1",
+        "Description": "Success"
+      },
+      "TransactionReference": {
+        "CustomerContext": "Your Customer Context"
+      }
+    },
+    "FormsHistoryDocumentID": {
+      "DocumentID": "2016-01-18-11.01.07.589501"
+    }
+  }
+}

@@ -46,7 +46,7 @@ class TestFedExPickup(unittest.TestCase):
         self.assertEqual(cancel_pickup_request.data.serialize(), PickupCancelRequestXML)
 
     def test_create_pickup(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mocks:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML]
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
 
@@ -61,7 +61,7 @@ class TestFedExPickup(unittest.TestCase):
             )
 
     def test_update_pickup(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mocks:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mocks:
             mocks.side_effect = [
                 PickupAvailabilityResponseXML,
                 PickupResponseXML,
@@ -84,7 +84,7 @@ class TestFedExPickup(unittest.TestCase):
             )
 
     def test_parse_pickup_reply(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mocks:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML]
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
@@ -93,13 +93,15 @@ class TestFedExPickup(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_cancel_reply(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponseXML
             parsed_response = (
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupCancelResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedPickupCancelResponse
+            )
 
 
 if __name__ == "__main__":

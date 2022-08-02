@@ -80,7 +80,7 @@ def rate_request(
 ) -> lib.Serializable[priceRequest]:
     package = lib.to_packages(payload.parcels).single
     service = lib.to_services(payload.services, provider_units.ShipmentService).first
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,

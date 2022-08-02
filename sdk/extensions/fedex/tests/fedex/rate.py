@@ -42,7 +42,7 @@ class TestFeDexQuote(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestUsingPackagePresetXML)
 
-    @patch("karrio.mappers.fedex.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.fedex.proxy.lib.request", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -50,14 +50,14 @@ class TestFeDexQuote(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/rate")
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error_response(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = RateErrorResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     meter_number: str
     account_number: str
     user_key: str = None
+    language_code: str = "en"
     account_country_code: str = None
 
     id: str = None

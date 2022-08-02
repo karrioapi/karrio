@@ -22,3 +22,7 @@ from karrio.providers.ups.pickup import (
     pickup_cancel_request,
     pickup_request,
 )
+from karrio.providers.ups.document import (
+    parse_document_upload_response,
+    document_upload_request,
+)

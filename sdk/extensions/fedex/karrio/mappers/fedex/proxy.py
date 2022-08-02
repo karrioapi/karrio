@@ -1,23 +1,15 @@
-from typing import Any
 from fedex_lib.ship_service_v26 import TrackingId
-from karrio.core.utils import (
-    XP,
-    request as http,
-    Pipeline,
-    Serializable,
-    Deserializable,
-    Job,
-    Envelope,
-)
-from karrio.api.proxy import Proxy as BaseProxy
+
+import karrio.lib as lib
+import karrio.api.proxy as proxy
 from karrio.mappers.fedex.settings import Settings
 
 
-class Proxy(BaseProxy):
+class Proxy(proxy.Proxy):
     settings: Settings
 
-    def _send_request(self, path: str, request: Serializable[Any]) -> str:
-        return http(
+    def _send_request(self, path: str, request: lib.Serializable) -> str:
+        return lib.request(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),
             trace=self.trace_as("xml"),
@@ -25,34 +17,42 @@ class Proxy(BaseProxy):
             headers={"Content-Type": "application/xml"},
         )
 
-    def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def validate_address(
+        self, request: lib.Serializable[lib.Envelope]
+    ) -> lib.Deserializable[str]:
         response = self._send_request("/addressvalidation", request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def get_rates(
+        self, request: lib.Serializable[lib.Envelope]
+    ) -> lib.Deserializable[str]:
         response = self._send_request("/rate", request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def get_tracking(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def get_tracking(
+        self, request: lib.Serializable[lib.Envelope]
+    ) -> lib.Deserializable[str]:
         response = self._send_request("/track", request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def create_shipment(
+        self, request: lib.Serializable[lib.Envelope]
+    ) -> lib.Deserializable[str]:
 
         requests = request.serialize()
-        response = self._send_request("/ship", Serializable(requests[0]))
-        master_id = XP.find(
-            "MasterTrackingId", XP.to_xml(response), TrackingId, first=True
+        response = self._send_request("/ship", lib.Serializable(requests[0]))
+        master_id = lib.find_element(
+            "MasterTrackingId", lib.to_element(response), TrackingId, first=True
         )
 
         if len(requests) > 1 and master_id is not None:
             responses = [
                 self._send_request(
                     "/ship",
-                    Serializable(
+                    lib.Serializable(
                         request.replace(
                             "[MASTER_ID_TYPE]", master_id.TrackingIdType
                         ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber),
@@ -60,40 +60,57 @@ class Proxy(BaseProxy):
                 )
                 for request in requests[1:]
             ]
-            return Deserializable(XP.bundle_xml([response, *responses]), XP.to_xml)
+            return lib.Deserializable([response, *responses], lib.to_element)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def cancel_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_shipment(
+        self, request: lib.Serializable[lib.Envelope]
+    ) -> lib.Deserializable[str]:
         response = self._send_request("/ship", request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-        def process(job: Job):
+    def schedule_pickup(
+        self, request: lib.Serializable[lib.Pipeline]
+    ) -> lib.Deserializable[str]:
+        def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
             return self._send_request("/pickup", job.data)
 
-        pipeline: Pipeline = request.serialize()
+        pipeline: lib.Pipeline = request.serialize()
         response = pipeline.apply(process)
 
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def modify_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-        def process(job: Job):
+    def modify_pickup(
+        self, request: lib.Serializable[lib.Pipeline]
+    ) -> lib.Deserializable[str]:
+        def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
             return self._send_request("/pickup", job.data)
 
-        pipeline: Pipeline = request.serialize()
+        pipeline: lib.Pipeline = request.serialize()
         response = pipeline.apply(process)
 
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_pickup(
+        self,
+        request: lib.Serializable[lib.Envelope],
+    ) -> lib.Deserializable[str]:
         response = self._send_request("/pickup", request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
+
+    def upload_document(
+        self,
+        request: lib.Serializable[lib.Envelope],
+    ) -> lib.Deserializable:
+        response = self._send_request("/uploaddocument", request)
+
+        return lib.Deserializable(response, lib.to_element)

@@ -119,7 +119,7 @@ def shipping_options_initializer(
     if package_options is not None:
         options.update(package_options.content)
 
-    return units.Options(options, ShippingOption)
+    return units.ShippingOptions(options, ShippingOption)
 
 
 class Surcharge(Flag):

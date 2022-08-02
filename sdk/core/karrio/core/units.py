@@ -1,29 +1,15 @@
 """Karrio universal data types and units definitions"""
-import functools
-import numbers
+
+import pathlib
 import attr
+import typing
+import numbers
+import functools
+import mimetypes
 import phonenumbers
-from typing import (
-    Callable,
-    Dict,
-    List,
-    Type,
-    Optional,
-    Iterator,
-    Iterable,
-    Tuple,
-    Any,
-    Union,
-    cast,
-    NamedTuple,
-)
-from karrio.core.utils import NF, Enum, OptionEnum, SF, identity
-from karrio.core.models import Customs, Parcel, Address
-from karrio.core.errors import (
-    FieldError,
-    FieldErrorCode,
-    MultiParcelNotSupportedError,
-)
+import karrio.core.utils as utils
+import karrio.core.models as models
+import karrio.core.errors as errors
 
 
 @attr.s(auto_attribs=True)
@@ -38,20 +24,20 @@ class PackagePreset:
     packaging_type: str = None
 
 
-class LabelType(Enum):
+class LabelType(utils.Enum):
     PDF = "PDF"
     ZPL = "ZPL"
     PNG = "PNG"
 
 
-class DocFormat(Enum):
+class DocFormat(utils.Enum):
     gif = "GIF"
     jpg = "JPG"
     pdf = "PDF"
     png = "PNG"
 
 
-class PackagingUnit(Enum):
+class PackagingUnit(utils.Enum):
     envelope = "Small Envelope"
     pak = "Pak"
     tube = "Tube"
@@ -61,19 +47,19 @@ class PackagingUnit(Enum):
     your_packaging = "Your Packaging"
 
 
-class PaymentType(Enum):
+class PaymentType(utils.Enum):
     sender = "SENDER"
     recipient = "RECIPIENT"
     third_party = "THIRD_PARTY"
 
 
-class CreditCardType(Enum):
+class CreditCardType(utils.Enum):
     visa = "Visa"
     mastercard = "Mastercard"
     american_express = "AmericanExpress"
 
 
-class CustomsContentType(Enum):
+class CustomsContentType(utils.Enum):
     documents = "DOCUMENTS"
     gift = "GIFT"
     sample = "SAMPLE"
@@ -82,7 +68,7 @@ class CustomsContentType(Enum):
     other = "OTHER"
 
 
-class Incoterm(Enum):
+class Incoterm(utils.Enum):
     """universal international shipment incoterm (term of trades)"""
 
     CFR = "Cost and Freight"
@@ -100,27 +86,35 @@ class Incoterm(Enum):
     FOB = "Free On Board"
 
 
-class WeightUnit(Enum):
+class WeightUnit(utils.Enum):
     """universal weight units"""
 
     KG = "KG"
     LB = "LB"
 
 
-class DimensionUnit(Enum):
+class DimensionUnit(utils.Enum):
     """universal dimension units"""
 
     CM = "CM"
     IN = "IN"
 
 
-class MeasurementOptionsType(NamedTuple):
-    min_in: Optional[float] = None
-    min_cm: Optional[float] = None
-    min_lb: Optional[float] = None
-    min_kg: Optional[float] = None
-    min_oz: Optional[float] = None
-    quant: Optional[float] = None
+class UploadDocumentType(utils.Enum):
+    """universal upload document types"""
+
+    certificate_of_origin = "certificate_of_origin"
+    commercial_invoice = "commercial_invoice"
+    other = "other"
+
+
+class MeasurementOptionsType(typing.NamedTuple):
+    min_in: typing.Optional[float] = None
+    min_cm: typing.Optional[float] = None
+    min_lb: typing.Optional[float] = None
+    min_kg: typing.Optional[float] = None
+    min_oz: typing.Optional[float] = None
+    quant: typing.Optional[float] = None
 
 
 class Dimension:
@@ -129,7 +123,7 @@ class Dimension:
     def __init__(
         self,
         value: float,
-        unit: Union[DimensionUnit, str] = DimensionUnit.CM,
+        unit: typing.Union[DimensionUnit, str] = DimensionUnit.CM,
         options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._value = value
@@ -145,7 +139,9 @@ class Dimension:
 
     def _compute(self, value: float, min_value: float = None):
         below_min = min_value is not None and value < min_value
-        return NF.decimal(value=(min_value if below_min else value), quant=self._quant)
+        return utils.NF.decimal(
+            value=(min_value if below_min else value), quant=self._quant
+        )
 
     @property
     def unit(self) -> str:
@@ -205,13 +201,13 @@ class Volume:
         if not any([self._side1.value, self._side2.value, self._side3.value]):
             return None
 
-        return NF.decimal(self._side1.M * self._side2.M * self._side3.M)
+        return utils.NF.decimal(self._side1.M * self._side2.M * self._side3.M)
 
     @property
     def cubic_meter(self):
         if self.value is None:
             return None
-        return NF.decimal(self.value * 250)
+        return utils.NF.decimal(self.value * 250)
 
 
 class Girth:
@@ -232,7 +228,7 @@ class Girth:
 
         sides.sort()
         small_side1, small_side2, _ = sides
-        return NF.decimal((small_side1 + small_side2) * 2)
+        return utils.NF.decimal((small_side1 + small_side2) * 2)
 
 
 class Weight:
@@ -241,7 +237,7 @@ class Weight:
     def __init__(
         self,
         value: float,
-        unit: Union[WeightUnit, str] = WeightUnit.KG,
+        unit: typing.Union[WeightUnit, str] = WeightUnit.KG,
         options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._value = value
@@ -256,9 +252,11 @@ class Weight:
     def __getitem__(self, item):
         return getattr(self, item)
 
-    def _compute(self, value: float, min_value: float = None) -> Optional[float]:
+    def _compute(self, value: float, min_value: float = None) -> typing.Optional[float]:
         below_min = min_value is not None and value < min_value
-        return NF.decimal(value=(min_value if below_min else value), quant=self._quant)
+        return utils.NF.decimal(
+            value=(min_value if below_min else value), quant=self._quant
+        )
 
     @property
     def unit(self) -> str:
@@ -268,14 +266,14 @@ class Weight:
         return self._unit.value
 
     @property
-    def value(self) -> Optional[float]:
+    def value(self) -> typing.Optional[float]:
         if self._unit is None or self._value is None:
             return None
 
         return self.__getattribute__(str(self._unit.name))
 
     @property
-    def KG(self) -> Optional[float]:
+    def KG(self) -> typing.Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.KG:
@@ -286,7 +284,7 @@ class Weight:
         return None
 
     @property
-    def LB(self) -> Optional[float]:
+    def LB(self) -> typing.Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
@@ -297,7 +295,7 @@ class Weight:
         return None
 
     @property
-    def OZ(self) -> Optional[float]:
+    def OZ(self) -> typing.Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
@@ -316,13 +314,15 @@ class Package:
 
     def __init__(
         self,
-        parcel: Parcel,
+        parcel: models.Parcel,
         template: PackagePreset = None,
-        package_option_type: Type[Enum] = Enum,
+        package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ):
-        self.parcel: Parcel = parcel
+        self.parcel: models.Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
-        self.options: "Options" = Options(parcel.options, package_option_type)
+        self.options: "ShippingOptions" = ShippingOptions(
+            parcel.options, package_option_type
+        )
 
         self._dimension_unit = (
             (self.parcel.dimension_unit or self.preset.dimension_unit)
@@ -396,18 +396,18 @@ class Package:
         )
 
 
-class Packages(Iterable[Package]):
+class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
 
     def __init__(
         self,
-        parcels: List[Parcel],
-        presets: Type[Enum] = None,
-        required: List[str] = None,
+        parcels: typing.List[models.Parcel],
+        presets: typing.Type[utils.Enum] = None,
+        required: typing.List[str] = None,
         max_weight: Weight = None,
-        package_option_type: Type[Enum] = Enum,
+        package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ):
-        def compute_preset(parcel) -> Optional[PackagePreset]:
+        def compute_preset(parcel) -> typing.Optional[PackagePreset]:
             if (presets is None) | (
                 presets is not None and parcel.package_preset not in presets
             ):
@@ -432,13 +432,13 @@ class Packages(Iterable[Package]):
     def __len__(self) -> int:
         return len(self._items)
 
-    def __iter__(self) -> Iterator[Package]:
+    def __iter__(self) -> typing.Iterator[Package]:
         return iter(self._items)
 
     @property
     def single(self) -> Package:
         if len(self._items) > 1:
-            raise MultiParcelNotSupportedError()
+            raise errors.MultiParcelNotSupportedError()
         return self._items[0]
 
     @property
@@ -468,16 +468,16 @@ class Packages(Iterable[Package]):
         return all([pkg.parcel.is_document for pkg in self._items])
 
     @property
-    def description(self) -> Optional[str]:
+    def description(self) -> typing.Optional[str]:
         descriptions = [item.parcel.description for item in self._items]
-        description: Optional[str] = SF.concat_str(
+        description: typing.Optional[str] = utils.SF.concat_str(
             *descriptions, join=True
         )  # type:ignore
 
         return description
 
     @property
-    def options(self) -> "Options":
+    def options(self) -> "ShippingOptions":
         def merge_options(acc, pkg) -> dict:
             """Merge package options into one
             if an item exists in one and is of type int or float,
@@ -497,21 +497,21 @@ class Packages(Iterable[Package]):
 
         options: dict = functools.reduce(merge_options, self._items, {})
 
-        return Options(options, self._package_option_type)
+        return ShippingOptions(options, self._package_option_type)
 
     @property
-    def compatible_units(self) -> Tuple[WeightUnit, DimensionUnit]:
+    def compatible_units(self) -> typing.Tuple[WeightUnit, DimensionUnit]:
         if any(self._items) and self._items[0].weight_unit == WeightUnit.KG:
             return WeightUnit.KG, DimensionUnit.CM
 
         return WeightUnit.LB, DimensionUnit.IN
 
-    def validate(self, required: List[str] = None, max_weight: Weight = None):
+    def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
         required = required or self._required
         max_weight = max_weight or self._max_weight
 
         if any(check is not None for check in [required, max_weight]):
-            errors = {}
+            validation_errors = {}
             for index, package in enumerate(self._items):
                 if required is not None:
                     for field in required:
@@ -520,46 +520,36 @@ class Packages(Iterable[Package]):
                         if prop is None or (
                             hasattr(prop, "value") and prop.value is None
                         ):
-                            errors.update(
-                                {f"parcel[{index}].{field}": FieldErrorCode.required}
+                            validation_errors.update(
+                                {
+                                    f"parcel[{index}].{field}": errors.FieldErrorCode.required
+                                }
                             )
 
                 if (
                     max_weight is not None
                     and (package.weight.LB or 0.0) > max_weight.LB
                 ):
-                    errors.update({f"parcel[{index}].weight": FieldErrorCode.exceeds})
+                    validation_errors.update(
+                        {f"parcel[{index}].weight": errors.FieldErrorCode.exceeds}
+                    )
 
-            if any(errors.items()):
-                raise FieldError(errors)
+            if any(validation_errors.items()):
+                raise errors.FieldError(validation_errors)
 
     @staticmethod
     def map(
-        parcels: List[Parcel],
-        presets: Type[Enum] = None,
-        required: List[str] = None,
+        parcels: typing.List[models.Parcel],
+        presets: typing.Type[utils.Enum] = None,
+        required: typing.List[str] = None,
         max_weight: Weight = None,
-        package_option_type: Type[Enum] = Enum,
-    ) -> Union[List[Package], "Packages"]:
+        package_option_type: typing.Type[utils.Enum] = utils.Enum,
+    ) -> typing.Union[typing.List[Package], "Packages"]:
 
-        return cast(
-            Union[List[Package], Packages],
+        return typing.cast(
+            typing.Union[typing.List[Package], Packages],
             Packages(parcels, presets, required, max_weight, package_option_type),
         )
-
-
-class ShippingOption(Enum):
-    """universal shipment options (special services)"""
-
-    currency = OptionEnum("currency")
-    insurance = OptionEnum("insurance", float)
-    cash_on_delivery = OptionEnum("COD", float)
-    shipment_date = OptionEnum("shipment_date")
-    dangerous_good = OptionEnum("dangerous_good", bool)
-    declared_value = OptionEnum("declared_value", float)
-    email_notification = OptionEnum("email_notification", bool)
-    email_notification_to = OptionEnum("email_notification_to")
-    signature_confirmation = OptionEnum("signature_confirmation", bool)
 
 
 class Options:
@@ -568,32 +558,32 @@ class Options:
     def __init__(
         self,
         options: dict,
-        option_type: Type[Enum] = Enum,
-        items_filter: Callable[[str], bool] = None,
+        option_type: typing.Type[utils.Enum] = utils.Enum,
+        items_filter: typing.Callable[[str], bool] = None,
+        base_option_type: typing.Type[utils.Enum] = utils.Enum,
     ):
-        option_values: Dict[str, OptionEnum] = {}
+        option_values: typing.Dict[str, utils.OptionEnum] = {}
 
         for key, val in options.items():
             if option_type is not None and key in option_type:
                 _val = option_type[key].value(val)
                 _key = option_type[key].name
-            elif key in ShippingOption and key:
-                _val = ShippingOption[key].value(val)
+                option_values[_key] = _val
+            elif key in base_option_type and key:
+                _val = base_option_type[key].value(val)
                 _key = key
-            else:
-                _key = key
-                _val = val
-
-            option_values[_key] = _val
+                option_values[key] = _val
 
         self._options = option_values
-        self._option_list = self._filter(option_values, (items_filter or identity))
+        self._option_list = self._filter(
+            option_values, (items_filter or utils.identity)
+        )
 
     def __getitem__(self, item):
-        return self._options.get(item) or OptionEnum("")
+        return self._options.get(item) or utils.OptionEnum("")
 
     def __getattr__(self, item):
-        return self._options.get(item) or OptionEnum("")
+        return self[item]
 
     def __contains__(self, item) -> bool:
         return item in self._options
@@ -601,7 +591,7 @@ class Options:
     def __len__(self) -> int:
         return len(self._options.items())
 
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> typing.Iterator[typing.Tuple[str, typing.Any]]:
         return iter(self._options.items())
 
     def _filter(self, option_values, items_filter):
@@ -609,7 +599,7 @@ class Options:
             (key, option) for key, option in option_values.items() if items_filter(key)
         ]
 
-    def items(self) -> List[Tuple[str, Optional[str], Any]]:
+    def items(self) -> typing.List[typing.Tuple[str, typing.Optional[str], typing.Any]]:
         return self._option_list
 
     @property
@@ -620,113 +610,104 @@ class Options:
     def has_content(self) -> bool:
         return any(o for o in self._options)
 
+
+class ShippingOption(utils.Enum):
+    """universal shipment options (special services)"""
+
+    currency = utils.OptionEnum("currency")
+    insurance = utils.OptionEnum("insurance", float)
+    cash_on_delivery = utils.OptionEnum("COD", float)
+    shipment_date = utils.OptionEnum("shipment_date")
+    dangerous_good = utils.OptionEnum("dangerous_good", bool)
+    declared_value = utils.OptionEnum("declared_value", float)
+    email_notification = utils.OptionEnum("email_notification", bool)
+    email_notification_to = utils.OptionEnum("email_notification_to")
+    signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
+
+
+class ShippingOptions(Options):
+    """The options common processing helper"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, base_option_type=ShippingOption)
+
     @property
-    def cash_on_delivery(self) -> OptionEnum:
+    def cash_on_delivery(self) -> utils.OptionEnum:
         return self[ShippingOption.cash_on_delivery.name]
 
     @property
-    def currency(self) -> OptionEnum:
+    def currency(self) -> utils.OptionEnum:
         return self[ShippingOption.currency.name]
 
     @property
-    def insurance(self) -> OptionEnum:
+    def insurance(self) -> utils.OptionEnum:
         return self[ShippingOption.insurance.name]
 
     @property
-    def declared_value(self) -> OptionEnum:
+    def declared_value(self) -> utils.OptionEnum:
         return self[ShippingOption.declared_value.name]
 
     @property
-    def dangerous_good(self) -> OptionEnum:
+    def dangerous_good(self) -> utils.OptionEnum:
         return self[ShippingOption.dangerous_good.name]
 
     @property
-    def email_notification(self) -> OptionEnum:
+    def email_notification(self) -> utils.OptionEnum:
         if ShippingOption.email_notification.name in self:
             return self[ShippingOption.email_notification.name]
 
         return ShippingOption.email_notification.value(True)
 
     @property
-    def email_notification_to(self) -> OptionEnum:
+    def email_notification_to(self) -> utils.OptionEnum:
         return self[ShippingOption.email_notification_to.name]
 
     @property
-    def shipment_date(self) -> OptionEnum:
+    def shipment_date(self) -> utils.OptionEnum:
         return self[ShippingOption.shipment_date.name]
 
     @property
-    def signature_confirmation(self) -> OptionEnum:
+    def signature_confirmation(self) -> utils.OptionEnum:
         return self[ShippingOption.signature_confirmation.name]
 
 
-class Services:
-    """The services common processing helper"""
+class CustomsOption(utils.Enum):
+    """common shipment customs identifiers"""
 
-    def __init__(self, services: Iterable, service_type: Type[Enum]):
-        self._services = [service_type[s] for s in services if s in service_type]
-
-    def __len__(self) -> int:
-        return len(self._services)
-
-    def __iter__(self) -> Iterator[Enum]:
-        return iter(self._services)
-
-    def __contains__(self, item) -> bool:
-        return item in [s.name for s in self._services]
-
-    @property
-    def first(self) -> Enum:
-        return next(iter(self._services), None)
-
-
-class CustomsOption(Enum):
-    """universal shipment customs identifiers"""
-
-    aes = OptionEnum("aes")
-    eel_pfc = OptionEnum("eel_pfc")
-    nip_number = OptionEnum("eori_number")
-    eori_number = OptionEnum("eori_number")
-    license_number = OptionEnum("license_number")
-    certificate_number = OptionEnum("certificate_number")
-    vat_registration_number = OptionEnum("vat_registration_number")
+    aes = utils.OptionEnum("aes")
+    eel_pfc = utils.OptionEnum("eel_pfc")
+    nip_number = utils.OptionEnum("eori_number")
+    eori_number = utils.OptionEnum("eori_number")
+    license_number = utils.OptionEnum("license_number")
+    certificate_number = utils.OptionEnum("certificate_number")
+    vat_registration_number = utils.OptionEnum("vat_registration_number")
 
 
 class CustomsInfo:
     """The customs info processing helper"""
 
-    def __init__(self, customs: Customs = None, option_type: Type[Enum] = Enum):
-        option_values = {}
-
-        for key, val in getattr(customs, "options", {}).items():
-            if option_type is not None and key in option_type:
-                option_values[option_type[key].name] = option_type[key].value(val)
-            elif key in CustomsOption and key:
-                option_values[key] = CustomsOption[key].value(val)
+    def __init__(
+        self,
+        customs: models.Customs = None,
+        option_type: typing.Type[utils.Enum] = utils.Enum,
+    ):
+        options = Options(
+            getattr(customs, "options", None) or {},
+            option_type=option_type,
+            base_option_type=CustomsOption,
+        )
 
         self._customs = customs
-        self._options = option_values
+        self._options = options
 
     def __getitem__(self, item):
-        if hasattr(self._customs, item):
-            return getattr(self._customs, item, None)
-
-        return self._options.get(item) or OptionEnum("")
+        return getattr(self._customs, item, None)
 
     def __getattr__(self, item):
-        if hasattr(self._customs, item):
-            return getattr(self._customs, item, None)
-
-        return self._options.get(item) or OptionEnum("")
+        return self[item]
 
     def __contains__(self, item) -> bool:
         return item in self._options or hasattr(self._customs, item)
-
-    def __len__(self) -> int:
-        return len(self._options.items())
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        return iter(self._options.items())
 
     @property
     def is_defined(self) -> bool:
@@ -739,6 +720,41 @@ class CustomsInfo:
     @property
     def commodities(self):
         return getattr(self._customs, "commodities", None) or []
+
+    @property
+    def options(self):
+        return self._options
+
+
+class DocumentUploadOption(utils.Enum):
+    """common shipment document upload options"""
+
+    origin_postal_code = utils.OptionEnum("origin_postal_code")
+    origin_country_code = utils.OptionEnum("origin_country_code")
+    destination_postal_code = utils.OptionEnum("destination_postal_code")
+    destination_country_code = utils.OptionEnum("destination_country_code")
+
+
+class Services:
+    """The services common processing helper"""
+
+    def __init__(
+        self, services: typing.Iterable, service_type: typing.Type[utils.Enum]
+    ):
+        self._services = [service_type[s] for s in services if s in service_type]
+
+    def __len__(self) -> int:
+        return len(self._services)
+
+    def __iter__(self) -> typing.Iterator[utils.Enum]:
+        return iter(self._services)
+
+    def __contains__(self, item) -> bool:
+        return item in [s.name for s in self._services]
+
+    @property
+    def first(self) -> utils.Enum:
+        return next(iter(self._services), None)
 
 
 class Phone:
@@ -770,8 +786,8 @@ class Phone:
         return str(self.number.national_number)[3:]
 
 
-class ComputedAddress(Address):
-    def __init__(self, address: Optional[Address]):
+class ComputedAddress(models.Address):
+    def __init__(self, address: typing.Optional[models.Address]):
         self.address = address
 
     def __getattr__(self, item):
@@ -793,12 +809,12 @@ class ComputedAddress(Address):
         return self._compute_address_line(join=False)
 
     @property
-    def tax_id(self) -> Optional[str]:
+    def tax_id(self) -> typing.Optional[str]:
         return self.address.federal_tax_id or self.address.state_tax_id
 
     @property
-    def taxes(self) -> List[str]:
-        return SF.concat_str(
+    def taxes(self) -> typing.List[str]:
+        return utils.SF.concat_str(
             self.address.federal_tax_id, self.address.state_tax_id
         )  # type:ignore
 
@@ -817,14 +833,14 @@ class ComputedAddress(Address):
     def has_tax_info(self) -> bool:
         return any([self.address.federal_tax_id, self.address.state_tax_id])
 
-    def _compute_address_line(self, join: bool = True) -> Optional[str]:
+    def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
         if any([self.address.address_line1, self.address.address_line2]):
-            return SF.concat_str(
+            return utils.SF.concat_str(
                 self.address.address_line1, self.address.address_line2, join=join
             )  # type:ignore
 
         if self.address.extra is not None:
-            return SF.concat_str(
+            return utils.SF.concat_str(
                 self.address.extra.suite,
                 self.address.extra.street_number,
                 self.address.extra.street_name,
@@ -835,7 +851,23 @@ class ComputedAddress(Address):
         return None
 
 
-class Currency(Enum):
+class ComputedDocumentFile(models.DocumentFile):
+    def __init__(self, document: typing.Optional[models.DocumentFile]):
+        self.document = document
+
+    def __getattr__(self, item):
+        return getattr(self.document, item, None)
+
+    @property
+    def doc_format(self):
+        return getattr(self.document, "doc_format", self.doc_file_extension)
+
+    @property
+    def doc_file_extension(self) -> typing.Optional[str]:
+        return pathlib.Path(self.doc_name or "").suffix
+
+
+class Currency(utils.Enum):
     EUR = "Euro"
     AED = "UAE Dirham"
     USD = "US Dollar"
@@ -983,7 +1015,7 @@ class Currency(Enum):
     ZMW = "Kwacha"
 
 
-class Country(Enum):
+class Country(utils.Enum):
     AD = "Andorra"
     AE = "United Arab Emirates"
     AF = "Afghanistan"
@@ -1220,7 +1252,7 @@ class Country(Enum):
     ZW = "Zimbabwe"
 
 
-class CountryCurrency(Enum):
+class CountryCurrency(utils.Enum):
     AD = "EUR"
     AE = "AED"
     AF = "USD"
@@ -1458,10 +1490,10 @@ class CountryCurrency(Enum):
 
 
 def create_enum(name, values):
-    return Enum(name, values)  # type: ignore
+    return utils.Enum(name, values)  # type: ignore
 
 
-class CountryState(Enum):
+class CountryState(utils.Enum):
     AE = create_enum(
         "State",
         {
@@ -1661,7 +1693,7 @@ class CountryState(Enum):
     )
 
 
-class CountryISO(Enum):
+class CountryISO(utils.Enum):
     AF = 4
     AX = 248
     AL = 8

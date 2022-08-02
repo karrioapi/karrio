@@ -100,7 +100,7 @@ def _shipment_request(
         required=["weight"],
     )
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

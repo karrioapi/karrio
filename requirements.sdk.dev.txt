@@ -1,5 +1,5 @@
 # Schemas update
--e ./schemas/usps
+-e ./schemas/ups
 
 # SDK extentions
 -e ./sdk/core

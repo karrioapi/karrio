@@ -88,7 +88,7 @@ def rate_request(
         payload.parcels, provider_units.PackagePresets, required=["weight"]
     ).single
     services = lib.to_services(payload.services, provider_units.ServiceType)
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         is_international=(

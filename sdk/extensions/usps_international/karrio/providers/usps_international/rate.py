@@ -94,7 +94,7 @@ def rate_request(
         package_option_type=provider_units.ShippingOption,
         max_weight=units.Weight(70, units.WeightUnit.LB),
     ).single
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,

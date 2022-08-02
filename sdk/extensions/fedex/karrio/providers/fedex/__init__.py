@@ -22,3 +22,7 @@ from karrio.providers.fedex.shipment import (
     shipment_cancel_request,
     shipment_request,
 )
+from karrio.providers.fedex.document import (
+    parse_document_upload_response,
+    document_upload_request,
+)

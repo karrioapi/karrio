@@ -391,3 +391,33 @@ class ServiceLabel:
     service_name: str
     service_code: str
     tracking_number: str
+
+
+@attr.s(auto_attribs=True)
+class DocumentFile:
+    """shipment document unified data type."""
+
+    doc_file: str  #  base64 encoded string
+    doc_name: str
+    doc_type: str = None
+    doc_format: str = None
+
+
+@attr.s(auto_attribs=True)
+class DocumentUploadRequest:
+    """shipment document upload request unified data type."""
+
+    document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
+    reference: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class DocumentUploadDetails:
+    """Karrio unified shipment document upload details data type."""
+
+    carrier_name: str
+    carrier_id: str
+    document_ids: List[str] = JList[str, REQUIRED]
+    meta: dict = None
+    id: str = None

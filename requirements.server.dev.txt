@@ -2,7 +2,7 @@ Django<=3.2.14
 django-debug-toolbar
 
 # Schemas update
-# -e ./schemas/usps
+-e ./schemas/ups
 
 # Carrier Extentions in Development
 -e ./sdk/core

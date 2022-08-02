@@ -108,7 +108,7 @@ def rate_request(
         required=["weight"],
     )
     service = units.Services(payload.services, provider_units.ServiceType).first
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

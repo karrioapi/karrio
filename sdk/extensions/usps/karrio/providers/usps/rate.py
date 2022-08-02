@@ -95,7 +95,7 @@ def rate_request(
         payload.parcels, package_option_type=provider_units.ShippingOption
     ).single
     container = provider_units.PackagingType[package.packaging_type or "your_packaging"]
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,

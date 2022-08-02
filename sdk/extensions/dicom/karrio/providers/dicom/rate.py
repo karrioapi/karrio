@@ -69,7 +69,7 @@ def rate_request(
         provider_units.Services(payload.services, provider_units.Service).first
         or provider_units.Service.dicom_ground_delivery.value
     ).value
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,

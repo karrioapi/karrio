@@ -87,6 +87,7 @@ Rating = interface.Rating
 Shipment = interface.Shipment
 Tracking = interface.Tracking
 Address = interface.Address
+Document = interface.Document
 
 
 __all__ = [
@@ -96,4 +97,5 @@ __all__ = [
     "Shipment",
     "Tracking",
     "Address",
+    "Document",
 ]

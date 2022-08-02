@@ -1,5 +1,4 @@
 import unittest
-import logging
 from unittest.mock import patch
 import karrio
 from karrio.core.utils import DP
@@ -22,7 +21,7 @@ class TestDHLAddressValidation(unittest.TestCase):
         self.assertEqual(request.serialize(), AddressValidationRequestXML)
 
     def test_validate_address(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
 
@@ -32,7 +31,7 @@ class TestDHLAddressValidation(unittest.TestCase):
             )
 
     def test_parse_address_validation_response(self):
-        with patch("karrio.mappers.fedex.proxy.http") as mock:
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
                 karrio.Address.validate(self.AddressValidationRequest)

@@ -49,7 +49,7 @@ def shipment_request(
         payload.parcels,
         max_weight=units.Weight(70, units.WeightUnit.LB),
     ).single
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
@@ -118,8 +118,8 @@ def shipment_request(
         ContentTypeOther=customs.content_description or "N/A",
         Agreement=("N" if customs.certify else "Y"),
         Comments=customs.content_description,
-        LicenseNumber=customs.license_number.state,
-        CertificateNumber=customs.certificate_number.state,
+        LicenseNumber=customs.options.license_number.state,
+        CertificateNumber=customs.options.certificate_number.state,
         InvoiceNumber=customs.invoice,
         ImageType="PDF",
         ImageLayout="ALLINONEFILE",
@@ -132,7 +132,7 @@ def shipment_request(
             output_format="%m/%d/%Y",
         ),
         HoldForManifest=None,
-        EELPFC=customs.eel_pfc.state,
+        EELPFC=customs.options.eel_pfc.state,
         Container=None,
         Length=package.length.IN,
         Width=package.width.IN,

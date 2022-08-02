@@ -77,7 +77,7 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     customs = lib.to_customs_info(payload.customs)
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
@@ -271,9 +271,9 @@ def shipment_request(
                             getattr(customs.duty, "currency", None)
                             or options.currency.state
                         ),
-                        nipNr=customs.nip_number.state,
-                        eoriNr=customs.eori_number.state,
-                        vatRegistrationNumber=customs.vat_registration_number.state,
+                        nipNr=customs.options.nip_number.state,
+                        eoriNr=customs.options.eori_number.state,
+                        vatRegistrationNumber=customs.options.vat_registration_number.state,
                         categoryOfItem=provider_units.CustomsContentType[
                             customs.content_type or "other"
                         ].value,

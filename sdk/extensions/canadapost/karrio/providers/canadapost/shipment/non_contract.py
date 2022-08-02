@@ -70,7 +70,7 @@ def shipment_request(
         required=["weight"],
         package_option_type=provider_units.ShippingOption,
     ).single
-    options = lib.to_options(
+    options = lib.to_shipping_options(
         options=payload.options,
         package_options=package.options,
         is_international=(
@@ -172,8 +172,8 @@ def shipment_request(
                     duties_and_taxes_prepaid=getattr(
                         customs.duty, "account_number", None
                     ),
-                    certificate_number=customs.certificate_number.state,
-                    licence_number=customs.licence_number.state,
+                    certificate_number=customs.options.certificate_number.state,
+                    licence_number=customs.options.licence_number.state,
                     invoice_number=customs.invoice,
                     sku_list=sku_listType(
                         item=[

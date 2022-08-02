@@ -8,10 +8,11 @@ from karrio.providers.fedex.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """FedEx connection settings."""
 
-    password: str
-    meter_number: str
-    account_number: str
+    password: str  # type:ignore
+    meter_number: str  # type:ignore
+    account_number: str  # type:ignore
     user_key: str = None
+    language_code: str = "en"
     account_country_code: str = None
 
     id: str = None

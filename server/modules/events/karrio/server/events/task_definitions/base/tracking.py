@@ -2,20 +2,22 @@ import functools
 import time
 import logging
 import datetime
-from typing import Dict, List, Tuple
 from itertools import groupby
+from typing import List, Tuple
 
 from django.conf import settings
 from django.utils import timezone
 
 import karrio
+from karrio.api.gateway import Gateway
+from karrio.api.interface import IRequestFrom
 from karrio.core.utils import exec_parrallel, DP
 from karrio.core.models import TrackingDetails, Message, TrackingEvent
-from karrio.api.interface import Gateway, IRequestFrom
 
-from karrio.server.manager import models, serializers
-import karrio.server.core.datatypes as datatypes
 import karrio.server.core.utils as utils
+import karrio.server.manager.models as models
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.serializers as serializers
 
 logger = logging.getLogger(__name__)
 Delay = int
