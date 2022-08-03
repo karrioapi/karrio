@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sun Oct 17 08:03:55 2021 by generateDS.py version 2.40.3.
+# Generated Wed Aug  3 05:43:06 2022 by generateDS.py version 2.40.13.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './dhl_ecom_de_lib/business_interface.py')
+#   ('-o', './dhl_germany_lib/business_interface.py')
 #
 # Command line arguments:
-#   ./schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd
+#   ./schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./dhl_ecom_de_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dhl_germany_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd
 #
 # Current working directory (os.getcwd()):
-#   dhl_ecom_de
+#   dhl_germany
 #
 
 import sys
@@ -35,6 +35,7 @@ from lxml import etree as etree_
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -194,13 +195,16 @@ except ModulenotfoundExp_ as exp:
                 'str_pretty_print': True,
                 'str_indent_level': 0,
                 'str_namespaceprefix': '',
-                'str_name': None,
+                'str_name': self.__class__.__name__,
                 'str_namespacedefs': '',
             }
             for n in settings:
                 if hasattr(self, n):
-                    setattr(settings[n], self[n])
-            from io import StringIO
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
             output = StringIO()
             self.export(
                 output,
@@ -343,6 +347,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -522,6 +527,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -767,6 +773,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -1026,8 +1033,8 @@ class activeType21(str, Enum):
     _1='1'
 
 
-class activeType24(str, Enum):
-    """activeType24 -- Indicates, if the option is on/off
+class activeType23(str, Enum):
+    """activeType23 -- Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1042,24 +1049,16 @@ class activeType25(str, Enum):
     _1='1'
 
 
-class activeType26(str, Enum):
-    """activeType26 -- Indicates, if the option is on/off
+class activeType27(str, Enum):
+    """activeType27 -- Indicates, if the option is on/off
     
     """
     _0='0'
     _1='1'
 
 
-class activeType28(str, Enum):
-    """activeType28 -- Indicates, if the option is on/off
-    
-    """
-    _0='0'
-    _1='1'
-
-
-class activeType29(str, Enum):
-    """activeType29 -- Indicates, if the option is on/off
+class activeType30(str, Enum):
+    """activeType30 -- Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1074,8 +1073,16 @@ class activeType31(str, Enum):
     _1='1'
 
 
-class activeType33(str, Enum):
-    """activeType33 -- Indicates, if the option is on/off
+class activeType32(str, Enum):
+    """activeType32 -- Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType34(str, Enum):
+    """activeType34 -- Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1090,14 +1097,6 @@ class activeType35(str, Enum):
     _1='1'
 
 
-class activeType36(str, Enum):
-    """activeType36 -- Indicates, if the option is on/off
-    
-    """
-    _0='0'
-    _1='1'
-
-
 class activeType37(str, Enum):
     """activeType37 -- Indicates, if the option is on/off
     
@@ -1106,8 +1105,48 @@ class activeType37(str, Enum):
     _1='1'
 
 
-class activeType38(str, Enum):
-    """activeType38 -- Indicates, if the option is on/off
+class activeType39(str, Enum):
+    """activeType39 -- Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType41(str, Enum):
+    """activeType41 -- Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType42(str, Enum):
+    """activeType42 -- Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType43(str, Enum):
+    """activeType43 -- Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType44(str, Enum):
+    """activeType44 -- 	Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType45(str, Enum):
+    """activeType45 -- Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1229,11 +1268,11 @@ class typeType(str, Enum):
     
     """
     IMMEDIATE='IMMEDIATE'
-    AFTER_DEADLINE='AFTER_DEADLINE'
+    ABANDONMENT='ABANDONMENT'
 
 
-class typeType32(str, Enum):
-    """typeType32 --
+class typeType38(str, Enum):
+    """typeType38 --
     Timeframe of delivery, if the option is used:
     ValidValues are
     10001200: 10:00 until 12:00;
@@ -1386,36 +1425,29 @@ class CreateShipmentOrderRequest(GeneratedsSuper):
       numbers you can use for creating shipments. To define group
       profiles please visit our business costumer portal.
       
-    * labelFormat -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper;
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
-      100x70mm: 100x70mm (only for Warenpost);
+    * labelFormat --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
-    * labelFormatRetoure -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper;
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
+    * labelFormatRetoure --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
     * combinedPrinting -- To get a single PDF for shipping and return label
       select this option.
@@ -2127,36 +2159,29 @@ class GetLabelRequest(GeneratedsSuper):
       business
       costumer portal.
       
-    * labelFormat -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
-      100x70mm: 100x70mm (only for Warenpost);
+    * labelFormat --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
-    * labelFormatRetoure -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper;
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
+    * labelFormatRetoure --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
     * combinedPrinting -- To get a single PDF for shipping and return label
       select this option.
@@ -2576,15 +2601,18 @@ class DoManifestRequest(GeneratedsSuper):
     which the
     requesting client is developed.
       
-    * shipmentNumber -- Identifiers of the shipments that should be
-      manifested. The shipment number is read
-      from
-      ShipmentNumberType-
-      >
-      shipmentNumber
+    * shipmentNumber --
+      Contains a shipment number. Any number of a printed shipment not already manifested can be used.
+      A Request can contain the element up to 50 times.
+      Requests need to either contain at least one times shipmentNumber or allshipments.
+      Requests cannot contain shipmentNumber and allShipments at the same time.
       
-    * allShipments -- Presence of this element signals that all
-      available shipments should be manifested.
+    * allShipments --
+      Manifests all shipments. Can be used instead the element
+      “
+      shipmentNumber
+      ”
+      . The element is used without a value, e.g.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3943,36 +3971,29 @@ class UpdateShipmentOrderRequest(GeneratedsSuper):
       numbers you can use for creating shipments. To define group
       profiles please visit our business costumer portal.
       
-    * labelFormat -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper;
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
-      100x70mm: 100x70mm (only for Warenpost);
+    * labelFormat --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
-    * labelFormatRetoure -- In this optional section you can define the
-      following label formats:
-      A4: common label laser printing A4 plain
-      paper;
-      910-300-700: common label laser printing 105 x 205 mm
-      (910-300-700);
-      910-300-700-oz: common label laser printing 105 x
-      205 mm
-      (910-300-700) without additional label;
-      910-300-600: common
-      label thermal printing 103 x 199 (910-300-600,
-      910-300-610);
-      910-300-710: common label laser printing 105 x 208 mm
-      (910-300-710);
+    * labelFormatRetoure --
+      In this optional section you can define the following label formats:
+      A4:common label laser printing A4 plain paper;
+      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
       
     * combinedPrinting -- To get a single PDF for shipping and return label
       select this option.
@@ -4824,15 +4845,34 @@ class Statusinformation(GeneratedsSuper):
       status codes is contained in
       the list.
       
-    * statusText -- Explanation of the statuscode and potential errors.
+    * statusText -- Explanation of the statuscode. Explains what types of errors occurred.
       
-    * statusMessage -- Explanation of the statuscode and potential errors.
+    * statusMessage -- Detailed explanation of errors or warnings, p.e.
+      “
+      Invalid postal code
+      ”
+      .
+      This element is kept for compatibility reasons only. Please use
+      “
+      statusType
+      ”
+      und
+      “
+      errorMassage
+      ”
+      with their subelements instead.
+      
+    * errorMessage --  Explains details of the error and where it occurred
+      
+    * statusType -- Explains if an error or warning occurred
+      
+    * warningMessage --  Explains details of the error and where it occurred
     
     """
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, statusCode=None, statusText=None, statusMessage=None, gds_collector_=None, **kwargs_):
+    def __init__(self, statusCode=None, statusText=None, statusMessage=None, errorMessage=None, statusType=None, warningMessage=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -4847,6 +4887,18 @@ class Statusinformation(GeneratedsSuper):
         else:
             self.statusMessage = statusMessage
         self.statusMessage_nsprefix_ = None
+        if errorMessage is None:
+            self.errorMessage = []
+        else:
+            self.errorMessage = errorMessage
+        self.errorMessage_nsprefix_ = None
+        self.statusType = statusType
+        self.statusType_nsprefix_ = None
+        if warningMessage is None:
+            self.warningMessage = []
+        else:
+            self.warningMessage = warningMessage
+        self.warningMessage_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -4880,11 +4932,38 @@ class Statusinformation(GeneratedsSuper):
         self.statusMessage.insert(index, value)
     def replace_statusMessage_at(self, index, value):
         self.statusMessage[index] = value
+    def get_errorMessage(self):
+        return self.errorMessage
+    def set_errorMessage(self, errorMessage):
+        self.errorMessage = errorMessage
+    def add_errorMessage(self, value):
+        self.errorMessage.append(value)
+    def insert_errorMessage_at(self, index, value):
+        self.errorMessage.insert(index, value)
+    def replace_errorMessage_at(self, index, value):
+        self.errorMessage[index] = value
+    def get_statusType(self):
+        return self.statusType
+    def set_statusType(self, statusType):
+        self.statusType = statusType
+    def get_warningMessage(self):
+        return self.warningMessage
+    def set_warningMessage(self, warningMessage):
+        self.warningMessage = warningMessage
+    def add_warningMessage(self, value):
+        self.warningMessage.append(value)
+    def insert_warningMessage_at(self, index, value):
+        self.warningMessage.insert(index, value)
+    def replace_warningMessage_at(self, index, value):
+        self.warningMessage[index] = value
     def _hasContent(self):
         if (
             self.statusCode is not None or
             self.statusText is not None or
-            self.statusMessage
+            self.statusMessage or
+            self.errorMessage or
+            self.statusType is not None or
+            self.warningMessage
         ):
             return True
         else:
@@ -4931,6 +5010,16 @@ class Statusinformation(GeneratedsSuper):
             namespaceprefix_ = self.statusMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.statusMessage_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sstatusMessage>%s</%sstatusMessage>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(statusMessage_), input_name='statusMessage')), namespaceprefix_ , eol_))
+        for errorMessage_ in self.errorMessage:
+            namespaceprefix_ = self.errorMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.errorMessage_nsprefix_) else ''
+            errorMessage_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='errorMessage', pretty_print=pretty_print)
+        if self.statusType is not None:
+            namespaceprefix_ = self.statusType_nsprefix_ + ':' if (UseCapturedNS_ and self.statusType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sstatusType>%s</%sstatusType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.statusType), input_name='statusType')), namespaceprefix_ , eol_))
+        for warningMessage_ in self.warningMessage:
+            namespaceprefix_ = self.warningMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.warningMessage_nsprefix_) else ''
+            warningMessage_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='warningMessage', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -4963,7 +5052,140 @@ class Statusinformation(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'statusMessage')
             self.statusMessage.append(value_)
             self.statusMessage_nsprefix_ = child_.prefix
+        elif nodeName_ == 'errorMessage':
+            obj_ = StatusElement.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.errorMessage.append(obj_)
+            obj_.original_tagname_ = 'errorMessage'
+        elif nodeName_ == 'statusType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'statusType')
+            value_ = self.gds_validate_string(value_, node, 'statusType')
+            self.statusType = value_
+            self.statusType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'warningMessage':
+            obj_ = StatusElement.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.warningMessage.append(obj_)
+            obj_.original_tagname_ = 'warningMessage'
 # end class Statusinformation
+
+
+class StatusElement(GeneratedsSuper):
+    """statusElement -- Explanation of the statusElement and potential errors.
+      
+    * statusMessage -- Explanation of the statusMessage and potential errors.
+    
+    """
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, statusElement=None, statusMessage=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.statusElement = statusElement
+        self.statusElement_nsprefix_ = None
+        self.statusMessage = statusMessage
+        self.statusMessage_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, StatusElement)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if StatusElement.subclass:
+            return StatusElement.subclass(*args_, **kwargs_)
+        else:
+            return StatusElement(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_statusElement(self):
+        return self.statusElement
+    def set_statusElement(self, statusElement):
+        self.statusElement = statusElement
+    def get_statusMessage(self):
+        return self.statusMessage
+    def set_statusMessage(self, statusMessage):
+        self.statusMessage = statusMessage
+    def _hasContent(self):
+        if (
+            self.statusElement is not None or
+            self.statusMessage is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='StatusElement', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('StatusElement')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'StatusElement':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='StatusElement')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='StatusElement', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='StatusElement'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='StatusElement', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.statusElement is not None:
+            namespaceprefix_ = self.statusElement_nsprefix_ + ':' if (UseCapturedNS_ and self.statusElement_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sstatusElement>%s</%sstatusElement>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.statusElement), input_name='statusElement')), namespaceprefix_ , eol_))
+        if self.statusMessage is not None:
+            namespaceprefix_ = self.statusMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.statusMessage_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sstatusMessage>%s</%sstatusMessage>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.statusMessage), input_name='statusMessage')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'statusElement':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'statusElement')
+            value_ = self.gds_validate_string(value_, node, 'statusElement')
+            self.statusElement = value_
+            self.statusElement_nsprefix_ = child_.prefix
+        elif nodeName_ == 'statusMessage':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'statusMessage')
+            value_ = self.gds_validate_string(value_, node, 'statusMessage')
+            self.statusMessage = value_
+            self.statusMessage_nsprefix_ = child_.prefix
+# end class StatusElement
 
 
 class PieceInformation(GeneratedsSuper):
@@ -6137,9 +6359,9 @@ class ShipmentDetailsType(GeneratedsSuper):
     Determines the DHL Paket product to be ordered.
     V01PAK: DHL PAKET;
     V53WPAK: DHL PAKET International;
-    V54EPAK: DHL
-    Europaket;
-    V62WP: DHL Warenpost
+    V54EPAK: DHL Europaket;
+    V62WP: Warenpost;
+    V66WPI: Warenpost International
       
     * customerReference -- A reference number that the client can assign for
       better association purposes. Appears on shipment label. To use the
@@ -6962,6 +7184,8 @@ class ShipmentService(GeneratedsSuper):
       shipments.
       
     * CashOnDelivery -- Service Cash on delivery.
+    * PDDP -- Postal Delivery Duty Paid
+      Deutsche Post and sender handle import duties instead of consignee
     * AdditionalInsurance -- Insure shipment with higher than standard amount.
       
     * BulkyGoods -- Service to ship bulky goods.
@@ -6976,7 +7200,7 @@ class ShipmentService(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, IndividualSenderRequirement=None, PackagingReturn=None, Endorsement=None, VisualCheckOfAge=None, PreferredLocation=None, PreferredNeighbour=None, PreferredDay=None, NoNeighbourDelivery=None, NamedPersonOnly=None, ReturnReceipt=None, Premium=None, CashOnDelivery=None, AdditionalInsurance=None, BulkyGoods=None, IdentCheck=None, ParcelOutletRouting=None, gds_collector_=None, **kwargs_):
+    def __init__(self, IndividualSenderRequirement=None, PackagingReturn=None, Endorsement=None, VisualCheckOfAge=None, PreferredLocation=None, PreferredNeighbour=None, PreferredDay=None, NoNeighbourDelivery=None, NamedPersonOnly=None, ReturnReceipt=None, Premium=None, CashOnDelivery=None, PDDP=None, AdditionalInsurance=None, BulkyGoods=None, IdentCheck=None, ParcelOutletRouting=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -7006,6 +7230,8 @@ class ShipmentService(GeneratedsSuper):
         self.Premium_nsprefix_ = None
         self.CashOnDelivery = CashOnDelivery
         self.CashOnDelivery_nsprefix_ = None
+        self.PDDP = PDDP
+        self.PDDP_nsprefix_ = None
         self.AdditionalInsurance = AdditionalInsurance
         self.AdditionalInsurance_nsprefix_ = None
         self.BulkyGoods = BulkyGoods
@@ -7077,6 +7303,10 @@ class ShipmentService(GeneratedsSuper):
         return self.CashOnDelivery
     def set_CashOnDelivery(self, CashOnDelivery):
         self.CashOnDelivery = CashOnDelivery
+    def get_PDDP(self):
+        return self.PDDP
+    def set_PDDP(self, PDDP):
+        self.PDDP = PDDP
     def get_AdditionalInsurance(self):
         return self.AdditionalInsurance
     def set_AdditionalInsurance(self, AdditionalInsurance):
@@ -7107,6 +7337,7 @@ class ShipmentService(GeneratedsSuper):
             self.ReturnReceipt is not None or
             self.Premium is not None or
             self.CashOnDelivery is not None or
+            self.PDDP is not None or
             self.AdditionalInsurance is not None or
             self.BulkyGoods is not None or
             self.IdentCheck is not None or
@@ -7193,6 +7424,10 @@ class ShipmentService(GeneratedsSuper):
             namespaceprefix_ = self.CashOnDelivery_nsprefix_ + ':' if (UseCapturedNS_ and self.CashOnDelivery_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCashOnDelivery>%s</%sCashOnDelivery>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CashOnDelivery), input_name='CashOnDelivery')), namespaceprefix_ , eol_))
+        if self.PDDP is not None:
+            namespaceprefix_ = self.PDDP_nsprefix_ + ':' if (UseCapturedNS_ and self.PDDP_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPDDP>%s</%sPDDP>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PDDP), input_name='PDDP')), namespaceprefix_ , eol_))
         if self.AdditionalInsurance is not None:
             namespaceprefix_ = self.AdditionalInsurance_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalInsurance_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -7295,6 +7530,12 @@ class ShipmentService(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'CashOnDelivery')
             self.CashOnDelivery = value_
             self.CashOnDelivery_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PDDP':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PDDP')
+            value_ = self.gds_validate_string(value_, node, 'PDDP')
+            self.PDDP = value_
+            self.PDDP_nsprefix_ = child_.prefix
         elif nodeName_ == 'AdditionalInsurance':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'AdditionalInsurance')
@@ -9845,13 +10086,13 @@ class PickupBookingInformationType(GeneratedsSuper):
         self.validate_AccountType(self.Account)
         self.Account_nsprefix_ = None
         self.PickupDate = PickupDate
-        self.validate_PickupDateType39(self.PickupDate)
+        self.validate_PickupDateType46(self.PickupDate)
         self.PickupDate_nsprefix_ = None
         self.ReadyByTime = ReadyByTime
-        self.validate_ReadyByTimeType40(self.ReadyByTime)
+        self.validate_ReadyByTimeType47(self.ReadyByTime)
         self.ReadyByTime_nsprefix_ = None
         self.ClosingTime = ClosingTime
-        self.validate_ClosingTimeType41(self.ClosingTime)
+        self.validate_ClosingTimeType48(self.ClosingTime)
         self.ClosingTime_nsprefix_ = None
         self.Remark = Remark
         self.Remark_nsprefix_ = None
@@ -9965,43 +10206,43 @@ class PickupBookingInformationType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_PickupDateType39(self, value):
+    def validate_PickupDateType46(self, value):
         result = True
-        # Validate type PickupDateType39, a restriction on xs:string.
+        # Validate type PickupDateType46, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PickupDateType39' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PickupDateType46' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupDateType39' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupDateType46' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ReadyByTimeType40(self, value):
+    def validate_ReadyByTimeType47(self, value):
         result = True
-        # Validate type ReadyByTimeType40, a restriction on xs:string.
+        # Validate type ReadyByTimeType47, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReadyByTimeType40' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReadyByTimeType47' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ReadyByTimeType40' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ReadyByTimeType47' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ClosingTimeType41(self, value):
+    def validate_ClosingTimeType48(self, value):
         result = True
-        # Validate type ClosingTimeType41, a restriction on xs:string.
+        # Validate type ClosingTimeType48, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ClosingTimeType41' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ClosingTimeType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ClosingTimeType41' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ClosingTimeType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_AmountOfPiecesType(self, value):
@@ -10230,24 +10471,24 @@ class PickupBookingInformationType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'PickupDate')
             self.PickupDate = value_
             self.PickupDate_nsprefix_ = child_.prefix
-            # validate type PickupDateType39
-            self.validate_PickupDateType39(self.PickupDate)
+            # validate type PickupDateType46
+            self.validate_PickupDateType46(self.PickupDate)
         elif nodeName_ == 'ReadyByTime':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ReadyByTime')
             value_ = self.gds_validate_string(value_, node, 'ReadyByTime')
             self.ReadyByTime = value_
             self.ReadyByTime_nsprefix_ = child_.prefix
-            # validate type ReadyByTimeType40
-            self.validate_ReadyByTimeType40(self.ReadyByTime)
+            # validate type ReadyByTimeType47
+            self.validate_ReadyByTimeType47(self.ReadyByTime)
         elif nodeName_ == 'ClosingTime':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ClosingTime')
             value_ = self.gds_validate_string(value_, node, 'ClosingTime')
             self.ClosingTime = value_
             self.ClosingTime_nsprefix_ = child_.prefix
-            # validate type ClosingTimeType41
-            self.validate_ClosingTimeType41(self.ClosingTime)
+            # validate type ClosingTimeType48
+            self.validate_ClosingTimeType48(self.ClosingTime)
         elif nodeName_ == 'Remark':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'Remark')
@@ -12049,8 +12290,8 @@ class Version(GeneratedsSuper):
     """Version -- The version of the webservice implementation for which the
     requesting client is developed.
     includes
-    majorRelease -- The number of the major release. E.g. the '3' in version "3.1.".
-    minorRelease -- The number of the minor release. E.g. the '3' in version "3.1.".
+    majorRelease -- The number of the major release. E.g. the '3' in version "3.2.".
+    minorRelease -- The number of the minor release. E.g. the '3' in version "3.2.".
     build -- Optional build id to be addressed.
     
     """
@@ -12064,13 +12305,13 @@ class Version(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.majorRelease = majorRelease
-        self.validate_majorReleaseType47(self.majorRelease)
+        self.validate_majorReleaseType54(self.majorRelease)
         self.majorRelease_nsprefix_ = None
         self.minorRelease = minorRelease
-        self.validate_minorReleaseType48(self.minorRelease)
+        self.validate_minorReleaseType55(self.minorRelease)
         self.minorRelease_nsprefix_ = None
         self.build_ = build_
-        self.validate_buildType49(self.build_)
+        self.validate_buildType56(self.build_)
         self.build__nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -12099,31 +12340,31 @@ class Version(GeneratedsSuper):
         return self.build_
     def set_build(self, build_):
         self.build_ = build_
-    def validate_majorReleaseType47(self, value):
+    def validate_majorReleaseType54(self, value):
         result = True
-        # Validate type majorReleaseType47, a restriction on xs:string.
+        # Validate type majorReleaseType54, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on majorReleaseType47' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on majorReleaseType54' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_minorReleaseType48(self, value):
+    def validate_minorReleaseType55(self, value):
         result = True
-        # Validate type minorReleaseType48, a restriction on xs:string.
+        # Validate type minorReleaseType55, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on minorReleaseType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on minorReleaseType55' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_buildType49(self, value):
+    def validate_buildType56(self, value):
         result = True
-        # Validate type buildType49, a restriction on xs:string.
+        # Validate type buildType56, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on buildType49' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on buildType56' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def _hasContent(self):
@@ -12197,24 +12438,24 @@ class Version(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'majorRelease')
             self.majorRelease = value_
             self.majorRelease_nsprefix_ = child_.prefix
-            # validate type majorReleaseType47
-            self.validate_majorReleaseType47(self.majorRelease)
+            # validate type majorReleaseType54
+            self.validate_majorReleaseType54(self.majorRelease)
         elif nodeName_ == 'minorRelease':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'minorRelease')
             value_ = self.gds_validate_string(value_, node, 'minorRelease')
             self.minorRelease = value_
             self.minorRelease_nsprefix_ = child_.prefix
-            # validate type minorReleaseType48
-            self.validate_minorReleaseType48(self.minorRelease)
+            # validate type minorReleaseType55
+            self.validate_minorReleaseType55(self.minorRelease)
         elif nodeName_ == 'build':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'build')
             value_ = self.gds_validate_string(value_, node, 'build')
             self.build_ = value_
             self.build_nsprefix_ = child_.prefix
-            # validate type buildType49
-            self.validate_buildType49(self.build_)
+            # validate type buildType56
+            self.validate_buildType56(self.build_)
 # end class Version
 
 
@@ -12378,10 +12619,10 @@ class NativeAddressType(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType50(self.streetName)
+        self.validate_streetNameType57(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType51(self.streetNumber)
+        self.validate_streetNumberType58(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         if addressAddition is None:
             self.addressAddition = []
@@ -12454,22 +12695,22 @@ class NativeAddressType(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_streetNameType50(self, value):
+    def validate_streetNameType57(self, value):
         result = True
-        # Validate type streetNameType50, a restriction on xs:string.
+        # Validate type streetNameType57, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType50' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType57' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType51(self, value):
+    def validate_streetNumberType58(self, value):
         result = True
-        # Validate type streetNumberType51, a restriction on xs:string.
+        # Validate type streetNumberType58, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType51' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType58' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_addressAdditionType(self, value):
@@ -12594,16 +12835,16 @@ class NativeAddressType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType50
-            self.validate_streetNameType50(self.streetName)
+            # validate type streetNameType57
+            self.validate_streetNameType57(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType51
-            self.validate_streetNumberType51(self.streetNumber)
+            # validate type streetNumberType58
+            self.validate_streetNumberType58(self.streetNumber)
         elif nodeName_ == 'addressAddition':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'addressAddition')
@@ -12669,10 +12910,10 @@ class NativeAddressTypeNew(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType52(self.streetName)
+        self.validate_streetNameType59(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType53(self.streetNumber)
+        self.validate_streetNumberType60(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -12716,22 +12957,22 @@ class NativeAddressTypeNew(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_streetNameType52(self, value):
+    def validate_streetNameType59(self, value):
         result = True
-        # Validate type streetNameType52, a restriction on xs:string.
+        # Validate type streetNameType59, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType52' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType59' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType53(self, value):
+    def validate_streetNumberType60(self, value):
         result = True
-        # Validate type streetNumberType53, a restriction on xs:string.
+        # Validate type streetNumberType60, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType53' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType60' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -12818,16 +13059,16 @@ class NativeAddressTypeNew(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType52
-            self.validate_streetNameType52(self.streetName)
+            # validate type streetNameType59
+            self.validate_streetNameType59(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType53
-            self.validate_streetNumberType53(self.streetNumber)
+            # validate type streetNumberType60
+            self.validate_streetNumberType60(self.streetNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -12850,8 +13091,7 @@ class NativeAddressTypeNew(GeneratedsSuper):
 
 
 class ReceiverNativeAddressType(GeneratedsSuper):
-    """streetName -- The name of the street. Optionally
-    the house number can be passed in this field too.
+    """streetName -- The name of the street. Optionally the house number can be passed in this field too.
     In this case the field "streetNumber" must not be present.
     streetNumber -- The house number. This field is only optional when the house number is passed with
     the field streetName.
@@ -12876,10 +13116,10 @@ class ReceiverNativeAddressType(GeneratedsSuper):
         self.validate_name3(self.name3)
         self.name3_nsprefix_ = "cis"
         self.streetName = streetName
-        self.validate_streetNameType54(self.streetName)
+        self.validate_streetNameType61(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType55(self.streetNumber)
+        self.validate_streetNumberType62(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         if addressAddition is None:
             self.addressAddition = []
@@ -12887,7 +13127,7 @@ class ReceiverNativeAddressType(GeneratedsSuper):
             self.addressAddition = addressAddition
         self.addressAddition_nsprefix_ = None
         self.dispatchingInformation = dispatchingInformation
-        self.validate_dispatchingInformationType57(self.dispatchingInformation)
+        self.validate_dispatchingInformationType64(self.dispatchingInformation)
         self.dispatchingInformation_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -12970,40 +13210,40 @@ class ReceiverNativeAddressType(GeneratedsSuper):
         # Validate type name3, a restriction on xs:string.
         pass
         return result
-    def validate_streetNameType54(self, value):
+    def validate_streetNameType61(self, value):
         result = True
-        # Validate type streetNameType54, a restriction on xs:string.
+        # Validate type streetNameType61, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType54' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType61' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType55(self, value):
+    def validate_streetNumberType62(self, value):
         result = True
-        # Validate type streetNumberType55, a restriction on xs:string.
+        # Validate type streetNumberType62, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType55' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType62' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_addressAdditionType56(self, value):
+    def validate_addressAdditionType63(self, value):
         result = True
-        # Validate type addressAdditionType56, a restriction on xs:string.
+        # Validate type addressAdditionType63, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on addressAdditionType56' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on addressAdditionType63' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_dispatchingInformationType57(self, value):
+    def validate_dispatchingInformationType64(self, value):
         result = True
-        # Validate type dispatchingInformationType57, a restriction on xs:string.
+        # Validate type dispatchingInformationType64, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on dispatchingInformationType57' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on dispatchingInformationType64' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -13136,32 +13376,32 @@ class ReceiverNativeAddressType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType54
-            self.validate_streetNameType54(self.streetName)
+            # validate type streetNameType61
+            self.validate_streetNameType61(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType55
-            self.validate_streetNumberType55(self.streetNumber)
+            # validate type streetNumberType62
+            self.validate_streetNumberType62(self.streetNumber)
         elif nodeName_ == 'addressAddition':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'addressAddition')
             value_ = self.gds_validate_string(value_, node, 'addressAddition')
             self.addressAddition.append(value_)
             self.addressAddition_nsprefix_ = child_.prefix
-            # validate type addressAdditionType56
-            self.validate_addressAdditionType56(self.addressAddition[-1])
+            # validate type addressAdditionType63
+            self.validate_addressAdditionType63(self.addressAddition[-1])
         elif nodeName_ == 'dispatchingInformation':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'dispatchingInformation')
             value_ = self.gds_validate_string(value_, node, 'dispatchingInformation')
             self.dispatchingInformation = value_
             self.dispatchingInformation_nsprefix_ = child_.prefix
-            # validate type dispatchingInformationType57
-            self.validate_dispatchingInformationType57(self.dispatchingInformation)
+            # validate type dispatchingInformationType64
+            self.validate_dispatchingInformationType64(self.dispatchingInformation)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -14905,7 +15145,7 @@ class PostfilialeType(GeneratedsSuper):
         self.validate_postfilialNumberType(self.postfilialNumber)
         self.postfilialNumber_nsprefix_ = None
         self.postNumber = postNumber
-        self.validate_postNumberType58(self.postNumber)
+        self.validate_postNumberType65(self.postNumber)
         self.postNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -14962,17 +15202,17 @@ class PostfilialeType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_postNumberType58(self, value):
+    def validate_postNumberType65(self, value):
         result = True
-        # Validate type postNumberType58, a restriction on xs:string.
+        # Validate type postNumberType65, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType58' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType65' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType58' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType65' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15067,8 +15307,8 @@ class PostfilialeType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'postNumber')
             self.postNumber = value_
             self.postNumber_nsprefix_ = child_.prefix
-            # validate type postNumberType58
-            self.validate_postNumberType58(self.postNumber)
+            # validate type postNumberType65
+            self.validate_postNumberType65(self.postNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -15108,10 +15348,10 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.postfilialNumber = postfilialNumber
-        self.validate_postfilialNumberType59(self.postfilialNumber)
+        self.validate_postfilialNumberType66(self.postfilialNumber)
         self.postfilialNumber_nsprefix_ = None
         self.postNumber = postNumber
-        self.validate_postNumberType60(self.postNumber)
+        self.validate_postNumberType67(self.postNumber)
         self.postNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -15155,30 +15395,30 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_postfilialNumberType59(self, value):
+    def validate_postfilialNumberType66(self, value):
         result = True
-        # Validate type postfilialNumberType59, a restriction on xs:string.
+        # Validate type postfilialNumberType66, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 3:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postfilialNumberType59' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postfilialNumberType66' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 3:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType59' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType66' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_postNumberType60(self, value):
+    def validate_postNumberType67(self, value):
         result = True
-        # Validate type postNumberType60, a restriction on xs:string.
+        # Validate type postNumberType67, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType60' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType60' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15265,16 +15505,16 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'postfilialNumber')
             self.postfilialNumber = value_
             self.postfilialNumber_nsprefix_ = child_.prefix
-            # validate type postfilialNumberType59
-            self.validate_postfilialNumberType59(self.postfilialNumber)
+            # validate type postfilialNumberType66
+            self.validate_postfilialNumberType66(self.postfilialNumber)
         elif nodeName_ == 'postNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'postNumber')
             value_ = self.gds_validate_string(value_, node, 'postNumber')
             self.postNumber = value_
             self.postNumber_nsprefix_ = child_.prefix
-            # validate type postNumberType60
-            self.validate_postNumberType60(self.postNumber)
+            # validate type postNumberType67
+            self.validate_postNumberType67(self.postNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -15317,10 +15557,10 @@ class ParcelShopType(GeneratedsSuper):
         self.validate_parcelShopNumberType(self.parcelShopNumber)
         self.parcelShopNumber_nsprefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType61(self.streetName)
+        self.validate_streetNameType68(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType62(self.streetNumber)
+        self.validate_streetNumberType69(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -15381,22 +15621,22 @@ class ParcelShopType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on parcelShopNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNameType61(self, value):
+    def validate_streetNameType68(self, value):
         result = True
-        # Validate type streetNameType61, a restriction on xs:string.
+        # Validate type streetNameType68, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType61' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType68' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType62(self, value):
+    def validate_streetNumberType69(self, value):
         result = True
-        # Validate type streetNumberType62, a restriction on xs:string.
+        # Validate type streetNumberType69, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType62' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType69' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15496,16 +15736,16 @@ class ParcelShopType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType61
-            self.validate_streetNameType61(self.streetName)
+            # validate type streetNameType68
+            self.validate_streetNameType68(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType62
-            self.validate_streetNumberType62(self.streetNumber)
+            # validate type streetNumberType69
+            self.validate_streetNumberType69(self.streetNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -17708,6 +17948,7 @@ class ExportDocPositionType(GeneratedsSuper):
       manufactured
       
     * customsTariffNumber -- Customs tariff number of the unit / position.
+      If the service PDDP is used, customsTariffNumber is required.
       
     * amount -- Quantity of the unit / position. Only positive
       values (
@@ -18572,9 +18813,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 
@@ -18756,211 +18998,226 @@ RenameMappings_ = {
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
 NamespaceToDefMappings_ = {'http://dhl.de/webservice/cisbase': [('countryISOType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'ST'),
                                       ('ZipType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'ST'),
                                       ('AuthentificationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressTypeNew',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PickupAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('DeliveryAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('BankType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NameType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNameType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CommunicationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ContactType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PackStationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeTypeNoCountry',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ParcelShopType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CustomerType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ErrorType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CountryType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ShipmentNumberType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT')],
  'http://dhl.de/webservices/businesscustomershipping/3.0': [('SequenceNumber',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'ST'),
                                                             ('ShipperReferenceType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'ST'),
                                                             ('CreationState',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ValidationState',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Statusinformation',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('StatusElement',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PieceInformation',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentOrderType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ValidateShipmentOrderType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipperTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipperType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ReceiverTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ReceiverType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Ident',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentDetailsType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentDetailsTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentItemType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentItemTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentService',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Serviceconfiguration',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetails',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('ServiceconfigurationDetailsPreferredDay',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('ServiceconfigurationDetailsPreferredLocation',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('ServiceconfigurationDetailsPreferredNeighbour',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsOptional',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsResponse',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationEndorsement',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationISR',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDH',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationVisualAgeCheck',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDeliveryTimeframe',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDateOfDelivery',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationAdditionalInsurance',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationCashOnDelivery',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationUnfree',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('PDDP',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationIC',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentNotificationType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ExportDocumentType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('FurtherAddressesType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('LabelData',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ExportDocData',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ManifestState',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('DeletionState',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupDetailsType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupAddressType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupOrdererType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupBookingInformationType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('IdentityData',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PackstationType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PostfilialeType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ParcelShopType',
-                                                             './schemas/geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
                                                              'CT')]}
 
 __all__ = [
@@ -19037,6 +19294,7 @@ __all__ = [
     "ShipperType",
     "ShipperTypeType",
     "Status",
+    "StatusElement",
     "Statusinformation",
     "TimeFrame",
     "UpdateShipmentOrderRequest",
