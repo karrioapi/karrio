@@ -3,6 +3,7 @@ django-debug-toolbar
 
 # Schemas update
 -e ./schemas/ups
+-e ./schemas/dhl_germany
 
 # Carrier Extentions in Development
 -e ./sdk/core
@@ -12,6 +13,7 @@ django-debug-toolbar
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_germany
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom

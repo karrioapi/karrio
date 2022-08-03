@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "carrier.dhl_germany"
-version = "2021.10rc0"
-description = "DHL eCommerce Germany Web API Schemas Python Data Types library"
+version = "2022.8"
+description = "DHL Parcel Germany Web API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
 homepage="https://github.com/karrioapi/karrio/tree/main/schemas/schemas/dhl_germany"
 authors = ["Karrio <hello@karrio.io>"]
