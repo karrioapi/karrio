@@ -25,7 +25,14 @@ def add_extension(
     typer.confirm(f'Generate new carrier: "{name}" extension with id "{id}" and features [{feature}]', abort=True)
 
     features = [f.strip() for f in feature.split(',')]
-    context = dict(id=id, name=name, features=features, version=version, is_xml_api=is_xml_api)
+    context = dict(
+        id=id,
+        name=name,
+        features=features,
+        version=version,
+        is_xml_api=is_xml_api,
+        compact_name=name.strip().replace("-", "").replace("_", "").replace("&", "").replace(" ", ""),
+    )
 
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
 

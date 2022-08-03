@@ -163,7 +163,7 @@ build-backend = "poetry.core.masonry.api"
 README_TEMPLATE = Template('''
 # karrio.{{id}}
 
-This package is a Canada Post extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
+This package is a {{name}} extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -323,8 +323,8 @@ class Mapper(mapper.Mapper):
 MAPPER_PROXY_TEMPLATE = Template('''
 """Karrio {{name}} client proxy."""
 
-import karrio.api.proxy as proxy
 import karrio.lib as lib
+import karrio.api.proxy as proxy
 from karrio.mappers.{{id}}.settings import Settings
 
 
@@ -485,8 +485,8 @@ def parse_error_response(
 
 PROVIDER_RATE_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -495,7 +495,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_rate_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
     response_rates = []  # extract carrier response rates
@@ -508,7 +508,7 @@ def parse_rate_response(
 
 def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = None  # parse carrier rate type
 
@@ -527,7 +527,7 @@ def _extract_details(
 
 def rate_request(
     payload: models.RateRequest,
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
     packages = units.Packages(payload.parcels)  # preprocess the request parcels
     options = units.Options(payload.options, provider_units.ShippingOption)  # preprocess the request options
@@ -541,8 +541,8 @@ def rate_request(
 
 PROVIDER_TRACKING_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -551,7 +551,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_tracking_response(
     responses: typing.List[typing.Tuple[str, {% if is_xml_api %}lib.Element{% else %}dict{% endif %}]],
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
     response_rates = []  # extract carrier response rates
@@ -564,7 +564,7 @@ def parse_tracking_response(
 
 def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     tracking = None  # parse carrier tracking object type
 
@@ -598,10 +598,10 @@ def tracking_request(
 ''')
 
 PROVIDER_UNITS_TEMPLATE = Template('''
-import karrio.core.utils import Enum, Flag, Spec
+import karrio.core.utils as utils
 
 
-class PackagingType(Flag):
+class PackagingType(utils.Flag):
     """ Carrier specific packaging type """
     PACKAGE = "PACKAGE"
 
@@ -615,14 +615,14 @@ class PackagingType(Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(Enum):
+class ShippingService(utils.Enum):
     """ Carrier specific services """
     {{id}}_standard_service = "{{name}} Standard Service"
 
 
-class ShippingOption(Enum):
+class ShippingOption(utils.Enum):
     """ Carrier specific options """
-    # {{id}}_option = Spec.asKey("code")  # use Spec.asValue("code") when the code isn't needed and Spec.asKeyVal("code", float) to capture both.
+    # {{id}}_option = utils.OptionEnum("code")
 
     """ Unified Option type mapping """
     # insurance = {{id}}_coverage  #  maps unified karrio option to carrier specific
@@ -666,7 +666,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_address_validation_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
@@ -709,7 +709,6 @@ from karrio.providers.{{id}}.shipment.cancel import (
 
 PROVIDER_SHIPMENT_CANCEL_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
@@ -719,11 +718,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_shipment_cancel_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
-    success = True  # compute address validation success state
+    success = True  # compute shipment cancel success state
 
     confirmation = (
         models.ConfirmationDetails(
@@ -739,7 +738,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
     request = None  # map data to convert karrio model to {{id}} specific type
@@ -750,8 +749,8 @@ def shipment_cancel_request(
 
 PROVIDER_SHIPMENT_CREATE_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -760,7 +759,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_shipment_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
     response_shipment = None  # extract carrier response shipment
@@ -773,7 +772,7 @@ def parse_shipment_response(
 
 def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     shipment = None  # parse carrier shipment type from "data"
     label = ""  # extract and process the shipment label to a valid base64 text
@@ -786,7 +785,7 @@ def _extract_details(
         shipment_identifier="",  # extract shipment identifier from shipment
         label_type="PDF",  # extract shipment label file format
         docs=models.Documents(
-            label=label,  pass label base64 text
+            label=label,  # pass label base64 text
             # invoice=invoice,  # pass invoice base64 text if applies
         ),
         meta=dict(
@@ -818,8 +817,8 @@ from karrio.providers.{{id}}.pickup.cancel import parse_pickup_cancel_response, 
 
 PROVIDER_PICKUP_CANCEL_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -828,7 +827,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_pickup_cancel_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
@@ -848,7 +847,7 @@ def parse_pickup_cancel_response(
 
 def pickup_cancel_request(
     payload: models.PickupCancelRequest,
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
     request = None  # map data to convert karrio model to {{id}} specific type
@@ -859,8 +858,8 @@ def pickup_cancel_request(
 
 PROVIDER_PICKUP_CREATE_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -869,7 +868,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_pickup_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
     response_pickup = None  # extract carrier response pickup
@@ -882,7 +881,7 @@ def parse_pickup_response(
 
 def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> models.PickupDetails:
     pickup = None  # parse carrier pickup type from "data"
 
@@ -906,8 +905,8 @@ def pickup_request(
 
 PROVIDER_PICKUP_UPDATE_TEMPLATE = Template('''
 import typing
-import karrio.core.units as units
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -916,7 +915,7 @@ import karrio.providers.{{id}}.units as provider_units
 
 def parse_pickup_update_response(
     response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
     response_pickup = None  # extract carrier response pickup
@@ -929,7 +928,7 @@ def parse_pickup_update_response(
 
 def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> models.PickupDetails:
     pickup = None  # parse carrier pickup type from "data"
 
@@ -943,7 +942,7 @@ def _extract_details(
 
 def pickup_update_request(
     payload: models.PickupUpdateRequest,
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
     request = None  # map data to convert karrio model to {{id}} specific type
 
@@ -958,7 +957,7 @@ TEST_PROVIDER_IMPORTS_TEMPLATE = Template('''{% if "rating" in features %}
 from tests.{{id}}.rate import *{% endif %}{% if "pickup" in features %}
 from tests.{{id}}.pickup import *{% endif %}{% if "address" in features %}
 from tests.{{id}}.address import *{% endif %}{% if "tracking" in features %}
-from tests.{{id}}.tracking import *{% endif %}{% if "shipment" in features %}
+from tests.{{id}}.tracking import *{% endif %}{% if "shipping" in features %}
 from tests.{{id}}.shipment import *{% endif %}
 ''')
 
@@ -983,7 +982,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class Test{{name.strip().replace(" ", "")}}Rating(unittest.TestCase):
+class Test{{compact_name}}Rating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = models.RateRequest(**RatePayload)
@@ -1038,7 +1037,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class Test{{name.strip().replace(" ", "")}}Tracking(unittest.TestCase):
+class Test{{compact_name}}Tracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.TrackingRequest = models.TrackingRequest(**TrackingPayload)
@@ -1115,7 +1114,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class Test{{name.strip().replace(" ", "")}}Shipping(unittest.TestCase):
+class Test{{compact_name}}Shipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
@@ -1213,7 +1212,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class Test{{name.strip().replace(" ", "")}}Pickup(unittest.TestCase):
+class Test{{compact_name}}Pickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.PickupRequest = PickupRequest(**PickupPayload)
@@ -1334,7 +1333,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class Test{{name.strip().replace(" ", "")}}Rating(unittest.TestCase):
+class Test{{compact_name}}Rating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.AddressValidationRequest = models.AddressValidationRequest(**AddressValidationPayload)
