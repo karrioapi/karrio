@@ -66,16 +66,16 @@ class Service(Enum):
 
 
 class ShippingOption(Flag):
-    dhl_poland_delivery_in_18_22_hours = OptionEnum("1722")
-    dhl_poland_delivery_on_saturday = OptionEnum("SATURDAY")
-    dhl_poland_pickup_on_staturday = OptionEnum("NAD_SOBOTA")
-    dhl_poland_insuration = OptionEnum("UBEZP")
-    dhl_poland_collect_on_delivery = OptionEnum("COD")
+    dhl_poland_delivery_in_18_22_hours = OptionEnum("1722", bool)
+    dhl_poland_delivery_on_saturday = OptionEnum("SATURDAY", bool)
+    dhl_poland_pickup_on_staturday = OptionEnum("NAD_SOBOTA", bool)
+    dhl_poland_insuration = OptionEnum("UBEZP", float)
+    dhl_poland_collect_on_delivery = OptionEnum("COD", float)
     dhl_poland_information_to_receiver = OptionEnum("PDI")
-    dhl_poland_return_of_document = OptionEnum("ROD")
-    dhl_poland_proof_of_delivery = OptionEnum("POD")
-    dhl_poland_delivery_to_neighbour = OptionEnum("SAS")
-    dhl_poland_self_collect = OptionEnum("ODB")
+    dhl_poland_return_of_document = OptionEnum("ROD", bool)
+    dhl_poland_proof_of_delivery = OptionEnum("POD", bool)
+    dhl_poland_delivery_to_neighbour = OptionEnum("SAS", bool)
+    dhl_poland_self_collect = OptionEnum("ODB", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = dhl_poland_collect_on_delivery
@@ -84,8 +84,8 @@ class ShippingOption(Flag):
 
 def shipping_options_initializer(
     options: dict,
-    package_options: units.Options = None,
-) -> units.Options:
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
     """
     Apply default values to the given options.
     """
