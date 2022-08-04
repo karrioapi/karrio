@@ -598,10 +598,11 @@ def tracking_request(
 ''')
 
 PROVIDER_UNITS_TEMPLATE = Template('''
-import karrio.core.utils as utils
+import karrio.lib as lib
+import karrio.core.units as units
 
 
-class PackagingType(utils.Flag):
+class PackagingType(lib.Flag):
     """ Carrier specific packaging type """
     PACKAGE = "PACKAGE"
 
@@ -615,19 +616,36 @@ class PackagingType(utils.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(utils.Enum):
+class ShippingService(lib.Enum):
     """ Carrier specific services """
     {{id}}_standard_service = "{{name}} Standard Service"
 
 
-class ShippingOption(utils.Enum):
+class ShippingOption(lib.Enum):
     """ Carrier specific options """
-    # {{id}}_option = utils.OptionEnum("code")
+    # {{id}}_option = lib.OptionEnum("code")
 
     """ Unified Option type mapping """
     # insurance = {{id}}_coverage  #  maps unified karrio option to carrier specific
 
     pass
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type: ignore
+
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 ''')
 
@@ -641,16 +659,16 @@ class Settings(core.Settings):
     # username: str  # carrier specific api credential key
 
     @property
+    def carrier_name(self):
+        return "{{id}}"
+
+    @property
     def server_url(self):
         return (
             "https://carrier.api"
             if self.test_mode
             else "https://sandbox.carrier.api"
         )
-
-    @property
-    def carrier_name(self):
-        return "{{id}}"
 
 ''')
 
