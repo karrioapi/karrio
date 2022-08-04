@@ -1,9 +1,9 @@
-import karrio.core.utils as utils
+import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 
 
-class PackagingType(utils.Flag):
+class PackagingType(lib.Flag):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -18,7 +18,7 @@ class PackagingType(utils.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(utils.Enum):
+class ShippingService(lib.Enum):
     """Carrier specific services"""
 
     dpdhl_paket = "V01PAK"
@@ -29,24 +29,24 @@ class ShippingService(utils.Enum):
     dpdhl_warenpost_international = "V66WPI"
 
 
-class ShippingOption(utils.Enum):
+class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    dpdhl_preferred_neighbour = utils.OptionEnum("code")
-    dpdhl_preferred_location = utils.OptionEnum("code")
-    dpdhl_notification = utils.OptionEnum("code", bool)
-    dpdhl_visual_check_of_age = utils.OptionEnum("code", bool)
-    dpdhl_named_person_only = utils.OptionEnum("code", bool)
-    dpdhl_identcheck = utils.OptionEnum("code", bool)
-    dpdhl_no_neighbour_delivery = utils.OptionEnum("code", bool)
-    dpdhl_preferred_day = utils.OptionEnum("code")
-    dpdhl_endorsement = utils.OptionEnum("code")
-    dpdhl_go_green = utils.OptionEnum("code", bool)
-    dpdhl_additional_insurance = utils.OptionEnum("code", float)
-    dpdhl_bulky_goods = utils.OptionEnum("code", bool)
-    dpdhl_cash_on_delivery = utils.OptionEnum("code", float)
-    dpdhl_premium = utils.OptionEnum("code", bool)
-    dpdhl_retoure = utils.OptionEnum("code", bool)
+    dpdhl_preferred_neighbour = lib.OptionEnum("code")
+    dpdhl_preferred_location = lib.OptionEnum("code")
+    dpdhl_notification = lib.OptionEnum("code", bool)
+    dpdhl_visual_check_of_age = lib.OptionEnum("code", bool)
+    dpdhl_named_person_only = lib.OptionEnum("code", bool)
+    dpdhl_identcheck = lib.OptionEnum("code", bool)
+    dpdhl_no_neighbour_delivery = lib.OptionEnum("code", bool)
+    dpdhl_preferred_day = lib.OptionEnum("code")
+    dpdhl_endorsement = lib.OptionEnum("code")
+    dpdhl_go_green = lib.OptionEnum("code", bool)
+    dpdhl_additional_insurance = lib.OptionEnum("code", float)
+    dpdhl_bulky_goods = lib.OptionEnum("code", bool)
+    dpdhl_cash_on_delivery = lib.OptionEnum("code", float)
+    dpdhl_premium = lib.OptionEnum("code", bool)
+    dpdhl_retoure = lib.OptionEnum("code", bool)
 
     """ Unified Option type mapping """
     insurance = dpdhl_additional_insurance
@@ -55,8 +55,8 @@ class ShippingOption(utils.Enum):
 
 def shipping_options_initializer(
     options: dict,
-    package_options: units.Options = None,
-) -> units.Options:
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
     """
     Apply default values to the given options.
     """

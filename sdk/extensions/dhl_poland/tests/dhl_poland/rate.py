@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest

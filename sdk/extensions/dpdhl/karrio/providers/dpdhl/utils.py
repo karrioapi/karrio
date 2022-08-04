@@ -1,4 +1,6 @@
+import karrio.lib as lib
 import karrio.core as core
+import dpdhl_lib.business_interface as dpdhl
 
 
 class Settings(core.Settings):
@@ -8,6 +10,7 @@ class Settings(core.Settings):
     username: str  # type:ignore
     password: str  # type:ignore
     customer_number: str = None
+    language_code: str = "en"
 
     @property
     def carrier_name(self):
@@ -23,13 +26,10 @@ class Settings(core.Settings):
 
     @property
     def auth_data(self):
-        return AuthData(
-            username=self.username,
-            password=self.password,
-        )
+        return dpdhl.AuthentificationType(user=self.username, signature=self.password)
 
     @staticmethod
-    def serialize(envelope: Envelope, request_name: str, namesapce: str) -> str:
+    def serialize(envelope: lib.Envelope, request_name: str, namesapce: str) -> str:
         namespacedef_ = (
             'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"'
             f' xmlns="{namesapce}"'
@@ -37,9 +37,9 @@ class Settings(core.Settings):
         envelope.ns_prefix_ = "soap-env"
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
 
-        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "")
+        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "")
         return (
-            XP.export(envelope, namespacedef_=namespacedef_)
+            lib.to_xml(envelope, namespacedef_=namespacedef_)
             .replace(
                 "<%s:%s" % (envelope.ns_prefix_, request_name),
                 "<%s%s" % ("", request_name),

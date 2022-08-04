@@ -13,6 +13,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     username: str  # type:ignore
     password: str  # type:ignore
     customer_number: str = None
+    language_code: str = "en"
 
     # generic properties
     id: str = None

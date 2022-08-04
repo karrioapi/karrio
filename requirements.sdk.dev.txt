@@ -1,6 +1,6 @@
 # Schemas update
 -e ./schemas/ups
--e ./schemas/dhl_germany
+-e ./schemas/dpdhl
 
 # SDK extentions
 -e ./sdk/core
@@ -17,6 +17,7 @@
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
+-e ./sdk/extensions/dpdhl
 -e ./sdk/vendors/eshipper
 -e ./sdk/extensions/fedex
 -e ./sdk/vendors/freightcom

@@ -239,83 +239,83 @@ import typing
 import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
-import karrio.providers.{{id}} as providers
-from karrio.mappers.{{id}}.settings import Settings
+import karrio.providers.{{id}} as provider
+import karrio.mappers.{{id}}.settings as provider_settings
 
 
 class Mapper(mapper.Mapper):
-    settings: Settings{% if "rating" in features %}
+    settings: provider_settings.Settings{% if "rating" in features %}
 
     def create_rate_request(
         self, payload: models.RateRequest
     ) -> lib.Serializable:
-        return providers.rate_request(payload, self.settings)
+        return provider.rate_request(payload, self.settings)
     {% endif %}{% if "tracking" in features %}
     def create_tracking_request(
         self, payload: models.TrackingRequest
     ) -> lib.Serializable:
-        return providers.tracking_request(payload, self.settings)
+        return provider.tracking_request(payload, self.settings)
     {% endif %}{% if "shipping" in features %}
     def create_shipment_request(
         self, payload: models.ShipmentRequest
     ) -> lib.Serializable:
-        return providers.shipment_request(payload, self.settings)
+        return provider.shipment_request(payload, self.settings)
     {% endif %}{% if "pickup" in features %}
     def create_pickup_request(
         self, payload: models.PickupRequest
     ) -> lib.Serializable:
-        return providers.pickup_request(payload, self.settings)
+        return provider.pickup_request(payload, self.settings)
     {% endif %}{% if "pickup" in features %}
     def create_pickup_update_request(
         self, payload: models.PickupUpdateRequest
     ) -> lib.Serializable:
-        return providers.pickup_update_request(payload, self.settings)
+        return provider.pickup_update_request(payload, self.settings)
     {% endif %}{% if "pickup" in features %}
     def create_cancel_pickup_request(
         self, payload: models.PickupCancelRequest
     ) -> lib.Serializable:
-        return providers.pickup_cancel_request(payload, self.settings)
+        return provider.pickup_cancel_request(payload, self.settings)
     {% endif %}{% if "shipping" in features %}
     def create_cancel_shipment_request(
         self, payload: models.ShipmentCancelRequest
     ) -> lib.Serializable[str]:
-        return providers.shipment_cancel_request(payload, self.settings)
+        return provider.shipment_cancel_request(payload, self.settings)
     {% endif %}
     {% if "pickup" in features %}
     def parse_cancel_pickup_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return providers.parse_pickup_cancel_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_cancel_response(response.deserialize(), self.settings)
     {% endif %}{% if "shipping" in features %}
     def parse_cancel_shipment_response(
         self, response: lib.Deserializable
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return providers.parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return provider.parse_shipment_cancel_response(response.deserialize(), self.settings)
     {% endif %}{% if "pickup" in features %}
     def parse_pickup_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
-        return providers.parse_pickup_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_response(response.deserialize(), self.settings)
     {% endif %}{% if "pickup" in features %}
     def parse_pickup_update_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
-        return providers.parse_pickup_update_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_update_response(response.deserialize(), self.settings)
     {% endif %}{% if "rating" in features %}
     def parse_rate_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-        return providers.parse_rate_response(response.deserialize(), self.settings)
+        return provider.parse_rate_response(response.deserialize(), self.settings)
     {% endif %}{% if "shipping" in features %}
     def parse_shipment_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-        return providers.parse_shipment_response(response.deserialize(), self.settings)
+        return provider.parse_shipment_response(response.deserialize(), self.settings)
     {% endif %}{% if "tracking" in features %}
     def parse_tracking_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-        return providers.parse_tracking_response(response.deserialize(), self.settings)
+        return provider.parse_tracking_response(response.deserialize(), self.settings)
     {% endif %}
 
 ''')
@@ -325,11 +325,11 @@ MAPPER_PROXY_TEMPLATE = Template('''
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
-from karrio.mappers.{{id}}.settings import Settings
+import karrio.mappers.{{id}}.settings as provider_settings
 
 
 class Proxy(proxy.Proxy):
-    settings: Settings{% if "rating" in features %}
+    settings: provider_settings.Settings{% if "rating" in features %}
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(

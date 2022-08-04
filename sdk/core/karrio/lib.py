@@ -16,6 +16,9 @@ Element = utils.Element
 Tracer = utils.Tracer
 Trace = utils.Trace
 Job = utils.Job
+OptionEnum = utils.OptionEnum
+Enum = utils.Enum
+Flag = utils.Flag
 
 
 # -----------------------------------------------------------

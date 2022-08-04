@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from tests.dpdhl.fixture import gateway
 
 import karrio
@@ -7,7 +7,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
-class TestDHLParcelGermanyShipping(unittest.TestCase):
+class TestDPDHLShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
