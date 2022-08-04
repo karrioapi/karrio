@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "carrier.dpdhl"
+version = "2022.8"
+description = "Deutsche Post DHL Web API Schemas Python Data Types library"
+repository="https://github.com/karrioapi/karrio"
+homepage="https://github.com/karrioapi/karrio/tree/main/schemas/schemas/dpdhl"
+authors = ["Karrio <hello@karrio.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [
+    { include = "dpdhl_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: Apache Software License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = ""
+lxml = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"
