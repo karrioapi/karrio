@@ -683,7 +683,7 @@ class CustomsOption(utils.Enum):
     vat_registration_number = utils.OptionEnum("vat_registration_number")
 
 
-class CustomsInfo:
+class CustomsInfo(models.Customs):
     """The customs info processing helper"""
 
     def __init__(
@@ -714,11 +714,11 @@ class CustomsInfo:
         return self._customs is not None
 
     @property
-    def duty(self) -> str:
+    def duty(self) -> typing.Optional[models.Duty]:  # type:ignore
         return getattr(self._customs, "duty", None)
 
     @property
-    def commodities(self):
+    def commodities(self) -> typing.List[models.Commodity]:  # type:ignore
         return getattr(self._customs, "commodities", None) or []
 
     @property

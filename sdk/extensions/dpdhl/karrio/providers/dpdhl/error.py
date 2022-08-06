@@ -1,3 +1,4 @@
+import dpdhl_lib.business_interface as dpdhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -9,15 +10,31 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors = []  # compute the carrier error object list
+    errors: typing.List[dpdhl.Statusinformation] = [
+        status
+        for status in lib.find_element("Status", response, dpdhl.Statusinformation)
+        if status.statusText != "ok"
+    ]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",  # set the carrier error code
-            message="",  # set the carrier error message
-            details={**kwargs},
+            code=error.statusCode,  # set the carrier error code
+            message=error.statusMessage,  # set the carrier error message
+            details={
+                **(
+                    {"error": error.errorMessage}
+                    if any(error.errorMessage or "")
+                    else {}
+                ),
+                **(
+                    {"warning": error.warningMessage}
+                    if any(error.warningMessage or "")
+                    else {}
+                ),
+                **kwargs,
+            },
         )
         for error in errors
     ]

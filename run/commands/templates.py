@@ -529,9 +529,9 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = units.Packages(payload.parcels)  # preprocess the request parcels
-    options = units.Options(payload.options, provider_units.ShippingOption)  # preprocess the request options
-    services = units.Services(payload.services, provider_units.ShippingService)  # preprocess the request services
+    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
+    options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
+    services = lib.to_services(payload.services, provider_units.ShippingService)  # preprocess the request services
 
     request = None  # map data to convert karrio model to {{id}} specific type
 
@@ -554,12 +554,12 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response_messages = []  # extract carrier response errors
-    response_rates = []  # extract carrier response rates
+    response_details = []  # extract carrier response tracking details
 
     messages = error.parse_error_response(response_messages, settings)
-    trackers = [_extract_details(rate, settings) for rate in response_rates]
+    tracking_details = [_extract_details(rate, settings) for rate in response_details]
 
-    return trackers, messages
+    return tracking_details, messages
 
 
 def _extract_details(
@@ -816,9 +816,9 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = units.Packages(payload.parcels)  # preprocess the request parcels
-    options = units.Options(payload.options, provider_units.ShippingOption)  # preprocess the request options
-    services = units.Services(payload.services, provider_units.ShippingService)  # preprocess the request services
+    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
+    options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
+    services = provider_units.Services.map(payload.service).value_or_key  # preprocess the request services
 
     request = None  # map data to convert karrio model to {{id}} specific type
 

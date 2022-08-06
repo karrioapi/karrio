@@ -34,7 +34,7 @@ class TestDPDHLShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/soap",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +44,7 @@ class TestDPDHLShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/soap",
             )
 
     def test_parse_shipment_response(self):
@@ -58,7 +58,7 @@ class TestDPDHLShipping(unittest.TestCase):
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.dpdhl.proxy.lib.request") as mock:
-            mock.return_value = ""
+            mock.return_value = ShipmentCancelResponse
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
@@ -74,20 +74,76 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
+ShipmentPayload = {
+    "service": "dpdhl_paket",
+    "shipper": {
+        "company_name": "Absender Zeile 2",
+        "person_name": "Absender Zeile 1",
+        "address_line1": "Vegesacker Heerstr.",
+        "city": "Bremen",
+        "postal_code": "28757",
+        "country_code": "DE",
+        "phone_number": "+49421987654321",
+        "email": "absender@dhl.local",
+        "extra": {"street_number": "111"},
+    },
+    "recipient": {
+        "company_name": "Empfänger Zeile 2",
+        "person_name": "Kontaktperson Empfänger",
+        "address_line1": "An der Weide",
+        "city": "Bremen",
+        "postal_code": "28195",
+        "country_code": "DE",
+        "phone_number": "+49421123456789",
+        "email": "empfaenger@dhl.local",
+        "extra": {"street_number": "50a"},
+    },
+    "parcels": [
+        {
+            "height": 15,
+            "length": 60.0,
+            "width": 30,
+            "weight": 5.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
+    "options": {"email_notification": True, "shipment_date": "2020-12-29"},
+    "label_type": "PDF",
+    "reference": "Ref. 123456",
+}
 
 ShipmentCancelPayload = {
     "shipment_identifier": "222201040006351204",
 }
 
-ParsedShipmentResponse = [{}, []]
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "dpdhl",
+        "carrier_name": "dpdhl",
+        "docs": {
+            "label": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC"
+        },
+        "label_type": "PDF",
+        "meta": {},
+        "shipment_identifier": "222201040006351662",
+        "tracking_number": "222201040006351662",
+    },
+    [],
+]
 
-ParsedCancelShipmentResponse = [{}, []]
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "dpdhl",
+        "carrier_name": "dpdhl",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
-ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:cis="http://dhl.de/webservice/cisbase"
-    xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
+ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cis="http://dhl.de/webservice/cisbase" xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
     <soapenv:Header>
         <cis:Authentification>
             <cis:user>2222222222_01</cis:user>
@@ -101,22 +157,21 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                 <minorRelease>1</minorRelease>
             </ns:Version>
             <ShipmentOrder>
-                <sequenceNumber></sequenceNumber>
+                <sequenceNumber>1</sequenceNumber>
                 <Shipment>
                     <ShipmentDetails>
                         <product>V01PAK</product>
                         <cis:accountNumber>22222222220104</cis:accountNumber>
                         <customerReference>Ref. 123456</customerReference>
                         <shipmentDate>2020-12-29</shipmentDate>
-                        <costCentre></costCentre>
+                        <returnShipmentAccountNumber>22222222220104</returnShipmentAccountNumber>
+                        <returnShipmentReference>Ref. 123456</returnShipmentReference>
                         <ShipmentItem>
                             <weightInKG>5</weightInKG>
                             <lengthInCM>60</lengthInCM>
                             <widthInCM>30</widthInCM>
                             <heightInCM>15</heightInCM>
                         </ShipmentItem>
-                        <Service>
-                        </Service>
                         <Notification>
                             <recipientEmailAddress>empfaenger@dhl.local</recipientEmailAddress>
                         </Notification>
@@ -125,7 +180,6 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                         <Name>
                             <cis:name1>Absender Zeile 1</cis:name1>
                             <cis:name2>Absender Zeile 2</cis:name2>
-                            <cis:name3>Absender Zeile 3</cis:name3>
                         </Name>
                         <Address>
                             <cis:streetName>Vegesacker Heerstr.</cis:streetName>
@@ -133,43 +187,39 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                             <cis:zip>28757</cis:zip>
                             <cis:city>Bremen</cis:city>
                             <cis:Origin>
-                                <cis:country></cis:country>
+                                <cis:country>Germany</cis:country>
                                 <cis:countryISOCode>DE</cis:countryISOCode>
                             </cis:Origin>
                         </Address>
                         <Communication>
                             <cis:phone>+49421987654321</cis:phone>
                             <cis:email>absender@dhl.local</cis:email>
-                            <cis:contactPerson>Kontaktperson Absender</cis:contactPerson>
+                            <cis:contactPerson>Absender Zeile 1</cis:contactPerson>
                         </Communication>
                     </Shipper>
+                    <ShipperReference>Ref. 123456</ShipperReference>
                     <Receiver>
-                        <cis:name1>Empfänger Zeile 1</cis:name1>
+                        <cis:name1>Kontaktperson Empfänger</cis:name1>
                         <Address>
                             <cis:name2>Empfänger Zeile 2</cis:name2>
-                            <cis:name3>Empfänger Zeile 3</cis:name3>
                             <cis:streetName>An der Weide</cis:streetName>
                             <cis:streetNumber>50a</cis:streetNumber>
                             <cis:zip>28195</cis:zip>
                             <cis:city>Bremen</cis:city>
                             <cis:Origin>
-                                <cis:country></cis:country>
+                                <cis:country>Germany</cis:country>
                                 <cis:countryISOCode>DE</cis:countryISOCode>
                             </cis:Origin>
                         </Address>
                         <Communication>
                             <cis:phone>+49421123456789</cis:phone>
                             <cis:email>empfaenger@dhl.local</cis:email>
-                            <cis:contactPerson>Kontaktperson Empfänger </cis:contactPerson>
+                            <cis:contactPerson>Kontaktperson Empfänger</cis:contactPerson>
                         </Communication>
                     </Receiver>
                 </Shipment>
-                <PrintOnlyIfCodeable active="1"/>
             </ShipmentOrder>
-            <labelResponseType>URL</labelResponseType>
-            <groupProfileName></groupProfileName>
-            <labelFormat></labelFormat>
-            <labelFormatRetoure></labelFormatRetoure>
+            <labelResponseType>B64</labelResponseType>
             <combinedPrinting>0</combinedPrinting>
         </ns:CreateShipmentOrderRequest>
     </soapenv:Body>
@@ -289,9 +339,7 @@ InternationalShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schema
 </soapenv:Envelope>
 """
 
-ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:cis="http://dhl.de/webservice/cisbase"
-    xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
+ShipmentCancelRequest = """<soapenv:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cis="http://dhl.de/webservice/cisbase" xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
     <soapenv:Header>
         <cis:Authentification>
             <cis:user>2222222222_01</cis:user>
@@ -303,7 +351,6 @@ ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
             <ns:Version>
                 <majorRelease>3</majorRelease>
                 <minorRelease>1</minorRelease>
-                <build>?</build>
             </ns:Version>
             <cis:shipmentNumber>222201040006351204</cis:shipmentNumber>
         </ns:DeleteShipmentOrderRequest>
@@ -335,7 +382,7 @@ ShipmentResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/busine
                         <statusText>ok</statusText>
                         <statusMessage>Der Webservice wurde ohne Fehler ausgeführt.</statusMessage>
                     </Status>
-                    <labelUrl>https://cig.dhl.de/gkvlabel/SANDBOX/dhl-vls/gw/shpmntws/printShipment?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEjfzNllkalXEA%2FzsC0FSzg%2F48gfdIvdzv5GGLzGJwoX</labelUrl>
+                    <labelData>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC</labelData>
                 </LabelData>
             </CreationState>
         </bcs:CreateShipmentOrderResponse>
@@ -368,6 +415,37 @@ ShipmentCancelResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/
                 </Status>
             </DeletionState>
         </bcs:DeleteShipmentOrderResponse>
+    </soap:Body>
+</soap:Envelope>
+"""
+
+ShipmentErrorResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/businesscustomershipping/3.0"
+    xmlns:cis="http://dhl.de/webservice/cisbase"
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soap:Header/>
+    <soap:Body>
+        <bcs:CreateShipmentOrderResponse>
+            <bcs:Version>
+                <majorRelease>3</majorRelease>
+                <minorRelease>1</minorRelease>
+            </bcs:Version>
+            <Status>
+                <statusCode>1101</statusCode>
+                <statusText>Hard validation error occured.</statusText>
+            </Status>
+            <CreationState>
+                <sequenceNumber/>
+                <LabelData>
+                    <Status>
+                        <statusCode>1101</statusCode>
+                        <statusText>Hard validation error occured.</statusText>
+                        <statusMessage>Bitte geben Sie ein gültiges Sendungsdatum an.</statusMessage>
+                        <statusMessage>Bitte geben Sie ein gültiges Sendungsdatum an.</statusMessage>
+                    </Status>
+                </LabelData>
+            </CreationState>
+        </bcs:CreateShipmentOrderResponse>
     </soap:Body>
 </soap:Envelope>
 """

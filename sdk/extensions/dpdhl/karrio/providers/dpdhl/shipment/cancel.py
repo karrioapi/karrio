@@ -1,3 +1,4 @@
+import dpdhl_lib.business_interface as dpdhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -10,9 +11,14 @@ def parse_shipment_cancel_response(
     response: lib.Element,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
-    messages = error.parse_error_response(response_messages, settings)
-    success = True  # compute shipment cancel success state
+    messages = error.parse_error_response(response, settings)
+    deletion: dpdhl.DeletionState = lib.find_element(
+        "DeletionState",
+        response,
+        dpdhl.DeletionState,
+        first=True,
+    )
+    success = deletion is not None and deletion.Status.statusCode == 0
 
     confirmation = (
         models.ConfirmationDetails(
@@ -33,6 +39,36 @@ def shipment_cancel_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to dpdhl specific type
+    request = lib.Envelope(
+        Header=lib.Header(
+            settings.AuthentificationType,
+        ),
+        Body=lib.Body(
+            dpdhl.DeleteShipmentOrderRequest(
+                Version=dpdhl.Version(
+                    majorRelease=3,
+                    minorRelease=1,
+                ),
+                shipmentNumber=[payload.shipment_identifier],
+            )
+        ),
+    )
 
-    return lib.Serializable(request)
+    return lib.Serializable(
+        request,
+        lambda _: lib.envelope_serializer(
+            _,
+            namespace=(
+                'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"'
+                ' xmlns:cis="http://dhl.de/webservice/cisbase"'
+                ' xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0"'
+            ),
+            prefixes=dict(
+                Envelope="soapenv",
+                Version_children="",
+                shipmentNumber="cis",
+                AuthentificationType="cis",
+                DeleteShipmentOrderRequest="ns",
+            ),
+        ),
+    )

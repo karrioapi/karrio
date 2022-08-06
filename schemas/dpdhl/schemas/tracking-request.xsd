@@ -8,7 +8,11 @@
             <xs:attribute name="password" type="xs:string" use="required" />
             <xs:attribute name="request" type="xs:string" use="required" />
             <xs:attribute name="language-code" type="xs:string" use="required" />
-            <xs:attribute name="piece-id" type="xs:string" use="required" />
+            <xs:attribute name="piece-code" type="xs:string" use="required" />
+            <xs:attribute name="piece-customer-reference" type="xs:string" use="required" />
+            <xs:attribute name="tas-order-no" type="xs:string" use="required" />
+            <xs:attribute name="from-date" type="xs:date" use="required" />
+            <xs:attribute name="to-date" type="xs:date" use="required" />
         </xs:complexType>
     </xs:element>
 </xs:schema>

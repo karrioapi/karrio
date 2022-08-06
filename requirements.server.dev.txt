@@ -13,10 +13,10 @@ django-debug-toolbar
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dpdhl
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
+-e ./sdk/extensions/dpdhl
 -e ./sdk/extensions/fedex
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/royalmail

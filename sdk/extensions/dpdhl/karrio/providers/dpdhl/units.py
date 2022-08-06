@@ -18,6 +18,54 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
+class LabelType(lib.Flag):
+    B_64 = "B64"
+    ZPL_2 = "ZPL2"
+
+    """ Unified Label type mapping """
+    PDF = B_64
+    ZPL = ZPL_2
+
+
+class CustomsContentType(lib.Flag):
+    OTHER = "OTHER"
+    PRESENT = "PRESENT"
+    COMMERCIAL_SAMPLE = "COMMERCIAL_SAMPLE"
+    DOCUMENT = "DOCUMENT"
+    RETURN_OF_GOODS = "RETURN_OF_GOODS"
+    COMMERCIAL_GOODS = "COMMERCIAL_GOODS"
+
+    """ Unified Content type mapping """
+    gift = PRESENT
+    other = OTHER
+    documents = DOCUMENT
+    sample = COMMERCIAL_SAMPLE
+    merchandise = COMMERCIAL_GOODS
+    return_merchandise = RETURN_OF_GOODS
+
+
+class Incoterm(lib.Enum):
+    DXV = "Delivery Duty Paid (excl. VAT)"
+    DAP = "Delivery Duty Paid"
+    DDX = "Delivery Duty Paid (excl. Duties, taxes and VAT"
+
+    """ Unified Incoterm mapping """
+
+    CFR = "Cost and Freight"
+    CIF = "Cost Insurance and Freight"
+    CIP = "Carriage and Insurance Paid"
+    CPT = "Carriage Paid To"
+    DAF = "Delivered at Frontier"
+    DDP = DAP
+    DDU = "Delivery Duty Unpaid"
+    DEQ = "Delivered Ex Quay"
+    DES = "Delivered Ex Ship"
+    EXW = "Ex Works"
+    FAS = "Free Alongside Ship"
+    FCA = "Free Carrier"
+    FOB = "Free On Board"
+
+
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
@@ -32,25 +80,28 @@ class ShippingService(lib.Enum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    dpdhl_preferred_neighbour = lib.OptionEnum("code")
-    dpdhl_preferred_location = lib.OptionEnum("code")
-    dpdhl_notification = lib.OptionEnum("code", bool)
-    dpdhl_visual_check_of_age = lib.OptionEnum("code", bool)
-    dpdhl_named_person_only = lib.OptionEnum("code", bool)
-    dpdhl_identcheck = lib.OptionEnum("code", bool)
-    dpdhl_no_neighbour_delivery = lib.OptionEnum("code", bool)
-    dpdhl_preferred_day = lib.OptionEnum("code")
-    dpdhl_endorsement = lib.OptionEnum("code")
-    dpdhl_go_green = lib.OptionEnum("code", bool)
-    dpdhl_additional_insurance = lib.OptionEnum("code", float)
-    dpdhl_bulky_goods = lib.OptionEnum("code", bool)
-    dpdhl_cash_on_delivery = lib.OptionEnum("code", float)
-    dpdhl_premium = lib.OptionEnum("code", bool)
-    dpdhl_retoure = lib.OptionEnum("code", bool)
+    dpdhl_individual_sender_requirement = lib.OptionEnum(
+        "IndividualSenderRequirement", bool
+    )
+    dpdhl_packaging_return = lib.OptionEnum("PackagingReturn", bool)
+    dpdhl_return_receipt = lib.OptionEnum("ReturnReceipt", bool)
+    dpdhl_preferred_neighbour = lib.OptionEnum("PreferredNeighbour")
+    dpdhl_preferred_location = lib.OptionEnum("PreferredLocation")
+    dpdhl_visual_check_of_age = lib.OptionEnum("VisualCheckOfAge", bool)
+    dpdhl_named_person_only = lib.OptionEnum("NamedPersonOnly", bool)
+    dpdhl_identcheck = lib.OptionEnum("code", lib.to_dict)
+    dpdhl_no_neighbour_delivery = lib.OptionEnum("NoNeighbourDelivery", bool)
+    dpdhl_preferred_day = lib.OptionEnum("PreferredDay")
+    dpdhl_endorsement = lib.OptionEnum("Endorsement", bool)
+    dpdhl_go_green = lib.OptionEnum("GoGreen", bool)
+    dpdhl_additional_insurance = lib.OptionEnum("AdditionalInsurance", float)
+    dpdhl_bulky_goods = lib.OptionEnum("BulkyGoods", bool)
+    dpdhl_cash_on_delivery = lib.OptionEnum("CashOnDelivery", float)
+    dpdhl_premium = lib.OptionEnum("Premium", bool)
+    dpdhl_parcel_outlet_routing = lib.OptionEnum("ParcelOutletRouting", bool)
 
     """ Unified Option type mapping """
     insurance = dpdhl_additional_insurance
-    email_notification = dpdhl_notification
 
 
 def shipping_options_initializer(

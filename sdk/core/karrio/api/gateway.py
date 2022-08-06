@@ -142,7 +142,8 @@ class GatewayInitializer:
 
             return ICreate(initializer)
         except KeyError as e:
-            raise ShippingSDKError(f"Unknown provider '{key}'") from e
+            logger.error(e)
+            raise ShippingSDKError(f"Unknown provider '{key}'")
 
     @property
     def providers(self):
