@@ -108,7 +108,11 @@ ShipmentPayload = {
             "dimension_unit": "CM",
         }
     ],
-    "options": {"email_notification": True, "shipment_date": "2020-12-29"},
+    "options": {
+        "email_notification": True,
+        "shipment_date": "2020-12-29",
+        "dpdhl_premium": True,
+    },
     "label_type": "PDF",
     "reference": "Ref. 123456",
 }
@@ -172,6 +176,9 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                             <widthInCM>30</widthInCM>
                             <heightInCM>15</heightInCM>
                         </ShipmentItem>
+                        <Service>
+                            <Premium>1</Premium>
+                        </Service>
                         <Notification>
                             <recipientEmailAddress>empfaenger@dhl.local</recipientEmailAddress>
                         </Notification>
