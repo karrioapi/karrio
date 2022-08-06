@@ -8,13 +8,17 @@ from karrio.core.models import Message
 class Header(soap.Header):
     def __init__(self, anytypeobjs_=None, gds_collector_=None, **kwargs_):
         super().__init__(None, gds_collector_, **kwargs_)
-        self.add_anytypeobjs_(anytypeobjs_)
+
+        if anytypeobjs_ is not None:
+            self.add_anytypeobjs_(anytypeobjs_)
 
 
 class Body(soap.Body):
     def __init__(self, anytypeobjs_=None, gds_collector_=None, **kwargs_):
         super().__init__(None, gds_collector_, **kwargs_)
-        self.add_anytypeobjs_(anytypeobjs_)
+
+        if anytypeobjs_ is not None:
+            self.add_anytypeobjs_(anytypeobjs_)
 
 
 class Envelope(soap.Envelope):
@@ -65,30 +69,27 @@ def create_envelope(
     body_prefix: str = None,
     header_tag_name: str = None,
     body_tag_name: str = None,
-    envelope_prefix: str = "soap-env",
-    prefixes: dict = None,
+    envelope_prefix: str = "tns",
 ) -> Envelope:
-    body = soap.Body()
-    body.add_anytypeobjs_(body_content)
-    header = soap.Header() if header_content is not None else None
-
+    header = None
     if header_content is not None:
+        header_content.ns_prefix_ = header_prefix or header_content.ns_prefix_
+        header_content.original_tagname_ = (
+            header_tag_name or header_content.original_tagname_
+        )
+        header = Header()
         header.add_anytypeobjs_(header_content)
 
-    envelope = soap.Envelope(Header=header, Body=body)
+    body_content.ns_prefix_ = body_prefix or body_content.ns_prefix_
+    body_content.original_tagname_ = body_tag_name or body_content.original_tagname_
+    body = Body()
+    body.add_anytypeobjs_(body_content)
+
+    envelope = Envelope(Header=header, Body=body)
     envelope.ns_prefix_ = envelope_prefix
-
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(
-        envelope.Body.anytypeobjs_[0], body_prefix or "", prefixes or {}
-    )
-
-    if header_content is not None:
+    if envelope.Header is not None:
         envelope.Header.ns_prefix_ = envelope.ns_prefix_
-        apply_namespaceprefix(
-            envelope.Header.anytypeobjs_[0], header_prefix or "", prefixes or {}
-        )
-
     return envelope
 
 

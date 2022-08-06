@@ -107,18 +107,18 @@ class ServiceType(utils.Enum):
 
 
 class ShippingOption(utils.Enum):
-    canadapost_signature = utils.OptionEnum("SO")
+    canadapost_signature = utils.OptionEnum("SO", bool)
     canadapost_coverage = utils.OptionEnum("COV", float)
     canadapost_collect_on_delivery = utils.OptionEnum("COD", float)
-    canadapost_proof_of_age_required_18 = utils.OptionEnum("PA18")
-    canadapost_proof_of_age_required_19 = utils.OptionEnum("PA19")
-    canadapost_card_for_pickup = utils.OptionEnum("HFP")
-    canadapost_do_not_safe_drop = utils.OptionEnum("DNS")
-    canadapost_leave_at_door = utils.OptionEnum("LAD")
-    canadapost_deliver_to_post_office = utils.OptionEnum("D2PO")
-    canadapost_return_at_senders_expense = utils.OptionEnum("RASE")
-    canadapost_return_to_sender = utils.OptionEnum("RTS")
-    canadapost_abandon = utils.OptionEnum("ABAN")
+    canadapost_proof_of_age_required_18 = utils.OptionEnum("PA18", bool)
+    canadapost_proof_of_age_required_19 = utils.OptionEnum("PA19", bool)
+    canadapost_card_for_pickup = utils.OptionEnum("HFP", bool)
+    canadapost_do_not_safe_drop = utils.OptionEnum("DNS", bool)
+    canadapost_leave_at_door = utils.OptionEnum("LAD", bool)
+    canadapost_deliver_to_post_office = utils.OptionEnum("D2PO", bool)
+    canadapost_return_at_senders_expense = utils.OptionEnum("RASE", bool)
+    canadapost_return_to_sender = utils.OptionEnum("RTS", bool)
+    canadapost_abandon = utils.OptionEnum("ABAN", bool)
 
     """ Custom Option """
     canadapost_cost_center = utils.OptionEnum("cost-centre")

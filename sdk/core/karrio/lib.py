@@ -113,6 +113,9 @@ def to_money(
     :param value: a value that can be parsed to float.
     :return: a valid monetary decimal number or None.
     """
+    if isinstance(value, bool):
+        return None
+
     return to_decimal(value)
 
 

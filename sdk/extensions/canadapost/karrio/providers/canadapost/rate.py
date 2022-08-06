@@ -12,7 +12,6 @@ from canadapost_lib.rating import (
     price_quoteType,
 )
 import typing
-import numbers
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.errors as errors
@@ -109,11 +108,7 @@ def rate_request(
                 option=[
                     optionType(
                         option_code=option.code,
-                        option_amount=(
-                            option.state
-                            if isinstance(option.state, numbers.Number)
-                            else None
-                        ),
+                        option_amount=lib.to_money(option.state),
                     )
                     for _, option in options.items()
                 ]

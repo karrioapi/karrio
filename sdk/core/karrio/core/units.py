@@ -488,7 +488,11 @@ class Packages(typing.Iterable[Package]):
                 **{
                     key: (
                         (val + acc[key])
-                        if (key in acc and isinstance(val, numbers.Number))
+                        if (
+                            key in acc
+                            and isinstance(val, numbers.Number)
+                            and not isinstance(val, bool)
+                        )
                         else val
                     )
                     for key, val in pkg.options.content.items()

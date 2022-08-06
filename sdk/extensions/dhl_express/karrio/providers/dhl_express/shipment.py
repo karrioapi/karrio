@@ -23,7 +23,6 @@ from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
 import time
 import typing
 import base64
-import numbers
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -373,12 +372,10 @@ def shipment_request(
         SpecialService=[
             SpecialService(
                 SpecialServiceType=option.code,
-                ChargeValue=(
-                    option.state if isinstance(option.state, numbers.Number) else None
-                ),
+                ChargeValue=lib.to_money(option.state),
                 CurrencyCode=(
                     options.currency.state or "USD"
-                    if isinstance(option.state, numbers.Number)
+                    if lib.to_money(option.state) is not None
                     else None
                 ),
             )

@@ -32,7 +32,6 @@ from purolator_lib.shipping_service_2_1_3 import (
 )
 
 import typing
-import numbers
 import functools
 import karrio.lib as lib
 import karrio.core.units as units
@@ -269,11 +268,7 @@ def _shipment_request(
                             OptionIDValuePair=[
                                 OptionIDValuePair(
                                     ID=option.code,
-                                    Value=(
-                                        option.state
-                                        if isinstance(option.state, numbers.Number)
-                                        else None
-                                    ),
+                                    Value=lib.to_money(option.state),
                                 )
                                 for _, option in options.items()
                             ]

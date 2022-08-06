@@ -42,7 +42,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
-            "currency": "USD",
+            "currency": "EUR",
             "meta": {"service_name": "DHL Poland Premium"},
             "service": "dhl_poland_premium",
             "total_charge": 0.0,
@@ -50,7 +50,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
-            "currency": "USD",
+            "currency": "EUR",
             "meta": {"service_name": "DHL Poland Polska"},
             "service": "dhl_poland_polska",
             "total_charge": 0.0,
@@ -58,7 +58,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
-            "currency": "USD",
+            "currency": "EUR",
             "meta": {"service_name": "DHL Poland 09"},
             "service": "dhl_poland_09",
             "total_charge": 0.0,
@@ -66,7 +66,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "dhl_poland",
             "carrier_name": "dhl_poland",
-            "currency": "USD",
+            "currency": "EUR",
             "meta": {"service_name": "DHL Poland 12"},
             "service": "dhl_poland_12",
             "total_charge": 0.0,

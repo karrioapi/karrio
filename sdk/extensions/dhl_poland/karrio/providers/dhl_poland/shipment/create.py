@@ -1,4 +1,3 @@
-import numbers
 from dhl_poland_lib.services import (
     Address,
     Addressat,
@@ -116,11 +115,7 @@ def shipment_request(
                             item=[
                                 DhlService(
                                     serviceType=option.code,
-                                    serviceValue=(
-                                        option.state
-                                        if isinstance(option.state, numbers.Number)
-                                        else None
-                                    ),
+                                    serviceValue=lib.to_money(option.state),
                                     textInstruction=None,
                                     collectOnDeliveryForm=None,
                                 )
