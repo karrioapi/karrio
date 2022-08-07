@@ -116,7 +116,10 @@ def to_money(
     if isinstance(value, bool):
         return None
 
-    return to_decimal(value)
+    try:
+        return to_decimal(value)
+    except:
+        return None
 
 
 # -----------------------------------------------------------
