@@ -7,15 +7,21 @@ import karrio.core.models as models
 
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
+mutate_xml_object_type = utils.mutate_xml_object_type
 apply_namespaceprefix = utils.apply_namespaceprefix
 Deserializable = utils.Deserializable
 Serializable = utils.Serializable
 Pipeline = utils.Pipeline
 Envelope = utils.Envelope
+Header = utils.Header
+Body = utils.Body
 Element = utils.Element
 Tracer = utils.Tracer
 Trace = utils.Trace
 Job = utils.Job
+OptionEnum = utils.OptionEnum
+Enum = utils.Enum
+Flag = utils.Flag
 
 
 # -----------------------------------------------------------
@@ -107,7 +113,13 @@ def to_money(
     :param value: a value that can be parsed to float.
     :return: a valid monetary decimal number or None.
     """
-    return to_decimal(value)
+    if isinstance(value, bool):
+        return None
+
+    try:
+        return to_decimal(value)
+    except:
+        return None
 
 
 # -----------------------------------------------------------
@@ -282,6 +294,29 @@ def create_envelope(
         body_tag_name=body_tag_name,
         envelope_prefix=envelope_prefix,
     )
+
+
+def envelope_serializer(
+    envelope: utils.Envelope,
+    namespace: str = "",
+    prefixes: dict = None,
+):
+
+    ns_prefixes = {"Envelope": "soap-env", **(prefixes or {})}
+
+    envelope.ns_prefix_ = ns_prefixes.get("Envelope") or "soap-env"
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+
+    if envelope.Header is not None:
+        envelope.Header.ns_prefix_ = envelope.ns_prefix_
+
+    for node in envelope.Body.anytypeobjs_ + getattr(
+        envelope.Header, "anytypeobjs_", []
+    ):
+        _prefix = ns_prefixes.get(node.__class__.__name__) or ""
+        apply_namespaceprefix(node, _prefix, ns_prefixes)
+
+    return to_xml(envelope, namespacedef_=namespace)
 
 
 # -----------------------------------------------------------

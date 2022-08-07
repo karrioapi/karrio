@@ -5,7 +5,7 @@
         xmlns:cis="http://dhl.de/webservice/cisbase"
         targetNamespace="http://dhl.de/webservices/businesscustomershipping/3.0">
 	  <import namespace="http://dhl.de/webservice/cisbase"
-           schemaLocation="geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd"/>
+           schemaLocation="geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd"/>
 	  <simpleType name="SequenceNumber">
 		    <annotation>
 			      <documentation>A sequence number defined by the (soap-) client. The
@@ -99,21 +99,17 @@
 				        </element>
 				        <element name="labelFormat" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper;
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
-							100x70mm: 100x70mm (only for Warenpost);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -123,20 +119,17 @@
 				        </element>
 				        <element name="labelFormatRetoure" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper;
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -316,21 +309,17 @@
 				        </element>
 				        <element name="labelFormat" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
-							100x70mm: 100x70mm (only for Warenpost);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -340,20 +329,17 @@
 				        </element>
 				        <element name="labelFormatRetoure" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper;
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -428,18 +414,19 @@
 				        <choice>
 					          <element ref="cis:shipmentNumber" maxOccurs="50">
 						            <annotation>
-							              <documentation>Identifiers of the shipments that should be
-								manifested. The shipment number is read
-								from
-								ShipmentNumberType-&gt;shipmentNumber
+							              <documentation>
+								Contains a shipment number. Any number of a printed shipment not already manifested can be used. 
+								A Request can contain the element up to 50 times.
+								Requests need to either contain at least one times shipmentNumber or allshipments. 
+								Requests cannot contain shipmentNumber and allShipments at the same time.
 							</documentation>
 						            </annotation>
 					          </element>
 					          <element name="allShipments">
 						            <annotation>
-							              <documentation>Presence of this element signals that all
-								available shipments should be manifested.
-							</documentation>
+							              <documentation>
+								Manifests all shipments. Can be used instead the element “shipmentNumber”. The element is used without a value, e.g. <allShipments/>
+							              </documentation>
 						            </annotation>
 					          </element>
 				        </choice>
@@ -795,21 +782,17 @@
 				        </element>
 				        <element name="labelFormat" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper;
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
-							100x70mm: 100x70mm (only for Warenpost);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -819,20 +802,17 @@
 				        </element>
 				        <element name="labelFormatRetoure" minOccurs="0">
 					          <annotation>
-						            <documentation>In this optional section you can define the
-							following label formats:
-							A4: common label laser printing A4 plain
-							paper;
-							910-300-700: common label laser printing 105 x 205 mm
-							(910-300-700);
-							910-300-700-oz: common label laser printing 105 x
-							205 mm
-							(910-300-700) without additional label;
-							910-300-600: common
-							label thermal printing 103 x 199 (910-300-600,
-							910-300-610);
-							910-300-710: common label laser printing 105 x 208 mm
-							(910-300-710);
+						            <documentation>
+							In this optional section you can define the following label formats:
+							A4:common label laser printing A4 plain paper;
+							910-300-700: common label laser printing 105 x 205 mm (910-300-700);
+							910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
+							910-300-300: common label laser printing 105 x 148 mm (910-300-700);
+							910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
+							910-300-710: common label laser printing 105 x 208 mm (910-300-710);
+							910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+							910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
+							100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
 						</documentation>
 					          </annotation>
 					          <simpleType>
@@ -1041,18 +1021,60 @@
 			      </element>
 			      <element name="statusText" type="xs:string" minOccurs="1" maxOccurs="1">
 				        <annotation>
-					          <documentation>Explanation of the statuscode and potential errors.
+					          <documentation>Explanation of the statuscode. Explains what types of errors occurred.
 					</documentation>
 				        </annotation>
 			      </element>
 			      <element name="statusMessage" type="xs:string" minOccurs="0" maxOccurs="30">
 				        <annotation>
-					          <documentation>Explanation of the statuscode and potential errors.
+					          <documentation>Detailed explanation of errors or warnings, p.e. “Invalid postal code”. 
+					This element is kept for compatibility reasons only. Please use “statusType” und “errorMassage” with their subelements instead.
+					</documentation>
+				        </annotation>
+			      </element>
+			      <element name="statusType" type="xs:string" minOccurs="0" maxOccurs="1">
+				        <annotation>
+					          <documentation>Explains if an error or warning occurred
+					</documentation>
+				        </annotation>
+			      </element>
+			      <element name="errorMessage" type="bcs:StatusElement" minOccurs="0" maxOccurs="30">
+				        <annotation>
+					          <documentation> Explains details of the error and where it occurred 
+					</documentation>
+				        </annotation>
+			      </element>
+			      <element name="statusType" type="xs:string" minOccurs="0" maxOccurs="1">
+				        <annotation>
+					          <documentation>Explains if an error or warning occurred 
+					</documentation>
+				        </annotation>
+			      </element>
+			      <element name="warningMessage" type="bcs:StatusElement" minOccurs="0" maxOccurs="30">
+				        <annotation>
+					          <documentation> Explains details of the error and where it occurred
+					</documentation>
+				        </annotation>
+			      </element>			
+		    </sequence>
+	  </complexType>
+	  <complexType name="StatusElement">
+		    <sequence>
+			      <element name="statusElement" type="xs:string" minOccurs="1" maxOccurs="1">
+				        <annotation>
+					          <documentation>Explanation of the statusElement and potential errors.
+					</documentation>
+				        </annotation>
+			      </element>
+			      <element name="statusMessage" type="xs:string" minOccurs="1" maxOccurs="1">
+				        <annotation>
+					          <documentation>Explanation of the statusMessage and potential errors.
 					</documentation>
 				        </annotation>
 			      </element>
 		    </sequence>
 	  </complexType>
+	
 	  <complexType name="PieceInformation">
 		    <annotation>
 			      <documentation>Information about each piece (e.g. the generated
@@ -1426,9 +1448,9 @@
 						Determines the DHL Paket product to be ordered.
 						V01PAK: DHL PAKET;
 						V53WPAK: DHL PAKET International;
-						V54EPAK: DHL
-						Europaket;
-						V62WP: DHL Warenpost
+						V54EPAK: DHL Europaket;
+						V62WP: Warenpost;
+						V66WPI: Warenpost International
 					</documentation>
 				        </annotation>
 			      </element>
@@ -1663,13 +1685,17 @@
 					          <documentation>Service visual age check</documentation>
 				        </annotation>
 			      </element>
-			      <element name="PreferredLocation" type="bcs:ServiceconfigurationDetails" minOccurs="0"
+			      <element name="PreferredLocation"
+                  type="bcs:ServiceconfigurationDetailsPreferredLocation"
+                  minOccurs="0"
                   maxOccurs="1">
 				        <annotation>
 					          <documentation>Service preferred location</documentation>
 				        </annotation>
 			      </element>
-			      <element name="PreferredNeighbour" type="bcs:ServiceconfigurationDetails" minOccurs="0"
+			      <element name="PreferredNeighbour"
+                  type="bcs:ServiceconfigurationDetailsPreferredNeighbour"
+                  minOccurs="0"
                   maxOccurs="1">
 				        <annotation>
 					          <documentation>Service preferred neighbour</documentation>
@@ -1679,7 +1705,8 @@
 					</documentation>
 				        </annotation>
 			      </element>
-			      <element name="PreferredDay" type="bcs:ServiceconfigurationDetails" minOccurs="0"
+			      <element name="PreferredDay" type="bcs:ServiceconfigurationDetailsPreferredDay"
+                  minOccurs="0"
                   maxOccurs="1">
 				        <annotation>
 					          <documentation>Service preferred day</documentation>
@@ -1716,6 +1743,12 @@
                   maxOccurs="1">
 				        <annotation>
 					          <documentation>Service Cash on delivery.</documentation>
+				        </annotation>
+			      </element>
+			      <element name="PDDP" type="bcs:PDDP" minOccurs="0" maxOccurs="1">
+				        <annotation>
+					          <documentation>Postal Delivery Duty Paid 
+					Deutsche Post and sender handle import duties instead of consignee</documentation>
 				        </annotation>
 			      </element>
 			      <element name="AdditionalInsurance" type="bcs:ServiceconfigurationAdditionalInsurance"
@@ -1781,6 +1814,89 @@
 			      <xs:annotation>
 				        <xs:documentation> e-mail address for notification in case of
 					non-deliverability
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:minLength value="1"/>
+					          <xs:maxLength value="100"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+	  </xs:complexType>
+	  <xs:complexType name="ServiceconfigurationDetailsPreferredDay">
+		    <xs:attribute name="active" use="required">
+			      <xs:annotation>
+				        <xs:documentation>Indicates, if the option is on/off
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:enumeration value="0"/>
+					          <xs:enumeration value="1"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+		    <xs:attribute name="details" use="required">
+			      <xs:annotation>
+				        <xs:documentation> 
+					Delivery Day:
+					Please enter the day (yyyy-mm-ddd) on which you would like the shipment to be delivered.
+					The requested day must be at least 2 and at most 6 working days after the shipment date.
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:minLength value="1"/>
+					          <xs:maxLength value="100"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+	  </xs:complexType>
+	  <xs:complexType name="ServiceconfigurationDetailsPreferredLocation">
+		    <xs:attribute name="active" use="required">
+			      <xs:annotation>
+				        <xs:documentation>Indicates, if the option is on/off
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:enumeration value="0"/>
+					          <xs:enumeration value="1"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+		    <xs:attribute name="details" use="required">
+			      <xs:annotation>
+				        <xs:documentation> 
+					e.g. garage, terrace
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:minLength value="1"/>
+					          <xs:maxLength value="100"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+	  </xs:complexType>
+	  <xs:complexType name="ServiceconfigurationDetailsPreferredNeighbour">
+		    <xs:attribute name="active" use="required">
+			      <xs:annotation>
+				        <xs:documentation>Indicates, if the option is on/off
+				</xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:enumeration value="0"/>
+					          <xs:enumeration value="1"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+		    <xs:attribute name="details" use="required">
+			      <xs:annotation>
+				        <xs:documentation> 
+					name, streetname streetnumber
 				</xs:documentation>
 			      </xs:annotation>
 			      <xs:simpleType>
@@ -1892,7 +2008,7 @@
 			      <xs:simpleType>
 				        <xs:restriction base="xs:string">
 					          <xs:enumeration value="IMMEDIATE"/>
-					          <xs:enumeration value="AFTER_DEADLINE"/>
+					          <xs:enumeration value="ABANDONMENT"/>
 				        </xs:restriction>
 			      </xs:simpleType>
 		    </xs:attribute>
@@ -2145,6 +2261,21 @@
 			      </xs:simpleType>
 		    </xs:attribute>
 	  </xs:complexType>
+	
+	  <xs:complexType name="PDDP">
+		    <xs:attribute name="active" use="required">
+			      <xs:annotation>
+				        <xs:documentation>	Indicates, if the option is on/off </xs:documentation>
+			      </xs:annotation>
+			      <xs:simpleType>
+				        <xs:restriction base="xs:string">
+					          <xs:enumeration value="0"/>
+					          <xs:enumeration value="1"/>
+				        </xs:restriction>
+			      </xs:simpleType>
+		    </xs:attribute>
+	  </xs:complexType>
+	
 	  <xs:complexType name="ServiceconfigurationIC">
 		    <xs:sequence>
 			      <xs:element name="Ident">
@@ -2472,6 +2603,7 @@
 						            <element name="customsTariffNumber">
 							              <annotation>
 								                <documentation>Customs tariff number of the unit / position.
+								If the service PDDP is used, customsTariffNumber is required.
 								</documentation>
 							              </annotation>
 							              <simpleType>
@@ -3534,7 +3666,7 @@ Email Address    (mandatory): cis:CommunicationType-&gt;email
 					          <xs:annotation>
 						            <xs:documentation>The number of the major release. E.g. the '3' in
 							version
-							"3.1.".
+							"3.2.".
 						</xs:documentation>
 					          </xs:annotation>
 					          <xs:simpleType>
@@ -3545,9 +3677,7 @@ Email Address    (mandatory): cis:CommunicationType-&gt;email
 				        </xs:element>
 				        <xs:element name="minorRelease" minOccurs="0">
 					          <xs:annotation>
-						            <xs:documentation>The number of the minor release. E.g. the '1' in
-							version
-							"3.1.".
+						            <xs:documentation>The number of the minor release. E.g. the '2' in version "3.2.". Please note, that if you wish to use the old error handling, you need use Version 3.2 or below
 						</xs:documentation>
 					          </xs:annotation>
 					          <xs:simpleType>

@@ -16,9 +16,6 @@ from purolator_lib.estimate_service_2_1_2 import (
     DimensionUnit as PurolatorDimensionUnit,
     TotalWeight,
     ShipmentEstimate,
-    Tax,
-    Surcharge,
-    OptionPrice,
     PickupType,
     PhoneNumber,
     PaymentInformation,
@@ -31,7 +28,6 @@ from purolator_lib.estimate_service_2_1_2 import (
 )
 
 import typing
-import numbers
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -263,13 +259,7 @@ def rate_request(
                                     OptionIDValuePair=[
                                         OptionIDValuePair(
                                             ID=option.code,
-                                            Value=(
-                                                option.state
-                                                if isinstance(
-                                                    option.state, numbers.Number
-                                                )
-                                                else None
-                                            ),
+                                            Value=lib.to_money(option.state),
                                         )
                                         for _, option in options.items()
                                     ]

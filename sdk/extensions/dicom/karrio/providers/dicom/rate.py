@@ -8,7 +8,6 @@ from dicom_lib.rates import (
 )
 
 import typing
-import numbers
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.dicom.error as provider_error
@@ -117,9 +116,7 @@ def rate_request(
         surcharges=[
             Surcharge(
                 type=option.code,
-                value=(
-                    option.state if isinstance(option.state, numbers.Number) else None
-                ),
+                value=lib.to_money(option.state),
             )
             for _, option in options.items()
         ],

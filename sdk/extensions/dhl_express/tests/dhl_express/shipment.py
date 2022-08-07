@@ -2,9 +2,9 @@ import re
 import time
 import unittest
 from unittest.mock import patch, ANY
+import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from karrio import Shipment
 from tests.dhl_express.fixture import gateway
 
 
@@ -27,7 +27,7 @@ class TestDHLShipment(unittest.TestCase):
 
     @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        Shipment.create(self.ShipmentRequest).from_(gateway)
+        karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -36,7 +36,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentParsingError)
@@ -46,7 +46,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentMissingArgsError)
@@ -56,14 +56,14 @@ class TestDHLShipment(unittest.TestCase):
         with patch("karrio.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_not_supported_cancel_shipment(self):
         cancel_request = ShipmentCancelRequest(shipment_identifier="IDENTIFIER")
-        response = Shipment.cancel(cancel_request).from_(gateway).parse()
+        response = karrio.Shipment.cancel(cancel_request).from_(gateway).parse()
 
         self.assertListEqual(
             DP.to_dict(response), ParsedNotSupportedShipmentCancelResponse

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="data">
+        <xs:complexType>
+            <xs:attribute name="appname" type="xs:string" use="required" />
+            <xs:attribute name="password" type="xs:string" use="required" />
+            <xs:attribute name="request" type="xs:string" use="required" />
+            <xs:attribute name="language-code" type="xs:string" use="required" />
+            <xs:attribute name="piece-code" type="xs:string" use="required" />
+            <xs:attribute name="piece-customer-reference" type="xs:string" use="required" />
+            <xs:attribute name="tas-order-no" type="xs:string" use="required" />
+            <xs:attribute name="from-date" type="xs:date" use="required" />
+            <xs:attribute name="to-date" type="xs:date" use="required" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

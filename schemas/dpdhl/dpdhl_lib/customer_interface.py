@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sun Oct 17 08:03:55 2021 by generateDS.py version 2.40.3.
+# Generated Fri Aug  5 17:17:31 2022 by generateDS.py version 2.40.13.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './dhl_ecom_de_lib/customer_interface.py')
+#   ('-o', './dpdhl_lib/customer_interface.py')
 #
 # Command line arguments:
-#   ./schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd
+#   ./schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./dhl_ecom_de_lib/customer_interface.py" ./schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/customer_interface.py" ./schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd
 #
 # Current working directory (os.getcwd()):
-#   dhl_ecom_de
+#   dpdhl
 #
 
 import sys
@@ -35,6 +35,7 @@ from lxml import etree as etree_
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -194,13 +195,16 @@ except ModulenotfoundExp_ as exp:
                 'str_pretty_print': True,
                 'str_indent_level': 0,
                 'str_namespaceprefix': '',
-                'str_name': None,
+                'str_name': self.__class__.__name__,
                 'str_namespacedefs': '',
             }
             for n in settings:
                 if hasattr(self, n):
-                    setattr(settings[n], self[n])
-            from io import StringIO
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
             output = StringIO()
             self.export(
                 output,
@@ -343,6 +347,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -522,6 +527,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -767,6 +773,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -2187,8 +2194,8 @@ class Version(GeneratedsSuper):
     """Version -- The version of the webservice implementation for which the
     requesting client is developed.
     includes
-    majorRelease -- The number of the major release. E.g. the '3' in version "3.1.".
-    minorRelease -- The number of the minor release. E.g. the '3' in version "3.1.".
+    majorRelease -- The number of the major release. E.g. the '3' in version "3.2.".
+    minorRelease -- The number of the minor release. E.g. the '3' in version "3.2.".
     build -- Optional build id to be addressed.
     
     """
@@ -7339,9 +7346,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 
@@ -7520,67 +7528,67 @@ RenameMappings_ = {
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
 NamespaceToDefMappings_ = {'http://dhl.de/webservice/cisbase': [('countryISOType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'ST'),
                                       ('ZipType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'ST'),
                                       ('AuthentificationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressTypeNew',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PickupAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('DeliveryAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('BankType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('NameType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNameType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CommunicationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ContactType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PackStationType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeTypeNoCountry',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ParcelShopType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CustomerType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ErrorType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('CountryType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT'),
                                       ('ShipmentNumberType',
-                                       './schemas/geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
                                        'CT')]}
 
 __all__ = [

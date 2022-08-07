@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "carrier.dhl_ecom_de"
-version = "2021.10rc0"
-description = "DHL eCommerce Germany Web API Schemas Python Data Types library"
+name = "carrier.dpdhl"
+version = "2022.8"
+description = "Deutsche Post DHL Web API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
-homepage="https://github.com/karrioapi/karrio/tree/main/schemas/schemas/dhl_ecom_de"
+homepage="https://github.com/karrioapi/karrio/tree/main/schemas/schemas/dpdhl"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
 packages = [
-    { include = "dhl_ecom_de_lib" }
+    { include = "dpdhl_lib" }
 ]
 classifiers = [
 	"Intended Audience :: Developers",

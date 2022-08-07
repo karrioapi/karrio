@@ -1,4 +1,3 @@
-import numbers
 from canadapost_lib.ncshipment import (
     NonContractShipmentType,
     NonContractShipmentInfoType,
@@ -119,11 +118,7 @@ def shipment_request(
                     option=[
                         OptionType(
                             option_code=option.code,
-                            option_amount=(
-                                option.state
-                                if isinstance(option.state, numbers.Number)
-                                else None
-                            ),
+                            option_amount=lib.to_money(option.state),
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )

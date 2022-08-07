@@ -1,0 +1,2659 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#
+# Generated Fri Aug  5 17:17:31 2022 by generateDS.py version 2.40.13.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+#
+# Command line options:
+#   ('--no-namespace-defs', '')
+#   ('-o', './dpdhl_lib/tracking_response.py')
+#
+# Command line arguments:
+#   ./schemas/tracking-response.xsd
+#
+# Command line:
+#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/tracking_response.py" ./schemas/tracking-response.xsd
+#
+# Current working directory (os.getcwd()):
+#   dpdhl
+#
+
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
+from six.moves import zip_longest
+import os
+import re as re_
+import base64
+import datetime as datetime_
+import decimal as decimal_
+from lxml import etree as etree_
+
+
+Validate_simpletypes_ = True
+SaveElementTreeNode = True
+TagNamePrefix = ""
+if sys.version_info.major == 2:
+    BaseStrType_ = basestring
+else:
+    BaseStrType_ = str
+
+
+def parsexml_(infile, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    try:
+        if isinstance(infile, os.PathLike):
+            infile = os.path.join(infile)
+    except AttributeError:
+        pass
+    doc = etree_.parse(infile, parser=parser, **kwargs)
+    return doc
+
+def parsexmlstring_(instring, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    element = etree_.fromstring(instring, parser=parser, **kwargs)
+    return element
+
+#
+# Namespace prefix definition table (and other attributes, too)
+#
+# The module generatedsnamespaces, if it is importable, must contain
+# a dictionary named GeneratedsNamespaceDefs.  This Python dictionary
+# should map element type names (strings) to XML schema namespace prefix
+# definitions.  The export method for any class for which there is
+# a namespace prefix definition, will export that definition in the
+# XML representation of that element.  See the export method of
+# any generated element type class for an example of the use of this
+# table.
+# A sample table is:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceDefs = {
+#         "ElementtypeA": "http://www.xxx.com/namespaceA",
+#         "ElementtypeB": "http://www.xxx.com/namespaceB",
+#     }
+#
+# Additionally, the generatedsnamespaces module can contain a python
+# dictionary named GenerateDSNamespaceTypePrefixes that associates element
+# types with the namespace prefixes that are to be added to the
+# "xsi:type" attribute value.  See the _exportAttributes method of
+# any generated element type and the generation of "xsi:type" for an
+# example of the use of this table.
+# An example table:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceTypePrefixes = {
+#         "ElementtypeC": "aaa:",
+#         "ElementtypeD": "bbb:",
+#     }
+#
+
+try:
+    from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
+except ModulenotfoundExp_ :
+    GenerateDSNamespaceDefs_ = {}
+try:
+    from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
+except ModulenotfoundExp_ :
+    GenerateDSNamespaceTypePrefixes_ = {}
+
+#
+# You can replace the following class definition by defining an
+# importable module named "generatedscollector" containing a class
+# named "GdsCollector".  See the default class definition below for
+# clues about the possible content of that class.
+#
+try:
+    from generatedscollector import GdsCollector as GdsCollector_
+except ModulenotfoundExp_ :
+
+    class GdsCollector_(object):
+
+        def __init__(self, messages=None):
+            if messages is None:
+                self.messages = []
+            else:
+                self.messages = messages
+
+        def add_message(self, msg):
+            self.messages.append(msg)
+
+        def get_messages(self):
+            return self.messages
+
+        def clear_messages(self):
+            self.messages = []
+
+        def print_messages(self):
+            for msg in self.messages:
+                print("Warning: {}".format(msg))
+
+        def write_messages(self, outstream):
+            for msg in self.messages:
+                outstream.write("Warning: {}\n".format(msg))
+
+
+#
+# The super-class for enum types
+#
+
+try:
+    from enum import Enum
+except ModulenotfoundExp_ :
+    Enum = object
+
+#
+# The root super-class for element type classes
+#
+# Calls to the methods in these classes are generated by generateDS.py.
+# You can replace these methods by re-implementing the following class
+#   in a module named generatedssuper.py.
+
+try:
+    from generatedssuper import GeneratedsSuper
+except ModulenotfoundExp_ as exp:
+    try:
+        from generatedssupersuper import GeneratedsSuperSuper
+    except ModulenotfoundExp_ as exp:
+        class GeneratedsSuperSuper(object):
+            pass
+    
+    class GeneratedsSuper(GeneratedsSuperSuper):
+        __hash__ = object.__hash__
+        tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
+        class _FixedOffsetTZ(datetime_.tzinfo):
+            def __init__(self, offset, name):
+                self.__offset = datetime_.timedelta(minutes=offset)
+                self.__name = name
+            def utcoffset(self, dt):
+                return self.__offset
+            def tzname(self, dt):
+                return self.__name
+            def dst(self, dt):
+                return None
+        def __str__(self):
+            settings = {
+                'str_pretty_print': True,
+                'str_indent_level': 0,
+                'str_namespaceprefix': '',
+                'str_name': self.__class__.__name__,
+                'str_namespacedefs': '',
+            }
+            for n in settings:
+                if hasattr(self, n):
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
+            output = StringIO()
+            self.export(
+                output,
+                settings['str_indent_level'],
+                pretty_print=settings['str_pretty_print'],
+                namespaceprefix_=settings['str_namespaceprefix'],
+                name_=settings['str_name'],
+                namespacedef_=settings['str_namespacedefs']
+            )
+            strval = output.getvalue()
+            output.close()
+            return strval
+        def gds_format_string(self, input_data, input_name=''):
+            return input_data
+        def gds_parse_string(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_validate_string(self, input_data, node=None, input_name=''):
+            if not input_data:
+                return ''
+            else:
+                return input_data
+        def gds_format_base64(self, input_data, input_name=''):
+            return base64.b64encode(input_data).decode('ascii')
+        def gds_validate_base64(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_integer(self, input_data, input_name=''):
+            return '%d' % int(input_data)
+        def gds_parse_integer(self, input_data, node=None, input_name=''):
+            try:
+                ival = int(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires integer value: %s' % exp)
+            return ival
+        def gds_validate_integer(self, input_data, node=None, input_name=''):
+            try:
+                value = int(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires integer value')
+            return value
+        def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_integer_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    int(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of integer values')
+            return values
+        def gds_format_float(self, input_data, input_name=''):
+            return ('%.15f' % float(input_data)).rstrip('0')
+        def gds_parse_float(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires float or double value: %s' % exp)
+            return fval_
+        def gds_validate_float(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires float value')
+            return value
+        def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_float_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of float values')
+            return values
+        def gds_format_decimal(self, input_data, input_name=''):
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
+        def gds_parse_decimal(self, input_data, node=None, input_name=''):
+            try:
+                decimal_value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return decimal_value
+        def gds_validate_decimal(self, input_data, node=None, input_name=''):
+            try:
+                value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return value
+        def gds_format_decimal_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
+        def gds_validate_decimal_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    decimal_.Decimal(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of decimal values')
+            return values
+        def gds_format_double(self, input_data, input_name=''):
+            return '%s' % input_data
+        def gds_parse_double(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires double or float value: %s' % exp)
+            return fval_
+        def gds_validate_double(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires double or float value')
+            return value
+        def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_double_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(
+                        node, 'Requires sequence of double or float values')
+            return values
+        def gds_format_boolean(self, input_data, input_name=''):
+            return ('%s' % input_data).lower()
+        def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
+            if input_data in ('true', '1'):
+                bval = True
+            elif input_data in ('false', '0'):
+                bval = False
+            else:
+                raise_parse_error(node, 'Requires boolean value')
+            return bval
+        def gds_validate_boolean(self, input_data, node=None, input_name=''):
+            if input_data not in (True, 1, False, 0, ):
+                raise_parse_error(
+                    node,
+                    'Requires boolean value '
+                    '(one of True, 1, False, 0)')
+            return input_data
+        def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_boolean_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
+                if value not in (True, 1, False, 0, ):
+                    raise_parse_error(
+                        node,
+                        'Requires sequence of boolean values '
+                        '(one of True, 1, False, 0)')
+            return values
+        def gds_validate_datetime(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_datetime(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d.%s' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        @classmethod
+        def gds_parse_datetime(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            time_parts = input_data.split('.')
+            if len(time_parts) > 1:
+                micro_seconds = int(float('0.' + time_parts[1]) * 1000000)
+                input_data = '%s.%s' % (
+                    time_parts[0], "{}".format(micro_seconds).rjust(6, "0"), )
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt
+        def gds_validate_date(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_date(self, input_data, input_name=''):
+            _svalue = '%04d-%02d-%02d' % (
+                input_data.year,
+                input_data.month,
+                input_data.day,
+            )
+            try:
+                if input_data.tzinfo is not None:
+                    tzoff = input_data.tzinfo.utcoffset(input_data)
+                    if tzoff is not None:
+                        total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                        if total_seconds == 0:
+                            _svalue += 'Z'
+                        else:
+                            if total_seconds < 0:
+                                _svalue += '-'
+                                total_seconds *= -1
+                            else:
+                                _svalue += '+'
+                            hours = total_seconds // 3600
+                            minutes = (total_seconds - (hours * 3600)) // 60
+                            _svalue += '{0:02d}:{1:02d}'.format(
+                                hours, minutes)
+            except AttributeError:
+                pass
+            return _svalue
+        @classmethod
+        def gds_parse_date(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            dt = datetime_.datetime.strptime(input_data, '%Y-%m-%d')
+            dt = dt.replace(tzinfo=tz)
+            return dt.date()
+        def gds_validate_time(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_time(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%02d:%02d:%02d' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%02d:%02d:%02d.%s' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        def gds_validate_simple_patterns(self, patterns, target):
+            # pat is a list of lists of strings/patterns.
+            # The target value must match at least one of the patterns
+            # in order for the test to succeed.
+            found1 = True
+            target = str(target)
+            for patterns1 in patterns:
+                found2 = False
+                for patterns2 in patterns1:
+                    mo = re_.search(patterns2, target)
+                    if mo is not None and len(mo.group(0)) == len(target):
+                        found2 = True
+                        break
+                if not found2:
+                    found1 = False
+                    break
+            return found1
+        @classmethod
+        def gds_parse_time(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            if len(input_data.split('.')) > 1:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt.time()
+        def gds_check_cardinality_(
+                self, value, input_name,
+                min_occurs=0, max_occurs=1, required=None):
+            if value is None:
+                length = 0
+            elif isinstance(value, list):
+                length = len(value)
+            else:
+                length = 1
+            if required is not None :
+                if required and length < 1:
+                    self.gds_collector_.add_message(
+                        "Required value {}{} is missing".format(
+                            input_name, self.gds_get_node_lineno_()))
+            if length < min_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is below "
+                    "the minimum allowed, "
+                    "expected at least {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        min_occurs, length))
+            elif length > max_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is above "
+                    "the maximum allowed, "
+                    "expected at most {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        max_occurs, length))
+        def gds_validate_builtin_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value, input_name=input_name)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_validate_defined_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_str_lower(self, instring):
+            return instring.lower()
+        def get_path_(self, node):
+            path_list = []
+            self.get_path_list_(node, path_list)
+            path_list.reverse()
+            path = '/'.join(path_list)
+            return path
+        Tag_strip_pattern_ = re_.compile(r'\{.*\}')
+        def get_path_list_(self, node, path_list):
+            if node is None:
+                return
+            tag = GeneratedsSuper.Tag_strip_pattern_.sub('', node.tag)
+            if tag:
+                path_list.append(tag)
+            self.get_path_list_(node.getparent(), path_list)
+        def get_class_obj_(self, node, default_class=None):
+            class_obj1 = default_class
+            if 'xsi' in node.nsmap:
+                classname = node.get('{%s}type' % node.nsmap['xsi'])
+                if classname is not None:
+                    names = classname.split(':')
+                    if len(names) == 2:
+                        classname = names[1]
+                    class_obj2 = globals().get(classname)
+                    if class_obj2 is not None:
+                        class_obj1 = class_obj2
+            return class_obj1
+        def gds_build_any(self, node, type_name=None):
+            # provide default value in case option --disable-xml is used.
+            content = ""
+            content = etree_.tostring(node, encoding="unicode")
+            return content
+        @classmethod
+        def gds_reverse_node_mapping(cls, mapping):
+            return dict(((v, k) for k, v in mapping.items()))
+        @staticmethod
+        def gds_encode(instring):
+            if sys.version_info.major == 2:
+                if ExternalEncoding:
+                    encoding = ExternalEncoding
+                else:
+                    encoding = 'utf-8'
+                return instring.encode(encoding)
+            else:
+                return instring
+        @staticmethod
+        def convert_unicode(instring):
+            if isinstance(instring, str):
+                result = quote_xml(instring)
+            elif sys.version_info.major == 2 and isinstance(instring, unicode):
+                result = quote_xml(instring).encode('utf8')
+            else:
+                result = GeneratedsSuper.gds_encode(str(instring))
+            return result
+        def __eq__(self, other):
+            def excl_select_objs_(obj):
+                return (obj[0] != 'parent_object_' and
+                        obj[0] != 'gds_collector_')
+            if type(self) != type(other):
+                return False
+            return all(x == y for x, y in zip_longest(
+                filter(excl_select_objs_, self.__dict__.items()),
+                filter(excl_select_objs_, other.__dict__.items())))
+        def __ne__(self, other):
+            return not self.__eq__(other)
+        # Django ETL transform hooks.
+        def gds_djo_etl_transform(self):
+            pass
+        def gds_djo_etl_transform_db_obj(self, dbobj):
+            pass
+        # SQLAlchemy ETL transform hooks.
+        def gds_sqa_etl_transform(self):
+            return 0, None
+        def gds_sqa_etl_transform_db_obj(self, dbobj):
+            pass
+        def gds_get_node_lineno_(self):
+            if (hasattr(self, "gds_elementtree_node_") and
+                    self.gds_elementtree_node_ is not None):
+                return ' near line {}'.format(
+                    self.gds_elementtree_node_.sourceline)
+            else:
+                return ""
+    
+    
+    def getSubclassFromModule_(module, class_):
+        '''Get the subclass of a class from a specific module.'''
+        name = class_.__name__ + 'Sub'
+        if hasattr(module, name):
+            return getattr(module, name)
+        else:
+            return None
+
+
+#
+# If you have installed IPython you can uncomment and use the following.
+# IPython is available from http://ipython.scipy.org/.
+#
+
+## from IPython.Shell import IPShellEmbed
+## args = ''
+## ipshell = IPShellEmbed(args,
+##     banner = 'Dropping into IPython',
+##     exit_msg = 'Leaving Interpreter, back to program.')
+
+# Then use the following line where and when you want to drop into the
+# IPython shell:
+#    ipshell('<some message> -- Entering ipshell.\nHit Ctrl-D to exit')
+
+#
+# Globals
+#
+
+ExternalEncoding = ''
+# Set this to false in order to deactivate during export, the use of
+# name space prefixes captured from the input document.
+UseCapturedNS_ = True
+CapturedNsmap_ = {}
+Tag_pattern_ = re_.compile(r'({.*})?(.*)')
+String_cleanup_pat_ = re_.compile(r"[\n\r\s]+")
+Namespace_extract_pat_ = re_.compile(r'{(.*)}(.*)')
+CDATA_pattern_ = re_.compile(r"<!\[CDATA\[.*?\]\]>", re_.DOTALL)
+
+# Change this to redirect the generated superclass module to use a
+# specific subclass module.
+CurrentSubclassModule_ = None
+
+#
+# Support/utility functions.
+#
+
+
+def showIndent(outfile, level, pretty_print=True):
+    if pretty_print:
+        for idx in range(level):
+            outfile.write('    ')
+
+
+def quote_xml(inStr):
+    "Escape markup chars, but do not modify CDATA sections."
+    if not inStr:
+        return ''
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s2 = ''
+    pos = 0
+    matchobjects = CDATA_pattern_.finditer(s1)
+    for mo in matchobjects:
+        s3 = s1[pos:mo.start()]
+        s2 += quote_xml_aux(s3)
+        s2 += s1[mo.start():mo.end()]
+        pos = mo.end()
+    s3 = s1[pos:]
+    s2 += quote_xml_aux(s3)
+    return s2
+
+
+def quote_xml_aux(inStr):
+    s1 = inStr.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    return s1
+
+
+def quote_attrib(inStr):
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s1 = s1.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
+    if '"' in s1:
+        if "'" in s1:
+            s1 = '"%s"' % s1.replace('"', "&quot;")
+        else:
+            s1 = "'%s'" % s1
+    else:
+        s1 = '"%s"' % s1
+    return s1
+
+
+def quote_python(inStr):
+    s1 = inStr
+    if s1.find("'") == -1:
+        if s1.find('\n') == -1:
+            return "'%s'" % s1
+        else:
+            return "'''%s'''" % s1
+    else:
+        if s1.find('"') != -1:
+            s1 = s1.replace('"', '\\"')
+        if s1.find('\n') == -1:
+            return '"%s"' % s1
+        else:
+            return '"""%s"""' % s1
+
+
+def get_all_text_(node):
+    if node.text is not None:
+        text = node.text
+    else:
+        text = ''
+    for child in node:
+        if child.tail is not None:
+            text += child.tail
+    return text
+
+
+def find_attr_value_(attr_name, node):
+    attrs = node.attrib
+    attr_parts = attr_name.split(':')
+    value = None
+    if len(attr_parts) == 1:
+        value = attrs.get(attr_name)
+    elif len(attr_parts) == 2:
+        prefix, name = attr_parts
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
+        if namespace is not None:
+            value = attrs.get('{%s}%s' % (namespace, name, ))
+    return value
+
+
+def encode_str_2_3(instr):
+    return instr
+
+
+class GDSParseError(Exception):
+    pass
+
+
+def raise_parse_error(node, msg):
+    if node is not None:
+        msg = '%s (element %s/line %d)' % (msg, node.tag, node.sourceline, )
+    raise GDSParseError(msg)
+
+
+class MixedContainer:
+    # Constants for category:
+    CategoryNone = 0
+    CategoryText = 1
+    CategorySimple = 2
+    CategoryComplex = 3
+    # Constants for content_type:
+    TypeNone = 0
+    TypeText = 1
+    TypeString = 2
+    TypeInteger = 3
+    TypeFloat = 4
+    TypeDecimal = 5
+    TypeDouble = 6
+    TypeBoolean = 7
+    TypeBase64 = 8
+    def __init__(self, category, content_type, name, value):
+        self.category = category
+        self.content_type = content_type
+        self.name = name
+        self.value = value
+    def getCategory(self):
+        return self.category
+    def getContenttype(self, content_type):
+        return self.content_type
+    def getValue(self):
+        return self.value
+    def getName(self):
+        return self.name
+    def export(self, outfile, level, name, namespace,
+               pretty_print=True):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                outfile.write(self.value)
+        elif self.category == MixedContainer.CategorySimple:
+            self.exportSimple(outfile, level, name)
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.export(
+                outfile, level, namespace, name_=name,
+                pretty_print=pretty_print)
+    def exportSimple(self, outfile, level, name):
+        if self.content_type == MixedContainer.TypeString:
+            outfile.write('<%s>%s</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeInteger or \
+                self.content_type == MixedContainer.TypeBoolean:
+            outfile.write('<%s>%d</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeFloat or \
+                self.content_type == MixedContainer.TypeDecimal:
+            outfile.write('<%s>%f</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeDouble:
+            outfile.write('<%s>%g</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeBase64:
+            outfile.write('<%s>%s</%s>' % (
+                self.name,
+                base64.b64encode(self.value),
+                self.name))
+    def to_etree(self, element, mapping_=None, reverse_mapping_=None, nsmap_=None):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                if len(element) > 0:
+                    if element[-1].tail is None:
+                        element[-1].tail = self.value
+                    else:
+                        element[-1].tail += self.value
+                else:
+                    if element.text is None:
+                        element.text = self.value
+                    else:
+                        element.text += self.value
+        elif self.category == MixedContainer.CategorySimple:
+            subelement = etree_.SubElement(
+                element, '%s' % self.name)
+            subelement.text = self.to_etree_simple()
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.to_etree(element)
+    def to_etree_simple(self, mapping_=None, reverse_mapping_=None, nsmap_=None):
+        if self.content_type == MixedContainer.TypeString:
+            text = self.value
+        elif (self.content_type == MixedContainer.TypeInteger or
+                self.content_type == MixedContainer.TypeBoolean):
+            text = '%d' % self.value
+        elif (self.content_type == MixedContainer.TypeFloat or
+                self.content_type == MixedContainer.TypeDecimal):
+            text = '%f' % self.value
+        elif self.content_type == MixedContainer.TypeDouble:
+            text = '%g' % self.value
+        elif self.content_type == MixedContainer.TypeBase64:
+            text = '%s' % base64.b64encode(self.value)
+        return text
+    def exportLiteral(self, outfile, level, name):
+        if self.category == MixedContainer.CategoryText:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        elif self.category == MixedContainer.CategorySimple:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        else:    # category == MixedContainer.CategoryComplex
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s",\n' % (
+                    self.category, self.content_type, self.name,))
+            self.value.exportLiteral(outfile, level + 1)
+            showIndent(outfile, level)
+            outfile.write(')\n')
+
+
+class MemberSpec_(object):
+    def __init__(self, name='', data_type='', container=0,
+            optional=0, child_attrs=None, choice=None):
+        self.name = name
+        self.data_type = data_type
+        self.container = container
+        self.child_attrs = child_attrs
+        self.choice = choice
+        self.optional = optional
+    def set_name(self, name): self.name = name
+    def get_name(self): return self.name
+    def set_data_type(self, data_type): self.data_type = data_type
+    def get_data_type_chain(self): return self.data_type
+    def get_data_type(self):
+        if isinstance(self.data_type, list):
+            if len(self.data_type) > 0:
+                return self.data_type[-1]
+            else:
+                return 'xs:string'
+        else:
+            return self.data_type
+    def set_container(self, container): self.container = container
+    def get_container(self): return self.container
+    def set_child_attrs(self, child_attrs): self.child_attrs = child_attrs
+    def get_child_attrs(self): return self.child_attrs
+    def set_choice(self, choice): self.choice = choice
+    def get_choice(self): return self.choice
+    def set_optional(self, optional): self.optional = optional
+    def get_optional(self): return self.optional
+
+
+def _cast(typ, value):
+    if typ is None or value is None:
+        return value
+    return typ(value)
+
+#
+# Data representation classes.
+#
+
+
+class data(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, name=None, code=None, request_id=None, error=None, data_member=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.name = _cast(None, name)
+        self.name_nsprefix_ = None
+        self.code = _cast(int, code)
+        self.code_nsprefix_ = None
+        self.request_id = _cast(None, request_id)
+        self.request_id_nsprefix_ = None
+        self.error = _cast(None, error)
+        self.error_nsprefix_ = None
+        self.data = data_member
+        self.data_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, data)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if data.subclass:
+            return data.subclass(*args_, **kwargs_)
+        else:
+            return data(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_data(self):
+        return self.data
+    def set_data(self, data):
+        self.data = data
+    def get_name(self):
+        return self.name
+    def set_name(self, name):
+        self.name = name
+    def get_code(self):
+        return self.code
+    def set_code(self, code):
+        self.code = code
+    def get_request_id(self):
+        return self.request_id
+    def set_request_id(self, request_id):
+        self.request_id = request_id
+    def get_error(self):
+        return self.error
+    def set_error(self, error):
+        self.error = error
+    def _hasContent(self):
+        if (
+            self.data is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='data', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('data')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'data':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='data')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='data', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='data'):
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
+        if self.code is not None and 'code' not in already_processed:
+            already_processed.add('code')
+            outfile.write(' code="%s"' % self.gds_format_integer(self.code, input_name='code'))
+        if self.request_id is not None and 'request_id' not in already_processed:
+            already_processed.add('request_id')
+            outfile.write(' request-id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.request_id), input_name='request-id')), ))
+        if self.error is not None and 'error' not in already_processed:
+            already_processed.add('error')
+            outfile.write(' error=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.error), input_name='error')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='data', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.data is not None:
+            namespaceprefix_ = self.data_nsprefix_ + ':' if (UseCapturedNS_ and self.data_nsprefix_) else ''
+            self.data.export(outfile, level, namespaceprefix_, namespacedef_='', name_='data', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('code', node)
+        if value is not None and 'code' not in already_processed:
+            already_processed.add('code')
+            self.code = self.gds_parse_integer(value, node, 'code')
+        value = find_attr_value_('request-id', node)
+        if value is not None and 'request-id' not in already_processed:
+            already_processed.add('request-id')
+            self.request_id = value
+        value = find_attr_value_('error', node)
+        if value is not None and 'error' not in already_processed:
+            already_processed.add('error')
+            self.error = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'data':
+            obj_ = dataType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.data = obj_
+            obj_.original_tagname_ = 'data'
+# end class data
+
+
+class dataType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, name=None, error_status=None, piece_id=None, shipment_code=None, piece_identifier=None, identifier_type=None, piece_code=None, event_location=None, event_country=None, status_liste=None, status_timestamp=None, status=None, short_status=None, recipient_name=None, recipient_street=None, recipient_city=None, pan_recipient_name=None, pan_recipient_street=None, pan_recipient_city=None, pan_recipient_address=None, pan_recipient_postalcode=None, shipper_name=None, shipper_street=None, shipper_city=None, shipper_address=None, product_code=None, product_key=None, product_name=None, delivery_event_flag=None, recipient_id=None, recipient_id_text=None, upu=None, shipment_length=None, shipment_width=None, shipment_height=None, shipment_weight=None, international_flag=None, division=None, ice=None, ric=None, standard_event_code=None, dest_country=None, origin_country=None, delivery_date=None, delivery_timeframe_from=None, delivery_timeframe_to=None, searched_piece_code=None, searched_ref_no=None, piece_customer_reference=None, shipment_customer_reference=None, leitcode=None, routing_code_ean=None, matchcode=None, domestic_id=None, airway_bill_number=None, ruecksendung=None, pslz_nr=None, order_preferred_delivery_day=None, data=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.name = _cast(None, name)
+        self.name_nsprefix_ = None
+        self.error_status = _cast(int, error_status)
+        self.error_status_nsprefix_ = None
+        self.piece_id = _cast(None, piece_id)
+        self.piece_id_nsprefix_ = None
+        self.shipment_code = _cast(None, shipment_code)
+        self.shipment_code_nsprefix_ = None
+        self.piece_identifier = _cast(int, piece_identifier)
+        self.piece_identifier_nsprefix_ = None
+        self.identifier_type = _cast(int, identifier_type)
+        self.identifier_type_nsprefix_ = None
+        self.piece_code = _cast(int, piece_code)
+        self.piece_code_nsprefix_ = None
+        self.event_location = _cast(None, event_location)
+        self.event_location_nsprefix_ = None
+        self.event_country = _cast(None, event_country)
+        self.event_country_nsprefix_ = None
+        self.status_liste = _cast(int, status_liste)
+        self.status_liste_nsprefix_ = None
+        self.status_timestamp = _cast(None, status_timestamp)
+        self.status_timestamp_nsprefix_ = None
+        self.status = _cast(None, status)
+        self.status_nsprefix_ = None
+        self.short_status = _cast(None, short_status)
+        self.short_status_nsprefix_ = None
+        self.recipient_name = _cast(None, recipient_name)
+        self.recipient_name_nsprefix_ = None
+        self.recipient_street = _cast(None, recipient_street)
+        self.recipient_street_nsprefix_ = None
+        self.recipient_city = _cast(None, recipient_city)
+        self.recipient_city_nsprefix_ = None
+        self.pan_recipient_name = _cast(None, pan_recipient_name)
+        self.pan_recipient_name_nsprefix_ = None
+        self.pan_recipient_street = _cast(None, pan_recipient_street)
+        self.pan_recipient_street_nsprefix_ = None
+        self.pan_recipient_city = _cast(None, pan_recipient_city)
+        self.pan_recipient_city_nsprefix_ = None
+        self.pan_recipient_address = _cast(None, pan_recipient_address)
+        self.pan_recipient_address_nsprefix_ = None
+        self.pan_recipient_postalcode = _cast(int, pan_recipient_postalcode)
+        self.pan_recipient_postalcode_nsprefix_ = None
+        self.shipper_name = _cast(None, shipper_name)
+        self.shipper_name_nsprefix_ = None
+        self.shipper_street = _cast(None, shipper_street)
+        self.shipper_street_nsprefix_ = None
+        self.shipper_city = _cast(None, shipper_city)
+        self.shipper_city_nsprefix_ = None
+        self.shipper_address = _cast(None, shipper_address)
+        self.shipper_address_nsprefix_ = None
+        self.product_code = _cast(int, product_code)
+        self.product_code_nsprefix_ = None
+        self.product_key = _cast(None, product_key)
+        self.product_key_nsprefix_ = None
+        self.product_name = _cast(None, product_name)
+        self.product_name_nsprefix_ = None
+        self.delivery_event_flag = _cast(int, delivery_event_flag)
+        self.delivery_event_flag_nsprefix_ = None
+        self.recipient_id = _cast(int, recipient_id)
+        self.recipient_id_nsprefix_ = None
+        self.recipient_id_text = _cast(None, recipient_id_text)
+        self.recipient_id_text_nsprefix_ = None
+        self.upu = _cast(None, upu)
+        self.upu_nsprefix_ = None
+        self.shipment_length = _cast(float, shipment_length)
+        self.shipment_length_nsprefix_ = None
+        self.shipment_width = _cast(float, shipment_width)
+        self.shipment_width_nsprefix_ = None
+        self.shipment_height = _cast(float, shipment_height)
+        self.shipment_height_nsprefix_ = None
+        self.shipment_weight = _cast(float, shipment_weight)
+        self.shipment_weight_nsprefix_ = None
+        self.international_flag = _cast(int, international_flag)
+        self.international_flag_nsprefix_ = None
+        self.division = _cast(None, division)
+        self.division_nsprefix_ = None
+        self.ice = _cast(None, ice)
+        self.ice_nsprefix_ = None
+        self.ric = _cast(None, ric)
+        self.ric_nsprefix_ = None
+        self.standard_event_code = _cast(None, standard_event_code)
+        self.standard_event_code_nsprefix_ = None
+        self.dest_country = _cast(None, dest_country)
+        self.dest_country_nsprefix_ = None
+        self.origin_country = _cast(None, origin_country)
+        self.origin_country_nsprefix_ = None
+        self.delivery_date = _cast(None, delivery_date)
+        self.delivery_date_nsprefix_ = None
+        self.delivery_timeframe_from = _cast(None, delivery_timeframe_from)
+        self.delivery_timeframe_from_nsprefix_ = None
+        self.delivery_timeframe_to = _cast(None, delivery_timeframe_to)
+        self.delivery_timeframe_to_nsprefix_ = None
+        self.searched_piece_code = _cast(int, searched_piece_code)
+        self.searched_piece_code_nsprefix_ = None
+        self.searched_ref_no = _cast(None, searched_ref_no)
+        self.searched_ref_no_nsprefix_ = None
+        self.piece_customer_reference = _cast(None, piece_customer_reference)
+        self.piece_customer_reference_nsprefix_ = None
+        self.shipment_customer_reference = _cast(None, shipment_customer_reference)
+        self.shipment_customer_reference_nsprefix_ = None
+        self.leitcode = _cast(None, leitcode)
+        self.leitcode_nsprefix_ = None
+        self.routing_code_ean = _cast(None, routing_code_ean)
+        self.routing_code_ean_nsprefix_ = None
+        self.matchcode = _cast(None, matchcode)
+        self.matchcode_nsprefix_ = None
+        self.domestic_id = _cast(None, domestic_id)
+        self.domestic_id_nsprefix_ = None
+        self.airway_bill_number = _cast(None, airway_bill_number)
+        self.airway_bill_number_nsprefix_ = None
+        self.ruecksendung = _cast(bool, ruecksendung)
+        self.ruecksendung_nsprefix_ = None
+        self.pslz_nr = _cast(int, pslz_nr)
+        self.pslz_nr_nsprefix_ = None
+        self.order_preferred_delivery_day = _cast(bool, order_preferred_delivery_day)
+        self.order_preferred_delivery_day_nsprefix_ = None
+        self.data = data
+        self.data_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, dataType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if dataType.subclass:
+            return dataType.subclass(*args_, **kwargs_)
+        else:
+            return dataType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_data(self):
+        return self.data
+    def set_data(self, data):
+        self.data = data
+    def get_name(self):
+        return self.name
+    def set_name(self, name):
+        self.name = name
+    def get_error_status(self):
+        return self.error_status
+    def set_error_status(self, error_status):
+        self.error_status = error_status
+    def get_piece_id(self):
+        return self.piece_id
+    def set_piece_id(self, piece_id):
+        self.piece_id = piece_id
+    def get_shipment_code(self):
+        return self.shipment_code
+    def set_shipment_code(self, shipment_code):
+        self.shipment_code = shipment_code
+    def get_piece_identifier(self):
+        return self.piece_identifier
+    def set_piece_identifier(self, piece_identifier):
+        self.piece_identifier = piece_identifier
+    def get_identifier_type(self):
+        return self.identifier_type
+    def set_identifier_type(self, identifier_type):
+        self.identifier_type = identifier_type
+    def get_piece_code(self):
+        return self.piece_code
+    def set_piece_code(self, piece_code):
+        self.piece_code = piece_code
+    def get_event_location(self):
+        return self.event_location
+    def set_event_location(self, event_location):
+        self.event_location = event_location
+    def get_event_country(self):
+        return self.event_country
+    def set_event_country(self, event_country):
+        self.event_country = event_country
+    def get_status_liste(self):
+        return self.status_liste
+    def set_status_liste(self, status_liste):
+        self.status_liste = status_liste
+    def get_status_timestamp(self):
+        return self.status_timestamp
+    def set_status_timestamp(self, status_timestamp):
+        self.status_timestamp = status_timestamp
+    def get_status(self):
+        return self.status
+    def set_status(self, status):
+        self.status = status
+    def get_short_status(self):
+        return self.short_status
+    def set_short_status(self, short_status):
+        self.short_status = short_status
+    def get_recipient_name(self):
+        return self.recipient_name
+    def set_recipient_name(self, recipient_name):
+        self.recipient_name = recipient_name
+    def get_recipient_street(self):
+        return self.recipient_street
+    def set_recipient_street(self, recipient_street):
+        self.recipient_street = recipient_street
+    def get_recipient_city(self):
+        return self.recipient_city
+    def set_recipient_city(self, recipient_city):
+        self.recipient_city = recipient_city
+    def get_pan_recipient_name(self):
+        return self.pan_recipient_name
+    def set_pan_recipient_name(self, pan_recipient_name):
+        self.pan_recipient_name = pan_recipient_name
+    def get_pan_recipient_street(self):
+        return self.pan_recipient_street
+    def set_pan_recipient_street(self, pan_recipient_street):
+        self.pan_recipient_street = pan_recipient_street
+    def get_pan_recipient_city(self):
+        return self.pan_recipient_city
+    def set_pan_recipient_city(self, pan_recipient_city):
+        self.pan_recipient_city = pan_recipient_city
+    def get_pan_recipient_address(self):
+        return self.pan_recipient_address
+    def set_pan_recipient_address(self, pan_recipient_address):
+        self.pan_recipient_address = pan_recipient_address
+    def get_pan_recipient_postalcode(self):
+        return self.pan_recipient_postalcode
+    def set_pan_recipient_postalcode(self, pan_recipient_postalcode):
+        self.pan_recipient_postalcode = pan_recipient_postalcode
+    def get_shipper_name(self):
+        return self.shipper_name
+    def set_shipper_name(self, shipper_name):
+        self.shipper_name = shipper_name
+    def get_shipper_street(self):
+        return self.shipper_street
+    def set_shipper_street(self, shipper_street):
+        self.shipper_street = shipper_street
+    def get_shipper_city(self):
+        return self.shipper_city
+    def set_shipper_city(self, shipper_city):
+        self.shipper_city = shipper_city
+    def get_shipper_address(self):
+        return self.shipper_address
+    def set_shipper_address(self, shipper_address):
+        self.shipper_address = shipper_address
+    def get_product_code(self):
+        return self.product_code
+    def set_product_code(self, product_code):
+        self.product_code = product_code
+    def get_product_key(self):
+        return self.product_key
+    def set_product_key(self, product_key):
+        self.product_key = product_key
+    def get_product_name(self):
+        return self.product_name
+    def set_product_name(self, product_name):
+        self.product_name = product_name
+    def get_delivery_event_flag(self):
+        return self.delivery_event_flag
+    def set_delivery_event_flag(self, delivery_event_flag):
+        self.delivery_event_flag = delivery_event_flag
+    def get_recipient_id(self):
+        return self.recipient_id
+    def set_recipient_id(self, recipient_id):
+        self.recipient_id = recipient_id
+    def get_recipient_id_text(self):
+        return self.recipient_id_text
+    def set_recipient_id_text(self, recipient_id_text):
+        self.recipient_id_text = recipient_id_text
+    def get_upu(self):
+        return self.upu
+    def set_upu(self, upu):
+        self.upu = upu
+    def get_shipment_length(self):
+        return self.shipment_length
+    def set_shipment_length(self, shipment_length):
+        self.shipment_length = shipment_length
+    def get_shipment_width(self):
+        return self.shipment_width
+    def set_shipment_width(self, shipment_width):
+        self.shipment_width = shipment_width
+    def get_shipment_height(self):
+        return self.shipment_height
+    def set_shipment_height(self, shipment_height):
+        self.shipment_height = shipment_height
+    def get_shipment_weight(self):
+        return self.shipment_weight
+    def set_shipment_weight(self, shipment_weight):
+        self.shipment_weight = shipment_weight
+    def get_international_flag(self):
+        return self.international_flag
+    def set_international_flag(self, international_flag):
+        self.international_flag = international_flag
+    def get_division(self):
+        return self.division
+    def set_division(self, division):
+        self.division = division
+    def get_ice(self):
+        return self.ice
+    def set_ice(self, ice):
+        self.ice = ice
+    def get_ric(self):
+        return self.ric
+    def set_ric(self, ric):
+        self.ric = ric
+    def get_standard_event_code(self):
+        return self.standard_event_code
+    def set_standard_event_code(self, standard_event_code):
+        self.standard_event_code = standard_event_code
+    def get_dest_country(self):
+        return self.dest_country
+    def set_dest_country(self, dest_country):
+        self.dest_country = dest_country
+    def get_origin_country(self):
+        return self.origin_country
+    def set_origin_country(self, origin_country):
+        self.origin_country = origin_country
+    def get_delivery_date(self):
+        return self.delivery_date
+    def set_delivery_date(self, delivery_date):
+        self.delivery_date = delivery_date
+    def get_delivery_timeframe_from(self):
+        return self.delivery_timeframe_from
+    def set_delivery_timeframe_from(self, delivery_timeframe_from):
+        self.delivery_timeframe_from = delivery_timeframe_from
+    def get_delivery_timeframe_to(self):
+        return self.delivery_timeframe_to
+    def set_delivery_timeframe_to(self, delivery_timeframe_to):
+        self.delivery_timeframe_to = delivery_timeframe_to
+    def get_searched_piece_code(self):
+        return self.searched_piece_code
+    def set_searched_piece_code(self, searched_piece_code):
+        self.searched_piece_code = searched_piece_code
+    def get_searched_ref_no(self):
+        return self.searched_ref_no
+    def set_searched_ref_no(self, searched_ref_no):
+        self.searched_ref_no = searched_ref_no
+    def get_piece_customer_reference(self):
+        return self.piece_customer_reference
+    def set_piece_customer_reference(self, piece_customer_reference):
+        self.piece_customer_reference = piece_customer_reference
+    def get_shipment_customer_reference(self):
+        return self.shipment_customer_reference
+    def set_shipment_customer_reference(self, shipment_customer_reference):
+        self.shipment_customer_reference = shipment_customer_reference
+    def get_leitcode(self):
+        return self.leitcode
+    def set_leitcode(self, leitcode):
+        self.leitcode = leitcode
+    def get_routing_code_ean(self):
+        return self.routing_code_ean
+    def set_routing_code_ean(self, routing_code_ean):
+        self.routing_code_ean = routing_code_ean
+    def get_matchcode(self):
+        return self.matchcode
+    def set_matchcode(self, matchcode):
+        self.matchcode = matchcode
+    def get_domestic_id(self):
+        return self.domestic_id
+    def set_domestic_id(self, domestic_id):
+        self.domestic_id = domestic_id
+    def get_airway_bill_number(self):
+        return self.airway_bill_number
+    def set_airway_bill_number(self, airway_bill_number):
+        self.airway_bill_number = airway_bill_number
+    def get_ruecksendung(self):
+        return self.ruecksendung
+    def set_ruecksendung(self, ruecksendung):
+        self.ruecksendung = ruecksendung
+    def get_pslz_nr(self):
+        return self.pslz_nr
+    def set_pslz_nr(self, pslz_nr):
+        self.pslz_nr = pslz_nr
+    def get_order_preferred_delivery_day(self):
+        return self.order_preferred_delivery_day
+    def set_order_preferred_delivery_day(self, order_preferred_delivery_day):
+        self.order_preferred_delivery_day = order_preferred_delivery_day
+    def _hasContent(self):
+        if (
+            self.data is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('dataType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'dataType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='dataType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='dataType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='dataType'):
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
+        if self.error_status is not None and 'error_status' not in already_processed:
+            already_processed.add('error_status')
+            outfile.write(' error-status="%s"' % self.gds_format_integer(self.error_status, input_name='error-status'))
+        if self.piece_id is not None and 'piece_id' not in already_processed:
+            already_processed.add('piece_id')
+            outfile.write(' piece-id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_id), input_name='piece-id')), ))
+        if self.shipment_code is not None and 'shipment_code' not in already_processed:
+            already_processed.add('shipment_code')
+            outfile.write(' shipment-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipment_code), input_name='shipment-code')), ))
+        if self.piece_identifier is not None and 'piece_identifier' not in already_processed:
+            already_processed.add('piece_identifier')
+            outfile.write(' piece-identifier="%s"' % self.gds_format_integer(self.piece_identifier, input_name='piece-identifier'))
+        if self.identifier_type is not None and 'identifier_type' not in already_processed:
+            already_processed.add('identifier_type')
+            outfile.write(' identifier-type="%s"' % self.gds_format_integer(self.identifier_type, input_name='identifier-type'))
+        if self.piece_code is not None and 'piece_code' not in already_processed:
+            already_processed.add('piece_code')
+            outfile.write(' piece-code="%s"' % self.gds_format_integer(self.piece_code, input_name='piece-code'))
+        if self.event_location is not None and 'event_location' not in already_processed:
+            already_processed.add('event_location')
+            outfile.write(' event-location=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_location), input_name='event-location')), ))
+        if self.event_country is not None and 'event_country' not in already_processed:
+            already_processed.add('event_country')
+            outfile.write(' event-country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_country), input_name='event-country')), ))
+        if self.status_liste is not None and 'status_liste' not in already_processed:
+            already_processed.add('status_liste')
+            outfile.write(' status-liste="%s"' % self.gds_format_integer(self.status_liste, input_name='status-liste'))
+        if self.status_timestamp is not None and 'status_timestamp' not in already_processed:
+            already_processed.add('status_timestamp')
+            outfile.write(' status-timestamp=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.status_timestamp), input_name='status-timestamp')), ))
+        if self.status is not None and 'status' not in already_processed:
+            already_processed.add('status')
+            outfile.write(' status=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.status), input_name='status')), ))
+        if self.short_status is not None and 'short_status' not in already_processed:
+            already_processed.add('short_status')
+            outfile.write(' short-status=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.short_status), input_name='short-status')), ))
+        if self.recipient_name is not None and 'recipient_name' not in already_processed:
+            already_processed.add('recipient_name')
+            outfile.write(' recipient-name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.recipient_name), input_name='recipient-name')), ))
+        if self.recipient_street is not None and 'recipient_street' not in already_processed:
+            already_processed.add('recipient_street')
+            outfile.write(' recipient-street=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.recipient_street), input_name='recipient-street')), ))
+        if self.recipient_city is not None and 'recipient_city' not in already_processed:
+            already_processed.add('recipient_city')
+            outfile.write(' recipient-city=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.recipient_city), input_name='recipient-city')), ))
+        if self.pan_recipient_name is not None and 'pan_recipient_name' not in already_processed:
+            already_processed.add('pan_recipient_name')
+            outfile.write(' pan-recipient-name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pan_recipient_name), input_name='pan-recipient-name')), ))
+        if self.pan_recipient_street is not None and 'pan_recipient_street' not in already_processed:
+            already_processed.add('pan_recipient_street')
+            outfile.write(' pan-recipient-street=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pan_recipient_street), input_name='pan-recipient-street')), ))
+        if self.pan_recipient_city is not None and 'pan_recipient_city' not in already_processed:
+            already_processed.add('pan_recipient_city')
+            outfile.write(' pan-recipient-city=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pan_recipient_city), input_name='pan-recipient-city')), ))
+        if self.pan_recipient_address is not None and 'pan_recipient_address' not in already_processed:
+            already_processed.add('pan_recipient_address')
+            outfile.write(' pan-recipient-address=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pan_recipient_address), input_name='pan-recipient-address')), ))
+        if self.pan_recipient_postalcode is not None and 'pan_recipient_postalcode' not in already_processed:
+            already_processed.add('pan_recipient_postalcode')
+            outfile.write(' pan-recipient-postalcode="%s"' % self.gds_format_integer(self.pan_recipient_postalcode, input_name='pan-recipient-postalcode'))
+        if self.shipper_name is not None and 'shipper_name' not in already_processed:
+            already_processed.add('shipper_name')
+            outfile.write(' shipper-name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipper_name), input_name='shipper-name')), ))
+        if self.shipper_street is not None and 'shipper_street' not in already_processed:
+            already_processed.add('shipper_street')
+            outfile.write(' shipper-street=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipper_street), input_name='shipper-street')), ))
+        if self.shipper_city is not None and 'shipper_city' not in already_processed:
+            already_processed.add('shipper_city')
+            outfile.write(' shipper-city=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipper_city), input_name='shipper-city')), ))
+        if self.shipper_address is not None and 'shipper_address' not in already_processed:
+            already_processed.add('shipper_address')
+            outfile.write(' shipper-address=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipper_address), input_name='shipper-address')), ))
+        if self.product_code is not None and 'product_code' not in already_processed:
+            already_processed.add('product_code')
+            outfile.write(' product-code="%s"' % self.gds_format_integer(self.product_code, input_name='product-code'))
+        if self.product_key is not None and 'product_key' not in already_processed:
+            already_processed.add('product_key')
+            outfile.write(' product-key=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.product_key), input_name='product-key')), ))
+        if self.product_name is not None and 'product_name' not in already_processed:
+            already_processed.add('product_name')
+            outfile.write(' product-name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.product_name), input_name='product-name')), ))
+        if self.delivery_event_flag is not None and 'delivery_event_flag' not in already_processed:
+            already_processed.add('delivery_event_flag')
+            outfile.write(' delivery-event-flag="%s"' % self.gds_format_integer(self.delivery_event_flag, input_name='delivery-event-flag'))
+        if self.recipient_id is not None and 'recipient_id' not in already_processed:
+            already_processed.add('recipient_id')
+            outfile.write(' recipient-id="%s"' % self.gds_format_integer(self.recipient_id, input_name='recipient-id'))
+        if self.recipient_id_text is not None and 'recipient_id_text' not in already_processed:
+            already_processed.add('recipient_id_text')
+            outfile.write(' recipient-id-text=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.recipient_id_text), input_name='recipient-id-text')), ))
+        if self.upu is not None and 'upu' not in already_processed:
+            already_processed.add('upu')
+            outfile.write(' upu=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.upu), input_name='upu')), ))
+        if self.shipment_length is not None and 'shipment_length' not in already_processed:
+            already_processed.add('shipment_length')
+            outfile.write(' shipment-length="%s"' % self.gds_format_decimal(self.shipment_length, input_name='shipment-length'))
+        if self.shipment_width is not None and 'shipment_width' not in already_processed:
+            already_processed.add('shipment_width')
+            outfile.write(' shipment-width="%s"' % self.gds_format_decimal(self.shipment_width, input_name='shipment-width'))
+        if self.shipment_height is not None and 'shipment_height' not in already_processed:
+            already_processed.add('shipment_height')
+            outfile.write(' shipment-height="%s"' % self.gds_format_decimal(self.shipment_height, input_name='shipment-height'))
+        if self.shipment_weight is not None and 'shipment_weight' not in already_processed:
+            already_processed.add('shipment_weight')
+            outfile.write(' shipment-weight="%s"' % self.gds_format_decimal(self.shipment_weight, input_name='shipment-weight'))
+        if self.international_flag is not None and 'international_flag' not in already_processed:
+            already_processed.add('international_flag')
+            outfile.write(' international-flag="%s"' % self.gds_format_integer(self.international_flag, input_name='international-flag'))
+        if self.division is not None and 'division' not in already_processed:
+            already_processed.add('division')
+            outfile.write(' division=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.division), input_name='division')), ))
+        if self.ice is not None and 'ice' not in already_processed:
+            already_processed.add('ice')
+            outfile.write(' ice=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ice), input_name='ice')), ))
+        if self.ric is not None and 'ric' not in already_processed:
+            already_processed.add('ric')
+            outfile.write(' ric=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ric), input_name='ric')), ))
+        if self.standard_event_code is not None and 'standard_event_code' not in already_processed:
+            already_processed.add('standard_event_code')
+            outfile.write(' standard-event-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.standard_event_code), input_name='standard-event-code')), ))
+        if self.dest_country is not None and 'dest_country' not in already_processed:
+            already_processed.add('dest_country')
+            outfile.write(' dest-country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.dest_country), input_name='dest-country')), ))
+        if self.origin_country is not None and 'origin_country' not in already_processed:
+            already_processed.add('origin_country')
+            outfile.write(' origin-country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.origin_country), input_name='origin-country')), ))
+        if self.delivery_date is not None and 'delivery_date' not in already_processed:
+            already_processed.add('delivery_date')
+            outfile.write(' delivery-date=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.delivery_date), input_name='delivery-date')), ))
+        if self.delivery_timeframe_from is not None and 'delivery_timeframe_from' not in already_processed:
+            already_processed.add('delivery_timeframe_from')
+            outfile.write(' delivery-timeframe-from=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.delivery_timeframe_from), input_name='delivery-timeframe-from')), ))
+        if self.delivery_timeframe_to is not None and 'delivery_timeframe_to' not in already_processed:
+            already_processed.add('delivery_timeframe_to')
+            outfile.write(' delivery-timeframe-to=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.delivery_timeframe_to), input_name='delivery-timeframe-to')), ))
+        if self.searched_piece_code is not None and 'searched_piece_code' not in already_processed:
+            already_processed.add('searched_piece_code')
+            outfile.write(' searched-piece-code="%s"' % self.gds_format_integer(self.searched_piece_code, input_name='searched-piece-code'))
+        if self.searched_ref_no is not None and 'searched_ref_no' not in already_processed:
+            already_processed.add('searched_ref_no')
+            outfile.write(' searched-ref-no=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.searched_ref_no), input_name='searched-ref-no')), ))
+        if self.piece_customer_reference is not None and 'piece_customer_reference' not in already_processed:
+            already_processed.add('piece_customer_reference')
+            outfile.write(' piece-customer-reference=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_customer_reference), input_name='piece-customer-reference')), ))
+        if self.shipment_customer_reference is not None and 'shipment_customer_reference' not in already_processed:
+            already_processed.add('shipment_customer_reference')
+            outfile.write(' shipment-customer-reference=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipment_customer_reference), input_name='shipment-customer-reference')), ))
+        if self.leitcode is not None and 'leitcode' not in already_processed:
+            already_processed.add('leitcode')
+            outfile.write(' leitcode=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.leitcode), input_name='leitcode')), ))
+        if self.routing_code_ean is not None and 'routing_code_ean' not in already_processed:
+            already_processed.add('routing_code_ean')
+            outfile.write(' routing-code-ean=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.routing_code_ean), input_name='routing-code-ean')), ))
+        if self.matchcode is not None and 'matchcode' not in already_processed:
+            already_processed.add('matchcode')
+            outfile.write(' matchcode=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.matchcode), input_name='matchcode')), ))
+        if self.domestic_id is not None and 'domestic_id' not in already_processed:
+            already_processed.add('domestic_id')
+            outfile.write(' domestic-id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.domestic_id), input_name='domestic-id')), ))
+        if self.airway_bill_number is not None and 'airway_bill_number' not in already_processed:
+            already_processed.add('airway_bill_number')
+            outfile.write(' airway-bill-number=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.airway_bill_number), input_name='airway-bill-number')), ))
+        if self.ruecksendung is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            outfile.write(' ruecksendung="%s"' % self.gds_format_boolean(self.ruecksendung, input_name='ruecksendung'))
+        if self.pslz_nr is not None and 'pslz_nr' not in already_processed:
+            already_processed.add('pslz_nr')
+            outfile.write(' pslz-nr="%s"' % self.gds_format_integer(self.pslz_nr, input_name='pslz-nr'))
+        if self.order_preferred_delivery_day is not None and 'order_preferred_delivery_day' not in already_processed:
+            already_processed.add('order_preferred_delivery_day')
+            outfile.write(' order-preferred-delivery-day="%s"' % self.gds_format_boolean(self.order_preferred_delivery_day, input_name='order-preferred-delivery-day'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.data is not None:
+            namespaceprefix_ = self.data_nsprefix_ + ':' if (UseCapturedNS_ and self.data_nsprefix_) else ''
+            self.data.export(outfile, level, namespaceprefix_, namespacedef_='', name_='data', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('error-status', node)
+        if value is not None and 'error-status' not in already_processed:
+            already_processed.add('error-status')
+            self.error_status = self.gds_parse_integer(value, node, 'error-status')
+        value = find_attr_value_('piece-id', node)
+        if value is not None and 'piece-id' not in already_processed:
+            already_processed.add('piece-id')
+            self.piece_id = value
+        value = find_attr_value_('shipment-code', node)
+        if value is not None and 'shipment-code' not in already_processed:
+            already_processed.add('shipment-code')
+            self.shipment_code = value
+        value = find_attr_value_('piece-identifier', node)
+        if value is not None and 'piece-identifier' not in already_processed:
+            already_processed.add('piece-identifier')
+            self.piece_identifier = self.gds_parse_integer(value, node, 'piece-identifier')
+        value = find_attr_value_('identifier-type', node)
+        if value is not None and 'identifier-type' not in already_processed:
+            already_processed.add('identifier-type')
+            self.identifier_type = self.gds_parse_integer(value, node, 'identifier-type')
+        value = find_attr_value_('piece-code', node)
+        if value is not None and 'piece-code' not in already_processed:
+            already_processed.add('piece-code')
+            self.piece_code = self.gds_parse_integer(value, node, 'piece-code')
+        value = find_attr_value_('event-location', node)
+        if value is not None and 'event-location' not in already_processed:
+            already_processed.add('event-location')
+            self.event_location = value
+        value = find_attr_value_('event-country', node)
+        if value is not None and 'event-country' not in already_processed:
+            already_processed.add('event-country')
+            self.event_country = value
+        value = find_attr_value_('status-liste', node)
+        if value is not None and 'status-liste' not in already_processed:
+            already_processed.add('status-liste')
+            self.status_liste = self.gds_parse_integer(value, node, 'status-liste')
+        value = find_attr_value_('status-timestamp', node)
+        if value is not None and 'status-timestamp' not in already_processed:
+            already_processed.add('status-timestamp')
+            self.status_timestamp = value
+        value = find_attr_value_('status', node)
+        if value is not None and 'status' not in already_processed:
+            already_processed.add('status')
+            self.status = value
+        value = find_attr_value_('short-status', node)
+        if value is not None and 'short-status' not in already_processed:
+            already_processed.add('short-status')
+            self.short_status = value
+        value = find_attr_value_('recipient-name', node)
+        if value is not None and 'recipient-name' not in already_processed:
+            already_processed.add('recipient-name')
+            self.recipient_name = value
+        value = find_attr_value_('recipient-street', node)
+        if value is not None and 'recipient-street' not in already_processed:
+            already_processed.add('recipient-street')
+            self.recipient_street = value
+        value = find_attr_value_('recipient-city', node)
+        if value is not None and 'recipient-city' not in already_processed:
+            already_processed.add('recipient-city')
+            self.recipient_city = value
+        value = find_attr_value_('pan-recipient-name', node)
+        if value is not None and 'pan-recipient-name' not in already_processed:
+            already_processed.add('pan-recipient-name')
+            self.pan_recipient_name = value
+        value = find_attr_value_('pan-recipient-street', node)
+        if value is not None and 'pan-recipient-street' not in already_processed:
+            already_processed.add('pan-recipient-street')
+            self.pan_recipient_street = value
+        value = find_attr_value_('pan-recipient-city', node)
+        if value is not None and 'pan-recipient-city' not in already_processed:
+            already_processed.add('pan-recipient-city')
+            self.pan_recipient_city = value
+        value = find_attr_value_('pan-recipient-address', node)
+        if value is not None and 'pan-recipient-address' not in already_processed:
+            already_processed.add('pan-recipient-address')
+            self.pan_recipient_address = value
+        value = find_attr_value_('pan-recipient-postalcode', node)
+        if value is not None and 'pan-recipient-postalcode' not in already_processed:
+            already_processed.add('pan-recipient-postalcode')
+            self.pan_recipient_postalcode = self.gds_parse_integer(value, node, 'pan-recipient-postalcode')
+        value = find_attr_value_('shipper-name', node)
+        if value is not None and 'shipper-name' not in already_processed:
+            already_processed.add('shipper-name')
+            self.shipper_name = value
+        value = find_attr_value_('shipper-street', node)
+        if value is not None and 'shipper-street' not in already_processed:
+            already_processed.add('shipper-street')
+            self.shipper_street = value
+        value = find_attr_value_('shipper-city', node)
+        if value is not None and 'shipper-city' not in already_processed:
+            already_processed.add('shipper-city')
+            self.shipper_city = value
+        value = find_attr_value_('shipper-address', node)
+        if value is not None and 'shipper-address' not in already_processed:
+            already_processed.add('shipper-address')
+            self.shipper_address = value
+        value = find_attr_value_('product-code', node)
+        if value is not None and 'product-code' not in already_processed:
+            already_processed.add('product-code')
+            self.product_code = self.gds_parse_integer(value, node, 'product-code')
+        value = find_attr_value_('product-key', node)
+        if value is not None and 'product-key' not in already_processed:
+            already_processed.add('product-key')
+            self.product_key = value
+        value = find_attr_value_('product-name', node)
+        if value is not None and 'product-name' not in already_processed:
+            already_processed.add('product-name')
+            self.product_name = value
+        value = find_attr_value_('delivery-event-flag', node)
+        if value is not None and 'delivery-event-flag' not in already_processed:
+            already_processed.add('delivery-event-flag')
+            self.delivery_event_flag = self.gds_parse_integer(value, node, 'delivery-event-flag')
+        value = find_attr_value_('recipient-id', node)
+        if value is not None and 'recipient-id' not in already_processed:
+            already_processed.add('recipient-id')
+            self.recipient_id = self.gds_parse_integer(value, node, 'recipient-id')
+        value = find_attr_value_('recipient-id-text', node)
+        if value is not None and 'recipient-id-text' not in already_processed:
+            already_processed.add('recipient-id-text')
+            self.recipient_id_text = value
+        value = find_attr_value_('upu', node)
+        if value is not None and 'upu' not in already_processed:
+            already_processed.add('upu')
+            self.upu = value
+        value = find_attr_value_('shipment-length', node)
+        if value is not None and 'shipment-length' not in already_processed:
+            already_processed.add('shipment-length')
+            value = self.gds_parse_decimal(value, node, 'shipment-length')
+            self.shipment_length = value
+        value = find_attr_value_('shipment-width', node)
+        if value is not None and 'shipment-width' not in already_processed:
+            already_processed.add('shipment-width')
+            value = self.gds_parse_decimal(value, node, 'shipment-width')
+            self.shipment_width = value
+        value = find_attr_value_('shipment-height', node)
+        if value is not None and 'shipment-height' not in already_processed:
+            already_processed.add('shipment-height')
+            value = self.gds_parse_decimal(value, node, 'shipment-height')
+            self.shipment_height = value
+        value = find_attr_value_('shipment-weight', node)
+        if value is not None and 'shipment-weight' not in already_processed:
+            already_processed.add('shipment-weight')
+            value = self.gds_parse_decimal(value, node, 'shipment-weight')
+            self.shipment_weight = value
+        value = find_attr_value_('international-flag', node)
+        if value is not None and 'international-flag' not in already_processed:
+            already_processed.add('international-flag')
+            self.international_flag = self.gds_parse_integer(value, node, 'international-flag')
+        value = find_attr_value_('division', node)
+        if value is not None and 'division' not in already_processed:
+            already_processed.add('division')
+            self.division = value
+        value = find_attr_value_('ice', node)
+        if value is not None and 'ice' not in already_processed:
+            already_processed.add('ice')
+            self.ice = value
+        value = find_attr_value_('ric', node)
+        if value is not None and 'ric' not in already_processed:
+            already_processed.add('ric')
+            self.ric = value
+        value = find_attr_value_('standard-event-code', node)
+        if value is not None and 'standard-event-code' not in already_processed:
+            already_processed.add('standard-event-code')
+            self.standard_event_code = value
+        value = find_attr_value_('dest-country', node)
+        if value is not None and 'dest-country' not in already_processed:
+            already_processed.add('dest-country')
+            self.dest_country = value
+        value = find_attr_value_('origin-country', node)
+        if value is not None and 'origin-country' not in already_processed:
+            already_processed.add('origin-country')
+            self.origin_country = value
+        value = find_attr_value_('delivery-date', node)
+        if value is not None and 'delivery-date' not in already_processed:
+            already_processed.add('delivery-date')
+            self.delivery_date = value
+        value = find_attr_value_('delivery-timeframe-from', node)
+        if value is not None and 'delivery-timeframe-from' not in already_processed:
+            already_processed.add('delivery-timeframe-from')
+            self.delivery_timeframe_from = value
+        value = find_attr_value_('delivery-timeframe-to', node)
+        if value is not None and 'delivery-timeframe-to' not in already_processed:
+            already_processed.add('delivery-timeframe-to')
+            self.delivery_timeframe_to = value
+        value = find_attr_value_('searched-piece-code', node)
+        if value is not None and 'searched-piece-code' not in already_processed:
+            already_processed.add('searched-piece-code')
+            self.searched_piece_code = self.gds_parse_integer(value, node, 'searched-piece-code')
+        value = find_attr_value_('searched-ref-no', node)
+        if value is not None and 'searched-ref-no' not in already_processed:
+            already_processed.add('searched-ref-no')
+            self.searched_ref_no = value
+        value = find_attr_value_('piece-customer-reference', node)
+        if value is not None and 'piece-customer-reference' not in already_processed:
+            already_processed.add('piece-customer-reference')
+            self.piece_customer_reference = value
+        value = find_attr_value_('shipment-customer-reference', node)
+        if value is not None and 'shipment-customer-reference' not in already_processed:
+            already_processed.add('shipment-customer-reference')
+            self.shipment_customer_reference = value
+        value = find_attr_value_('leitcode', node)
+        if value is not None and 'leitcode' not in already_processed:
+            already_processed.add('leitcode')
+            self.leitcode = value
+        value = find_attr_value_('routing-code-ean', node)
+        if value is not None and 'routing-code-ean' not in already_processed:
+            already_processed.add('routing-code-ean')
+            self.routing_code_ean = value
+        value = find_attr_value_('matchcode', node)
+        if value is not None and 'matchcode' not in already_processed:
+            already_processed.add('matchcode')
+            self.matchcode = value
+        value = find_attr_value_('domestic-id', node)
+        if value is not None and 'domestic-id' not in already_processed:
+            already_processed.add('domestic-id')
+            self.domestic_id = value
+        value = find_attr_value_('airway-bill-number', node)
+        if value is not None and 'airway-bill-number' not in already_processed:
+            already_processed.add('airway-bill-number')
+            self.airway_bill_number = value
+        value = find_attr_value_('ruecksendung', node)
+        if value is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            if value in ('true', '1'):
+                self.ruecksendung = True
+            elif value in ('false', '0'):
+                self.ruecksendung = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+        value = find_attr_value_('pslz-nr', node)
+        if value is not None and 'pslz-nr' not in already_processed:
+            already_processed.add('pslz-nr')
+            self.pslz_nr = self.gds_parse_integer(value, node, 'pslz-nr')
+        value = find_attr_value_('order-preferred-delivery-day', node)
+        if value is not None and 'order-preferred-delivery-day' not in already_processed:
+            already_processed.add('order-preferred-delivery-day')
+            if value in ('true', '1'):
+                self.order_preferred_delivery_day = True
+            elif value in ('false', '0'):
+                self.order_preferred_delivery_day = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'data':
+            obj_ = dataType1.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.data = obj_
+            obj_.original_tagname_ = 'data'
+# end class dataType
+
+
+class dataType1(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, name=None, piece_identifier=None, _build_time=None, piece_id=None, leitcode=None, routing_code_ean=None, ruecksendung=None, pslz_nr=None, order_preferred_delivery_day=None, data=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.name = _cast(None, name)
+        self.name_nsprefix_ = None
+        self.piece_identifier = _cast(int, piece_identifier)
+        self.piece_identifier_nsprefix_ = None
+        self._build_time = _cast(None, _build_time)
+        self._build_time_nsprefix_ = None
+        self.piece_id = _cast(None, piece_id)
+        self.piece_id_nsprefix_ = None
+        self.leitcode = _cast(int, leitcode)
+        self.leitcode_nsprefix_ = None
+        self.routing_code_ean = _cast(None, routing_code_ean)
+        self.routing_code_ean_nsprefix_ = None
+        self.ruecksendung = _cast(bool, ruecksendung)
+        self.ruecksendung_nsprefix_ = None
+        self.pslz_nr = _cast(int, pslz_nr)
+        self.pslz_nr_nsprefix_ = None
+        self.order_preferred_delivery_day = _cast(bool, order_preferred_delivery_day)
+        self.order_preferred_delivery_day_nsprefix_ = None
+        if data is None:
+            self.data = []
+        else:
+            self.data = data
+        self.data_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, dataType1)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if dataType1.subclass:
+            return dataType1.subclass(*args_, **kwargs_)
+        else:
+            return dataType1(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_data(self):
+        return self.data
+    def set_data(self, data):
+        self.data = data
+    def add_data(self, value):
+        self.data.append(value)
+    def insert_data_at(self, index, value):
+        self.data.insert(index, value)
+    def replace_data_at(self, index, value):
+        self.data[index] = value
+    def get_name(self):
+        return self.name
+    def set_name(self, name):
+        self.name = name
+    def get_piece_identifier(self):
+        return self.piece_identifier
+    def set_piece_identifier(self, piece_identifier):
+        self.piece_identifier = piece_identifier
+    def get__build_time(self):
+        return self._build_time
+    def set__build_time(self, _build_time):
+        self._build_time = _build_time
+    def get_piece_id(self):
+        return self.piece_id
+    def set_piece_id(self, piece_id):
+        self.piece_id = piece_id
+    def get_leitcode(self):
+        return self.leitcode
+    def set_leitcode(self, leitcode):
+        self.leitcode = leitcode
+    def get_routing_code_ean(self):
+        return self.routing_code_ean
+    def set_routing_code_ean(self, routing_code_ean):
+        self.routing_code_ean = routing_code_ean
+    def get_ruecksendung(self):
+        return self.ruecksendung
+    def set_ruecksendung(self, ruecksendung):
+        self.ruecksendung = ruecksendung
+    def get_pslz_nr(self):
+        return self.pslz_nr
+    def set_pslz_nr(self, pslz_nr):
+        self.pslz_nr = pslz_nr
+    def get_order_preferred_delivery_day(self):
+        return self.order_preferred_delivery_day
+    def set_order_preferred_delivery_day(self, order_preferred_delivery_day):
+        self.order_preferred_delivery_day = order_preferred_delivery_day
+    def _hasContent(self):
+        if (
+            self.data
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType1', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('dataType1')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'dataType1':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='dataType1')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='dataType1', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='dataType1'):
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
+        if self.piece_identifier is not None and 'piece_identifier' not in already_processed:
+            already_processed.add('piece_identifier')
+            outfile.write(' piece-identifier="%s"' % self.gds_format_integer(self.piece_identifier, input_name='piece-identifier'))
+        if self._build_time is not None and '_build_time' not in already_processed:
+            already_processed.add('_build_time')
+            outfile.write(' _build-time=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self._build_time), input_name='_build-time')), ))
+        if self.piece_id is not None and 'piece_id' not in already_processed:
+            already_processed.add('piece_id')
+            outfile.write(' piece-id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_id), input_name='piece-id')), ))
+        if self.leitcode is not None and 'leitcode' not in already_processed:
+            already_processed.add('leitcode')
+            outfile.write(' leitcode="%s"' % self.gds_format_integer(self.leitcode, input_name='leitcode'))
+        if self.routing_code_ean is not None and 'routing_code_ean' not in already_processed:
+            already_processed.add('routing_code_ean')
+            outfile.write(' routing-code-ean=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.routing_code_ean), input_name='routing-code-ean')), ))
+        if self.ruecksendung is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            outfile.write(' ruecksendung="%s"' % self.gds_format_boolean(self.ruecksendung, input_name='ruecksendung'))
+        if self.pslz_nr is not None and 'pslz_nr' not in already_processed:
+            already_processed.add('pslz_nr')
+            outfile.write(' pslz-nr="%s"' % self.gds_format_integer(self.pslz_nr, input_name='pslz-nr'))
+        if self.order_preferred_delivery_day is not None and 'order_preferred_delivery_day' not in already_processed:
+            already_processed.add('order_preferred_delivery_day')
+            outfile.write(' order-preferred-delivery-day="%s"' % self.gds_format_boolean(self.order_preferred_delivery_day, input_name='order-preferred-delivery-day'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType1', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for data_ in self.data:
+            namespaceprefix_ = self.data_nsprefix_ + ':' if (UseCapturedNS_ and self.data_nsprefix_) else ''
+            data_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='data', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('piece-identifier', node)
+        if value is not None and 'piece-identifier' not in already_processed:
+            already_processed.add('piece-identifier')
+            self.piece_identifier = self.gds_parse_integer(value, node, 'piece-identifier')
+        value = find_attr_value_('_build-time', node)
+        if value is not None and '_build-time' not in already_processed:
+            already_processed.add('_build-time')
+            self._build_time = value
+        value = find_attr_value_('piece-id', node)
+        if value is not None and 'piece-id' not in already_processed:
+            already_processed.add('piece-id')
+            self.piece_id = value
+        value = find_attr_value_('leitcode', node)
+        if value is not None and 'leitcode' not in already_processed:
+            already_processed.add('leitcode')
+            self.leitcode = self.gds_parse_integer(value, node, 'leitcode')
+        value = find_attr_value_('routing-code-ean', node)
+        if value is not None and 'routing-code-ean' not in already_processed:
+            already_processed.add('routing-code-ean')
+            self.routing_code_ean = value
+        value = find_attr_value_('ruecksendung', node)
+        if value is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            if value in ('true', '1'):
+                self.ruecksendung = True
+            elif value in ('false', '0'):
+                self.ruecksendung = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+        value = find_attr_value_('pslz-nr', node)
+        if value is not None and 'pslz-nr' not in already_processed:
+            already_processed.add('pslz-nr')
+            self.pslz_nr = self.gds_parse_integer(value, node, 'pslz-nr')
+        value = find_attr_value_('order-preferred-delivery-day', node)
+        if value is not None and 'order-preferred-delivery-day' not in already_processed:
+            already_processed.add('order-preferred-delivery-day')
+            if value in ('true', '1'):
+                self.order_preferred_delivery_day = True
+            elif value in ('false', '0'):
+                self.order_preferred_delivery_day = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'data':
+            obj_ = dataType2.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.data.append(obj_)
+            obj_.original_tagname_ = 'data'
+# end class dataType1
+
+
+class dataType2(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, name=None, event_timestamp=None, event_status=None, event_text=None, event_short_status=None, ice=None, ric=None, event_location=None, event_country=None, standard_event_code=None, ruecksendung=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.name = _cast(None, name)
+        self.name_nsprefix_ = None
+        self.event_timestamp = _cast(None, event_timestamp)
+        self.event_timestamp_nsprefix_ = None
+        self.event_status = _cast(None, event_status)
+        self.event_status_nsprefix_ = None
+        self.event_text = _cast(None, event_text)
+        self.event_text_nsprefix_ = None
+        self.event_short_status = _cast(None, event_short_status)
+        self.event_short_status_nsprefix_ = None
+        self.ice = _cast(None, ice)
+        self.ice_nsprefix_ = None
+        self.ric = _cast(None, ric)
+        self.ric_nsprefix_ = None
+        self.event_location = _cast(None, event_location)
+        self.event_location_nsprefix_ = None
+        self.event_country = _cast(None, event_country)
+        self.event_country_nsprefix_ = None
+        self.standard_event_code = _cast(None, standard_event_code)
+        self.standard_event_code_nsprefix_ = None
+        self.ruecksendung = _cast(bool, ruecksendung)
+        self.ruecksendung_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, dataType2)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if dataType2.subclass:
+            return dataType2.subclass(*args_, **kwargs_)
+        else:
+            return dataType2(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_name(self):
+        return self.name
+    def set_name(self, name):
+        self.name = name
+    def get_event_timestamp(self):
+        return self.event_timestamp
+    def set_event_timestamp(self, event_timestamp):
+        self.event_timestamp = event_timestamp
+    def get_event_status(self):
+        return self.event_status
+    def set_event_status(self, event_status):
+        self.event_status = event_status
+    def get_event_text(self):
+        return self.event_text
+    def set_event_text(self, event_text):
+        self.event_text = event_text
+    def get_event_short_status(self):
+        return self.event_short_status
+    def set_event_short_status(self, event_short_status):
+        self.event_short_status = event_short_status
+    def get_ice(self):
+        return self.ice
+    def set_ice(self, ice):
+        self.ice = ice
+    def get_ric(self):
+        return self.ric
+    def set_ric(self, ric):
+        self.ric = ric
+    def get_event_location(self):
+        return self.event_location
+    def set_event_location(self, event_location):
+        self.event_location = event_location
+    def get_event_country(self):
+        return self.event_country
+    def set_event_country(self, event_country):
+        self.event_country = event_country
+    def get_standard_event_code(self):
+        return self.standard_event_code
+    def set_standard_event_code(self, standard_event_code):
+        self.standard_event_code = standard_event_code
+    def get_ruecksendung(self):
+        return self.ruecksendung
+    def set_ruecksendung(self, ruecksendung):
+        self.ruecksendung = ruecksendung
+    def _hasContent(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType2', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('dataType2')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'dataType2':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='dataType2')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='dataType2', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='dataType2'):
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
+        if self.event_timestamp is not None and 'event_timestamp' not in already_processed:
+            already_processed.add('event_timestamp')
+            outfile.write(' event-timestamp=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_timestamp), input_name='event-timestamp')), ))
+        if self.event_status is not None and 'event_status' not in already_processed:
+            already_processed.add('event_status')
+            outfile.write(' event-status=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_status), input_name='event-status')), ))
+        if self.event_text is not None and 'event_text' not in already_processed:
+            already_processed.add('event_text')
+            outfile.write(' event-text=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_text), input_name='event-text')), ))
+        if self.event_short_status is not None and 'event_short_status' not in already_processed:
+            already_processed.add('event_short_status')
+            outfile.write(' event-short-status=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_short_status), input_name='event-short-status')), ))
+        if self.ice is not None and 'ice' not in already_processed:
+            already_processed.add('ice')
+            outfile.write(' ice=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ice), input_name='ice')), ))
+        if self.ric is not None and 'ric' not in already_processed:
+            already_processed.add('ric')
+            outfile.write(' ric=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ric), input_name='ric')), ))
+        if self.event_location is not None and 'event_location' not in already_processed:
+            already_processed.add('event_location')
+            outfile.write(' event-location=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_location), input_name='event-location')), ))
+        if self.event_country is not None and 'event_country' not in already_processed:
+            already_processed.add('event_country')
+            outfile.write(' event-country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_country), input_name='event-country')), ))
+        if self.standard_event_code is not None and 'standard_event_code' not in already_processed:
+            already_processed.add('standard_event_code')
+            outfile.write(' standard-event-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.standard_event_code), input_name='standard-event-code')), ))
+        if self.ruecksendung is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            outfile.write(' ruecksendung="%s"' % self.gds_format_boolean(self.ruecksendung, input_name='ruecksendung'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='dataType2', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('event-timestamp', node)
+        if value is not None and 'event-timestamp' not in already_processed:
+            already_processed.add('event-timestamp')
+            self.event_timestamp = value
+        value = find_attr_value_('event-status', node)
+        if value is not None and 'event-status' not in already_processed:
+            already_processed.add('event-status')
+            self.event_status = value
+        value = find_attr_value_('event-text', node)
+        if value is not None and 'event-text' not in already_processed:
+            already_processed.add('event-text')
+            self.event_text = value
+        value = find_attr_value_('event-short-status', node)
+        if value is not None and 'event-short-status' not in already_processed:
+            already_processed.add('event-short-status')
+            self.event_short_status = value
+        value = find_attr_value_('ice', node)
+        if value is not None and 'ice' not in already_processed:
+            already_processed.add('ice')
+            self.ice = value
+        value = find_attr_value_('ric', node)
+        if value is not None and 'ric' not in already_processed:
+            already_processed.add('ric')
+            self.ric = value
+        value = find_attr_value_('event-location', node)
+        if value is not None and 'event-location' not in already_processed:
+            already_processed.add('event-location')
+            self.event_location = value
+        value = find_attr_value_('event-country', node)
+        if value is not None and 'event-country' not in already_processed:
+            already_processed.add('event-country')
+            self.event_country = value
+        value = find_attr_value_('standard-event-code', node)
+        if value is not None and 'standard-event-code' not in already_processed:
+            already_processed.add('standard-event-code')
+            self.standard_event_code = value
+        value = find_attr_value_('ruecksendung', node)
+        if value is not None and 'ruecksendung' not in already_processed:
+            already_processed.add('ruecksendung')
+            if value in ('true', '1'):
+                self.ruecksendung = True
+            elif value in ('false', '0'):
+                self.ruecksendung = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class dataType2
+
+
+GDSClassesMapping = {
+}
+
+
+USAGE_TEXT = """
+Usage: python <Parser>.py [ -s ] <in_xml_file>
+"""
+
+
+def usage():
+    print(USAGE_TEXT)
+    sys.exit(1)
+
+
+def get_root_tag(node):
+    tag = Tag_pattern_.match(node.tag).groups()[-1]
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
+    if rootClass is None:
+        rootClass = globals().get(prefix_tag)
+    return tag, rootClass
+
+
+def get_required_ns_prefix_defs(rootNode):
+    '''Get all name space prefix definitions required in this XML doc.
+    Return a dictionary of definitions and a char string of definitions.
+    '''
+    nsmap = {
+        prefix: uri
+        for node in rootNode.iter()
+        for (prefix, uri) in node.nsmap.items()
+        if prefix is not None
+    }
+    namespacedefs = ' '.join([
+        'xmlns:{}="{}"'.format(prefix, uri)
+        for prefix, uri in nsmap.items()
+    ])
+    return nsmap, namespacedefs
+
+
+def parse(inFileName, silence=False, print_warnings=True):
+    global CapturedNsmap_
+    gds_collector = GdsCollector_()
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'data'
+        rootClass = data
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_=namespacedefs,
+            pretty_print=True)
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, reverse_mapping=None, nsmap=None):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'data'
+        rootClass = data
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    if mapping is None:
+        mapping = {}
+    if reverse_mapping is None:
+        reverse_mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping,
+        reverse_mapping_=reverse_mapping, nsmap_=nsmap)
+    reverse_node_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    # Enable Python to collect the space used by the DOM.
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        content = etree_.tostring(
+            rootElement, pretty_print=True,
+            xml_declaration=True, encoding="utf-8")
+        sys.stdout.write(str(content))
+        sys.stdout.write('\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj, rootElement, mapping, reverse_node_mapping
+
+
+def parseString(inString, silence=False, print_warnings=True):
+    '''Parse a string, create the object tree, and export it.
+
+    Arguments:
+    - inString -- A string.  This XML fragment should not start
+      with an XML declaration containing an encoding.
+    - silence -- A boolean.  If False, export the object.
+    Returns -- The root object in the tree.
+    '''
+    parser = None
+    rootNode= parsexmlstring_(inString, parser)
+    gds_collector = GdsCollector_()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'data'
+        rootClass = data
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    if not SaveElementTreeNode:
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_='')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseLiteral(inFileName, silence=False, print_warnings=True):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'data'
+        rootClass = data
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    # Enable Python to collect the space used by the DOM.
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('#from tracking_response import *\n\n')
+        sys.stdout.write('import tracking_response as model_\n\n')
+        sys.stdout.write('rootObj = model_.rootClass(\n')
+        rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
+        sys.stdout.write(')\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def main():
+    args = sys.argv[1:]
+    if len(args) == 1:
+        parse(args[0])
+    else:
+        usage()
+
+
+if __name__ == '__main__':
+    #import pdb; pdb.set_trace()
+    main()
+
+RenameMappings_ = {
+}
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {}
+
+__all__ = [
+    "data",
+    "dataType",
+    "dataType1",
+    "dataType2"
+]

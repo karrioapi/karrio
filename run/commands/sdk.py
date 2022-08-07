@@ -25,7 +25,14 @@ def add_extension(
     typer.confirm(f'Generate new carrier: "{name}" extension with id "{id}" and features [{feature}]', abort=True)
 
     features = [f.strip() for f in feature.split(',')]
-    context = dict(id=id, name=name, features=features, version=version, is_xml_api=is_xml_api)
+    context = dict(
+        id=id,
+        name=name,
+        features=features,
+        version=version,
+        is_xml_api=is_xml_api,
+        compact_name=name.strip().replace("-", "").replace("_", "").replace("&", "").replace(" ", ""),
+    )
 
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
 
@@ -43,7 +50,7 @@ def add_extension(
         # tests files
         templates.TEST_FIXTURE_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/fixture.py')
         templates.TEST_PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/__init__.py')
-        templates.TEST_IMPORTS_TEMPLATE.stream(**context).dump(f'{ROOT_DIR.substitute(id=id)}/tests/__init__py.py')
+        templates.TEST_IMPORTS_TEMPLATE.stream(**context).dump(f'{ROOT_DIR.substitute(id=id)}/tests/__init__.py')
 
         # mappers files
         templates.MAPPER_TEMPLATE.stream(**context).dump(f'{MAPPERS_DIR.substitute(id=id)}/mapper.py')

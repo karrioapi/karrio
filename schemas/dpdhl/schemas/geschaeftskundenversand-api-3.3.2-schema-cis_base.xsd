@@ -229,7 +229,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:element name="majorRelease">
 					<xs:annotation>
-						<xs:documentation>The number of the major release. E.g. the '3' in version "3.1.".</xs:documentation>
+						<xs:documentation>The number of the major release. E.g. the '3' in version "3.2.".</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
@@ -239,7 +239,7 @@ requesting client is developed.</xs:documentation>
 				</xs:element>
 				<xs:element name="minorRelease" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>The number of the minor release. E.g. the '3' in version "3.1.".</xs:documentation>
+						<xs:documentation>The number of the minor release. E.g. the '3' in version "3.2.".</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
