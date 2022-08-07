@@ -16,7 +16,7 @@ class Settings(core.Settings):
     username: str  # type:ignore
     password: str  # type:ignore
     signature: str  # type:ignore
-    developer_id: str  # type:ignore
+    app_id: str  # type:ignore
     account_number: str = None
     language_code: str = "en"
 
@@ -35,7 +35,7 @@ class Settings(core.Settings):
     @property
     def AuthentificationType(self):
         return AuthentificationType(
-            user=self.developer_id,
+            user=self.app_id,
             signature=self.signature,
         )
 

@@ -17,7 +17,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     username: str  # type:ignore
     password: str  # type:ignore
     signature: str  # type:ignore
-    developer_id: str  # type:ignore
+    app_id: str  # type:ignore
     account_number: str = None
     language_code: str = "en"
 

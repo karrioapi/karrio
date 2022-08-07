@@ -78,7 +78,7 @@ def tracking_request(
 ) -> lib.Serializable:
     request = [
         dpdhl.data(
-            appname=settings.developer_id,
+            appname=settings.app_id,
             password=settings.signature,
             request="d-get-piece-detail",
             language_code=settings.language_code,

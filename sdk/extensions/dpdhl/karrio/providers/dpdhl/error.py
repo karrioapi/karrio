@@ -20,8 +20,8 @@ def parse_error_response(
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=error.statusCode,  # set the carrier error code
-            message=error.statusMessage,  # set the carrier error message
+            code=error.statusCode,
+            message=error.statusMessage or error.statusText,
             details={
                 **(
                     {"error": error.errorMessage}
