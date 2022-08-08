@@ -8,10 +8,10 @@ from karrio.providers.amazon_mws.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """AmazonMws connection settings."""
 
-    seller_id: str
-    developer_id: str
-    mws_auth_token: str
-    x_amz_access_token: str  # This is the access token retrieved from oauth flow
+    seller_id: str  # type:ignore
+    developer_id: str  # type:ignore
+    mws_auth_token: str  # type:ignore
+    x_amz_access_token: str  # This is the access token retrieved from oauth flow.
     aws_region: str = "us-east-1"
 
     id: str = None
