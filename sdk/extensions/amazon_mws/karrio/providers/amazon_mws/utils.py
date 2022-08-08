@@ -4,8 +4,9 @@ from karrio.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """AmazonMws connection settings."""
 
-    access_key: str
-    secret_key: str
+    seller_id: str
+    developer_id: str
+    mws_auth_token: str
     x_amz_access_token: str  # This is the access token retrieved from oauth flow
     aws_region: str = "us-east-1"
     account_country_code: str = None

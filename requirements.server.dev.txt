@@ -7,7 +7,7 @@ django-debug-toolbar
 
 # Carrier Extentions in Development
 -e ./sdk/core
-# -e ./sdk/extensions/amazon_mws
+-e ./sdk/extensions/amazon_mws
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/canadapost
