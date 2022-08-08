@@ -669,6 +669,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -677,6 +678,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -761,6 +763,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -769,6 +772,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -2382,6 +2386,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2390,6 +2395,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -2480,6 +2486,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2488,6 +2495,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -2578,6 +2586,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2586,6 +2595,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -2802,6 +2812,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2810,6 +2821,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "easypost",
                                 "eshipper",
                                 "fedex",
@@ -2908,6 +2920,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -2916,6 +2929,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "fedex",
                                 "generic",
                                 "purolator",
@@ -3033,7 +3047,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -3666,7 +3680,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "schema": {
                             "type": "string"
                         }
@@ -3764,6 +3778,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "amazon_mws",
                                 "aramex",
                                 "australiapost",
                                 "canadapost",
@@ -3772,6 +3787,7 @@
                                 "dhl_poland",
                                 "dhl_universal",
                                 "dicom",
+                                "dpdhl",
                                 "fedex",
                                 "generic",
                                 "purolator",
@@ -5410,6 +5426,7 @@
                         "type": "string",
                         "description": "Indicates a carrier (type)",
                         "enum": [
+                            "amazon_mws",
                             "aramex",
                             "australiapost",
                             "canadapost",
@@ -5418,6 +5435,7 @@
                             "dhl_poland",
                             "dhl_universal",
                             "dicom",
+                            "dpdhl",
                             "easypost",
                             "eshipper",
                             "fedex",
