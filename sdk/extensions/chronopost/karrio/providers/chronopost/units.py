@@ -1,11 +1,12 @@
-from karrio.core.utils import Enum, Flag, Spec
+import karrio.lib as lib
+import karrio.core.units as units
+from karrio.core.utils.enum import OptionEnum
 
-
-class WeightUnit(Flag):
+class WeightUnit(lib.Flag):
     KG = "KGM"
 
 
-class LabelType(Flag):
+class LabelType(lib.Flag):
     PDF_LABEL = "PDF"
     PPR_LABEL = "PPR"
     SPD_LABEL = "SPD"
@@ -22,10 +23,10 @@ class LabelType(Flag):
     ZPL = ZPL300_LABEL
 
 
-class Service(Enum):
-    chronopost_retrait_bureau = "00"
-    chronopost_13 = "01"
-    chronopost_10 = "02"
+class Service(lib.Enum):
+    chronopost_retrait_bureau = "0"
+    chronopost_13 = "1"
+    chronopost_10 = "2"
     chronopost_18 = "16"
     chronopost_relais = "86"
     chronopost_express_international = "17"
@@ -33,7 +34,24 @@ class Service(Enum):
     chronopost_classic_international = "44"
 
 
-class Option(Flag):
-    chronopost_delivery_on_monday = Spec.asKey("1")
-    chronopost_delivery_on_saturday = Spec.asKey("6")
-    chronopost_delivery_normal = Spec.asKey("0")
+class ShippingOption(lib.Flag):
+    chronopost_delivery_on_monday = OptionEnum("1")
+    chronopost_delivery_on_saturday = OptionEnum("6")
+    chronopost_delivery_normal = OptionEnum("0")
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.Options = None,
+) -> units.Options:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type: ignore
+
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
