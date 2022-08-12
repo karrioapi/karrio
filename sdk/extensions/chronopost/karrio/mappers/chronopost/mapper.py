@@ -8,12 +8,13 @@ from karrio.core.models import (
     TrackingDetails,
     Message,
 )
-from karrio.universal.providers.rating import parse_rate_response, rate_request
 from karrio.providers.chronopost import (
     parse_shipment_cancel_response,
     parse_shipment_response,
     shipment_cancel_request,
     shipment_request,
+    rate_request,
+    parse_rate_response,
 )
 from karrio.mappers.chronopost.settings import Settings
 
