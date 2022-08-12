@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Jul 14 16:45:43 2022 by generateDS.py version 2.40.13.
+# Generated Fri Aug  5 11:45:43 2022 by generateDS.py version 2.40.13.
 # Python 3.10.4 (main, Apr  2 2022, 09:04:19) [GCC 11.2.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './chronopost_lib/services.py')
+#   ('-o', './chronopost_lib/shippingservice.py')
 #
 # Command line arguments:
 #   ./schemas/ShippingServiceWS.xml
 #
 # Command line:
-#   /home/iyed/Github/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./chronopost_lib/services.py" ./schemas/ShippingServiceWS.xml
+#   /home/iyed/Github/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./chronopost_lib/shippingservice.py" ./schemas/ShippingServiceWS.xml
 #
 # Current working directory (os.getcwd()):
 #   chronopost
@@ -26552,8 +26552,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from services import *\n\n')
-        sys.stdout.write('import services as model_\n\n')
+        sys.stdout.write('#from shippingservice import *\n\n')
+        sys.stdout.write('import shippingservice as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')

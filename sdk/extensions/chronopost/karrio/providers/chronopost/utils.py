@@ -1,6 +1,6 @@
 """Karrio Chronopost client settings."""
 
-from chronopost_lib.services import headerValue
+from chronopost_lib.shippingservice import headerValue
 from karrio.core.settings import Settings as BaseSettings
 from karrio.core.utils import Envelope, apply_namespaceprefix, XP
 

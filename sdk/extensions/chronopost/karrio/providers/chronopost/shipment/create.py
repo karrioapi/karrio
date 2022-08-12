@@ -1,6 +1,6 @@
 import time
 from typing import List, Tuple, Optional
-from chronopost_lib.services import (
+from chronopost_lib.shippingservice import (
     customerValue,
     esdValue,
     headerValue,
@@ -12,86 +12,72 @@ from chronopost_lib.services import (
     skybillParamsValue,
     skybillValue,
 )
-from karrio.core.models import (
-    Documents,
-    Message,
-    Payment,
-    ShipmentRequest,
-    ShipmentDetails,
-)
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    create_envelope,
-    XP,
-    DF,
-)
-from karrio.core.units import (
-    CompleteAddress,
-    CustomsInfo,
-    Packages,
-    Options,
-    WeightUnit,
-)
-from karrio.providers.chronopost.error import parse_error_response
-from karrio.providers.chronopost.utils import Settings
-from karrio.providers.chronopost.units import (
-    WeightUnit,
-    Option,
-    Service,
-    LabelType,
-)
+import time
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.chronopost.error as provider_error
+import karrio.providers.chronopost.utils as provider_utils
+import karrio.providers.chronopost.units as provider_units
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
-    errors = parse_error_response(response, settings)
+    response: lib.lib.Element, settings: provider_utils.provider_utils.Settings
+) -> Tuple[models.models.ShipmentDetails, typing.List[models.Message]]:
+    errors = provider_error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings)
-        if XP.find("return", response, first=True) is not None
+        if lib.find_element("return", response, first=True) is not None
         else None
     )
 
     return shipment, errors
 
 
-def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = XP.find("return", response, resultMultiParcelExpeditionValue, first=True)
+def _extract_details(response: lib.Element, settings: provider_utils.Settings) -> models.ShipmentDetails:
+    shipment = lib.find_element("return", response, resultMultiParcelExpeditionValue, first=True)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        docs=Documents(
+        docs=models.Documents(
             label=shipment.pdfEtiquette,
         ),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[str]:
-    packages = Packages(payload.parcels, required=["weight"])
-    shipper = CompleteAddress.map(payload.shipper)
-    recipient = CompleteAddress.map(payload.recipient)
-    options = Options(payload.options, Option)
-    customs = CustomsInfo(payload.customs)
+def shipment_request(payload: models.ShipmentRequest, settings: provider_utils.Settings) -> lib.Serializable[str]:
+    packages = lib.to_packages(
+        payload.parcels,
+        required=["weight"],
+        package_option_type=provider_units.ShippingOption,
+    )
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    customs = lib.to_customs_info(payload.customs)
+    options = lib.to_shipping_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
 
-    shipping_date = DF.fdatetime(
+    shipping_date = lib.fdatetime(
         options.shipment_date or time.strftime("%Y-%m-%d"),
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%SZ",
     )
 
     is_international = shipper.country_code != recipient.country_code
-    service_type = Service.map(payload.service).value_or_key or (
-        Service.chronopost_express_international.value
+    service_type = provider_units.Service.map(payload.service).value_or_key or (
+        provider_units.chronopost_express_international.value
         if is_international
-        else Service.chronopost_13.value
+        else provider_units.Service.chronopost_13.value
     )
-    label_type = LabelType.map(payload.label_type or "PDF").value
-    payment = payload.payment or Payment()
+    label_type = provider_units.LabelType.map(payload.label_type or "PDF").value
+    payment = payload.payment or models.Payment()
     quantity = len(customs.commodities or []) if customs.is_defined else 1
 
-    request = create_envelope(
+    request = lib.create_envelope(
         body_content=shippingMultiParcelV5(
             esdValue=esdValue(),
             headerValue=settings.header_value(),
@@ -149,7 +135,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 skybillRank=None,
                 source=None,
                 weight=packages.weight.KG,
-                weightUnit=WeightUnit.KG,
+                weightUnit=provider_units.WeightUnit,
             ),
             skybillParamsValue=skybillParamsValue(
                 duplicata=None,
@@ -163,10 +149,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ),
     )
 
-    return Serializable(
+    return lib.Serializable(
         request,
-        lambda req: settings.serialize(
-            req, "shippingMultiParcelV5", settings.server_url
-        ),
-        logged=True,
+        lambda req: settings.serialize(req, "shippingMultiParcelV5", settings.server_url),
     )

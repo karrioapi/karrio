@@ -1,10 +1,6 @@
 """Karrio Chronopost client settings."""
 
-from typing import List
 import attr
-from jstruct.types import JList
-from karrio.core.models import ServiceLevel
-from karrio.providers.chronopost.units import DEFAULT_SERVICES
 from karrio.providers.chronopost.utils import Settings as BaseSettings
 
 
