@@ -12,7 +12,4 @@
     "**/templates/**/*": "django-txt",
     "**/requirements{/**,*}.{txt,in}": "pip-requirements"
   },
-  "python.analysis.extraPaths": [
-    "./schemas/chronopost"
-  ],
 }

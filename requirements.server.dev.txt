@@ -4,6 +4,7 @@ django-debug-toolbar
 # Schemas update
 -e ./schemas/ups
 -e ./schemas/dpdhl
+-e ./schemas/chronopost
 
 # Carrier Extentions in Development
 -e ./sdk/core
