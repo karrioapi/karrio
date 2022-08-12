@@ -113,7 +113,8 @@ class Proxy(proxy.Proxy):
         )
 
         def _upload(data: dict):
-            return lib.request(
+            name = data["UploadRequest"]["UserCreatedForm"]["UserCreatedFormFileName"]
+            return name, lib.request(
                 url=url,
                 data=data,
                 trace=self.trace_as("json"),
@@ -129,5 +130,5 @@ class Proxy(proxy.Proxy):
 
         responses = lib.run_concurently(_upload, request.serialize())
         return lib.Deserializable(
-            responses, lambda values: [lib.to_dict(r) for r in values]
+            responses, lambda values: [(n, lib.to_dict(r)) for n, r in values]
         )

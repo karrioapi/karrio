@@ -58,19 +58,24 @@ DocumentUploadPayload = {
             "doc_file": "R0lGODdhIAOwBPAAAA==",
         }
     ],
+    "reference": "By-Vikas",
     "options": {
         "destination_country_code": "US",
         "destination_postal_code": "US",
         "fedex_document_producer": "CUSTOMER",
     },
-    "reference": "By-Vikas",
 }
 
 ParsedDocumentUploadResponse = [
     {
         "carrier_id": "carrier_id",
         "carrier_name": "carrier_id",
-        "document_ids": ["090493e1815c194e"],
+        "documents": [
+            {
+                "document_id": "090493e1815c194e",
+                "file_name": "vikas_coo.txt",
+            }
+        ],
         "meta": {},
     },
     [],
