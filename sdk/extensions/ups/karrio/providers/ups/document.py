@@ -11,12 +11,12 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_document_upload_response(
-    responses: typing.List[dict],
+    responses: typing.List[typing.Tuple[str, dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
     raw_documents = [
-        result["UploadResponse"]["FormsHistoryDocumentID"]
-        for result in responses
+        (name, result["UploadResponse"]["FormsHistoryDocumentID"])
+        for name, result in responses
         if "UploadResponse" in result
         and result["UploadResponse"].get("FormsHistoryDocumentID") is not None
     ]
@@ -38,8 +38,9 @@ def parse_document_upload_response(
                     ),
                 ],
                 settings,
+                dict(file_name=file_name),
             )
-            for result in responses
+            for file_name, result in responses
         ],
         [],
     )
@@ -50,17 +51,24 @@ def parse_document_upload_response(
 
 
 def _extract_details(
-    raw_documents: typing.List[dict],
+    raw_documents: typing.List[typing.Tuple[str, dict]],
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
-    documents: typing.List[FormsHistoryDocumentIDType] = [
-        lib.to_object(FormsHistoryDocumentIDType, doc) for doc in raw_documents
+    documents: typing.List[typing.Tuple[str, FormsHistoryDocumentIDType]] = [
+        (name, lib.to_object(FormsHistoryDocumentIDType, doc))
+        for name, doc in raw_documents
     ]
 
     return models.DocumentUploadDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_id,
-        document_ids=[doc.DocumentID for doc in documents],
+        documents=[
+            models.DocumentDetails(
+                document_id=doc.DocumentID,
+                file_name=name,
+            )
+            for name, doc in documents
+        ],
         meta=dict(),
     )
 
