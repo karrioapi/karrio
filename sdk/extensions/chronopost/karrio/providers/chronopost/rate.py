@@ -34,8 +34,7 @@ def _extract_service_details(
     return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency="CAD",
-        transit_days=shipment.transit_time,
+        currency="EUR",
         service=service.name_or_key,
         total_charge=lib.to_money(shipment.amountTTC or 0),
         extra_charges=tax,
@@ -45,20 +44,8 @@ def _extract_service_details(
 def rate_request(
     payload: models.RateRequest, settings: provider_utils.Settings
 ) -> lib.Serializable[lib.Envelope]:
-    packages = lib.to_packages(payload.parcels)
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    options = lib.to_shipping_options(
-        payload.options,
-        package_options=packages.options,
-        initializer=provider_units.shipping_options_initializer,
-    )
-
-    shipment_date = lib.fdatetime(
-        options.shipment_date.state or time.strftime("%Y-%m-%d"),
-        current_format="%Y-%m-%d",
-        output_format="%Y-%m-%dT%H:%M:%SZ",
-    )
 
     request = lib.create_envelope(
         body_content=calculateProducts(
