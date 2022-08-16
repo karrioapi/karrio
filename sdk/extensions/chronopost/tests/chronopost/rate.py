@@ -33,8 +33,7 @@ class TestChronopostRating(unittest.TestCase):
             parsed_response = (
                 karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             )
-        print(lib.to_dict(parsed_response))
-        self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
@@ -77,7 +76,7 @@ RateRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soa
             <depCode>75001</depCode>
             <arrCode>91210</arrCode>
             <weight>4.0</weight>
-            <productCode>0</productCode>
+            <productCode>00</productCode>
         </soapenv:quickCost>
     </soapenv:Body>
 </soapenv:Envelope>

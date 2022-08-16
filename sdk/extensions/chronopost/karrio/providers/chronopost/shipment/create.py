@@ -35,7 +35,6 @@ def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(resultMultiParcelValue, response)
-
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -44,6 +43,7 @@ def _extract_details(
         docs=models.Documents(
             label=shipment.pdfEtiquette,
         ),
+        meta={},
     )
 
 
@@ -63,9 +63,8 @@ def shipment_request(
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-
-    shipping_date = lib.datetime(
-        options.shipment_date or datetime.now(),
+    shipping_date = (
+        lib.to_date(options.shipment_date.state, "%Y-%m-%dT%H:%M:%S") or datetime.now()
     )
 
     product_code = provider_units.ShippingService.map(payload.service).value_or_key
@@ -76,20 +75,22 @@ def shipment_request(
             shippingMultiParcelV5(
                 esdValue=None,
                 headerValue=settings.header_value,
-                shipperValue=shipperValue(
-                    shipperAdress1=shipper.address_line1,
-                    shipperAdress2=shipper.address_line2,
-                    shipperCity=shipper.city,
-                    shipperContactName=shipper.person_name,
-                    shipperCountry=shipper.country_code,
-                    shipperCountryName=shipper.country_name,
-                    shipperEmail=shipper.email,
-                    shipperMobilePhone=shipper.phone_number,
-                    shipperName=shipper.company_name,
-                    shipperName2=shipper.company_name,
-                    shipperPreAlert=0,
-                    shipperCivility="M",
-                    shipperZipCode=shipper.postal_code,
+                shipperValue=(
+                    shipperValue(
+                        shipperAdress1=shipper.address_line1,
+                        shipperAdress2=shipper.address_line2,
+                        shipperCity=shipper.city,
+                        shipperContactName=shipper.person_name,
+                        shipperCountry=shipper.country_code,
+                        shipperCountryName=shipper.country_name,
+                        shipperEmail=shipper.email,
+                        shipperMobilePhone=shipper.phone_number,
+                        shipperName=shipper.company_name,
+                        shipperName2=shipper.company_name,
+                        shipperPreAlert=0,
+                        shipperCivility="M",
+                        shipperZipCode=shipper.postal_code,
+                    ),
                 ),
                 customerValue=customerValue(
                     customerAdress1=recipient.address_line1,
@@ -106,69 +107,76 @@ def shipment_request(
                     customerZipCode=recipient.postal_code,
                     printAsSender=None,
                 ),
-                recipientValue=recipientValue(
-                    recipientAdress1=recipient.address_line1,
-                    recipientAdress2=recipient.address_line2,
-                    recipientCity=recipient.city,
-                    recipientContactName=recipient.person_name,
-                    recipientCountry=recipient.country_code,
-                    recipientCountryName=recipient.country_name,
-                    recipientEmail=recipient.email,
-                    recipientMobilePhone=recipient.phone_number,
-                    recipientName=recipient.company_name,
-                    recipientName2=recipient.company_name,
-                    recipientPreAlert=0,
-                    recipientZipCode=recipient.postal_code,
+                recipientValue=(
+                    recipientValue(
+                        recipientAdress1=recipient.address_line1,
+                        recipientAdress2=recipient.address_line2,
+                        recipientCity=recipient.city,
+                        recipientContactName=recipient.person_name,
+                        recipientCountry=recipient.country_code,
+                        recipientCountryName=recipient.country_name,
+                        recipientEmail=recipient.email,
+                        recipientMobilePhone=recipient.phone_number,
+                        recipientName=recipient.company_name,
+                        recipientName2=recipient.company_name,
+                        recipientPreAlert=0,
+                        recipientZipCode=recipient.postal_code,
+                    ),
                 ),
-                refValue=refValue(
-                    shipperRef=payload.reference,
-                    recipientRef=None,
-                    customerSkybillNumber=None,
-                    PCardTransactionNumber=None,
+                refValue=(
+                    refValue(
+                        shipperRef=payload.reference,
+                        recipientRef=None,
+                        customerSkybillNumber=None,
+                        PCardTransactionNumber=None,
+                    ),
                 ),
-                skybillValue=skybillValue(
-                    bulkNumber=1,
-                    codCurrency=(
-                        options.currency.state
-                        if options.cash_on_delivery.state is not None
-                        else None
+                skybillValue=(
+                    skybillValue(
+                        bulkNumber=1,
+                        codCurrency=(
+                            options.currency.state
+                            if options.cash_on_delivery.state is not None
+                            else None
+                        ),
+                        codValue=options.cash_on_delivery.state,
+                        customsCurrency=(
+                            (customs.duty.currency or options.currency)
+                            if payload.customs is not None
+                            else None
+                        ),
+                        customsValue=(
+                            (customs.duty.declared_value or options.declared_value)
+                            if payload.customs is not None
+                            else None
+                        ),
+                        evtCode="DC",
+                        insuredCurrency=(
+                            options.currency.state
+                            if options.insurance.state is not None
+                            else None
+                        ),
+                        insuredValue=options.insurance.state,
+                        latitude=None,
+                        longitude=None,
+                        masterSkybillNumber=None,
+                        objectType=(
+                            provider_units.CustomsContentType.map(
+                                customs.content_type or "MAR"
+                            ).value
+                        ),
+                        portCurrency=None,
+                        portValue=None,
+                        productCode=product_code,
+                        qualite=None,
+                        service="0",
+                        shipDate=shipping_date.strftime("%Y-%m-%dT%H:%M:%S"),
+                        shipHour=shipping_date.strftime("%H"),
+                        skybillRank=None,
+                        source=None,
+                        weight=package.weight.KG,
+                        weightUnit=provider_units.WeightUnit.KG.value,
                     ),
-                    codValue=options.cash_on_delivery.state,
-                    customsCurrency=(
-                        (customs.duty.currency or options.currency)
-                        if payload.customs is not None
-                        else None
-                    ),
-                    customsValue=(
-                        (customs.duty.declared_value or options.declared_value)
-                        if payload.customs is not None
-                        else None
-                    ),
-                    evtCode="DC",
-                    insuredCurrency=(
-                        options.currency.state
-                        if options.insurance.state is not None
-                        else None
-                    ),
-                    insuredValue=options.insurance.state,
-                    latitude=None,
-                    longitude=None,
-                    masterSkybillNumber=None,
-                    objectType=(
-                        provider_units.CustomsContentType(customs.content_type).value
-                        or "MAR"
-                    ),
-                    portCurrency=None,
-                    portValue=None,
-                    productCode=product_code,
-                    qualite=None,
-                    service="0",
-                    shipDate=shipping_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    shipHour=shipping_date.strftime("%H"),
-                    skybillRank=None,
-                    source=None,
-                    weight=package.weight.KG,
-                    weightUnit=provider_units.WeightUnit.KG.value,
                 ),
                 skybillParamsValue=skybillParamsValue(
                     duplicata=None,
@@ -189,7 +197,7 @@ def shipment_request(
             envelope,
             namespace=(
                 'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" '
-                'xmlns:cxf="xmlns:cxf="http://cxf.shipping.soap.chronopost.fr/"'
+                'xmlns:cxf="http://cxf.shipping.soap.chronopost.fr/"'
             ),
             prefixes=dict(Envelope="soapenv"),
         ),
