@@ -5,12 +5,11 @@ from karrio.core.utils import (
     request as http,
     XP,
 )
-from karrio.universal.mappers.rating_proxy import RatingMixinProxy
 from karrio.mappers.chronopost.settings import Settings
 from karrio.api.proxy import Proxy as BaseProxy
 
 
-class Proxy(RatingMixinProxy, BaseProxy):
+class Proxy(BaseProxy):
     settings: Settings
 
     def _send_request(self, request: Serializable[Any]) -> str:
