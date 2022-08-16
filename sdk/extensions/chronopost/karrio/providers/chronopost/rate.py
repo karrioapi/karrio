@@ -1,4 +1,3 @@
-import time
 from chronopost_lib.quickcostservice import(
     calculateProducts,
     calculateProductsResponse,

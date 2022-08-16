@@ -1,5 +1,5 @@
 import time
-from typing import List, Tuple, Optional
+import typing
 from chronopost_lib.shippingservice import (
     customerValue,
     esdValue,
@@ -23,7 +23,7 @@ import karrio.providers.chronopost.units as provider_units
 
 def parse_shipment_response(
     response: lib.lib.Element, settings: provider_utils.provider_utils.Settings
-) -> Tuple[models.models.ShipmentDetails, typing.List[models.Message]]:
+) -> typing.Tuple[models.models.ShipmentDetails, typing.List[models.Message]]:
     errors = provider_error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings)
@@ -135,7 +135,7 @@ def shipment_request(payload: models.ShipmentRequest, settings: provider_utils.S
                 skybillRank=None,
                 source=None,
                 weight=packages.weight.KG,
-                weightUnit=provider_units.WeightUnit,
+                weightUnit=provider_units.WeightUnit.KG,
             ),
             skybillParamsValue=skybillParamsValue(
                 duplicata=None,
