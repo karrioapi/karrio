@@ -34,9 +34,9 @@ class CustomsContentType(lib.Flag):
 
 
 class ShippingService(lib.Enum):
-    chronopost_retrait_bureau = "0"
-    chronopost_13 = "1"
-    chronopost_10 = "2"
+    chronopost_retrait_bureau = "00"
+    chronopost_13 = "01"
+    chronopost_10 = "02"
     chronopost_18 = "16"
     chronopost_relais = "86"
     chronopost_express_international = "17"

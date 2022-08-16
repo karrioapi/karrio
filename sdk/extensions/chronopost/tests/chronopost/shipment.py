@@ -24,7 +24,6 @@ class TestChronopostShipping(unittest.TestCase):
         request = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_create_shipment(self):
@@ -34,7 +33,7 @@ class TestChronopostShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipping-cxf/ShippingServiceWS",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +43,7 @@ class TestChronopostShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/tracking-cxf/TrackingServiceWS",
             )
 
     def test_parse_shipment_response(self):
@@ -53,7 +52,6 @@ class TestChronopostShipping(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_error_response(self):
@@ -64,7 +62,7 @@ class TestChronopostShipping(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-
+            print(lib.to_dict(parsed_response))
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
@@ -74,101 +72,147 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
+ShipmentPayload = {
+    "service": "chronopost_13",
+    "shipper": {
+        "company_name": "Chef Royale",
+        "person_name": "Jean Dupont",
+        "address_line1": "28 rue du Clair Bocage",
+        "city": "La Seyne-sur-mer",
+        "postal_code": "83500",
+        "country_code": "FR",
+        "phone_number": "+330447110494",
+    },
+    "recipient": {
+        "company_name": "HautSide",
+        "person_name": "Lucas Dupont",
+        "address_line1": "72 rue Reine Elisabeth",
+        "city": "Menton",
+        "postal_code": "06500",
+        "country_code": "FR",
+    },
+    "parcels": [
+        {
+            "height": 15,
+            "length": 60.0,
+            "width": 30,
+            "weight": 5.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
+    "label_type": "PDF",
+    "reference": "Ref. 123456",
+    "options": {"shipment_date": "2022-08-16T22:56:11"},
+}
 
 ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
 }
 
-ParsedShipmentResponse = []
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "chronopost",
+        "carrier_name": "chronopost",
+        "docs": {},
+        "meta": {},
+    },
+    [],
+]
 
-ParsedCancelShipmentResponse = []
+ParsedCancelShipmentResponse = [
+    None,
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "code": 4,
+            "message": "Document is empty, line 1, column 1 (<string>, line 1)",
+        }
+    ],
+]
 
 
 ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.shipping.soap.chronopost.fr/">
-    <soapenv:Header />
     <soapenv:Body>
-        <cxf:shippingMultiParcelV5>
+        <soapenv:shippingMultiParcelV5>
             <headerValue>
-                <accountNumber>19869502</accountNumber>
+                <accountNumber>1234</accountNumber>
                 <idEmit>CHRFR</idEmit>
-                <subAccount>123</subAccount>
             </headerValue>
             <shipperValue>
                 <shipperAdress1>28 rue du Clair Bocage</shipperAdress1>
-                <shipperAdress2>28 rue du Clair Bocage</shipperAdress2>
+                <shipperAdress2></shipperAdress2>
                 <shipperCity>La Seyne-sur-mer</shipperCity>
                 <shipperCivility>M</shipperCivility>
                 <shipperContactName>Jean Dupont</shipperContactName>
                 <shipperCountry>FR</shipperCountry>
                 <shipperCountryName>France</shipperCountryName>
-                <shipperEmail></shipperEmail>
-                <shipperMobilePhone>0447110494</shipperMobilePhone>
+                <shipperMobilePhone>+330447110494</shipperMobilePhone>
+                <shipperName>Chef Royale</shipperName>
+                <shipperName2>Chef Royale</shipperName2>
                 <shipperPreAlert>0</shipperPreAlert>
                 <shipperZipCode>83500</shipperZipCode>
             </shipperValue>
             <customerValue>
-                <customerAdress1>28 rue du Clair Bocage</customerAdress1>
-                <customerAdress2>28 rue du Clair Bocage</customerAdress2>
-                <customerCity>La Seyne-sur</customerCity>
-                <customerCivility>M</customerCivility>
-                <customerContactName>Jean Dupont</customerContactName>
+                <customerAdress1>72 rue Reine Elisabeth</customerAdress1>
+                <customerAdress2></customerAdress2>
+                <customerCity>Menton</customerCity>
+                <customerContactName>Lucas Dupont</customerContactName>
                 <customerCountry>FR</customerCountry>
                 <customerCountryName>France</customerCountryName>
-                <customerName>Chef Royale</customerName>
+                <customerName>HautSide</customerName>
+                <customerName2>HautSide</customerName2>
                 <customerPreAlert>0</customerPreAlert>
-                <customerZipCode>83500</customerZipCode>
-                <printAsSender>N</printAsSender>
+                <customerZipCode>06500</customerZipCode>
             </customerValue>
             <recipientValue>
                 <recipientAdress1>72 rue Reine Elisabeth</recipientAdress1>
-                <recipientAdress2>72 rue Reine Elisabet</recipientAdress2>
+                <recipientAdress2></recipientAdress2>
                 <recipientCity>Menton</recipientCity>
                 <recipientContactName>Lucas Dupont</recipientContactName>
                 <recipientCountry>FR</recipientCountry>
                 <recipientCountryName>France</recipientCountryName>
-                <recipientName>HauteSide</recipientName>
+                <recipientName>HautSide</recipientName>
+                <recipientName2>HautSide</recipientName2>
                 <recipientPreAlert>0</recipientPreAlert>
                 <recipientZipCode>06500</recipientZipCode>
             </recipientValue>
-            <refValue></refValue>
+            <refValue>
+                <shipperRef>Ref. 123456</shipperRef>
+            </refValue>
             <skybillValue>
                 <bulkNumber>1</bulkNumber>
-                <codValue>EUR</codValue>
                 <evtCode>DC</evtCode>
                 <objectType>MAR</objectType>
                 <productCode>01</productCode>
                 <service>0</service>
-                <shipDate>2022-7-18T09:11:00.000Z</shipDate>
-                <shipHour>9</shipHour>
-                <height>10</height>
-                <length>10</length>
-                <width>10</width>
-                <subAccount>123</subAccount>
+                <shipDate>2022-08-16T22:56:11</shipDate>
+                <shipHour>22</shipHour>
+                <weight>5.</weight>
+                <weightUnit>KGM</weightUnit>
             </skybillValue>
             <skybillParamsValue>
                 <mode>PDF</mode>
-                <withReservation>0</withReservation>
             </skybillParamsValue>
-            <password>255562</password>
+            <password>password</password>
             <modeRetour>1</modeRetour>
             <numberOfParcel>1</numberOfParcel>
             <version>2.0</version>
-            <multiParcel></multiParcel>
-        </cxf:shippingMultiParcelV5>
+            <multiParcel>N</multiParcel>
+        </soapenv:shippingMultiParcelV5>
     </soapenv:Body>
 </soapenv:Envelope>
 """
 
 ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.tracking.soap.chronopost.fr/">
-    <soapenv:Header />
     <soapenv:Body>
-        <cxf:cancelSkybill>
-            <accountNumber>19869502</accountNumber>
-            <password>255562</password>
+        <soapenv:cancelSkybill>
+            <accountNumber>1234</accountNumber>
+            <password>password</password>
             <language>en_GB</language>
-            <skybillNumber>XP695852974FR</skybillNumber>
-        </cxf:cancelSkybill>
+            <skybillNumber>794947717776</skybillNumber>
+        </soapenv:cancelSkybill>
     </soapenv:Body>
 </soapenv:Envelope>
 """
@@ -180,24 +224,23 @@ ShipmentResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
                 <errorCode>0</errorCode>
                 <errorMessage />
                 <resultMultiParcelValue>
-                    <codeDepot>27422240</codeDepot>
+                    <codeDepot>75327227</codeDepot>
                     <codeService>226</codeService>
                     <destinationDepot>0477</destinationDepot>
-                    <geoPostCodeBarre>%0006500XP696808230248226250</geoPostCodeBarre>
-                    <geoPostNumeroColis>XP6968082302480</geoPostNumeroColis>
+                    <geoPostCodeBarre>%0006500XP696982485248226250</geoPostCodeBarre>
+                    <geoPostNumeroColis>XP696982485248D</geoPostNumeroColis>
                     <groupingPriorityLabel>SIA1</groupingPriorityLabel>
-                    <pdfEtiquette>R0lGODdhIAOwBPAAAA==</pdfEtiquette>
+                    <pdfetiquette>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC</pdfetiquette>
                     <serviceMark />
                     <serviceName>AM2-NO</serviceName>
                     <signaletiqueProduit>13H</signaletiqueProduit>
-                    <skybillNumber>XP696808230FR</skybillNumber>
+                    <skybillNumber>XP696982485FR</skybillNumber>
                 </resultMultiParcelValue>
             </return>
         </ns1:shippingMultiParcelV5Response>
     </soap:Body>
 </soap:Envelope>
 """
-
 ShipmentCancelErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
         <ns2:cancelSkybillResponse xmlns:ns2="http://cxf.tracking.soap.chronopost.fr/">
