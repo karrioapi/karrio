@@ -14,4 +14,7 @@ METADATA = Metadata(
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
+    services=units.Service,
+    options=units.ShippingOption,
+    label_types=units.LabelType,
 )
