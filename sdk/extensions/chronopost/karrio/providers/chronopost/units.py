@@ -2,6 +2,7 @@ import karrio.lib as lib
 import karrio.core.units as units
 from karrio.core.utils.enum import OptionEnum
 
+
 class WeightUnit(lib.Flag):
     KG = "KGM"
 
@@ -23,7 +24,16 @@ class LabelType(lib.Flag):
     ZPL = ZPL300_LABEL
 
 
-class Service(lib.Enum):
+class CustomsContentType(lib.Flag):
+    document = "DOC"
+    marchandise = "MAR"
+
+    """ Unified Customs Content Type mapping"""
+    documents = document
+    merchandise = marchandise
+
+
+class ShippingService(lib.Enum):
     chronopost_retrait_bureau = "0"
     chronopost_13 = "1"
     chronopost_10 = "2"

@@ -14,6 +14,7 @@
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
+-e ./sdk/extensions/chronopost
 -e ./sdk/extensions/dhl_express
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal

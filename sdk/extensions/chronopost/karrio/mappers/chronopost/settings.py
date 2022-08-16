@@ -11,8 +11,10 @@ class Settings(BaseSettings):
     account_number: str  # type: ignore
     password: str  # type: ignore
     id_emit: str = "CHRFR"  # type: ignore
+    language: str = "en_GB"
 
     id: str = None
-    test: bool = False
+    test_mode: bool = False
     carrier_id: str = "chronopost"
     account_country_code: str = "FR"
+    metadata: dict = {}

@@ -2,7 +2,6 @@ import typing
 import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
-import karrio.universal.providers.rating as universal_provider
 import karrio.providers.chronopost as provider
 import karrio.mappers.chronopost.settings as provider_settings
 
@@ -11,7 +10,7 @@ class Mapper(mapper.Mapper):
     settings: provider_settings.Settings
 
     def create_rate_request(self, payload: models.RateRequest) -> lib.Serializable:
-        return universal_provider.rate_request(payload, self.settings)
+        return provider.rate_request(payload, self.settings)
 
     def create_shipment_request(
         self, payload: models.ShipmentRequest
@@ -33,9 +32,7 @@ class Mapper(mapper.Mapper):
     def parse_rate_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-        return universal_provider.parse_rate_response(
-            response.deserialize(), self.settings
-        )
+        return provider.parse_rate_response(response.deserialize(), self.settings)
 
     def parse_shipment_response(
         self, response: lib.Deserializable[str]
