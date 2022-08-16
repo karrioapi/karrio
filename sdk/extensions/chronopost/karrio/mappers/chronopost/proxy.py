@@ -1,20 +1,14 @@
-from typing import Any
-from karrio.core.utils import (
-    Serializable,
-    Deserializable,
-    request as http,
-    XP,
-)
-from karrio.mappers.chronopost.settings import Settings
-from karrio.api.proxy import Proxy as BaseProxy
+import karrio.lib as lib
+import karrio.api.proxy as proxy
+import karrio.mappers.chronopost.settings as provider_settings
 
 
-class Proxy(BaseProxy):
-    settings: Settings
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
 
-    def _send_request(self, request: Serializable[Any]) -> str:
-        return http(
-            url=f"{self.settings.server_url}",
+    def _send_request(self, request: lib.Serializable, path: str) -> str:
+        return lib.request(
+            url=f"{self.settings.server_url}{path}",
             data=bytearray(request.serialize(), "utf-8"),
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
@@ -22,22 +16,19 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
-    def get_rates(self, request: Serializable) -> Deserializable:
-        response = self._send_request(
-            request,
-        )
-        return Deserializable(response, XP.to_xml)
+    def get_rates(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = self._send_request(request, path="/quickcost-cxf/QuickcostServiceWS")
+        return lib.Deserializable(response, lib.to_element)
 
-    def create_shipment(self, request: Serializable) -> Deserializable[str]:
-        response = self._send_request(
-            request,
-        )
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = self._send_request(request, path="/shipping-cxf/ShippingServiceWS")
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
-        response = self._send_request(
-            request,
-        )
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = self._send_request(request, path="/tracking-cxf/TrackingServiceWS")
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
