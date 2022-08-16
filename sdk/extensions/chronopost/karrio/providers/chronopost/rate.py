@@ -24,7 +24,7 @@ def parse_rate_response(
 def _extract_service_details(
     detail: chronopost.service, settings: provider_utils.Settings
 ) -> models.RateDetails:
-    service = provider_units.Service.map(detail.codeService)
+    service = provider_units.ShippingService.map(detail.codeService)
 
     charges = [("TVA", lib.to_decimal(detail.amountTVA))]
 
@@ -33,7 +33,7 @@ def _extract_service_details(
         carrier_id=settings.carrier_id,
         currency="EUR",
         service=service.name_or_key,
-        total_charge=lib.to_money(service.amountTTC),
+        total_charge=lib.to_money(detail.amountTTC),
         extra_charges=[
             models.ChargeDetails(
                 name=name,
@@ -43,7 +43,7 @@ def _extract_service_details(
             for name, amount in charges
             if amount > 0.0
         ],
-        meta=dict(service_name=service.name_or_key),
+        meta=dict(service_name=detail.label or service.name_or_key),
     )
 
 

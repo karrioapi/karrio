@@ -42,6 +42,7 @@ class ShippingService(lib.Enum):
     chronopost_express_international = "17"
     chronopost_premium_international = "37"
     chronopost_classic_international = "44"
+    chronopost_sup_retrait_bureau = "11"
 
 
 class ShippingOption(lib.Flag):
