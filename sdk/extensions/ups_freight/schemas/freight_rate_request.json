@@ -1,0 +1,96 @@
+{
+  "FreightRateRequest": {
+    "ShipFrom": {
+      "Name": "Test US Shipper",
+      "Address": {
+        "AddressLine": "123 Lane",
+        "City": "TIMONIUM",
+        "StateProvinceCode": "MD",
+        "PostalCode": "21093",
+        "CountryCode": "US",
+        "ResidentialAddressIndicator": ""
+      },
+      "AttentionName": "Test Shipper",
+      "Phone": {
+        "Number": "4444444444",
+        "Extension": "4444"
+      },
+      "EMailAddress": "gcc0htq@ups.com"
+    },
+    "ShipperNumber": "AT0123",
+    "ShipTo": {
+      "Name": "Dilbert\u0027s Derbies",
+      "Address": {
+        "AddressLine": "555 Main St",
+        "City": "LOUISVILLE",
+        "StateProvinceCode": "KY",
+        "PostalCode": "40201",
+        "CountryCode": "US"
+      },
+      "AttentionName": "Dilbert",
+      "Phone": {
+        "Number": "8459865555"
+      }
+    },
+    "PaymentInformation": {
+      "Payer": {
+        "Name": "Test US Shipper",
+        "Address": {
+          "AddressLine": "123 Lane",
+          "City": "LUTHERVILLE TIMONIUM",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        },
+        "ShipperNumber": "AT0123",
+        "AccountType": "1",
+        "AttentionName": "Test Shipper",
+        "Phone": {
+          "Number": "4444444444",
+          "Extension": "4444"
+        },
+        "EMailAddress": "gcc0htq@ups.com"
+      },
+      "ShipmentBillingOption": {
+        "Code": "10"
+      }
+    },
+    "Service": {
+      "Code": "308"
+    },
+    "Commodity": {
+      "Description": "FRS-Freight",
+      "Weight": {
+        "UnitOfMeasurement": {
+          "Code": "LBS"
+        },
+        "Value": "150"
+      },
+      "Dimensions": {
+        "UnitOfMeasurement": {
+          "Code": "IN",
+          "Description": " "
+        },
+        "Length": "9",
+        "Width": "5",
+        "Height": "4"
+      },
+      "NumberOfPieces": "1",
+      "PackagingType": {
+        "Code": "PLT"
+      },
+      "FreightClass": "60"
+    },
+    "DensityEligibleIndicator": "",
+    "AlternateRateOptions": {
+      "Code": "3"
+    },
+    "PickupRequest": {
+      "PickupDate": "20170923"
+    },
+    "GFPOptions": {
+      "GPFAccesorialRateIndicator": ""
+    },
+    "TimeInTransitIndicator": ""
+  }
+}

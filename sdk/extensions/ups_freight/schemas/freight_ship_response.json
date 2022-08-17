@@ -1,0 +1,164 @@
+{
+  "FreightShipResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Alert": [
+        {
+          "Code": "9369054",
+          "Description": "User is not registered for freight processing."
+        },
+        {
+          "Code": "9369055",
+          "Description": "User is not eligible for contract rates."
+        }
+      ],
+      "TransactionReference": {
+        "CustomerContext": "string",
+        "TransactionIdentifier": "string"
+      }
+    },
+    "ShipmentResults": {
+      "PickupRequestConfirmationNumber": "string",
+      "DeliveryDate": "string",
+      "ShipmentNumber": "string",
+      "BOLID": "string",
+      "GuaranteedIndicator": "string",
+      "MinimumChargeAppliedIndicator": "string",
+      "Rate": [
+        {
+          "Type": {
+            "Code": "DSCNT",
+            "Description": "DSCNT"
+          },
+          "Factor": {
+            "Value": "1061.78",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "DSCNT_RATE",
+            "Description": "DSCNT_RATE"
+          },
+          "Factor": {
+            "Value": "70.00",
+            "UnitOfMeasurement": {
+              "Code": "%"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "2",
+            "Description": "2"
+          },
+          "Factor": {
+            "Value": "116.49",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "CA_BORDER",
+            "Description": "CA_BORDER"
+          },
+          "Factor": {
+            "Value": "30.00",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "HICST",
+            "Description": "HICST"
+          },
+          "Factor": {
+            "Value": "7.50",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "LND_GROSS",
+            "Description": "LND_GROSS"
+          },
+          "Factor": {
+            "Value": "1516.83",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "AFTR_DSCNT",
+            "Description": "AFTR_DSCNT"
+          },
+          "Factor": {
+            "Value": "455.05",
+            "UnitOfMeasurement": {
+              "Code": "USD"
+            }
+          }
+        }
+      ],
+      "FreightDensityRate": {
+        "Density": "string",
+        "TotalCubicFeet": "string"
+      },
+      "TotalShipmentCharge": {
+        "CurrencyCode": "string",
+        "MonetaryValue": "string"
+      },
+      "BillableShipmentWeight": {
+        "UnitOfMeasurement": {
+          "Code": "string",
+          "Description": "string"
+        },
+        "Value": "string"
+      },
+      "Service": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Documents": {
+        "Image": {
+          "Type": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string",
+          "Format": {
+            "Code": "string",
+            "Description": "string"
+          }
+        },
+        "Forms": {
+          "Type": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string",
+          "Format": {
+            "Code": "string",
+            "Description": "string"
+          }
+        }
+      },
+      "TimeInTransit": {
+        "DaysInTransit": "string"
+      }
+    }
+  }
+}
