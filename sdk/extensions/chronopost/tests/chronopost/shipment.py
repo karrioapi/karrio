@@ -56,15 +56,14 @@ class TestChronopostShipping(unittest.TestCase):
 
     def test_parse_cancel_shipment_error_response(self):
         with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
-            mock.return_value = ""
+            mock.return_value = ShipmentCancelErrorResponse
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
                 .parse()
             )
-            print(lib.to_dict(parsed_response))
             self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
+                lib.to_dict(parsed_response), ParsedCancelShipmentErrorResponse
             )
 
 
@@ -107,7 +106,7 @@ ShipmentPayload = {
 }
 
 ShipmentCancelPayload = {
-    "shipment_identifier": "794947717776",
+    "shipment_identifier": "XP696982485FR",
 }
 
 ParsedShipmentResponse = [
@@ -116,22 +115,21 @@ ParsedShipmentResponse = [
         "carrier_name": "chronopost",
         "docs": {},
         "meta": {},
+        "shipment_identifier": "XP696982485FR",
+        "tracking_number": "XP696982485FR",
     },
     [],
 ]
 
-ParsedCancelShipmentResponse = [
-    None,
-    [
-        {
-            "carrier_id": "chronopost",
-            "carrier_name": "chronopost",
-            "code": 4,
-            "message": "Document is empty, line 1, column 1 (<string>, line 1)",
-        }
-    ],
+ParsedCancelShipmentErrorResponse = [
+    {
+        "carrier_id": "chronopost",
+        "carrier_name": "chronopost",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
 ]
-
 
 ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.shipping.soap.chronopost.fr/">
     <soapenv:Body>
@@ -211,7 +209,7 @@ ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
             <accountNumber>1234</accountNumber>
             <password>password</password>
             <language>en_GB</language>
-            <skybillNumber>794947717776</skybillNumber>
+            <skybillNumber>XP696982485FR</skybillNumber>
         </soapenv:cancelSkybill>
     </soapenv:Body>
 </soapenv:Envelope>

@@ -25,7 +25,6 @@ def _extract_service_details(
     detail: chronopost.service, settings: provider_utils.Settings
 ) -> models.RateDetails:
     service = provider_units.ShippingService.map(detail.codeService)
-
     charges = [("TVA", lib.to_decimal(detail.amountTVA))]
 
     return models.RateDetails(
