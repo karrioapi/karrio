@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:16.17.0-slim
 
 ENV workdir /app
 
@@ -13,4 +13,5 @@ RUN apt-get update && \
 
 RUN git clone https://github.com/karrioapi/quicktype.git /quicktype && \
     cd /quicktype && \
-    yarn
+    yarn; \
+    echo "done"
