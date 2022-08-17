@@ -1,0 +1,189 @@
+{
+  "FreightRateResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "1",
+        "Description": "Success"
+      },
+      "Alert": [
+        {
+          "Code": "9369054",
+          "Description": "User is not registered for freight processing."
+        },
+        {
+          "Code": "9369055",
+          "Description": "User is not eligible for contract rates."
+        },
+        {
+          "Code": "9369080",
+          "Description": "Time in Transit (for FRS/GFP) information not available at this time."
+        }
+      ],
+      "TransactionReference": {
+        "CustomerContext": "test",
+        "TransactionIdentifier": "xwsspta21dg7HtJj4gW7tR"
+      }
+    },
+    "Rate": [
+      {
+        "Type": {
+          "Code": "2",
+          "Description": "2"
+        },
+        "Factor": {
+          "Value": "117.24",
+          "UnitOfMeasurement": {
+            "Code": "USD"
+          }
+        }
+      },
+      {
+        "Type": {
+          "Code": "LND_GROSS",
+          "Description": "LND_GROSS"
+        },
+        "Factor": {
+          "Value": "457.98",
+          "UnitOfMeasurement": {
+            "Code": "USD"
+          }
+        }
+      },
+      {
+        "Type": {
+          "Code": "AFTR_DSCNT",
+          "Description": "AFTR_DSCNT"
+        },
+        "Factor": {
+          "Value": "457.98",
+          "UnitOfMeasurement": {
+            "Code": "USD"
+          }
+        }
+      }
+    ],
+    "Commodity": {
+      "Description": "FRS-Freight",
+      "Weight": {
+        "Value": "150",
+        "UnitOfMeasurement": {
+          "Code": "LBS"
+        }
+      },
+      "AdjustedWeight": {
+        "Value": "150",
+        "UnitOfMeasurement": {
+          "Code": "LBS"
+        }
+      }
+    },
+    "TotalShipmentCharge": {
+      "CurrencyCode": "USD",
+      "MonetaryValue": "575.22"
+    },
+    "BillableShipmentWeight": {
+      "Value": "150",
+      "UnitOfMeasurement": {
+        "Code": "LBS"
+      }
+    },
+    "DimensionalWeight": {
+      "Value": "0",
+      "UnitOfMeasurement": {
+        "Code": "LBS"
+      }
+    },
+    "Service": {
+      "Code": "308"
+    },
+    "GuaranteedIndicator": "",
+    "MinimumChargeAppliedIndicator": "",
+    "AlternateRatesResponse": {
+      "AlternateRateType": {
+        "Code": "1",
+        "Description": "FRS Rate"
+      },
+      "Rate": [
+        {
+          "Type": {
+            "Code": "FRS_TOTAL_ACCS_SUR_CHARGE_COMBO",
+            "Description": "FRS_TOTAL_ACCS_SUR_CHARGE_COMBO"
+          },
+          "Factor": {
+            "Value": "137.60"
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_SHIPMENT_LEVEL_GROSS",
+            "Description": "FRS_SHIPMENT_LEVEL_GROSS"
+          },
+          "Factor": {
+            "Value": "457.98"
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_SHIPMENT_LEVEL_DISCOUNT_AMOUNT",
+            "Description": "FRS_SHIPMENT_LEVEL_DISCOUNT_AMOUNT"
+          },
+          "Factor": {
+            "Value": "366.38"
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_SHIPMENT_LEVEL_DISCOUNT_RATE",
+            "Description": "FRS_SHIPMENT_LEVEL_DISCOUNT_RATE"
+          },
+          "Factor": {
+            "Value": "80.00",
+            "UnitOfMeasurement": {
+              "Code": "%"
+            }
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_SHIPMENT_LEVEL_NET_CHARGE",
+            "Description": "FRS_SHIPMENT_LEVEL_NET_CHARGE"
+          },
+          "Factor": {
+            "Value": "91.60"
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_PACKAGELEVEL_ACCESSORIAL_TOTAL",
+            "Description": "FRS_PACKAGELEVEL_ACCESSORIAL_TOTAL"
+          },
+          "Factor": {
+            "Value": "46.00"
+          }
+        },
+        {
+          "Type": {
+            "Code": "FRS_ADDITIONAL_HANDLING",
+            "Description": "FRS_ADDITIONAL_HANDLING"
+          },
+          "Factor": {
+            "Value": "46.00"
+          }
+        }
+      ],
+      "BillableShipmentWeight": {
+        "Value": "151",
+        "UnitOfMeasurement": {
+          "Code": "LBS"
+        }
+      }
+    },
+    "RatingSchedule": {
+      "Code": "02",
+      "Description": "Published Rates"
+    },
+    "TimeInTransit": {
+      "DaysInTransit": "2"
+    }
+  }
+}

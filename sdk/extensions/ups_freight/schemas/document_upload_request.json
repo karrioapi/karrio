@@ -1,0 +1,25 @@
+{
+  "UPSSecurity": {
+    "UsernameToken": {
+      "Username": "Your User Id",
+      "Password": "Your Password"
+    },
+    "ServiceAccessToken": {
+      "AccessLicenseNumber": "Your Access License Number"
+    }
+  },
+  "UploadRequest": {
+    "ShipperNumber": "Your Shipper Number",
+    "Request": {
+      "TransactionReference": {
+        "CustomerContext": "Your Customer Context"
+      }
+    },
+    "UserCreatedForm": {
+      "UserCreatedFormFileName": "TestFile.txt",
+      "UserCreatedFormFileFormat": "txt",
+      "UserCreatedFormDocumentType": "013",
+      "UserCreatedFormFile": ""
+    }
+  }
+}
