@@ -1,7 +1,6 @@
 from enum import Enum
 
 from karrio.server import serializers
-from karrio.server.core.serializers import EntitySerializer
 
 
 class EventTypes(Enum):
@@ -47,7 +46,7 @@ class WebhookData(serializers.Serializer):
     )
 
 
-class Webhook(EntitySerializer, WebhookData):
+class Webhook(serializers.EntitySerializer, WebhookData):
     object_type = serializers.CharField(
         default="webhook", help_text="Specifies the object type"
     )

@@ -1,8 +1,8 @@
-from functools import partial
-from typing import List, cast, Optional
-from django.conf import settings
+import typing
+import functools
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 from django.db.models.fields import json
 
 from karrio.server.core.utils import identity
@@ -41,7 +41,7 @@ class Address(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="adr_"),
+        default=functools.partial(uuid, prefix="adr_"),
         editable=False,
     )
 
@@ -118,7 +118,7 @@ class Parcel(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="pcl_"),
+        default=functools.partial(uuid, prefix="pcl_"),
         editable=False,
     )
 
@@ -142,7 +142,7 @@ class Parcel(OwnedEntity):
     )
     reference_number = models.CharField(max_length=100, null=True, blank=True)
     options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     def delete(self, *args, **kwargs):
@@ -176,7 +176,7 @@ class Commodity(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="cdt_"),
+        default=functools.partial(uuid, prefix="cdt_"),
         editable=False,
     )
 
@@ -203,7 +203,7 @@ class Commodity(OwnedEntity):
         related_name="children",
     )
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     def delete(self, *args, **kwargs):
@@ -281,7 +281,7 @@ class Customs(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="cst_"),
+        default=functools.partial(uuid, prefix="cst_"),
         editable=False,
     )
 
@@ -295,10 +295,10 @@ class Customs(OwnedEntity):
     signer = models.CharField(max_length=50, null=True, blank=True)
 
     duty = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=None)
+        blank=True, null=True, default=functools.partial(identity, value=None)
     )
     options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     # System Reference fields
@@ -361,7 +361,7 @@ class Pickup(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="pck_"),
+        default=functools.partial(uuid, prefix="pck_"),
         editable=False,
     )
     confirmation_number = models.CharField(max_length=50, blank=False)
@@ -373,7 +373,7 @@ class Pickup(OwnedEntity):
     package_location = models.CharField(max_length=200, null=True, blank=True)
 
     options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
     pickup_charge = models.JSONField(blank=True, null=True)
     address = models.ForeignKey(
@@ -384,7 +384,7 @@ class Pickup(OwnedEntity):
         null=True,
     )
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     # System Reference fields
@@ -404,20 +404,20 @@ class Pickup(OwnedEntity):
 
     @property
     def carrier_id(self) -> str:
-        return cast(Carrier, self.pickup_carrier).carrier_id
+        return typing.cast(Carrier, self.pickup_carrier).carrier_id
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.pickup_carrier).data.carrier_name
+        return typing.cast(Carrier, self.pickup_carrier).data.carrier_name
 
     @property
-    def parcels(self) -> List[Parcel]:
+    def parcels(self) -> typing.List[Parcel]:
         return sum(
             [list(shipment.parcels.all()) for shipment in self.shipments.all()], []
         )
 
     @property
-    def tracking_numbers(self) -> List[str]:
+    def tracking_numbers(self) -> typing.List[str]:
         return [shipment.tracking_number for shipment in self.shipments.all()]
 
 
@@ -457,7 +457,7 @@ class Tracking(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="trk_"),
+        default=functools.partial(uuid, prefix="trk_"),
         editable=False,
     )
 
@@ -466,20 +466,20 @@ class Tracking(OwnedEntity):
     )
     tracking_number = models.CharField(max_length=50)
     events = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=[])
+        blank=True, null=True, default=functools.partial(identity, value=[])
     )
     delivered = models.BooleanField(blank=True, null=True, default=False)
     estimated_delivery = models.DateField(null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     messages = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=[])
+        blank=True, null=True, default=functools.partial(identity, value=[])
     )
     options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
-    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    meta = models.JSONField(blank=True, null=True, default=functools.partial(identity, value={}))
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     # System Reference fields
@@ -493,11 +493,11 @@ class Tracking(OwnedEntity):
 
     @property
     def carrier_id(self) -> str:
-        return cast(Carrier, self.tracking_carrier).carrier_id
+        return typing.cast(Carrier, self.tracking_carrier).carrier_id
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.tracking_carrier).data.carrier_name
+        return typing.cast(Carrier, self.tracking_carrier).data.carrier_name
 
     @property
     def pending(self) -> bool:
@@ -582,7 +582,7 @@ class Shipment(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="shp_"),
+        default=functools.partial(uuid, prefix="shp_"),
         editable=False,
     )
     status = models.CharField(
@@ -616,25 +616,25 @@ class Shipment(OwnedEntity):
 
     selected_rate = models.JSONField(blank=True, null=True)
     payment = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=None)
+        blank=True, null=True, default=functools.partial(identity, value=None)
     )
     options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
     services = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=[])
+        blank=True, null=True, default=functools.partial(identity, value=[])
     )
     messages = models.JSONField(
-        blank=True, null=True, default=partial(identity, value=[])
+        blank=True, null=True, default=functools.partial(identity, value=[])
     )
-    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    meta = models.JSONField(blank=True, null=True, default=functools.partial(identity, value={}))
     metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
+        blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     # System Reference fields
 
-    rates = models.JSONField(blank=True, null=True, default=partial(identity, value=[]))
+    rates = models.JSONField(blank=True, null=True, default=functools.partial(identity, value=[]))
     parcels = models.ManyToManyField("Parcel", related_name="parcel_shipment")
     carriers = models.ManyToManyField(
         Carrier, blank=True, related_name="related_shipments"
@@ -660,24 +660,24 @@ class Shipment(OwnedEntity):
 
     @property
     def carrier_id(self) -> str:
-        return cast(Carrier, self.selected_rate_carrier).carrier_id
+        return typing.cast(Carrier, self.selected_rate_carrier).carrier_id
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.selected_rate_carrier).carrier_name
+        return typing.cast(Carrier, self.selected_rate_carrier).carrier_name
 
     @property
-    def tracker_id(self) -> Optional[str]:
+    def tracker_id(self) -> typing.Optional[str]:
         return getattr(self.tracker, "id", None)
 
     @property
-    def carrier_ids(self) -> List[str]:
+    def carrier_ids(self) -> typing.List[str]:
         return [carrier.carrier_id for carrier in self.carriers.all()]
 
     @property
     def selected_rate_id(self) -> str:
         return (
-            cast(dict, self.selected_rate).get("id")
+            typing.cast(dict, self.selected_rate).get("id")
             if self.selected_rate is not None
             else None
         )
@@ -685,7 +685,7 @@ class Shipment(OwnedEntity):
     @property
     def service(self) -> str:
         return (
-            cast(dict, self.selected_rate).get("service")
+            typing.cast(dict, self.selected_rate).get("service")
             if self.selected_rate is not None
             else None
         )
@@ -718,3 +718,56 @@ class Shipment(OwnedEntity):
             "karrio.server.manager:shipment-docs",
             kwargs=dict(pk=self.pk, doc="invoice", format="pdf"),
         )
+
+
+@register_model
+class DocumentUploadRecord(OwnedEntity):
+    HIDDEN_PROPS = (
+        "upload_carrier",
+        *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
+    )
+
+    class Meta:
+        db_table = "document-upload-record"
+        verbose_name = "Document Upload Record"
+        verbose_name_plural = "Document Upload Records"
+        ordering = ["-created_at"]
+
+    id = models.CharField(
+        max_length=50,
+        primary_key=True,
+        default=functools.partial(uuid, prefix="uprec_"),
+        editable=False,
+    )
+    documents = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value=[])
+    )
+    messages = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value=[])
+    )
+    meta = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value={})
+    )
+    options = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value={})
+    )
+    reference = models.CharField(max_length=100, null=True, blank=True)
+
+    # System Reference fields
+
+    upload_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    shipment = models.OneToOneField(
+        "Shipment",
+        on_delete=models.CASCADE,
+        related_name="shipment_upload_record",
+    )
+
+    # Computed properties
+
+    @property
+    def carrier_id(self) -> str:
+        return typing.cast(Carrier, self.upload_carrier).carrier_id
+
+    @property
+    def carrier_name(self) -> str:
+        return typing.cast(Carrier, self.upload_carrier).data.carrier_name

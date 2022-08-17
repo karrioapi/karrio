@@ -10,47 +10,47 @@ from django.urls import path
 from django.conf import settings
 
 from karrio.server.core.router import router
-from karrio.server.core.serializers import PlainDictField, CharField, BooleanField
-from karrio.server.core import dataunits
+import karrio.server.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
 
 
 class References(Serializer):
-    VERSION = CharField()
-    APP_NAME = CharField()
-    APP_WEBSITE = CharField()
-    CUSTOM_CARRIER_DEFINITION = BooleanField()
-    DATA_IMPORT_EXPORT = BooleanField()
-    MULTI_ORGANIZATIONS = BooleanField()
-    ALLOW_MULTI_ACCOUNT = BooleanField()
-    ORDERS_MANAGEMENT = BooleanField()
-    APPS_MANAGEMENT = BooleanField()
-    AUDIT_LOGGING = BooleanField()
-    ALLOW_SIGNUP = BooleanField()
-    ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
-    PERSIST_SDK_TRACING = BooleanField()
-    ADMIN = CharField()
-    OPENAPI = CharField()
-    GRAPHQL = CharField()
-    ADDRESS_AUTO_COMPLETE = PlainDictField()
+    VERSION = serializers.CharField()
+    APP_NAME = serializers.CharField()
+    APP_WEBSITE = serializers.CharField()
+    CUSTOM_CARRIER_DEFINITION = serializers.BooleanField()
+    DATA_IMPORT_EXPORT = serializers.BooleanField()
+    MULTI_ORGANIZATIONS = serializers.BooleanField()
+    ALLOW_MULTI_ACCOUNT = serializers.BooleanField()
+    ORDERS_MANAGEMENT = serializers.BooleanField()
+    APPS_MANAGEMENT = serializers.BooleanField()
+    AUDIT_LOGGING = serializers.BooleanField()
+    ALLOW_SIGNUP = serializers.BooleanField()
+    ALLOW_ADMIN_APPROVED_SIGNUP = serializers.BooleanField()
+    PERSIST_SDK_TRACING = serializers.BooleanField()
+    ADMIN = serializers.CharField()
+    OPENAPI = serializers.CharField()
+    GRAPHQL = serializers.CharField()
+    ADDRESS_AUTO_COMPLETE = serializers.PlainDictField()
 
-    countries = PlainDictField()
-    currencies = PlainDictField()
-    carriers = PlainDictField()
-    customs_content_type = PlainDictField()
-    incoterms = PlainDictField()
-    states = PlainDictField()
-    services = PlainDictField()
-    service_names = PlainDictField()
-    options = PlainDictField()
-    option_names = PlainDictField()
-    package_presets = PlainDictField()
-    packaging_types = PlainDictField()
-    payment_types = PlainDictField()
-    carrier_capabilities = PlainDictField()
-    service_levels = PlainDictField()
+    countries = serializers.PlainDictField()
+    currencies = serializers.PlainDictField()
+    carriers = serializers.PlainDictField()
+    customs_content_type = serializers.PlainDictField()
+    incoterms = serializers.PlainDictField()
+    states = serializers.PlainDictField()
+    services = serializers.PlainDictField()
+    service_names = serializers.PlainDictField()
+    options = serializers.PlainDictField()
+    option_names = serializers.PlainDictField()
+    package_presets = serializers.PlainDictField()
+    packaging_types = serializers.PlainDictField()
+    payment_types = serializers.PlainDictField()
+    carrier_capabilities = serializers.PlainDictField()
+    service_levels = serializers.PlainDictField()
 
 
 @swagger_auto_schema(

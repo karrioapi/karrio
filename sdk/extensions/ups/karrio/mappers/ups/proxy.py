@@ -116,7 +116,7 @@ class Proxy(proxy.Proxy):
             name = data["UploadRequest"]["UserCreatedForm"]["UserCreatedFormFileName"]
             return name, lib.request(
                 url=url,
-                data=data,
+                data=lib.to_json(data),
                 trace=self.trace_as("json"),
                 headers={
                     "Accept": "application/json",

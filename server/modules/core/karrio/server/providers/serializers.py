@@ -1,36 +1,34 @@
-from typing import Dict, Type
+import typing
 
-from rest_framework.serializers import ModelSerializer, Serializer, ChoiceField
-
-from karrio.server.serializers import SerializerDecorator
-from karrio.server.core.serializers import CARRIERS, PlainDictField
-from karrio.server.providers.models import MODELS, Carrier
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
+from karrio.server.core.serializers import CARRIERS
 
 
 CarrierName = str
-CarrierSerializerType = Type[ModelSerializer]
+CarrierSerializerType = typing.Type[serializers.ModelSerializer]
 
 
-def generate_provider_serializer() -> Dict[CarrierName, CarrierSerializerType]:
+def generate_provider_serializer() -> typing.Dict[CarrierName, CarrierSerializerType]:
     def _create_serializer(name) -> CarrierSerializerType:
-        class _CarrierSerializer(ModelSerializer):
+        class _CarrierSerializer(serializers.ModelSerializer):
             class Meta:
-                model = MODELS[name]
+                model = providers.MODELS[name]
                 exclude = ["id", "created_at", "updated_at", "created_by"]
 
         return _CarrierSerializer
 
-    return {name: _create_serializer(name) for name in MODELS.keys()}
+    return {name: _create_serializer(name) for name in providers.MODELS.keys()}
 
 
 SERIALIZERS = generate_provider_serializer()
 
 
-class CarrierSerializer(Serializer):
-    carrier_name = ChoiceField(
+class CarrierSerializer(serializers.Serializer):
+    carrier_name = serializers.ChoiceField(
         required=True, choices=CARRIERS, help_text="Indicates a carrier (type)"
     )
-    carrier_config = PlainDictField(
+    carrier_config = serializers.PlainDictField(
         required=True,
         help_text="the logistics service provider connection configuration",
     )
@@ -43,11 +41,11 @@ class CarrierSerializer(Serializer):
             carrier_config_data: dict = kwargs.get("data", {}).get("carrier_config", {})
             serializer = SERIALIZERS[carrier_name]
             _args = (
-                [MODELS[carrier_name].objects.get(pk=carrier_config_data["id"])]
+                [providers.MODELS[carrier_name].objects.get(pk=carrier_config_data["id"])]
                 if "id" in carrier_config_data
                 else []
             )
-            carrier_config = SerializerDecorator[serializer](
+            carrier_config = serializers.SerializerDecorator[serializer](
                 *_args, data=carrier_config_data
             ).data
             kwargs.update(
@@ -59,14 +57,14 @@ class CarrierSerializer(Serializer):
 
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict, **kwargs) -> Carrier:
+    def create(self, validated_data: dict, **kwargs) -> providers.Carrier:
         created_by = validated_data["created_by"]
         carrier_name = validated_data["carrier_name"]
         carrier_config = {**validated_data["carrier_config"], "created_by": created_by}
 
-        return MODELS[carrier_name].objects.create(**carrier_config)
+        return providers.MODELS[carrier_name].objects.create(**carrier_config)
 
-    def update(self, instance: Carrier, validated_data: dict, **kwargs) -> Carrier:
+    def update(self, instance: providers.Carrier, validated_data: dict, **kwargs) -> providers.Carrier:
         carrier_config = validated_data["carrier_config"]
 
         for key, val in carrier_config.items():

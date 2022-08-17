@@ -1,6 +1,6 @@
 from enum import Enum
-from rest_framework import fields
-from karrio.server.core import serializers
+import rest_framework.fields as fields
+import karrio.server.serializers as serializers
 
 
 class ResourceType(Enum):

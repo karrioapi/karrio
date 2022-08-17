@@ -4,7 +4,6 @@ from django_filters import rest_framework as filters
 
 from karrio.server.core import dataunits
 from karrio.server.core import serializers
-import karrio.server.manager.models as manager
 import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
 
@@ -84,6 +83,7 @@ class ShipmentFilters(filters.FilterSet):
     )
 
     class Meta:
+        import karrio.server.manager.models as manager
         model = manager.Shipment
         fields: typing.List[str] = []
 
@@ -191,6 +191,7 @@ class TrackerFilters(filters.FilterSet):
     )
 
     class Meta:
+        import karrio.server.manager.models as manager
         model = manager.Tracking
         fields: typing.List[str] = []
 
@@ -266,9 +267,20 @@ class TracingRecordFilter(filters.FilterSet):
         return queryset.filter(meta__request_log_id__icontains=value)
 
 
+class UploadRecordFilter(filters.FilterSet):
+    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
+    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+
+    class Meta:
+        import karrio.server.manager.models as manager
+        model = manager.DocumentUploadRecord
+        fields: list = []
+
+
 class PickupFilters(filters.FilterSet):
     parameters: list = []
 
     class Meta:
+        import karrio.server.manager.models as manager
         model = manager.Pickup
         fields: list = []

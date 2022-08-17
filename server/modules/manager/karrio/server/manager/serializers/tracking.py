@@ -1,17 +1,15 @@
-import logging
 import typing
-from click import option
+import logging
 from django.utils import timezone
-from karrio.server.serializers import owned_model_serializer
-from rest_framework.serializers import CharField, BooleanField
-from karrio.core.utils import DP
+
+import karrio.lib as lib
+import karrio.server.serializers as serializers
 from karrio.server.core.gateway import Shipments, Carriers
 from karrio.server.core.serializers import (
     TrackingDetails,
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
-    PlainDictField,
 )
 
 import karrio.server.manager.models as models
@@ -20,12 +18,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="tracking")
 
 
-@owned_model_serializer
+@serializers.owned_model_serializer
 class TrackingSerializer(TrackingDetails):
-    carrier_id = CharField(required=False)
-    carrier_name = CharField(required=False)
-    test_mode = BooleanField(required=False)
-    options = PlainDictField(
+    carrier_id = serializers.CharField(required=False)
+    carrier_name = serializers.CharField(required=False)
+    test_mode = serializers.BooleanField(required=False)
+    options = serializers.PlainDictField(
         required=False,
         default={},
         help_text="additional tracking options",
@@ -51,13 +49,13 @@ class TrackingSerializer(TrackingDetails):
         return models.Tracking.objects.create(
             created_by=context.user,
             tracking_number=tracking_number,
-            events=DP.to_dict(response.tracking.events),
+            events=lib.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
             status=response.tracking.status,
             tracking_carrier=carrier,
             estimated_delivery=response.tracking.estimated_delivery,
-            messages=DP.to_dict(response.messages),
+            messages=lib.to_dict(response.messages),
             meta=response.tracking.meta,
             options=response.tracking.options,
         )
@@ -98,7 +96,7 @@ class TrackingSerializer(TrackingDetails):
             # update values only if changed; This is important for webhooks notification
             changes = []
             events = (
-                DP.to_dict(response.tracking.events)
+                lib.to_dict(response.tracking.events)
                 if any(response.tracking.events)
                 else instance.events
             )
@@ -108,7 +106,7 @@ class TrackingSerializer(TrackingDetails):
                 changes.append("events")
 
             if response.messages != instance.messages:
-                instance.messages = DP.to_dict(response.messages)
+                instance.messages = lib.to_dict(response.messages)
                 changes.append("messages")
 
             if response.tracking.delivered != instance.delivered:

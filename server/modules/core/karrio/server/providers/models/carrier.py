@@ -20,6 +20,7 @@ class CarrierCapabilities(Enum):
     rating = "rating"
     shipping = "shipping"
     tracking = "tracking"
+    paperless = "paperless"
 
     @classmethod
     def get_capabilities(cls):

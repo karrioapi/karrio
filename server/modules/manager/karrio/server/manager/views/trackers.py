@@ -11,28 +11,26 @@ from django.urls import path
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
+import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
     TrackingStatus,
     ErrorResponse,
     ErrorMessages,
-    CharField,
-    Serializer,
 )
 from karrio.server.core.filters import TrackerFilters
-from karrio.server.serializers import SerializerDecorator, PaginatedResult
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import TrackingSerializer
 import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-Trackers = PaginatedResult("TrackerList", TrackingStatus)
+Trackers = serializers.PaginatedResult("TrackerList", TrackingStatus)
 
 
-class TrackerFilter(Serializer):
-    hub = CharField(
+class TrackerFilter(serializers.Serializer):
+    hub = serializers.CharField(
         required=False,
         allow_blank=False,
         allow_null=False,
@@ -120,7 +118,7 @@ class TrackersCreate(APIView):
             .first()
         )
 
-        query = SerializerDecorator[TrackerFilter](data=request.query_params).data
+        query = serializers.SerializerDecorator[TrackerFilter](data=request.query_params).data
         carrier_filter = {
             **{k: v for k, v in query.items() if k != "hub"},
             # If a hub is specified, use the hub as carrier to track the package
@@ -134,7 +132,7 @@ class TrackersCreate(APIView):
         }
 
         tracker = (
-            SerializerDecorator[TrackingSerializer](
+            serializers.SerializerDecorator[TrackingSerializer](
                 instance, data=data, context=request
             )
             .save(carrier_filter=carrier_filter)

@@ -1,17 +1,18 @@
 from django.urls import reverse
 from rest_framework.request import Request
 
-from karrio.references import collect_providers_data, collect_references
-from karrio.server.core.serializers import CustomsContentType, Incoterm, MODELS
 from karrio.server.conf import settings
+import karrio.references as references
+import karrio.core.units as units
+import karrio.server.providers.models as providers
 
 
-PACKAGE_MAPPERS = collect_providers_data()
+PACKAGE_MAPPERS = references.collect_providers_data()
 
 REFERENCE_MODELS = {
-    **collect_references(),
-    "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
-    "incoterms": {c.name: c.value for c in list(Incoterm)},
+    **references.collect_references(),
+    "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
+    "incoterms": {c.name: c.value for c in list(units.Incoterm)},
 }
 REFERENCE_EXCLUSIONS = [
     "currencies",
@@ -23,7 +24,7 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-CARRIER_NAMES = list(sorted(MODELS.keys()))
+CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
@@ -76,7 +77,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         },
     }
 
-    if is_authenticated and "generic" in MODELS:
+    if is_authenticated and "generic" in providers.MODELS:
         custom_carriers = [
             c.settings
             for c in gateway.Carriers.list(context=request, carrier_name="generic")
