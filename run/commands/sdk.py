@@ -80,6 +80,11 @@ def add_extension(
 
             templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/tracking.py')
 
+        if "document" in features:
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/document.py')
+
+            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/document.py')
+
         if "shipping" in features:
             templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/shipment.py')
 

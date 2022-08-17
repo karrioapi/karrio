@@ -20,7 +20,7 @@ class TestUPSDocument(unittest.TestCase):
 
         self.assertEqual(request.serialize(), DocumentUploadRequest)
 
-    def test_get_tracking(self):
+    def test_upload_document(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Document.upload(self.DocumentUploadRequest).from_(gateway)
