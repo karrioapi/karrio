@@ -1,5 +1,6 @@
 import io
 import re
+import ssl
 import asyncio
 import logging
 import base64
@@ -14,6 +15,7 @@ from typing import List, TypeVar, Callable, Optional, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
+ssl._create_default_https_context = ssl._create_unverified_context
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
