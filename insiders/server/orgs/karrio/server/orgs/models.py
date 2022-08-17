@@ -56,6 +56,9 @@ class Organization(AbstractOrganization):
     commodities = models.ManyToManyField(
         manager.Commodity, related_name="org", through="CommodityLink"
     )
+    upload_records = models.ManyToManyField(
+        manager.DocumentUploadRecord, related_name="org", through="UploadRecordLink"
+    )
 
     templates = models.ManyToManyField(
         graph.Template, related_name="org", through="TemplateLink"
@@ -183,6 +186,15 @@ class ShipmentLink(models.Model):
     )
     item = models.OneToOneField(
         manager.Shipment, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class UploadRecordLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="upload_record_links"
+    )
+    item = models.OneToOneField(
+        manager.DocumentUploadRecord, on_delete=models.CASCADE, related_name="link"
     )
 
 

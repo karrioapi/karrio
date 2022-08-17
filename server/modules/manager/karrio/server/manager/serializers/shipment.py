@@ -1,14 +1,17 @@
-import logging
-from typing import Optional, Any
 import typing
-from django.db import transaction
-from rest_framework import status
+import logging
+import rest_framework.status as status
+import django.db.transaction as transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from karrio.core.utils import DP
-from karrio.server.core.gateway import Shipments, Carriers
-from karrio.server.core.exceptions import APIException
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.server.core.utils as utils
+import karrio.server.core.gateway as gateway
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.exceptions as exceptions
+import karrio.server.providers.models as providers
 from karrio.server.serializers import (
     SerializerDecorator,
     owned_model_serializer,
@@ -16,10 +19,9 @@ from karrio.server.serializers import (
     save_many_to_many_data,
     link_org,
     Context,
+    PlainDictField,
+    StringListField,
 )
-import karrio.server.core.datatypes as datatypes
-import karrio.server.core.utils as utils
-from karrio.server.providers.models import Carrier, MODELS
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
     Documents,
@@ -30,10 +32,7 @@ from karrio.server.core.serializers import (
     Rate,
     ShipmentCancelRequest,
     LABEL_TYPES,
-    LabelType,
     Message,
-    PlainDictField,
-    StringListField,
     TrackerStatus,
     ShipmentDetails,
 )
@@ -44,7 +43,7 @@ from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
-DEFAULT_CARRIER_FILTER: Any = dict(active=True, capability="shipping")
+DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="shipping")
 
 
 @owned_model_serializer
@@ -85,13 +84,13 @@ class ShipmentSerializer(ShipmentData):
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
-        carriers = Carriers.list(
+        carriers = gateway.Carriers.list(
             context=context,
             carrier_ids=carrier_ids,
             **({"services": services} if any(services) else {}),
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
-        payment = validated_data.get("payment") or DP.to_dict(
+        payment = validated_data.get("payment") or lib.to_dict(
             datatypes.Payment(
                 currency=(validated_data.get("options") or {}).get("currency")
             )
@@ -129,8 +128,8 @@ class ShipmentSerializer(ShipmentData):
             **{
                 **shipment_data,
                 "payment": payment,
-                "rates": DP.to_dict(rate_response.rates),
-                "messages": DP.to_dict(rate_response.messages),
+                "rates": lib.to_dict(rate_response.rates),
+                "messages": lib.to_dict(rate_response.messages),
                 "test_mode": context.test_mode,
             }
         )
@@ -206,7 +205,7 @@ class ShipmentSerializer(ShipmentData):
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
-            carrier = Carrier.objects.filter(
+            carrier = providers.Carrier.objects.filter(
                 carrier_id=selected_rate.get("carrier_id")
             ).first()
             instance.test_mode = selected_rate.get("test_mode", instance.test_mode)
@@ -239,7 +238,7 @@ class ShipmentPurchaseData(Serializer):
     label_type = ChoiceField(
         required=False,
         choices=LABEL_TYPES,
-        default=LabelType.PDF.name,
+        default=units.LabelType.PDF.name,
         help_text="The shipment label file type.",
     )
     payment = Payment(required=False, help_text="The payment details")
@@ -258,7 +257,7 @@ class ShipmentUpdateData(Serializer):
     label_type = ChoiceField(
         required=False,
         choices=LABEL_TYPES,
-        default=LabelType.PDF.name,
+        default=units.LabelType.PDF.name,
         help_text="The shipment label file type.",
     )
     payment = Payment(required=False, help_text="The payment details")
@@ -337,7 +336,7 @@ class ShipmentPurchaseSerializer(Shipment):
     reference = CharField(required=False, allow_blank=True, allow_null=True)
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
-        return Shipments.create(
+        return gateway.Shipment.create(
             Shipment(validated_data).data,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
@@ -355,7 +354,7 @@ class ShipmentCancelSerializer(Shipment):
         self, instance: models.Shipment, validated_data: dict, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
-            Shipments.cancel(
+            gateway.Shipment.cancel(
                 payload=ShipmentCancelRequest(instance).data,
                 carrier=instance.selected_rate_carrier,
             )
@@ -417,7 +416,7 @@ def buy_shipment_label(
     return purchased_shipment
 
 
-def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
+def reset_related_shipment_rates(shipment: typing.Optional[models.Shipment]):
     if shipment is not None:
         shipment.selected_rate = None
         shipment.rates = []
@@ -432,14 +431,14 @@ def can_mutate_shipment(
     purchase: bool = False,
 ):
     if purchase and shipment.status == ShipmentStatus.purchased.value:
-        raise APIException(
+        raise exceptions.APIException(
             f"The shipment is '{shipment.status}' and cannot be purchased again",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if update and shipment.status != ShipmentStatus.draft.value:
-        raise APIException(
+        raise exceptions.APIException(
             f"Shipment is {shipment.status} and cannot be updated anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
@@ -449,14 +448,14 @@ def can_mutate_shipment(
         ShipmentStatus.purchased.value,
         ShipmentStatus.draft.value,
     ]:
-        raise APIException(
+        raise exceptions.APIException(
             f"The shipment is '{shipment.status}' and can not be cancelled anymore...",
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
     if delete and shipment.shipment_pickup.exists():
-        raise APIException(
+        raise exceptions.APIException(
             (
                 f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
                 "Please cancel this shipment pickup before."
@@ -471,13 +470,13 @@ def remove_shipment_tracker(shipment: models.Shipment):
         shipment.shipment_tracker.delete()
 
 
-def create_shipment_tracker(shipment: Optional[models.Shipment], context):
+def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
     carrier = shipment.selected_rate_carrier
 
     # Get rate provider carrier if supported instead of carrier account
-    if (rate_provider != shipment.carrier_name) and rate_provider in MODELS:
-        carrier = MODELS[rate_provider].access_by(context).first()
+    if (rate_provider != shipment.carrier_name) and rate_provider in providers.MODELS:
+        carrier = providers.MODELS[rate_provider].access_by(context).first()
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
@@ -489,7 +488,7 @@ def create_shipment_tracker(shipment: Optional[models.Shipment], context):
         and "dhl" in carrier.carrier_name
         and "get_tracking" not in carrier.gateway.capabilities
     ):
-        carrier = Carriers.first(
+        carrier = gateway.Carriers.first(
             carrier_name="dhl_universal",
             context=context,
         )

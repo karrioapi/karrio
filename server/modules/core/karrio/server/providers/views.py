@@ -23,8 +23,6 @@ from karrio.server.providers import models
 from karrio.server.core.serializers import (
     CarrierSettings,
     ErrorResponse,
-    FlagField,
-    FlagsSerializer,
     CARRIERS,
 )
 from karrio.server.providers.router import router
@@ -34,18 +32,18 @@ ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make
 CarriersSettingsList = PaginatedResult("CarrierList", CarrierSettings)
 
 
-class CarrierFilters(FlagsSerializer):
+class CarrierFilters(serializers.FlagsSerializer):
 
     carrier_name = serializers.ChoiceField(
         choices=CARRIERS, required=False, help_text="Indicates a carrier (type)"
     )
-    active = FlagField(
+    active = serializers.FlagField(
         required=False,
         allow_null=True,
         default=None,
         help_text="This flag indicates whether to return active carriers only",
     )
-    system_only = FlagField(
+    system_only = serializers.FlagField(
         required=False,
         allow_null=True,
         default=False,

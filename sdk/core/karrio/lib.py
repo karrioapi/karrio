@@ -554,3 +554,10 @@ def bundle_base64(
     format: str = "PDF",
 ) -> str:
     return utils.bundle_base64(base64_strings, format=format)
+
+
+def to_buffer(
+    base64_string: str,
+    **kwargs,
+):
+    return utils.to_buffer(base64_string, **kwargs)

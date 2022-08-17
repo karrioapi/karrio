@@ -224,6 +224,15 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 """,
                 },
                 {
+                    "name": "Documents",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} document upload record.
+
+                A Document upload record keep traces of shipping trade documents uploaded to carriers
+                to fast track customs processing.
+                """,
+                },
+                {
                     "name": "Trackers",
                     "description": f"""
                 This is an object representing your a {APP_NAME} shipment tracker.
@@ -232,27 +241,6 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 The tracker provide the latest tracking status and events associated with a shipment
                 """,
                 },
-                {
-                    "name": "Webhooks",
-                    "description": f"""
-                This is an object representing your a {APP_NAME} webhook.
-
-                You can configure webhook endpoints via the API to be notified about events that happen in your
-                {APP_NAME} account.
-                """,
-                },
-                (
-                    {
-                        "name": "Orders",
-                        "description": f"""
-                This is an object representing your a {APP_NAME} order.
-
-                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
-                """,
-                    }
-                    if django.settings.ORDERS_MANAGEMENT
-                    else None
-                ),
                 {
                     "name": "Pickups",
                     "description": f"""
@@ -271,6 +259,27 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 > **Note**
                 >
                 > When using the proxy API, no objects are created in the {APP_NAME} system.
+                """,
+                },
+                (
+                    {
+                        "name": "Orders",
+                        "description": f"""
+                This is an object representing your a {APP_NAME} order.
+
+                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
+                """,
+                    }
+                    if django.settings.ORDERS_MANAGEMENT
+                    else None
+                ),
+                {
+                    "name": "Webhooks",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} webhook.
+
+                You can configure webhook endpoints via the API to be notified about events that happen in your
+                {APP_NAME} account.
                 """,
                 },
                 (

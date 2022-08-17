@@ -6,15 +6,13 @@ from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from karrio.server.serializers import SerializerDecorator
+from karrio.server.serializers import SerializerDecorator, CharField, Serializer
 from karrio.server.core.views.api import APIView
 import karrio.server.core.dataunits as dataunits
 from karrio.server.core.serializers import (
     TrackingResponse,
     ErrorResponse,
     ErrorMessages,
-    CharField,
-    Serializer,
 )
 from karrio.server.core.gateway import Shipments
 from karrio.server.proxy.router import router
