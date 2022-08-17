@@ -24,7 +24,7 @@ def parse_shipment_response(
     errors = provider_error.parse_error_response(response, settings)
     shipment_node = lib.find_element("resultMultiParcelValue", response, first=True)
     shipment = (
-        _extract_details(response, settings) if shipment_node is not None else None
+        _extract_details(shipment_node, settings) if shipment_node is not None else None
     )
 
     return shipment, errors
@@ -33,9 +33,7 @@ def parse_shipment_response(
 def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
-    shipment = lib.find_element(
-        "resultMultiParcelValue", response, resultMultiParcelValue, first=True
-    )
+    shipment = lib.to_object(resultMultiParcelValue, response)
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
