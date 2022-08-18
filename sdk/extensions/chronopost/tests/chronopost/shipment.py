@@ -113,7 +113,9 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "chronopost",
         "carrier_name": "chronopost",
-        "docs": {},
+        "docs": {
+            "label": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC"
+        },
         "meta": {},
         "shipment_identifier": "XP696982485FR",
         "tracking_number": "XP696982485FR",
@@ -228,8 +230,8 @@ ShipmentResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
                     <geoPostCodeBarre>%0006500XP696982485248226250</geoPostCodeBarre>
                     <geoPostNumeroColis>XP696982485248D</geoPostNumeroColis>
                     <groupingPriorityLabel>SIA1</groupingPriorityLabel>
-                    <pdfetiquette>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC</pdfetiquette>
-                    <serviceMark />
+                    <pdfEtiquette>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC=</pdfEtiquette>
+                    <serviceMark/>
                     <serviceName>AM2-NO</serviceName>
                     <signaletiqueProduit>13H</signaletiqueProduit>
                     <skybillNumber>XP696982485FR</skybillNumber>
