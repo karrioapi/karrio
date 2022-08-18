@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 import typing
 from chronopost_lib.shippingservice import (
@@ -34,14 +35,13 @@ def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(resultMultiParcelValue, response)
+    label = base64.b64encode(shipment.pdfEtiquette).decode("utf-8")
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.skybillNumber,
         shipment_identifier=shipment.skybillNumber,
-        docs=models.Documents(
-            label=shipment.pdfEtiquette,
-        ),
+        docs=models.Documents(label=label),
         meta={},
     )
 
