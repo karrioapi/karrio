@@ -10,8 +10,8 @@ import karrio.providers.chronopost.utils as provider_utils
 def parse_rate_response(
     response: lib.Element, settings: provider_utils.Settings
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    product_nodes: typing.List[chronopost.service] = lib.find_element(
-        "service", response, chronopost.service
+    product_nodes: typing.List[chronopost.product] = lib.find_element(
+        "productList", response, chronopost.product
     )
     products: typing.List[models.RateDetails] = [
         _extract_service_details(product_node, settings)
@@ -22,9 +22,9 @@ def parse_rate_response(
 
 
 def _extract_service_details(
-    detail: chronopost.service, settings: provider_utils.Settings
+    detail: chronopost.product, settings: provider_utils.Settings
 ) -> models.RateDetails:
-    service = provider_units.ShippingService.map(detail.codeService)
+    service = provider_units.ShippingService.map(detail.productCode)
     charges = [("TVA", lib.to_decimal(detail.amountTVA))]
 
     return models.RateDetails(
@@ -42,7 +42,7 @@ def _extract_service_details(
             for name, amount in charges
             if amount > 0.0
         ],
-        meta=dict(service_name=detail.label or service.name_or_key),
+        meta=dict(service_name=service.name_or_key),
     )
 
 
@@ -52,35 +52,25 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single
-    service = lib.to_services(payload.services, provider_units.ShippingService).first
-    is_international = shipper.country_code != recipient.country_code
-    product = (
-        service
-        if service is not None
-        else (
-            provider_units.ShippingService.chronopost_express_international
-            if is_international
-            else provider_units.ShippingService.chronopost_10
-        )
-    ).value
 
     request = lib.Envelope(
         Body=lib.Body(
-            chronopost.quickCost(
+            chronopost.calculateProducts(
                 accountNumber=settings.account_number,
                 password=settings.password,
-                depCode=(
-                    shipper.country_code if is_international else shipper.postal_code
-                ),
-                arrCode=(
-                    recipient.country_code
-                    if is_international
-                    else recipient.postal_code
-                ),
+                depCountryCode=shipper.country_code,
+                arrCountryCode=recipient.country_code,
+                depZipCode=shipper.postal_code,
+                arrZipCode=recipient.postal_code,
+                arrCity=recipient.city,
+                type_="M",
                 weight=package.weight.KG,
-                productCode=product,
-            )
-        )
+                height=package.height.CM,
+                length=package.length.CM,
+                width=package.width.CM,
+                shippingDate=None,
+            ),
+        ),
     )
 
     return lib.Serializable(
