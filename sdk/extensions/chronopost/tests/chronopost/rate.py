@@ -49,7 +49,6 @@ RatePayload = {
             "weight_unit": "KG",
         }
     ],
-    "services": ["chronopost_retrait_bureau"],
 }
 
 ParsedRateResponse = [
@@ -59,8 +58,8 @@ ParsedRateResponse = [
             "carrier_name": "chronopost",
             "currency": "EUR",
             "extra_charges": [{"amount": 1.2, "currency": "EUR", "name": "TVA"}],
-            "meta": {"service_name": "Sup.Retrait Bureau"},
-            "service": "chronopost_sup_retrait_bureau",
+            "meta": {"service_name": "chronopost_retrait_bureau"},
+            "service": "chronopost_retrait_bureau",
             "total_charge": 7.2,
         }
     ],
@@ -70,89 +69,105 @@ ParsedRateResponse = [
 
 RateRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.quickcost.soap.chronopost.fr/">
     <soapenv:Body>
-        <soapenv:quickCost>
+        <soapenv:calculateProducts>
             <accountNumber>1234</accountNumber>
             <password>password</password>
-            <depCode>75001</depCode>
-            <arrCode>91210</arrCode>
+            <depCountryCode>FR</depCountryCode>
+            <depZipCode>75001</depZipCode>
+            <arrCountryCode>FR</arrCountryCode>
+            <arrZipCode>91210</arrZipCode>
+            <type>M</type>
             <weight>4.0</weight>
-            <productCode>00</productCode>
-        </soapenv:quickCost>
+        </soapenv:calculateProducts>
     </soapenv:Body>
 </soapenv:Envelope>
 """
 
 RateResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
-        <ns1:quickCostResponse xmlns:ns1="http://cxf.quickcost.soap.chronopost.fr/">
+        <ns1:calculateProductsResponse xmlns:ns1="http://cxf.quickcost.soap.chronopost.fr/">
             <return>
-                <amount>6.0</amount>
-                <amountTTC>7.2</amountTTC>
-                <amountTVA>1.2</amountTVA>
                 <errorCode>0</errorCode>
-                <service>
+                <productList>
                     <amount>0.0</amount>
                     <amountTTC>0.0</amountTTC>
                     <amountTVA>0.0</amountTVA>
-                    <codeService>1</codeService>
-                    <label>ESD en France métropolitaine</label>
-                </service>
-                <service>
+                    <productCode>5A</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>4T</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>4U</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>4I</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>2O</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>2L</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>1O</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>75</productCode>
+                </productList>
+                <productList>
+                    <amount>0.0</amount>
+                    <amountTTC>0.0</amountTTC>
+                    <amountTVA>0.0</amountTVA>
+                    <productCode>86</productCode>
+                </productList>
+                <productList>
                     <amount>6.0</amount>
                     <amountTTC>7.2</amountTTC>
                     <amountTVA>1.2</amountTVA>
-                    <codeService>11</codeService>
-                    <label>Sup.Retrait Bureau</label>
-                </service>
-                <service>
+                    <productCode>0</productCode>
+                </productList>
+                <productList>
                     <amount>0.0</amount>
                     <amountTTC>0.0</amountTTC>
                     <amountTVA>0.0</amountTVA>
-                    <codeService>15</codeService>
-                    <label>Sup.Classic livr.du Samedi</label>
-                </service>
-                <service>
+                    <productCode>1</productCode>
+                </productList>
+                <productList>
                     <amount>0.0</amount>
                     <amountTTC>0.0</amountTTC>
                     <amountTVA>0.0</amountTVA>
-                    <codeService>4</codeService>
-                    <label>Retour Express de Paiement</label>
-                </service>
-                <service>
+                    <productCode>16</productCode>
+                </productList>
+                <productList>
                     <amount>0.0</amount>
                     <amountTTC>0.0</amountTTC>
                     <amountTVA>0.0</amountTVA>
-                    <codeService>9</codeService>
-                    <label>Supplement Corse</label>
-                </service>
-                <service>
-                    <amount>0.0</amount>
-                    <amountTTC>0.0</amountTTC>
-                    <amountTVA>0.0</amountTVA>
-                    <codeService>B1</codeService>
-                    <label>Livr. Domicile privé</label>
-                </service>
-                <service>
-                    <amount>0.0</amount>
-                    <amountTTC>0.0</amountTTC>
-                    <amountTVA>0.0</amountTVA>
-                    <codeService>B1</codeService>
-                    <label>Livr. Domicile privé</label>
-                </service>
-                <service>
-                    <amount>0.0</amount>
-                    <amountTTC>0.0</amountTTC>
-                    <amountTVA>0.0</amountTVA>
-                    <codeService>S9</codeService>
-                    <label>Redevance Sûreté</label>
-                </service>
-                <zone>NT</zone>
-                <assurance>
-                    <plafond>0.0</plafond>
-                    <taux>0.0</taux>
-                </assurance>
+                    <productCode>2</productCode>
+                </productList>
             </return>
-        </ns1:quickCostResponse>
+        </ns1:calculateProductsResponse>
     </soap:Body>
 </soap:Envelope>
 """
