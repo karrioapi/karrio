@@ -1,7 +1,9 @@
 import typing
+from urllib import response
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.chronopost.utils as provider_utils
+import karrio.providers.chronopost.error as provider_error
 import chronopost_lib.trackingservice as chronopost
 
 
@@ -9,45 +11,27 @@ def parse_tracking_response(
     responses: typing.List[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages = [
-        result for result in responses if result.get("errorCode") != "0"
+    tracking_nodes: typing.List[chronopost.eventInfoComp] = [
+        lib.find_element("events", response, chronopost.eventInfoComp)
+        for response in responses
     ]
-    response_details = [
-        result[0]
-        for result in responses
-        if result.get("errorcode") == "0" and next(iter(result), None) is not None
+    errors = [
+        provider_error.parse_error_response(result, settings) for result in responses
     ]
-    messages = [_extract_errors(result, settings) for result in response_messages]
-    tracking_details = [_extract_details(rate, settings) for rate in response_details]
-
-    return tracking_details, messages
-
-
-def _extract_errors(
-    data: lib.Element,
-    settings: provider_utils.Settings,
-) -> models.Message:
-    return models.Message(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        message=data.get("errorMessage"),
-        code=data.get("errorCode"),
-    )
+    tracking_details = [
+        _extract_details(tracking, settings) for tracking in tracking_nodes
+    ]
+    return tracking_details, errors
 
 
 def _extract_details(
-    data: lib.Element,
+    detail: typing.List[chronopost.eventInfoComp],
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = lib.to_object(chronopost.resultTrackSkybillV2, data)
-    events: typing.List[chronopost.eventInfoComp] = (
-        [event for event in tracking] if tracking.listEventInfoComp is not None else []
-    )
-    delivered = ["D" == event.code for event in events]
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking.listEventInfoComp.skybillNumber,
+        tracking_number=None,
         events=[
             models.TrackingEvent(
                 date=lib.fdate(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
@@ -56,10 +40,10 @@ def _extract_details(
                 time=lib.ftime(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
                 location=event.officeLabel,
             )
-            for event in events
+            for event in detail
         ],
         estimated_delivery=None,
-        delivered=True if True in delivered else False,
+        delivered=False,
     )
 
 
