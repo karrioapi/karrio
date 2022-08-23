@@ -17,7 +17,7 @@ def parse_tracking_response(
         for result in responses
         if result.get("errorcode") == "0" and next(iter(result), None) is not None
     ]
-    messages = [_extract_errors(response_messages, settings)]
+    messages = [_extract_errors(result, settings) for result in response_messages]
     tracking_details = [_extract_details(rate, settings) for rate in response_details]
 
     return tracking_details, messages
@@ -41,7 +41,7 @@ def _extract_details(
 ) -> models.TrackingDetails:
     tracking = lib.to_object(chronopost.resultTrackSkybillV2, data)
     events: typing.List[chronopost.eventInfoComp] = (
-        [event for event in tracking.listEventInfoComp] if tracking is not None else []
+        [event for event in tracking] if tracking.listEventInfoComp is not None else []
     )
     delivered = ["D" == event.code for event in events]
     return models.TrackingDetails(
