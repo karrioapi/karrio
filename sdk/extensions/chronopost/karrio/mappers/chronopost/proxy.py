@@ -42,8 +42,14 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_element)
 
     def get_tracking(
-        self, request: lib.Serializable[typing.List[str]]
+        self, request: lib.Serializable[typing.List[Envelope]]
     ) -> lib.Deserializable[str]:
-        response = self._send_request(request, path="/tracking-cxf/TrackingServiceWS")
+        def get_tracking(track_request: str):
+            return self._send_request(
+                path="/tracking-cxf/TrackingServiceWS",
+                request=lib.Serializable(track_request),
+            )
 
-        return lib.Deserializable(response, lib.to_element)
+        response: typing.List[str] = exec_parrallel(get_tracking, request.serialize())
+
+        return lib.Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
