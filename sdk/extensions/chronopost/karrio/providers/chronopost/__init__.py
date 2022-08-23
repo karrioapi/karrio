@@ -6,3 +6,7 @@ from karrio.providers.chronopost.shipment import (
     shipment_cancel_request,
     shipment_request,
 )
+from karrio.providers.chronopost.tracking import (
+    tracking_request,
+    parse_tracking_response,
+)
