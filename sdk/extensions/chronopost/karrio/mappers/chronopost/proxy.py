@@ -1,12 +1,9 @@
 import typing
+import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 from karrio.core.utils import (
-    Serializable,
-    Deserializable,
     Envelope,
-    Pipeline,
-    Job,
     XP,
     request as http,
     exec_parrallel,
@@ -34,25 +31,19 @@ class Proxy(proxy.Proxy):
         response = self._send_request(request, path="/quickcost-cxf/QuickcostServiceWS")
         return lib.Deserializable(response, lib.to_element)
 
-    def get_tracking(
-        self, request: Serializable[typing.List[Envelope]]
-    ) -> Deserializable[str]:
-        def get_tracking(track_request: str):
-            return self._send_request(
-                path="/tracking-cxf/TrackingServiceWS",
-                request=Serializable(track_request),
-            )
-
-        response: typing.List[str] = exec_parrallel(get_tracking, request.serialize())
-
-        return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
-
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = self._send_request(request, path="/shipping-cxf/ShippingServiceWS")
 
         return lib.Deserializable(response, lib.to_element)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = self._send_request(request, path="/tracking-cxf/TrackingServiceWS")
+
+        return lib.Deserializable(response, lib.to_element)
+
+    def get_tracking(
+        self, request: lib.Serializable[typing.List[str]]
+    ) -> lib.Deserializable[str]:
         response = self._send_request(request, path="/tracking-cxf/TrackingServiceWS")
 
         return lib.Deserializable(response, lib.to_element)

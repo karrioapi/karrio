@@ -15,7 +15,7 @@ def parse_tracking_response(
     response_details = [
         result[0]
         for result in responses
-        if result.get("code") == "0" and next(iter(result), None) is not None
+        if result.get("errorcode") == "0" and next(iter(result), None) is not None
     ]
     messages = [_extract_errors(response_messages, settings)]
     tracking_details = [_extract_details(rate, settings) for rate in response_details]
@@ -43,6 +43,7 @@ def _extract_details(
     events: typing.List[chronopost.eventInfoComp] = (
         [event for event in tracking.listEventInfoComp] if tracking is not None else []
     )
+    delivered = ["D" == event.code for event in events]
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -51,14 +52,14 @@ def _extract_details(
             models.TrackingEvent(
                 date=lib.fdate(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
                 description=event.eventLabel,
-                code=event.eventLabel,
+                code=event.code,
                 time=lib.ftime(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
-                location=None,
+                location=event.officeLabel,
             )
             for event in events
         ],
         estimated_delivery=None,
-        delivered=False,
+        delivered=True if True in delivered else False,
     )
 
 
@@ -67,11 +68,27 @@ def tracking_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     request = [
-        chronopost.trackSkybillV2(
-            language=settings.language, skybillNumber=tracking_number
+        lib.Envelope(
+            Header=lib.Header(),
+            Body=lib.Body(
+                chronopost.trackSkybillV2(
+                    language=settings.language, skybillNumber=tracking_number
+                )
+            ),
         )
         for tracking_number in payload.tracking_numbers
     ]
     return lib.Serializable(
-        request, lambda requests: [lib.to_xml(req) for req in requests]
+        request,
+        lambda requests: [
+            lib.envelope_serializer(
+                req,
+                namespace=(
+                    'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" '
+                    'xmlns:cxf="http://cxf.tracking.soap.chronopost.fr/"'
+                ),
+                prefixes=dict(Envelope="soapenv"),
+            )
+            for req in requests
+        ],
     )
