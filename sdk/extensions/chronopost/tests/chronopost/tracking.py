@@ -32,7 +32,7 @@ class TestchronopostTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
+            print(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     # def test_parse_error_response(self):
@@ -53,7 +53,82 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "DC",
+                    "date": "2022-06-19",
+                    "description": "Shipment in preparation to be shipped",
+                    "location": "Web Services",
+                    "time": "13:47",
+                },
+                {
+                    "code": "DB",
+                    "date": "2022-06-20",
+                    "description": "Shipment handed over by shipper",
+                    "location": "AMBOISE",
+                    "time": "16:54",
+                },
+                {
+                    "code": "DY",
+                    "date": "2022-06-20",
+                    "description": "Parcel Registered by the post office",
+                    "location": "AMBOISE",
+                    "time": "16:57",
+                },
+                {
+                    "code": "SC",
+                    "date": "2022-06-21",
+                    "description": "Sorted at departure location",
+                    "location": "TOURS CHRONOPOST",
+                    "time": "19:16",
+                },
+                {
+                    "code": "TS",
+                    "date": "2022-06-21",
+                    "description": "Shipment in transit",
+                    "location": "HUB CHILLY MAZARIN CHRONOPOST",
+                    "time": "23:36",
+                },
+                {
+                    "code": "TS",
+                    "date": "2022-06-22",
+                    "description": "Shipment in transit",
+                    "location": "ARRAS CHRONOPOST",
+                    "time": "02:43",
+                },
+                {
+                    "code": "SD",
+                    "date": "2022-06-22",
+                    "description": "Sorted at delivery location",
+                    "location": "ARRAS CHRONOPOST",
+                    "time": "02:44",
+                },
+                {
+                    "code": "TA",
+                    "date": "2022-06-22",
+                    "description": "Shipment in delivery to the consignee",
+                    "location": "ARRAS CHRONOPOST",
+                    "time": "07:12",
+                },
+                {
+                    "code": "D",
+                    "date": "2022-06-22",
+                    "description": "Delivered",
+                    "location": "ARRAS CHRONOPOST",
+                    "time": "08:30",
+                },
+            ],
+            "tracking_number": "89108749065090",
+        }
+    ],
+    [[]],
+]
 
 # ParsedErrorResponse = []
 

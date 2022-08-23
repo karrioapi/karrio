@@ -19,19 +19,25 @@ def parse_tracking_response(
         provider_error.parse_error_response(result, settings) for result in responses
     ]
     tracking_details = [
-        _extract_details(tracking, settings) for tracking in tracking_nodes
+        _extract_details(tracking_nodes[t], settings, responses[t])
+        for t in range(len(tracking_nodes))
     ]
+
     return tracking_details, errors
 
 
 def _extract_details(
     detail: typing.List[chronopost.eventInfoComp],
     settings: provider_utils.Settings,
+    response: typing.List[lib.Element],
 ) -> models.TrackingDetails:
+    tracking_number: chronopost.listEventInfoComps = lib.find_element(
+        "listEventInfoComp", response, chronopost.listEventInfoComps, first=True
+    )
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=None,
+        tracking_number=tracking_number.skybillNumber,
         events=[
             models.TrackingEvent(
                 date=lib.fdate(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
@@ -43,7 +49,7 @@ def _extract_details(
             for event in detail
         ],
         estimated_delivery=None,
-        delivered=False,
+        delivered=True if "D" in [event.code for event in detail] else False,
     )
 
 
