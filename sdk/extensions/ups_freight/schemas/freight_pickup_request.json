@@ -41,7 +41,14 @@
     "PickupDate": "20190228",
     "EarliestTimeReady": "0800",
     "LatestTimeReady": "1600",
+    "ShipmentServiceOptions": {
+      "FreezableProtectionIndicator": "",
+      "LimitedAccessPickupIndicator": "",
+      "LimitedAccessDeliveryIndicator": "",
+      "ExtremeLengthIndicator": ""
+    },
     "ShipmentDetail": {
+      "HazmatIndicator": "",
       "PackagingType": {
         "Code": "CAN",
         "Description": "can"
@@ -54,6 +61,22 @@
           "Description": "pounds"
         },
         "Value": "102"
+      }
+    },
+    "ExistingShipmentID": {
+      "ShipmentNumber": "",
+      "BOLID": ""
+    },
+    "POM": {
+      "POMNumber": "",
+      "POMNumberType": "",
+      "PickupNotifications": {
+        "CompanyName": "",
+        "EMailNotification": {
+          "EMailAddress": "",
+          "EventType": "",
+          "FailedEMail": ""
+        }
       }
     },
     "PickupInstructions": "Pickup Instructions ",

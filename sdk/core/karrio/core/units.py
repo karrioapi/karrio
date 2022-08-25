@@ -1,11 +1,10 @@
 """Karrio universal data types and units definitions"""
 
-import pathlib
 import attr
 import typing
 import numbers
+import pathlib
 import functools
-import mimetypes
 import phonenumbers
 import karrio.core.utils as utils
 import karrio.core.models as models
@@ -19,6 +18,7 @@ class PackagePreset:
     length: float = None
     weight: float = None
     volume: float = None
+    thickness: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
     packaging_type: str = None
@@ -98,6 +98,29 @@ class DimensionUnit(utils.Enum):
 
     CM = "CM"
     IN = "IN"
+
+
+class FreightClass(utils.Enum):
+    """universal freight_class units"""
+
+    freight_class_50 = 50
+    freight_class_55 = 55
+    freight_class_60 = 60
+    freight_class_65 = 65
+    freight_class_70 = 70
+    freight_class_77 = 77
+    freight_class_77_5 = 77.5
+    freight_class_85 = 85
+    freight_class_92_5 = 92.5
+    freight_class_100 = 100
+    freight_class_110 = 110
+    freight_class_125 = 125
+    freight_class_150 = 150
+    freight_class_175 = 175
+    freight_class_200 = 200
+    freight_class_250 = 250
+    freight_class_300 = 300
+    freight_class_400 = 400
 
 
 class UploadDocumentType(utils.Enum):
@@ -309,6 +332,72 @@ class Weight:
         return Weight(value=self._value, unit=self._unit, options=options)
 
 
+class Product(models.Commodity):
+    """The item common processing helper"""
+
+    def __init__(
+        self,
+        item: models.Commodity,
+        weight_unit: str = None,
+    ):
+        self.item = item
+        self._weight_unit: str = weight_unit or item.weight_unit
+
+    def __getitem__(self, item):
+        return getattr(self.item, item, None)
+
+    def __getattr__(self, item):
+        return self[item]
+
+    @property
+    def weight_unit(self):
+        return self._weight_unit
+
+    @property
+    def weight(self):
+        if self.item.weight is None:
+            return None
+
+        _weight_value = Weight(
+            self.item.weight,
+            self.item.weight_unit or self._weight_unit,
+        )
+
+        return typing.cast(float, _weight_value[self.weight_unit])
+
+    @property
+    def quantity(self) -> int:  # type: ignore
+        _quantity = utils.NF.integer(self.item.quantity)
+        if _quantity is None:
+            return 1
+
+        return _quantity
+
+
+class Products(typing.Iterable[Product]):
+    """The commoditiy/item collection common processing helper"""
+
+    def __init__(
+        self,
+        items: typing.List[models.Commodity],
+        weight_unit: str = None,
+    ):
+        self._items = [Product(item, weight_unit=weight_unit) for item in items]
+
+    def __len__(self) -> int:
+        return len(self._items)
+
+    def __getitem__(self, index: int) -> Product:
+        return self._items[index]
+
+    def __iter__(self) -> typing.Iterator[Product]:
+        return iter(self._items)
+
+    @property
+    def quantity(self):
+        return sum((item.quantity for item in self._items), 0)
+
+
 class Package:
     """The parcel common processing helper"""
 
@@ -316,31 +405,33 @@ class Package:
         self,
         parcel: models.Parcel,
         template: PackagePreset = None,
+        options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        weight_unit: str = None,
+        dimension_unit: str = None,
     ):
         self.parcel: models.Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
-        self.options: "ShippingOptions" = ShippingOptions(
-            parcel.options, package_option_type
-        )
 
+        self._options: "ShippingOptions" = ShippingOptions(
+            {**parcel.options, **getattr(options, "content", {})},
+            package_option_type,
+        )
         self._dimension_unit = (
-            (self.parcel.dimension_unit or self.preset.dimension_unit)
-            if any([self.parcel.height, self.parcel.width, self.parcel.length])
-            else self.preset.dimension_unit
+            dimension_unit or self.parcel.dimension_unit or self.preset.dimension_unit
         )
         self._weight_unit = (
-            self.preset.weight_unit
-            if self.parcel.weight is None
-            else (self.parcel.weight_unit or self.preset.weight_unit)
+            weight_unit or self.parcel.weight_unit or self.preset.weight_unit
         )
 
     def _compute_dimension(self, value):
-        dimension = Dimension(value, DimensionUnit[self._dimension_unit])
-        if self._dimension_unit == self.dimension_unit.value:
-            return dimension
+        _dimension_unit = self.parcel.dimension_unit or self._dimension_unit
+        _dimension = Dimension(value, DimensionUnit[_dimension_unit])
 
-        return Dimension(dimension[self.dimension_unit.value], self.dimension_unit)
+        if _dimension_unit == self.dimension_unit.value:
+            return _dimension
+
+        return Dimension(_dimension[self.dimension_unit.value], self.dimension_unit)
 
     @property
     def dimension_unit(self) -> DimensionUnit:
@@ -358,35 +449,53 @@ class Package:
         return self.parcel.packaging_type or self.preset.packaging_type
 
     @property
-    def weight(self):
-        return Weight(self.parcel.weight or self.preset.weight, self.weight_unit)
+    def weight(self) -> Weight:
+        _weight_unit = self.parcel.weight_unit or self._weight_unit
+        _weight = Weight(self.parcel.weight or self.preset.weight, self.weight_unit)
+
+        if _weight_unit == self.weight_unit.value:
+            return _weight
+
+        return Weight(_weight[self.weight_unit.value], self.weight_unit)
 
     @property
-    def width(self):
+    def width(self) -> Dimension:
         return self._compute_dimension(self.preset.width or self.parcel.width)
 
     @property
-    def height(self):
+    def height(self) -> Dimension:
         return self._compute_dimension(self.preset.height or self.parcel.height)
 
     @property
-    def length(self):
+    def length(self) -> Dimension:
         return self._compute_dimension(self.preset.length or self.parcel.length)
 
     @property
-    def girth(self):
+    def girth(self) -> Girth:
         return Girth(self.width, self.length, self.height)
 
     @property
-    def volume(self):
+    def volume(self) -> Volume:
         return Volume(self.width, self.length, self.height)
 
     @property
-    def thickness(self):
+    def thickness(self) -> Dimension:
         return self._compute_dimension(self.preset.thickness)
 
     @property
-    def has_dimensions(self):
+    def description(self) -> typing.Optional[str]:
+        if any(self.parcel.description or ""):
+            return self.parcel.description
+
+        descriptions = [item.description for item in self.items]
+        description: typing.Optional[str] = utils.SF.concat_str(
+            *descriptions, join=True
+        )  # type:ignore
+
+        return description
+
+    @property
+    def has_dimensions(self) -> bool:
         return any(
             [
                 self.length.value,
@@ -394,6 +503,16 @@ class Package:
                 self.height.value,
             ]
         )
+
+    @property
+    def options(self) -> "ShippingOptions":
+        return self._options
+
+    @property
+    def items(self) -> Products:
+        _items = self.parcel.items or []
+
+        return Products(_items, self.weight_unit.value)
 
 
 class Packages(typing.Iterable[Package]):
@@ -405,6 +524,7 @@ class Packages(typing.Iterable[Package]):
         presets: typing.Type[utils.Enum] = None,
         required: typing.List[str] = None,
         max_weight: Weight = None,
+        options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ):
         def compute_preset(parcel) -> typing.Optional[PackagePreset]:
@@ -415,15 +535,27 @@ class Packages(typing.Iterable[Package]):
 
             return presets[parcel.package_preset].value
 
+        self._compatible_units = (
+            (WeightUnit.KG, DimensionUnit.CM)
+            if any(parcels) and parcels[0].weight_unit == WeightUnit.KG.value
+            else (WeightUnit.LB, DimensionUnit.IN)
+        )
+        self._options = options or ShippingOptions({}, package_option_type)
         self._items = [
             Package(
-                parcel, compute_preset(parcel), package_option_type=package_option_type
+                parcel,
+                compute_preset(parcel),
+                options=self._options,
+                package_option_type=package_option_type,
+                weight_unit=self._compatible_units[0].value,
+                dimension_unit=self._compatible_units[1].value,
             )
             for parcel in parcels
         ]
         self._required = required
         self._max_weight = max_weight
         self._package_option_type = package_option_type
+
         self.validate()
 
     def __getitem__(self, index: int) -> Package:
@@ -469,7 +601,7 @@ class Packages(typing.Iterable[Package]):
 
     @property
     def description(self) -> typing.Optional[str]:
-        descriptions = [item.parcel.description for item in self._items]
+        descriptions = [item.description for item in self._items]
         description: typing.Optional[str] = utils.SF.concat_str(
             *descriptions, join=True
         )  # type:ignore
@@ -499,16 +631,33 @@ class Packages(typing.Iterable[Package]):
                 },
             }
 
-        options: dict = functools.reduce(merge_options, self._items, {})
+        options: dict = functools.reduce(
+            merge_options,
+            self._items,
+            self._options.content,
+        )
 
         return ShippingOptions(options, self._package_option_type)
 
     @property
     def compatible_units(self) -> typing.Tuple[WeightUnit, DimensionUnit]:
-        if any(self._items) and self._items[0].weight_unit == WeightUnit.KG:
-            return WeightUnit.KG, DimensionUnit.CM
+        return self._compatible_units
 
-        return WeightUnit.LB, DimensionUnit.IN
+    @property
+    def weight_unit(self) -> str:
+        _weight_unit, _ = self._compatible_units
+        return _weight_unit.value
+
+    @property
+    def items(self) -> Products:
+        _weight_unit, _ = self.compatible_units
+        _items: typing.List[models.Commodity] = functools.reduce(
+            lambda acc, pkg: [*acc, *[p.item for p in pkg.items]],
+            self._items,
+            [],
+        )
+
+        return Products(_items, _weight_unit.value)
 
     def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
         required = required or self._required
@@ -547,12 +696,20 @@ class Packages(typing.Iterable[Package]):
         presets: typing.Type[utils.Enum] = None,
         required: typing.List[str] = None,
         max_weight: Weight = None,
+        options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ) -> typing.Union[typing.List[Package], "Packages"]:
 
         return typing.cast(
             typing.Union[typing.List[Package], Packages],
-            Packages(parcels, presets, required, max_weight, package_option_type),
+            Packages(
+                parcels,
+                presets,
+                required,
+                max_weight,
+                options,
+                package_option_type,
+            ),
         )
 
 
@@ -694,6 +851,7 @@ class CustomsInfo(models.Customs):
         self,
         customs: models.Customs = None,
         option_type: typing.Type[utils.Enum] = utils.Enum,
+        weight_unit: str = None,
     ):
         options = Options(
             getattr(customs, "options", None) or {},
@@ -703,6 +861,7 @@ class CustomsInfo(models.Customs):
 
         self._customs = customs
         self._options = options
+        self._weight_unit = weight_unit
 
     def __getitem__(self, item):
         return getattr(self._customs, item, None)
@@ -722,8 +881,10 @@ class CustomsInfo(models.Customs):
         return getattr(self._customs, "duty", None)
 
     @property
-    def commodities(self) -> typing.List[models.Commodity]:  # type:ignore
-        return getattr(self._customs, "commodities", None) or []
+    def commodities(self) -> Products:  # type:ignore
+        _commodities = getattr(self._customs, "commodities", None) or []
+
+        return Products(_commodities, self._weight_unit)
 
     @property
     def options(self):

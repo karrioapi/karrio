@@ -1,4 +1,5 @@
-
+from ups_freight_lib.freight_ship_response import ShipmentResultsType
+import ups_freight_lib.freight_ship_request as ups
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -12,8 +13,19 @@ def parse_shipment_response(
     response: dict,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_shipment = None  # extract carrier response shipment
+    shipment_response = response.get("FreightShipResponse") or {}
+    response_messages = [
+        *response.get("response", {}).get("errors", []),
+        *shipment_response.get("Response", {}).get("Alert", []),
+    ]
+    response_shipment = (
+        shipment_response.get("ShipmentResults")
+        if (
+            shipment_response.get("ShipmentResults", {}).get("ShipmentNumber")
+            is not None
+        )
+        else None
+    )
 
     messages = error.parse_error_response(response_messages, settings)
     shipment = _extract_details(response_shipment, settings)
@@ -25,22 +37,37 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    shipment = None  # parse carrier shipment type from "data"
-    label = ""  # extract and process the shipment label to a valid base64 text
-    # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
+    shipment = lib.to_object(ShipmentResultsType, data)
+    label = shipment.Documents.Image.GraphicImage
+    service = provider_units.ShippingService.map(shipment.Service.Code)
+    extra_charges = [
+        models.ChargeDetails(
+            name=charge.Type.Description,
+            amount=lib.to_money(charge.Factor.Value),
+            currency=charge.Factor.UnitOfMeasurement.Code,
+        )
+        for charge in shipment.Rate
+    ]
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from shipment
-        shipment_identifier="",  # extract shipment identifier from shipment
-        label_type="PDF",  # extract shipment label file format
-        docs=models.Documents(
-            label=label,  # pass label base64 text
-            # invoice=invoice,  # pass invoice base64 text if applies
+        tracking_number=shipment.ShipmentNumber,
+        shipment_identifier=shipment.ShipmentNumber,
+        label_type="PDF",
+        docs=models.Documents(label=label),
+        selected_rate=models.RateDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            service=service.name_or_key,
+            currency=shipment.TotalShipmentCharge.CurrencyCode,
+            total_charge=lib.to_money(shipment.TotalShipmentCharge.MonetaryValue),
+            transit_days=lib.to_int(shipment.TimeInTransit.DaysInTransit),
+            extra_charges=extra_charges,
+            meta=dict(service_name=shipment.Service.Description or service.name_or_key),
         ),
         meta=dict(
-            # any relevent meta
+            pickup_confirmation_number=shipment.PickupRequestConfirmationNumber,
         ),
     )
 
@@ -49,10 +76,169 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
-    services = provider_units.Services.map(payload.service).value_or_key  # preprocess the request services
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels, options=payload.options)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
+    options = lib.to_shipping_options(
+        payload.options,
+        provider_units.ShippingOption,
+        package_options=packages.options,
+    )
 
-    request = None  # map data to convert karrio model to ups_freight specific type
+    payment = payload.payment or models.Payment()
+    payment_type = (
+        provider_units.PaymentType.map(payment.paid_by)
+        or provider_units.PaymentType.prepaid
+    )
+    payer = lib.to_address(
+        {
+            provider_units.PaymentType.prepaid: (payment.address or payload.shipper),
+            provider_units.PaymentType.freight_collect: (
+                payment.address or payload.recipient
+            ),
+            provider_units.PaymentType.bill_to_third_party: payment.address,
+        }[payment_type]
+    )
 
-    return lib.Serializable(request)
+    request = ups.FreightShipRequestType(
+        FreightShipRequest=ups.FreightShipRequestClassType(
+            Shipment=ups.ShipmentType(
+                ShipperNumber=settings.account_number,
+                ShipFrom=ups.ShipFromType(
+                    Name=(shipper.company_name or shipper.person_name or "N/A"),
+                    Address=ups.AddressType(
+                        AddressLine=shipper.address_line,
+                        City=shipper.city,
+                        StateProvinceCode=shipper.state_code,
+                        PostalCode=shipper.postal_code,
+                        CountryCode=shipper.country_code,
+                    ),
+                    AttentionName=shipper.person_name,
+                    Phone=ups.PhoneType(Number=shipper.phone_number or "0000"),
+                    EMailAddress=shipper.email,
+                    TaxIdentificationNumber=(
+                        shipper.federal_tax_id or shipper.state_tax_id
+                    ),
+                ),
+                ShipTo=ups.ShipFromType(
+                    Name=(recipient.company_name or recipient.person_name or "N/A"),
+                    Address=ups.AddressType(
+                        AddressLine=recipient.address_line,
+                        City=recipient.city,
+                        StateProvinceCode=recipient.state_code,
+                        PostalCode=recipient.postal_code,
+                        CountryCode=recipient.country_code,
+                    ),
+                    AttentionName=recipient.person_name,
+                    Phone=ups.PhoneType(Number=recipient.phone_number or "0000"),
+                    EMailAddress=recipient.email,
+                    TaxIdentificationNumber=(
+                        recipient.federal_tax_id or recipient.state_tax_id
+                    ),
+                ),
+                PaymentInformation=ups.PaymentInformationType(
+                    Payer=ups.ShipFromType(
+                        Name=(payer.company_name or payer.person_name or "N/A"),
+                        Address=ups.AddressType(
+                            AddressLine=payer.address_line,
+                            City=payer.city,
+                            StateProvinceCode=payer.state_code,
+                            PostalCode=payer.postal_code,
+                            CountryCode=payer.country_code,
+                        ),
+                        ShipperNumber=(
+                            payment.account_number or settings.account_number
+                        ),
+                        AttentionName=payer.person_name,
+                        Phone=(
+                            ups.PhoneType(Number=payer.phone_number)
+                            if payer.phone_number is not None
+                            else None
+                        ),
+                    ),
+                    ShipmentBillingOption=ups.ServiceType(Code=payment_type.value),
+                ),
+                Service=ups.ServiceType(Code=service.value),
+                HandlingUnitOne=ups.HandlingUnitType(
+                    Quantity=packages.items.quantity,
+                    Type=ups.ServiceType(
+                        Code=(
+                            provider_units.PackagingType.map(
+                                packages.package_type
+                            ).value
+                            or "PLT"
+                        )
+                    ),
+                ),
+                Commodity=[
+                    ups.CommodityType(
+                        CommodityID=None,
+                        Weight=ups.WeightType(
+                            UnitOfMeasurement=ups.ServiceType(
+                                Code=(
+                                    provider_units.WeightUnit.map(
+                                        package.weight_unit
+                                    ).value
+                                    or "LBS"
+                                ),
+                            ),
+                            Value=package.weight.value,
+                        ),
+                        Dimensions=(
+                            ups.DimensionsType(
+                                UnitOfMeasurement=ups.ServiceType(
+                                    Code=(
+                                        units.DimensionUnit.map(
+                                            package.dimension_unit
+                                        ).value
+                                        or "IN"
+                                    ),
+                                ),
+                                Length=package.length.value,
+                                Width=package.width.value,
+                                Height=package.height.value,
+                            )
+                            if package.has_dimensions
+                            else None
+                        ),
+                        NumberOfPieces=package.items.quantity,
+                        PackagingType=ups.ServiceType(
+                            Code=provider_units.PackagingType.map(
+                                package.packaging_type or "your_packaging"
+                            ).value
+                        ),
+                        FreightClass=(package.options.freight_class.state or "60"),
+                    )
+                    for package in packages
+                ],
+                PickupRequest=None,
+                Documents=ups.DocumentsType(
+                    Image=[
+                        ups.ImageType(
+                            Type=ups.ServiceType(Code="30"),
+                            LabelsPerPage=1,
+                            Format=ups.ServiceType(Code="01"),
+                            PrintFormat=ups.ServiceType(Code="02"),
+                            PrintSize=ups.PrintSizeType(
+                                Length=4,
+                                Width=64,
+                            ),
+                        )
+                    ]
+                ),
+                TimeInTransitIndicator=(
+                    "" if options.ups_freight_time_in_transit_indicator.state else None
+                ),
+                DensityEligibleIndicator=(
+                    "" if options.ups_freight_density_eligible_indicator.state else None
+                ),
+            ),
+            Miscellaneous=ups.MiscellaneousType(
+                WSVersion="21.0.11",
+                ReleaseID="07.12.2008",
+            ),
+        )
+    )
+
+    return lib.Serializable(request, lib.to_json)

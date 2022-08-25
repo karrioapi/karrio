@@ -8,9 +8,9 @@ from karrio.providers.ups.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    username: str
-    password: str
-    access_license_number: str
+    username: str  # type:ignore
+    password: str  # type:ignore
+    access_license_number: str  # type:ignore
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
@@ -18,7 +18,3 @@ class Settings(BaseSettings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "ups"
-
-    @property
-    def carrier_name(self):
-        return "ups"

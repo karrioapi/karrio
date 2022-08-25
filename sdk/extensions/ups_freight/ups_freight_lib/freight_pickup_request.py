@@ -4,6 +4,32 @@ from jstruct import JStruct
 
 
 @s(auto_attribs=True)
+class ExistingShipmentIDType:
+    ShipmentNumber: Optional[str] = None
+    BOLID: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class EMailNotificationType:
+    EMailAddress: Optional[str] = None
+    EventType: Optional[str] = None
+    FailedEMail: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PickupNotificationsType:
+    CompanyName: Optional[str] = None
+    EMailNotification: Optional[EMailNotificationType] = JStruct[EMailNotificationType]
+
+
+@s(auto_attribs=True)
+class PomType:
+    POMNumber: Optional[str] = None
+    POMNumberType: Optional[str] = None
+    PickupNotifications: Optional[PickupNotificationsType] = JStruct[PickupNotificationsType]
+
+
+@s(auto_attribs=True)
 class TransactionReferenceType:
     CustomerContext: Optional[str] = None
     TransactionIdentifier: Optional[str] = None
@@ -53,10 +79,19 @@ class WeightType:
 
 @s(auto_attribs=True)
 class ShipmentDetailType:
+    HazmatIndicator: Optional[str] = None
     PackagingType: Optional[PackagingTypeType] = JStruct[PackagingTypeType]
     NumberOfPieces: Optional[int] = None
     DescriptionOfCommodity: Optional[str] = None
     Weight: Optional[WeightType] = JStruct[WeightType]
+
+
+@s(auto_attribs=True)
+class ShipmentServiceOptionsType:
+    FreezableProtectionIndicator: Optional[str] = None
+    LimitedAccessPickupIndicator: Optional[str] = None
+    LimitedAccessDeliveryIndicator: Optional[str] = None
+    ExtremeLengthIndicator: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -69,7 +104,10 @@ class FreightPickupRequestClassType:
     PickupDate: Optional[int] = None
     EarliestTimeReady: Optional[str] = None
     LatestTimeReady: Optional[int] = None
+    ShipmentServiceOptions: Optional[ShipmentServiceOptionsType] = JStruct[ShipmentServiceOptionsType]
     ShipmentDetail: Optional[ShipmentDetailType] = JStruct[ShipmentDetailType]
+    ExistingShipmentID: Optional[ExistingShipmentIDType] = JStruct[ExistingShipmentIDType]
+    POM: Optional[PomType] = JStruct[PomType]
     PickupInstructions: Optional[str] = None
     AdditionalComments: Optional[str] = None
     HandlingInstructions: Optional[str] = None

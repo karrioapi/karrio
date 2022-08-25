@@ -1,4 +1,3 @@
-
 """Karrio UPS Freight client settings."""
 
 import attr
@@ -10,6 +9,10 @@ class Settings(provider_utils.Settings):
     """UPS Freight connection settings."""
 
     # required carrier specific properties
+    username: str  # type:ignore
+    password: str  # type:ignore
+    access_license_number: str  # type:ignore
+    account_number: str = None
 
     # generic properties
     id: str = None

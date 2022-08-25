@@ -1,10 +1,7 @@
-
 from karrio.providers.ups_freight.utils import Settings
 from karrio.providers.ups_freight.rate import parse_rate_response, rate_request
 from karrio.providers.ups_freight.shipment import (
-    parse_shipment_cancel_response,
     parse_shipment_response,
-    shipment_cancel_request,
     shipment_request,
 )
 from karrio.providers.ups_freight.pickup import (

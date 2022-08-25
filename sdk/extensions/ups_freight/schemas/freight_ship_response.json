@@ -36,79 +36,8 @@
           "Factor": {
             "Value": "1061.78",
             "UnitOfMeasurement": {
-              "Code": "USD"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "DSCNT_RATE",
-            "Description": "DSCNT_RATE"
-          },
-          "Factor": {
-            "Value": "70.00",
-            "UnitOfMeasurement": {
-              "Code": "%"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "2",
-            "Description": "2"
-          },
-          "Factor": {
-            "Value": "116.49",
-            "UnitOfMeasurement": {
-              "Code": "USD"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "CA_BORDER",
-            "Description": "CA_BORDER"
-          },
-          "Factor": {
-            "Value": "30.00",
-            "UnitOfMeasurement": {
-              "Code": "USD"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "HICST",
-            "Description": "HICST"
-          },
-          "Factor": {
-            "Value": "7.50",
-            "UnitOfMeasurement": {
-              "Code": "USD"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "LND_GROSS",
-            "Description": "LND_GROSS"
-          },
-          "Factor": {
-            "Value": "1516.83",
-            "UnitOfMeasurement": {
-              "Code": "USD"
-            }
-          }
-        },
-        {
-          "Type": {
-            "Code": "AFTR_DSCNT",
-            "Description": "AFTR_DSCNT"
-          },
-          "Factor": {
-            "Value": "455.05",
-            "UnitOfMeasurement": {
-              "Code": "USD"
+              "Code": "USD",
+              "Description": "DSCNT"
             }
           }
         }
@@ -133,17 +62,19 @@
         "Description": "string"
       },
       "Documents": {
-        "Image": {
-          "Type": {
-            "Code": "string",
-            "Description": "string"
-          },
-          "GraphicImage": "string",
-          "Format": {
-            "Code": "string",
-            "Description": "string"
+        "Image": [
+          {
+            "Type": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "GraphicImage": "string",
+            "Format": {
+              "Code": "string",
+              "Description": "string"
+            }
           }
-        },
+        ],
         "Forms": {
           "Type": {
             "Code": "string",
