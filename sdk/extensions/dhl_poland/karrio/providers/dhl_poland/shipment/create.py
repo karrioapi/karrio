@@ -75,7 +75,7 @@ def shipment_request(
     )
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    customs = lib.to_customs_info(payload.customs)
+    customs = lib.to_customs_info(payload.customs, weight_unit=packages.weight_unit)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
