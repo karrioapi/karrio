@@ -356,7 +356,7 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                             <nameEn>test</nameEn>
                             <namePl>test</namePl>
                             <quantity>1</quantity>
-                            <weight>10.0</weight>
+                            <weight>4.54</weight>
                         </item>
                     </customsItem>
                     <customAgreements>

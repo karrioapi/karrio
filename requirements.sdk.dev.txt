@@ -27,6 +27,7 @@
 -e ./sdk/extensions/sf_express
 -e ./sdk/extensions/tnt
 -e ./sdk/extensions/ups
+-e ./sdk/extensions/ups_freight
 -e ./sdk/extensions/usps
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen

@@ -341,7 +341,7 @@ class Product(models.Commodity):
         weight_unit: str = None,
     ):
         self.item = item
-        self._weight_unit: str = weight_unit or item.weight_unit
+        self._weight_unit: str = weight_unit or item.weight_unit or "LB"
 
     def __getitem__(self, item):
         return getattr(self.item, item, None)
@@ -363,7 +363,7 @@ class Product(models.Commodity):
             self.item.weight_unit or self._weight_unit,
         )
 
-        return typing.cast(float, _weight_value[self.weight_unit])
+        return typing.cast(float, _weight_value[self._weight_unit])
 
     @property
     def quantity(self) -> int:  # type: ignore
@@ -425,13 +425,26 @@ class Package:
         )
 
     def _compute_dimension(self, value):
-        _dimension_unit = self.parcel.dimension_unit or self._dimension_unit
+        _dimension_unit = (
+            self.parcel.dimension_unit or self._dimension_unit
+            if self.preset.width is None
+            else self.preset.dimension_unit
+        )
         _dimension = Dimension(value, DimensionUnit[_dimension_unit])
 
         if _dimension_unit == self.dimension_unit.value:
             return _dimension
 
         return Dimension(_dimension[self.dimension_unit.value], self.dimension_unit)
+
+    def _compute_weight(self, value):
+        _weight_unit = self.parcel.weight_unit or self._weight_unit
+        _weight = Weight(value, _weight_unit)
+
+        if _weight_unit == self.weight_unit.value:
+            return _weight
+
+        return Weight(_weight[self.weight_unit.value], self.weight_unit)
 
     @property
     def dimension_unit(self) -> DimensionUnit:
@@ -450,13 +463,7 @@ class Package:
 
     @property
     def weight(self) -> Weight:
-        _weight_unit = self.parcel.weight_unit or self._weight_unit
-        _weight = Weight(self.parcel.weight or self.preset.weight, self.weight_unit)
-
-        if _weight_unit == self.weight_unit.value:
-            return _weight
-
-        return Weight(_weight[self.weight_unit.value], self.weight_unit)
+        return self._compute_weight(self.parcel.weight or self.preset.weight)
 
     @property
     def width(self) -> Dimension:
@@ -527,24 +534,12 @@ class Packages(typing.Iterable[Package]):
         options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ):
-        def compute_preset(parcel) -> typing.Optional[PackagePreset]:
-            if (presets is None) | (
-                presets is not None and parcel.package_preset not in presets
-            ):
-                return None
-
-            return presets[parcel.package_preset].value
-
-        self._compatible_units = (
-            (WeightUnit.KG, DimensionUnit.CM)
-            if any(parcels) and parcels[0].weight_unit == WeightUnit.KG.value
-            else (WeightUnit.LB, DimensionUnit.IN)
-        )
+        self._compatible_units = self._compute_compatible_units(parcels, presets)
         self._options = options or ShippingOptions({}, package_option_type)
         self._items = [
             Package(
                 parcel,
-                compute_preset(parcel),
+                self._compute_preset(parcel, presets),
                 options=self._options,
                 package_option_type=package_option_type,
                 weight_unit=self._compatible_units[0].value,
@@ -572,6 +567,33 @@ class Packages(typing.Iterable[Package]):
         if len(self._items) > 1:
             raise errors.MultiParcelNotSupportedError()
         return self._items[0]
+
+    def _compute_compatible_units(
+        self,
+        parcels: typing.List[models.Parcel],
+        presets: typing.Type[utils.Enum],
+    ):
+        master_weight_unit = next(
+            (
+                p.weight_unit
+                or getattr(self._compute_preset(p, presets), "weight_unit", None)
+                for p in parcels
+            ),
+            None,
+        )
+
+        if master_weight_unit == WeightUnit.KG.value:
+            return (WeightUnit.KG, DimensionUnit.CM)
+
+        return (WeightUnit.LB, DimensionUnit.IN)
+
+    def _compute_preset(self, parcel: models.Parcel, presets: typing.Type[utils.Enum]):
+        if (presets is None) | (
+            presets is not None and parcel.package_preset not in presets
+        ):
+            return None
+
+        return presets[parcel.package_preset].value
 
     @property
     def weight(self) -> Weight:
