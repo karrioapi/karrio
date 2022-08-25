@@ -32,17 +32,15 @@ class TestchronopostTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
-    # def test_parse_error_response(self):
-    #     with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
-    #         mock.return_value = ErrorResponse
-    #         parsed_response = (
-    #             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-    #         )
-
-    #         self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -127,14 +125,23 @@ ParsedTrackingResponse = [
             "tracking_number": "89108749065090",
         }
     ],
-    [[]],
+    [],
 ]
 
-# ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "code": 1,
+            "message": "System Error",
+        }
+    ],
+]
 
 
 TrackingRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.tracking.soap.chronopost.fr/">
-    <soapenv:Header/>
     <soapenv:Body>
         <soapenv:trackSkybillV2>
             <language>en_GB</language>
@@ -263,5 +270,14 @@ TrackingResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
 </soap:Envelope>
 """
 
-ErrorResponse = """<a></a>
+ErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:trackSkybillV2Response xmlns:ns2="http://cxf.tracking.soap.chronopost.fr/">
+            <return>
+                <errorCode>1</errorCode>
+                <errorMessage>System Error</errorMessage>
+            </return>
+        </ns2:trackSkybillV2Response>
+    </soap:Body>
+</soap:Envelope>
 """

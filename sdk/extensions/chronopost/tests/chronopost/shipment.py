@@ -54,6 +54,16 @@ class TestChronopostShipping(unittest.TestCase):
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
+    def test_parse_shipment_error_response(self):
+        with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
+            mock.return_value = ShipmentErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedShipmentErrorResponse
+            )
+
     def test_parse_cancel_shipment_error_response(self):
         with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelErrorResponse
@@ -123,14 +133,28 @@ ParsedShipmentResponse = [
     [],
 ]
 
+ParsedShipmentErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "code": 33,
+            "message": "Invalid accesColis account number",
+        }
+    ],
+]
+
 ParsedCancelShipmentErrorResponse = [
-    {
-        "carrier_id": "chronopost",
-        "carrier_name": "chronopost",
-        "operation": "Cancel Shipment",
-        "success": True,
-    },
-    [],
+    None,
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "code": 2,
+            "message": "the parcel doesn't match account or parcel information not found",
+        }
+    ],
 ]
 
 ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="http://cxf.shipping.soap.chronopost.fr/">
@@ -239,6 +263,17 @@ ShipmentResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
             </return>
         </ns1:shippingMultiParcelV5Response>
     </soap:Body>
+</soap:Envelope>
+"""
+ShipmentErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns1:shippingMultiParcelV5Response xmlns:ns1="http://cxf.shipping.soap.chronopost.fr/">
+         <return>
+            <errorCode>33</errorCode>
+            <errorMessage>Invalid accesColis account number</errorMessage>
+         </return>
+      </ns1:shippingMultiParcelV5Response>
+   </soap:Body>
 </soap:Envelope>
 """
 ShipmentCancelErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">

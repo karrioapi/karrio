@@ -9,7 +9,9 @@ import karrio.providers.chronopost.utils as provider_utils
 def parse_shipment_cancel_response(
     response: lib.Element, settings: provider_utils.Settings
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    errors = provider_error.parse_error_response(response, settings)
+    errors = provider_error.parse_error_response(
+        response, settings, "cancelSkybillResponse"
+    )
     success = len(errors) == 0
     confirmation: models.ConfirmationDetails = (
         models.ConfirmationDetails(
