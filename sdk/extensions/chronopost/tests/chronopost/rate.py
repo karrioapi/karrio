@@ -35,6 +35,14 @@ class TestChronopostRating(unittest.TestCase):
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
+    def test_parse_rate_error_response(self):
+        with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
+            mock.return_value = RateErrorResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateErrorResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -64,6 +72,18 @@ ParsedRateResponse = [
         }
     ],
     [],
+]
+
+ParsedRateErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "chronopost",
+            "carrier_name": "chronopost",
+            "code": 3,
+            "message": "invalid account or password",
+        }
+    ],
 ]
 
 
@@ -166,6 +186,18 @@ RateResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/env
                     <amountTVA>0.0</amountTVA>
                     <productCode>2</productCode>
                 </productList>
+            </return>
+        </ns1:calculateProductsResponse>
+    </soap:Body>
+</soap:Envelope>
+"""
+
+RateErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns1:calculateProductsResponse xmlns:ns1="http://cxf.quickcost.soap.chronopost.fr/">
+            <return>
+                <errorCode>3</errorCode>
+                <errorMessage>invalid account or password</errorMessage>
             </return>
         </ns1:calculateProductsResponse>
     </soap:Body>

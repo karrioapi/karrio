@@ -1,13 +1,6 @@
 import typing
-import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
-from karrio.core.utils import (
-    Envelope,
-    XP,
-    request as http,
-    exec_parrallel,
-)
 import karrio.mappers.chronopost.settings as provider_settings
 
 
@@ -42,7 +35,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_element)
 
     def get_tracking(
-        self, request: lib.Serializable[typing.List[Envelope]]
+        self, request: lib.Serializable[typing.List[lib.Envelope]]
     ) -> lib.Deserializable[str]:
         def get_tracking(track_request: str):
             return self._send_request(
@@ -50,6 +43,8 @@ class Proxy(proxy.Proxy):
                 request=lib.Serializable(track_request),
             )
 
-        response: typing.List[str] = exec_parrallel(get_tracking, request.serialize())
+        response: typing.List[str] = lib.run_concurently(
+            get_tracking, request.serialize()
+        )
 
-        return lib.Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
