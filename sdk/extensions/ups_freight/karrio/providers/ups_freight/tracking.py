@@ -1,55 +1,93 @@
-
+import ups_freight_lib.tracking_response as ups
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.ups_freight.error as error
 import karrio.providers.ups_freight.utils as provider_utils
-import karrio.providers.ups_freight.units as provider_units
 
 
 def parse_tracking_response(
     responses: typing.List[typing.Tuple[str, dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_details = []  # extract carrier response tracking details
+    packages = [
+        result["trackResponse"]["shipment"][0]
+        for _, result in responses
+        if "trackResponse" in result
+        and result["trackResponse"]["shipment"][0].get("package") is not None
+    ]
+    messages: typing.List[models.Message] = sum(
+        [
+            error.parse_rest_error_response(
+                [
+                    *(  # get errors from the response object returned by UPS
+                        result["response"].get("errors", [])
+                        if "response" in result
+                        else []
+                    ),
+                    *(  # get warnings from the trackResponse object returned by UPS
+                        result["trackResponse"]["shipment"][0].get("warnings", [])
+                        if "trackResponse" in result
+                        else []
+                    ),
+                ],
+                settings,
+                details=dict(tracking_number=tracking_number),
+            )
+            for tracking_number, result in responses
+        ],
+        [],
+    )
 
-    messages = error.parse_error_response(response_messages, settings)
-    tracking_details = [_extract_details(rate, settings) for rate in response_details]
+    details = [_extract_details(package, settings) for package in packages]
 
-    return tracking_details, messages
+    return details, messages
 
 
 def _extract_details(
-    data: dict,
+    detail: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = None  # parse carrier tracking object type
+    package: ups.PackageType = next(
+        iter(lib.to_object(ups.ShipmentType, detail).package)
+    )
+    delivered = any(a.status.type == "D" for a in package.activity)
+    estimated_delivery = next(
+        iter([d.date for d in package.deliveryDate if d.type == "DEL"]), None
+    )
 
     return models.TrackingDetails(
-        carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from tracking
+        carrier_id=settings.carrier_id,
+        tracking_number=package.trackingNumber,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""), # extract tracking event date
-                description="",  # extract tracking event description or code
-                code="",  # extract tracking event code
-                time=lib.ftime(""), # extract tracking event time
-                location="",  # extract tracking event address
+                date=lib.fdate(a.date, "%Y%m%d"),
+                description=a.status.description if a.status else None,
+                location=(
+                    lib.join(
+                        a.location.address.city,
+                        a.location.address.stateProvince,
+                        a.location.address.postalCode,
+                        a.location.address.country,
+                        join=True,
+                        separator=", ",
+                    )
+                    if a.location
+                    else None
+                ),
+                time=lib.ftime(a.time, "%H%M%S"),
+                code=a.status.code if a.status else None,
             )
-            for event in []  # extract tracking events
+            for a in package.activity
         ],
-        estimated_delivery=lib.fdate(""), # extract tracking estimated date if provided
-        delivered=False,  # compute tracking delivered status
+        delivered=delivered,
+        estimated_delivery=lib.fdate(estimated_delivery, "%Y%m%d"),
     )
 
 
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable:
-    request = None  # map data to convert karrio model to ups_freight specific type
-
-    return lib.Serializable(request)
+) -> lib.Serializable[typing.List[lib.Envelope]]:
+    return lib.Serializable(payload.tracking_numbers)

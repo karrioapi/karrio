@@ -24,8 +24,8 @@ class ResponseType:
 
 @s(auto_attribs=True)
 class BillableShipmentWeightType:
-    UnitOfMeasurement: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
     Value: Optional[str] = None
+    UnitOfMeasurement: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
 
 
 @s(auto_attribs=True)
@@ -37,7 +37,7 @@ class FormsType:
 
 @s(auto_attribs=True)
 class DocumentsType:
-    Image: Optional[FormsType] = JStruct[FormsType]
+    Image: List[FormsType] = JList[FormsType]
     Forms: Optional[FormsType] = JStruct[FormsType]
 
 
@@ -48,20 +48,9 @@ class FreightDensityRateType:
 
 
 @s(auto_attribs=True)
-class UnitOfMeasurementType:
-    Code: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class FactorType:
-    Value: Optional[str] = None
-    UnitOfMeasurement: Optional[UnitOfMeasurementType] = JStruct[UnitOfMeasurementType]
-
-
-@s(auto_attribs=True)
 class RateType:
     Type: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
-    Factor: Optional[FactorType] = JStruct[FactorType]
+    Factor: Optional[BillableShipmentWeightType] = JStruct[BillableShipmentWeightType]
 
 
 @s(auto_attribs=True)

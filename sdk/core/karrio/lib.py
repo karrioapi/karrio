@@ -475,6 +475,7 @@ def to_packages(
     presets: typing.Type[utils.Enum] = None,
     required: typing.List[str] = None,
     max_weight: units.Weight = None,
+    options: dict = None,
     package_option_type: typing.Type[utils.Enum] = utils.Enum,
 ) -> units.Packages:
     return units.Packages(
@@ -482,6 +483,7 @@ def to_packages(
         presets=presets,
         required=required,
         max_weight=max_weight,
+        options=units.ShippingOptions(options or {}, package_option_type),
         package_option_type=package_option_type,
     )
 

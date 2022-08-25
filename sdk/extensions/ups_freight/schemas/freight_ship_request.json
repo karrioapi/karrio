@@ -7,13 +7,17 @@
           "AddressLine": "AddressLine",
           "City": "City",
           "StateProvinceCode": "State",
+          "Town": "Town",
           "PostalCode": "PostalCode",
           "CountryCode": "CountryCode"
         },
         "AttentionName": "AttentionName",
         "Phone": {
-          "Number": "AttentionPhone"
-        }
+          "Number": "AttentionPhone",
+          "Extension": "Extension"
+        },
+        "FaxNumber": "FaxNumber",
+        "TaxIdentificationNumber": ""
       },
       "ShipperNumber": "888144",
       "ShipTo": {
@@ -22,13 +26,17 @@
           "AddressLine": "AddressLine",
           "City": "City",
           "StateProvinceCode": "StateProvince”",
+          "Town": "Town",
           "PostalCode": "PostalCode",
           "CountryCode": "CountryCode"
         },
         "AttentionName": "AttentionName",
         "Phone": {
-          "Number": "AttentionPhone"
-        }
+          "Number": "AttentionPhone",
+          "Extension": "Extension"
+        },
+        "FaxNumber": "FaxNumber",
+        "TaxIdentificationNumber": ""
       },
       "PaymentInformation": {
         "Payer": {
@@ -37,15 +45,17 @@
             "AddressLine": "AddressLine",
             "City": "City",
             "StateProvinceCode": "StateProvince",
+            "Town": "Town",
             "PostalCode": "PostalCode",
             "CountryCode": "CountryCode"
           },
           "ShipperNumber": "ShipperNumber",
-          "AccountType": "1",
           "AttentionName": "AttentionName",
           "Phone": {
-            "Number": "AttentionPhone"
-          }
+            "Number": "AttentionPhone",
+            "Extension": "Extension"
+          },
+          "FaxNumber": "FaxNumber"
         },
         "ShipmentBillingOption": {
           "Code": "10"
@@ -60,8 +70,28 @@
           "Code": "PLT"
         }
       },
+      "HandlingUnitTwo": {
+        "Quantity": "2",
+        "Type": {
+          "Code": "PLT"
+        }
+      },
+      "ExistingShipmentID": {
+        "ShipmentNumber": "ShipmentNumber",
+        "BOLID": "",
+        "ConfirmationNumber": {
+          "Type": {
+            "Code": "PLT"
+          },
+          "Value": ""
+        }
+      },
+      "HandlingInstructions": "",
+      "DeliveryInstructions": "",
+      "PickupInstructions": "",
       "Commodity": [
         {
+          "CommodityID": "",
           "Description": "Goods",
           "Weight": {
             "UnitOfMeasurement": {
@@ -81,24 +111,209 @@
           "PackagingType": {
             "Code": "PKG"
           },
-          "FreightClass": "110"
+          "DangerousGoodsIndicator": "",
+          "CommodityValue": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          },
+          "FreightClass": "110",
+          "NMFCCommodityCode": "",
+          "NMFCCommodity": {
+            "PrimeCode": "",
+            "SubCode": ""
+          }
         }
       ],
-      "DensityEligibleIndicator": "",
+      "Reference": {
+        "Number": {
+          "Code": "",
+          "Value": ""
+        },
+        "BarCodeIndicator": "",
+        "NumberOfCartons": "",
+        "Weight": {
+          "UnitOfMeasurement": {
+            "Code": ""
+          },
+          "Value": ""
+        }
+      },
+      "ShipmentServiceOptions": {
+        "EMailInformation": {
+          "EMailType": {
+            "Code": ""
+          },
+          "Email": {
+            "EMailAddress": "",
+            "EMailText": "",
+            "UndeliverableEMailAddress": "",
+            "Subject": ""
+          }
+        },
+        "PickupOptions": {
+          "HolidayPickupIndicator": "",
+          "InsidePickupIndicator": "",
+          "ResidentialPickupIndicator": "",
+          "WeekendPickupIndicator": "",
+          "LiftGateRequiredIndicator": "",
+          "LimitedAccessPickupIndicator": ""
+        },
+        "DeliveryOptions": {
+          "CallBeforeDeliveryIndicator": "",
+          "HolidayDeliveryIndicator": "",
+          "InsideDeliveryIndicator": "",
+          "ResidentialDeliveryIndicator": "",
+          "WeekendDeliveryIndicator": "",
+          "LiftGateRequiredIndicator": "",
+          "LimitedAccessDeliveryIndicator": ""
+        },
+        "OverSeasLeg": {
+          "Dimensions": {
+            "Volume": "",
+            "Height": "",
+            "Length": "",
+            "UnitOfMeasurement": {
+              "Code": ""
+            },
+            "Value": {
+              "Cube": {
+                "CurrencyCode": "",
+                "MonetaryValue": ""
+              },
+              "CWT": {
+                "CurrencyCode": "",
+                "MonetaryValue": ""
+              }
+            }
+          }
+        },
+        "COD": {
+          "CODValue": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          },
+          "CODPaymentMethod": {
+            "Code": ""
+          },
+          "CODBillingOption": {
+            "Code": ""
+          },
+          "RemitTo": {
+            "Name": "",
+            "Address": {
+              "AddressLine": "",
+              "City": "",
+              "StateProvinceCode": "",
+              "Town": "",
+              "PostalCode": "",
+              "CountryCode": ""
+            },
+            "AttentionName": "",
+            "Phone": {
+              "Number": "",
+              "Extension": ""
+            },
+            "FaxNumber": "",
+            "EMailAddress": ""
+          }
+        },
+        "DangerousGoods": {
+          "Name": "",
+          "Phone": {
+            "Number": "",
+            "Extension": ""
+          },
+          "TransportationMode": {
+            "Code": ""
+          }
+        },
+        "SortingAndSegregating": {
+          "Quantity": ""
+        },
+        "DeclaredValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "ExcessDeclaredValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "HandlingCharge": {
+          "Percentage": "",
+          "Amount": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          }
+        },
+        "FreezableProtectionIndicator": "",
+        "ExtremeLengthIndicator": "",
+        "LinearFeet": ""
+      },
       "PickupRequest": {
+        "AdditionalComments": "",
         "Requester": {
+          "ThirdPartyIndicator": "",
           "AttentionName": "AttentionName",
           "EMailAddress": "AttentionEmail",
           "Name": "DG",
           "Phone": {
-            "Number": "AttentionPhone"
+            "Number": "AttentionPhone",
+            "Extension": ""
           }
         },
         "PickupDate": "20181228",
         "EarliestTimeReady": "0723",
-        "LatestTimeReady": "1700"
+        "LatestTimeReady": "1700",
+        "POM": {
+          "POMNumber": "",
+          "POMNumberType": "",
+          "PickupNotifications": {
+            "EMailNotification": {
+              "EMailAddress": "",
+              "EventType": "",
+              "FailedEMail": ""
+            }
+          }
+        }
       },
-      "TimeInTransitIndicator": ""
+      "Documents": {
+        "Image": [
+          {
+            "Type": {
+              "Code": ""
+            },
+            "LabelsPerPage": "",
+            "Format": {
+              "Code": ""
+            },
+            "PrintFormat": {
+              "Code": ""
+            },
+            "PrintSize": {
+              "Length": "",
+              "Width": ""
+            }
+          }
+        ]
+      },
+      "TimeInTransitIndicator": "",
+      "HandlingUnits": [
+        {
+          "Quantity": "",
+          "Type": {
+            "Code": ""
+          },
+          "Dimensions": {
+            "UnitOfMeasurement": {
+              "Code": ""
+            },
+            "Length": "",
+            "Width": "",
+            "Height": ""
+          }
+        }
+      ],
+      "DensityEligibleIndicator": ""
     },
     "Miscellaneous": {
       "WSVersion": "21.0.11",
