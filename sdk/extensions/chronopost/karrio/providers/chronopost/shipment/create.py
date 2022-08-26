@@ -168,11 +168,7 @@ def shipment_request(
                         ),
                         portCurrency=None,
                         portValue=None,
-                        productCode=(
-                            product_code
-                            if len(product_code) == 2
-                            else "0" + product_code
-                        ),
+                        productCode=product_code.zfill(2),
                         qualite=None,
                         service="0",
                         shipDate=shipping_date.strftime("%Y-%m-%dT%H:%M:%S"),
