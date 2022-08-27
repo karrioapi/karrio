@@ -38,8 +38,11 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(ShipmentResultsType, data)
-    label = shipment.Documents.Image.GraphicImage
     service = provider_units.ShippingService.map(shipment.Service.Code)
+    label = next(
+        (img.GraphicImage for img in shipment.Documents.Image if img.Type.Code == "30"),
+        None,
+    )
     extra_charges = [
         models.ChargeDetails(
             name=charge.Type.Description,
@@ -82,22 +85,24 @@ def shipment_request(
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        provider_units.ShippingOption,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     payment = payload.payment or models.Payment()
     payment_type = (
         provider_units.PaymentType.map(payment.paid_by)
         or provider_units.PaymentType.prepaid
-    )
+    ).value
     payer = lib.to_address(
         {
-            provider_units.PaymentType.prepaid: (payment.address or payload.shipper),
-            provider_units.PaymentType.freight_collect: (
+            provider_units.PaymentType.prepaid.value: (
+                payment.address or payload.shipper
+            ),
+            provider_units.PaymentType.freight_collect.value: (
                 payment.address or payload.recipient
             ),
-            provider_units.PaymentType.bill_to_third_party: payment.address,
+            provider_units.PaymentType.bill_to_third_party.value: payment.address,
         }[payment_type]
     )
 
@@ -115,7 +120,7 @@ def shipment_request(
                         CountryCode=shipper.country_code,
                     ),
                     AttentionName=shipper.person_name,
-                    Phone=ups.PhoneType(Number=shipper.phone_number or "0000"),
+                    Phone=ups.PhoneType(Number=shipper.phone_number or "000 000 0000"),
                     EMailAddress=shipper.email,
                     TaxIdentificationNumber=(
                         shipper.federal_tax_id or shipper.state_tax_id
@@ -157,9 +162,9 @@ def shipment_request(
                             else None
                         ),
                     ),
-                    ShipmentBillingOption=ups.ServiceType(Code=payment_type.value),
+                    ShipmentBillingOption=ups.ServiceType(Code=payment_type),
                 ),
-                Service=ups.ServiceType(Code=service.value),
+                Service=ups.ServiceType(Code=service),
                 HandlingUnitOne=ups.HandlingUnitType(
                     Quantity=packages.items.quantity,
                     Type=ups.ServiceType(
@@ -176,24 +181,16 @@ def shipment_request(
                         CommodityID=None,
                         Weight=ups.WeightType(
                             UnitOfMeasurement=ups.ServiceType(
-                                Code=(
-                                    provider_units.WeightUnit.map(
-                                        package.weight_unit
-                                    ).value
-                                    or "LBS"
-                                ),
+                                Code=provider_units.WeightUnit.map(
+                                    package.weight_unit.value
+                                ).value
                             ),
                             Value=package.weight.value,
                         ),
                         Dimensions=(
-                            ups.DimensionsType(
+                            ups.CommodityDimensionsType(
                                 UnitOfMeasurement=ups.ServiceType(
-                                    Code=(
-                                        units.DimensionUnit.map(
-                                            package.dimension_unit
-                                        ).value
-                                        or "IN"
-                                    ),
+                                    Code=package.dimension_unit.value,
                                 ),
                                 Length=package.length.value,
                                 Width=package.width.value,
@@ -228,7 +225,9 @@ def shipment_request(
                     ]
                 ),
                 TimeInTransitIndicator=(
-                    "" if options.ups_freight_time_in_transit_indicator.state else None
+                    None
+                    if options.ups_freight_time_in_transit_indicator.state == False
+                    else ""
                 ),
                 DensityEligibleIndicator=(
                     "" if options.ups_freight_density_eligible_indicator.state else None
@@ -241,4 +240,4 @@ def shipment_request(
         )
     )
 
-    return lib.Serializable(request, lib.to_json)
+    return lib.Serializable(request, lib.to_dict)

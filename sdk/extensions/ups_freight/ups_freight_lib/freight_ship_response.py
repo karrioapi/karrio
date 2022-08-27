@@ -66,6 +66,7 @@ class TotalShipmentChargeType:
 
 @s(auto_attribs=True)
 class ShipmentResultsType:
+    OriginServiceCenterCode: Optional[str] = None
     PickupRequestConfirmationNumber: Optional[str] = None
     DeliveryDate: Optional[str] = None
     ShipmentNumber: Optional[str] = None

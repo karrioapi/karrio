@@ -21,6 +21,7 @@
       }
     },
     "ShipmentResults": {
+      "OriginServiceCenterCode": "SLO",
       "PickupRequestConfirmationNumber": "string",
       "DeliveryDate": "string",
       "ShipmentNumber": "string",

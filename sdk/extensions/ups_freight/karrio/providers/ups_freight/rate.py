@@ -1,4 +1,4 @@
-from ups_freight_lib.freight_rate_response import AlternateRatesResponseType
+from ups_freight_lib.freight_rate_response import FreightRateResponseClassType
 import ups_freight_lib.freight_rate_request as ups
 import typing
 import karrio.lib as lib
@@ -18,31 +18,39 @@ def parse_rate_response(
         *response.get("response", {}).get("errors", []),
         *rate_response.get("Response", {}).get("Alert", []),
     ]
-    response_rates = rate_response.get("Rate") or []
-    transit = rate_response.get("TimeInTransit", {}).get("DaysInTransit")
-
     messages = error.parse_error_response(response_messages, settings)
-    rates = [_extract_details((rate, transit), settings) for rate in response_rates]
+    rates = [
+        _extract_details(rate, settings)
+        for rate in [rate_response]
+        if rate_response.get("TotalShipmentCharge") is not None
+    ]
 
     return rates, messages
 
 
 def _extract_details(
-    data: typing.Tuple[typing.Optional[str], dict],
+    data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    transit, rate_data = data
-    rate = lib.to_object(AlternateRatesResponseType, rate_data)
-    service = provider_units.ShippingService.map(rate.Type.Code)
+    detail = lib.to_object(FreightRateResponseClassType, data)
+    service = provider_units.ShippingService.map(detail.Service.Code)
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=lib.to_money(rate.Factor.Value),
-        currency=rate.Factor.UnitOfMeasurement.Code,
-        transit_days=transit,
-        meta=dict(service_name=(service.name or rate.Type.Description)),
+        currency=detail.TotalShipmentCharge.CurrencyCode,
+        total_charge=lib.to_money(detail.TotalShipmentCharge.MonetaryValue),
+        transit_days=lib.to_int(detail.TimeInTransit.DaysInTransit),
+        meta=dict(service_name=(service.name or detail.Service.Code)),
+        extra_charges=[
+            models.ChargeDetails(
+                name=provider_units.RateType.map(charge.Type.Code).name_or_key,
+                amount=lib.to_money(charge.Factor.Value),
+                currency=charge.Factor.UnitOfMeasurement.Code,
+            )
+            for charge in detail.Rate
+        ],
     )
 
 
@@ -59,8 +67,8 @@ def rate_request(
     )
     options = lib.to_shipping_options(
         payload.options,
-        provider_units.ShippingOption,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     request = ups.FreightRateRequestType(
@@ -74,7 +82,9 @@ def rate_request(
                     Town=None,
                     PostalCode=shipper.postal_code,
                     CountryCode=shipper.country_code,
-                    ResidentialAddressIndicator=("" if shipper.residential else None),
+                    ResidentialAddressIndicator=(
+                        "true" if shipper.residential else None
+                    ),
                 ),
             ),
             ShipTo=ups.ShipToType(
@@ -86,7 +96,9 @@ def rate_request(
                     Town=None,
                     PostalCode=recipient.postal_code,
                     CountryCode=recipient.country_code,
-                    ResidentialAddressIndicator=("" if recipient.residential else None),
+                    ResidentialAddressIndicator=(
+                        "true" if recipient.residential else None
+                    ),
                 ),
                 AttentionName=recipient.person_name,
             ),
@@ -100,7 +112,7 @@ def rate_request(
                         PostalCode=shipper.postal_code,
                         CountryCode=shipper.country_code,
                         ResidentialAddressIndicator=(
-                            "" if shipper.residential else None
+                            "true" if shipper.residential else None
                         ),
                     ),
                     ShipperNumber=settings.account_number,
@@ -111,7 +123,7 @@ def rate_request(
             Service=ups.AccountTypeType(
                 Code=(
                     services.first
-                    or provider_units.ShippingService.ups_freight_tforce_freight_ltl
+                    or provider_units.ShippingService.ups_tforce_freight_ltl
                 ).value
             ),
             Commodity=[
@@ -130,7 +142,7 @@ def rate_request(
                             UnitOfMeasurement=ups.AccountTypeType(
                                 Code=(
                                     units.DimensionUnit.map(
-                                        package.dimension_unit
+                                        package.dimension_unit.value
                                     ).value
                                     or "IN"
                                 ),
@@ -158,43 +170,43 @@ def rate_request(
                     DeliveryOptions=(
                         ups.DeliveryOptionsType(
                             CallBeforeDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_call_before_delivery_indicator.state
                                 is not None
                                 else None
                             ),
                             HolidayDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_holiday_delivery_indicator.state
                                 is not None
                                 else None
                             ),
                             InsideDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_inside_delivery_indicator.state
                                 is not None
                                 else None
                             ),
                             ResidentialDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_residential_delivery_indicator.state
                                 is not None
                                 else None
                             ),
                             WeekendDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_weekend_delivery_indicator.state
                                 is not None
                                 else None
                             ),
                             LiftGateRequiredIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_lift_gate_required_indicator.state
                                 is not None
                                 else None
                             ),
                             LimitedAccessDeliveryIndicator=(
-                                ""
+                                "true"
                                 if options.ups_freight_limited_access_delivery_indicator.state
                                 is not None
                                 else None
@@ -238,7 +250,7 @@ def rate_request(
                                     PostalCode=recipient.postal_code,
                                     CountryCode=recipient.country_code,
                                     ResidentialAddressIndicator=(
-                                        "" if recipient.residential else None
+                                        "true" if recipient.residential else None
                                     ),
                                 ),
                                 AttentionName=recipient.person_name or "N/A",
@@ -255,7 +267,7 @@ def rate_request(
                                 Code=options.dangerous_good.state
                             ),
                         )
-                        if options.dangerous_good.state is None
+                        if options.dangerous_good.state is not None
                         else None
                     ),
                     SortingAndSegregating=None,
@@ -269,19 +281,19 @@ def rate_request(
                     ),
                     HandlingCharge=None,
                     FreezableProtectionIndicator=(
-                        ""
+                        "true"
                         if options.ups_freight_freezable_protection_indicator.state
                         is not None
                         else None
                     ),
                     ExtremeLengthIndicator=(
-                        ""
+                        "true"
                         if options.ups_freight_extreme_length_indicator.state
                         is not None
                         else None
                     ),
                     LinearFeet=(
-                        ""
+                        "true"
                         if options.ups_freight_linear_feet.state is not None
                         else None
                     ),
@@ -304,14 +316,14 @@ def rate_request(
                 Code=(options.ups_freight_alternate_rate_option.state or "3")
             ),
             GFPOptions=(
-                ups.GFPOptionsType(GPFAccesorialRateIndicator="")
+                ups.GFPOptionsType(GPFAccesorialRateIndicator="true")
                 if options.ups_freight_gpf_accesorial_rate_indicator.state
                 else None
             ),
             TimeInTransitIndicator=(
-                "" if options.ups_freight_time_in_transit_indicator.state else None
+                "true" if options.ups_freight_time_in_transit_indicator.state else None
             ),
         )
     )
 
-    return lib.Serializable(request, lib.to_json)
+    return lib.Serializable(request, lib.to_dict)

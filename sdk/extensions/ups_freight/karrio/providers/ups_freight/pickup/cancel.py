@@ -15,7 +15,7 @@ def parse_pickup_cancel_response(
         *cancel_response.get("Response", {}).get("Alert", []),
     ]
     messages = error.parse_error_response(response_messages, settings)
-    success = cancel_response.get("FreightCancelStatus", {}).get("Code") == 1
+    success = cancel_response.get("FreightCancelStatus") == "1"
 
     confirmation = (
         models.ConfirmationDetails(

@@ -14,8 +14,8 @@ def parse_error_response(
         models.Message(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            code=error.get("code"),
-            message=error.get("message"),
+            code=error.get("code") or error.get("Code"),
+            message=error.get("message") or error.get("Description"),
             details=details,
         )
         for error in errors

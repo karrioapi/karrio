@@ -55,8 +55,10 @@ def pickup_request(
                     TransactionIdentifier=None,
                 )
             ),
-            DestinationPostalCode=address.postal_code,
-            DestinationCountryCode=address.country_code,
+            DestinationPostalCode=options.recipient_postal_code.state,
+            DestinationCountryCode=(
+                options.recipient_country_code.state or address.country_code
+            ),
             Requester=ups.RequesterType(
                 ThirdPartyIndicator=options.ups_freight_third_party_indicator.state,
                 AttentionName=(address.person_name or address.company_name or "N/A"),
@@ -97,24 +99,27 @@ def pickup_request(
                 )
                 else None
             ),
-            ShipmentDetail=ups.ShipmentDetailType(
-                PackagingType=ups.PackagingTypeType(
-                    Code=(
-                        provider_units.PackagingType.map(packages.package_type).value
-                        or provider_units.PackagingType.ups_other.value
-                    )
-                ),
-                NumberOfPieces=len(packages.items),
-                DescriptionOfCommodity=packages.description,
-                Weight=ups.WeightType(
-                    UnitOfMeasurement=ups.PackagingTypeType(
+            ShipmentDetail=(
+                ups.ShipmentDetailType(
+                    PackagingType=ups.PackagingTypeType(
                         Code=(
-                            provider_units.WeightUnit.map(packages.weight_unit).value
-                            or provider_units.WeightUnit.LB.value
-                        ),
+                            provider_units.PackagingType.map(packages.package_type)
+                            or provider_units.PackagingType.ups_other
+                        ).value
                     ),
-                    Value=packages.weight,
-                ),
+                    NumberOfPieces=len(packages),
+                    DescriptionOfCommodity=packages.description,
+                    Weight=ups.WeightType(
+                        UnitOfMeasurement=ups.PackagingTypeType(
+                            Code=provider_units.WeightUnit.map(
+                                packages.weight_unit
+                            ).value,
+                        ),
+                        Value=packages.weight.value,
+                    ),
+                )
+                if any(payload.parcels)
+                else None
             ),
             PickupInstructions=payload.package_location,
             AdditionalComments=None,
@@ -124,4 +129,4 @@ def pickup_request(
         )
     )
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

@@ -11,7 +11,7 @@ class Proxy(proxy.Proxy):
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = self._send_request(
-            request,
+            lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/shipments/ground",
             method="POST",
         )
@@ -20,7 +20,7 @@ class Proxy(proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = self._send_request(
-            request,
+            lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/shipments/ground",
             method="POST",
         )
@@ -29,7 +29,7 @@ class Proxy(proxy.Proxy):
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = self._send_request(
-            request,
+            lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/pickups",
             method="POST",
         )
@@ -44,7 +44,7 @@ class Proxy(proxy.Proxy):
         )
 
         # abort if cancellation request fails.
-        if cancel.get("FreightCancelStatus", {}).get("Code") != 1:
+        if cancel.get("FreightCancelStatus") != "1":
             return cancel_response
 
         return self.schedule_pickup(requests["create"])
