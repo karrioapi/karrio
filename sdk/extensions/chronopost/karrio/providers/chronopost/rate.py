@@ -18,9 +18,7 @@ def parse_rate_response(
         for product_node in product_nodes
         if product_node.amount > 0.0
     ]
-    return products, provider_error.parse_error_response(
-        response, settings, "calculateProductsResponse"
-    )
+    return products, provider_error.parse_error_response(response, settings)
 
 
 def _extract_service_details(

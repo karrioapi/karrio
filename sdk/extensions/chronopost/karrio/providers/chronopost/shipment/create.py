@@ -22,9 +22,7 @@ import karrio.providers.chronopost.units as provider_units
 def parse_shipment_response(
     response: lib.Element, settings: provider_utils.Settings
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-    errors = provider_error.parse_error_response(
-        response, settings, "shippingMultiParcelV5Response"
-    )
+    errors = provider_error.parse_error_response(response, settings)
     shipment_node = lib.find_element("resultMultiParcelValue", response, first=True)
     shipment = (
         _extract_details(shipment_node, settings) if shipment_node is not None else None
