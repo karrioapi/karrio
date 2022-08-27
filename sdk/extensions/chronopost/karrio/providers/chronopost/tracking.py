@@ -13,9 +13,7 @@ def parse_tracking_response(
     tracking_nodes: typing.List[chronopost.listEventInfoComps] = lib.find_element(
         "listEventInfoComp", responses, chronopost.listEventInfoComps
     )
-    errors = provider_error.parse_error_response(
-        responses, settings, "trackSkybillV2Response"
-    )
+    errors = provider_error.parse_error_response(responses, settings)
     tracking_details: typing.List[models.TrackingDetails] = [
         _extract_details(tracking_node, settings) for tracking_node in tracking_nodes
     ]
