@@ -206,6 +206,9 @@ class PickupOption(lib.Enum):
         "ExtremeLengthIndicator", bool
     )
 
+    recipient_postal_code = lib.OptionEnum("recipient_postal_code")
+    recipient_country_code = lib.OptionEnum("recipient_country_code")
+
 
 class UploadDocumentType(lib.Flag):
     ups_authorization_form = "001"
@@ -226,3 +229,36 @@ class UploadDocumentType(lib.Flag):
     certificate_of_origin = ups_certificate_of_origin
     commercial_invoice = ups_commercial_invoice
     other = ups_other_document
+
+
+class RateType(lib.Enum):
+    fuel_surcharge = "2"
+    arrival_notification = "ADV_NOTF"
+    amount_after_discount = "AFTR_DSCNT"
+    border_processing_fee = "CA_BORDER"
+    custom_manifest_fee = "CA_CSTM_MNFST"
+    collect_on_delivery_fee = "COD"
+    deficit_rate = "DEFICITRATE"
+    deficit_weight = "DEFICITWGHT"
+    deficit_charge = "DFCT_AMT"
+    discounted_amount = "DSCNT"
+    discount_rate_as_a_percentage = "DSCNT_RATE"
+    extreme_length = "EXC_LEN"
+    excess_declared_value_charges = "EXLI"
+    freezable_protection = "FREEZE_PROT"
+    guaranteed_service_charges = "GUAR_SERVICE"
+    hazardous_materials_charge = "HAZMAT"
+    high_cost_service_area_surcharge = "HICST"
+    holiday_weekend_pickup_or_delivery = "HOL_WE_PU_DEL"
+    inside_pickup_delivery = "INSD_PU_DEL"
+    custom_charge = "L_UPGF_016"
+    liftgate_fee = "LIFTGATE"
+    limited_access_pickup_delivery = "LIM_ACC_PU_DEL"
+    gross_charges = "LND_GROSS"
+    minimum_charge_applies = "MINCHARGE"
+    ocean_fuel_surcharge = "OFUELSURCHG"
+    residential_pickup_delivery = "RESI_PU_DEL"
+    remote_location_fee = "RMTLOC"
+    sorting_and_segregation = "SORTSEG"
+    total_island_charges = "TOTI"
+    total_ocean_charges = "TOTO"

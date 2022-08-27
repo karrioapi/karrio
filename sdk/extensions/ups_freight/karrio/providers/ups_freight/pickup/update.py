@@ -16,7 +16,7 @@ def pickup_update_request(
     payload: models.PickupUpdateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    cancel_request = lib.Deserializable(
+    cancel_request = lib.Serializable(
         dict(PickupRequestConfirmationNumber=payload.confirmation_number)
     )
     create_request = pickup.pickup_request(payload, settings)

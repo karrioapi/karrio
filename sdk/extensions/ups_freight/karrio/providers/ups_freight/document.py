@@ -5,9 +5,9 @@ import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.ups.error as provider_error
-import karrio.providers.ups.units as provider_units
-import karrio.providers.ups.utils as provider_utils
+import karrio.providers.ups_freight.error as provider_error
+import karrio.providers.ups_freight.units as provider_units
+import karrio.providers.ups_freight.utils as provider_utils
 
 
 def parse_document_upload_response(
@@ -22,7 +22,7 @@ def parse_document_upload_response(
     ]
     messages: typing.List[models.Message] = sum(
         [
-            provider_error.parse_rest_error_response(
+            provider_error.parse_error_response(
                 [
                     *(  # get errors from the response object returned by UPS
                         result["response"].get("errors", [])

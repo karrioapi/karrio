@@ -18,7 +18,7 @@ def parse_tracking_response(
     ]
     messages: typing.List[models.Message] = sum(
         [
-            error.parse_rest_error_response(
+            error.parse_error_response(
                 [
                     *(  # get errors from the response object returned by UPS
                         result["response"].get("errors", [])

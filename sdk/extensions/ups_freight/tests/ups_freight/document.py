@@ -62,8 +62,8 @@ DocumentUploadPayload = {
 
 ParsedDocumentUploadResponse = [
     {
-        "carrier_id": "ups",
-        "carrier_name": "ups",
+        "carrier_id": "ups_freight",
+        "carrier_name": "ups_freight",
         "documents": [
             {
                 "document_id": "2016-01-18-11.01.07.589501",
