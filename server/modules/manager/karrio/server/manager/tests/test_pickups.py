@@ -45,7 +45,7 @@ class TestPickupSchedule(TestFixture):
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
@@ -78,7 +78,7 @@ class TestPickupDetails(TestFixture):
             kwargs=dict(pk=self.pickup.pk),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
             response = self.client.post(url, PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
@@ -92,7 +92,7 @@ class TestPickupDetails(TestFixture):
             kwargs=dict(pk=self.pickup.pk),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
             response = self.client.post(url, {})
             response_data = json.loads(response.content)

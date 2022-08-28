@@ -81,7 +81,7 @@ class TestShipments(APITestCase):
         url = reverse("karrio.server.manager:shipment-list")
         data = SHIPMENT_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -111,7 +111,7 @@ class TestShipmentDetails(TestShipmentFixture):
             "karrio.server.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk)
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
@@ -157,7 +157,7 @@ class TestShipmentPurchase(TestShipmentFixture):
         )
         data = SHIPMENT_PURCHASE_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -178,7 +178,7 @@ class TestShipmentPurchase(TestShipmentFixture):
             kwargs=dict(pk=self.shipment.pk),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             response = self.client.delete(url)
             response_data = json.loads(response.content)
 
@@ -196,7 +196,7 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.shipment.selected_rate_carrier = self.carrier
         self.shipment.save()
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_CANCEL_VALUE
             response = self.client.delete(url)
             response_data = json.loads(response.content)

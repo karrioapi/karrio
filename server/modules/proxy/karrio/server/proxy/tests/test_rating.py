@@ -11,7 +11,7 @@ class TestRating(APITestCase):
         url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)

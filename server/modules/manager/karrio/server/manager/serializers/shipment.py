@@ -336,7 +336,7 @@ class ShipmentPurchaseSerializer(Shipment):
     reference = CharField(required=False, allow_blank=True, allow_null=True)
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
-        return gateway.Shipment.create(
+        return gateway.Shipments.create(
             Shipment(validated_data).data,
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
@@ -354,7 +354,7 @@ class ShipmentCancelSerializer(Shipment):
         self, instance: models.Shipment, validated_data: dict, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
-            gateway.Shipment.cancel(
+            gateway.Shipments.cancel(
                 payload=ShipmentCancelRequest(instance).data,
                 carrier=instance.selected_rate_carrier,
             )
