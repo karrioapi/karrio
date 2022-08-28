@@ -557,6 +557,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -639,6 +640,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -980,6 +982,150 @@
                 ]
             },
             "parameters": []
+        },
+        "/v1/documents": {
+            "get": {
+                "operationId": "$$$$$$list",
+                "summary": "List all upload records",
+                "description": "Retrieve all shipping document upload records.",
+                "parameters": [
+                    {
+                        "name": "date_after",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "date_before",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "The initial index from which to return the results.",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DocumentUploadRecords"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Documents"
+                ]
+            },
+            "post": {
+                "operationId": "$$$$$$upload",
+                "summary": "Upload documents",
+                "description": "Upload a shipping document.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DocumentUploadData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DocumentUploadRecord"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "424": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessages"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Documents"
+                ]
+            },
+            "parameters": []
+        },
+        "/v1/documents/{id}": {
+            "get": {
+                "operationId": "$$$$$$retrieve",
+                "summary": "Retrieve an upload record",
+                "description": "Retrieve a shipping document upload record.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DocumentUploadRecord"
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Documents"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
         },
         "/v1/orders": {
             "get": {
@@ -1833,6 +1979,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -1920,6 +2067,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -2007,6 +2155,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -2188,6 +2337,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -2267,6 +2417,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -2370,7 +2521,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "required": false,
                         "type": "string"
                     },
@@ -2826,7 +2977,7 @@
                     {
                         "name": "carrier_name",
                         "in": "query",
-                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
+                        "description": "\ncarrier_name used to fulfill the shipment\nValues: `amazon_mws`, `aramex`, `australiapost`, `canadapost`, `canpar`, `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `purolator`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`, `usps`, `usps_international`, `yanwen`, `yunexpress`\n",
                         "required": false,
                         "type": "string"
                     },
@@ -2916,6 +3067,7 @@
                             "sf_express",
                             "tnt",
                             "ups",
+                            "ups_freight",
                             "usps",
                             "usps_international",
                             "yanwen",
@@ -4430,6 +4582,7 @@
                         "sf_express",
                         "tnt",
                         "ups",
+                        "ups_freight",
                         "usps",
                         "usps_international",
                         "yanwen",
@@ -5560,6 +5713,223 @@
                 }
             }
         },
+        "DocumentDetails": {
+            "description": "the carrier shipping document ids",
+            "type": "object",
+            "properties": {
+                "document_id": {
+                    "title": "Document id",
+                    "description": "The uploaded document id.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "file_name": {
+                    "title": "File name",
+                    "description": "The uploaded document file name.",
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "default": {}
+        },
+        "Message": {
+            "description": "The list of note or warning messages",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "title": "Message",
+                    "description": "The error or warning message",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "code": {
+                    "title": "Code",
+                    "description": "The message code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "details": {
+                    "title": "Details",
+                    "description": "any additional details",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string",
+                        "x-nullable": true
+                    }
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The targeted carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "default": {}
+        },
+        "DocumentUploadRecord": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrier_name": {
+                    "title": "Carrier name",
+                    "description": "The shipment carrier",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "carrier_id": {
+                    "title": "Carrier id",
+                    "description": "The shipment carrier configured identifier",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "documents": {
+                    "description": "the carrier shipping document ids",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DocumentDetails"
+                    },
+                    "default": []
+                },
+                "meta": {
+                    "title": "Meta",
+                    "description": "provider specific metadata",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "x-nullable": true
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "Shipping document file reference",
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    },
+                    "default": []
+                }
+            }
+        },
+        "DocumentUploadRecords": {
+            "required": [
+                "results"
+            ],
+            "type": "object",
+            "properties": {
+                "count": {
+                    "title": "Count",
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "next": {
+                    "title": "Next",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "previous": {
+                    "title": "Previous",
+                    "type": "string",
+                    "format": "uri",
+                    "x-nullable": true
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DocumentUploadRecord"
+                    }
+                }
+            }
+        },
+        "DocumentFileData": {
+            "description": "Shipping document files",
+            "required": [
+                "doc_file",
+                "doc_name"
+            ],
+            "type": "object",
+            "properties": {
+                "doc_file": {
+                    "title": "Doc file",
+                    "description": "A base64 file to upload",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "doc_name": {
+                    "title": "Doc name",
+                    "description": "A file name",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "doc_type": {
+                    "title": "Doc type",
+                    "description": "Shipping document type",
+                    "type": "string",
+                    "default": "other",
+                    "maxLength": 50,
+                    "minLength": 1,
+                    "x-nullable": true
+                }
+            }
+        },
+        "DocumentUploadData": {
+            "required": [
+                "shipment_id",
+                "document_files"
+            ],
+            "type": "object",
+            "properties": {
+                "shipment_id": {
+                    "title": "Shipment id",
+                    "description": "The documents related shipment.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "document_files": {
+                    "description": "Shipping document files",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DocumentFileData"
+                    }
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "Shipping document file reference",
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1,
+                    "x-nullable": true
+                }
+            }
+        },
+        "ErrorMessages": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of error messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                }
+            }
+        },
         "LineItem": {
             "description": "The order line items.",
             "required": [
@@ -6308,46 +6678,6 @@
                     "type": "boolean"
                 }
             }
-        },
-        "Message": {
-            "description": "The list of note or warning messages",
-            "type": "object",
-            "properties": {
-                "message": {
-                    "title": "Message",
-                    "description": "The error or warning message",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "code": {
-                    "title": "Code",
-                    "description": "The message code",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "details": {
-                    "title": "Details",
-                    "description": "any additional details",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string",
-                        "x-nullable": true
-                    }
-                },
-                "carrier_name": {
-                    "title": "Carrier name",
-                    "description": "The targeted carrier",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "carrier_id": {
-                    "title": "Carrier id",
-                    "description": "The targeted carrier name (unique identifier)",
-                    "type": "string",
-                    "minLength": 1
-                }
-            },
-            "default": {}
         },
         "Shipment": {
             "description": "The shipments associated with the order.",
@@ -7113,18 +7443,6 @@
                     "type": "object",
                     "additionalProperties": true,
                     "default": {}
-                }
-            }
-        },
-        "ErrorMessages": {
-            "type": "object",
-            "properties": {
-                "messages": {
-                    "description": "The list of error messages",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Message"
-                    }
                 }
             }
         },
