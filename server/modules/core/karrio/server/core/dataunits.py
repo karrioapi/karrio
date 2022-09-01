@@ -44,17 +44,10 @@ def contextual_metadata(request: Request):
         "ADMIN": f"{host}admin/",
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",
-        "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
-        "ALLOW_MULTI_ACCOUNT": settings.ALLOW_MULTI_ACCOUNT,
-        "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
-        "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
-        "AUDIT_LOGGING": settings.AUDIT_LOGGING,
-        "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
-        "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
-        "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
-        "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
-        "ALLOW_ADMIN_APPROVED_SIGNUP": settings.ALLOW_ADMIN_APPROVED_SIGNUP,
-        "PERSIST_SDK_TRACING": settings.PERSIST_SDK_TRACING,
+        **{
+            flag: getattr(settings, flag, None)
+            for flag, _ in settings.FEATURE_FLAGS
+        },
     }
 
 

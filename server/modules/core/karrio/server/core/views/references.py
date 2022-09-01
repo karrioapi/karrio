@@ -4,53 +4,49 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
-from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from django.urls import path
 from django.conf import settings
 
+from karrio.server.conf import FEATURE_FLAGS
 from karrio.server.core.router import router
-import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
+References = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "VERSION": openapi.Schema(type=openapi.TYPE_STRING),
+        "APP_NAME": openapi.Schema(type=openapi.TYPE_STRING),
+        "APP_WEBSITE": openapi.Schema(type=openapi.TYPE_STRING),
+        **{
+            flag: openapi.Schema(type=openapi.TYPE_BOOLEAN)
+            for flag in FEATURE_FLAGS
+        },
+        "ADMIN": openapi.Schema(type=openapi.TYPE_STRING),
+        "OPENAPI": openapi.Schema(type=openapi.TYPE_STRING),
+        "GRAPHQL": openapi.Schema(type=openapi.TYPE_STRING),
 
-
-class References(Serializer):
-    VERSION = serializers.CharField()
-    APP_NAME = serializers.CharField()
-    APP_WEBSITE = serializers.CharField()
-    CUSTOM_CARRIER_DEFINITION = serializers.BooleanField()
-    DATA_IMPORT_EXPORT = serializers.BooleanField()
-    MULTI_ORGANIZATIONS = serializers.BooleanField()
-    ALLOW_MULTI_ACCOUNT = serializers.BooleanField()
-    ORDERS_MANAGEMENT = serializers.BooleanField()
-    APPS_MANAGEMENT = serializers.BooleanField()
-    AUDIT_LOGGING = serializers.BooleanField()
-    ALLOW_SIGNUP = serializers.BooleanField()
-    ALLOW_ADMIN_APPROVED_SIGNUP = serializers.BooleanField()
-    PERSIST_SDK_TRACING = serializers.BooleanField()
-    ADMIN = serializers.CharField()
-    OPENAPI = serializers.CharField()
-    GRAPHQL = serializers.CharField()
-    ADDRESS_AUTO_COMPLETE = serializers.PlainDictField()
-
-    countries = serializers.PlainDictField()
-    currencies = serializers.PlainDictField()
-    carriers = serializers.PlainDictField()
-    customs_content_type = serializers.PlainDictField()
-    incoterms = serializers.PlainDictField()
-    states = serializers.PlainDictField()
-    services = serializers.PlainDictField()
-    service_names = serializers.PlainDictField()
-    options = serializers.PlainDictField()
-    option_names = serializers.PlainDictField()
-    package_presets = serializers.PlainDictField()
-    packaging_types = serializers.PlainDictField()
-    payment_types = serializers.PlainDictField()
-    carrier_capabilities = serializers.PlainDictField()
-    service_levels = serializers.PlainDictField()
+        "ADDRESS_AUTO_COMPLETE": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "countries": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "currencies": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "customs_content_type": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "incoterms": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "states": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "services": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "service_names": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "options": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "option_names": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "package_presets": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "packaging_types": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "payment_types": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "carrier_capabilities": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "service_levels": openapi.Schema(type=openapi.TYPE_OBJECT),
+    },
+)
 
 
 @swagger_auto_schema(
@@ -58,7 +54,7 @@ class References(Serializer):
     tags=["API"],
     operation_id=f"{ENDPOINT_ID}data",
     operation_summary="Data References",
-    responses={200: References()},
+    responses={200: References},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])

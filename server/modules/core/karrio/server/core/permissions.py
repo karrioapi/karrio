@@ -16,3 +16,13 @@ class APIAccessPermissions(permissions.BasePermission):
             raise exceptions.PermissionDenied()
 
         return super().has_permission(request, view)
+
+
+
+class IsAuthorized(permissions.BasePermission):
+    """
+    Allows access only to authorized users.
+    """
+
+    def has_permission(self, request, view):
+        return super().has_permission(request, view)

@@ -1,3 +1,4 @@
+# type: ignore
 from karrio.server.settings.base import *
 
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")

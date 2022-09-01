@@ -1,3 +1,4 @@
+# type: ignore
 from django.conf.global_settings import CACHES
 from karrio.server.settings.base import *
 from karrio.server.settings.cache import HEALTH_CHECK_APPS
@@ -35,6 +36,7 @@ PUBLIC_SCHEMA_NAME = "public"
 PUBLIC_SCHEMA_URLCONF = "karrio.server.tenants.urls"
 TENANT_LIMIT_SET_CALLS = True
 TENANT_COLOR_ADMIN_APPS = False
+TENANT_ADMIN_API_URLS = []
 
 # Cache config
 CACHES["default"]["KEY_FUNCTION"] = "django_tenants.cache.make_key"

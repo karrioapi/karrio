@@ -156,6 +156,21 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 
 
+# Feature flags
+FEATURE_FLAGS = [
+    ("AUDIT_LOGGING", bool),
+    ("ALLOW_SIGNUP", bool),
+    ("ALLOW_ADMIN_APPROVED_SIGNUP", bool),
+    ("ALLOW_MULTI_ACCOUNT", bool),
+    ("ORDERS_MANAGEMENT", bool),
+    ("APPS_MANAGEMENT", bool),
+    ("DOCUMENTS_MANAGEMENT", bool),
+    ("DATA_IMPORT_EXPORT", bool),
+    ("CUSTOM_CARRIER_DEFINITION", bool),
+    ("PERSIST_SDK_TRACING", bool),
+]
+
+
 # components path settings
 BASE_PATH = config("BASE_PATH", default="")
 if len(BASE_PATH) > 0 and BASE_PATH.startswith("/"):
@@ -383,26 +398,7 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
             "in": "header",
             "description": """
-                API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
-
-                Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
-                API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
-
-                Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
-                the basic auth username value. You do not need to provide a password.
-
-                ```shell
-                $ curl https://instance.api.com/v1/shipments \\
-                  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:
-                # The colon prevents curl from asking for a password.
-                ```
-
-                If you need to authenticate via bearer auth (e.g., for a cross-origin request),
-                use `-H "Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e"`
-                instead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.
-
-                All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
-                API requests without authentication will also fail.
+            `Authorization: Token key_xxxxxxxx`
             """,
         }
     },

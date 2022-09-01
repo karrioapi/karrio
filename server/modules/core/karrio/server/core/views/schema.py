@@ -75,6 +75,28 @@ def render_schema_description(APP_NAME):
 
     Do not store any sensitive information as metadata.
 
+    ## Authentication
+
+    API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
+
+    Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
+    API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+
+    Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
+    the basic auth username value. You do not need to provide a password.
+
+    ```shell
+    $ curl https://instance.api.com/v1/shipments \\
+        -u key_xxxxxx:
+    # The colon prevents curl from asking for a password.
+    ```
+
+    If you need to authenticate via bearer auth (e.g., for a cross-origin request),
+    use `-H "Authorization: Token key_xxxxxx"` instead of `-u key_xxxxxx`.
+
+    All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
+    API requests without authentication will also fail.
+
     """
 
 
@@ -171,10 +193,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 {
                     "name": "API",
                     "description": """
-                For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
-                The JWT tokens changes for every new session and have an expiration timestamp.
-
-                To authenticate via JWT access key, use `-H "Authorization: Bearer key_c2760bb43...671ce3c09b6e"`.
+                API instance metadata and authentication resources.
                 """,
                 },
                 {
