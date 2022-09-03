@@ -1,3 +1,4 @@
+import sys
 import inspect
 import functools
 import logging
@@ -47,7 +48,7 @@ def run_async(callable: Callable[[], Any]) -> futures.Future:
     return futures.ThreadPoolExecutor(max_workers=1).submit(callable)
 
 
-def async_warpper(func):
+def async_wrapper(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         def _run():
@@ -183,6 +184,17 @@ def disable_for_loaddata(signal_handler):
             return
 
         signal_handler(*args, **kwargs)
+
+    return wrapper
+
+
+def skip_on_loadata(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if ("loaddata" in sys.argv):
+            return
+
+        return func(*args, **kwargs)
 
     return wrapper
 

@@ -6,3 +6,11 @@ class IamConfig(AppConfig):
     name = "karrio.server.iam"
     verbose_name = _("IAM")
     default_auto_field = "django.db.models.BigAutoField"
+
+    def ready(self):
+        from karrio.server.iam import signals, permissions
+
+        signals.register_all()
+        permissions.setup_groups()
+        permissions.apply_for_org_users()
+        permissions.apply_for_api_tokens()

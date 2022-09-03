@@ -1,5 +1,6 @@
 from functools import partial
 from django.db import models
+from django.contrib.postgres import fields
 from organizations.abstract import (
     AbstractOrganization,
     AbstractOrganizationUser,
@@ -7,12 +8,14 @@ from organizations.abstract import (
     AbstractOrganizationInvitation,
 )
 
+import karrio.server.orgs.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.pricing.models as pricing
 import karrio.server.manager.models as manager
 import karrio.server.tracing.models as tracing
 import karrio.server.events.models as events
 import karrio.server.orders.models as orders
+import karrio.server.core.fields as fields
 import karrio.server.graph.models as graph
 import karrio.server.audit.models as audit
 import karrio.server.core.models as core
@@ -94,19 +97,32 @@ class Organization(AbstractOrganization):
 
 @core.register_model
 class OrganizationUser(AbstractOrganizationUser):
-    @property
-    def roles(self):
-        from karrio.server.orgs.utils import OrganizationUserRole
+    id = models.CharField(
+        max_length=50,
+        primary_key=True,
+        default=partial(core.uuid, prefix="usr_"),
+        editable=False,
+    )
+    roles = fields.MultiChoiceField(
+        models.CharField(
+            max_length=50,
+            choices=serializers.USER_ROLES,
+            blank=False,
+        ),
+        default=core.field_default([
+            serializers.UserRole.member.value,
+            serializers.UserRole.developer.value,
+        ]),
+    )
 
-        roles = [OrganizationUserRole.member]
+    def save(self, *args, **kwargs):
+        if serializers.UserRole.member.value not in self.roles:
+            self.roles.append(serializers.UserRole.member.value)
 
-        if self.is_admin:
-            roles.append(OrganizationUserRole.admin)
+        if (serializers.UserRole.admin.value in self.roles) is not self.is_admin:
+            self.is_admin = not self.is_admin
 
-        if self.organization.is_owner(self.user):
-            roles.append(OrganizationUserRole.owner)
-
-        return roles
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.email} ({self.organization.name})"

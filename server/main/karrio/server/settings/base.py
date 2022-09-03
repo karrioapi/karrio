@@ -261,6 +261,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 MODEL_TRANSFORMERS: list = []
+PERMISSION_CHECKS = ["karrio.server.core.permissions.feature_enabled"]
 
 
 # Database
@@ -331,12 +332,14 @@ AUTHENTICATION_METHODS = [
     "karrio.server.core.authentication.JWTAuthentication",
     "rest_framework.authentication.SessionAuthentication",
 ]
+PERMISSION_CLASSES = [
+    "rest_framework.permissions.IsAuthenticated",
+    "karrio.server.core.permissions.AllowEnabledAPI",
+]
+
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-        "karrio.server.core.permissions.APIAccessPermissions",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_METHODS,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",

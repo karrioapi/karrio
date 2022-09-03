@@ -8,10 +8,10 @@ from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
 
 from karrio.core.utils import Enum
-from karrio.server.conf import settings
 from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
+import karrio.server.core.permissions as permissions
 import karrio.server.core.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 
@@ -49,13 +49,12 @@ def password_required(func):
     return wrapper
 
 
-def api_permissions(api: str):
+def permisions_required(keys: typing.List[str]):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
 
-            if settings.get(api) is False:
-                raise exceptions.PermissionDenied()
+            permissions.check_permissions(keys)
 
             return func(*args, **kwargs)
 

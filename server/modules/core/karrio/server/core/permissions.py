@@ -1,9 +1,15 @@
+import pydoc
+import typing
 from rest_framework import permissions, exceptions
 
 from karrio.server.conf import settings
 
+PERMISSION_CHECKS = getattr(
+    settings, "PERMISSION_CHECKS", ["karrio.server.core.permissions.feature_enabled"]
+)
 
-class APIAccessPermissions(permissions.BasePermission):
+
+class AllowEnabledAPI(permissions.BasePermission):
     """
     Global permission check for blocked IPs.
     """
@@ -18,11 +24,15 @@ class APIAccessPermissions(permissions.BasePermission):
         return super().has_permission(request, view)
 
 
+def check_permissions(keys: typing.List[str]):
+    for check in PERMISSION_CHECKS:
+        pydoc.locate(check)(keys) # type: ignore
 
-class IsAuthorized(permissions.BasePermission):
-    """
-    Allows access only to authorized users.
-    """
 
-    def has_permission(self, request, view):
-        return super().has_permission(request, view)
+def feature_enabled(features: typing.List[str]):
+    keys = [key for key in features if key in settings.FEATURE_FLAGS]
+
+    if any([settings.get(key) is False for key in keys]):
+        raise exceptions.PermissionDenied()
+
+    return True

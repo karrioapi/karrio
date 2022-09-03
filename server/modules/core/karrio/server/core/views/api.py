@@ -15,14 +15,10 @@ from karrio.server.core.authentication import (
     JWTAuthentication,
     TokenBasicAuthentication,
 )
-from karrio.server.core.permissions import APIAccessPermissions
-from karrio.server.core.models import APILogIndex, APILog
+from karrio.server.core.models import APILogIndex
 
 AccessMixin: typing.Any = pydoc.locate(
     getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
-)
-IsAuthorized = pydoc.locate(
-    getattr(settings, "USER_PERMISSION", "karrio.server.core.permissions.IsAuthorized")
 )
 
 
@@ -73,7 +69,7 @@ class LoggingMixin(mixins.LoggingMixin):
 
 
 class BaseView:
-    permission_classes = [APIAccessPermissions, IsAuthenticated, IsAuthorized]
+    permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     authentication_classes = [
         TokenBasicAuthentication,

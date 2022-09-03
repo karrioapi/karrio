@@ -1,16 +1,16 @@
 from django.conf import settings
+from django.contrib import auth
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.forms import models as forms
+from django.contrib.auth import admin as auth_admin
 from django.utils.translation import ugettext_lazy as _
 
-from karrio.server.user.models import Token
+from karrio.server.user.models import Token, Group
 
-User = get_user_model()
+User = auth.get_user_model()
+admin.site.unregister(auth.models.Group)
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(auth_admin.UserAdmin):
     add_form_template = None
     fieldsets = (
         (None, {"fields": ("email", "password")}),
@@ -58,6 +58,10 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
 
 
+class GroupAdmin(auth_admin.GroupAdmin):
+    pass
+
+
 class TokenAdmin(admin.ModelAdmin):
     list_display = (
         "key",
@@ -86,5 +90,6 @@ class TokenAdmin(admin.ModelAdmin):
         return form
 
 
-admin.site.register(Token, TokenAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Group, GroupAdmin)
+admin.site.register(Token, TokenAdmin)

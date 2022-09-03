@@ -4,8 +4,9 @@ from django.contrib.auth import get_user_model
 
 from karrio.server.conf import settings
 import karrio.server.core.utils as utils
-import karrio.server.orgs.models as models
 import karrio.server.events.tasks as tasks
+import karrio.server.orgs.models as models
+import karrio.server.orgs.serializers as serializers
 
 logger = logging.getLogger(__name__)
 

@@ -17,12 +17,12 @@ class Query:
         default_value=[],
     )
 
-    @utils.api_permissions("AUDIT_LOGGING")
+    @utils.permisions_required(["AUDIT_LOGGING"])
     @utils.login_required
     def resolve_auditlog(self, info, **kwargs):
         return models.AuditLogEntry.access_by(info.context).filter(**kwargs).first()
 
-    @utils.api_permissions("AUDIT_LOGGING")
+    @utils.permisions_required(["AUDIT_LOGGING"])
     @utils.login_required
     def resolve_auditlogs(self, info, **kwargs):
         return models.AuditLogEntry.access_by(info.context)
