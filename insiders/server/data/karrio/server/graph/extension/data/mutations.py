@@ -18,7 +18,7 @@ class CreateDataTemplate(utils.ClientMutation):
         fields_mapping = types.generic.GenericScalar()
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, **data):
         serializer = serializers.DataTemplateModelSerializer(
             data=data,
@@ -43,7 +43,7 @@ class UpdateDataTemplate(utils.ClientMutation):
         fields_mapping = types.generic.GenericScalar()
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **data):
         instance = models.DataTemplate.access_by(info.context).get(id=id)
 
@@ -69,7 +69,7 @@ class DeleteDataTemplate(utils.ClientMutation):
         id = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **kwargs):
         template = models.DataTemplate.access_by(info.context).get(id=id)
 

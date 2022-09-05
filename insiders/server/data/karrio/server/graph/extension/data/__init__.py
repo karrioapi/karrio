@@ -25,15 +25,15 @@ class Query:
         default_value=[],
     )
 
-    @utils.login_required
+    @utils.authentication_required
     def resolve_data_template(self, info, **kwargs):
         return models.DataTemplate.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authentication_required
     def resolve_data_templates(self, info, **kwargs):
         return models.DataTemplate.access_by(info.context)
 
-    @utils.login_required
+    @utils.authentication_required
     def resolve_batch_operations(self, info, **kwargs):
         return models.BatchOperation.access_by(info.context)
 

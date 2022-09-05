@@ -17,13 +17,13 @@ class Query:
         default_value=[],
     )
 
-    @utils.login_required
-    @utils.permisions_required(["ORDERS_MANAGEMENT"])
+    @utils.authentication_required
+    @utils.authorization_required(["ORDERS_MANAGEMENT"])
     def resolve_order(self, info, **kwargs):
         return models.Order.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
-    @utils.permisions_required(["ORDERS_MANAGEMENT"])
+    @utils.authentication_required
+    @utils.authorization_required(["ORDERS_MANAGEMENT"])
     def resolve_orders(self, info, **kwargs):
         return models.Order.access_by(info.context)
 

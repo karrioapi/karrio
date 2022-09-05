@@ -22,8 +22,8 @@ class CreateOrganization(utils.ClientMutation):
         name = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
-    @utils.permisions_required(["ALLOW_MULTI_ACCOUNT"])
+    @utils.authentication_required
+    @utils.authorization_required(["ALLOW_MULTI_ACCOUNT"])
     def mutate_and_get_payload(cls, root, info, **data):
         serializer = serializers.OrganizationModelSerializer(
             data=data,
@@ -170,7 +170,7 @@ class AcceptOrganizationInvitation(utils.ClientMutation):
         guid = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, guid, **kwargs):
         invitation = models.OrganizationInvitation.objects.get(
             guid=guid,

@@ -20,7 +20,7 @@ class CreateWebhook(utils.ClientMutation):
         test_mode = graphene.Boolean(required=True, default_value=False)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, **inputs):
         serializer = WebhookSerializer(
             context=info.context,
@@ -47,7 +47,7 @@ class UpdateWebhook(utils.ClientMutation):
         test_mode = graphene.Boolean(required=False)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         webhook = models.Webhook.access_by(info.context).get(id=id)
 
