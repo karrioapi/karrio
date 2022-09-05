@@ -23,7 +23,10 @@ from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
-AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
+AUTHENTICATION_CLASSES = [
+    pydoc.locate(_class) for _class in
+    getattr(settings, "AUTHENTICATION_CLASSES", [])
+]
 
 
 def catch_auth_exception(func):
@@ -89,7 +92,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
         return auth
 
-    def authenticate_credentials(self, api_key, *_, **__):
+    def authenticate_credentials(self, api_key, *args, **kwargs):
         """
         Authenticate the api token with optional request for context.
         """
@@ -208,7 +211,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 def authenticate_user(request):
     def authenticate(request, authenticator):
         if request.user.is_authenticated is False:
-            auth = pydoc.locate(authenticator)().authenticate(request)
+            auth = authenticator().authenticate(request)
 
             if auth is not None:
                 user, _ = auth
