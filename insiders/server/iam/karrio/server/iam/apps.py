@@ -13,4 +13,3 @@ class IamConfig(AppConfig):
         signals.register_all()
         permissions.setup_groups()
         permissions.apply_for_org_users()
-        permissions.apply_for_api_tokens()

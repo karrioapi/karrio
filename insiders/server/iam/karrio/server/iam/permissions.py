@@ -123,13 +123,6 @@ def apply_for_org_users():
         sync_permissions(user)
 
 
-@utils.skip_on_loadata
-@utils.async_wrapper
-def apply_for_api_tokens():
-    """This function will create context permissions for all api tokens based on their user's roles."""
-    pass
-
-
 def setup_group(name: str, permissions: typing.List[Permission], override: bool = False):
     group, created = user.Group.objects.get_or_create(name=name)
 
