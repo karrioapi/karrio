@@ -53,8 +53,11 @@ def authorization_required(keys: typing.List[str] = None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-
-            permissions.check_permissions(keys or [])
+            *__, info = args
+            permissions.check_permissions(
+                context=info.context,
+                keys=keys or [],
+            )
 
             return func(*args, **kwargs)
 

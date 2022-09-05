@@ -261,7 +261,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 MODEL_TRANSFORMERS: list = []
-PERMISSION_CHECKS = ["karrio.server.core.permissions.feature_enabled"]
+PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 
 
 # Database

@@ -48,10 +48,14 @@ def custom_exception_handler(exc, context):
     logger.exception(exc, exc_info=False)
 
     response = exception_handler(exc, context)
-    code = getattr(exc, "code", getattr(exc, "default_code", None))
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
-    status_code = None
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    code = (
+        exc.get_codes()
+        if hasattr(exc, "get_codes")
+        else getattr(exc, "default_code", None)
+    )
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, SDKValidationError):
         return Response(
@@ -93,7 +97,7 @@ def custom_exception_handler(exc, context):
         if errors is not None:
             return Response(
                 DP.to_dict(errors),
-                status=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=exc.status_code or status_code,
                 headers=getattr(response, "headers", None),
             )
 
@@ -111,7 +115,7 @@ def custom_exception_handler(exc, context):
                     ]
                 )
             ),
-            status=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status=exc.status_code or status_code,
             headers=getattr(response, "headers", None),
         )
 
@@ -119,7 +123,7 @@ def custom_exception_handler(exc, context):
         message, *_ = list(exc.args)
         return Response(
             dict(errors=DP.to_dict([Error(code=code, message=message)])),
-            status=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status=status_code,
             headers=getattr(response, "headers", None),
         )
 
@@ -163,9 +167,14 @@ def error_handler(exc) -> typing.Optional[dict]:
         for error in exc.detail:
             message, *_ = list(exc.args)
             detail = getattr(error, "detail", None)
+            code = (
+                error.get_codes()
+                if hasattr(error, "get_codes")
+                else getattr(error, "default_code", "error")
+            )
             errors.append(
                 dict(
-                    code=getattr(error, "code", "error"),
+                    code=code,
                     message=(
                         (detail if isinstance(detail, str) else None)
                         if detail
