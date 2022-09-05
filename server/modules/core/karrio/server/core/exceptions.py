@@ -51,11 +51,7 @@ def custom_exception_handler(exc, context):
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    code = (
-        exc.get_codes()
-        if hasattr(exc, "get_codes")
-        else getattr(exc, "default_code", None)
-    )
+    code = get_code(exc)
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, SDKValidationError):
         return Response(
@@ -64,7 +60,7 @@ def custom_exception_handler(exc, context):
                 errors=DP.to_dict(
                     [
                         Error(
-                            code=getattr(exc, "code", "validation"),
+                            code=code or "validation",
                             message=detail if isinstance(detail, str) else None,
                             details=(detail if not isinstance(detail, str) else None),
                         )
@@ -81,7 +77,7 @@ def custom_exception_handler(exc, context):
                 errors=DP.to_dict(
                     [
                         Error(
-                            code=getattr(exc, "code", "not_found"),
+                            code=code or "not_found",
                             message=detail if isinstance(detail, str) else None,
                             details=(detail if not isinstance(detail, str) else None),
                         )
@@ -108,7 +104,7 @@ def custom_exception_handler(exc, context):
                 errors=DP.to_dict(
                     [
                         Error(
-                            code=getattr(exc, "code", code),
+                            code=code,
                             message=detail if isinstance(detail, str) else None,
                             details=(detail if not isinstance(detail, str) else None),
                         )
@@ -187,3 +183,15 @@ def error_handler(exc) -> typing.Optional[dict]:
         return dict(errors=errors)
 
     return None
+
+
+def get_code(exc):
+    from karrio.server.core.utils import failsafe
+
+    if hasattr(exc, "get_codes"):
+        return (
+            failsafe(lambda: exc.get_codes())
+            or getattr(exc, "default_code", None)
+        )
+
+    return getattr(exc, "default_code", None)

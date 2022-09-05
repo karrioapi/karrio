@@ -8,7 +8,7 @@ from django.contrib.contenttypes import models as contenttypes
 from rest_framework import exceptions
 
 import karrio.server.core.utils as utils
-import karrio.server.user.models as user
+import karrio.server.user.models as users
 import karrio.server.orgs.models as orgs
 import karrio.server.iam.serializers as serializers
 import karrio.server.iam.models as iam
@@ -127,7 +127,7 @@ def apply_for_org_users():
 
 
 def setup_group(name: str, permissions: typing.List[Permission], override: bool = False):
-    group, created = user.Group.objects.get_or_create(name=name)
+    group, created = users.Group.objects.get_or_create(name=name)
 
     if created or override:
         group.permissions.set(permissions)
@@ -149,7 +149,7 @@ def sync_permissions(org_user):
     if org_owner_id == org_user.id:
         group_names.add("manage_org_owner")
 
-    groups = user.Group.objects.filter(name__in=group_names)
+    groups = users.Group.objects.filter(name__in=group_names)
 
     permission, _ = iam.ContextPermission.objects.get_or_create(
         content_type=contenttypes.ContentType.objects.get_for_model(org_user),
@@ -161,15 +161,8 @@ def sync_permissions(org_user):
 
 def check_context_permissions(context=None, keys: typing.List[str] = [], **kwargs):
     groups = [group for group, _ in serializers.PERMISSION_GROUPS if group in keys]
-    print(
-        keys,
-        groups,
-        getattr(context, "org", "No org"),
-        getattr(context, "user", "No user"),
-        getattr(context, "token", "No token"),
-    )
 
-    if any(groups):
+    if any(groups) and users.Group.objects.exists():
         user = context.org.organization_users.filter(user__id=context.user.id).first()
         token = getattr(context, "token", None)
         group_filters = functools.reduce(

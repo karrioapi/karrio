@@ -29,9 +29,6 @@ class OrganizationUserAdmin(BaseOrganizationUserAdmin):
             return self.readonly_fields + ("user", "organization")
         return self.readonly_fields
 
-    def test_fields(self, obj):
-        return "test"
-
 
 class TokenLinkInline(admin.TabularInline):
     model = Organization.tokens.through
