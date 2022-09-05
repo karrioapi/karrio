@@ -23,10 +23,7 @@ from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
-AUTHENTICATION_CLASSES = [
-    pydoc.locate(_class) for _class in
-    getattr(settings, "AUTHENTICATION_CLASSES", [])
-]
+AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
 
 
 def catch_auth_exception(func):
@@ -60,6 +57,7 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -80,6 +78,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -119,6 +118,7 @@ class JWTAuthentication(BaseJWTAuthentication):
             user, token = auth
 
             request.user = user
+            request.token = token
             request.test_mode = get_request_test_mode(request)
             request.otp_is_verified = token.get("is_verified") or False
             request.org = SimpleLazyObject(
@@ -211,11 +211,12 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 def authenticate_user(request):
     def authenticate(request, authenticator):
         if request.user.is_authenticated is False:
-            auth = authenticator().authenticate(request)
+            auth = pydoc.locate(authenticator)().authenticate(request)
 
             if auth is not None:
-                user, _ = auth
+                user, token = auth
                 request.user = user
+                request.token = token
 
         return request
 

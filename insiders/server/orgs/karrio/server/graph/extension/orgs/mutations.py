@@ -44,7 +44,8 @@ class UpdateOrganization(utils.ClientMutation):
         name = graphene.String()
 
     @classmethod
-    @roles_required(["admin"])
+    @utils.authentication_required
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, id, **data):
         try:
             instance = models.Organization.objects.get(
@@ -74,7 +75,7 @@ class DeleteOrganization(utils.ClientMutation):
 
     @classmethod
     @utils.password_required
-    @roles_required(["owner"])
+    @utils.authorization_required(["manage_org_owner"])
     def mutate_and_get_payload(cls, **kwargs):
         org = kwargs.get("org")
 
@@ -95,7 +96,7 @@ class SetOrganizationUserRoles(utils.ClientMutation):
         roles = graphene.List(graphene.NonNull(OrganizationUserRole), required=True)
 
     @classmethod
-    @roles_required(["owner"])
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, org_id, user_id, roles, **kwargs):
         changes = ["roles"]
         org = kwargs.get("org")
@@ -116,7 +117,7 @@ class ChangeOrganizationOwner(utils.ClientMutation):
         password = graphene.String(required=True)
 
     @classmethod
-    @roles_required(["owner"])
+    @utils.authorization_required(["manage_org_owner"])
     def mutate_and_get_payload(
         cls, root, info, org_id: str, email: str = None, password: str = None, **kwargs
     ):
@@ -154,7 +155,7 @@ class SendOrganizationInvites(utils.ClientMutation):
         redirect_url = graphene.String(required=True)
 
     @classmethod
-    @roles_required(["admin"])
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, org_id, emails, redirect_url, **kwargs):
         organization = kwargs.get("org")
 
@@ -171,6 +172,7 @@ class AcceptOrganizationInvitation(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, guid, **kwargs):
         invitation = models.OrganizationInvitation.objects.get(
             guid=guid,

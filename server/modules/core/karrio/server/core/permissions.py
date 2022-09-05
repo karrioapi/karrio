@@ -36,5 +36,3 @@ def check_feature_flags(keys: typing.List[str] = [], **kwargs):
 
     if any([conf.settings.get(flag) is False for flag in flags]):
         raise exceptions.PermissionDenied()
-
-    return True

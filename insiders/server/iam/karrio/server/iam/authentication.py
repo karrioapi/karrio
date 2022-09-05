@@ -13,8 +13,9 @@ class OAuth2Authentication(BaseOAuth2Authentication):
         auth = super().authenticate(request)
 
         if auth is not None:
-            user, _ = auth
+            user, token = auth
 
+            request.token = token
             request.test_mode = authentication.get_request_test_mode(request)
             request.org = SimpleLazyObject(
                 functools.partial(

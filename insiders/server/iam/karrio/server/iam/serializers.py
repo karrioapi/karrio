@@ -16,6 +16,7 @@ class PermissionGroup(enum.Enum):
     manage_org_owner = "manage_org_owner"
 
 
+PERMISSION_GROUPS = [(p.name, p.name) for p in list(PermissionGroup)]
 ROLES_GROUPS: typing.Dict[str, typing.List[str]] = {
     "owner": [
         PermissionGroup.manage_org_owner.value,

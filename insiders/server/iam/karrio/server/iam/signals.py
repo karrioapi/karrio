@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def register_all():
+    signals.post_save.connect(organization_owner_changed, sender=orgs.OrganizationOwner)
     signals.post_save.connect(organization_user_changed, sender=orgs.OrganizationUser)
     signals.post_delete.connect(context_object_deleted, sender=orgs.OrganizationUser)
     signals.post_delete.connect(context_object_deleted, sender=user.Token)
@@ -28,3 +29,13 @@ def context_object_deleted(sender, instance, *args, **kwargs):
 def organization_user_changed(sender, instance, created, *args, **kwargs):
     # sync organization user permissions based on roles updates
     permissions.sync_permissions(instance)
+
+
+@utils.disable_for_loaddata
+def organization_owner_changed(sender, instance, created, *args, **kwargs):
+    # sync organization user permissions based on roles updates
+    roles = getattr(instance.organization_user, "roles", [])
+
+    if "admin" not in roles:
+        instance.organization_user.roles += ["admin"]
+        instance.organization_user.save()

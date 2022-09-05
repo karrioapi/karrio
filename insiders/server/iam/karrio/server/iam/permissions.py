@@ -1,8 +1,11 @@
+import functools
+import operator
 import typing
 import logging
 from django.db import models
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes import models as contenttypes
+from rest_framework import exceptions
 
 import karrio.server.core.utils as utils
 import karrio.server.user.models as user
@@ -154,3 +157,35 @@ def sync_permissions(org_user):
     )
     permission.groups.set(groups)
     permission.save()
+
+
+def check_context_permissions(context=None, keys: typing.List[str] = [], **kwargs):
+    groups = [group for group, _ in serializers.PERMISSION_GROUPS if group in keys]
+    print(
+        keys,
+        groups,
+        getattr(context, "org", "No org"),
+        getattr(context, "user", "No user"),
+        getattr(context, "token", "No token"),
+    )
+
+    if any(groups):
+        user = context.org.organization_users.filter(user__id=context.user.id).first()
+        token = getattr(context, "token", None)
+        group_filters = functools.reduce(
+            operator.and_, (models.Q(groups__name=x) for x in groups)
+        )
+        token_permission = iam.ContextPermission.objects.filter(
+            models.Q(object_pk=getattr(token, "pk", None))
+        )
+
+        if token_permission.exists():
+            permission_groups = token_permission.filter(group_filters)
+        else:
+            permission_groups = iam.ContextPermission.objects.filter(
+                models.Q(object_pk=user.pk) & group_filters
+            )
+
+        if not permission_groups.exists():
+            raise exceptions.PermissionDenied()
+
