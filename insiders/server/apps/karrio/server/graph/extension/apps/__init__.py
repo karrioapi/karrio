@@ -28,14 +28,17 @@ class Query:
         default_value=[],
     )
 
+    @utils.authorization_required(["APPS_MANAGEMENT"])
     @utils.authentication_required
     def resolve_app(self, info, **kwargs):
         return models.App.access_by(info.context).filter(**kwargs).first()
 
+    @utils.authorization_required(["APPS_MANAGEMENT"])
     @utils.authentication_required
     def resolve_private_apps(self, info, **kwargs):
         return models.App.access_by(info.context)
 
+    @utils.authorization_required(["APPS_MANAGEMENT"])
     @utils.authentication_required
     def resolve_apps(self, info, **kwargs):
         return models.App.objects.filter(
@@ -43,6 +46,7 @@ class Query:
             is_published=True,
         )
 
+    @utils.authorization_required(["APPS_MANAGEMENT"])
     @utils.authentication_required
     def resolve_installations(self, info, **kwargs):
         return models.AppInstallation.access_by(info.context)

@@ -25,6 +25,7 @@ class Query:
         return models.OrganizationInvitation.objects.get(**kwargs)
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_organization(self, info, **kwargs):
         if any(kwargs.keys()):
             return models.Organization.objects.get(
@@ -34,6 +35,7 @@ class Query:
         return info.context.org
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_organizations(self, info, **kwargs):
         return models.Organization.objects.filter(
             users__id=info.context.user.id, is_active=True, **kwargs

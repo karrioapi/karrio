@@ -21,6 +21,7 @@ class CreateWebhook(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, **inputs):
         serializer = WebhookSerializer(
             context=info.context,
@@ -48,6 +49,7 @@ class UpdateWebhook(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         webhook = models.Webhook.access_by(info.context).get(id=id)
 

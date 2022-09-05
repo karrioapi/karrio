@@ -54,6 +54,7 @@ def create_template_mutation(template: str, update: bool = False):
 
         @classmethod
         @utils.authentication_required
+        @utils.authorization_required()
         def mutate_and_get_payload(cls, root, info, **input):
             data = input.copy()
             instance = (
@@ -100,6 +101,7 @@ class SystemCarrierMutation(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
@@ -126,6 +128,7 @@ class TokenMutation(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(
         cls, root, info, refresh: bool = None, password: str = None
     ):
@@ -186,6 +189,7 @@ class RequestEmailChange(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(
         cls, root, info, email, password, redirect_url, **kwargs
@@ -221,6 +225,7 @@ class ConfirmEmailChange(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, token, **kwargs):
         validated_token = ConfirmationToken(token)
         user = info.context.user
@@ -273,6 +278,7 @@ class ChangePassword(DjangoFormMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def perform_mutate(cls, form, info):
         return super().perform_mutate(form, info)
 
@@ -329,6 +335,7 @@ class EnableMultiFactor(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
@@ -361,6 +368,7 @@ class ConfirmMultiFactor(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, token, **kwargs):
         try:
             # Retrieve a default device or create a new one.
@@ -396,6 +404,7 @@ class DisableMultiFactor(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
@@ -424,6 +433,7 @@ class MutateMetadata(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(
         cls,
         root,
@@ -461,6 +471,7 @@ class PartialShipmentUpdate(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         shipment = manager.Shipment.access_by(info.context).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
@@ -488,6 +499,7 @@ class _CreateCarrierConnection:
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, **input):
         data = input.copy()
 
@@ -517,6 +529,7 @@ class _UpdateCarrierConnection:
 
     @classmethod
     @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, id: str, **data):
         instance = providers.Carrier.access_by(info.context).get(id=id)
         serializer = serializers.PartialConnectionModelSerializer(

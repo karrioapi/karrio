@@ -25,18 +25,22 @@ class Query:
     )
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_webhook(self, info, id: str, **kwargs):
         return models.Webhook.access_by(info.context).filter(id=id).first()
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_webhooks(self, info, **kwargs):
         return models.Webhook.access_by(info.context)
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_event(self, info, id: str, **kwargs):
         return models.Event.access_by(info.context).filter(id=id).first()
 
     @utils.authentication_required
+    @utils.authorization_required()
     def resolve_events(self, info, **kwargs):
         return models.Event.access_by(info.context)
 

@@ -123,6 +123,7 @@ def create_delete_mutation(
 
         @classmethod
         @authentication_required
+        @authorization_required()
         def mutate_and_get_payload(cls, root, info, id: str = None):
             queryset = (
                 model.access_by(info.context)

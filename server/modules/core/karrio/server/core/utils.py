@@ -73,6 +73,15 @@ def tenant_wrapper(func):
     return wrapper
 
 
+def decorator(dec):
+    def layer(*args, **kwargs):
+        def repl(func):
+            return dec(func, *args, **kwargs)
+        return repl
+    return layer
+
+
+
 def post_processing(methods: List[str] = None):
     def class_wrapper(klass):
         setattr(
