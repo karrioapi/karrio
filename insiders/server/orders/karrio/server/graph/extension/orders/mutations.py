@@ -28,6 +28,7 @@ class CreateOrder(utils.ClientMutation):
 
     @classmethod
     @utils.login_required
+    @utils.permisions_required(["ORDERS_MANAGEMENT"])
     def mutate_and_get_payload(cls, root, info, **inputs):
         count = models.Order.access_by(info.context).filter(source="manual").count() + 1
         order_id = "1" + str(count).zfill(5)  # TODO: make this grow beyond 2 million
@@ -64,6 +65,7 @@ class PartialOrderUpdate(utils.ClientMutation):
 
     @classmethod
     @utils.login_required
+    @utils.permisions_required(["ORDERS_MANAGEMENT"])
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         order = models.Order.access_by(info.context).get(id=id)
         can_mutate_order(order, update=True)
