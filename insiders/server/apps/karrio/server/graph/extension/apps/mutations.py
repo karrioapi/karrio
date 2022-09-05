@@ -24,7 +24,7 @@ class CreateApp(utils.ClientMutation):
         metadata = generic.GenericScalar()
 
     @classmethod
-    @utils.authorization_required(["APPS_MANAGEMENT"])
+    @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
     @utils.authentication_required
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info, **data):
@@ -65,7 +65,7 @@ class UpdateApp(utils.ClientMutation):
         metadata = generic.GenericScalar()
 
     @classmethod
-    @utils.authorization_required(["APPS_MANAGEMENT"])
+    @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **data):
         instance = models.App.access_by(info.context).get(id=id)
@@ -96,7 +96,7 @@ class DeleteApp(utils.ClientMutation):
         id = graphene.String(required=True)
 
     @classmethod
-    @utils.authorization_required(["APPS_MANAGEMENT"])
+    @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **kwargs):
         app = models.App.access_by(info.context).get(id=id)
@@ -115,7 +115,7 @@ class InstallApp(utils.ClientMutation):
         metadata = generic.GenericScalar()
 
     @classmethod
-    @utils.authorization_required(["APPS_MANAGEMENT"])
+    @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, app_id, **inputs):
         app = models.App.objects.get(
@@ -146,7 +146,7 @@ class UninstallApp(utils.ClientMutation):
         app_id = graphene.String(required=True)
 
     @classmethod
-    @utils.authorization_required(["APPS_MANAGEMENT"])
+    @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, app_id, **inputs):
         app = models.App.objects.get(id=app_id)

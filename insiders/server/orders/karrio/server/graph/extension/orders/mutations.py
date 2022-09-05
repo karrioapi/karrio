@@ -27,7 +27,7 @@ class CreateOrder(utils.ClientMutation):
         test_mode = graphene.Boolean(required=False, default_value=False)
 
     @classmethod
-    @utils.authorization_required(["ORDERS_MANAGEMENT"])
+    @utils.authorization_required(["ORDERS_MANAGEMENT", "manage_orders"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, **inputs):
         count = models.Order.access_by(info.context).filter(source="manual").count() + 1
@@ -64,7 +64,7 @@ class PartialOrderUpdate(utils.ClientMutation):
         test_mode = graphene.Boolean(required=False)
 
     @classmethod
-    @utils.authorization_required(["ORDERS_MANAGEMENT"])
+    @utils.authorization_required(["ORDERS_MANAGEMENT", "manage_orders"])
     @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         order = models.Order.access_by(info.context).get(id=id)

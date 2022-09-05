@@ -101,7 +101,7 @@ class SystemCarrierMutation(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
-    @utils.authorization_required()
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
@@ -471,7 +471,7 @@ class PartialShipmentUpdate(utils.ClientMutation):
 
     @classmethod
     @utils.authentication_required
-    @utils.authorization_required()
+    @utils.authorization_required(["manage_shipments"])
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         shipment = manager.Shipment.access_by(info.context).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
@@ -499,7 +499,7 @@ class _CreateCarrierConnection:
 
     @classmethod
     @utils.authentication_required
-    @utils.authorization_required()
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, **input):
         data = input.copy()
 
@@ -529,7 +529,7 @@ class _UpdateCarrierConnection:
 
     @classmethod
     @utils.authentication_required
-    @utils.authorization_required()
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, id: str, **data):
         instance = providers.Carrier.access_by(info.context).get(id=id)
         serializer = serializers.PartialConnectionModelSerializer(
