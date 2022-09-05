@@ -49,12 +49,12 @@ def password_required(func):
     return wrapper
 
 
-def permisions_required(keys: typing.List[str]):
+def permisions_required(keys: typing.List[str] = None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
 
-            permissions.check_permissions(keys)
+            permissions.check_permissions(keys or [])
 
             return func(*args, **kwargs)
 
