@@ -326,7 +326,7 @@ STATICFILES_DIRS = [
 
 
 # Django REST framework
-AUTHENTICATION_METHODS = [
+AUTHENTICATION_CLASSES = [
     "karrio.server.core.authentication.TokenBasicAuthentication",
     "karrio.server.core.authentication.TokenAuthentication",
     "karrio.server.core.authentication.JWTAuthentication",
@@ -340,7 +340,7 @@ PERMISSION_CLASSES = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
-    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_METHODS,
+    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_CLASSES,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],

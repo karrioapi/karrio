@@ -23,7 +23,7 @@ from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
-AUTHENTICATION_METHODS = getattr(settings, "AUTHENTICATION_METHODS", [])
+AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
 
 
 def catch_auth_exception(func):
@@ -225,7 +225,7 @@ def authenticate_user(request):
         return request
 
     try:
-        return functools.reduce(authenticate, AUTHENTICATION_METHODS, request)
+        return functools.reduce(authenticate, AUTHENTICATION_CLASSES, request)
     except Exception:
         return request
 

@@ -7,7 +7,7 @@ NAMESPACED_URLS += [
     ("oauth/", "oauth2_provider.urls", "oauth2_provider"),
 ]
 
-AUTHENTICATION_METHODS += ["karrio.server.iam.authentication.OAuth2Authentication"]
+AUTHENTICATION_CLASSES += ["karrio.server.iam.authentication.OAuth2Authentication"]
 REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
     "karrio.server.iam.authentication.OAuth2Authentication",
     *REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
