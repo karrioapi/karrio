@@ -11,7 +11,7 @@ def model_admin(model):
         exclude = (
             ["active_users", "metadata"]
             if model.__name__ not in ["GenericSettings", "CanadaPostSettings"]
-            else ["active_users"]
+            else ["active_users", "services"]
         )
         formfield_overrides = {
             models.CharField: {
