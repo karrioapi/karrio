@@ -62,10 +62,7 @@ def shipment_request(
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    shipping_date = (
-        lib.to_date(options.shipment_date.state, "%Y-%m-%dT%H:%M:%S") or datetime.now()
-    )
-
+    shipping_date = lib.to_date(options.shipment_date.state) or datetime.now()
     product_code = provider_units.ShippingService.map(payload.service).value_or_key
     label_type = provider_units.LabelType.map(payload.label_type or "PDF").value
 
@@ -105,6 +102,7 @@ def shipment_request(
                     customerPreAlert=0,
                     customerZipCode=recipient.postal_code,
                     printAsSender=None,
+                    customerCivility="M",
                 ),
                 recipientValue=(
                     recipientValue(
@@ -170,7 +168,7 @@ def shipment_request(
                         qualite=None,
                         service="0",
                         shipDate=shipping_date.strftime("%Y-%m-%dT%H:%M:%S"),
-                        shipHour=shipping_date.strftime("%H"),
+                        shipHour="10",
                         skybillRank=None,
                         source=None,
                         weight=package.weight.KG,

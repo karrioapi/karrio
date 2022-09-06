@@ -112,7 +112,7 @@ ShipmentPayload = {
     ],
     "label_type": "PDF",
     "reference": "Ref. 123456",
-    "options": {"shipment_date": "2022-08-16T22:56:11"},
+    "options": {"shipment_date": "2022-08-16"},
 }
 
 ShipmentCancelPayload = {
@@ -182,6 +182,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                 <customerAdress1>72 rue Reine Elisabeth</customerAdress1>
                 <customerAdress2></customerAdress2>
                 <customerCity>Menton</customerCity>
+                <customerCivility>M</customerCivility>
                 <customerContactName>Lucas Dupont</customerContactName>
                 <customerCountry>FR</customerCountry>
                 <customerCountryName>France</customerCountryName>
@@ -211,8 +212,8 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                 <objectType>MAR</objectType>
                 <productCode>01</productCode>
                 <service>0</service>
-                <shipDate>2022-08-16T22:56:11</shipDate>
-                <shipHour>22</shipHour>
+                <shipDate>2022-08-16T00:00:00</shipDate>
+                <shipHour>10</shipHour>
                 <weight>5.</weight>
                 <weightUnit>KGM</weightUnit>
             </skybillValue>

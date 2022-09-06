@@ -10,7 +10,8 @@ class Proxy(proxy.Proxy):
     def _send_request(self, request: lib.Serializable, path: str) -> str:
         return lib.request(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
             },
