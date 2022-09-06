@@ -242,6 +242,7 @@ def to_xml(
 
 def to_element(
     *xml_texts,
+    encoding: str = "utf-8",
 ) -> utils.Element:
     """Turn a XML text into an (lxml) XML Element.
 
@@ -263,7 +264,7 @@ def to_element(
     if xml_text is None:
         raise Exception("Cannot parse empty XML text")
 
-    return utils.XP.to_xml(xml_text)
+    return utils.XP.to_xml(xml_text, encoding=encoding)
 
 
 def find_element(

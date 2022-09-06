@@ -23,7 +23,7 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response_shipment, settings)
-        if response_shipment.shipmentNumber is not None
+        if response_shipment is not None
         else None
     )
 
@@ -200,11 +200,20 @@ def shipment_request(
                             ),
                             Shipper=dpdhl.ShipperType(
                                 Name=dpdhl.NameType(
-                                    *lib.join(shipper.person_name, shipper.company_name)
+                                    *lib.join(
+                                        shipper.person_name,
+                                        shipper.company_name or "N/A",
+                                    )
                                 ),
                                 Address=dpdhl.NativeAddressTypeNew(
-                                    streetName=shipper.address_line,
-                                    streetNumber=shipper.extra.street_number,
+                                    streetName=(
+                                        shipper.street_name or shipper.address_line1
+                                    ),
+                                    streetNumber=(
+                                        shipper.street_number
+                                        or shipper.address_line2
+                                        or " "
+                                    ),
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(shipper.postal_code),
@@ -235,8 +244,14 @@ def shipment_request(
                                 Address=dpdhl.ReceiverNativeAddressType(
                                     name2=recipient.company_name,
                                     name3=None,
-                                    streetName=recipient.address_line,
-                                    streetNumber=recipient.extra.street_number,
+                                    streetName=(
+                                        recipient.street_name or recipient.address_line1
+                                    ),
+                                    streetNumber=(
+                                        recipient.street_number
+                                        or recipient.address_line2
+                                        or " "
+                                    ),
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(recipient.postal_code),

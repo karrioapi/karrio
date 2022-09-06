@@ -1020,6 +1020,22 @@ class ComputedAddress(models.Address):
     def has_tax_info(self) -> bool:
         return any([self.address.federal_tax_id, self.address.state_tax_id])
 
+    @property
+    def suite(self) -> typing.Optional[str]:
+        return getattr(self.address.extra, "suite", None)
+
+    @property
+    def street_number(self) -> typing.Optional[str]:
+        return getattr(self.address.extra, "street_number", None)
+
+    @property
+    def street_name(self) -> typing.Optional[str]:
+        return getattr(self.address.extra, "street_name", None)
+
+    @property
+    def street_type(self) -> typing.Optional[str]:
+        return getattr(self.address.extra, "street_type", None)
+
     def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
         if any([self.address.address_line1, self.address.address_line2]):
             return utils.SF.concat_str(

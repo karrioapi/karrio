@@ -122,18 +122,15 @@ class XMLPARSER:
         return parse(xml_str)
 
     @staticmethod
-    def to_xml(xml_str: str) -> Element:
+    def to_xml(xml_str: Union[str, bytes], encoding: str = "utf-8") -> Element:
         """Turn a XML text into an (lxml) XML Element.
 
         :param xml_str:
         :return: Node Element
         """
-        _formated_str = (
-            xml_str
-            if isinstance(xml_str, bytes)
-            else bytearray(xml_str, encoding="utf-8")
-        )
-        element = etree.fromstring(bytes(_formated_str))
+        text = xml_str if isinstance(xml_str, bytes) else xml_str.encode(encoding)
+        element = etree.fromstring(text, parser=etree.XMLParser(encoding=encoding))
+
         return cast(Element, element)
 
     @staticmethod

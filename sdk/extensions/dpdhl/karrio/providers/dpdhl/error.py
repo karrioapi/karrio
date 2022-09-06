@@ -13,7 +13,7 @@ def parse_error_response(
     errors: typing.List[dpdhl.Statusinformation] = [
         status
         for status in lib.find_element("Status", response, dpdhl.Statusinformation)
-        if status.statusText != "ok"
+        if (status.statusText != "ok")
     ]
 
     return [
@@ -21,8 +21,13 @@ def parse_error_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             code=error.statusCode,
-            message=error.statusMessage or error.statusText,
+            message=error.statusText,
             details={
+                **(
+                    {"message": lib.join(*error.statusMessage, join=" ")}
+                    if any(error.statusMessage)
+                    else {}
+                ),
                 **(
                     {"error": error.errorMessage}
                     if any(error.errorMessage or "")
@@ -37,4 +42,5 @@ def parse_error_response(
             },
         )
         for error in errors
+        if any(error.statusMessage)
     ]
