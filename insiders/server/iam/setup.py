@@ -15,7 +15,6 @@ setup(
     license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "django-oauth-toolkit",
         "karrio.server.core",
     ],
     classifiers=[

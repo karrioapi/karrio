@@ -28,6 +28,7 @@ setup(
         "django-cors-headers",
         "django-redis",
         "django-two-factor-auth",
+        "django-oauth-toolkit",
         "drf-api-tracking",
         "drf-yasg",
         "gunicorn",

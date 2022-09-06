@@ -2,7 +2,7 @@
     "openapi": "3.0.1",
     "info": {
         "title": "Karrio API",
-        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.6.1`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Metadata\n\nUpdateable Karrio objects\u2014including Shipment and Order\u2014have a metadata parameter.\nYou can use this parameter to attach key-value data to these Karrio objects.\n\nMetadata is useful for storing additional, structured information on an object.\nAs an example, you could store your user's full name and corresponding unique identifier\nfrom your system on a Karrio Order object.\n\nDo not store any sensitive information as metadata.\n\n",
+        "description": "\n## API Reference\n\nKarrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded\nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Karrio API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released.\nThe current version is `2022.6.1`.\n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Environments\n\nThe Karrio API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates,\nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses,\nlist shipments, and list trackers. These list API methods share a common structure, taking at least these\ntwo parameters: limit, and offset.\n\nKarrio utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order.\nThe offset parameter returns objects listed after an index.\nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"count\": 100,\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n        { ... },\n    ]\n}\n```\n\n## Metadata\n\nUpdateable Karrio objects\u2014including Shipment and Order\u2014have a metadata parameter.\nYou can use this parameter to attach key-value data to these Karrio objects.\n\nMetadata is useful for storing additional, structured information on an object.\nAs an example, you could store your user's full name and corresponding unique identifier\nfrom your system on a Karrio Order object.\n\nDo not store any sensitive information as metadata.\n\n## Authentication\n\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Basic Auth. Provide your API token as\nthe basic auth username value. You do not need to provide a password.\n\n```shell\n$ curl https://instance.api.com/v1/shipments \\\n    -u key_xxxxxx:\n# The colon prevents curl from asking for a password.\n```\n\nIf you need to authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.\n\nAll API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).\nAPI requests without authentication will also fail.\n\n",
         "contact": {
             "email": ""
         },
@@ -14,6 +14,12 @@
         }
     ],
     "security": [
+        {
+            "JWT": []
+        },
+        {
+            "Oauth2": []
+        },
         {
             "Token": []
         }
@@ -32,7 +38,63 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Metadata"
+                                    "type": "object",
+                                    "properties": {
+                                        "VERSION": {
+                                            "type": "string"
+                                        },
+                                        "APP_NAME": {
+                                            "type": "string"
+                                        },
+                                        "APP_WEBSITE": {
+                                            "type": "string"
+                                        },
+                                        "AUDIT_LOGGING": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_SIGNUP": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_MULTI_ACCOUNT": {
+                                            "type": "boolean"
+                                        },
+                                        "ORDERS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "APPS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "DOCUMENTS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "DATA_IMPORT_EXPORT": {
+                                            "type": "boolean"
+                                        },
+                                        "CUSTOM_CARRIER_DEFINITION": {
+                                            "type": "boolean"
+                                        },
+                                        "PERSIST_SDK_TRACING": {
+                                            "type": "boolean"
+                                        },
+                                        "ORG_LEVEL_BILLING": {
+                                            "type": "boolean"
+                                        },
+                                        "TENANT_LEVEL_BILLING": {
+                                            "type": "boolean"
+                                        },
+                                        "ADMIN": {
+                                            "type": "string"
+                                        },
+                                        "OPENAPI": {
+                                            "type": "string"
+                                        },
+                                        "GRAPHQL": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -633,6 +695,34 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/v1/billing/portal": {
+            "post": {
+                "tags": [
+                    "v1"
+                ],
+                "operationId": "v1_billing_portal_create",
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/v1/billing/webhook": {
+            "post": {
+                "tags": [
+                    "v1"
+                ],
+                "operationId": "v1_billing_webhook_create",
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {}
                     }
                 }
             }
@@ -3204,7 +3294,127 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/References"
+                                    "type": "object",
+                                    "properties": {
+                                        "VERSION": {
+                                            "type": "string"
+                                        },
+                                        "APP_NAME": {
+                                            "type": "string"
+                                        },
+                                        "APP_WEBSITE": {
+                                            "type": "string"
+                                        },
+                                        "AUDIT_LOGGING": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_SIGNUP": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_ADMIN_APPROVED_SIGNUP": {
+                                            "type": "boolean"
+                                        },
+                                        "ALLOW_MULTI_ACCOUNT": {
+                                            "type": "boolean"
+                                        },
+                                        "ORDERS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "APPS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "DOCUMENTS_MANAGEMENT": {
+                                            "type": "boolean"
+                                        },
+                                        "DATA_IMPORT_EXPORT": {
+                                            "type": "boolean"
+                                        },
+                                        "CUSTOM_CARRIER_DEFINITION": {
+                                            "type": "boolean"
+                                        },
+                                        "PERSIST_SDK_TRACING": {
+                                            "type": "boolean"
+                                        },
+                                        "ORG_LEVEL_BILLING": {
+                                            "type": "boolean"
+                                        },
+                                        "TENANT_LEVEL_BILLING": {
+                                            "type": "boolean"
+                                        },
+                                        "ADMIN": {
+                                            "type": "string"
+                                        },
+                                        "OPENAPI": {
+                                            "type": "string"
+                                        },
+                                        "GRAPHQL": {
+                                            "type": "string"
+                                        },
+                                        "ADDRESS_AUTO_COMPLETE": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "countries": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "currencies": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "carriers": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "customs_content_type": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "incoterms": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "states": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "services": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "service_names": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "options": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "option_names": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "package_presets": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "packaging_types": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "payment_types": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "carrier_capabilities": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "service_levels": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -4503,99 +4713,6 @@
     },
     "components": {
         "schemas": {
-            "Metadata": {
-                "required": [
-                    "ADMIN",
-                    "ALLOW_ADMIN_APPROVED_SIGNUP",
-                    "ALLOW_MULTI_ACCOUNT",
-                    "ALLOW_SIGNUP",
-                    "APPS_MANAGEMENT",
-                    "APP_NAME",
-                    "AUDIT_LOGGING",
-                    "CUSTOM_CARRIER_DEFINITION",
-                    "DATA_IMPORT_EXPORT",
-                    "GRAPHQL",
-                    "MULTI_ORGANIZATIONS",
-                    "OPENAPI",
-                    "ORDERS_MANAGEMENT",
-                    "PERSIST_SDK_TRACING",
-                    "VERSION"
-                ],
-                "type": "object",
-                "properties": {
-                    "VERSION": {
-                        "title": "Version",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "APP_NAME": {
-                        "title": "App name",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "APP_WEBSITE": {
-                        "title": "App website",
-                        "minLength": 1,
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "CUSTOM_CARRIER_DEFINITION": {
-                        "title": "Custom carrier definition",
-                        "type": "boolean"
-                    },
-                    "DATA_IMPORT_EXPORT": {
-                        "title": "Data import export",
-                        "type": "boolean"
-                    },
-                    "MULTI_ORGANIZATIONS": {
-                        "title": "Multi organizations",
-                        "type": "boolean"
-                    },
-                    "ALLOW_MULTI_ACCOUNT": {
-                        "title": "Allow multi account",
-                        "type": "boolean"
-                    },
-                    "ORDERS_MANAGEMENT": {
-                        "title": "Orders management",
-                        "type": "boolean"
-                    },
-                    "APPS_MANAGEMENT": {
-                        "title": "Apps management",
-                        "type": "boolean"
-                    },
-                    "AUDIT_LOGGING": {
-                        "title": "Audit logging",
-                        "type": "boolean"
-                    },
-                    "ALLOW_SIGNUP": {
-                        "title": "Allow signup",
-                        "type": "boolean"
-                    },
-                    "ALLOW_ADMIN_APPROVED_SIGNUP": {
-                        "title": "Allow admin approved signup",
-                        "type": "boolean"
-                    },
-                    "PERSIST_SDK_TRACING": {
-                        "title": "Persist sdk tracing",
-                        "type": "boolean"
-                    },
-                    "ADMIN": {
-                        "title": "Admin",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "OPENAPI": {
-                        "title": "Openapi",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "GRAPHQL": {
-                        "title": "Graphql",
-                        "minLength": 1,
-                        "type": "string"
-                    }
-                }
-            },
             "TokenObtainPair": {
                 "required": [
                     "email",
@@ -7433,6 +7550,14 @@
                         "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
                         "nullable": true
                     },
+                    "freight_class": {
+                        "title": "Freight class",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The parcel's freight class for pallet and freight shipments.",
+                        "nullable": true
+                    },
                     "options": {
                         "title": "Options",
                         "type": "object",
@@ -8268,6 +8393,14 @@
                         "minLength": 1,
                         "type": "string",
                         "description": "The parcel reference number. (can be used as tracking number for custom carriers)",
+                        "nullable": true
+                    },
+                    "freight_class": {
+                        "title": "Freight class",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The parcel's freight class for pallet and freight shipments.",
                         "nullable": true
                     },
                     "options": {
@@ -9315,195 +9448,6 @@
                     }
                 }
             },
-            "References": {
-                "required": [
-                    "ADDRESS_AUTO_COMPLETE",
-                    "ADMIN",
-                    "ALLOW_ADMIN_APPROVED_SIGNUP",
-                    "ALLOW_MULTI_ACCOUNT",
-                    "ALLOW_SIGNUP",
-                    "APPS_MANAGEMENT",
-                    "APP_NAME",
-                    "APP_WEBSITE",
-                    "AUDIT_LOGGING",
-                    "CUSTOM_CARRIER_DEFINITION",
-                    "DATA_IMPORT_EXPORT",
-                    "GRAPHQL",
-                    "MULTI_ORGANIZATIONS",
-                    "OPENAPI",
-                    "ORDERS_MANAGEMENT",
-                    "PERSIST_SDK_TRACING",
-                    "VERSION",
-                    "carrier_capabilities",
-                    "carriers",
-                    "countries",
-                    "currencies",
-                    "customs_content_type",
-                    "incoterms",
-                    "option_names",
-                    "options",
-                    "package_presets",
-                    "packaging_types",
-                    "payment_types",
-                    "service_levels",
-                    "service_names",
-                    "services",
-                    "states"
-                ],
-                "type": "object",
-                "properties": {
-                    "VERSION": {
-                        "title": "Version",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "APP_NAME": {
-                        "title": "App name",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "APP_WEBSITE": {
-                        "title": "App website",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "CUSTOM_CARRIER_DEFINITION": {
-                        "title": "Custom carrier definition",
-                        "type": "boolean"
-                    },
-                    "DATA_IMPORT_EXPORT": {
-                        "title": "Data import export",
-                        "type": "boolean"
-                    },
-                    "MULTI_ORGANIZATIONS": {
-                        "title": "Multi organizations",
-                        "type": "boolean"
-                    },
-                    "ALLOW_MULTI_ACCOUNT": {
-                        "title": "Allow multi account",
-                        "type": "boolean"
-                    },
-                    "ORDERS_MANAGEMENT": {
-                        "title": "Orders management",
-                        "type": "boolean"
-                    },
-                    "APPS_MANAGEMENT": {
-                        "title": "Apps management",
-                        "type": "boolean"
-                    },
-                    "AUDIT_LOGGING": {
-                        "title": "Audit logging",
-                        "type": "boolean"
-                    },
-                    "ALLOW_SIGNUP": {
-                        "title": "Allow signup",
-                        "type": "boolean"
-                    },
-                    "ALLOW_ADMIN_APPROVED_SIGNUP": {
-                        "title": "Allow admin approved signup",
-                        "type": "boolean"
-                    },
-                    "PERSIST_SDK_TRACING": {
-                        "title": "Persist sdk tracing",
-                        "type": "boolean"
-                    },
-                    "ADMIN": {
-                        "title": "Admin",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "OPENAPI": {
-                        "title": "Openapi",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "GRAPHQL": {
-                        "title": "Graphql",
-                        "minLength": 1,
-                        "type": "string"
-                    },
-                    "ADDRESS_AUTO_COMPLETE": {
-                        "title": "Address auto complete",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "countries": {
-                        "title": "Countries",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "currencies": {
-                        "title": "Currencies",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "carriers": {
-                        "title": "Carriers",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "customs_content_type": {
-                        "title": "Customs content type",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "incoterms": {
-                        "title": "Incoterms",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "states": {
-                        "title": "States",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "services": {
-                        "title": "Services",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "service_names": {
-                        "title": "Service names",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "options": {
-                        "title": "Options",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "option_names": {
-                        "title": "Option names",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "package_presets": {
-                        "title": "Package presets",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "packaging_types": {
-                        "title": "Packaging types",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "payment_types": {
-                        "title": "Payment types",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "carrier_capabilities": {
-                        "title": "Carrier capabilities",
-                        "type": "object",
-                        "properties": {}
-                    },
-                    "service_levels": {
-                        "title": "Service levels",
-                        "type": "object",
-                        "properties": {}
-                    }
-                }
-            },
             "ShipmentList": {
                 "required": [
                     "results"
@@ -9967,9 +9911,20 @@
         "securitySchemes": {
             "Token": {
                 "type": "apiKey",
-                "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret\nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Basic Auth. Provide your API token as\nthe basic auth username value. You do not need to provide a password.\n\n```shell\n$ curl https://instance.api.com/v1/shipments \\\n  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:\n# The colon prevents curl from asking for a password.\n```\n\nIf you need to authenticate via bearer auth (e.g., for a cross-origin request),\nuse `-H \"Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e\"`\ninstead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.\n\nAll API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).\nAPI requests without authentication will also fail.\n",
+                "description": "\n`Authorization: Token key_xxxxxxxx`\n",
                 "name": "Authorization",
                 "in": "header"
+            },
+            "JWT": {
+                "type": "apiKey",
+                "description": "\n`Authorization: Bearer xxx.xxx.xxx`\n",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "Oauth2": {
+                "type": "oauth2",
+                "description": "\n`Authorization: Bearer xxxxxxxx`\n",
+                "flows": {}
             }
         }
     }

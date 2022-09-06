@@ -14,6 +14,7 @@ from karrio.server.core.authentication import (
     TokenAuthentication,
     JWTAuthentication,
     TokenBasicAuthentication,
+    OAuth2Authentication,
 )
 from karrio.server.core.models import APILogIndex
 
@@ -74,6 +75,7 @@ class BaseView:
     authentication_classes = [
         TokenBasicAuthentication,
         TokenAuthentication,
+        OAuth2Authentication,
         JWTAuthentication,
     ]
 

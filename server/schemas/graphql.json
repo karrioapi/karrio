@@ -5917,6 +5917,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "freight_class",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "options",
               "type": {
                 "kind": "SCALAR",
@@ -14121,7 +14133,7 @@
           "possibleTypes": null
         },
         {
-          "description": null,
+          "description": "An enumeration.",
           "enumValues": [
             {
               "deprecationReason": null,
@@ -14133,13 +14145,13 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "admin"
+              "name": "developer"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "owner"
+              "name": "admin"
             }
           ],
           "fields": null,
@@ -18312,8 +18324,8 @@
                     "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
+                      "kind": "ENUM",
+                      "name": "OrganizationUserRole",
                       "ofType": null
                     }
                   }
@@ -38726,6 +38738,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "freight_class",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "options",
               "type": {
                 "kind": "SCALAR",
@@ -38998,6 +39020,16 @@
               "defaultValue": null,
               "description": null,
               "name": "reference_number",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "freight_class",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -39554,6 +39586,16 @@
               "defaultValue": null,
               "description": null,
               "name": "reference_number",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "freight_class",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

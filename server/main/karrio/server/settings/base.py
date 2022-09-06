@@ -186,6 +186,7 @@ OPEN_API_PATH = "openapi/"
 
 NAMESPACED_URLS = [
     ("api/", "rest_framework.urls", "rest_framework"),
+    ("oauth/", "oauth2_provider.urls", "oauth2_provider"),
 ]
 
 BASE_APPS = [
@@ -219,6 +220,7 @@ INSTALLED_APPS = [
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
+    "oauth2_provider",
     *OTP_APPS,
 ]
 
@@ -329,6 +331,7 @@ STATICFILES_DIRS = [
 AUTHENTICATION_CLASSES = [
     "karrio.server.core.authentication.TokenBasicAuthentication",
     "karrio.server.core.authentication.TokenAuthentication",
+    "karrio.server.core.authentication.OAuth2Authentication",
     "karrio.server.core.authentication.JWTAuthentication",
     "rest_framework.authentication.SessionAuthentication",
 ]
@@ -386,6 +389,20 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+# Oauth2 config
+OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
+    "OIDC_ENABLED": True,
+    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
+    "SCOPES": {
+        "read": "Reading scope",
+        "write": "Writing scope",
+        "openid": "OpenID connect",
+    },
+    "OAUTH2_VALIDATOR_CLASS": "karrio.server.core.oauth_validators.CustomOAuth2Validator",
+}
 
 # OpenAPI config
 
@@ -403,7 +420,25 @@ SWAGGER_SETTINGS = {
             "description": """
             `Authorization: Token key_xxxxxxxx`
             """,
-        }
+        },
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": """
+            `Authorization: Bearer xxx.xxx.xxx`
+            """,
+        },
+        "Oauth2": {
+            "type": "oauth2",
+            "authorizationUrl": "/oauth/authorize/",
+            "tokenUrl": "/oauth/token/",
+            "flow": "authorizationCode",
+            "description": """
+            `Authorization: Bearer xxxxxxxx`
+            """,
+            "scopes": OAUTH2_PROVIDER["SCOPES"]
+        },
     },
 }
 
