@@ -1099,7 +1099,7 @@
         },
         "/v1/documents": {
             "get": {
-                "operationId": "$$$$$$list",
+                "operationId": "$$$$$&list",
                 "summary": "List all upload records",
                 "description": "Retrieve all shipping document upload records.",
                 "parameters": [
@@ -1157,7 +1157,7 @@
                 ]
             },
             "post": {
-                "operationId": "$$$$$$upload",
+                "operationId": "$$$$$&upload",
                 "summary": "Upload documents",
                 "description": "Upload a shipping document.",
                 "parameters": [
@@ -1204,7 +1204,7 @@
         },
         "/v1/documents/{id}": {
             "get": {
-                "operationId": "$$$$$$retrieve",
+                "operationId": "$$$$$&retrieve",
                 "summary": "Retrieve an upload record",
                 "description": "Retrieve a shipping document upload record.",
                 "parameters": [],

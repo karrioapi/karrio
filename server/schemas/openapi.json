@@ -1358,7 +1358,7 @@
                 ],
                 "summary": "List all upload records",
                 "description": "Retrieve all shipping document upload records.",
-                "operationId": "$$$$$$list",
+                "operationId": "$$$$$&list",
                 "parameters": [
                     {
                         "name": "date_after",
@@ -1430,7 +1430,7 @@
                 ],
                 "summary": "Upload documents",
                 "description": "Upload a shipping document.",
-                "operationId": "$$$$$$upload",
+                "operationId": "$$$$$&upload",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1493,7 +1493,7 @@
                 ],
                 "summary": "Retrieve an upload record",
                 "description": "Retrieve a shipping document upload record.",
-                "operationId": "$$$$$$retrieve",
+                "operationId": "$$$$$&retrieve",
                 "parameters": [
                     {
                         "name": "id",

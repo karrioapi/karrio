@@ -24,7 +24,7 @@ from karrio.server.manager.serializers import (
 import karrio.server.manager.models as models
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$$&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DocumentUploadRecords = PaginatedResult("DocumentUploadRecords", DocumentUploadRecord)
 
 
