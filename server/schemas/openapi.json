@@ -61,6 +61,9 @@
                                         "ALLOW_MULTI_ACCOUNT": {
                                             "type": "boolean"
                                         },
+                                        "MULTI_ORGANIZATIONS": {
+                                            "type": "boolean"
+                                        },
                                         "ORDERS_MANAGEMENT": {
                                             "type": "boolean"
                                         },
@@ -3315,6 +3318,9 @@
                                             "type": "boolean"
                                         },
                                         "ALLOW_MULTI_ACCOUNT": {
+                                            "type": "boolean"
+                                        },
+                                        "MULTI_ORGANIZATIONS": {
                                             "type": "boolean"
                                         },
                                         "ORDERS_MANAGEMENT": {

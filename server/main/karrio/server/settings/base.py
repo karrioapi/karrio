@@ -162,6 +162,7 @@ FEATURE_FLAGS = [
     ("ALLOW_SIGNUP", bool),
     ("ALLOW_ADMIN_APPROVED_SIGNUP", bool),
     ("ALLOW_MULTI_ACCOUNT", bool),
+    ("MULTI_ORGANIZATIONS", bool),
     ("ORDERS_MANAGEMENT", bool),
     ("APPS_MANAGEMENT", bool),
     ("DOCUMENTS_MANAGEMENT", bool),
