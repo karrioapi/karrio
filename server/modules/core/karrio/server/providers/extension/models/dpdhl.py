@@ -14,6 +14,7 @@ class DPDHLSettings(providers.Carrier):
     password = models.CharField(max_length=100)
     signature = models.CharField(max_length=100)
     account_number = models.CharField(max_length=100, blank=True, default='')
+    services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
     def carrier_name(self) -> str:
@@ -21,9 +22,9 @@ class DPDHLSettings(providers.Carrier):
 
     @property
     def default_services(self):
-        from karrio.mappers.dpdhl import DEFAULT_SERVICES
+        from karrio.mappers.dpdhl import units
 
-        return lib.to_dict(DEFAULT_SERVICES)
+        return lib.to_dict(units.DEFAULT_SERVICES)
 
 
 SETTINGS = DPDHLSettings
