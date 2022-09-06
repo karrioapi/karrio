@@ -10,7 +10,7 @@ class USPSInternationalSettings(Carrier):
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
-    mailer_id = models.CharField(max_length=200, null=True)
+    mailer_id = models.CharField(max_length=200, null=True, blank=True)
     customer_registration_id = models.CharField(max_length=200, blank=True, null=True)
     logistics_manager_mailer_id = models.CharField(max_length=200, blank=True, null=True)
 
