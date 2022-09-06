@@ -119,14 +119,6 @@ def shipping_request(
         if packaging_type in [provider_units.FreightPackagingType.pallet.value]
         else "Package"
     )
-    freight_class = next(
-        (
-            provider_units.FreightClass[c].value
-            for c in payload.options.keys()
-            if c in provider_units.FreightClass.__members__
-        ),
-        None,
-    )
     payment_type = (
         provider_units.PaymentType[payload.payment.paid_by] if payload.payment else None
     )
@@ -229,7 +221,7 @@ def shipping_request(
                         height=provider_utils.ceil(package.height.IN),
                         weight=provider_utils.ceil(package.weight.LB),
                         type_=packaging_type,
-                        freightClass=freight_class,
+                        freightClass=package.parcel.freight_class,
                         nmfcCode=None,
                         insuranceAmount=package.options.insurance.state,
                         codAmount=package.options.cash_on_delivery.state,

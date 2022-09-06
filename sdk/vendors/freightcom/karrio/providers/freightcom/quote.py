@@ -90,15 +90,6 @@ def quote_request(
         or provider_units.ShippingService.freightcom_all
     )
 
-    freight_class = next(
-        (
-            provider_units.FreightClass[c].value
-            for c in payload.options.keys()
-            if c in provider_units.FreightClass
-        ),
-        None,
-    )
-
     request = Freightcom(
         username=settings.username,
         password=settings.password,
@@ -168,7 +159,7 @@ def quote_request(
                         height=provider_utils.ceil(package.height.IN),
                         weight=provider_utils.ceil(package.weight.LB),
                         type_=packaging_type,
-                        freightClass=freight_class,
+                        freightClass=package.parcel.freight_class,
                         nmfcCode=None,
                         insuranceAmount=package.options.insurance.state,
                         codAmount=package.options.cash_on_delivery.state,

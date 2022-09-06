@@ -205,7 +205,7 @@ def shipment_request(
                                 package.packaging_type or "your_packaging"
                             ).value
                         ),
-                        FreightClass=(package.options.freight_class.state or "60"),
+                        FreightClass=(package.parcel.freight_class or "50"),
                     )
                     for package in packages
                 ],

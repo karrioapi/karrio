@@ -127,7 +127,7 @@ RateRequest = {
                     "UnitOfMeasurement": {"Code": "IN"},
                     "Width": 5.0,
                 },
-                "FreightClass": "60",
+                "FreightClass": "50",
                 "NumberOfPieces": 0,
                 "PackagingType": {"Code": "Pallet"},
                 "Weight": {"UnitOfMeasurement": {"Code": "LBS"}, "Value": 150.0},

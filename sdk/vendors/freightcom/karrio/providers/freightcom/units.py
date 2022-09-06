@@ -146,24 +146,3 @@ def shipping_options_initializer(
         options.update(package_options.content)
 
     return units.ShippingOptions(options, ShippingOption)
-
-
-class FreightClass(Enum):
-    freightcom_freight_class_50 = 50
-    freightcom_freight_class_55 = 55
-    freightcom_freight_class_60 = 60
-    freightcom_freight_class_65 = 65
-    freightcom_freight_class_70 = 70
-    freightcom_freight_class_77 = 77
-    freightcom_freight_class_77_5 = 77.5
-    freightcom_freight_class_85 = 85
-    freightcom_freight_class_92_5 = 92.5
-    freightcom_freight_class_100 = 100
-    freightcom_freight_class_110 = 110
-    freightcom_freight_class_125 = 125
-    freightcom_freight_class_150 = 150
-    freightcom_freight_class_175 = 175
-    freightcom_freight_class_200 = 200
-    freightcom_freight_class_250 = 250
-    freightcom_freight_class_300 = 300
-    freightcom_freight_class_400 = 400

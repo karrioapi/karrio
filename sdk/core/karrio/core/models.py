@@ -77,6 +77,7 @@ class Parcel:
 
     items: List[Commodity] = JList[Commodity]
     reference_number: str = None
+    freight_class: str = None
     options: Dict = {}
 
 

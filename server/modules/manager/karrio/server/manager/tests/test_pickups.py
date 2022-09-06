@@ -214,6 +214,7 @@ PICKUP_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
+            "freight_class": None,
             "reference_number": ANY,
             "options": {},
         }
@@ -271,6 +272,7 @@ PICKUP_UPDATE_RESPONSE = {
             "items": [],
             "weight_unit": "KG",
             "dimension_unit": None,
+            "freight_class": None,
             "reference_number": ANY,
             "options": {},
         }
@@ -326,6 +328,7 @@ PICKUP_CANCEL_RESPONSE = {
             "weight_unit": "KG",
             "dimension_unit": None,
             "items": [],
+            "freight_class": None,
             "reference_number": "0000000002",
             "options": {},
             "object_type": "parcel",

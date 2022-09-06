@@ -219,6 +219,7 @@ SHIPPING_RESPONSE = {
             "weight_unit": "KG",
             "dimension_unit": "CM",
             "items": [],
+            "freight_class": None,
             "reference_number": "123456789012",
             "object_type": "parcel",
             "options": {},

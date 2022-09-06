@@ -177,6 +177,7 @@ SHIPMENT_SAMPLE = {
                         "object_type": "commodity",
                     }
                 ],
+                "freight_class": None,
                 "reference_number": "0000000135",
                 "object_type": "parcel",
             },
@@ -534,6 +535,7 @@ SHIPMENT_SAMPLE = {
                                         "object_type": "commodity",
                                     },
                                 ],
+                                "freight_class": None,
                                 "reference_number": "0000000136",
                                 "object_type": "parcel",
                             }
@@ -694,6 +696,7 @@ SHIPMENT_SAMPLE = {
                                         "object_type": "commodity",
                                     }
                                 ],
+                                "freight_class": None,
                                 "reference_number": "0000000135",
                                 "object_type": "parcel",
                             },
@@ -1034,6 +1037,7 @@ SHIPMENT_SAMPLE = {
                                         "object_type": "commodity",
                                     },
                                 ],
+                                "freight_class": None,
                                 "reference_number": "0000000136",
                                 "object_type": "parcel",
                             }
@@ -1194,6 +1198,7 @@ SHIPMENT_SAMPLE = {
                                         "object_type": "commodity",
                                     }
                                 ],
+                                "freight_class": None,
                                 "reference_number": "0000000135",
                                 "object_type": "parcel",
                             },
@@ -1546,6 +1551,7 @@ SHIPMENT_SAMPLE = {
                                     "object_type": "commodity",
                                 },
                             ],
+                            "freight_class": None,
                             "reference_number": "0000000136",
                             "object_type": "parcel",
                         }
@@ -1706,6 +1712,7 @@ SHIPMENT_SAMPLE = {
                                     "object_type": "commodity",
                                 }
                             ],
+                            "freight_class": None,
                             "reference_number": "0000000135",
                             "object_type": "parcel",
                         },
@@ -2020,6 +2027,7 @@ SHIPMENT_SAMPLE = {
                                     "object_type": "commodity",
                                 },
                             ],
+                            "freight_class": None,
                             "reference_number": "0000000136",
                             "object_type": "parcel",
                         }
@@ -2180,6 +2188,7 @@ SHIPMENT_SAMPLE = {
                                     "object_type": "commodity",
                                 }
                             ],
+                            "freight_class": None,
                             "reference_number": "0000000135",
                             "object_type": "parcel",
                         },

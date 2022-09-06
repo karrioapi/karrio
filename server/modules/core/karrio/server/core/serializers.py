@@ -369,6 +369,12 @@ class ParcelData(validators.PresetSerializer):
         max_length=100,
         help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
     )
+    freight_class = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=6,
+        help_text="The parcel's freight class for pallet and freight shipments.",
+    )
     options = serializers.PlainDictField(
         required=False,
         default={},

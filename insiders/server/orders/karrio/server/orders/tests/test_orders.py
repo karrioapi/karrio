@@ -340,6 +340,7 @@ SHIPMENT_DATA = {
             "is_document": False,
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "freight_class": None,
             "reference_number": None,
             "items": [
                 {
@@ -500,6 +501,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                             "object_type": "commodity",
                         }
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},
@@ -719,6 +721,7 @@ FULFILLED_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         },
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},
@@ -923,6 +926,7 @@ PARTIAL_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         }
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},
