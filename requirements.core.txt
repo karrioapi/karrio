@@ -1,5 +1,5 @@
 -f https://github.com/karrioapi/purplship-packages/releases
-Django<=3.2.11
+Django<=3.2.15
 
 purplship
 purplship.server
