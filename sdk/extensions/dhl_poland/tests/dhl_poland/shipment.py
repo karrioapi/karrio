@@ -36,7 +36,7 @@ class TestDHLPolandShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -50,7 +50,7 @@ class TestDHLPolandShipment(unittest.TestCase):
             )
 
     def test_void_shipment(self):
-        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
 
@@ -64,7 +64,7 @@ class TestDHLPolandShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -73,7 +73,7 @@ class TestDHLPolandShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_void_shipment_response(self):
-        with patch("karrio.mappers.dhl_poland.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
                 karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()

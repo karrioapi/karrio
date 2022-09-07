@@ -368,7 +368,7 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -391,7 +391,10 @@ SIMPLE_JWT = {
 }
 
 # Oauth2 config
-OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
+OIDC_RSA_PRIVATE_KEY = (
+    config("OIDC_RSA_PRIVATE_KEY", default="")
+    .replace("\\n", "\n")
+)
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
