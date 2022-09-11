@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 @utils.skip_on_loadata
 @utils.async_wrapper
-def setup_groups():
+@utils.tenant_aware
+def setup_groups(**_):
     """This function create all standard group permissions if they don't exsist."""
 
     # manage_apps
@@ -111,7 +112,8 @@ def setup_groups():
 
 @utils.skip_on_loadata
 @utils.async_wrapper
-def apply_for_org_users():
+@utils.tenant_aware
+def apply_for_org_users(**_):
     """This function will create context permissions for all organization users based on their roles."""
     org_user_permissions = (
         iam.ContextPermission.objects

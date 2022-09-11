@@ -6,6 +6,7 @@ from string import Template
 from concurrent import futures
 from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
+import typing
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 import django_email_verification.confirm as confirm
@@ -50,9 +51,12 @@ def run_async(callable: Callable[[], Any]) -> futures.Future:
 
 def async_wrapper(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, run_synchronous: bool = False, **kwargs):
         def _run():
             func(*args, **kwargs)
+
+        if run_synchronous:
+            return _run()
 
         return run_async(_run)
 
@@ -65,7 +69,9 @@ def tenant_aware(func):
         if settings.MULTI_TENANTS:
             import django_tenants.utils as tenant_utils
 
-            with tenant_utils.schema_context(kwargs.get("schema")):
+            schema = kwargs.get("schema") or "public"
+
+            with tenant_utils.schema_context(schema):
                 return func(*args, **kwargs)
         else:
             return func(*args, **kwargs)
@@ -73,12 +79,70 @@ def tenant_aware(func):
     return wrapper
 
 
-def decorator(dec):
-    def layer(*args, **kwargs):
-        def repl(func):
-            return dec(func, *args, **kwargs)
-        return repl
-    return layer
+def run_on_all_tenants(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if settings.MULTI_TENANTS:
+            import django_tenants.utils as tenant_utils
+
+            tenants = tenant_utils.get_tenant_model().objects.exclude(
+                schema_name="public"
+            )
+
+            for tenant in tenants:
+                with tenant_utils.tenant_context(tenant):
+                    return func(*args, **kwargs, schema=tenant.schema_name)
+        else:
+            return func(*args, **kwargs)
+
+    return wrapper
+
+
+def disable_for_loaddata(signal_handler):
+    @functools.wraps(signal_handler)
+    def wrapper(*args, **kwargs):
+        if is_system_loading_data():
+            return
+
+        signal_handler(*args, **kwargs)
+
+    return wrapper
+
+
+def skip_on_loadata(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if ("loaddata" in sys.argv):
+            return
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def skip_on_commands(commands: typing.List[str] = ["loaddata", "migrate", "makemigrations"]):
+    def _decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if any(cmd in sys.argv for cmd in commands):
+                return
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return _decorator
+
+
+def email_setup_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not settings.EMAIL_ENABLED:
+            raise Exception(_("The email service is not configured."))
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 
@@ -184,39 +248,6 @@ def is_system_loading_data() -> bool:
         pass
 
     return False
-
-
-def disable_for_loaddata(signal_handler):
-    @functools.wraps(signal_handler)
-    def wrapper(*args, **kwargs):
-        if is_system_loading_data():
-            return
-
-        signal_handler(*args, **kwargs)
-
-    return wrapper
-
-
-def skip_on_loadata(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        if ("loaddata" in sys.argv):
-            return
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def email_setup_required(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        if not settings.EMAIL_ENABLED:
-            raise Exception(_("The email service is not configured."))
-
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 @email_setup_required

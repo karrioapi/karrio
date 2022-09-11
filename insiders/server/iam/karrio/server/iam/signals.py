@@ -1,4 +1,6 @@
 import logging
+from django.conf import settings
+from django.dispatch import receiver
 from django.db.models import signals
 
 import karrio.server.core.utils as utils
@@ -39,3 +41,18 @@ def organization_owner_changed(sender, instance, created, *args, **kwargs):
     if "admin" not in roles:
         instance.organization_user.roles += ["admin"]
         instance.organization_user.save()
+
+if settings.MULTI_TENANTS:
+    from django_tenants.signals import post_schema_sync
+    from django_tenants.models import TenantMixin
+
+    @receiver(post_schema_sync, sender=TenantMixin)
+    def check_post_schema_sync(**kwargs):
+        client = kwargs['tenant']
+
+        permissions.setup_groups(
+            run_synchronous=True,
+            schema=client.schema_name,
+        )
+
+        logger.debug(f"default group permissions created for tenant {client.id}")
