@@ -59,7 +59,7 @@ def async_wrapper(func):
     return wrapper
 
 
-def tenant_wrapper(func):
+def tenant_aware(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if settings.MULTI_TENANTS:

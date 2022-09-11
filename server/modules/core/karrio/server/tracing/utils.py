@@ -17,7 +17,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
     tracer = tracer or getattr(context, "tracer", Tracer())
 
     # Process Karrio SDK tracing records to persist records of interest.
-    @utils.tenant_wrapper
+    @utils.tenant_aware
     def persist_records(**kwarg):
         if len(tracer.records) == 0:
             return

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-@utils.tenant_wrapper
+@utils.tenant_aware
 def trigger_batch_processing(
     batch_id: str,
     data: dict,

@@ -32,7 +32,7 @@ def background_trackers_update():
 
 
 @db_task()
-@utils.tenant_wrapper
+@utils.tenant_aware
 def notify_webhooks(*args, **kwargs):
     from karrio.server.events.task_definitions.base.webhook import (
         notify_webhook_subscribers,
