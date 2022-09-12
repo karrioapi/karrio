@@ -174,10 +174,8 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                     <ShipmentDetails>
                         <product>V01PAK</product>
                         <cis:accountNumber>22222222220104</cis:accountNumber>
-                        <customerReference>Ref. 123456</customerReference>
                         <shipmentDate>2020-12-29</shipmentDate>
                         <returnShipmentAccountNumber>22222222220104</returnShipmentAccountNumber>
-                        <returnShipmentReference>Ref. 123456</returnShipmentReference>
                         <ShipmentItem>
                             <weightInKG>5</weightInKG>
                             <lengthInCM>60</lengthInCM>
