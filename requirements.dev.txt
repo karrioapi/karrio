@@ -4,7 +4,7 @@ black
 coverage
 generateDS
 mypy
-poetry
+poetry==1.1.15
 twine
 wheel
 nose

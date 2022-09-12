@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.chronopost"
-version = "2022.7"
+version = "2022.8"
 description = "Chronopost Web API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
 homepage="https://github.com/karrioapi/karrio/tree/main/schemas/carrier.chronopost"

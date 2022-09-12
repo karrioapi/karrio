@@ -1,7 +1,7 @@
 
 [tool.poetry]
 name = "karrio.chronopost"
-version = "2022.8"
+version = "2022.8.1"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - Chronopost Shipping Extension"
@@ -19,6 +19,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 "karrio" = ""
+"carrier.chronopost" = ""
 
 [tool.poetry.dev-dependencies]
 

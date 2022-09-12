@@ -1,14 +1,14 @@
 
 [tool.poetry]
 name = "karrio.ups_freight"
-version = "2022.8"
+version = "2022.8.1"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - UPS Freight Shipping Extension"
 authors = ["Karrio <hello@karrio.io>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "karrio" }]
+packages = [{ include = "karrio" }, { include = "ups_freight_lib" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
