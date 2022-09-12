@@ -7,6 +7,7 @@ import karrio.universal.mappers.rating_proxy as rating_proxy
 import karrio.mappers.dpdhl.settings as provider_settings
 
 to_element = functools.partial(lib.to_element, encoding="ISO-8859-1")
+decoder = lambda _: _.decode("ISO-8859-1")
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
@@ -25,6 +26,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Authorization": f"Basic {self.settings.basic_authentication}",
                 "SOAPAction": "urn:createShipmentOrder",
             },
+            decoder=decoder,
         )
 
         return lib.Deserializable(response, to_element)
@@ -39,6 +41,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Authorization": f"Basic {self.settings.basic_authentication}",
                 "SOAPAction": "urn:deleteShipmentOrder",
             },
+            decoder=decoder,
         )
 
         return lib.Deserializable(response, to_element)
