@@ -53,7 +53,7 @@ See the [License section](#license) for more details.
 - [x] Public Beta: Anyone can sign up over at [app.karrio.io](https://app.karrio.io)
 - [ ] Public: Production-ready
 
-We are currently in Private Beta. Watch "releases" of this repo to get notified of major updates.
+We are currently in Public Beta. Watch "releases" of this repo to get notified of major updates.
 
 ## Self-hosted installation
 
