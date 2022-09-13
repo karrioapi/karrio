@@ -75,14 +75,14 @@ karrio.dhl-express==2022.8
 karrio.dhl-poland==2022.8
 karrio.dhl-universal==2022.8
 karrio.dicom==2022.8
-karrio.dpdhl==2022.8.1
+karrio.dpdhl==2022.8.2
 karrio.eshipper==2022.8
 karrio.fedex==2022.8
 karrio.freightcom==2022.8
 karrio.purolator==2022.8
 karrio.royalmail==2022.8
 karrio.sendle==2022.8
-karrio.server==2022.8rc1
+karrio.server==2022.8
 karrio.server.core==2022.8.1
 karrio.server.events==2022.8
 karrio.server.graph==2022.8
