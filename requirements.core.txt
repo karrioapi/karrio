@@ -1,22 +1,25 @@
-Django<=3.2.14
+Django<=3.2.15
 
 karrio
-karrio.server
+karrio.server==2022.8rc1
 karrio.server.core
 karrio.server.events
 karrio.server.graph
 karrio.server.manager
 karrio.server.pricing
 karrio.server.proxy
+karrio.amazon_mws
 karrio.aramex
 karrio.australiapost
 karrio.canadapost
 karrio.canpar
+karrio.chronopost
 karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
 karrio.eshipper
 karrio.dicom
+karrio.dpdhl
 karrio.fedex
 karrio.freightcom
 karrio.purolator
@@ -25,6 +28,7 @@ karrio.sendle
 karrio.sf-express
 karrio.tnt
 karrio.ups
+karrio.ups_freight
 karrio.usps
 karrio.usps_international
 karrio.yanwen

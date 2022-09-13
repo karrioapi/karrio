@@ -1,25 +1,15 @@
 import typing
 from django.db import transaction
-from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from karrio.server.serializers import (
-    ModelSerializer,
-    save_one_to_one_data,
-    save_many_to_many_data,
-    owned_model_serializer,
-    make_fields_optional,
-    exclude_id_field,
-    Context,
-)
-import karrio.server.core.serializers as serializers
+import karrio.server.serializers as serializers
 import karrio.server.core.validators as validators
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
 
 
-class UserModelSerializer(ModelSerializer):
+class UserModelSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=False)
 
     class Meta:
@@ -47,8 +37,8 @@ class UserModelSerializer(ModelSerializer):
         return user
 
 
-@owned_model_serializer
-class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSerializer):
+@serializers.owned_model_serializer
+class AddressModelSerializer(validators.AugmentedAddressSerializer, serializers.ModelSerializer):
     country_code = serializers.CharField(required=False)
 
     class Meta:
@@ -57,8 +47,8 @@ class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSeriali
         exclude = ["created_at", "updated_at", "created_by", "validation"]
 
 
-@owned_model_serializer
-class CommodityModelSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class CommodityModelSerializer(serializers.ModelSerializer):
     weight_unit = serializers.CharField()
     value_currency = serializers.CharField(required=False)
     origin_country = serializers.CharField(required=False)
@@ -69,12 +59,12 @@ class CommodityModelSerializer(ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id", "parent"]}
 
 
-@owned_model_serializer
-class CustomsModelSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class CustomsModelSerializer(serializers.ModelSerializer):
     NESTED_FIELDS = ["commodities"]
 
     incoterm = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    commodities = make_fields_optional(CommodityModelSerializer)(
+    commodities = serializers.make_fields_optional(CommodityModelSerializer)(
         many=True, allow_null=True, required=False
     )
 
@@ -93,7 +83,7 @@ class CustomsModelSerializer(ModelSerializer):
 
         instance = super().create(data)
 
-        save_many_to_many_data(
+        serializers.save_many_to_many_data(
             "commodities",
             CommodityModelSerializer,
             instance,
@@ -116,8 +106,8 @@ class CustomsModelSerializer(ModelSerializer):
         return super().update(instance, data)
 
 
-@owned_model_serializer
-class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
+@serializers.owned_model_serializer
+class ParcelModelSerializer(validators.PresetSerializer, serializers.ModelSerializer):
     weight_unit = serializers.CharField(
         required=False, allow_null=True, allow_blank=True
     )
@@ -131,11 +121,11 @@ class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
-@owned_model_serializer
-class TemplateModelSerializer(ModelSerializer):
-    address = make_fields_optional(AddressModelSerializer)(required=False)
-    customs = make_fields_optional(CustomsModelSerializer)(required=False)
-    parcel = make_fields_optional(ParcelModelSerializer)(required=False)
+@serializers.owned_model_serializer
+class TemplateModelSerializer(serializers.ModelSerializer):
+    address = serializers.make_fields_optional(AddressModelSerializer)(required=False)
+    customs = serializers.make_fields_optional(CustomsModelSerializer)(required=False)
+    parcel = serializers.make_fields_optional(ParcelModelSerializer)(required=False)
 
     class Meta:
         model = graph.Template
@@ -146,19 +136,19 @@ class TemplateModelSerializer(ModelSerializer):
     def create(self, validated_data: dict, context: dict, **kwargs) -> graph.Template:
         data = {
             **validated_data,
-            "address": save_one_to_one_data(
+            "address": serializers.save_one_to_one_data(
                 "address",
                 AddressModelSerializer,
                 payload=validated_data,
                 context=context,
             ),
-            "customs": save_one_to_one_data(
+            "customs": serializers.save_one_to_one_data(
                 "customs",
                 CustomsModelSerializer,
                 payload=validated_data,
                 context=context,
             ),
-            "parcel": save_one_to_one_data(
+            "parcel": serializers.save_one_to_one_data(
                 "parcel", ParcelModelSerializer, payload=validated_data, context=context
             ),
         }
@@ -177,13 +167,13 @@ class TemplateModelSerializer(ModelSerializer):
             if key not in ["address", "customs", "parcel"]
         }
 
-        save_one_to_one_data(
+        serializers.save_one_to_one_data(
             "address", AddressModelSerializer, instance, payload=validated_data
         )
-        save_one_to_one_data(
+        serializers.save_one_to_one_data(
             "customs", CustomsModelSerializer, instance, payload=validated_data
         )
-        save_one_to_one_data(
+        serializers.save_one_to_one_data(
             "parcel", ParcelModelSerializer, instance, payload=validated_data
         )
 
@@ -213,8 +203,8 @@ def ensure_unique_default_related_data(
     ).filter(**query).update(is_default=False)
 
 
-@owned_model_serializer
-class ServiceLevelModelSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class ServiceLevelModelSerializer(serializers.ModelSerializer):
     dimension_unit = serializers.CharField(
         required=False, allow_null=True, allow_blank=True
     )
@@ -229,8 +219,8 @@ class ServiceLevelModelSerializer(ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
-@owned_model_serializer
-class LabelTemplateModelSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class LabelTemplateModelSerializer(serializers.ModelSerializer):
     template_type = serializers.CharField(required=False)
 
     class Meta:
@@ -260,9 +250,9 @@ def create_carrier_model_serializers(partial: bool = False):
 
         if hasattr(carrier_model, "services"):
             _service_serializer = (
-                make_fields_optional(ServiceLevelModelSerializer)
+                serializers.make_fields_optional(ServiceLevelModelSerializer)
                 if partial
-                else exclude_id_field(ServiceLevelModelSerializer)
+                else serializers.exclude_id_field(ServiceLevelModelSerializer)
             )
             _extra_fields.update(
                 services=_service_serializer(many=True, allow_null=True, required=False)
@@ -270,7 +260,7 @@ def create_carrier_model_serializers(partial: bool = False):
 
         if hasattr(carrier_model, "label_template"):
             _template_serializer = (
-                make_fields_optional(LabelTemplateModelSerializer)
+                serializers.make_fields_optional(LabelTemplateModelSerializer)
                 if partial
                 else LabelTemplateModelSerializer
             )
@@ -290,10 +280,10 @@ def create_carrier_model_serializers(partial: bool = False):
                 *_extra_exclude,
             )
 
-        return owned_model_serializer(
+        return serializers.owned_model_serializer(
             type(
                 _name,
-                (ModelSerializer,),
+                (serializers.ModelSerializer,),
                 {
                     "Meta": Meta,
                     "carrier_id": serializers.CharField(required=not partial),
@@ -311,8 +301,8 @@ def create_carrier_model_serializers(partial: bool = False):
 CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
 
 
-@owned_model_serializer
-class ConnectionModelSerializerBase(ModelSerializer):
+@serializers.owned_model_serializer
+class ConnectionModelSerializerBase(serializers.ModelSerializer):
     class Meta:
         model = providers.Carrier
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
@@ -328,7 +318,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
         ]
 
     @transaction.atomic
-    def create(self, validated_data: dict, context: Context, **kwargs):
+    def create(self, validated_data: dict, context: serializers.Context, **kwargs):
         name = next((k for k in validated_data.keys() if "settings" in k), "")
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_data = validated_data.get(name, {})
@@ -337,14 +327,14 @@ class ConnectionModelSerializerBase(ModelSerializer):
             for key, value in settings_data.items()
             if key not in ["id", "services", "label_template"]
         }
-        label_template = save_one_to_one_data(
+        label_template = serializers.save_one_to_one_data(
             "label_template",
             LabelTemplateModelSerializer,
             payload=settings_data,
             context=context,
         )
 
-        settings = save_one_to_one_data(
+        settings = serializers.save_one_to_one_data(
             name, serializer, payload={name: payload}, context=context
         )
 
@@ -352,7 +342,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
             settings, "default_services", []
         )
         if any(services):
-            save_many_to_many_data(
+            serializers.save_many_to_many_data(
                 "services",
                 ServiceLevelModelSerializer,
                 settings,
@@ -366,7 +356,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
         return getattr(settings, "carrier_ptr", None)
 
     @transaction.atomic
-    def update(self, instance, validated_data: dict, context: Context, **kwargs):
+    def update(self, instance, validated_data: dict, context: serializers.Context, **kwargs):
         name = next((k for k in validated_data.keys() if "settings" in k), "")
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
 
@@ -376,13 +366,13 @@ class ConnectionModelSerializerBase(ModelSerializer):
             if key not in ["id", "services", "label_template"]
         }
 
-        settings = save_one_to_one_data(
+        settings = serializers.save_one_to_one_data(
             name, serializer, instance, payload={name: payload}
         )
 
         template = validated_data.get(name, {}).get("label_template")
         if template:
-            settings.label_template = save_one_to_one_data(
+            settings.label_template = serializers.save_one_to_one_data(
                 "label_template",
                 LabelTemplateModelSerializer,
                 settings,
@@ -396,7 +386,7 @@ class ConnectionModelSerializerBase(ModelSerializer):
 
 ConnectionModelSerializer = type(
     "ConnectionModelSerializer",
-    (exclude_id_field(ConnectionModelSerializerBase),),
+    (serializers.exclude_id_field(ConnectionModelSerializerBase),),
     {
         _name: _serializer(required=False)
         for _name, _serializer in CARRIER_MODEL_SERIALIZERS.items()
@@ -407,7 +397,7 @@ PartialConnectionModelSerializer = type(
     "PartialConnectionModelSerializer",
     (ConnectionModelSerializerBase,),
     {
-        _name: make_fields_optional(_serializer)(required=False)
+        _name: serializers.make_fields_optional(_serializer)(required=False)
         for _name, _serializer in create_carrier_model_serializers(True).items()
     },
 )

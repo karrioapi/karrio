@@ -280,6 +280,11 @@ class Mapper(mapper.Mapper):
         self, payload: models.ShipmentCancelRequest
     ) -> lib.Serializable[str]:
         return provider.shipment_cancel_request(payload, self.settings)
+    {% endif %}{% if "shipping" in features %}
+    def create_document_upload_request(
+        self, payload: models.DocumentUploadRequest
+    ) -> lib.Serializable[str]:
+        return provider.document_upload_request(payload, self.settings)
     {% endif %}
     {% if "pickup" in features %}
     def parse_cancel_pickup_response(
@@ -316,6 +321,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
         return provider.parse_tracking_response(response.deserialize(), self.settings)
+    {% endif %}{% if "document" in features %}
+    def parse_document_upload_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+        return provider.parse_document_upload_response(response.deserialize(), self.settings)
     {% endif %}
 
 ''')
@@ -337,7 +347,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -348,7 +358,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -359,7 +369,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -370,7 +380,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -381,7 +391,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -392,7 +402,7 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -403,7 +413,18 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
-            headers=None,
+            headers={},
+        )
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "document" in features %}
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+            method="POST",
+            headers={},
         )
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
@@ -452,6 +473,10 @@ from karrio.providers.{{id}}.pickup import (
 from karrio.providers.{{id}}.tracking import (
     parse_tracking_response,
     tracking_request,
+){% endif %}{% if "document" in features %}
+from karrio.providers.{{id}}.document import (
+    parse_document_upload_response,
+    document_upload_request,
 ){% endif %}
 
 ''')
@@ -826,6 +851,59 @@ def shipment_request(
 
 ''')
 
+PROVIDER_DOCUMENT_UPLOAD_TEMPLATE = Template('''
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.{{id}}.error as error
+import karrio.providers.{{id}}.utils as provider_utils
+import karrio.providers.{{id}}.units as provider_units
+
+
+def parse_document_upload_response(
+    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+    response_messages = []  # extract carrier response errors and messages
+    response_details = None  # extract carrier response details
+
+    messages = error.parse_error_response(response_messages, settings)
+    details = _extract_details(response_details, settings)
+
+    return details, messages
+
+
+def _extract_details(
+    data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    settings: provider_utils.Settings,
+) -> models.DocumentUploadDetails:
+    documents = []  # documents ids and name extraction
+
+    return models.DocumentUploadDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_id,
+        documents=[
+            models.DocumentDetails(
+                document_id="doc_id",
+                file_name="file_name",
+            )
+            for doc in documents
+        ],
+        meta=dict(),
+    )
+
+
+def document_upload_request(
+    payload: models.DocumentUploadRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+
+    request = None  # map data to convert karrio model to {{id}} specific type
+
+    return lib.Serializable(request)
+
+''')
+
 PROVIDER_PICKUP_IMPORTS_TEMPLATE = Template('''
 from karrio.providers.{{id}}.pickup.create import parse_pickup_response, pickup_request
 from karrio.providers.{{id}}.pickup.update import parse_pickup_update_response, pickup_update_request
@@ -976,7 +1054,8 @@ from tests.{{id}}.rate import *{% endif %}{% if "pickup" in features %}
 from tests.{{id}}.pickup import *{% endif %}{% if "address" in features %}
 from tests.{{id}}.address import *{% endif %}{% if "tracking" in features %}
 from tests.{{id}}.tracking import *{% endif %}{% if "shipping" in features %}
-from tests.{{id}}.shipment import *{% endif %}
+from tests.{{id}}.shipment import *{% endif %}{% if "document" in features %}
+from tests.{{id}}.document import *{% endif %}
 ''')
 
 TEST_FIXTURE_TEMPLATE = Template('''
@@ -1216,6 +1295,93 @@ ShipmentResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
 ShipmentCancelResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
+"""
+
+''')
+
+
+
+TEST_DOCUMENT_UPLOAD_TEMPLATE = Template('''
+import unittest
+from unittest.mock import patch, ANY
+from tests.{{id}}.fixture import gateway
+
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
+
+
+class Test{{compact_name}}Tracking(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.DocumentUploadRequest = models.DocumentUploadRequest(**TrackingPayload)
+
+    def test_create_tracking_request(self):
+        request = gateway.mapper.create_document_upload_request(
+            self.DocumentUploadRequest
+        )
+
+        self.assertEqual(request.serialize(), DocumentUploadRequest)
+
+    def test_get_tracking(self):
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
+            mock.return_value = "{% if is_xml_api %}<a></a>{% else %}{}{% endif %}"
+            karrio.Document.fetch(self.create_document_upload_request).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}",
+            )
+
+    def test_parse_document_upload_response(self):
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
+            mock.return_value = DocumentUploadResponse
+            parsed_response = (
+                karrio.Document.fetch(self.DocumentUploadRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedDocumentUploadResponse
+            )
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+DocumentUploadPayload = {
+    "document_files": [
+        {
+            "doc_format": "txt",
+            "doc_name": "TestFile.txt",
+            "doc_type": "other",
+            "doc_file": "R0lGODdhIAOwBPAAAA==",
+        }
+    ],
+}
+
+ParsedDocumentUploadResponse = [
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "carrier_id",
+        "documents": [
+            {
+                "document_id": "090493e1815c194e",
+                "file_name": "TestFile.txt",
+            }
+        ],
+        "meta": {},
+    },
+    [],
+]
+
+
+DocumentUploadRequest = {% if is_xml_api %}"""<a></a>
+"""{% else %}{}{% endif %}
+
+DocumentUploadResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
 ''')

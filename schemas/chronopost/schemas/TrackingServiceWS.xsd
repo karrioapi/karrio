@@ -1,0 +1,265 @@
+<xs:schema xmlns:tns="http://cxf.tracking.soap.chronopost.fr/" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://cxf.tracking.soap.chronopost.fr/">
+<xs:element name="cancelListSkybill" type="tns:cancelListSkybill"/>
+<xs:element name="cancelListSkybillResponse" type="tns:cancelListSkybillResponse"/>
+<xs:element name="cancelSkybill" type="tns:cancelSkybill"/>
+<xs:element name="cancelSkybillResponse" type="tns:cancelSkybillResponse"/>
+<xs:element name="searchPOD" type="tns:searchPOD"/>
+<xs:element name="searchPODResponse" type="tns:searchPODResponse"/>
+<xs:element name="searchPODWithSenderRef" type="tns:searchPODWithSenderRef"/>
+<xs:element name="searchPODWithSenderRefResponse" type="tns:searchPODWithSenderRefResponse"/>
+<xs:element name="trackESD" type="tns:trackESD"/>
+<xs:element name="trackESDResponse" type="tns:trackESDResponse"/>
+<xs:element name="trackSearch" type="tns:trackSearch"/>
+<xs:element name="trackSearchResponse" type="tns:trackSearchResponse"/>
+<xs:element name="trackSkybill" type="tns:trackSkybill"/>
+<xs:element name="trackSkybillResponse" type="tns:trackSkybillResponse"/>
+<xs:element name="trackSkybillV2" type="tns:trackSkybillV2"/>
+<xs:element name="trackSkybillV2Response" type="tns:trackSkybillV2Response"/>
+<xs:element name="trackWithSenderRef" type="tns:trackWithSenderRef"/>
+<xs:element name="trackWithSenderRefResponse" type="tns:trackWithSenderRefResponse"/>
+<xs:complexType name="cancelListSkybill">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="cancelListSkybillResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultListCancelSkybill"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultListCancelSkybill">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybills" nillable="true" type="xs:string"/>
+<xs:element name="statusCode" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackESD">
+<xs:sequence>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="esdNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackESDResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultTrackSkybillV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultTrackSkybillV2">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="listEventInfoComp" type="tns:listEventInfoComps"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="listEventInfoComps">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="events" nillable="true" type="tns:eventInfoComp"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="eventInfoComp">
+<xs:complexContent>
+<xs:extension base="tns:event">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="infoCompList" nillable="true" type="tns:infoComp"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="event">
+<xs:sequence>
+<xs:element minOccurs="0" name="code" type="xs:string"/>
+<xs:element minOccurs="0" name="eventDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="eventLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="highPriority" type="xs:boolean"/>
+<xs:element minOccurs="0" name="NPC" type="xs:string"/>
+<xs:element minOccurs="0" name="officeLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="infoComp">
+<xs:sequence>
+<xs:element minOccurs="0" name="name" type="xs:string"/>
+<xs:element minOccurs="0" name="value" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSearch">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="consigneesCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="consigneesRef" type="xs:string"/>
+<xs:element minOccurs="0" name="consigneesZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="dateDeposit" type="xs:string"/>
+<xs:element minOccurs="0" name="dateEndDeposit" type="xs:string"/>
+<xs:element minOccurs="0" name="parcelState" type="xs:string"/>
+<xs:element minOccurs="0" name="sendersRef" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSearchResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultTrackSearch"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultTrackSearch">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="listInfosPOD" nillable="true" type="tns:infosPOD"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="infosPOD">
+<xs:sequence>
+<xs:element minOccurs="0" name="dateDeposit" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="depositCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="depositZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="objectType" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCity" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientRef" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCity" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperRef" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="significantEvent" type="tns:event"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="searchPOD">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+<xs:element name="pdf" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="searchPODResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultSearchPOD"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultSearchPOD">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="formatPOD" type="xs:string"/>
+<xs:element minOccurs="0" name="pod" type="xs:base64Binary"/>
+<xs:element name="podPresente" type="xs:boolean"/>
+<xs:element name="statusCode" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="cancelSkybill">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="cancelSkybillResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultCancelSkybill"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultCancelSkybill">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element name="statusCode" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackWithSenderRef">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="sendersRef" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackWithSenderRefResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultTrackWithSenderRef"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultTrackWithSenderRef">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="listParcel" nillable="true" type="tns:listEvents"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="listEvents">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="events" nillable="true" type="tns:event"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSkybillV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSkybillV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultTrackSkybillV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSkybill">
+<xs:sequence>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trackSkybillResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultTrackSkybill"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultTrackSkybill">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="listEvents" type="tns:listEvents"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="searchPODWithSenderRef">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="sendersRef" type="xs:string"/>
+<xs:element name="pdf" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="searchPODWithSenderRefResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultSearchPODWithSenderRef"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultSearchPODWithSenderRef">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="listParcelPOD" nillable="true" type="tns:parcelPOD"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="parcelPOD">
+<xs:sequence>
+<xs:element minOccurs="0" name="formatPOD" type="xs:string"/>
+<xs:element minOccurs="0" name="pod" type="xs:base64Binary"/>
+<xs:element name="podPresente" type="xs:boolean"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+<xs:element name="statusCode" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

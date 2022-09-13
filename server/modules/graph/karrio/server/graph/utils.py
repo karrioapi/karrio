@@ -8,21 +8,21 @@ from django.utils.translation import gettext_lazy as _
 from graphene_django.types import ErrorType
 
 from karrio.core.utils import Enum
-from karrio.server.conf import settings
 from karrio.server.manager.serializers.shipment import reset_related_shipment_rates
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
+import karrio.server.core.permissions as permissions
 import karrio.server.core.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 
 
-def login_required(func):
+def authentication_required(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         *__, info = args
         if info.context.user.is_anonymous:
             raise exceptions.AuthenticationFailed(
-                _("You are not authenticated"), code="login_required"
+                _("You are not authenticated"), code="authentication_required"
             )
 
         if not info.context.user.is_verified():
@@ -49,13 +49,15 @@ def password_required(func):
     return wrapper
 
 
-def api_permissions(api: str):
+def authorization_required(keys: typing.List[str] = None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-
-            if settings.get(api) is False:
-                raise exceptions.PermissionDenied()
+            *__, info = args
+            permissions.check_permissions(
+                context=info.context,
+                keys=keys or [],
+            )
 
             return func(*args, **kwargs)
 
@@ -123,7 +125,8 @@ def create_delete_mutation(
             id = graphene.String(required=True)
 
         @classmethod
-        @login_required
+        @authentication_required
+        @authorization_required()
         def mutate_and_get_payload(cls, root, info, id: str = None):
             queryset = (
                 model.access_by(info.context)

@@ -1,0 +1,121 @@
+<xs:schema xmlns:tns="http://cxf.quickcost.soap.chronopost.fr/" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://cxf.quickcost.soap.chronopost.fr/">
+<xs:complexType name="resultCalculateProducts">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="productList" nillable="true" type="tns:product"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="product">
+<xs:sequence>
+<xs:element name="amount" type="xs:float"/>
+<xs:element name="amountTTC" type="xs:float"/>
+<xs:element name="amountTVA" type="xs:float"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultQuickCost">
+<xs:sequence>
+<xs:element name="amount" type="xs:float"/>
+<xs:element name="amountTTC" type="xs:float"/>
+<xs:element name="amountTVA" type="xs:float"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="service" nillable="true" type="tns:service"/>
+<xs:element minOccurs="0" name="zone" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="service">
+<xs:sequence>
+<xs:element name="amount" type="xs:float"/>
+<xs:element name="amountTTC" type="xs:float"/>
+<xs:element name="amountTVA" type="xs:float"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="label" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultQuickCostV2">
+<xs:complexContent>
+<xs:extension base="tns:resultQuickCost">
+<xs:sequence>
+<xs:element minOccurs="0" name="assurance" type="tns:assurance"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="assurance">
+<xs:sequence>
+<xs:element name="plafond" type="xs:float"/>
+<xs:element name="taux" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultCalculateDeliveryTime">
+<xs:sequence>
+<xs:element minOccurs="0" name="date" type="xs:dateTime"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="calculateProducts" type="tns:calculateProducts"/>
+<xs:complexType name="calculateProducts">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="depCountryCode" type="xs:string"/>
+<xs:element minOccurs="0" name="depZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrCountryCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrCity" type="xs:string"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+<xs:element minOccurs="0" name="weight" type="xs:string"/>
+<xs:element minOccurs="0" name="height" type="xs:string"/>
+<xs:element minOccurs="0" name="length" type="xs:string"/>
+<xs:element minOccurs="0" name="width" type="xs:string"/>
+<xs:element minOccurs="0" name="shippingDate" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="calculateProductsResponse" type="tns:calculateProductsResponse"/>
+<xs:complexType name="calculateProductsResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultCalculateProducts"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="quickCost" type="tns:quickCost"/>
+<xs:complexType name="quickCost">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="depCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrCode" type="xs:string"/>
+<xs:element minOccurs="0" name="weight" type="xs:string"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="quickCostResponse" type="tns:quickCostResponse"/>
+<xs:complexType name="quickCostResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultQuickCostV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="calculateDeliveryTime" type="tns:calculateDeliveryTime"/>
+<xs:complexType name="calculateDeliveryTime">
+<xs:sequence>
+<xs:element minOccurs="0" name="depCountryCode" type="xs:string"/>
+<xs:element minOccurs="0" name="depZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrCountryCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="arrCity" type="xs:string"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+<xs:element minOccurs="0" name="shippingDate" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="calculateDeliveryTimeResponse" type="tns:calculateDeliveryTimeResponse"/>
+<xs:complexType name="calculateDeliveryTimeResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultCalculateDeliveryTime"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

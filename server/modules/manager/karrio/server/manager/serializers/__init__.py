@@ -38,3 +38,7 @@ from karrio.server.manager.serializers.pickup import (
     PickupUpdateData,
     PickupCancelData,
 )
+from karrio.server.manager.serializers.document import (
+    DocumentUploadSerializer,
+    can_upload_shipment_document,
+)

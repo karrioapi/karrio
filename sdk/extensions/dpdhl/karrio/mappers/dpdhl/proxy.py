@@ -1,9 +1,13 @@
 """Karrio Deutsche Post DHL client proxy."""
+import functools
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.universal.mappers.rating_proxy as rating_proxy
 import karrio.mappers.dpdhl.settings as provider_settings
+
+to_element = functools.partial(lib.to_element, encoding="ISO-8859-1")
+decoder = lambda _: _.decode("ISO-8859-1")
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
@@ -22,9 +26,10 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Authorization": f"Basic {self.settings.basic_authentication}",
                 "SOAPAction": "urn:createShipmentOrder",
             },
+            decoder=decoder,
         )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, to_element)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
@@ -36,9 +41,10 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Authorization": f"Basic {self.settings.basic_authentication}",
                 "SOAPAction": "urn:deleteShipmentOrder",
             },
+            decoder=decoder,
         )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, to_element)
 
     def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
         def _track(request):

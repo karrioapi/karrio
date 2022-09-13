@@ -33,8 +33,11 @@ def _extract_details(
     return models.DocumentUploadDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_id,
-        document_ids=[
-            status.DocumentId
+        documents=[
+            models.DocumentDetails(
+                document_id=status.DocumentId,
+                file_name=status.FileName,
+            )
             for status in document_statuses
             if status.Status == "SUCCESS"
         ],

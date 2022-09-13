@@ -5,14 +5,19 @@ from datetime import datetime
 class DATEFORMAT:
     @staticmethod
     def date(
-        date_value: Union[str, datetime] = None,
+        date_value: Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d",
         try_formats: List[str] = None,
     ) -> datetime:
         if date_value is None:
             return None
+
         if isinstance(date_value, str) and not any(date_value.split(" ")):
             return None
+
+        if isinstance(date_value, int):
+            return datetime.fromtimestamp(date_value)
+
         if isinstance(date_value, datetime):
             return date_value
 
@@ -27,7 +32,7 @@ class DATEFORMAT:
 
     @staticmethod
     def fdate(
-        date_str: str = None,
+        date_str: Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d",
         try_formats: List[str] = None,
     ):
@@ -40,7 +45,7 @@ class DATEFORMAT:
 
     @staticmethod
     def fdatetime(
-        date_str: str = None,
+        date_str: Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d %H:%M:%S",
         output_format: str = "%Y-%m-%d %H:%M:%S",
         try_formats: List[str] = None,

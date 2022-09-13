@@ -17,7 +17,6 @@ Including another URLconf
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-from django.contrib.auth.models import Group
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from constance.admin import Config
 
@@ -29,8 +28,6 @@ admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 
 try:
-    admin.site.unregister(Group)
-
     if getattr(settings, "MULTI_TENANTS", False):
         admin.site.unregister([Config])
 

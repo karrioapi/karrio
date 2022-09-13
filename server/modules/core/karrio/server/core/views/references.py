@@ -4,53 +4,49 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
-from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from django.urls import path
 from django.conf import settings
 
+from karrio.server.conf import FEATURE_FLAGS
 from karrio.server.core.router import router
-from karrio.server.core.serializers import PlainDictField, CharField, BooleanField
-from karrio.server.core import dataunits
+import karrio.server.core.dataunits as dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
+References = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "VERSION": openapi.Schema(type=openapi.TYPE_STRING),
+        "APP_NAME": openapi.Schema(type=openapi.TYPE_STRING),
+        "APP_WEBSITE": openapi.Schema(type=openapi.TYPE_STRING),
+        **{
+            flag: openapi.Schema(type=openapi.TYPE_BOOLEAN)
+            for flag in FEATURE_FLAGS
+        },
+        "ADMIN": openapi.Schema(type=openapi.TYPE_STRING),
+        "OPENAPI": openapi.Schema(type=openapi.TYPE_STRING),
+        "GRAPHQL": openapi.Schema(type=openapi.TYPE_STRING),
 
-
-class References(Serializer):
-    VERSION = CharField()
-    APP_NAME = CharField()
-    APP_WEBSITE = CharField()
-    CUSTOM_CARRIER_DEFINITION = BooleanField()
-    DATA_IMPORT_EXPORT = BooleanField()
-    MULTI_ORGANIZATIONS = BooleanField()
-    ALLOW_MULTI_ACCOUNT = BooleanField()
-    ORDERS_MANAGEMENT = BooleanField()
-    APPS_MANAGEMENT = BooleanField()
-    AUDIT_LOGGING = BooleanField()
-    ALLOW_SIGNUP = BooleanField()
-    ALLOW_ADMIN_APPROVED_SIGNUP = BooleanField()
-    PERSIST_SDK_TRACING = BooleanField()
-    ADMIN = CharField()
-    OPENAPI = CharField()
-    GRAPHQL = CharField()
-    ADDRESS_AUTO_COMPLETE = PlainDictField()
-
-    countries = PlainDictField()
-    currencies = PlainDictField()
-    carriers = PlainDictField()
-    customs_content_type = PlainDictField()
-    incoterms = PlainDictField()
-    states = PlainDictField()
-    services = PlainDictField()
-    service_names = PlainDictField()
-    options = PlainDictField()
-    option_names = PlainDictField()
-    package_presets = PlainDictField()
-    packaging_types = PlainDictField()
-    payment_types = PlainDictField()
-    carrier_capabilities = PlainDictField()
-    service_levels = PlainDictField()
+        "ADDRESS_AUTO_COMPLETE": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "countries": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "currencies": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "customs_content_type": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "incoterms": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "states": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "services": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "service_names": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "options": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "option_names": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "package_presets": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "packaging_types": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "payment_types": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "carrier_capabilities": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "service_levels": openapi.Schema(type=openapi.TYPE_OBJECT),
+    },
+)
 
 
 @swagger_auto_schema(
@@ -58,7 +54,7 @@ class References(Serializer):
     tags=["API"],
     operation_id=f"{ENDPOINT_ID}data",
     operation_summary="Data References",
-    responses={200: References()},
+    responses={200: References},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])

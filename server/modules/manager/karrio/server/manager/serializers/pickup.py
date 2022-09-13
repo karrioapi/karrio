@@ -5,6 +5,7 @@ from karrio.server.serializers import (
     owned_model_serializer,
     save_one_to_one_data,
     Context,
+    PlainDictField,
 )
 from karrio.server.core.gateway import Pickups, Carriers
 from karrio.server.core.datatypes import Confirmation
@@ -14,8 +15,6 @@ from karrio.server.core.serializers import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
-    StringListField,
-    PlainDictField,
 )
 from karrio.server.manager.serializers import AddressSerializer
 import karrio.server.manager.models as models
@@ -70,7 +69,7 @@ class PickupSerializer(PickupRequest):
     address = AddressData(
         required=False, validators=[address_exists], help_text="The pickup address"
     )
-    tracking_numbers = StringListField(
+    tracking_numbers = serializers.StringListField(
         required=True,
         validators=[shipment_exists],
         help_text="The list of shipments to be picked up",
@@ -204,7 +203,7 @@ class PickupUpdateData(PickupSerializer):
     eg: Behind the entrance door.
     """,
     )
-    tracking_numbers = StringListField(
+    tracking_numbers = serializers.StringListField(
         required=False,
         validators=[shipment_exists],
         help_text="The list of shipments to be picked up",

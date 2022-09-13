@@ -22,7 +22,7 @@ class TestDHLShipment(unittest.TestCase):
             "",
             request.serialize(),
         )
-        print(serialized_request)
+
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
     @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")

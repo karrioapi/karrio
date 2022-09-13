@@ -23,7 +23,7 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response_shipment, settings)
-        if response_shipment.shipmentNumber is not None
+        if getattr(response_shipment, "shipmentNumber", None) is not None
         else None
     )
 
@@ -79,9 +79,7 @@ def shipment_request(
                             ShipmentDetails=dpdhl.ShipmentDetailsTypeType(
                                 product=service,
                                 accountNumber=settings.account_number,
-                                customerReference=(
-                                    payload.reference or getattr(payload, "id", None)
-                                ),
+                                customerReference=None,
                                 shipmentDate=(
                                     options.shipment_date.state
                                     or time.strftime("%Y-%m-%d")
@@ -93,9 +91,7 @@ def shipment_request(
                                     options.return_account_number.state
                                     or settings.account_number
                                 ),
-                                returnShipmentReference=(
-                                    payload.reference or getattr(payload, "id", None)
-                                ),
+                                returnShipmentReference=None,
                                 ShipmentItem=dpdhl.ShipmentItemType(
                                     weightInKG=package.weight.KG,
                                     lengthInCM=package.length.CM,
@@ -200,11 +196,19 @@ def shipment_request(
                             ),
                             Shipper=dpdhl.ShipperType(
                                 Name=dpdhl.NameType(
-                                    *lib.join(shipper.person_name, shipper.company_name)
+                                    *lib.join(
+                                        shipper.person_name,
+                                        shipper.company_name or " ",
+                                    )
                                 ),
                                 Address=dpdhl.NativeAddressTypeNew(
-                                    streetName=shipper.address_line,
-                                    streetNumber=shipper.extra.street_number,
+                                    streetName=(
+                                        shipper.street_name or shipper.address_line1
+                                    ),
+                                    streetNumber=(
+                                        shipper.street_number
+                                        or shipper.address_line2
+                                    ),
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(shipper.postal_code),
@@ -230,13 +234,17 @@ def shipment_request(
                                 name1=(
                                     recipient.person_name
                                     or recipient.company_name
-                                    or "N/A"
                                 ),
                                 Address=dpdhl.ReceiverNativeAddressType(
                                     name2=recipient.company_name,
                                     name3=None,
-                                    streetName=recipient.address_line,
-                                    streetNumber=recipient.extra.street_number,
+                                    streetName=(
+                                        recipient.street_name or recipient.address_line1
+                                    ),
+                                    streetNumber=(
+                                        recipient.street_number
+                                        or recipient.address_line2
+                                    ),
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(recipient.postal_code),

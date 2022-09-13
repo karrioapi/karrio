@@ -78,7 +78,7 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             shipment_url = reverse("karrio.server.manager:shipment-list")
             data = SHIPMENT_DATA
             data["parcels"][0]["items"][0]["parent_id"] = order["line_items"][0]["id"]
@@ -97,7 +97,7 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment and change status to purchased
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             shipment_url = reverse("karrio.server.manager:shipment-list")
             data = {
                 **SHIPMENT_DATA,
@@ -132,7 +132,7 @@ class TestOrderShipments(TestOrderFixture):
         _, order = self.create_order()
 
         # Create shipment and change status to purchased
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             shipment_url = reverse("karrio.server.manager:shipment-list")
             data = {
                 **SHIPMENT_DATA,
@@ -340,6 +340,7 @@ SHIPMENT_DATA = {
             "is_document": False,
             "weight_unit": "KG",
             "dimension_unit": "CM",
+            "freight_class": None,
             "reference_number": None,
             "items": [
                 {
@@ -500,6 +501,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                             "object_type": "commodity",
                         }
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},
@@ -719,6 +721,7 @@ FULFILLED_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         },
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},
@@ -923,6 +926,7 @@ PARTIAL_ORDER_RESPONSE = {
                             "object_type": "commodity",
                         }
                     ],
+                    "freight_class": None,
                     "reference_number": ANY,
                     "object_type": "parcel",
                     "options": {},

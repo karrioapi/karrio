@@ -13,7 +13,7 @@ class TestTracking(APITestCase):
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.get(f"{url}")
             response_data = json.loads(response.content)

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.iam",
-    version="2022.6",
+    version="2022.8",
     description="Multi-carrier shipping API iam module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,7 +15,6 @@ setup(
     license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "django-oauth-toolkit",
         "karrio.server.core",
     ],
     classifiers=[

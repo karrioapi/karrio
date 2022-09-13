@@ -1,4 +1,4 @@
-import yaml
+import yaml # type: ignore
 import pydoc
 import logging
 import functools
@@ -19,11 +19,14 @@ from rest_framework.authentication import (
 from rest_framework_simplejwt.authentication import (
     JWTAuthentication as BaseJWTAuthentication,
 )
+from oauth2_provider.contrib.rest_framework import (
+    OAuth2Authentication as BaseOAuth2Authentication,
+)
 from django_otp.middleware import OTPMiddleware
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
-AUTHENTICATION_METHODS = getattr(settings, "AUTHENTICATION_METHODS", [])
+AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
 
 
 def catch_auth_exception(func):
@@ -57,6 +60,7 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -77,6 +81,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -89,7 +94,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
         return auth
 
-    def authenticate_credentials(self, api_key, *_, **__):
+    def authenticate_credentials(self, api_key, *args, **kwargs):
         """
         Authenticate the api token with optional request for context.
         """
@@ -116,6 +121,7 @@ class JWTAuthentication(BaseJWTAuthentication):
             user, token = auth
 
             request.user = user
+            request.token = token
             request.test_mode = get_request_test_mode(request)
             request.otp_is_verified = token.get("is_verified") or False
             request.org = SimpleLazyObject(
@@ -131,6 +137,28 @@ class JWTAuthentication(BaseJWTAuthentication):
                 raise exceptions.AuthenticationFailed(
                     _("Authentication token not verified"), code="otp_not_verified"
                 )
+
+        return auth
+
+
+class OAuth2Authentication(BaseOAuth2Authentication):
+    @catch_auth_exception
+    def authenticate(self, request):
+        auth = super().authenticate(request)
+
+        if auth is not None:
+            user, token = auth
+
+            request.token = token
+            request.test_mode = get_request_test_mode(request)
+            request.org = SimpleLazyObject(
+                functools.partial(
+                    get_request_org,
+                    request,
+                    user,
+                    org_id=request.META.get("HTTP_X_ORG_ID"),
+                )
+            )
 
         return auth
 
@@ -198,14 +226,6 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
                         _("Organization is inactive"), code="organization_inactive"
                     )
 
-                # org id has been passed, but org is None and the are no existing org id affiliated with user
-                # if (
-                #     (org_id is not None)
-                #     and (org is None)
-                #     and (not orgs.filter(id=org_id).exists())
-                # ):
-                #     request.COOKIES.pop("orgId")
-
                 return org
             except ProgrammingError:
                 pass
@@ -219,13 +239,14 @@ def authenticate_user(request):
             auth = pydoc.locate(authenticator)().authenticate(request)
 
             if auth is not None:
-                user, _ = auth
+                user, token = auth
                 request.user = user
+                request.token = token
 
         return request
 
     try:
-        return functools.reduce(authenticate, AUTHENTICATION_METHODS, request)
+        return functools.reduce(authenticate, AUTHENTICATION_CLASSES, request)
     except Exception:
         return request
 

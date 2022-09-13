@@ -3,10 +3,10 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 
 import karrio.server.graph.utils as utils
+import karrio.server.orgs.models as models
 from karrio.server.orgs.utils import OrganizationUserRole
 from karrio.server.serializers import SerializerDecorator, Context
 from karrio.server.user.serializers import TokenSerializer
-import karrio.server.orgs.models as models
 
 
 class OrganizationUserType(utils.BaseObjectType):

@@ -53,7 +53,8 @@ def create_template_mutation(template: str, update: bool = False):
             is_default = graphene.Boolean(default=False)
 
         @classmethod
-        @utils.login_required
+        @utils.authentication_required
+        @utils.authorization_required()
         def mutate_and_get_payload(cls, root, info, **input):
             data = input.copy()
             instance = (
@@ -99,7 +100,8 @@ class SystemCarrierMutation(utils.ClientMutation):
         enable = graphene.Boolean(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, id: str, enable: bool):
         carrier = providers.Carrier.objects.get(id=id, created_by=None)
 
@@ -125,7 +127,8 @@ class TokenMutation(utils.ClientMutation):
         password = graphene.String(help_text="Password required when refresh is True")
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(
         cls, root, info, refresh: bool = None, password: str = None
     ):
@@ -185,7 +188,8 @@ class RequestEmailChange(utils.ClientMutation):
         redirect_url = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(
         cls, root, info, email, password, redirect_url, **kwargs
@@ -220,7 +224,8 @@ class ConfirmEmailChange(utils.ClientMutation):
         token = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, token, **kwargs):
         validated_token = ConfirmationToken(token)
         user = info.context.user
@@ -272,7 +277,8 @@ class ChangePassword(DjangoFormMutation):
         form_class = forms.PasswordChangeForm
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def perform_mutate(cls, form, info):
         return super().perform_mutate(form, info)
 
@@ -328,7 +334,8 @@ class EnableMultiFactor(utils.ClientMutation):
         password = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
@@ -360,7 +367,8 @@ class ConfirmMultiFactor(utils.ClientMutation):
         token = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, token, **kwargs):
         try:
             # Retrieve a default device or create a new one.
@@ -395,7 +403,8 @@ class DisableMultiFactor(utils.ClientMutation):
         password = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     @utils.password_required
     def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
@@ -423,7 +432,8 @@ class MutateMetadata(utils.ClientMutation):
         discarded_keys = graphene.List(graphene.String, required=False)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(
         cls,
         root,
@@ -460,7 +470,8 @@ class PartialShipmentUpdate(utils.ClientMutation):
         metadata = generic.GenericScalar(required=False)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required(["manage_shipments"])
     def mutate_and_get_payload(cls, root, info, id: str, **inputs):
         shipment = manager.Shipment.access_by(info.context).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
@@ -487,7 +498,8 @@ class _CreateCarrierConnection:
         pass
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, **input):
         data = input.copy()
 
@@ -516,7 +528,8 @@ class _UpdateCarrierConnection:
         id = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
     def mutate_and_get_payload(cls, root, info, id: str, **data):
         instance = providers.Carrier.access_by(info.context).get(id=id)
         serializer = serializers.PartialConnectionModelSerializer(

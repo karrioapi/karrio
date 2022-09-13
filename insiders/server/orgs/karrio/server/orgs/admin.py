@@ -16,10 +16,18 @@ class OrganizationAdmin(BaseOrganizationAdmin):
     list_display = ["name", "is_active", "created"]
     fields = ("name", "is_active", "slug")
     list_filter = ("is_active", "created")
+    view_on_site = False
 
 
 class OrganizationUserAdmin(BaseOrganizationUserAdmin):
     list_display = ["user", "organization", "is_admin", "created"]
+    fields = ("user", "organization", "roles")
+    view_on_site = False
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return self.readonly_fields + ("user", "organization")
+        return self.readonly_fields
 
 
 class TokenLinkInline(admin.TabularInline):

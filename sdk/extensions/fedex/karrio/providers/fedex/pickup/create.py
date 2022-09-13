@@ -144,9 +144,11 @@ def _pickup_request(
         FreightPickupDetail=None,
         ExpressFreightDetail=None,
         PackageCount=len(packages) or 1,
-        TotalWeight=Weight(Units=WeightUnits.LB.name, Value=packages.weight.LB)
-        if len(packages) > 0
-        else None,
+        TotalWeight=(
+            Weight(Units=WeightUnits.LB.name, Value=packages.weight.LB)
+            if len(packages) > 0
+            else None
+        ),
         CarrierCode=CarrierCodeType.FDXE.value,
         OversizePackageCount=None,
         Remarks=payload.instruction,

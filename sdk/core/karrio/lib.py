@@ -242,6 +242,7 @@ def to_xml(
 
 def to_element(
     *xml_texts,
+    encoding: str = "utf-8",
 ) -> utils.Element:
     """Turn a XML text into an (lxml) XML Element.
 
@@ -263,7 +264,7 @@ def to_element(
     if xml_text is None:
         raise Exception("Cannot parse empty XML text")
 
-    return utils.XP.to_xml(xml_text)
+    return utils.XP.to_xml(xml_text, encoding=encoding)
 
 
 def find_element(
@@ -352,8 +353,13 @@ def to_services(
 def to_customs_info(
     customs: models.Customs,
     option_type: typing.Type[utils.Enum] = None,
+    weight_unit: str = None,
 ):
-    return units.CustomsInfo(customs, option_type=option_type or utils.Enum)
+    return units.CustomsInfo(
+        customs,
+        option_type=option_type or utils.Enum,
+        weight_unit=weight_unit,
+    )
 
 
 def to_document_files(
@@ -475,6 +481,7 @@ def to_packages(
     presets: typing.Type[utils.Enum] = None,
     required: typing.List[str] = None,
     max_weight: units.Weight = None,
+    options: dict = None,
     package_option_type: typing.Type[utils.Enum] = utils.Enum,
 ) -> units.Packages:
     return units.Packages(
@@ -482,6 +489,7 @@ def to_packages(
         presets=presets,
         required=required,
         max_weight=max_weight,
+        options=units.ShippingOptions(options or {}, package_option_type),
         package_option_type=package_option_type,
     )
 
@@ -554,3 +562,10 @@ def bundle_base64(
     format: str = "PDF",
 ) -> str:
     return utils.bundle_base64(base64_strings, format=format)
+
+
+def to_buffer(
+    base64_string: str,
+    **kwargs,
+):
+    return utils.to_buffer(base64_string, **kwargs)

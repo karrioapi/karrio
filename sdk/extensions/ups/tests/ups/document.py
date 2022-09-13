@@ -20,7 +20,7 @@ class TestUPSDocument(unittest.TestCase):
 
         self.assertEqual(request.serialize(), DocumentUploadRequest)
 
-    def test_get_tracking(self):
+    def test_upload_document(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Document.upload(self.DocumentUploadRequest).from_(gateway)
@@ -64,7 +64,12 @@ ParsedDocumentUploadResponse = [
     {
         "carrier_id": "ups",
         "carrier_name": "ups",
-        "document_ids": ["2016-01-18-11.01.07.589501"],
+        "documents": [
+            {
+                "document_id": "2016-01-18-11.01.07.589501",
+                "file_name": "TestFile.txt",
+            }
+        ],
         "meta": {},
     },
     [],

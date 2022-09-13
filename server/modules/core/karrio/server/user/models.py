@@ -2,9 +2,9 @@ import os
 import binascii
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
+from django.contrib.auth import models as auth
+from rest_framework.authtoken import models as authtoken
 from django.utils.translation import ugettext_lazy as _
-from rest_framework.authtoken.models import Token as BaseToken
 
 from karrio.server.core.models import (
     ControlledAccessModel,
@@ -13,7 +13,7 @@ from karrio.server.core.models import (
 )
 
 
-class UserManager(DefaultUserManager):
+class UserManager(auth.UserManager):
     def _create_user(self, email, password, **extra_fields):
         """
         Create and save a user with the given username, email, and password.
@@ -44,7 +44,7 @@ class UserManager(DefaultUserManager):
 
 
 @register_model
-class User(AbstractUser):
+class User(auth.AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
 
@@ -70,7 +70,7 @@ class User(AbstractUser):
 
 
 @register_model
-class Token(BaseToken, ControlledAccessModel):
+class Token(authtoken.Token, ControlledAccessModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
@@ -95,3 +95,8 @@ class Token(BaseToken, ControlledAccessModel):
     @property
     def object_type(self):
         return "token"
+
+
+@register_model
+class Group(auth.Group):
+    pass

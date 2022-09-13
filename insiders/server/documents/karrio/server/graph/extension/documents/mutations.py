@@ -19,7 +19,8 @@ class CreateDocumentTemplate(utils.ClientMutation):
         active = graphene.Boolean(default_value=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authorization_required(["DOCUMENTS_MANAGEMENT"])
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, **data):
         serializer = serializers.DocumentTemplateModelSerializer(
             data=data,
@@ -45,7 +46,8 @@ class UpdateDocumentTemplate(utils.ClientMutation):
         active = graphene.Boolean()
 
     @classmethod
-    @utils.login_required
+    @utils.authorization_required(["DOCUMENTS_MANAGEMENT"])
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **data):
         instance = models.DocumentTemplate.access_by(info.context).get(id=id)
 
@@ -69,7 +71,8 @@ class DeleteDocumentTemplate(utils.ClientMutation):
         id = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authorization_required(["DOCUMENTS_MANAGEMENT"])
+    @utils.authentication_required
     def mutate_and_get_payload(cls, root, info, id, **kwargs):
         template = models.DocumentTemplate.access_by(info.context).get(id=id)
 

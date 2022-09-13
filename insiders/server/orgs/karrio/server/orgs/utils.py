@@ -4,7 +4,6 @@ import graphene
 import functools
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from karrio.server.core.utils import email_setup_required
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 from django_email_verification.confirm import (
@@ -13,21 +12,18 @@ from django_email_verification.confirm import (
     render_to_string,
 )
 
-from karrio.core.utils import exec_parrallel
-from karrio.server.conf import settings
+import karrio.lib as lib
+import karrio.server.conf as conf
+import karrio.server.core.utils as utils
 import karrio.server.orgs.models as models
+import karrio.server.orgs.serializers as serializers
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
+OrganizationUserRole: typing.Any = graphene.Enum("OrganizationUserRole", serializers.USER_ROLES)
 
 
-class OrganizationUserRole(graphene.Enum):
-    member = "member"
-    admin = "admin"
-    owner = "owner"
-
-
-def required_roles(roles: typing.List[OrganizationUserRole]):
+def roles_required(roles: typing.List[OrganizationUserRole]):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -76,7 +72,7 @@ def admin_required(instance, context) -> models.Organization:
     return instance
 
 
-@email_setup_required
+@utils.email_setup_required
 def send_invitation_emails(
     organization: models.Organization,
     emails: typing.List[str],
@@ -100,7 +96,7 @@ def send_invitation_emails(
             "invitee_identifier", flat=True
         ),
     ]
-    return exec_parrallel(action, [email for email in emails if email not in exclusion])
+    return lib.run_concurently(action, [email for email in emails if email not in exclusion])
 
 
 def send_invitation(
@@ -112,10 +108,10 @@ def send_invitation(
     sender = _get_validated_field("EMAIL_FROM_ADDRESS")
     invited_by = invitation.invited_by.full_name or "You are"
     redirect_link = f"{redirect_url}?token={invitation.guid}"
-    subject = f"{invited_by} invited you to join the {organization.name} team on {settings.APP_NAME}"
+    subject = f"{invited_by} invited you to join the {organization.name} team on {conf.settings.APP_NAME}"
     context = {
         "redirect_link": redirect_link,
-        "app_name": settings.APP_NAME,
+        "app_name": conf.settings.APP_NAME,
         "organization_name": organization.name,
         "owner_email": getattr(owner, "email", invitation.invited_by.email),
     }

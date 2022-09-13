@@ -1,16 +1,16 @@
 import graphene
+from rest_framework import exceptions
 from graphene_django.types import ErrorType
+
 from karrio.server.conf import settings
 from karrio.server.core.utils import failsafe, send_email
-from rest_framework import exceptions
-
 from karrio.server.orgs.utils import (
     OrganizationUserRole,
-    required_roles,
+    roles_required,
     send_invitation_emails,
 )
+import karrio.server.orgs.serializers.organization as serializers
 import karrio.server.graph.extension.orgs.types as types
-import karrio.server.orgs.serializers as serializers
 import karrio.server.orgs.models as models
 import karrio.server.graph.utils as utils
 
@@ -22,8 +22,8 @@ class CreateOrganization(utils.ClientMutation):
         name = graphene.String(required=True)
 
     @classmethod
-    @utils.api_permissions("ALLOW_MULTI_ACCOUNT")
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required(["ALLOW_MULTI_ACCOUNT"])
     def mutate_and_get_payload(cls, root, info, **data):
         serializer = serializers.OrganizationModelSerializer(
             data=data,
@@ -44,7 +44,8 @@ class UpdateOrganization(utils.ClientMutation):
         name = graphene.String()
 
     @classmethod
-    @required_roles(["admin"])
+    @utils.authentication_required
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, id, **data):
         try:
             instance = models.Organization.objects.get(
@@ -74,7 +75,7 @@ class DeleteOrganization(utils.ClientMutation):
 
     @classmethod
     @utils.password_required
-    @required_roles(["owner"])
+    @utils.authorization_required(["manage_org_owner"])
     def mutate_and_get_payload(cls, **kwargs):
         org = kwargs.get("org")
 
@@ -92,16 +93,17 @@ class SetOrganizationUserRoles(utils.ClientMutation):
     class Input:
         org_id = graphene.String(required=True)
         user_id = graphene.String(required=True)
-        roles = graphene.List(graphene.NonNull(graphene.String), required=True)
+        roles = graphene.List(graphene.NonNull(OrganizationUserRole), required=True)
 
     @classmethod
-    @required_roles(["owner"])
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, org_id, user_id, roles, **kwargs):
+        changes = ["roles"]
         org = kwargs.get("org")
         org_user = org.organization_users.get(user__id=user_id)
 
-        org_user.is_admin = OrganizationUserRole.admin.value in roles
-        org_user.save()
+        org_user.roles = roles
+        org.save(update_fields=changes)
 
         return cls(organization=models.Organization.objects.get(id=org_id))
 
@@ -115,7 +117,7 @@ class ChangeOrganizationOwner(utils.ClientMutation):
         password = graphene.String(required=True)
 
     @classmethod
-    @required_roles(["owner"])
+    @utils.authorization_required(["manage_org_owner"])
     def mutate_and_get_payload(
         cls, root, info, org_id: str, email: str = None, password: str = None, **kwargs
     ):
@@ -126,7 +128,7 @@ class ChangeOrganizationOwner(utils.ClientMutation):
             raise exceptions.ValidationError({"password": "Invalid password"})
 
         org.change_owner(new_owner)
-        org.save()
+        org.save(update_fields=["owner"])
 
         failsafe(
             lambda: send_email(
@@ -153,7 +155,7 @@ class SendOrganizationInvites(utils.ClientMutation):
         redirect_url = graphene.String(required=True)
 
     @classmethod
-    @required_roles(["admin"])
+    @utils.authorization_required(["manage_team"])
     def mutate_and_get_payload(cls, root, info, org_id, emails, redirect_url, **kwargs):
         organization = kwargs.get("org")
 
@@ -169,7 +171,8 @@ class AcceptOrganizationInvitation(utils.ClientMutation):
         guid = graphene.String(required=True)
 
     @classmethod
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def mutate_and_get_payload(cls, root, info, guid, **kwargs):
         invitation = models.OrganizationInvitation.objects.get(
             guid=guid,

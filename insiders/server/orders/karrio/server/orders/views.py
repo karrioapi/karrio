@@ -9,7 +9,6 @@ from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 from django_filters import rest_framework as filters
 
-from karrio.core.utils import DP
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.serializers import (
     SerializerDecorator,

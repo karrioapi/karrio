@@ -77,6 +77,7 @@ class Parcel:
 
     items: List[Commodity] = JList[Commodity]
     reference_number: str = None
+    freight_class: str = None
     options: Dict = {}
 
 
@@ -408,8 +409,16 @@ class DocumentUploadRequest:
     """shipment document upload request unified data type."""
 
     document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
-    reference: str = None
     options: Dict = {}
+    reference: str = None
+
+
+@attr.s(auto_attribs=True)
+class DocumentDetails:
+    """Karrio unified uploaded document id info data type."""
+
+    document_id: str
+    file_name: str
 
 
 @attr.s(auto_attribs=True)
@@ -418,6 +427,6 @@ class DocumentUploadDetails:
 
     carrier_name: str
     carrier_id: str
-    document_ids: List[str] = JList[str, REQUIRED]
+    documents: List[DocumentDetails] = JList[DocumentDetails]
     meta: dict = None
     id: str = None

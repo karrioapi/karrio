@@ -1036,14 +1036,17 @@
     */
     var CarrierSettingsCarrierNameEnum;
     (function (CarrierSettingsCarrierNameEnum) {
+        CarrierSettingsCarrierNameEnum["AmazonMws"] = "amazon_mws";
         CarrierSettingsCarrierNameEnum["Aramex"] = "aramex";
         CarrierSettingsCarrierNameEnum["Australiapost"] = "australiapost";
         CarrierSettingsCarrierNameEnum["Canadapost"] = "canadapost";
         CarrierSettingsCarrierNameEnum["Canpar"] = "canpar";
+        CarrierSettingsCarrierNameEnum["Chronopost"] = "chronopost";
         CarrierSettingsCarrierNameEnum["DhlExpress"] = "dhl_express";
         CarrierSettingsCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CarrierSettingsCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CarrierSettingsCarrierNameEnum["Dicom"] = "dicom";
+        CarrierSettingsCarrierNameEnum["Dpdhl"] = "dpdhl";
         CarrierSettingsCarrierNameEnum["Easypost"] = "easypost";
         CarrierSettingsCarrierNameEnum["Eshipper"] = "eshipper";
         CarrierSettingsCarrierNameEnum["Fedex"] = "fedex";
@@ -1055,6 +1058,7 @@
         CarrierSettingsCarrierNameEnum["SfExpress"] = "sf_express";
         CarrierSettingsCarrierNameEnum["Tnt"] = "tnt";
         CarrierSettingsCarrierNameEnum["Ups"] = "ups";
+        CarrierSettingsCarrierNameEnum["UpsFreight"] = "ups_freight";
         CarrierSettingsCarrierNameEnum["Usps"] = "usps";
         CarrierSettingsCarrierNameEnum["UspsInternational"] = "usps_international";
         CarrierSettingsCarrierNameEnum["Yanwen"] = "yanwen";
@@ -2010,6 +2014,23 @@
     }
 
     /* tslint:disable */
+    function MessageFromJSON(json) {
+        return MessageFromJSONTyped(json);
+    }
+    function MessageFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'message': !exists(json, 'message') ? undefined : json['message'],
+            'code': !exists(json, 'code') ? undefined : json['code'],
+            'details': !exists(json, 'details') ? undefined : json['details'],
+            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
+            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+        };
+    }
+
+    /* tslint:disable */
     function DocumentsFromJSON(json) {
         return DocumentsFromJSONTyped(json);
     }
@@ -2024,19 +2045,76 @@
     }
 
     /* tslint:disable */
-    function MessageFromJSON(json) {
-        return MessageFromJSONTyped(json);
+    function InlineResponse200FromJSON(json) {
+        return InlineResponse200FromJSONTyped(json);
     }
-    function MessageFromJSONTyped(json, ignoreDiscriminator) {
+    function InlineResponse200FromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
         return {
-            'message': !exists(json, 'message') ? undefined : json['message'],
-            'code': !exists(json, 'code') ? undefined : json['code'],
-            'details': !exists(json, 'details') ? undefined : json['details'],
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
+            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
+            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
+            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
+            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
+            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
+            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
+            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
+            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
+            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
+            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
+            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
+            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
+            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
+            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
+            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
+        };
+    }
+
+    /* tslint:disable */
+    function InlineResponse2001FromJSON(json) {
+        return InlineResponse2001FromJSONTyped(json);
+    }
+    function InlineResponse2001FromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
+            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
+            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
+            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
+            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
+            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
+            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
+            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
+            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
+            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
+            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
+            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
+            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
+            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
+            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
+            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
+            'address_auto_complete': !exists(json, 'ADDRESS_AUTO_COMPLETE') ? undefined : json['ADDRESS_AUTO_COMPLETE'],
+            'countries': !exists(json, 'countries') ? undefined : json['countries'],
+            'currencies': !exists(json, 'currencies') ? undefined : json['currencies'],
+            'carriers': !exists(json, 'carriers') ? undefined : json['carriers'],
+            'customs_content_type': !exists(json, 'customs_content_type') ? undefined : json['customs_content_type'],
+            'incoterms': !exists(json, 'incoterms') ? undefined : json['incoterms'],
+            'states': !exists(json, 'states') ? undefined : json['states'],
+            'services': !exists(json, 'services') ? undefined : json['services'],
+            'service_names': !exists(json, 'service_names') ? undefined : json['service_names'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'option_names': !exists(json, 'option_names') ? undefined : json['option_names'],
+            'package_presets': !exists(json, 'package_presets') ? undefined : json['package_presets'],
+            'packaging_types': !exists(json, 'packaging_types') ? undefined : json['packaging_types'],
+            'payment_types': !exists(json, 'payment_types') ? undefined : json['payment_types'],
+            'carrier_capabilities': !exists(json, 'carrier_capabilities') ? undefined : json['carrier_capabilities'],
+            'service_levels': !exists(json, 'service_levels') ? undefined : json['service_levels'],
         };
     }
 
@@ -2316,40 +2394,12 @@
     }
 
     /* tslint:disable */
-    function MetadataFromJSON(json) {
-        return MetadataFromJSONTyped(json);
-    }
-    function MetadataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'version': json['VERSION'],
-            'app_name': json['APP_NAME'],
-            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
-            'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
-            'data_import_export': json['DATA_IMPORT_EXPORT'],
-            'multi_organizations': json['MULTI_ORGANIZATIONS'],
-            'allow_multi_account': json['ALLOW_MULTI_ACCOUNT'],
-            'orders_management': json['ORDERS_MANAGEMENT'],
-            'apps_management': json['APPS_MANAGEMENT'],
-            'audit_logging': json['AUDIT_LOGGING'],
-            'allow_signup': json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'persist_sdk_tracing': json['PERSIST_SDK_TRACING'],
-            'admin': json['ADMIN'],
-            'openapi': json['OPENAPI'],
-            'graphql': json['GRAPHQL'],
-        };
-    }
-
-    /* tslint:disable */
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6.1`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
      *
-     * The version of the OpenAPI document: 2022.6.1
+     * The version of the OpenAPI document: 2022.8
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2373,9 +2423,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6.1`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
      *
-     * The version of the OpenAPI document: 2022.6.1
+     * The version of the OpenAPI document: 2022.8
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2451,6 +2501,7 @@
             'dimension_unit': !exists(json, 'dimension_unit') ? undefined : json['dimension_unit'],
             'items': !exists(json, 'items') ? undefined : (json['items'].map(CommodityFromJSON)),
             'reference_number': !exists(json, 'reference_number') ? undefined : json['reference_number'],
+            'freight_class': !exists(json, 'freight_class') ? undefined : json['freight_class'],
             'options': !exists(json, 'options') ? undefined : json['options'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
         };
@@ -2477,6 +2528,7 @@
             'dimension_unit': value.dimension_unit,
             'items': value.items === undefined ? undefined : (value.items.map(CommodityToJSON)),
             'reference_number': value.reference_number,
+            'freight_class': value.freight_class,
             'options': value.options,
             'object_type': value.object_type,
         };
@@ -2906,6 +2958,7 @@
             'dimension_unit': value.dimension_unit,
             'items': value.items === undefined ? undefined : (value.items.map(CommodityDataToJSON)),
             'reference_number': value.reference_number,
+            'freight_class': value.freight_class,
             'options': value.options,
         };
     }
@@ -3127,62 +3180,6 @@
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
             'rates': (json['rates'].map(RateFromJSON)),
-        };
-    }
-
-    /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6.1`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
-     *
-     * The version of the OpenAPI document: 2022.6.1
-     * Contact:
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
-    function ReferencesFromJSON(json) {
-        return ReferencesFromJSONTyped(json);
-    }
-    function ReferencesFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'version': json['VERSION'],
-            'app_name': json['APP_NAME'],
-            'app_website': json['APP_WEBSITE'],
-            'custom_carrier_definition': json['CUSTOM_CARRIER_DEFINITION'],
-            'data_import_export': json['DATA_IMPORT_EXPORT'],
-            'multi_organizations': json['MULTI_ORGANIZATIONS'],
-            'allow_multi_account': json['ALLOW_MULTI_ACCOUNT'],
-            'orders_management': json['ORDERS_MANAGEMENT'],
-            'apps_management': json['APPS_MANAGEMENT'],
-            'audit_logging': json['AUDIT_LOGGING'],
-            'allow_signup': json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'persist_sdk_tracing': json['PERSIST_SDK_TRACING'],
-            'admin': json['ADMIN'],
-            'openapi': json['OPENAPI'],
-            'graphql': json['GRAPHQL'],
-            'address_auto_complete': json['ADDRESS_AUTO_COMPLETE'],
-            'countries': json['countries'],
-            'currencies': json['currencies'],
-            'carriers': json['carriers'],
-            'customs_content_type': json['customs_content_type'],
-            'incoterms': json['incoterms'],
-            'states': json['states'],
-            'services': json['services'],
-            'service_names': json['service_names'],
-            'options': json['options'],
-            'option_names': json['option_names'],
-            'package_presets': json['package_presets'],
-            'packaging_types': json['packaging_types'],
-            'payment_types': json['payment_types'],
-            'carrier_capabilities': json['carrier_capabilities'],
-            'service_levels': json['service_levels'],
         };
     }
 
@@ -3434,9 +3431,9 @@
     /* eslint-disable */
     /**
      * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.6.1`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.
+     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
      *
-     * The version of the OpenAPI document: 2022.6.1
+     * The version of the OpenAPI document: 2022.8
      * Contact:
      *
      * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -3716,6 +3713,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -3765,6 +3765,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -3818,6 +3821,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -3867,6 +3873,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -3920,6 +3929,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -3984,6 +3996,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4030,6 +4045,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4040,7 +4058,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ReferencesFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return InlineResponse2001FromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4078,6 +4096,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4125,6 +4146,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4135,7 +4159,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return MetadataFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return InlineResponse200FromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4173,6 +4197,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4224,6 +4251,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4287,6 +4317,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4348,6 +4381,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4390,14 +4426,17 @@
         */
     var GetServicesCarrierNameEnum;
     (function (GetServicesCarrierNameEnum) {
+        GetServicesCarrierNameEnum["AmazonMws"] = "amazon_mws";
         GetServicesCarrierNameEnum["Aramex"] = "aramex";
         GetServicesCarrierNameEnum["Australiapost"] = "australiapost";
         GetServicesCarrierNameEnum["Canadapost"] = "canadapost";
         GetServicesCarrierNameEnum["Canpar"] = "canpar";
+        GetServicesCarrierNameEnum["Chronopost"] = "chronopost";
         GetServicesCarrierNameEnum["DhlExpress"] = "dhl_express";
         GetServicesCarrierNameEnum["DhlPoland"] = "dhl_poland";
         GetServicesCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         GetServicesCarrierNameEnum["Dicom"] = "dicom";
+        GetServicesCarrierNameEnum["Dpdhl"] = "dpdhl";
         GetServicesCarrierNameEnum["Easypost"] = "easypost";
         GetServicesCarrierNameEnum["Eshipper"] = "eshipper";
         GetServicesCarrierNameEnum["Fedex"] = "fedex";
@@ -4409,6 +4448,7 @@
         GetServicesCarrierNameEnum["SfExpress"] = "sf_express";
         GetServicesCarrierNameEnum["Tnt"] = "tnt";
         GetServicesCarrierNameEnum["Ups"] = "ups";
+        GetServicesCarrierNameEnum["UpsFreight"] = "ups_freight";
         GetServicesCarrierNameEnum["Usps"] = "usps";
         GetServicesCarrierNameEnum["UspsInternational"] = "usps_international";
         GetServicesCarrierNameEnum["Yanwen"] = "yanwen";
@@ -4420,14 +4460,17 @@
         */
     var ListCarrierNameEnum;
     (function (ListCarrierNameEnum) {
+        ListCarrierNameEnum["AmazonMws"] = "amazon_mws";
         ListCarrierNameEnum["Aramex"] = "aramex";
         ListCarrierNameEnum["Australiapost"] = "australiapost";
         ListCarrierNameEnum["Canadapost"] = "canadapost";
         ListCarrierNameEnum["Canpar"] = "canpar";
+        ListCarrierNameEnum["Chronopost"] = "chronopost";
         ListCarrierNameEnum["DhlExpress"] = "dhl_express";
         ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
         ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         ListCarrierNameEnum["Dicom"] = "dicom";
+        ListCarrierNameEnum["Dpdhl"] = "dpdhl";
         ListCarrierNameEnum["Easypost"] = "easypost";
         ListCarrierNameEnum["Eshipper"] = "eshipper";
         ListCarrierNameEnum["Fedex"] = "fedex";
@@ -4439,6 +4482,7 @@
         ListCarrierNameEnum["SfExpress"] = "sf_express";
         ListCarrierNameEnum["Tnt"] = "tnt";
         ListCarrierNameEnum["Ups"] = "ups";
+        ListCarrierNameEnum["UpsFreight"] = "ups_freight";
         ListCarrierNameEnum["Usps"] = "usps";
         ListCarrierNameEnum["UspsInternational"] = "usps_international";
         ListCarrierNameEnum["Yanwen"] = "yanwen";
@@ -4470,6 +4514,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4520,6 +4567,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4573,6 +4623,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4622,6 +4675,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4675,6 +4731,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4739,6 +4798,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4788,6 +4850,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4841,6 +4906,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -4890,6 +4958,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -4943,6 +5014,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5010,6 +5084,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5063,6 +5140,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5112,6 +5192,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5166,6 +5249,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5219,6 +5305,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5283,6 +5372,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5337,6 +5429,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5387,6 +5482,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5441,6 +5539,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5498,6 +5599,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5550,6 +5654,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5605,6 +5712,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -5647,14 +5757,17 @@
         */
     var CancelPickupCarrierNameEnum;
     (function (CancelPickupCarrierNameEnum) {
+        CancelPickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
         CancelPickupCarrierNameEnum["Aramex"] = "aramex";
         CancelPickupCarrierNameEnum["Australiapost"] = "australiapost";
         CancelPickupCarrierNameEnum["Canadapost"] = "canadapost";
         CancelPickupCarrierNameEnum["Canpar"] = "canpar";
+        CancelPickupCarrierNameEnum["Chronopost"] = "chronopost";
         CancelPickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         CancelPickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CancelPickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CancelPickupCarrierNameEnum["Dicom"] = "dicom";
+        CancelPickupCarrierNameEnum["Dpdhl"] = "dpdhl";
         CancelPickupCarrierNameEnum["Easypost"] = "easypost";
         CancelPickupCarrierNameEnum["Eshipper"] = "eshipper";
         CancelPickupCarrierNameEnum["Fedex"] = "fedex";
@@ -5666,6 +5779,7 @@
         CancelPickupCarrierNameEnum["SfExpress"] = "sf_express";
         CancelPickupCarrierNameEnum["Tnt"] = "tnt";
         CancelPickupCarrierNameEnum["Ups"] = "ups";
+        CancelPickupCarrierNameEnum["UpsFreight"] = "ups_freight";
         CancelPickupCarrierNameEnum["Usps"] = "usps";
         CancelPickupCarrierNameEnum["UspsInternational"] = "usps_international";
         CancelPickupCarrierNameEnum["Yanwen"] = "yanwen";
@@ -5677,14 +5791,17 @@
         */
     var SchedulePickupCarrierNameEnum;
     (function (SchedulePickupCarrierNameEnum) {
+        SchedulePickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
         SchedulePickupCarrierNameEnum["Aramex"] = "aramex";
         SchedulePickupCarrierNameEnum["Australiapost"] = "australiapost";
         SchedulePickupCarrierNameEnum["Canadapost"] = "canadapost";
         SchedulePickupCarrierNameEnum["Canpar"] = "canpar";
+        SchedulePickupCarrierNameEnum["Chronopost"] = "chronopost";
         SchedulePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         SchedulePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         SchedulePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         SchedulePickupCarrierNameEnum["Dicom"] = "dicom";
+        SchedulePickupCarrierNameEnum["Dpdhl"] = "dpdhl";
         SchedulePickupCarrierNameEnum["Easypost"] = "easypost";
         SchedulePickupCarrierNameEnum["Eshipper"] = "eshipper";
         SchedulePickupCarrierNameEnum["Fedex"] = "fedex";
@@ -5696,6 +5813,7 @@
         SchedulePickupCarrierNameEnum["SfExpress"] = "sf_express";
         SchedulePickupCarrierNameEnum["Tnt"] = "tnt";
         SchedulePickupCarrierNameEnum["Ups"] = "ups";
+        SchedulePickupCarrierNameEnum["UpsFreight"] = "ups_freight";
         SchedulePickupCarrierNameEnum["Usps"] = "usps";
         SchedulePickupCarrierNameEnum["UspsInternational"] = "usps_international";
         SchedulePickupCarrierNameEnum["Yanwen"] = "yanwen";
@@ -5707,14 +5825,17 @@
         */
     var TrackShipmentCarrierNameEnum;
     (function (TrackShipmentCarrierNameEnum) {
+        TrackShipmentCarrierNameEnum["AmazonMws"] = "amazon_mws";
         TrackShipmentCarrierNameEnum["Aramex"] = "aramex";
         TrackShipmentCarrierNameEnum["Australiapost"] = "australiapost";
         TrackShipmentCarrierNameEnum["Canadapost"] = "canadapost";
         TrackShipmentCarrierNameEnum["Canpar"] = "canpar";
+        TrackShipmentCarrierNameEnum["Chronopost"] = "chronopost";
         TrackShipmentCarrierNameEnum["DhlExpress"] = "dhl_express";
         TrackShipmentCarrierNameEnum["DhlPoland"] = "dhl_poland";
         TrackShipmentCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         TrackShipmentCarrierNameEnum["Dicom"] = "dicom";
+        TrackShipmentCarrierNameEnum["Dpdhl"] = "dpdhl";
         TrackShipmentCarrierNameEnum["Fedex"] = "fedex";
         TrackShipmentCarrierNameEnum["Generic"] = "generic";
         TrackShipmentCarrierNameEnum["Purolator"] = "purolator";
@@ -5723,6 +5844,7 @@
         TrackShipmentCarrierNameEnum["SfExpress"] = "sf_express";
         TrackShipmentCarrierNameEnum["Tnt"] = "tnt";
         TrackShipmentCarrierNameEnum["Ups"] = "ups";
+        TrackShipmentCarrierNameEnum["UpsFreight"] = "ups_freight";
         TrackShipmentCarrierNameEnum["Usps"] = "usps";
         TrackShipmentCarrierNameEnum["UspsInternational"] = "usps_international";
         TrackShipmentCarrierNameEnum["Yanwen"] = "yanwen";
@@ -5734,14 +5856,17 @@
         */
     var UpdatePickupCarrierNameEnum;
     (function (UpdatePickupCarrierNameEnum) {
+        UpdatePickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
         UpdatePickupCarrierNameEnum["Aramex"] = "aramex";
         UpdatePickupCarrierNameEnum["Australiapost"] = "australiapost";
         UpdatePickupCarrierNameEnum["Canadapost"] = "canadapost";
         UpdatePickupCarrierNameEnum["Canpar"] = "canpar";
+        UpdatePickupCarrierNameEnum["Chronopost"] = "chronopost";
         UpdatePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
         UpdatePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
         UpdatePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         UpdatePickupCarrierNameEnum["Dicom"] = "dicom";
+        UpdatePickupCarrierNameEnum["Dpdhl"] = "dpdhl";
         UpdatePickupCarrierNameEnum["Easypost"] = "easypost";
         UpdatePickupCarrierNameEnum["Eshipper"] = "eshipper";
         UpdatePickupCarrierNameEnum["Fedex"] = "fedex";
@@ -5753,6 +5878,7 @@
         UpdatePickupCarrierNameEnum["SfExpress"] = "sf_express";
         UpdatePickupCarrierNameEnum["Tnt"] = "tnt";
         UpdatePickupCarrierNameEnum["Ups"] = "ups";
+        UpdatePickupCarrierNameEnum["UpsFreight"] = "ups_freight";
         UpdatePickupCarrierNameEnum["Usps"] = "usps";
         UpdatePickupCarrierNameEnum["UspsInternational"] = "usps_international";
         UpdatePickupCarrierNameEnum["Yanwen"] = "yanwen";
@@ -5764,14 +5890,17 @@
         */
     var VoidLabelCarrierNameEnum;
     (function (VoidLabelCarrierNameEnum) {
+        VoidLabelCarrierNameEnum["AmazonMws"] = "amazon_mws";
         VoidLabelCarrierNameEnum["Aramex"] = "aramex";
         VoidLabelCarrierNameEnum["Australiapost"] = "australiapost";
         VoidLabelCarrierNameEnum["Canadapost"] = "canadapost";
         VoidLabelCarrierNameEnum["Canpar"] = "canpar";
+        VoidLabelCarrierNameEnum["Chronopost"] = "chronopost";
         VoidLabelCarrierNameEnum["DhlExpress"] = "dhl_express";
         VoidLabelCarrierNameEnum["DhlPoland"] = "dhl_poland";
         VoidLabelCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         VoidLabelCarrierNameEnum["Dicom"] = "dicom";
+        VoidLabelCarrierNameEnum["Dpdhl"] = "dpdhl";
         VoidLabelCarrierNameEnum["Easypost"] = "easypost";
         VoidLabelCarrierNameEnum["Eshipper"] = "eshipper";
         VoidLabelCarrierNameEnum["Fedex"] = "fedex";
@@ -5783,6 +5912,7 @@
         VoidLabelCarrierNameEnum["SfExpress"] = "sf_express";
         VoidLabelCarrierNameEnum["Tnt"] = "tnt";
         VoidLabelCarrierNameEnum["Ups"] = "ups";
+        VoidLabelCarrierNameEnum["UpsFreight"] = "ups_freight";
         VoidLabelCarrierNameEnum["Usps"] = "usps";
         VoidLabelCarrierNameEnum["UspsInternational"] = "usps_international";
         VoidLabelCarrierNameEnum["Yanwen"] = "yanwen";
@@ -5813,6 +5943,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5863,6 +5996,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -5956,6 +6092,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6009,6 +6148,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6064,6 +6206,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6113,6 +6258,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6166,6 +6314,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6235,6 +6386,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6302,6 +6456,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6352,6 +6509,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6401,6 +6561,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6442,14 +6605,17 @@
         */
     var CreateCarrierNameEnum;
     (function (CreateCarrierNameEnum) {
+        CreateCarrierNameEnum["AmazonMws"] = "amazon_mws";
         CreateCarrierNameEnum["Aramex"] = "aramex";
         CreateCarrierNameEnum["Australiapost"] = "australiapost";
         CreateCarrierNameEnum["Canadapost"] = "canadapost";
         CreateCarrierNameEnum["Canpar"] = "canpar";
+        CreateCarrierNameEnum["Chronopost"] = "chronopost";
         CreateCarrierNameEnum["DhlExpress"] = "dhl_express";
         CreateCarrierNameEnum["DhlPoland"] = "dhl_poland";
         CreateCarrierNameEnum["DhlUniversal"] = "dhl_universal";
         CreateCarrierNameEnum["Dicom"] = "dicom";
+        CreateCarrierNameEnum["Dpdhl"] = "dpdhl";
         CreateCarrierNameEnum["Fedex"] = "fedex";
         CreateCarrierNameEnum["Generic"] = "generic";
         CreateCarrierNameEnum["Purolator"] = "purolator";
@@ -6458,6 +6624,7 @@
         CreateCarrierNameEnum["SfExpress"] = "sf_express";
         CreateCarrierNameEnum["Tnt"] = "tnt";
         CreateCarrierNameEnum["Ups"] = "ups";
+        CreateCarrierNameEnum["UpsFreight"] = "ups_freight";
         CreateCarrierNameEnum["Usps"] = "usps";
         CreateCarrierNameEnum["UspsInternational"] = "usps_international";
         CreateCarrierNameEnum["Yanwen"] = "yanwen";
@@ -6489,6 +6656,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6543,6 +6713,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6593,6 +6766,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6641,6 +6817,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6695,6 +6874,9 @@
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6748,6 +6930,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6811,6 +6996,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6860,6 +7048,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -6950,6 +7141,9 @@
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
@@ -6999,6 +7193,9 @@
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
@@ -7052,6 +7249,9 @@
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }

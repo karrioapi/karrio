@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.ups"
-version = "2022.6"
+version = "2022.8.1"
 homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - UPS Shipping Extension"

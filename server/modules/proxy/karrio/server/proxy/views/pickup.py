@@ -6,10 +6,11 @@ from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from karrio.server.core.views.api import APIView
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
 from karrio.server.proxy.router import router
-from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.gateway import Pickups
+from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
     PickupCancelRequest,
     PickupUpdateRequest,
@@ -18,12 +19,11 @@ from karrio.server.core.serializers import (
     PickupRequest,
     ErrorResponse,
     ErrorMessages,
-    MODELS,
 )
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-CARRIER_NAMES = list(MODELS.keys())
+CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
@@ -51,7 +51,7 @@ class PickupSchedule(APIView):
         """
         Schedule one or many parcels pickup
         """
-        payload = SerializerDecorator[PickupRequest](data=request.data).data
+        payload = serializers.SerializerDecorator[PickupRequest](data=request.data).data
 
         response = Pickups.schedule(payload, context=request, carrier_name=carrier_name)
 
@@ -83,7 +83,7 @@ class PickupUpdate(APIView):
         """
         Modify a scheduled pickup
         """
-        payload = SerializerDecorator[PickupUpdateRequest](data=request.data).data
+        payload = serializers.SerializerDecorator[PickupUpdateRequest](data=request.data).data
 
         response = Pickups.update(payload, context=request, carrier_name=carrier_name)
 
@@ -115,7 +115,7 @@ class PickupCancel(APIView):
         """
         Cancel a pickup previously scheduled
         """
-        payload = SerializerDecorator[PickupCancelRequest](data=request.data).data
+        payload = serializers.SerializerDecorator[PickupCancelRequest](data=request.data).data
 
         response = Pickups.cancel(payload, context=request, carrier_name=carrier_name)
 

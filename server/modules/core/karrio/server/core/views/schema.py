@@ -75,6 +75,28 @@ def render_schema_description(APP_NAME):
 
     Do not store any sensitive information as metadata.
 
+    ## Authentication
+
+    API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
+
+    Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
+    API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+
+    Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
+    the basic auth username value. You do not need to provide a password.
+
+    ```shell
+    $ curl https://instance.api.com/v1/shipments \\
+        -u key_xxxxxx:
+    # The colon prevents curl from asking for a password.
+    ```
+
+    If you need to authenticate via bearer auth (e.g., for a cross-origin request),
+    use `-H "Authorization: Token key_xxxxxx"` instead of `-u key_xxxxxx`.
+
+    All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
+    API requests without authentication will also fail.
+
     """
 
 
@@ -171,10 +193,7 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 {
                     "name": "API",
                     "description": """
-                For client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.
-                The JWT tokens changes for every new session and have an expiration timestamp.
-
-                To authenticate via JWT access key, use `-H "Authorization: Bearer key_c2760bb43...671ce3c09b6e"`.
+                API instance metadata and authentication resources.
                 """,
                 },
                 {
@@ -224,6 +243,15 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 """,
                 },
                 {
+                    "name": "Documents",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} document upload record.
+
+                A Document upload record keep traces of shipping trade documents uploaded to carriers
+                to fast track customs processing.
+                """,
+                },
+                {
                     "name": "Trackers",
                     "description": f"""
                 This is an object representing your a {APP_NAME} shipment tracker.
@@ -232,27 +260,6 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 The tracker provide the latest tracking status and events associated with a shipment
                 """,
                 },
-                {
-                    "name": "Webhooks",
-                    "description": f"""
-                This is an object representing your a {APP_NAME} webhook.
-
-                You can configure webhook endpoints via the API to be notified about events that happen in your
-                {APP_NAME} account.
-                """,
-                },
-                (
-                    {
-                        "name": "Orders",
-                        "description": f"""
-                This is an object representing your a {APP_NAME} order.
-
-                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
-                """,
-                    }
-                    if django.settings.ORDERS_MANAGEMENT
-                    else None
-                ),
                 {
                     "name": "Pickups",
                     "description": f"""
@@ -271,6 +278,27 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 > **Note**
                 >
                 > When using the proxy API, no objects are created in the {APP_NAME} system.
+                """,
+                },
+                (
+                    {
+                        "name": "Orders",
+                        "description": f"""
+                This is an object representing your a {APP_NAME} order.
+
+                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
+                """,
+                    }
+                    if django.settings.ORDERS_MANAGEMENT
+                    else None
+                ),
+                {
+                    "name": "Webhooks",
+                    "description": f"""
+                This is an object representing your a {APP_NAME} webhook.
+
+                You can configure webhook endpoints via the API to be notified about events that happen in your
+                {APP_NAME} account.
                 """,
                 },
                 (

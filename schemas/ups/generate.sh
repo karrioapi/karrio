@@ -8,7 +8,7 @@ quicktype () {
     echo "Generating $1..."
     docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/ups_lib \
     karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
-    --no-nice-property-names --all-properties-optional $@
+    --no-nice-property-names --all-properties-optional --type-as-suffix $@
 }
 
 generateDS --no-namespace-defs -o "${LIB_MODULES}/av_request.py" "${SCHEMAS}/AVRequest.xsd"

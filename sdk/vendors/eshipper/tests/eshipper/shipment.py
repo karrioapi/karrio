@@ -100,12 +100,12 @@ shipment_data = {
             "dimension_unit": "CM",
             "description": "desc.",
             "packaging_type": "eshipper_pallet",
+            "freight_class": "70",
             "options": {"insurance": 100},
         }
     ],
     "service": "eshipper_fedex_ground",
     "options": {
-        "freight_class": "eshipper_freight_class_70",
         "cash_on_delivery": 10.5,
         "insurance": 70.0,
     },

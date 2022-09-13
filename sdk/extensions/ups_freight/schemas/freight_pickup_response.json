@@ -1,0 +1,25 @@
+{
+  "FreightPickupResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Alert": [
+        {
+          "Code": "9369054",
+          "Description": "User is not registered for freight processing."
+        },
+        {
+          "Code": "9369055",
+          "Description": "User is not eligible for contract rates."
+        }
+      ],
+      "TransactionReference": {
+        "CustomerContext": "string",
+        "TransactionIdentifier": "string"
+      }
+    },
+    "PickupRequestConfirmationNumber": "string"
+  }
+}

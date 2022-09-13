@@ -25,8 +25,8 @@ def identity(value: Any) -> Any:
     return value
 
 
-def to_buffer(encoded_file: str) -> io.BytesIO:
-    content = base64.b64decode(encoded_file)
+def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
+    content = base64.b64decode(encoded_file, **kwargs)
     buffer = io.BytesIO()
     buffer.write(content)
 

@@ -77,15 +77,18 @@ class Query:
         filterset_class=filters.TrackerFilters,
     )
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_user(self, info):
         return types.User.objects.get(id=info.context.user.id)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_token(self, info, **kwargs):
         return user_serializers.TokenSerializer.retrieve_token(info.context, **kwargs)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_user_connections(self, info, **kwargs):
         connections = providers.Carrier.access_by(info.context).filter(
             created_by__isnull=False,
@@ -93,14 +96,16 @@ class Query:
         )
         return [connection.settings for connection in connections]
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_system_connections(self, info, **kwargs):
         return gateway.Carriers.list(
             context=info.context,
             system_only=True,
         )
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_default_templates(self, info, **kwargs):
         templates = graph.Template.access_by(info.context).filter(is_default=True)
 
@@ -110,47 +115,58 @@ class Query:
             default_parcel=templates.filter(parcel__isnull=False).first(),
         )
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_address_templates(self, info, **kwargs):
         return graph.Template.access_by(info.context).filter(address__isnull=False)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_customs_templates(self, info, **kwargs):
         return graph.Template.access_by(info.context).filter(customs__isnull=False)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_parcel_templates(self, info, **kwargs):
         return graph.Template.access_by(info.context).filter(parcel__isnull=False)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_log(self, info, **kwargs):
         return core.APILog.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_logs(self, info, **kwargs):
         return core.APILog.access_by(info.context)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_tacingrecord(self, info, **kwargs):
         return tracing.TracingRecord.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_tracingrecords(self, info, **kwargs):
         return tracing.TracingRecord.access_by(info.context)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_shipment(self, info, **kwargs):
         return manager.Shipment.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_shipments(self, info, **kwargs):
         return manager.Shipment.access_by(info.context)
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_tracker(self, info, **kwargs):
         return manager.Tracking.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authentication_required
+    @utils.authorization_required()
     def resolve_trackers(self, info, **kwargs):
         return manager.Tracking.access_by(info.context)
 

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 @db_task()
-@utils.tenant_wrapper
+@utils.tenant_aware
 def queue_batch(*args, **kwargs):
     try:
         from karrio.server.events.task_definitions.data.batch import (
@@ -31,7 +31,7 @@ def queue_batch(*args, **kwargs):
 
 
 @db_task()
-@utils.tenant_wrapper
+@utils.tenant_aware
 def process_batch_resources(batch_id, **kwargs):
     logger.info(f"> start batch ({batch_id}) resources processing...")
     try:

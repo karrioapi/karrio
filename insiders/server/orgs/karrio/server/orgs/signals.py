@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 
 from karrio.server.conf import settings
 import karrio.server.core.utils as utils
-import karrio.server.orgs.models as models
 import karrio.server.events.tasks as tasks
+import karrio.server.orgs.models as models
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ def user_updated(sender, instance, *args, **kwargs):
     # user made active
     if instance.is_active and not has_org:
         _user_name = instance.full_name.split(" ")[0]
-        org_name = _user_name if any(_user_name) else instance.email.split("@")[0]
+        _org_name = _user_name if any(_user_name) else instance.email.split("@")[0].split(".")[0]
         invitation = models.OrganizationInvitation.objects.filter(
             invitee_identifier=instance.email
         ).first()
@@ -46,8 +46,8 @@ def user_updated(sender, instance, *args, **kwargs):
 
         # no invitation: create a new organization for the user
         organization = models.Organization.objects.create(
-            name=f"{org_name.capitalize()}'s Org",
-            slug=f"{org_name.lower()}_org".replace(" ", "").lower(),
+            name=f"{_org_name.capitalize()}",
+            slug=f"{_org_name.lower()}_org".replace(" ", "").lower(),
             is_active=instance.is_active,
         )
 

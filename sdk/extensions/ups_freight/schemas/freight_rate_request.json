@@ -1,0 +1,263 @@
+{
+  "FreightRateRequest": {
+    "ShipFrom": {
+      "Name": "Test US Shipper",
+      "Address": {
+        "AddressLine": "123 Lane",
+        "City": "TIMONIUM",
+        "StateProvinceCode": "MD",
+        "Town": "",
+        "PostalCode": "21093",
+        "CountryCode": "US",
+        "ResidentialAddressIndicator": ""
+      },
+      "TariffPoint": "",
+      "AttentionName": "Test Shipper"
+    },
+    "ShipTo": {
+      "Name": "Dilbert's Derbies",
+      "Address": {
+        "AddressLine": "555 Main St",
+        "City": "LOUISVILLE",
+        "StateProvinceCode": "KY",
+        "Town": "",
+        "PostalCode": "40201",
+        "CountryCode": "US"
+      },
+      "TariffPoint": "",
+      "AttentionName": "Test Shipper"
+    },
+    "PaymentInformation": {
+      "Payer": {
+        "Name": "Test US Shipper",
+        "Address": {
+          "AddressLine": "123 Lane",
+          "City": "LUTHERVILLE TIMONIUM",
+          "Town": "",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        },
+        "ShipperNumber": "AT0123",
+        "AttentionName": "Test Shipper"
+      },
+      "ShipmentBillingOption": {
+        "Code": "10"
+      }
+    },
+    "Service": {
+      "Code": "308"
+    },
+    "HandlingUnitOne": {
+      "Quantity": "2",
+      "Type": {
+        "Code": "PLT"
+      }
+    },
+    "HandlingUnitTwo": {
+      "Quantity": "2",
+      "Type": {
+        "Code": "PLT"
+      }
+    },
+    "Commodity": [
+      {
+        "CommodityID": "",
+        "Weight": {
+          "UnitOfMeasurement": {
+            "Code": "LBS"
+          },
+          "Value": "150"
+        },
+        "AdjustedWeight": {
+          "UnitOfMeasurement": {
+            "Code": "LBS"
+          },
+          "Value": "150"
+        },
+        "Dimensions": {
+          "UnitOfMeasurement": {
+            "Code": "IN"
+          },
+          "Length": "9",
+          "Width": "5",
+          "Height": "4"
+        },
+        "NumberOfPieces": "1",
+        "PackagingType": {
+          "Code": "PLT"
+        },
+        "DangerousGoodsIndicator": "",
+        "CommodityValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "NMFCCommodityCode": "",
+        "NMFCCommodity": {
+          "PrimeCode": "",
+          "SubCode": ""
+        },
+        "FreightClass": "60"
+      }
+    ],
+    "ShipmentServiceOptions": {
+      "PickupOptions": {
+        "HolidayPickupIndicator": "",
+        "InsidePickupIndicator": "",
+        "ResidentialPickupIndicator": "",
+        "WeekendPickupIndicator": "",
+        "LiftGateRequiredIndicator": "",
+        "LimitedAccessPickupIndicator": ""
+      },
+      "DeliveryOptions": {
+        "CallBeforeDeliveryIndicator": "",
+        "HolidayDeliveryIndicator": "",
+        "InsideDeliveryIndicator": "",
+        "ResidentialDeliveryIndicator": "",
+        "WeekendDeliveryIndicator": "",
+        "LiftGateRequiredIndicator": "",
+        "LimitedAccessDeliveryIndicator": ""
+      },
+      "OverSeasLeg": {
+        "Dimensions": {
+          "Volume": "",
+          "Height": "",
+          "Length": "",
+          "UnitOfMeasurement": {
+            "Code": ""
+          },
+          "Value": {
+            "Cube": {
+              "CurrencyCode": "",
+              "MonetaryValue": ""
+            },
+            "CWT": {
+              "CurrencyCode": "",
+              "MonetaryValue": ""
+            }
+          }
+        },
+        "Value": {
+          "Cube": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          },
+          "CWT": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          }
+        }
+      },
+      "COD": {
+        "CODValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "CODPaymentMethod": {
+          "Code": ""
+        },
+        "CODBillingOption": {
+          "Code": ""
+        },
+        "RemitTo": {
+          "Name": "",
+          "Address": {
+            "AddressLine": "",
+            "City": "",
+            "StateProvinceCode": "",
+            "Town": "",
+            "PostalCode": "",
+            "CountryCode": ""
+          },
+          "AttentionName": ""
+        }
+      },
+      "DangerousGoods": {
+        "Name": "",
+        "Phone": {
+          "Number": "",
+          "Extension": ""
+        },
+        "TransportationMode": {
+          "Code": ""
+        }
+      },
+      "SortingAndSegregating": {
+        "Quantity": ""
+      },
+      "DeclaredValue": {
+        "CurrencyCode": "",
+        "MonetaryValue": ""
+      },
+      "ExcessDeclaredValue": {
+        "CurrencyCode": "",
+        "MonetaryValue": ""
+      },
+      "HandlingCharge": {
+        "Percentage": "",
+        "Amount": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        }
+      },
+      "FreezableProtectionIndicator": "",
+      "ExtremeLengthIndicator": "",
+      "LinearFeet": "",
+      "AdjustedHeight": {
+        "Value": "",
+        "UnitOfMeasurement": {
+          "Code": ""
+        }
+      }
+    },
+    "PickupRequest": {
+      "PickupDate": "20170923",
+      "AdditionalComments": ""
+    },
+    "AlternateRateOptions": {
+      "Code": "3"
+    },
+    "GFPOptions": {
+      "GPFAccesorialRateIndicator": "",
+      "OnCallInformation": {
+        "OnCallPickupIndicator": ""
+      }
+    },
+    "AccountType": {
+      "Code": ""
+    },
+    "ShipmentTotalWeight": {
+      "Value": "",
+      "UnitOfMeasurement": {
+        "Code": ""
+      }
+    },
+    "HandlingUnitWeight": {
+      "Value": "",
+      "UnitOfMeasurement": {
+        "Code": ""
+      }
+    },
+    "AdjustedWeightIndicator": "",
+    "TimeInTransitIndicator": "",
+    "HandlingUnits": [
+      {
+        "Quantity": "",
+        "Type": {
+          "Code": ""
+        },
+        "Dimensions": {
+          "UnitOfMeasurement": {
+            "Code": ""
+          },
+          "Length": "",
+          "Width": "",
+          "Height": ""
+        }
+      }
+    ],
+    "AdjustedHeightIndicator": "",
+    "DensityEligibleIndicator": "",
+    "QuoteNumberIndicator": ""
+  }
+}

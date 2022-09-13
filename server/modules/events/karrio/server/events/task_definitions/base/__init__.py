@@ -15,24 +15,18 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
 def background_trackers_update():
     from karrio.server.events.task_definitions.base.tracking import update_trackers
 
-    try:
-        if settings.MULTI_TENANTS:
-            import django_tenants.utils as tenant_utils
-
-            for tenant in tenant_utils.get_tenant_model().objects.exclude(
-                schema_name="public"
-            ):
-                with tenant_utils.tenant_context(tenant):
-                    update_trackers()
-
-        else:
+    @utils.run_on_all_tenants
+    def _run():
+        try:
             update_trackers()
-    except Exception as e:
-        logger.error(f"failed to crawl tracking statuses: {e}")
+        except Exception as e:
+            logger.error(f"failed to crawl tracking statuses: {e}")
+
+    _run()
 
 
 @db_task()
-@utils.tenant_wrapper
+@utils.tenant_aware
 def notify_webhooks(*args, **kwargs):
     from karrio.server.events.task_definitions.base.webhook import (
         notify_webhook_subscribers,

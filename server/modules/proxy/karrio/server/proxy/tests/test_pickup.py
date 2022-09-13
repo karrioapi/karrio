@@ -13,7 +13,7 @@ class TesPickup(APITestCase):
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
@@ -27,7 +27,7 @@ class TesPickup(APITestCase):
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
@@ -41,7 +41,7 @@ class TesPickup(APITestCase):
             kwargs=dict(carrier_name="canadapost"),
         )
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)
@@ -207,6 +207,7 @@ PICKUP_RESPONSE = {
                 "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
+                "freight_class": None,
                 "reference_number": None,
                 "options": {},
             }
@@ -267,6 +268,7 @@ PICKUP_UPDATE_RESPONSE = {
                 "items": [],
                 "weight_unit": "KG",
                 "dimension_unit": "CM",
+                "freight_class": None,
                 "reference_number": None,
                 "options": {},
             }

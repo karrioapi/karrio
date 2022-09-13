@@ -1,0 +1,88 @@
+{
+  "FreightPickupRequest": {
+    "Request": {
+      "TransactionReference": {
+        "CustomerContext": "string",
+        "TransactionIdentifier": "string"
+      }
+    },
+    "DestinationPostalCode": "20019",
+    "DestinationCountryCode": "US",
+    "Requester": {
+      "ThirdPartyIndicator": "true",
+      "AttentionName": "Pickup Testing",
+      "EMailAddress": "vholloway@ups.com",
+      "Name": "Pickup Testing",
+      "Phone": {
+        "Number": "12345667890",
+        "Extension": "122"
+      }
+    },
+    "ShipFrom": {
+      "AttentionName": "Pickup testing",
+      "Name": "Pickup Testin",
+      "Address": {
+        "AddressLine": [
+          "123 main st ",
+          "address 2",
+          "address 3"
+        ],
+        "City": "Roswell",
+        "StateProvinceCode": "GA",
+        "PostalCode": "30076",
+        "CountryCode": "US"
+      },
+      "Phone": {
+        "Number": "1290987654",
+        "Extension": "123"
+      },
+      "EMailAddress": "abc@yahoo.com"
+    },
+    "PickupDate": "20190228",
+    "EarliestTimeReady": "0800",
+    "LatestTimeReady": "1600",
+    "ShipmentServiceOptions": {
+      "FreezableProtectionIndicator": "",
+      "LimitedAccessPickupIndicator": "",
+      "LimitedAccessDeliveryIndicator": "",
+      "ExtremeLengthIndicator": ""
+    },
+    "ShipmentDetail": {
+      "HazmatIndicator": "",
+      "PackagingType": {
+        "Code": "CAN",
+        "Description": "can"
+      },
+      "NumberOfPieces": "20",
+      "DescriptionOfCommodity": "twenty",
+      "Weight": {
+        "UnitOfMeasurement": {
+          "Code": "LBS",
+          "Description": "pounds"
+        },
+        "Value": "102"
+      }
+    },
+    "ExistingShipmentID": {
+      "ShipmentNumber": "",
+      "BOLID": ""
+    },
+    "POM": {
+      "POMNumber": "",
+      "POMNumberType": "",
+      "PickupNotifications": {
+        "CompanyName": "",
+        "EMailNotification": {
+          "EMailAddress": "",
+          "EventType": "",
+          "FailedEMail": ""
+        }
+      }
+    },
+    "PickupInstructions": "Pickup Instructions ",
+    "AdditionalComments": "Additonal Instructions",
+    "HandlingInstructions": "Handling Instructions",
+    "SpecialInstructions": "Special Instructions ",
+    "DeliveryInstructions": "Delivery Instructions"
+  }
+}

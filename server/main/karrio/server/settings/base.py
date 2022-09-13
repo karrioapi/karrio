@@ -156,6 +156,22 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 
 
+# Feature flags
+FEATURE_FLAGS = [
+    ("AUDIT_LOGGING", bool),
+    ("ALLOW_SIGNUP", bool),
+    ("ALLOW_ADMIN_APPROVED_SIGNUP", bool),
+    ("ALLOW_MULTI_ACCOUNT", bool),
+    ("MULTI_ORGANIZATIONS", bool),
+    ("ORDERS_MANAGEMENT", bool),
+    ("APPS_MANAGEMENT", bool),
+    ("DOCUMENTS_MANAGEMENT", bool),
+    ("DATA_IMPORT_EXPORT", bool),
+    ("CUSTOM_CARRIER_DEFINITION", bool),
+    ("PERSIST_SDK_TRACING", bool),
+]
+
+
 # components path settings
 BASE_PATH = config("BASE_PATH", default="")
 if len(BASE_PATH) > 0 and BASE_PATH.startswith("/"):
@@ -171,6 +187,7 @@ OPEN_API_PATH = "openapi/"
 
 NAMESPACED_URLS = [
     ("api/", "rest_framework.urls", "rest_framework"),
+    ("oauth/", "oauth2_provider.urls", "oauth2_provider"),
 ]
 
 BASE_APPS = [
@@ -204,6 +221,7 @@ INSTALLED_APPS = [
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
+    "oauth2_provider",
     *OTP_APPS,
 ]
 
@@ -246,6 +264,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.CreatorAccess'
 # KARRIO_ENTITY_ACCESS_METHOD = 'karrio.server.core.middleware.WideAccess'
 MODEL_TRANSFORMERS: list = []
+PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 
 
 # Database
@@ -310,19 +329,22 @@ STATICFILES_DIRS = [
 
 
 # Django REST framework
-AUTHENTICATION_METHODS = [
+AUTHENTICATION_CLASSES = [
     "karrio.server.core.authentication.TokenBasicAuthentication",
     "karrio.server.core.authentication.TokenAuthentication",
+    "karrio.server.core.authentication.OAuth2Authentication",
     "karrio.server.core.authentication.JWTAuthentication",
     "rest_framework.authentication.SessionAuthentication",
 ]
+PERMISSION_CLASSES = [
+    "rest_framework.permissions.IsAuthenticated",
+    "karrio.server.core.permissions.AllowEnabledAPI",
+]
+
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-        "karrio.server.core.permissions.APIAccessPermissions",
-    ),
-    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_METHODS,
+    "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
+    "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_CLASSES,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -368,6 +390,23 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+# Oauth2 config
+OIDC_RSA_PRIVATE_KEY = (
+    config("OIDC_RSA_PRIVATE_KEY", default="")
+    .replace("\\n", "\n")
+)
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
+    "OIDC_ENABLED": True,
+    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
+    "SCOPES": {
+        "read": "Reading scope",
+        "write": "Writing scope",
+        "openid": "OpenID connect",
+    },
+    "OAUTH2_VALIDATOR_CLASS": "karrio.server.core.oauth_validators.CustomOAuth2Validator",
+}
 
 # OpenAPI config
 
@@ -383,28 +422,27 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
             "in": "header",
             "description": """
-                API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
-
-                Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret
-                API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
-
-                Authentication to the API is performed via HTTP Basic Auth. Provide your API token as
-                the basic auth username value. You do not need to provide a password.
-
-                ```shell
-                $ curl https://instance.api.com/v1/shipments \\
-                  -u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e:
-                # The colon prevents curl from asking for a password.
-                ```
-
-                If you need to authenticate via bearer auth (e.g., for a cross-origin request),
-                use `-H "Authorization: Token key_c2760bb435l6kj5lk6j5lk671ce3c09b6e"`
-                instead of `-u key_c2760bb435l6kj5lk6j5lk671ce3c09b6e`.
-
-                All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
-                API requests without authentication will also fail.
+            `Authorization: Token key_xxxxxxxx`
             """,
-        }
+        },
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": """
+            `Authorization: Bearer xxx.xxx.xxx`
+            """,
+        },
+        "Oauth2": {
+            "type": "oauth2",
+            "authorizationUrl": "/oauth/authorize/",
+            "tokenUrl": "/oauth/token/",
+            "flow": "authorizationCode",
+            "description": """
+            `Authorization: Bearer xxxxxxxx`
+            """,
+            "scopes": OAUTH2_PROVIDER["SCOPES"]
+        },
     },
 }
 

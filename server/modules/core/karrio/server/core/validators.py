@@ -1,12 +1,15 @@
 import re
+import typing
 import logging
-import requests
+import requests  # type: ignore
 import phonenumbers
 from constance import config
 from datetime import datetime
-from karrio.server import serializers
-from karrio.core import units, utils
-from karrio.server.core import dataunits, datatypes
+
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.server.serializers as serializers
+import karrio.server.core.datatypes as datatypes
 
 logger = logging.getLogger(__name__)
 DIMENSIONS = ["width", "height", "length"]
@@ -78,6 +81,28 @@ def valid_datetime_format(prop: str):
     return validate
 
 
+def valid_base64(prop: str, max_size: int = 5242880):
+    def validate(value: str):
+        error = None
+
+        try:
+            buffer = lib.to_buffer(value, validate=True)
+
+            if buffer.getbuffer().nbytes > max_size:
+                error = f"Error: file size exceeds {max_size} bytes."
+
+        except Exception:
+            raise serializers.ValidationError(
+                "Invalid base64 file content",
+                code="invalid",
+            )
+
+        if any(error or ""):
+            raise serializers.ValidationError(error, code="invalid")
+
+    return validate
+
+
 class OptionDefaultSerializer(serializers.Serializer):
     def validate(self, data):
         options = {
@@ -98,6 +123,7 @@ class OptionDefaultSerializer(serializers.Serializer):
 
 class PresetSerializer(serializers.Serializer):
     def validate(self, data):
+        import karrio.server.core.dataunits as dataunits
         dimensions_required_together(data)
 
         if data is not None and "package_preset" in data:
@@ -186,7 +212,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
 
 class AddressValidatorAbstract:
     @staticmethod
-    def get_info() -> dict:
+    def get_info(is_authenticated: bool = None) -> dict:
         raise Exception("get_info method is not implemented")
 
     @staticmethod
@@ -217,7 +243,7 @@ class GoogleGeocode(AddressValidatorAbstract):
 
     @staticmethod
     def format_address(address: datatypes.Address) -> str:
-        address_string = utils.SF.concat_str(
+        address_string = lib.join(
             address.address_line1 or "",
             address.address_line2 or "",
             address.postal_code or "",
@@ -230,7 +256,7 @@ class GoogleGeocode(AddressValidatorAbstract):
                 "At least one address info must be provided (address_line1, city and/or postal_code)"
             )
 
-        enriched_address = utils.SF.concat_str(
+        enriched_address = lib.join(
             address_string,
             address.state_code or "",
             address.country_code or "",
@@ -299,7 +325,7 @@ class CanadaPostAddressComplete(AddressValidatorAbstract):
 
     @staticmethod
     def format_address(address: datatypes.Address) -> str:
-        address_string = utils.SF.concat_str(
+        address_string = lib.join(
             address.address_line1 or "",
             address.address_line2 or "",
             address.city or "",
@@ -372,7 +398,7 @@ class Address:
         return dict(is_enabled=is_enabled)
 
     @staticmethod
-    def get_validator() -> AddressValidatorAbstract:
+    def get_validator() -> typing.Type[AddressValidatorAbstract]:
         if any(config.GOOGLE_CLOUD_API_KEY or ""):
             return GoogleGeocode
         elif any(config.CANADAPOST_ADDRESS_COMPLETE_API_KEY or ""):

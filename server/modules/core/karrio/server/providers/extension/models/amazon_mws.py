@@ -10,9 +10,10 @@ class AmazonMwsSettings(Carrier):
         verbose_name = "AmazonMws Settings"
         verbose_name_plural = "AmazonMws Settings"
 
-    access_key = models.CharField(max_length=200)
-    secret_key = models.CharField(max_length=200)
-    aws_region = models.CharField(max_length=200, default="us-east-1")
+    seller_id = models.CharField(max_length=50)
+    developer_id = models.CharField(max_length=50)
+    mws_auth_token = models.CharField(max_length=50)
+    aws_region = models.CharField(max_length=50, default="us-east-1")
 
     @property
     def carrier_name(self) -> str:

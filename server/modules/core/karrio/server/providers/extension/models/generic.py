@@ -17,8 +17,8 @@ class GenericSettings(Carrier):
         help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
     )
     services = models.ManyToManyField("ServiceLevel", blank=True)
-    label_template = models.ForeignKey(
-        "LabelTemplate", null=True, on_delete=models.CASCADE
+    label_template = models.OneToOneField(
+        "LabelTemplate", null=True, blank=True, on_delete=models.CASCADE
     )
     account_number = models.CharField(max_length=25, blank=True)
     account_country_code = models.CharField(

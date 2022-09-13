@@ -203,8 +203,3 @@ class UploadDocumentType(utils.Flag):
     certificate_of_origin = ups_certificate_of_origin
     commercial_invoice = ups_commercial_invoice
     other = ups_other_document
-
-
-class DocumentUploadOption(utils.Enum):
-    fedex_document_producer = utils.OptionEnum("fedex_document_producer")
-    fedex_expiration_date = utils.OptionEnum("fedex_expiration_date")

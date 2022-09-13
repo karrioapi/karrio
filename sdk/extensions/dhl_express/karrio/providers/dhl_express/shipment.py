@@ -103,7 +103,7 @@ def shipment_request(
     payment = payload.payment or models.Payment(
         paid_by="sender", account_number=settings.account_number
     )
-    customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
+    customs = lib.to_customs_info(payload.customs, weight_unit=weight_unit.value)
     is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
     options = lib.to_shipping_options(
@@ -234,19 +234,15 @@ def shipment_request(
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(
-                            Weight=units.Weight(
-                                item.weight, units.WeightUnit[item.weight_unit or "KG"]
-                            )[weight_unit.name],
+                            Weight=item.weight,
                             WeightUnit=provider_units.WeightUnit[
-                                weight_unit.name
+                                item.weight_unit
                             ].value,
                         ),
                         GrossWeight=WeightType(
-                            Weight=units.Weight(
-                                item.weight, units.WeightUnit[item.weight_unit or "KG"]
-                            )[weight_unit.name],
+                            Weight=item.weight,
                             WeightUnit=provider_units.WeightUnit[
-                                weight_unit.name
+                                item.weight_unit
                             ].value,
                         ),
                         License=None,

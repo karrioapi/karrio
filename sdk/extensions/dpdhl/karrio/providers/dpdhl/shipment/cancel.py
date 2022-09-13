@@ -59,13 +59,12 @@ def shipment_cancel_request(
         lambda _: lib.envelope_serializer(
             _,
             namespace=(
-                'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"'
+                'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"'
                 ' xmlns:cis="http://dhl.de/webservice/cisbase"'
                 ' xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0"'
             ),
             prefixes=dict(
                 Envelope="soapenv",
-                Version_children="",
                 shipmentNumber="cis",
                 AuthentificationType="cis",
                 DeleteShipmentOrderRequest="ns",

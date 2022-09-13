@@ -7,16 +7,13 @@ from rest_framework.reverse import reverse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
 from karrio.server.core.views.api import APIView
 from karrio.server.proxy.router import router
-from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.gateway import Shipments
 from karrio.server.core.serializers import (
-    CharField,
-    ChoiceField,
     COUNTRIES,
-    MODELS,
-    EntitySerializer,
     ShippingRequest,
     ShipmentCancelRequest,
     ShipmentContent,
@@ -29,16 +26,16 @@ from karrio.server.core.serializers import (
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-CARRIER_NAMES = list(MODELS.keys())
+CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class Address(BaseAddress):
-    city = CharField(required=True, help_text="The address city")
-    person_name = CharField(required=True, help_text="attention to")
-    country_code = ChoiceField(
+    city = serializers.CharField(required=True, help_text="The address city")
+    person_name = serializers.CharField(required=True, help_text="attention to")
+    country_code = serializers.ChoiceField(
         required=True, choices=COUNTRIES, help_text="The address country code"
     )
-    address_line1 = CharField(
+    address_line1 = serializers.CharField(
         required=True, help_text="The address line with street number"
     )
 
@@ -52,8 +49,8 @@ class ShippingRequestValidation(ShippingRequest):
     )
 
 
-class ShippingResponse(EntitySerializer, ShipmentContent, ShipmentDetails):
-    object_type = CharField(default="shipment", help_text="Specifies the object type")
+class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
+    object_type = serializers.CharField(default="shipment", help_text="Specifies the object type")
 
 
 class ShippingDetails(APIView):
@@ -74,7 +71,7 @@ class ShippingDetails(APIView):
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
         """
-        payload = SerializerDecorator[ShippingRequestValidation](data=request.data).data
+        payload = serializers.SerializerDecorator[ShippingRequestValidation](data=request.data).data
 
         response = Shipments.create(
             payload,
@@ -115,7 +112,7 @@ class ShippingCancel(APIView):
         """
         Cancel a shipment and the label previously created
         """
-        payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
+        payload = serializers.SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
         response = Shipments.cancel(payload, context=request, carrier_name=carrier_name)
 

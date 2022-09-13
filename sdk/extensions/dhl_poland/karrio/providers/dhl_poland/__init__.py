@@ -5,3 +5,7 @@ from karrio.providers.dhl_poland.shipment import (
     shipment_cancel_request,
     shipment_request,
 )
+from karrio.providers.dhl_poland.tracking import (
+    parse_tracking_response,
+    tracking_request,
+)

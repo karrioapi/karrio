@@ -1,13 +1,12 @@
-from enum import Enum
 from django.db import transaction
 
-from karrio.server.serializers import ModelSerializer, owned_model_serializer
-from karrio.server.orgs.utils import admin_required
-from karrio.server.orgs import models
+import karrio.server.orgs.serializers as serializers
+import karrio.server.orgs.models as models
+import karrio.server.orgs.utils as utils
 
 
-@owned_model_serializer
-class OrganizationModelSerializer(ModelSerializer):
+@serializers.owned_model_serializer
+class OrganizationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Organization
         fields = ("id", "name", "slug")
@@ -30,7 +29,7 @@ class OrganizationModelSerializer(ModelSerializer):
         return org
 
     def update(self, instance, data: dict, context, **kwargs) -> models.Organization:
-        admin_required(instance, context)
+        utils.admin_required(instance, context)
 
         if "name" in data and "slug" not in data:
             data.update(

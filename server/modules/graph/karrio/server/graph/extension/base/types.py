@@ -335,7 +335,7 @@ class LabelTemplateType(utils.BaseObjectType):
 
     class Meta:
         model = providers.LabelTemplate
-        exclude = ("genericsettings_set",)
+        exclude = ("genericsettings",)
         interfaces = (utils.CustomNode,)
 
 

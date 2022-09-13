@@ -18,11 +18,13 @@ class Query:
         default_value=[],
     )
 
-    @utils.login_required
+    @utils.authorization_required(["DOCUMENTS_MANAGEMENT"])
+    @utils.authentication_required
     def resolve_document_template(self, info, **kwargs):
         return models.DocumentTemplate.access_by(info.context).filter(**kwargs).first()
 
-    @utils.login_required
+    @utils.authorization_required(["DOCUMENTS_MANAGEMENT"])
+    @utils.authentication_required
     def resolve_document_templates(self, info, **kwargs):
         return models.DocumentTemplate.access_by(info.context)
 

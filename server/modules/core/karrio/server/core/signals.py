@@ -1,6 +1,6 @@
 import logging
-from django.dispatch import receiver
 from django.conf import settings
+from django.dispatch import receiver
 
 from constance.signals import config_updated
 
@@ -14,19 +14,25 @@ def constance_updated(sender, key, old_value, new_value, **kwargs):
 
 
 def update_settings(current):
-    settings.EMAIL_USE_TLS = current.EMAIL_USE_TLS
-    settings.EMAIL_HOST_USER = current.EMAIL_HOST_USER
-    settings.EMAIL_HOST_PASSWORD = current.EMAIL_HOST_PASSWORD
-    settings.EMAIL_HOST = current.EMAIL_HOST
-    settings.EMAIL_PORT = current.EMAIL_PORT
-    settings.EMAIL_FROM_ADDRESS = current.EMAIL_FROM_ADDRESS
+    CONSTANCE_CONFIG_KEYS = [key for key in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, "key")]
 
-    settings.EMAIL_SERVER = current.EMAIL_HOST
-    settings.EMAIL_ADDRESS = current.EMAIL_HOST_USER
-    settings.EMAIL_PASSWORD = current.EMAIL_HOST_PASSWORD
+    for key in CONSTANCE_CONFIG_KEYS:
+        setattr(settings, key, getattr(current, key))
+
+    # settings.EMAIL_USE_TLS = current.EMAIL_USE_TLS
+    # settings.EMAIL_HOST_USER = current.EMAIL_HOST_USER
+    # settings.EMAIL_HOST_PASSWORD = current.EMAIL_HOST_PASSWORD
+    # settings.EMAIL_HOST = current.EMAIL_HOST
+    # settings.EMAIL_PORT = current.EMAIL_PORT
+    # settings.EMAIL_FROM_ADDRESS = current.EMAIL_FROM_ADDRESS
+
+    # settings.EMAIL_SERVER = current.EMAIL_HOST
+    # settings.EMAIL_ADDRESS = current.EMAIL_HOST_USER
+    # settings.EMAIL_PASSWORD = current.EMAIL_HOST_PASSWORD
     settings.EMAIL_ENABLED = all(
-        cfg is not None and cfg != '' for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER, current.EMAIL_HOST_PASSWORD]
+        cfg is not None and cfg != '' for cfg
+        in [current.EMAIL_HOST, current.EMAIL_HOST_USER, current.EMAIL_HOST_PASSWORD]
     )
 
-    settings.GOOGLE_CLOUD_API_KEY = current.GOOGLE_CLOUD_API_KEY
-    settings.CANADAPOST_ADDRESS_COMPLETE_API_KEY = current.CANADAPOST_ADDRESS_COMPLETE_API_KEY
+    # settings.GOOGLE_CLOUD_API_KEY = current.GOOGLE_CLOUD_API_KEY
+    # settings.CANADAPOST_ADDRESS_COMPLETE_API_KEY = current.CANADAPOST_ADDRESS_COMPLETE_API_KEY

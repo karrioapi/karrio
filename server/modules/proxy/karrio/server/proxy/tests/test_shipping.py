@@ -11,7 +11,7 @@ class TestShipping(APITestCase):
         url = reverse("karrio.server.proxy:shipping-request")
         data = SHIPPING_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
@@ -26,7 +26,7 @@ class TestShipping(APITestCase):
         )
         data = SHIPPING_CANCEL_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_SUCCESS_CANCEL_VALUE
             response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
@@ -41,7 +41,7 @@ class TestShipping(APITestCase):
         )
         data = SHIPPING_CANCEL_DATA
 
-        with patch("karrio.server.core.gateway.identity") as mock:
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_FAILED_CANCEL_VALUE
             response = self.client.post(f"{url}", data)
             response_data = json.loads(response.content)
@@ -219,6 +219,7 @@ SHIPPING_RESPONSE = {
             "weight_unit": "KG",
             "dimension_unit": "CM",
             "items": [],
+            "freight_class": None,
             "reference_number": "123456789012",
             "object_type": "parcel",
             "options": {},

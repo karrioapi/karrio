@@ -28,6 +28,7 @@ urlpatterns = [
             [
                 path("", include("karrio.server.user.views")),
                 path("status/", include("health_check.urls")),
+                *[path("", include(urls)) for urls in settings.TENANT_ADMIN_API_URLS],
                 path("", tenants_admin.site.urls, name="tenants_admin"),
             ]
         ),

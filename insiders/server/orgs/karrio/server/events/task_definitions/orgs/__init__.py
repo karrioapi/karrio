@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @db_task()
-@utils.tenant_wrapper
+@utils.tenant_aware
 def cleanup_orgs(*args, **kwargs):
     @utils.run_async
     def _actual():

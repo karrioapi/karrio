@@ -1,0 +1,323 @@
+{
+  "FreightShipRequest": {
+    "Shipment": {
+      "ShipFrom": {
+        "Name": "Ship From Name",
+        "Address": {
+          "AddressLine": "AddressLine",
+          "City": "City",
+          "StateProvinceCode": "State",
+          "Town": "Town",
+          "PostalCode": "PostalCode",
+          "CountryCode": "CountryCode"
+        },
+        "AttentionName": "AttentionName",
+        "Phone": {
+          "Number": "AttentionPhone",
+          "Extension": "Extension"
+        },
+        "FaxNumber": "FaxNumber",
+        "TaxIdentificationNumber": ""
+      },
+      "ShipperNumber": "888144",
+      "ShipTo": {
+        "Name": "Ship To Name",
+        "Address": {
+          "AddressLine": "AddressLine",
+          "City": "City",
+          "StateProvinceCode": "StateProvince”",
+          "Town": "Town",
+          "PostalCode": "PostalCode",
+          "CountryCode": "CountryCode"
+        },
+        "AttentionName": "AttentionName",
+        "Phone": {
+          "Number": "AttentionPhone",
+          "Extension": "Extension"
+        },
+        "FaxNumber": "FaxNumber",
+        "TaxIdentificationNumber": ""
+      },
+      "PaymentInformation": {
+        "Payer": {
+          "Name": "PayerName",
+          "Address": {
+            "AddressLine": "AddressLine",
+            "City": "City",
+            "StateProvinceCode": "StateProvince",
+            "Town": "Town",
+            "PostalCode": "PostalCode",
+            "CountryCode": "CountryCode"
+          },
+          "ShipperNumber": "ShipperNumber",
+          "AttentionName": "AttentionName",
+          "Phone": {
+            "Number": "AttentionPhone",
+            "Extension": "Extension"
+          },
+          "FaxNumber": "FaxNumber"
+        },
+        "ShipmentBillingOption": {
+          "Code": "10"
+        }
+      },
+      "Service": {
+        "Code": "308"
+      },
+      "HandlingUnitOne": {
+        "Quantity": "2",
+        "Type": {
+          "Code": "PLT"
+        }
+      },
+      "HandlingUnitTwo": {
+        "Quantity": "2",
+        "Type": {
+          "Code": "PLT"
+        }
+      },
+      "ExistingShipmentID": {
+        "ShipmentNumber": "ShipmentNumber",
+        "BOLID": "",
+        "ConfirmationNumber": {
+          "Type": {
+            "Code": "PLT"
+          },
+          "Value": ""
+        }
+      },
+      "HandlingInstructions": "",
+      "DeliveryInstructions": "",
+      "PickupInstructions": "",
+      "Commodity": [
+        {
+          "CommodityID": "",
+          "Description": "Goods",
+          "Weight": {
+            "UnitOfMeasurement": {
+              "Code": "LBS"
+            },
+            "Value": "190"
+          },
+          "Dimensions": {
+            "UnitOfMeasurement": {
+              "Code": "IN"
+            },
+            "Length": "11",
+            "Width": "11",
+            "Height": "11"
+          },
+          "NumberOfPieces": "10",
+          "PackagingType": {
+            "Code": "PKG"
+          },
+          "DangerousGoodsIndicator": "",
+          "CommodityValue": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          },
+          "FreightClass": "110",
+          "NMFCCommodityCode": "",
+          "NMFCCommodity": {
+            "PrimeCode": "",
+            "SubCode": ""
+          }
+        }
+      ],
+      "Reference": {
+        "Number": {
+          "Code": "",
+          "Value": ""
+        },
+        "BarCodeIndicator": "",
+        "NumberOfCartons": "",
+        "Weight": {
+          "UnitOfMeasurement": {
+            "Code": ""
+          },
+          "Value": ""
+        }
+      },
+      "ShipmentServiceOptions": {
+        "EMailInformation": {
+          "EMailType": {
+            "Code": ""
+          },
+          "Email": {
+            "EMailAddress": "",
+            "EMailText": "",
+            "UndeliverableEMailAddress": "",
+            "Subject": ""
+          }
+        },
+        "PickupOptions": {
+          "HolidayPickupIndicator": "",
+          "InsidePickupIndicator": "",
+          "ResidentialPickupIndicator": "",
+          "WeekendPickupIndicator": "",
+          "LiftGateRequiredIndicator": "",
+          "LimitedAccessPickupIndicator": ""
+        },
+        "DeliveryOptions": {
+          "CallBeforeDeliveryIndicator": "",
+          "HolidayDeliveryIndicator": "",
+          "InsideDeliveryIndicator": "",
+          "ResidentialDeliveryIndicator": "",
+          "WeekendDeliveryIndicator": "",
+          "LiftGateRequiredIndicator": "",
+          "LimitedAccessDeliveryIndicator": ""
+        },
+        "OverSeasLeg": {
+          "Dimensions": {
+            "Volume": "",
+            "Height": "",
+            "Length": "",
+            "UnitOfMeasurement": {
+              "Code": ""
+            },
+            "Value": {
+              "Cube": {
+                "CurrencyCode": "",
+                "MonetaryValue": ""
+              },
+              "CWT": {
+                "CurrencyCode": "",
+                "MonetaryValue": ""
+              }
+            }
+          }
+        },
+        "COD": {
+          "CODValue": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          },
+          "CODPaymentMethod": {
+            "Code": ""
+          },
+          "CODBillingOption": {
+            "Code": ""
+          },
+          "RemitTo": {
+            "Name": "",
+            "Address": {
+              "AddressLine": "",
+              "City": "",
+              "StateProvinceCode": "",
+              "Town": "",
+              "PostalCode": "",
+              "CountryCode": ""
+            },
+            "AttentionName": "",
+            "Phone": {
+              "Number": "",
+              "Extension": ""
+            },
+            "FaxNumber": "",
+            "EMailAddress": ""
+          }
+        },
+        "DangerousGoods": {
+          "Name": "",
+          "Phone": {
+            "Number": "",
+            "Extension": ""
+          },
+          "TransportationMode": {
+            "Code": ""
+          }
+        },
+        "SortingAndSegregating": {
+          "Quantity": ""
+        },
+        "DeclaredValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "ExcessDeclaredValue": {
+          "CurrencyCode": "",
+          "MonetaryValue": ""
+        },
+        "HandlingCharge": {
+          "Percentage": "",
+          "Amount": {
+            "CurrencyCode": "",
+            "MonetaryValue": ""
+          }
+        },
+        "FreezableProtectionIndicator": "",
+        "ExtremeLengthIndicator": "",
+        "LinearFeet": ""
+      },
+      "PickupRequest": {
+        "AdditionalComments": "",
+        "Requester": {
+          "ThirdPartyIndicator": "",
+          "AttentionName": "AttentionName",
+          "EMailAddress": "AttentionEmail",
+          "Name": "DG",
+          "Phone": {
+            "Number": "AttentionPhone",
+            "Extension": ""
+          }
+        },
+        "PickupDate": "20181228",
+        "EarliestTimeReady": "0723",
+        "LatestTimeReady": "1700",
+        "POM": {
+          "POMNumber": "",
+          "POMNumberType": "",
+          "PickupNotifications": {
+            "EMailNotification": {
+              "EMailAddress": "",
+              "EventType": "",
+              "FailedEMail": ""
+            }
+          }
+        }
+      },
+      "Documents": {
+        "Image": [
+          {
+            "Type": {
+              "Code": ""
+            },
+            "LabelsPerPage": "",
+            "Format": {
+              "Code": ""
+            },
+            "PrintFormat": {
+              "Code": ""
+            },
+            "PrintSize": {
+              "Length": "",
+              "Width": ""
+            }
+          }
+        ]
+      },
+      "TimeInTransitIndicator": "",
+      "HandlingUnits": [
+        {
+          "Quantity": "",
+          "Type": {
+            "Code": ""
+          },
+          "Dimensions": {
+            "UnitOfMeasurement": {
+              "Code": ""
+            },
+            "Length": "",
+            "Width": "",
+            "Height": ""
+          }
+        }
+      ],
+      "DensityEligibleIndicator": ""
+    },
+    "Miscellaneous": {
+      "WSVersion": "21.0.11",
+      "ReleaseID": "07.12.2008"
+    }
+  }
+}

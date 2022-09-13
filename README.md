@@ -1,4 +1,9 @@
-# Karrio - The Universal Shipping API
+# Karrio
+
+- Website: <https://karrio.io>
+- Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
+- Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
+- Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
 
 <a href="https://karrio.io" target="_blank">
   <picture>
@@ -11,15 +16,14 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
 
-karrio makes shipping feature integration simple and accessible.
-Help us out… If you love open source and great software, give us a star! 🌟
+Karrio is a tool for courier integration and logistics operations automation using a modern tech stack. Karrio help you manage carrier accounts and improve shipping costs and fulfilment efficiency.
 
 **Features**
 
-- **Headless Shipping**: Access a network of traditional and modern shipping carrier API-first
-- **Multi-carrier SDK**: Integrate karrio once and connect to multiple shipping carrier APIs
-- **Extensible**: Use the karrio SDK Framework to integrate with custom carrier APIs.
-- **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels.
+- **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
+- **Extensible**: Build anything with webhooks, API and metadata.
+- **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
+- **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
 - **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
@@ -44,8 +48,9 @@ See the [License section](#license) for more details.
 
 ## Status
 
-- [x] Alpha: We are testing karrio with a closed set of customers
+- [x] Alpha: We are testing Karrio with a closed set of customers.
 - [x] Private Beta: Stable enough for most non-enterprise use-cases
+- [x] Public Beta: Anyone can sign up over at [app.karrio.io](https://app.karrio.io)
 - [ ] Public: Production-ready
 
 We are currently in Private Beta. Watch "releases" of this repo to get notified of major updates.
@@ -79,7 +84,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.6rc
+  danh91.docker.scarf.sh/karrio/server:2022.8
 ```
 
 </details>
@@ -104,7 +109,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.6rc
+    image: danh91.docker.scarf.sh/karrio/server:2022.8
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -266,10 +271,7 @@ print(rates)
 #         currency="CAD",
 #         transit_days=2,
 #         service="canadapost_xpresspost",
-#         discount=1.38,
-#         base_charge=12.26,
 #         total_charge=13.64,
-#         duties_and_taxes=0.0,
 #         extra_charges=[
 #             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
 #             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
@@ -282,8 +284,6 @@ print(rates)
 
 ## Resources
 
-- [**Documentation**](https://docs.karrio.io)
-- [**Community Discussions**](https://github.com/karrioapi/karrio/discussions)
 - [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
 - [**Blog**](https://docs.karrio.io/blog)
 

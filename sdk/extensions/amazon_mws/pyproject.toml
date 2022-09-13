@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "karrio.amazon_mws"
-version = "2022.6"
+version = "2022.8"
 homepage="https://github.com/karrioapi/karrio/tree/main/sdk/vendors/amazon_mws"
 repository="https://github.com/karrioapi/karrio"
 description = "AmazonMws karrio extension"

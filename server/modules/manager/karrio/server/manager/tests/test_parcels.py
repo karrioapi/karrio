@@ -70,6 +70,7 @@ PARCEL_RESPONSE = {
     "items": [],
     "weight_unit": "KG",
     "dimension_unit": "CM",
+    "freight_class": None,
     "reference_number": ANY,
     "options": {},
 }
@@ -97,6 +98,7 @@ PARCEL_UPDATE_RESPONSE = {
     "items": [],
     "weight_unit": "LB",
     "dimension_unit": "IN",
+    "freight_class": None,
     "reference_number": ANY,
     "options": {},
 }

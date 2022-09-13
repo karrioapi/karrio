@@ -23,8 +23,10 @@ class GraphQLView(AccessMixin, BaseGraphQLView):
         if hasattr(error, "original_error"):
             if isinstance(error.original_error, exceptions.APIException):
                 formatted_error["message"] = str(error.original_error.detail)
-                formatted_error["code"] = getattr(
-                    error.original_error, "code", error.original_error.default_code
+                formatted_error["code"] = (
+                    error.original_error.get_codes()
+                    if hasattr(error.original_error, "get_codes")
+                    else getattr(error.original_error, "code", getattr(error.original_error, "default_code", None))
                 )
                 formatted_error["status_code"] = error.original_error.status_code
 

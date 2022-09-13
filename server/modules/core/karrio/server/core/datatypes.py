@@ -2,6 +2,7 @@ import attr
 from typing import List, Dict
 from jstruct import JStruct, JList, REQUIRED
 from karrio.core.models import (
+    DocumentDetails,
     Documents,
     Parcel,
     Message,
@@ -21,6 +22,8 @@ from karrio.core.models import (
     ConfirmationDetails as Confirmation,
     TrackingEvent,
     TrackingDetails,
+    DocumentFile,
+    DocumentUploadRequest,
 )
 
 
@@ -250,6 +253,21 @@ class Tracking:
     test_mode: bool = None
     options: Dict = {}
     meta: dict = None
+
+
+
+@attr.s(auto_attribs=True)
+class DocumentUploadResponse:
+    carrier_name: str
+    carrier_id: str
+    documents: List[DocumentDetails] = JList[DocumentDetails]
+    reference: str = ""
+
+    test_mode: bool = None
+    options: Dict = {}
+    meta: dict = None
+    id: str = None
+    messages: List[Message] = JList[Message]
 
 
 @attr.s(auto_attribs=True)

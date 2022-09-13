@@ -1,17 +1,18 @@
 from django.urls import reverse
 from rest_framework.request import Request
 
-from karrio.references import collect_providers_data, collect_references
-from karrio.server.core.serializers import CustomsContentType, Incoterm, MODELS
 from karrio.server.conf import settings
+import karrio.references as references
+import karrio.core.units as units
+import karrio.server.providers.models as providers
 
 
-PACKAGE_MAPPERS = collect_providers_data()
+PACKAGE_MAPPERS = references.collect_providers_data()
 
 REFERENCE_MODELS = {
-    **collect_references(),
-    "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
-    "incoterms": {c.name: c.value for c in list(Incoterm)},
+    **references.collect_references(),
+    "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
+    "incoterms": {c.name: c.value for c in list(units.Incoterm)},
 }
 REFERENCE_EXCLUSIONS = [
     "currencies",
@@ -23,7 +24,7 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-CARRIER_NAMES = list(sorted(MODELS.keys()))
+CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
@@ -43,17 +44,10 @@ def contextual_metadata(request: Request):
         "ADMIN": f"{host}admin/",
         "OPENAPI": f"{host}openapi",
         "GRAPHQL": f"{host}graphql",
-        "MULTI_ORGANIZATIONS": settings.MULTI_ORGANIZATIONS,
-        "ALLOW_MULTI_ACCOUNT": settings.ALLOW_MULTI_ACCOUNT,
-        "ORDERS_MANAGEMENT": settings.ORDERS_MANAGEMENT,
-        "APPS_MANAGEMENT": settings.APPS_MANAGEMENT,
-        "AUDIT_LOGGING": settings.AUDIT_LOGGING,
-        "DOCUMENTS_MANAGEMENT": settings.DOCUMENTS_MANAGEMENT,
-        "CUSTOM_CARRIER_DEFINITION": settings.CUSTOM_CARRIER_DEFINITION,
-        "DATA_IMPORT_EXPORT": settings.DATA_IMPORT_EXPORT,
-        "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
-        "ALLOW_ADMIN_APPROVED_SIGNUP": settings.ALLOW_ADMIN_APPROVED_SIGNUP,
-        "PERSIST_SDK_TRACING": settings.PERSIST_SDK_TRACING,
+        **{
+            flag: getattr(settings, flag, None)
+            for flag, _ in settings.FEATURE_FLAGS
+        },
     }
 
 
@@ -76,7 +70,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         },
     }
 
-    if is_authenticated and "generic" in MODELS:
+    if is_authenticated and "generic" in providers.MODELS:
         custom_carriers = [
             c.settings
             for c in gateway.Carriers.list(context=request, carrier_name="generic")

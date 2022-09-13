@@ -1,5 +1,6 @@
 import pydoc
 import logging
+import drf_yasg.openapi as openapi
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple, List
 from django.db import models
 from django.conf import settings
@@ -45,6 +46,46 @@ class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):
 
         instance.save()
         return instance
+
+
+class StringListField(serializers.ListField):
+    child = serializers.CharField()
+
+
+class PlainDictField(serializers.DictField):
+    class Meta:
+        swagger_schema_fields = {
+            "type": openapi.TYPE_OBJECT,
+            "additional_properties": True,
+        }
+
+
+class FlagField(serializers.BooleanField):
+    pass
+
+
+class FlagsSerializer(serializers.Serializer):
+    def __init__(self, *args, **kwargs):
+        data = kwargs.get("data", {})
+        self.flags = [
+            (label, label in data)
+            for label, field in self.fields.items()
+            if isinstance(field, FlagField)
+        ]
+
+        super().__init__(*args, **kwargs)
+
+    def validate(self, data):
+        validated = super().validate(data)
+        for flag, specified in self.flags:
+            if specified and validated[flag] is None:
+                validated.update({flag: True})
+
+        return validated
+
+
+class EntitySerializer(serializers.Serializer):
+    id = serializers.CharField(required=False, help_text="A unique identifier")
 
 
 """
