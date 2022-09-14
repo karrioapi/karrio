@@ -9,3 +9,4 @@ twine
 wheel
 nose
 typer[all]
+poetry-core>=1.1.0a7 # not directly required, pinned by Snyk to avoid a vulnerability
