@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 QUERIES: list = []
 MUTATIONS: list = []
+EXTRA_TYPES: list = []
 
 # Register karrio graphql schemas
 for _, name, _ in pkgutil.iter_modules(schemas.__path__): # type: ignore
@@ -19,6 +20,8 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__): # type: ignore
             QUERIES.append(schema.Query)
         if hasattr(schema, "Mutation"):
             MUTATIONS.append(schema.Mutation)
+        if hasattr(schema, "extra_types"):
+            EXTRA_TYPES += schema.extra_types
     except Exception as e:
         logger.warning(f'Failed to register "{name}" schema')
         logger.exception(e)
@@ -37,6 +40,6 @@ class Mutation(*MUTATIONS): # type: ignore
 schema = strawberry.Schema( # type: ignore
     query=Query,
     mutation=Mutation,
-    types=[*base.extra_types],
+    types=[*EXTRA_TYPES],
     config=config.StrawberryConfig(auto_camel_case=False),
 )

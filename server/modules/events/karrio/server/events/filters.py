@@ -1,14 +1,9 @@
 import typing
-import graphene
 import django_filters
-from graphene.types import generic
 from django.db.models import Q
 
-import karrio.server.graph.utils as utils
-import karrio.server.events.models as models
 import karrio.server.events.serializers as serializers
-
-EventStatusEnum = graphene.Enum.from_enum(serializers.EventTypes)
+import karrio.server.events.models as models
 
 
 class WebhookFilter(django_filters.FilterSet):
@@ -38,15 +33,6 @@ class WebhookFilter(django_filters.FilterSet):
         return queryset.filter(
             Q(enabled_events__contains=values) | Q(enabled_events__contains=["all"])
         )
-
-
-class WebhookType(utils.BaseObjectType):
-    enabled_events = graphene.List(EventStatusEnum)
-
-    class Meta:
-        model = models.Webhook
-        exclude = (*models.Webhook.HIDDEN_PROPS, "failure_streak_count")
-        interfaces = (utils.CustomNode,)
 
 
 class EventFilter(django_filters.FilterSet):
@@ -79,13 +65,3 @@ class EventFilter(django_filters.FilterSet):
 
     def types_filter(self, queryset, name, values):
         return queryset.filter(Q(type__in=values))
-
-
-class EventType(utils.BaseObjectType):
-    type = EventStatusEnum()
-    data = generic.GenericScalar()
-
-    class Meta:
-        model = models.Event
-        exclude = (*models.Event.HIDDEN_PROPS,)
-        interfaces = (utils.CustomNode,)
