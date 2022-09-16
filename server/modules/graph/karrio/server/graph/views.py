@@ -3,9 +3,14 @@ karrio server graph module urls
 """
 import pydoc
 import typing
+from django.urls import path
 from django.conf import settings
-from graphene_django.views import GraphQLView as BaseGraphQLView
-from rest_framework import exceptions
+
+import strawberry.http as http
+import strawberry.types as types
+import strawberry.django.views as views
+
+import karrio.server.graph.schema as schema
 
 ACCESS_METHOD = getattr(
     settings,
@@ -15,23 +20,20 @@ ACCESS_METHOD = getattr(
 AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
 
-class GraphQLView(AccessMixin, BaseGraphQLView):
-    @staticmethod
-    def format_error(error):
-        formatted_error = super(GraphQLView, GraphQLView).format_error(error)
+class GraphQLView(AccessMixin, views.GraphQLView):
+    def process_result(self, request, result: types.ExecutionResult) -> http.GraphQLHTTPResponse:
+        data: http.GraphQLHTTPResponse = {"data": result.data}
 
-        if hasattr(error, "original_error"):
-            if isinstance(error.original_error, exceptions.APIException):
-                formatted_error["message"] = str(error.original_error.detail)
-                formatted_error["code"] = (
-                    error.original_error.get_codes()
-                    if hasattr(error.original_error, "get_codes")
-                    else getattr(error.original_error, "code", getattr(error.original_error, "default_code", None))
-                )
-                formatted_error["status_code"] = error.original_error.status_code
+        if result.errors:
+            data["errors"] = [format_graphql_error(err) for err in result.errors]
 
-            if isinstance(error.original_error, exceptions.ValidationError):
-                formatted_error["message"] = str(error.original_error.default_detail)
-                formatted_error["validation"] = error.original_error.detail
+        return data
 
-        return formatted_error
+
+def format_graphql_error(error):
+    return error
+
+
+urlpatterns = [
+    path("graphql/", GraphQLView.as_view(schema=schema.schema), name="graphql"),
+]
