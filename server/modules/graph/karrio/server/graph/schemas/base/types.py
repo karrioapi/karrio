@@ -117,7 +117,7 @@ class TracingRecordType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: int) -> typing.Optional["TracingRecordType"]:
+    def resolve(info, id: str) -> typing.Optional["TracingRecordType"]:
         return tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
