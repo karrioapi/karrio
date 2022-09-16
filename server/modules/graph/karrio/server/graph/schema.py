@@ -1,33 +1,42 @@
 import pkgutil
 import logging
-import typing
-import graphene
-from graphene_django.debug import DjangoDebug
+import strawberry
+import strawberry.schema.config as config
 
-import karrio.server.graph.extension as extensions
+import karrio.server.graph.schemas.base as base
+import karrio.server.graph.schemas as schemas
 
 logger = logging.getLogger(__name__)
 
-QUERIES: typing.List[graphene.ObjectType] = []
-MUTATIONS: typing.List[graphene.ObjectType] = []
+QUERIES: list = []
+MUTATIONS: list = []
 
 # Register karrio graphql schemas
-for _, name, _ in pkgutil.iter_modules(extensions.__path__):
+for _, name, _ in pkgutil.iter_modules(schemas.__path__): # type: ignore
     try:
-        schema = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
-        hasattr(schema, "Query") and QUERIES.append(schema.Query)
-        hasattr(schema, "Mutation") and MUTATIONS.append(schema.Mutation)
+        schema = __import__(f"{schemas.__name__}.{name}", fromlist=[name])
+        if hasattr(schema, "Query"):
+            QUERIES.append(schema.Query)
+        if hasattr(schema, "Mutation"):
+            MUTATIONS.append(schema.Mutation)
     except Exception as e:
         logger.warning(f'Failed to register "{name}" schema')
         logger.exception(e)
 
 
-class Query(*QUERIES, graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name="_debug")
-
-
-class Mutation(*MUTATIONS, graphene.ObjectType):
+@strawberry.type
+class Query(*QUERIES): # type: ignore
     pass
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation, auto_camelcase=False)
+@strawberry.type
+class Mutation(*MUTATIONS): # type: ignore
+    pass
+
+
+schema = strawberry.Schema( # type: ignore
+    query=Query,
+    mutation=Mutation,
+    types=[*base.extra_types],
+    config=config.StrawberryConfig(auto_camel_case=False),
+)
