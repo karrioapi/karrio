@@ -1,7 +1,7 @@
 import typing
 import logging
-import graphene
 import functools
+import strawberry
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework import exceptions
@@ -18,9 +18,9 @@ import karrio.server.core.utils as utils
 import karrio.server.orgs.models as models
 import karrio.server.orgs.serializers as serializers
 
-logger = logging.getLogger(__name__)
 User = get_user_model()
-OrganizationUserRole: typing.Any = graphene.Enum("OrganizationUserRole", serializers.USER_ROLES)
+logger = logging.getLogger(__name__)
+OrganizationUserRole: typing.Any = strawberry.enum(serializers.UserRole)
 
 
 def roles_required(roles: typing.List[OrganizationUserRole]):
