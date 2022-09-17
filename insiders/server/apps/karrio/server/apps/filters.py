@@ -1,10 +1,7 @@
 import django_filters
 from django.db.models import Q
-import graphene
-import graphene.types.generic as generic
 
 import karrio.server.core.filters as filters
-import karrio.server.graph.utils as utils
 import karrio.server.apps.models as models
 
 
@@ -35,16 +32,6 @@ class AppInstallationFilter(django_filters.FilterSet):
         return queryset.filter(Q(metadata__values__contains=value))
 
 
-class AppInstallationType(utils.BaseObjectType):
-    metadata = generic.GenericScalar()
-    access_scopes = graphene.List(graphene.String, default_value=[])
-
-    class Meta:
-        model = models.AppInstallation
-        exclude = ("org",)
-        interfaces = (utils.CustomNode,)
-
-
 class AppFilter(django_filters.FilterSet):
     feature = django_filters.CharFilter(field_name="features", lookup_expr="icontains")
     created_after = django_filters.DateTimeFilter(
@@ -71,30 +58,3 @@ class AppFilter(django_filters.FilterSet):
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(Q(metadata__values__contains=value))
-
-
-class AppType(utils.BaseObjectType):
-    features = graphene.List(graphene.String, default_value=[])
-    installation = graphene.Field(AppInstallationType)
-    metadata = generic.GenericScalar()
-
-    class Meta:
-        model = models.App
-        exclude = ("installations", "registration", "org")
-        interfaces = (utils.CustomNode,)
-
-    def resolve_installation(self, info):
-        return self.installations.filter(org=info.context.org).first()
-
-
-class PrivateAppType(utils.BaseObjectType):
-    client_id = graphene.String(required=True)
-    features = graphene.List(graphene.String, default_value=[])
-    installation = graphene.Field(AppInstallationType)
-    redirect_uris = graphene.String(required=True)
-    metadata = generic.GenericScalar()
-
-    class Meta:
-        model = models.App
-        exclude = ("installations", "registration", "client_secret", "org")
-        interfaces = (utils.CustomNode,)
