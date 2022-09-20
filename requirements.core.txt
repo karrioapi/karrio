@@ -1,7 +1,5 @@
-Django<=3.2.15
-
 karrio
-karrio.server==2022.8rc1
+karrio.server
 karrio.server.core
 karrio.server.events
 karrio.server.graph
