@@ -1,2 +1,2 @@
-from tests.generic.rate import *
-from tests.generic.shipment import *
+from .rate import *
+from .shipment import *

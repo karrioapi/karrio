@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.usps_international.fixture import gateway
+from .fixture import gateway
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from karrio import Tracking

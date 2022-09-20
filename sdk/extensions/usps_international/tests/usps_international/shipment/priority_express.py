@@ -4,7 +4,7 @@ from unittest.mock import patch, ANY
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest
-from tests.usps_international.fixture import gateway
+from ..fixture import gateway
 
 
 class TestUSPSPriorityExpressShipment(unittest.TestCase):

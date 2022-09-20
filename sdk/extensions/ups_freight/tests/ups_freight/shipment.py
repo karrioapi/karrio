@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, ANY
-from tests.ups_freight.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib

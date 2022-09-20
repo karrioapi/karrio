@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from karrio import Shipment
-from tests.amazon_mws.fixture import gateway
+from .fixture import gateway
 
 
 class TestAmazonMwsShipment(unittest.TestCase):

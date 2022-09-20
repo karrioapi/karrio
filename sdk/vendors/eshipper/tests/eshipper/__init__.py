@@ -1,2 +1,2 @@
-from tests.eshipper.shipment import *
-from tests.eshipper.rate import *
+from .shipment import *
+from .rate import *

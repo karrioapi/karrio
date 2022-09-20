@@ -7,7 +7,7 @@ from karrio.core.models import (
     PickupUpdateRequest,
     PickupCancelRequest,
 )
-from tests.canadapost.fixture import gateway
+from .fixture import gateway
 
 
 class TestCanadaPostPickup(unittest.TestCase):
@@ -94,7 +94,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_update_response(self):

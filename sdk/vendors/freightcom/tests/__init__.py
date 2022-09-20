@@ -1,1 +1,1 @@
-from tests.freightcom import *
+

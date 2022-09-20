@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.fedex.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib

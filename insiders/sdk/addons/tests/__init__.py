@@ -1,1 +1,0 @@
-from tests.addons import *

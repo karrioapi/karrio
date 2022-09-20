@@ -8,7 +8,7 @@ from karrio.core.models import (
     PickupUpdateRequest,
     PickupCancelRequest,
 )
-from tests.purolator.fixture import gateway
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 

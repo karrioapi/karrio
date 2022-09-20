@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from karrio import Tracking
-from tests.purolator.fixture import gateway
+from .fixture import gateway
 
 
 class TestPurolatorTracking(unittest.TestCase):
@@ -95,13 +95,13 @@ TRACKING_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/
 
 TRACKING_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
     <s:Header>
-        <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v1" 
+        <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v1"
             xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
             <h:ResponseReference>Rating Example</h:ResponseReference>
         </h:ResponseContext>
     </s:Header>
     <s:Body>
-        <TrackPackagesByPinResponse xmlns="http://purolator.com/pws/datatypes/v1" 
+        <TrackPackagesByPinResponse xmlns="http://purolator.com/pws/datatypes/v1"
             xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
             <ResponseInformation>
                 <Errors/>

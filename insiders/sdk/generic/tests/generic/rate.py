@@ -2,7 +2,7 @@ import unittest
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
-from tests.generic.fixture import gateway
+from .fixture import gateway
 
 
 class TestGenericRating(unittest.TestCase):

@@ -1,3 +1,3 @@
-from tests.easypost.shipment import *
-from tests.easypost.rate import *
-from tests.easypost.tracking import *
+from .shipment import *
+from .rate import *
+from .tracking import *

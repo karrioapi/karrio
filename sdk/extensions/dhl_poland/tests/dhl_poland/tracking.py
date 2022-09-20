@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.dhl_poland.fixture import gateway
+from .fixture import gateway
 import karrio
 import karrio.lib as lib
 import karrio.core.models as models

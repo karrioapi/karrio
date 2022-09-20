@@ -1,2 +1,2 @@
-from tests.freightcom.rate import *
-from tests.freightcom.shipment import *
+from .rate import *
+from .shipment import *

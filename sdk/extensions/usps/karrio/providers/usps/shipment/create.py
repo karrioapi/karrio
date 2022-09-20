@@ -74,7 +74,7 @@ def shipment_request(
     redirect_address = models.Address(
         **(options.usps_option_redirect_non_delivery.state or {})
     )
-    print(customs._options.content, customs.aes, "<<<,")
+
     request = eVSRequest(
         USERID=settings.username,
         Option=None,

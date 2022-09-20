@@ -1,1 +1,0 @@
-from tests.ups_freight import *

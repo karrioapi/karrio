@@ -8,7 +8,7 @@ from karrio.core.models import (
     PickupUpdateRequest,
     PickupCancelRequest,
 )
-from tests.fedex.fixture import gateway
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 

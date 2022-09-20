@@ -1,1 +1,1 @@
-from tests.aramex import *
+

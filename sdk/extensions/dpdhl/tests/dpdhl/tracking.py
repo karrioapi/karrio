@@ -1,7 +1,7 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch
-from tests.dpdhl.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
