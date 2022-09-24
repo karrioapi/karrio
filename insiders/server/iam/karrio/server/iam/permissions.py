@@ -165,7 +165,7 @@ def check_context_permissions(context=None, keys: typing.List[str] = [], **kwarg
     groups = [group for group, _ in serializers.PERMISSION_GROUPS if group in keys]
 
     if any(groups) and users.Group.objects.exists():
-        user = context.org.organization_users.filter(user__id=context.user.id).first()
+        user = context.org.organization_users.filter(user__id=context.request.user.id).first()
         token = getattr(context, "token", None)
         group_filters = functools.reduce(
             operator.and_, (models.Q(groups__name=x) for x in groups)

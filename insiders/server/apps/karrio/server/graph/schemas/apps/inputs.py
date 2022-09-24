@@ -12,9 +12,9 @@ class CreateAppMutationInput(utils.BaseInput):
     features: typing.List[str]
     launch_url: str
     is_embedded: bool
-    redirect_uris: str = None
+    redirect_uris: str = strawberry.UNSET
     is_public: typing.Optional[bool] = False
-    metadata: typing.Optional[utils.JSON] = None
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -29,14 +29,14 @@ class AppFilter(utils.Paginated):
 @strawberry.input
 class UpdateAppMutationInput(utils.BaseInput):
     id: str
-    display_name: typing.Optional[str] = None
-    developer_name: typing.Optional[str] = None
-    features: typing.List[str] = None
-    launch_url: typing.Optional[str] = None
-    is_embedded: typing.Optional[bool] = None
-    redirect_uris: typing.Optional[str] = None
+    display_name: typing.Optional[str] = strawberry.UNSET
+    developer_name: typing.Optional[str] = strawberry.UNSET
+    features: typing.List[str] = strawberry.UNSET
+    launch_url: typing.Optional[str] = strawberry.UNSET
+    is_embedded: typing.Optional[bool] = strawberry.UNSET
+    redirect_uris: typing.Optional[str] = strawberry.UNSET
     is_public: typing.Optional[bool] = False
-    metadata: typing.Optional[utils.JSON] = None
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -51,7 +51,7 @@ class AppInstallationFilter(utils.Paginated):
 class InstallAppMutationInput(utils.BaseInput):
     app_id: str
     access_scopes = typing.List[str]
-    metadata: typing.Optional[utils.JSON] = None
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input

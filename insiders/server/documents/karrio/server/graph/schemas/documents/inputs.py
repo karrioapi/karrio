@@ -14,18 +14,18 @@ class CreateDocumentTemplateMutationInput(utils.BaseInput):
     template: str
     related_object: TemplateRelatedObjectEnum
     active: typing.Optional[bool] = True
-    description: typing.Optional[str] = None
+    description: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateDocumentTemplateMutationInput(utils.BaseInput):
     id: str
-    slug: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    template: typing.Optional[str] = None
-    active: typing.Optional[bool] = None
-    description: typing.Optional[str] = None
-    related_object: typing.Optional[TemplateRelatedObjectEnum] = None
+    slug: typing.Optional[str] = strawberry.UNSET
+    name: typing.Optional[str] = strawberry.UNSET
+    template: typing.Optional[str] = strawberry.UNSET
+    active: typing.Optional[bool] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    related_object: typing.Optional[TemplateRelatedObjectEnum] = strawberry.UNSET
 
 
 @strawberry.input

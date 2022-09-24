@@ -21,16 +21,12 @@ class CreateWebhookMutation(utils.BaseMutation):
         info: Info, **input: inputs.CreateWebhookMutationInput
     ) -> "CreateWebhookMutation":
         serializer = serializers.WebhookSerializer(
-            context=info.context,
-            data=lib.to_dict(inputs),
+            data=input,
+            context=info.context.request,
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return CreateWebhookMutation(errors=utils.ErrorType.from_errors(serializer.errors))
-
-        webhook = serializer.save()
-
-        return CreateWebhookMutation(errors=None, webhook=webhook)  # type:ignore
+        return CreateWebhookMutation(webhook=serializer.save())  # type:ignore
 
 
 @strawberry.type
@@ -43,21 +39,19 @@ class UpdateWebhookMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.UpdateWebhookMutationInput
     ) -> "UpdateWebhookMutation":
-        webhook = models.Webhook.access_by(info.context).get(id=input.get("id"))
+        id = input.get("id")
+        webhook = models.Webhook.access_by(info.context.request).get(id=id)
 
         serializer = serializers.WebhookSerializer(
             webhook,
-            context=info.context,
-            data=lib.to_dict(inputs),
+            data=input,
             partial=True,
+            context=info.context,
         )
-
-        if not serializer.is_valid():
-            return UpdateWebhookMutation(errors=utils.ErrorType.from_errors(serializer.errors))
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         # refetch the shipment to get the updated state with signals processed
-        update = models.Webhook.access_by(info.context).get(id=id)
+        update = models.Webhook.access_by(info.context.request).get(id=id)
 
-        return UpdateWebhookMutation(errors=None, webhook=update)  # type:ignore
+        return UpdateWebhookMutation(webhook=update)  # type:ignore
