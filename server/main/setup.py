@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio-server",
     author="karrio",
-    author_email="danielk.developer@gmail.com",
+    author_email="hello@karrio.io",
     license="Apache License Version 2.0",
     packages=find_namespace_packages("."),
     install_requires=[
@@ -30,7 +30,7 @@ setup(
         "django-two-factor-auth",
         "django-oauth-toolkit",
         "drf-api-tracking",
-        "drf-yasg",
+        "drf-spectacular",
         "gunicorn",
         "hiredis",
         "uvicorn",

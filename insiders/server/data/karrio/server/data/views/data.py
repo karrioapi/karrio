@@ -8,8 +8,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 import karrio.server.core.views.api as api
 import karrio.server.data.serializers as serializers
@@ -17,18 +17,16 @@ import karrio.server.data.resources as resources
 from karrio.server.data.serializers.data import ImportDataSerializer
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-DataImportParameters = [
-    openapi.Parameter(
+DataImportParameters: list = [
+    OpenApiParameter(
         name="resource_type",
-        in_=openapi.IN_FORM,
-        type=openapi.TYPE_STRING,
+        type=OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
         description="The type of the resource to import",
     ),
-    openapi.Parameter(
+    OpenApiParameter(
         "data_template",
-        in_=openapi.IN_FORM,
-        type=openapi.TYPE_STRING,
+        type=OpenApiTypes.STR,
         required=False,
         description="""
         A data template slug to use for the import.
@@ -36,23 +34,43 @@ DataImportParameters = [
         **When nothing is specified, the system default headers are expected.**
         """,
     ),
-    openapi.Parameter(name="data_file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE),
+    OpenApiParameter(
+        name="data_file",
+        type=OpenApiTypes.BINARY,
+    ),
 ]
 
 
 class DataImport(api.BaseAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Data"],
         operation_id=f"{ENDPOINT_ID}import_file",
-        operation_summary="Import data files",
+        summary="Import data files",
         responses={
             202: serializers.BatchOperation(),
             400: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
-        manual_parameters=DataImportParameters,
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'resource_type': {
+                        'type': 'string',
+                    },
+                    'data_template': {
+                        'type': 'string',
+                    },
+                    'data_file': {
+                        'type': 'string',
+                        'format': 'binary'
+                    }
+                }
+            }
+        },
+        parameters=DataImportParameters,
     )
     def post(self, request: Request):
         """Import csv, xls and xlsx data files for:
@@ -77,23 +95,23 @@ class DataImport(api.BaseAPIView):
         )
 
 
-DataExportParameters = [
-    openapi.Parameter(
+DataExportParameters: list = [
+    OpenApiParameter(
         name="resource_type",
-        in_=openapi.IN_PATH,
-        type=openapi.TYPE_STRING,
+        location=OpenApiParameter.PATH,
+        type=OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
     ),
-    openapi.Parameter(
+    OpenApiParameter(
         name="export_format",
-        in_=openapi.IN_PATH,
-        type=openapi.TYPE_STRING,
+        location=OpenApiParameter.PATH,
+        type=OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
     ),
-    openapi.Parameter(
+    OpenApiParameter(
         "data_template",
-        in_=openapi.IN_QUERY,
-        type=openapi.TYPE_STRING,
+        location=OpenApiParameter.QUERY,
+        type=OpenApiTypes.STR,
         required=False,
         description="""
         A data template slug to use for the import.
@@ -105,16 +123,16 @@ DataExportParameters = [
 
 
 class DataExport(api.LoginRequiredView, VirtualDownloadView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Data"],
         operation_id=f"{ENDPOINT_ID}export_file",
-        operation_summary="Export data files",
+        summary="Export data files",
         responses={
-            200: openapi.Schema(type=openapi.TYPE_FILE),
+            (200, "application/octet-stream"): OpenApiTypes.BINARY,
             409: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
-        manual_parameters=DataExportParameters,
+        parameters=DataExportParameters,
     )
     def get(
         self,

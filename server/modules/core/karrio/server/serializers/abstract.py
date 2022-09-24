@@ -1,12 +1,12 @@
 import pydoc
 import logging
-import drf_yasg.openapi as openapi
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple, List
 from django.db import models
 from django.conf import settings
 from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import serializers
+from drf_spectacular.types import OpenApiTypes
 
 from karrio.core.utils import DP
 
@@ -36,10 +36,10 @@ class Serializer(serializers.Serializer, AbstractSerializer):
 
 
 class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):
-    def create(self, data: dict, **kwargs):
+    def create(self, data: dict, **kwargs):  # type: ignore
         return self.Meta.model.objects.create(**data)
 
-    def update(self, instance, data: dict, **kwargs):
+    def update(self, instance, data: dict, **kwargs):  # type: ignore
         for name, value in data.items():
             if name != "created_by":
                 setattr(instance, name, value)
@@ -55,7 +55,7 @@ class StringListField(serializers.ListField):
 class PlainDictField(serializers.DictField):
     class Meta:
         swagger_schema_fields = {
-            "type": openapi.TYPE_OBJECT,
+            "type": OpenApiTypes.OBJECT,
             "additional_properties": True,
         }
 
@@ -120,7 +120,7 @@ class _SerializerDecoratorInitializer(Generic[T]):
                     self._serializer = None
 
                 else:
-                    self._serializer: serializer_type = (
+                    self._serializer: serializer_type = (  # type: ignore
                         serializer_type(data=data, **kwargs)
                         if instance is None
                         else serializer_type(
@@ -151,11 +151,11 @@ class _SerializerDecoratorInitializer(Generic[T]):
         return Decorator
 
 
-SerializerDecorator = _SerializerDecoratorInitializer()
+SerializerDecorator = _SerializerDecoratorInitializer()  # type: ignore
 
 
 def owned_model_serializer(serializer: Type[Serializer]):
-    class MetaSerializer(serializer):
+    class MetaSerializer(serializer):  # type: ignore
         def __init__(self, *args, **kwargs):
             if "context" in kwargs:
                 context = kwargs.get("context") or {}
@@ -273,7 +273,7 @@ def save_one_to_one_data(
         new_instance = (
             SerializerDecorator[serializer](data=data, **kwargs).save().instance
         )
-        parent and setattr(parent, name, new_instance)
+        parent and setattr(parent, name, new_instance)  # type: ignore
         return new_instance
 
     return (
@@ -285,9 +285,9 @@ def save_one_to_one_data(
     )
 
 
-def allow_model_id(model_paths: []):
+def allow_model_id(model_paths: []):  # type: ignore
     def _decorator(serializer: Type[Serializer]):
-        class ModelIdSerializer(serializer):
+        class ModelIdSerializer(serializer):  # type: ignore
             def __init__(self, *args, **kwargs):
                 for param, model_path in model_paths:
                     content = kwargs.get("data", {}).get(param)
@@ -321,7 +321,7 @@ def allow_model_id(model_paths: []):
 def make_fields_optional(serializer: Type[ModelSerializer]):
     _name = f"Partial{serializer.__name__}"
 
-    class _Meta(serializer.Meta):
+    class _Meta(serializer.Meta):  # type: ignore
         extra_kwargs = {
             **getattr(serializer.Meta, "extra_kwargs", {}),
             **{
@@ -334,7 +334,7 @@ def make_fields_optional(serializer: Type[ModelSerializer]):
 
 
 def exclude_id_field(serializer: Type[ModelSerializer]):
-    class _Meta(serializer.Meta):
+    class _Meta(serializer.Meta):  # type: ignore
         exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
 
     return type(serializer.__name__, (serializer,), dict(Meta=_Meta))

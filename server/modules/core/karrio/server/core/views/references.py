@@ -4,17 +4,17 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from django.urls import path
 from django.conf import settings
 
 from karrio.server.conf import FEATURE_FLAGS
 from karrio.server.core.router import router
 import karrio.server.core.dataunits as dataunits
+import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
+<<<<<<< HEAD
 References = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
@@ -47,14 +47,51 @@ References = openapi.Schema(
         "carrier_capabilities": openapi.Schema(type=openapi.TYPE_OBJECT),
         "service_levels": openapi.Schema(type=openapi.TYPE_OBJECT),
     },
+=======
+References = openapi.OpenApiResponse(
+    openapi.OpenApiTypes.OBJECT,
+    examples=[
+        openapi.OpenApiExample(
+            name="References",
+            value={
+                "VERSION": "",
+                "APP_NAME": "",
+                "APP_WEBSITE": "",
+                **{
+                    flag: True
+                    for flag in FEATURE_FLAGS
+                },
+                "ADMIN": "",
+                "OPENAPI": "",
+                "GRAPHQL": "",
+                "ADDRESS_AUTO_COMPLETE": {},
+                "countries": {},
+                "currencies": {},
+                "carriers": {},
+                "customs_content_type": {},
+                "incoterms": {},
+                "states": {},
+                "services": {},
+                "service_names": {},
+                "options": {},
+                "option_names": {},
+                "package_presets": {},
+                "packaging_types": {},
+                "payment_types": {},
+                "carrier_capabilities": {},
+                "service_levels": {},
+            }
+        )
+    ],
+>>>>>>> c3e3097d ((replace) drf-yasg by drf-spectacular for OpenAPI v3 support)
 )
 
 
-@swagger_auto_schema(
+@openapi.extend_schema(
     methods=["get"],
     tags=["API"],
     operation_id=f"{ENDPOINT_ID}data",
-    operation_summary="Data References",
+    summary="Data References",
     responses={200: References},
 )
 @api_view(["GET"])
