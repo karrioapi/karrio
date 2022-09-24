@@ -6,18 +6,11 @@ source "scripts/activate-env.sh" > /dev/null 2>&1
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
 	cd "${ROOT:?}"
-	karrio graphql_schema --out "${ROOT:?}/server/schemas/graphql.json"
+    karrio export_schema >| "${ROOT:?}/server/schemas/schema.graphql"
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
-    docker rm -f swagger 2> /dev/null
-	karrio generate_swagger -f json -o -u https://app.karrio.io "${ROOT:?}/server/schemas/swagger.json"
-	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
-	sleep 5 &&
-	curl -X POST -H "Content-Type: application/json" \
-		-d @./server/schemas/swagger.json http://localhost:8085/api/convert \
-		| python -m json.tool >| ./server/schemas/openapi.json
-	docker rm -f swagger
+    karrio spectacular --file "${ROOT:?}/server/schemas/openapi.yml"
 	cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"
