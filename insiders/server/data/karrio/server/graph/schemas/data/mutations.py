@@ -23,13 +23,9 @@ class CreateDataTemplateMutation(utils.BaseMutation):
             data=input,
             context=info.context,
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return CreateDataTemplateMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        return CreateDataTemplateMutation(errors=None, template=serializer.save())  # type:ignore
+        return CreateDataTemplateMutation(template=serializer.save())  # type:ignore
 
 
 @strawberry.type
@@ -42,7 +38,7 @@ class UpdateDataTemplateMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.UpdateDataTemplateMutationInput
     ) -> "UpdateDataTemplateMutation":
-        instance = models.DataTemplate.access_by(info.context).get(id=input["id"])
+        instance = models.DataTemplate.access_by(info.context.request).get(id=input["id"])
 
         serializer = serializers.DataTemplateModelSerializer(
             instance,
@@ -52,10 +48,6 @@ class UpdateDataTemplateMutation(utils.BaseMutation):
             partial=True,
             context=info.context,
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return UpdateDataTemplateMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        return UpdateDataTemplateMutation(errors=None, template=serializer.save())  # type:ignore
+        return UpdateDataTemplateMutation(template=serializer.save())  # type:ignore

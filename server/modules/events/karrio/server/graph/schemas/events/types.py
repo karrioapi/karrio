@@ -46,7 +46,7 @@ class WebhookType:
 @strawberry.type
 class EventType:
     object_type: str
-    id: int
+    id: str
     test_mode: typing.Optional[bool]
     pending_webhooks: typing.Optional[int]
     type: typing.Optional[inputs.EventStatusEnum]
