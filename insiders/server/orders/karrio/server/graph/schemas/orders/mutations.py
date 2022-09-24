@@ -20,8 +20,9 @@ class CreateOrderMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.CreateOrderMutationInput
     ) -> "CreateOrderMutation":
-        count = models.Order.access_by(info.context).filter(source="manual").count() + 1
+        count = models.Order.access_by(info.context.request).filter(source="manual").count() + 1
         order_id = "1" + str(count).zfill(5)  # TODO: make this grow beyond 2 million
+
         serializer = serializers.OrderSerializer(
             context=info.context,
             data={
@@ -30,15 +31,9 @@ class CreateOrderMutation(utils.BaseMutation):
                 "order_id": order_id,
             },
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return CreateOrderMutation(  # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        order = serializer.save()
-
-        return CreateOrderMutation(errors=None, order=order)  # type:ignore
+        return CreateOrderMutation(order=serializer.save())  # type:ignore
 
 
 @strawberry.type
@@ -51,7 +46,7 @@ class PartialOrderUpdateMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.PartialOrderUpdateMutationInput
     ) -> "PartialOrderUpdateMutation":
-        order = models.Order.access_by(info.context).get(id=input.get("id"))
+        order = models.Order.access_by(info.context.request).get(id=input.get("id"))
         serializers.can_mutate_order(order, update=True)
 
         serializer = serializers.OrderSerializer(
@@ -60,15 +55,10 @@ class PartialOrderUpdateMutation(utils.BaseMutation):
             data=lib.to_dict(input),
             partial=True,
         )
-
-        if not serializer.is_valid():
-            return PartialOrderUpdateMutation(  # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         # refetch the shipment to get the updated state with signals processed
-        update = models.Order.access_by(info.context).get(id=input.get("id"))
+        update = models.Order.access_by(info.context.request).get(id=input.get("id"))
 
         return PartialOrderUpdateMutation(errors=None, order=update)  # type:ignore

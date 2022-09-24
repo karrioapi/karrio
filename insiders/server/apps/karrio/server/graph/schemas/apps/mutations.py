@@ -22,7 +22,7 @@ class CreateAppMutation(utils.BaseMutation):
         info: Info, **input: inputs.CreateAppMutationInput
     ) -> "CreateAppMutation":
         registration = models.Application(
-            user=info.context.user,
+            user=info.context.request.user,
             name=input["display_name"],
             redirect_uris=input["redirect_uris"],
             algorithm=models.Application.RS256_ALGORITHM,
@@ -36,11 +36,7 @@ class CreateAppMutation(utils.BaseMutation):
             data={**input, "registration": registration.pk},
             context=info.context,
         )
-
-        if not serializer.is_valid():
-            return CreateAppMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
+        serializer.is_valid(raise_exception=True)
 
         return CreateAppMutation(  # type:ignore
             app=serializer.save(),
@@ -55,10 +51,11 @@ class UpdateAppMutation(utils.BaseMutation):
     @staticmethod
     @utils.authentication_required
     @utils.authorization_required(["APPS_MANAGEMENT", "manage_apps"])
+    @transaction.atomic
     def mutate(
         info: Info, **input: inputs.UpdateAppMutationInput
     ) -> "UpdateAppMutation":
-        instance = models.App.access_by(info.context).get(id=id)
+        instance = models.App.access_by(info.context.request).get(id=id)
 
         serializer = serializers.AppModelSerializer(
             instance,
@@ -66,11 +63,7 @@ class UpdateAppMutation(utils.BaseMutation):
             partial=True,
             context=info.context,
         )
-
-        if not serializer.is_valid():
-            return UpdateAppMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
+        serializer.is_valid(raise_exception=True)
 
         instance.registration.name = input.get("display_name") or instance.display_name
         instance.registration.redirect_uris = (
@@ -92,24 +85,20 @@ class InstallAppMutation(utils.BaseMutation):
         info: Info, **input: inputs.InstallAppMutationInput
     ) -> "InstallAppMutation":
         app = models.App.objects.get(
-            django.Q(id=input["app_id"], link__org=info.context.org)
+            django.Q(id=input["app_id"], link__org=info.context.request.org)
             | django.Q(id=input["app_id"], is_public=True, is_published=True)
         )
 
-        if app.installations.filter(org=info.context.org).exists():
+        if app.installations.filter(org=info.context.request.org).exists():
             return InstallAppMutation(
-                installation=app.installations.filter(org=info.context.org).first()
+                installation=app.installations.filter(org=info.context.request.org).first()
             )
 
         serializer = serializers.AppInstallationModelSerializer(
             data={"app": app, **input},
             context=info.context,
         )
-
-        if not serializer.is_valid():
-            return InstallAppMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
+        serializer.is_valid(raise_exception=True)
 
         return InstallAppMutation(installation=serializer.save())  # type:ignore
 
@@ -126,8 +115,8 @@ class UninstallAppMutation(utils.BaseMutation):
     ) -> "UninstallAppMutation":
         app = models.App.objects.get(id=input["app_id"])
 
-        app.installations.filter(org=info.context.org).delete()
+        app.installations.filter(org=info.context.request.org).delete()
 
         return UninstallAppMutation(  # type:ignore
-            app=models.App.access_by(info.context).get(id=input["app_id"])
+            app=models.App.access_by(info.context.request).get(id=input["app_id"])
         )

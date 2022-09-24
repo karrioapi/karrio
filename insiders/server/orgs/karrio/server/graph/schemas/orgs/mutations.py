@@ -27,9 +27,7 @@ class CreateOrganizationMutation(utils.BaseMutation):
             data=input,
             context=info.context,
         )
-
-        if not serializer.is_valid():
-            return CreateOrganizationMutation(errors=utils.ErrorType.from_errors(serializer.errors))
+        serializer.is_valid(raise_exception=True)
 
         return CreateOrganizationMutation(organization=serializer.save())  # type:ignore
 
@@ -48,17 +46,14 @@ class UpdateOrganizationMutation(utils.BaseMutation):
             id=input.get("id"),
             users__id=info.context.request.user.id,
         )
+
         serializer = serializers.OrganizationModelSerializer(
             instance,
             data=input,
             partial=True,
             context=info.context,
         )
-
-        if not serializer.is_valid():
-            return UpdateOrganizationMutation( # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
+        serializer.is_valid(raise_exception=True)
 
         return UpdateOrganizationMutation(organization=serializer.save()) # type:ignore
 
@@ -88,13 +83,9 @@ class SetOrganizationUserRolesMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required(["manage_team"])
     def mutate(
-        info: Info, **input: inputs.SetOrganizationUserRolesMutationInput
+        info: Info, org=None, org_id=None, user_id=None, roles=[], **kwargs
     ) -> "SetOrganizationUserRolesMutation":
         changes = ["roles"]
-        org = input.get("org")
-        roles = input.get("roles")
-        org_id = input.get("org_id")
-        user_id = input.get("user_id")
 
         org_user = org.organization_users.get(user__id=user_id)
         org_user.roles = roles
@@ -113,12 +104,8 @@ class ChangeOrganizationOwnerMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required(["manage_org_owner"])
     def mutate(
-        info: Info, **input: inputs.ChangeOrganizationOwnerMutationInput
+        info: Info, org=None, email=None, org_id=None, password=None, **kwargs
     ) -> "ChangeOrganizationOwnerMutation":
-        org = input.get("org")
-        email = input.get("email")
-        org_id = input.get("org_id")
-        password = input.get("password")
         new_owner = org.organization_users.get(user__email=email)
 
         if not info.context.request.user.check_password(password):
@@ -153,12 +140,12 @@ class SendOrganizationInvitesMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required(["manage_team"])
     def mutate(
-        info: Info, **input: inputs.SendOrganizationInvitesMutationInput
+        info: Info, org=None, emails=None, redirect_url=None, **kwargs
     ) -> "SendOrganizationInvitesMutation":
         orgs.send_invitation_emails(
-            input.get("org"),
-            input.get("emails"),
-            input.get("redirect_url"),
+            org,
+            emails,
+            redirect_url,
             info.context.request.user,
         )
 
@@ -173,11 +160,11 @@ class AcceptOrganizationInvitationMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required()
     def mutate(
-        info: Info, **input: inputs.AcceptOrganizationInvitationMutationInput
+        info: Info, guid=None, **kwargs
     ) -> "AcceptOrganizationInvitationMutation":
         invitation = models.OrganizationInvitation.objects.get(
-            guid=input.get("guid"),
-            invitee__email=info.context.user.email,
+            guid=guid,
+            invitee__email=info.context.request.user.email,
         )
 
         invitation.organization.add_user(invitation.invitee)

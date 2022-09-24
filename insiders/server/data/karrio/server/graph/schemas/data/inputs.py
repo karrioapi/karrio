@@ -27,10 +27,10 @@ class DataTemplateFilter(utils.Paginated):
 @strawberry.input
 class UpdateDataTemplateMutationInput(utils.BaseInput):
     id: str
-    slug: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    fields_mapping: typing.Optional[utils.JSON] = None
-    resource_type: typing.Optional[ResourceTypeEnum] = None
+    slug: typing.Optional[str] = strawberry.UNSET
+    name: typing.Optional[str] = strawberry.UNSET
+    fields_mapping: typing.Optional[utils.JSON] = strawberry.UNSET
+    resource_type: typing.Optional[ResourceTypeEnum] = strawberry.UNSET
 
 
 @strawberry.input

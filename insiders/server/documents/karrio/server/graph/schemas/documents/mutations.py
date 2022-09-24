@@ -23,13 +23,9 @@ class CreateDocumentTemplateMutation(utils.BaseMutation):
             data=input,
             context=info.context,
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return CreateDocumentTemplateMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        return CreateDocumentTemplateMutation(errors=None, template=serializer.save())  # type:ignore
+        return CreateDocumentTemplateMutation(template=serializer.save())  # type:ignore
 
 
 @strawberry.type
@@ -42,7 +38,7 @@ class UpdateDocumentTemplateMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.UpdateDocumentTemplateMutationInput
     ) -> "UpdateDocumentTemplateMutation":
-        instance = models.DocumentTemplate.access_by(info.context).get(id=input["id"])
+        instance = models.DocumentTemplate.access_by(info.context.request).get(id=input["id"])
 
         serializer = serializers.DocumentTemplateModelSerializer(
             instance,
@@ -50,10 +46,6 @@ class UpdateDocumentTemplateMutation(utils.BaseMutation):
             partial=True,
             context=info.context,
         )
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return UpdateDocumentTemplateMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        return UpdateDocumentTemplateMutation(errors=None, template=serializer.save())  # type:ignore
+        return UpdateDocumentTemplateMutation(template=serializer.save())  # type:ignore

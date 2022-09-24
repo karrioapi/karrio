@@ -82,7 +82,7 @@ class OrganizationType:
 
     @strawberry.field
     def current_user(self: models.Organization, info: Info) -> OrganizationMemberType:
-        user = info.context.user
+        user = info.context.request.user
         return OrganizationUserType( # type: ignore
             **{
                 k: v
@@ -146,7 +146,7 @@ class OrganizationType:
     @utils.authentication_required
     def resolve_list(info) -> typing.List["OrganizationType"]:
         return models.Organization.access_by(info.context.request).filter(
-            users__id=info.context.user.id, is_active=True
+            users__id=info.context.request.user.id, is_active=True
         )
 
 

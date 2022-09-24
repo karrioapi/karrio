@@ -26,14 +26,13 @@ OrganizationUserRole: typing.Any = strawberry.enum(serializers.UserRole)
 def roles_required(roles: typing.List[OrganizationUserRole]):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            *a, info = args
-            user = info.context.user
+        def wrapper(info, **kwargs):
+            user = info.context.request.user
             org_id = kwargs.get("id") or kwargs.get("org_id")
             org = (
                 models.Organization.objects.filter(id=org_id, is_active=True).first()
                 if org_id
-                else getattr(info.context, "org", None)
+                else getattr(info.context.request, "org", None)
             )
             org_user = org.organization_users.filter(user=user).first() if org else None
 
@@ -53,7 +52,7 @@ def roles_required(roles: typing.List[OrganizationUserRole]):
 
             kwargs.update({"org": org})
 
-            return func(*args, **kwargs)
+            return func(info, **kwargs)
 
         return wrapper
 
@@ -65,7 +64,7 @@ def admin_required(instance, context) -> models.Organization:
         instance.organization if hasattr(instance, "organization") else instance
     )
     if not organization.organization_users.filter(
-        is_admin=True, user__id=context.user.id
+        is_admin=True, user__id=context.request.user.id
     ).exists():
         raise exceptions.PermissionDenied()
 

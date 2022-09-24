@@ -12,7 +12,7 @@ EventStatusEnum: typing.Any = strawberry.enum(serializers.EventTypes)
 class CreateWebhookMutationInput(utils.BaseInput):
     url: str
     enabled_events: typing.List[EventStatusEnum]
-    description: typing.Optional[str] = None
+    description: typing.Optional[str] = strawberry.UNSET
     disabled: typing.Optional[bool] = False
     test_mode: typing.Optional[bool] = False
 
@@ -30,11 +30,11 @@ class WebhookFilter(utils.Paginated):
 @strawberry.input
 class UpdateWebhookMutationInput(utils.BaseInput):
     id: str
-    url: typing.Optional[str] = None
-    enabled_events: typing.List[EventStatusEnum] = None
-    description: typing.Optional[str] = None
-    disabled: typing.Optional[bool] = None
-    test_mode: typing.Optional[bool] = None
+    url: typing.Optional[str] = strawberry.UNSET
+    enabled_events: typing.List[EventStatusEnum] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    disabled: typing.Optional[bool] = strawberry.UNSET
+    test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
