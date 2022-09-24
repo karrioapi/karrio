@@ -18,7 +18,7 @@ class Query:
     user: types.UserType = strawberry.field(resolver=types.UserType.resolve)
     token: types.TokenType = strawberry.field(resolver=types.TokenType.resolve)
 
-    user_connections: types.ConnectionType = strawberry.field(
+    user_connections: types.CarrierConnectionType = strawberry.field(
         resolver=types.ConnectionType.resolve_list
     )
     system_connections: types.SystemConnectionType = strawberry.field(
@@ -188,7 +188,7 @@ class Mutation:
     def delete_carrier_connection(
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(info, providers.Carrier, **input.to_dict())
+        return mutations.DeleteMutation.mutate(info, model=providers.Carrier, **input.to_dict())
 
     @strawberry.mutation
     def partial_shipment_update(
@@ -206,7 +206,7 @@ class Mutation:
     def delete_template(
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(info, graph.Template, **input.to_dict())
+        return mutations.DeleteMutation.mutate(info, model=graph.Template, **input.to_dict())
 
     @strawberry.mutation
     def discard_commodity(
@@ -214,7 +214,7 @@ class Mutation:
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
             info,
-            manager.Commodity,
+            model=manager.Commodity,
             validator=manager_serializers.can_mutate_commodity,
             **input.to_dict()
         )
@@ -225,7 +225,7 @@ class Mutation:
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
             info,
-            manager.Customs,
+            model=manager.Customs,
             validator=manager_serializers.can_mutate_customs,
             **input.to_dict()
         )
@@ -236,7 +236,7 @@ class Mutation:
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
             info,
-            manager.Customs,
+            model=manager.Customs,
             validator=manager_serializers.can_mutate_parcel,
             **input.to_dict()
         )

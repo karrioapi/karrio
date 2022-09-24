@@ -3,15 +3,20 @@ karrio server graph module urls
 """
 import pydoc
 import typing
+import logging
 from django.urls import path
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import exceptions
 
 import strawberry.http as http
 import strawberry.types as types
 import strawberry.django.views as views
+import graphql.error.graphql_error as graphql
 
 import karrio.server.graph.schema as schema
 
+logger = logging.getLogger(__name__)
 ACCESS_METHOD = getattr(
     settings,
     "SESSION_ACCESS_MIXIN",
@@ -25,15 +30,36 @@ class GraphQLView(AccessMixin, views.GraphQLView):
         data: http.GraphQLHTTPResponse = {"data": result.data}
 
         if result.errors:
-            data["errors"] = [format_graphql_error(err) for err in result.errors]
+            data["errors"] = [self.format_graphql_error(err) for err in result.errors]
+        if result.extensions:
+            data["extensions"] = result.extensions
 
         return data
 
+    def format_graphql_error(self, error: graphql.GraphQLError):
+        logger.exception(error.original_error)
+        formatted_error: dict = (
+            graphql.format_error(error)  # type: ignore
+            if isinstance(error, graphql.GraphQLError)
+            else {}
+        )
 
-def format_graphql_error(error):
-    return error
+        if isinstance(error.original_error, exceptions.APIException):
+            formatted_error["message"] = str(error.original_error.detail)
+            formatted_error["code"] = (
+                error.original_error.get_codes()
+                if hasattr(error.original_error, "get_codes")
+                else getattr(error.original_error, "code", getattr(error.original_error, "default_code", None))
+            )
+            formatted_error["status_code"] = error.original_error.status_code
+
+        if isinstance(error.original_error, exceptions.ValidationError):
+            formatted_error["message"] = str(error.original_error.default_detail)
+            formatted_error["validation"] = error.original_error.detail
+
+        return formatted_error
 
 
 urlpatterns = [
-    path("graphql/", GraphQLView.as_view(schema=schema.schema), name="graphql"),
+    path("graphql/", csrf_exempt(GraphQLView.as_view(schema=schema.schema)), name="graphql"),
 ]

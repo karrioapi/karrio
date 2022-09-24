@@ -114,7 +114,7 @@ def render_reference_descriptions(request):
             if v is not None
         ]
 
-        return f'{" x ".join(vals)} {preset.get("dimension_unit").lower()}'
+        return f'{" x ".join(vals)} {preset.get("dimension_unit", "").lower()}'
 
     return Template(
         """

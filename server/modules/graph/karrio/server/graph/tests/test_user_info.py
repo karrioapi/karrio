@@ -1,4 +1,3 @@
-import json
 from unittest.mock import ANY
 from karrio.server.graph.tests.base import GraphTestCase
 
@@ -19,10 +18,10 @@ class TestUserUpdate(GraphTestCase):
               }
             }
             """,
-            op_name="update_user",
+            operation_name="update_user",
             variables=USER_UPDATE_DATA,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, USER_UPDATE_RESPONSE)
@@ -42,10 +41,10 @@ class TestTokenMutation(GraphTestCase):
               }
             }
             """,
-            op_name="mutate_token",
+            operation_name="mutate_token",
             variables=TOKEN_MUTATION_DATA,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertFalse(
