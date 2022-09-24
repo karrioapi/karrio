@@ -595,17 +595,14 @@ class ConnectionType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve_list(
-        info,
-        test_mode: typing.Optional[bool] = strawberry.UNSET,
-    ) -> typing.List["CarrierConnectionType"]:
-        results = gateway.Carriers.list(
-            info.context.request,
-            **(dict(test_mode=test_mode) if test_mode != strawberry.UNSET else {}),
+    def resolve_list(info) -> typing.List["CarrierConnectionType"]:
+        connections = providers.Carrier.access_by(info.context).filter(
+            created_by__isnull=False,
+            test_mode=getattr(info.context, "test_mode", False),
         )
 
         return list(
-            map(ConnectionType.to_carrier_settings, results)
+            map(ConnectionType.to_carrier_settings, connections)
         )
 
     @staticmethod
