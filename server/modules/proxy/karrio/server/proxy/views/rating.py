@@ -2,7 +2,7 @@ import logging
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from django.urls import path
 
 from karrio.server.serializers import SerializerDecorator
@@ -26,18 +26,18 @@ Use this service to fetch a shipping rates available.
 
 
 class RateViewAPI(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
-        operation_summary="Fetch shipment rates",
-        operation_description=DESCRIPTIONS,
+        summary="Fetch shipment rates",
+        description=DESCRIPTIONS,
         responses={
             200: RateResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=RateRequest(),
+        request=RateRequest(),
     )
     def post(self, request: Request):
         payload = SerializerDecorator[RateRequest](data=request.data).data

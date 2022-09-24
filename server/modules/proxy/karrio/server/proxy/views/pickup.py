@@ -3,8 +3,8 @@ from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
@@ -27,22 +27,22 @@ CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
-        operation_summary="Schedule a pickup",
-        request_body=PickupRequest(),
+        summary="Schedule a pickup",
+        request=PickupRequest(),
         responses={
             201: PickupResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -59,22 +59,22 @@ class PickupSchedule(APIView):
 
 
 class PickupUpdate(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
-        operation_summary="Update a pickup",
-        request_body=PickupUpdateRequest(),
+        summary="Update a pickup",
+        request=PickupUpdateRequest(),
         responses={
             200: PickupResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -91,22 +91,22 @@ class PickupUpdate(APIView):
 
 
 class PickupCancel(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",
-        operation_summary="Cancel a pickup",
-        request_body=PickupCancelRequest(),
+        summary="Cancel a pickup",
+        request=PickupCancelRequest(),
         responses={
             200: OperationResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],

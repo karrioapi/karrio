@@ -3,7 +3,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from django_filters import rest_framework as filters
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 
 from karrio.server.data.filters import BatchOperationFilter
 import karrio.server.core.views.api as api
@@ -25,10 +25,10 @@ class BatchList(api.GenericAPIView):
     serializer_class = BatchOperations
     model = models.BatchOperation
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all batch operations",
+        summary="List all batch operations",
         responses={
             200: BatchOperations(),
             404: serializers.ErrorResponse(),
@@ -49,10 +49,10 @@ class BatchList(api.GenericAPIView):
 
 
 class BatchDetails(api.APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a batch operation",
+        summary="Retrieve a batch operation",
         responses={
             200: serializers.BatchOperation(),
             404: serializers.ErrorResponse(),
