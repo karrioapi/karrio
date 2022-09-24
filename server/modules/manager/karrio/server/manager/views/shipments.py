@@ -8,7 +8,7 @@ from rest_framework.request import Request
 from rest_framework import status
 
 from django.urls import path, re_path
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from django_filters import rest_framework as filters
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
@@ -53,10 +53,10 @@ class ShipmentList(GenericAPIView):
     serializer_class = Shipments
     model = models.Shipment
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all shipments",
+        summary="List all shipments",
         responses={
             200: Shipments(),
             404: ErrorResponse(),
@@ -72,17 +72,17 @@ class ShipmentList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a shipment",
+        summary="Create a shipment",
         responses={
             201: Shipment(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentData(),
+        request=ShipmentData(),
     )
     def post(self, request: Request):
         """
@@ -98,10 +98,10 @@ class ShipmentList(GenericAPIView):
 
 
 class ShipmentDetails(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a shipment",
+        summary="Retrieve a shipment",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -116,10 +116,10 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(shipment).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a shipment",
+        summary="Update a shipment",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -128,7 +128,7 @@ class ShipmentDetails(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentUpdateData(),
+        request=ShipmentUpdateData(),
     )
     def put(self, request: Request, pk: str):
         """
@@ -149,10 +149,10 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(shipment).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
-        operation_summary="Cancel a shipment",
+        summary="Cancel a shipment",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -184,20 +184,20 @@ class ShipmentDetails(APIView):
 class ShipmentRates(APIView):
     logging_methods = ["GET"]
 
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}rates",
-        operation_summary="Fetch new shipment rates",
-        responses={
-            200: Shipment(),
-            404: ErrorResponse(),
-            400: ErrorResponse(),
-            409: ErrorResponse(),
-            424: ErrorMessages(),
-            500: ErrorResponse(),
-        },
-        request_body=ShipmentRateData(),
-    )
+    # @extend_schema(
+    #     tags=["Shipments"],
+    #     operation_id=f"{ENDPOINT_ID}rates",
+    #     summary="Fetch new shipment rates",
+    #     responses={
+    #         200: Shipment(),
+    #         404: ErrorResponse(),
+    #         400: ErrorResponse(),
+    #         409: ErrorResponse(),
+    #         424: ErrorMessages(),
+    #         500: ErrorResponse(),
+    #     },
+    #     request=ShipmentRateData(),
+    # )
     def post(self, request: Request, pk: str):
         """
         Refresh the list of the shipment rates
@@ -245,20 +245,20 @@ class ShipmentRates(APIView):
 
 
 class ShipmentPurchase(APIView):
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}purchase",
-        operation_summary="Buy a shipment label",
-        responses={
-            200: Shipment(),
-            404: ErrorResponse(),
-            400: ErrorResponse(),
-            409: ErrorResponse(),
-            424: ErrorMessages(),
-            500: ErrorResponse(),
-        },
-        request_body=ShipmentPurchaseData(),
-    )
+    # @extend_schema(
+    #     tags=["Shipments"],
+    #     operation_id=f"{ENDPOINT_ID}purchase",
+    #     summary="Buy a shipment label",
+    #     responses={
+    #         200: Shipment(),
+    #         404: ErrorResponse(),
+    #         400: ErrorResponse(),
+    #         409: ErrorResponse(),
+    #         424: ErrorMessages(),
+    #         500: ErrorResponse(),
+    #     },
+    #     request=ShipmentPurchaseData(),
+    # )
     def post(self, request: Request, pk: str):
         """
         Select your preferred rates to buy a shipment label.
@@ -278,6 +278,7 @@ class ShipmentPurchase(APIView):
 
 
 class ShipmentDocs(VirtualDownloadView):
+    @extend_schema(exclude=True)
     def get(
         self,
         request: Request,

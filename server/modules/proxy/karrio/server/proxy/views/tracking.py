@@ -3,8 +3,8 @@ from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from karrio.server.serializers import SerializerDecorator, CharField, Serializer
 from karrio.server.core.views.api import APIView
@@ -34,22 +34,22 @@ class TrackerFilter(Serializer):
 class TrackingAPIView(APIView):
     logging_methods = ["GET"]
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}track_shipment",
-        operation_summary="Track a shipment",
-        query_serializer=TrackerFilter(),
+        summary="Track a shipment",
         responses={
             200: TrackingResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            TrackerFilter(),
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=dataunits.NON_HUBS_CARRIERS,
             ),
         ],

@@ -217,7 +217,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_email_verification",
     "rest_framework_tracking",
-    "drf_yasg",
+    "drf_spectacular",
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
@@ -345,6 +345,7 @@ PERMISSION_CLASSES = [
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_CLASSES,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -409,7 +410,11 @@ OAUTH2_PROVIDER = {
 }
 
 # OpenAPI config
-
+SPECTACULAR_SETTINGS = {
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {},
+}
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "LOGIN_URL": reverse_lazy("admin:login"),

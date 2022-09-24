@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework import status
 
 from django.urls import path
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from django_filters import rest_framework as filters
 
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -44,10 +44,10 @@ class OrderList(GenericAPIView):
     serializer_class = Orders
     model = models.Order
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all orders",
+        summary="List all orders",
         responses={
             200: Orders(),
             404: ErrorResponse(),
@@ -62,16 +62,16 @@ class OrderList(GenericAPIView):
         response = self.paginate_queryset(Order(orders, many=True).data)
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create an order",
+        summary="Create an order",
         responses={
             201: Order(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        request_body=OrderData(),
+        request=OrderData(),
     )
     def post(self, request: Request):
         """
@@ -87,10 +87,10 @@ class OrderList(GenericAPIView):
 
 
 class OrderDetail(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an order",
+        summary="Retrieve an order",
         responses={
             200: Order(),
             404: ErrorResponse(),
@@ -105,10 +105,10 @@ class OrderDetail(APIView):
 
         return Response(Order(order).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update an order",
+        summary="Update an order",
         responses={
             200: Order(),
             404: ErrorResponse(),
@@ -116,7 +116,7 @@ class OrderDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        request_body=OrderUpdateData(),
+        request=OrderUpdateData(),
     )
     def put(self, request: Request, pk: str):
         """
@@ -137,10 +137,10 @@ class OrderDetail(APIView):
 
         return Response(Order(order).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
-        operation_summary="Cancel an order",
+        summary="Cancel an order",
         responses={
             200: Order(),
             404: ErrorResponse(),

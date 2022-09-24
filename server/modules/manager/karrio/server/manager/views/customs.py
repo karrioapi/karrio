@@ -4,7 +4,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.urls import path
 
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -32,24 +32,24 @@ class CustomsList(GenericAPIView):
     )
     serializer_class = CustomsInfoList
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all customs info",
+        summary="List all customs info",
         responses={
             200: CustomsInfoList(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url '/v1/customs_info' \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request):
@@ -67,20 +67,20 @@ class CustomsList(GenericAPIView):
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a customs info",
-        request_body=CustomsData(),
+        summary="Create a customs info",
+        request=CustomsData(),
         responses={
             201: Customs(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request POST \\
                   --url /v1/customs_info \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -108,7 +108,7 @@ class CustomsList(GenericAPIView):
                     "signer": "Kex",
                   }'
                 """,
-            }
+            ),
         ],
     )
     def post(self, request: Request):
@@ -124,24 +124,24 @@ class CustomsList(GenericAPIView):
 
 
 class CustomsDetail(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a customs info",
+        summary="Retrieve a customs info",
         responses={
             200: Customs(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request, pk: str):
@@ -151,11 +151,11 @@ class CustomsDetail(APIView):
         address = models.Customs.access_by(request).get(pk=pk)
         return Response(Customs(address).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a customs info",
-        request_body=CustomsData(),
+        summary="Update a customs info",
+        request=CustomsData(),
         responses={
             200: Customs(),
             400: ErrorResponse(),
@@ -163,10 +163,10 @@ class CustomsDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request PATCH \\
                   --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -180,7 +180,7 @@ class CustomsDetail(APIView):
                     }
                   }'
                 """,
-            }
+            ),
         ],
     )
     def patch(self, request: Request, pk: str):
@@ -196,25 +196,25 @@ class CustomsDetail(APIView):
 
         return Response(Customs(customs).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}discard",
-        operation_summary="Discard a customs info",
+        summary="Discard a customs info",
         responses={
             200: Customs(),
             404: ErrorResponse(),
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request DELETE \\
                   --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def delete(self, request: Request, pk: str):

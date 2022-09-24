@@ -5,8 +5,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django.urls import path
 from django.db.models import Q
 from django_filters import rest_framework as filters
@@ -65,10 +65,10 @@ class TrackerList(GenericAPIView):
 
         return queryset.filter(*_filters)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all shipment trackers",
+        summary="List all shipment trackers",
         responses={
             200: Trackers(),
             404: ErrorResponse(),
@@ -87,22 +87,22 @@ class TrackerList(GenericAPIView):
 class TrackersCreate(APIView):
     logging_methods = ["GET"]
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a shipment tracker",
-        query_serializer=TrackerFilter(),
+        summary="Create a shipment tracker",
         responses={
             200: TrackingStatus(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            TrackerFilter(),
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=dataunits.NON_HUBS_CARRIERS,
             ),
         ],
@@ -145,10 +145,10 @@ class TrackersCreate(APIView):
 class TrackersDetails(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
-        operation_summary="Retrieves a shipment tracker",
+        summary="Retrieves a shipment tracker",
         responses={
             200: TrackingStatus(),
             404: ErrorMessages(),
@@ -169,10 +169,10 @@ class TrackersDetails(APIView):
 
         return Response(TrackingStatus(trackers.first()).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
-        operation_summary="Discard a shipment tracker",
+        summary="Discard a shipment tracker",
         responses={
             200: TrackingStatus(),
             404: ErrorResponse(),

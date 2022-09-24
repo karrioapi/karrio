@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
@@ -54,11 +54,11 @@ class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDe
 
 
 class ShippingDetails(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
-        operation_summary="Buy a shipment label",
-        request_body=ShippingRequest(),
+        summary="Buy a shipment label",
+        request=ShippingRequest(),
         responses={
             200: ShippingResponse(),
             400: ErrorResponse(),
@@ -89,21 +89,21 @@ class ShippingDetails(APIView):
 
 
 class ShippingCancel(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
-        operation_summary="Void a shipment label",
-        request_body=ShipmentCancelRequest(),
+        summary="Void a shipment label",
+        request=ShipmentCancelRequest(),
         responses={
             202: OperationResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],

@@ -4,7 +4,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.urls import path
 
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -33,24 +33,24 @@ class AddressList(GenericAPIView):
     )
     serializer_class = Addresses
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all addresses",
+        summary="List all addresses",
         responses={
             200: Addresses(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url '/v1/addresses' \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request):
@@ -67,20 +67,20 @@ class AddressList(GenericAPIView):
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create an address",
-        request_body=AddressData(),
+        summary="Create an address",
+        request=AddressData(),
         responses={
             201: Address(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request POST \\
                   --url /v1/addresses \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -97,7 +97,7 @@ class AddressList(GenericAPIView):
                     "state_code": "NB"
                 }'
                 """,
-            }
+            ),
         ],
     )
     def post(self, request: Request):
@@ -113,24 +113,24 @@ class AddressList(GenericAPIView):
 
 
 class AddressDetail(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an address",
+        summary="Retrieve an address",
         responses={
             200: Address(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request, pk: str):
@@ -140,11 +140,11 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         return Response(Address(address).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update an address",
-        request_body=AddressData(),
+        summary="Update an address",
+        request=AddressData(),
         responses={
             200: Address(),
             400: ErrorResponse(),
@@ -152,10 +152,10 @@ class AddressDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request PATCH \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>' \\
@@ -164,7 +164,7 @@ class AddressDetail(APIView):
                     "city": "Pierrefonds"
                 }'
                 """,
-            }
+            ),
         ],
     )
     def patch(self, request: Request, pk: str):
@@ -178,25 +178,25 @@ class AddressDetail(APIView):
 
         return Response(Address(address).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
-        operation_summary="Discard an address",
+        summary="Discard an address",
         responses={
             200: Address(),
             404: ErrorResponse(),
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request DELETE \\
                   --url /v1/addresses/<ADDRESS_ID> \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def delete(self, request: Request, pk: str):

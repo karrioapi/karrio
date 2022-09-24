@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
 from django.urls import path
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from django_filters import rest_framework as filters
 
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -37,10 +37,10 @@ class DocumentList(GenericAPIView):
     serializer_class = DocumentUploadRecords
     model = models.DocumentUploadRecord
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all upload records",
+        summary="List all upload records",
         responses={
             200: DocumentUploadRecords(),
             404: ErrorResponse(),
@@ -56,17 +56,17 @@ class DocumentList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}upload",
-        operation_summary="Upload documents",
+        summary="Upload documents",
         responses={
             201: DocumentUploadRecord(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=DocumentUploadData(),
+        request=DocumentUploadData(),
     )
     def post(self, request: Request):
         """Upload a shipping document."""
@@ -91,10 +91,10 @@ class DocumentList(GenericAPIView):
 
 
 class DocumentDetails(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an upload record",
+        summary="Retrieve an upload record",
         responses={
             200: DocumentUploadRecord(),
             404: ErrorResponse(),

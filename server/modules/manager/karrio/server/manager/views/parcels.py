@@ -4,7 +4,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.urls import path
 
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -32,24 +32,24 @@ class ParcelList(GenericAPIView):
     )
     serializer_class = Parcels
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all parcels",
+        summary="List all parcels",
         responses={
             200: Parcels(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url '/v1/parcels' \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request):
@@ -68,20 +68,20 @@ class ParcelList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a parcel",
-        request_body=ParcelData(),
+        summary="Create a parcel",
+        request=ParcelData(),
         responses={
             201: Parcel(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request POST \\
                     --url /v1/parcels \\
                     --header 'Authorization: Token <API_KEY>' \\
@@ -92,7 +92,7 @@ class ParcelList(GenericAPIView):
                       "package_preset": "canadapost_corrugated_small_box"
                     }'
                 """,
-            }
+            ),
         ],
     )
     def post(self, request: Request):
@@ -108,24 +108,24 @@ class ParcelList(GenericAPIView):
 
 
 class ParcelDetail(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a parcel",
+        summary="Retrieve a parcel",
         responses={
             200: Parcel(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request GET \\
                   --url /v1/parcels/<PARCEL_ID> \\
                   --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def get(self, request: Request, pk: str):
@@ -135,11 +135,11 @@ class ParcelDetail(APIView):
         address = models.Parcel.access_by(request).get(pk=pk)
         return Response(Parcel(address).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a parcel",
-        request_body=ParcelData(),
+        summary="Update a parcel",
+        request=ParcelData(),
         responses={
             200: Parcel(),
             400: ErrorResponse(),
@@ -147,10 +147,10 @@ class ParcelDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request PATCH \\
                     --url /v1/parcels/<PARCEL_ID> \\
                     --header 'Authorization: Token <API_KEY>' \\
@@ -159,7 +159,7 @@ class ParcelDetail(APIView):
                       "weight": 1.2,
                     }'
                 """,
-            }
+            ),
         ],
     )
     def patch(self, request: Request, pk: str):
@@ -173,25 +173,25 @@ class ParcelDetail(APIView):
 
         return Response(Parcel(parcel).data)
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}discard",
-        operation_summary="Remove a parcel",
+        summary="Remove a parcel",
         responses={
             200: Parcel(),
             404: ErrorResponse(),
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
                 curl --request DELETE \\
                     --url /v1/parcels/<PARCEL_ID> \\
                     --header 'Authorization: Token <API_KEY>'
                 """,
-            }
+            ),
         ],
     )
     def delete(self, request: Request, pk: str):
