@@ -30,7 +30,7 @@ jobs:
           sudo chown -R 1000 ./
           docker-compose -f docker-compose.test.yml run --rm karrio bash -c '
             cd app &&
-            pip install --upgrade pip
+            pip install --upgrade pip &&
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.dev.txt &&
             cd -
@@ -55,7 +55,7 @@ jobs:
           sudo chown -R 1000 ./
           docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN karrio bash -c '
             cd app &&
-            pip install --upgrade pip
+            pip install --upgrade pip &&
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&
             cd -
