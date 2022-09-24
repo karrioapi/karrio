@@ -43,7 +43,7 @@ class DICTPARSE:
         )
 
     @staticmethod
-    def to_dict(entity: Any) -> dict:
+    def to_dict(entity: Any, clear_empty: bool = True) -> dict:
         """Parse value into a Python dictionay.
 
         :param value: a value that can converted in dictionary.
@@ -56,7 +56,9 @@ class DICTPARSE:
                 else entity
             ),
             object_hook=lambda d: {
-                k: v for k, v in d.items() if v not in (None, [], "")
+                k: v
+                for k, v in d.items()
+                if (v not in (None, [], "") if clear_empty else True)
             },
         )
 

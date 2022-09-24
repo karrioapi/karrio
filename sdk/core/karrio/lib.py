@@ -203,13 +203,14 @@ def to_object(
 
 def to_dict(
     value: typing.Any,
+    clear_empty: bool = None,
 ) -> dict:
     """Parse value into a Python dictionay.
 
     :param value: a value that can converted in dictionary.
     :return: a dictionary.
     """
-    return utils.DP.to_dict(value)
+    return utils.DP.to_dict(value, clear_empty=clear_empty or True)
 
 
 def to_json(

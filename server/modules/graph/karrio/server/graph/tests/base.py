@@ -1,21 +1,37 @@
-from graphene_django.utils.testing import GraphQLTestCase
+import json
+import logging
+import dataclasses
+from django.urls import reverse
 from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
 from karrio.server.providers.models import MODELS
 from karrio.server.user.models import Token
 
+logger = logging.getLogger(__name__)
 
-class GraphTestCase(GraphQLTestCase):
-    GRAPHQL_URL = "/graphql"
+@dataclasses.dataclass
+class Result:
+    data: dict = None
+    status_code: str = None
 
+
+class GraphTestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
+
+        # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
         )
-        self.token = Token.objects.create(user=self.user)
-        self.client.force_login(self.user)
+        self.token = Token.objects.create(user=self.user, test_mode=False)
 
+        # Setup API client.
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+
+        # Setup test carrier connections.
         self.carrier = MODELS["canadapost"].objects.create(
             carrier_id="canadapost",
             test_mode=False,
@@ -48,3 +64,25 @@ class GraphTestCase(GraphQLTestCase):
             consumer_key="test",
             consumer_secret="password",
         )
+
+    def query(self, query: str, operation_name: str = None, variables: dict = None) -> Result:
+        url = reverse("karrio.server.graph:graphql")
+        data =  dict(
+            query=query,
+            variables=variables,
+            operation_name=operation_name,
+        )
+
+        response = self.client.post(url, data)
+
+        return Result(
+            status_code=response.status_code,
+            data=json.loads(response.content),
+        )
+
+    def assertResponseNoErrors(self, result: Result):
+        if result.status_code != status.HTTP_200_OK or result.data.get("errors") is not None:
+            print(result.data)
+
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        assert result.data.get("errors") is None

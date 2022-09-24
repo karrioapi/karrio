@@ -5,10 +5,11 @@ import strawberry
 from strawberry.types import Info
 from karrio.server.core import gateway
 
+from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from karrio.core.utils import DP
+import karrio.lib as lib
 import karrio.server.core.filters as filters
 import karrio.server.user.serializers as user_serializers
 import karrio.server.providers.models as providers
@@ -17,6 +18,7 @@ import karrio.server.tracing.models as tracing
 import karrio.server.graph.models as graph
 import karrio.server.core.models as core
 import karrio.server.graph.schemas.base.inputs as inputs
+import karrio.server.graph.serializers as serializers
 import karrio.server.graph.utils as utils
 
 User = get_user_model()
@@ -52,22 +54,21 @@ class LogType:
     @strawberry.field
     def data(self: core.APILog) -> typing.Optional[utils.JSON]:
         try:
-            return DP.to_dict(self.data)
+            return lib.to_dict(self.data)
         except:
             return self.data
 
     @strawberry.field
     def response(self: core.APILog) -> typing.Optional[utils.JSON]:
         try:
-            return DP.to_dict(self.response)
+            return lib.to_dict(self.response)
         except:
-            print("touch")
             return self.response
 
     @strawberry.field
     def query_params(self: core.APILog) -> typing.Optional[utils.JSON]:
         try:
-            return DP.to_dict(self.query_params)
+            return lib.to_dict(self.query_params)
         except:
             return self.query_params
 
@@ -82,7 +83,7 @@ class LogType:
         info,
         filter: typing.Optional[inputs.LogFilter] = strawberry.UNSET,
     ) -> utils.Connection["LogType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.LogFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.LogFilter()
         queryset = filters.LogFilter(
             _filter.to_dict(), core.APILog.access_by(info.context.request)
         ).qs
@@ -103,14 +104,14 @@ class TracingRecordType:
     @strawberry.field
     def record(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
         try:
-            return DP.to_dict(self.record)
+            return lib.to_dict(self.record)
         except:
             return self.record
 
     @strawberry.field
     def meta(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
         try:
-            return DP.to_dict(self.meta)
+            return lib.to_dict(self.meta)
         except:
             return self.meta
 
@@ -126,7 +127,7 @@ class TracingRecordType:
         info,
         filter: typing.Optional[inputs.TracingRecordFilter] = strawberry.UNSET,
     ) -> utils.Connection["TracingRecordType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.TracingRecordFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.TracingRecordFilter()
         queryset = filters.TracingRecordFilter(
             _filter.to_dict(), tracing.TracingRecord.access_by(info.context.request)
         ).qs
@@ -247,31 +248,36 @@ class ParcelType:
 
 @strawberry.type
 class DutyType:
-    id: typing.Optional[str]
-    paid_by: typing.Optional[utils.PaidByEnum]
-    currency: typing.Optional[utils.CountryCodeEnum]
-    account_number: typing.Optional[str]
-    declared_value: typing.Optional[float]
-    bill_to: typing.Optional[AddressType] = strawberry.UNSET
+    paid_by: typing.Optional[utils.PaidByEnum] = None
+    currency: typing.Optional[utils.CurrencyCodeEnum] = None
+    account_number: typing.Optional[str] = None
+    declared_value: typing.Optional[float] = None
+    bill_to: typing.Optional[AddressType] = None
 
 
 @strawberry.type
 class CustomsType:
     object_type: str
-    id: typing.Optional[str]
-    certify: typing.Optional[bool]
-    commercial_invoice: typing.Optional[bool]
-    content_type: typing.Optional[utils.CustomsContentTypeEnum]
-    content_description: typing.Optional[str]
-    incoterm: typing.Optional[utils.IncotermCodeEnum]
-    invoice: typing.Optional[str]
-    invoice_date: typing.Optional[datetime.date]
-    signer: typing.Optional[str]
-    duty: typing.Optional[DutyType]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
+    id: str
+    certify: typing.Optional[bool] = strawberry.UNSET
+    commercial_invoice: typing.Optional[bool] = strawberry.UNSET
+    content_type: typing.Optional[utils.CustomsContentTypeEnum] = strawberry.UNSET
+    content_description: typing.Optional[str] = strawberry.UNSET
+    incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
+    invoice: typing.Optional[str] = strawberry.UNSET
+    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    signer: typing.Optional[str] = strawberry.UNSET
+    created_at: typing.Optional[datetime.datetime] = strawberry.UNSET
+    updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
+    created_by: typing.Optional[UserType] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
+
+    @strawberry.field
+    def duty(self: manager) -> typing.Optional[DutyType]:
+        if self.duty is None:
+            return None
+
+        return DutyType(**self.duty)
 
     @strawberry.field
     def commodities(self: manager.Customs) -> typing.List[CommodityType]:
@@ -284,31 +290,31 @@ class AddressTemplateType:
     id: str
     label: str
     address: AddressType
-    is_default: typing.Optional[bool]
+    is_default: typing.Optional[bool] = None
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
         info,
         filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
-    ) -> utils.Connection["AddressType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.AddressFilter()
+    ) -> utils.Connection["AddressTemplateType"]:
+        _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
         _query = {
             **(  # type: ignore
-                {"label__icontain": filter.label}
-                if filter.label is not strawberry.UNSET
+                {"label__icontain": _filter.label}
+                if _filter.label != strawberry.UNSET
                 else {}
-            )
+            ),
             ** (
-                {"address__icontain": filter.address}
-                if filter.address is not strawberry.UNSET
+                {"address__icontain": _filter.address}
+                if _filter.address != strawberry.UNSET
                 else {}
             )
         }
-
-        queryset = graph.Template.access_by(info.context).filter(
+        queryset = graph.Template.access_by(info.context.request).filter(
             address__isnull=False, **_query
         )
+
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -326,13 +332,13 @@ class ParcelTemplateType:
         info,
         filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["ParcelTemplateType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.TemplateFilter()
+        _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
 
-        queryset = graph.Template.access_by(info.context).filter(
+        queryset = graph.Template.access_by(info.context.request).filter(
             parcel__isnull=False,
             **(
-                {"label__icontain": filter.label}
-                if filter.label is not strawberry.UNSET
+                {"label__icontain": _filter.label}
+                if _filter.label != strawberry.UNSET
                 else {}
             ),
         )
@@ -353,13 +359,13 @@ class CustomsTemplateType:
         info,
         filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["CustomsTemplateType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.TemplateFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.TemplateFilter()
 
-        queryset = graph.Template.access_by(info.context).filter(
+        queryset = graph.Template.access_by(info.context.request).filter(
             customs__isnull=False,
             **(
-                {"label__icontain": filter.label}
-                if filter.label is not strawberry.UNSET
+                {"label__icontain": _filter.label}
+                if _filter.label is not strawberry.UNSET
                 else {}
             ),
         )
@@ -433,7 +439,7 @@ class TrackerType:
         info,
         filter: typing.Optional[inputs.TrackerFilter] = strawberry.UNSET,
     ) -> utils.Connection["TrackerType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.TrackerFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
         queryset = filters.TrackerFilter(
             _filter.to_dict(), manager.Tracking.access_by(info.context.request)
         ).qs
@@ -501,7 +507,7 @@ class ShipmentType:
         info,
         filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
     ) -> utils.Connection["ShipmentType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.ShipmentFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
         queryset = filters.ShipmentFilter(
             _filter.to_dict(), manager.Shipment.access_by(info.context.request)
         ).qs
@@ -547,11 +553,11 @@ class LabelTemplateType:
 
 @strawberry.type
 class SystemConnectionType:
-    id: typing.Optional[str]
-    carrier_id: typing.Optional[str]
-    test: typing.Optional[bool]
-    active: typing.Optional[bool]
-    capabilities: typing.Optional[typing.List[str]]
+    id: str
+    carrier_id: str
+    test_mode: bool
+    active: bool
+    capabilities: typing.List[str]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
 
@@ -570,35 +576,47 @@ class SystemConnectionType:
     @utils.authentication_required
     def resolve_list(
         info,
-        test: typing.Optional[bool] = strawberry.UNSET,
+        test_mode: typing.Optional[bool] = strawberry.UNSET,
     ) -> typing.List["SystemConnectionType"]:
         return gateway.Carriers.list(
-            context=info.context.request,
+            info.context.request,
             system_only=True,
-            **(dict(test=test) if test != strawberry.UNSET else {}),
+            **(dict(test_mode=test_mode) if test_mode != strawberry.UNSET else {}),
         )
 
 
 @strawberry.interface
 class ConnectionType:
-    id: typing.Optional[str]
-
-    @strawberry.field
-    def carrier_name(self: providers.Carrier) -> typing.Optional[str]:
-        return getattr(self, "settings", self).carrier_name
+    id: str
+    active: bool
+    carrier_id: str
+    carrier_name: str
+    test_mode: bool
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
         info,
-        test: typing.Optional[bool] = strawberry.UNSET,
-    ) -> typing.List["ConnectionType"]:
-        connections = providers.Carrier.access_by(info.context.request).filter(
-            created_by__isnull=False,
-            **(dict(test=test) if test != strawberry.UNSET else {}),
+        test_mode: typing.Optional[bool] = strawberry.UNSET,
+    ) -> typing.List["CarrierConnectionType"]:
+        results = gateway.Carriers.list(
+            info.context.request,
+            **(dict(test_mode=test_mode) if test_mode != strawberry.UNSET else {}),
         )
-        return [connection.settings for connection in connections]
 
+        return list(
+            map(ConnectionType.to_carrier_settings, results)
+        )
+
+    @staticmethod
+    def to_carrier_settings(carrier: providers.Carrier) -> "CarrierConnectionType":
+        return CarrierSettings[carrier.carrier_name](
+            id=carrier.id,
+            carrier_name=carrier.carrier_name,
+            **serializers.ConnectionModelSerializer(
+                {carrier.carrier_name: model_to_dict(carrier.settings)}
+            ).data[carrier.carrier_name]
+        )
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
@@ -632,9 +650,12 @@ def create_carrier_settings_type(name: str, model):
                 **{
                     k: strawberry.UNSET
                     for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
+                    if hasattr(model, k)
                 },
                 "__annotations__": {
-                    k: v for k, v in annotations.items() if k not in ["services"]
+                    k: v
+                    for k, v in annotations.items()
+                    if k not in ["services"] and hasattr(model, k)
                 },
             },
         )
@@ -645,3 +666,7 @@ CarrierSettings = {
     name: create_carrier_settings_type(name, model)
     for name, model in providers.MODELS.items()
 }
+CarrierConnectionType: typing.Any = strawberry.union(
+    "CarrierConnectionType",
+    types=(*(T for T in CarrierSettings.values()),)
+)
