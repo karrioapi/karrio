@@ -297,7 +297,6 @@ CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
 class ConnectionModelSerializerBase(serializers.ModelSerializer):
     class Meta:
         model = providers.Carrier
-        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
         exclude = [
             "created_at",
             "updated_at",
@@ -317,6 +316,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         )
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_data = validated_data.get(name, {})
+
         payload = {
             key: value
             for key, value in settings_data.items()
@@ -328,7 +328,6 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             payload=settings_data,
             context=context,
         )
-
         settings = serializers.save_one_to_one_data(
             name, serializer, payload={name: payload}, context=context
         )
@@ -363,9 +362,12 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             for key, value in validated_data.get(name, {}).items()
             if key not in ["id", "services", "label_template"]
         }
-
         settings = serializers.save_one_to_one_data(
-            name, serializer, instance, payload={name: payload}
+            name,
+            serializer,
+            instance,
+            payload={name: payload},
+            context=context,
         )
 
         template = validated_data.get(name, {}).get("label_template")

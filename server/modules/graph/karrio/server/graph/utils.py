@@ -1,5 +1,6 @@
 import enum
 import base64
+import logging
 import typing
 import functools
 import strawberry
@@ -8,15 +9,16 @@ from django import conf as django
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
+import karrio.lib as lib
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
 import karrio.server.core.permissions as permissions
 import karrio.server.core.serializers as serializers
 
-
 Cursor = str
 T = typing.TypeVar("T")
 GenericType = typing.TypeVar("GenericType")
+logger = logging.getLogger(__name__)
 
 JSON: typing.Any = strawberry.scalar(
     typing.NewType("JSON", object),
@@ -81,10 +83,10 @@ def metadata_object_types() -> enum.Enum:
 
 MetadataObjectTypeEnum: typing.Any = strawberry.enum(metadata_object_types())  # type: ignore
 
+
 def authentication_required(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        *__, info = args
+    def wrapper(info, **kwargs):
         if info.context.request.user.is_anonymous:
             raise exceptions.AuthenticationFailed(
                 _("You are not authenticated"), code="authentication_required"
@@ -95,21 +97,20 @@ def authentication_required(func):
                 _("Authentication Token not verified"), code="two_factor_required"
             )
 
-        return func(*args, **kwargs)
+        return func(info, **kwargs)
 
     return wrapper
 
 
 def password_required(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        *__, info = args
+    def wrapper(info, **kwargs):
         password = kwargs.get("password")
 
         if not info.context.request.user.check_password(password):
             raise exceptions.ValidationError({"password": "Invalid password"})
 
-        return func(*args, **kwargs)
+        return func(info, **kwargs)
 
     return wrapper
 
@@ -117,14 +118,13 @@ def password_required(func):
 def authorization_required(keys: typing.List[str] = None):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            *__, info = args
+        def wrapper(info, **kwargs):
             permissions.check_permissions(
                 context=info.context.request,
                 keys=keys or [],
             )
 
-            return func(*args, **kwargs)
+            return func(info, **kwargs)
 
         return wrapper
 
@@ -146,16 +146,12 @@ class BaseInput:
     def pagination(self) -> typing.Dict[str, typing.Any]:
         return {
             k: v
-            for k, v in dataclasses.asdict(self).items()
+            for k, v in dataclass_to_dict(self).items()
             if k in ["offset", "before", "after", "first", "last"]
         }
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
-        return {
-            k: v
-            for k, v in dataclasses.asdict(self).items()
-            if v is not strawberry.UNSET
-        }
+        return dataclass_to_dict(self)
 
 
 @strawberry.type
@@ -242,3 +238,25 @@ def paginated_connection(
         ),
         edges=edges[:-1],
     )
+
+
+def is_unset(v: typing.Any) -> bool:
+    return isinstance(v, strawberry.unset.UnsetType)
+
+
+def _dict_factory(items):
+    if isinstance(next(iter(items), None), tuple):
+        return dict([
+            (key, _dict_factory(value) if isinstance(value, list) else value)
+            for key, value in items
+            if not is_unset(value)
+        ])
+
+    return items
+
+
+def dataclass_to_dict(data):
+    return lib.to_dict(dataclasses.asdict(
+        data,
+        dict_factory=_dict_factory,
+    ), clear_empty=False)

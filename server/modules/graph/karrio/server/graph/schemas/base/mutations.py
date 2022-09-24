@@ -7,6 +7,7 @@ from django.utils.http import urlsafe_base64_decode
 from django_email_verification import confirm as email_verification
 from django_otp.plugins.otp_email import models as otp
 from django.utils.translation import gettext_lazy as _
+from django.db import transaction
 
 from karrio.core.utils import DP
 from karrio.server.conf import settings
@@ -44,10 +45,7 @@ class UserUpdateMutation(utils.BaseMutation):
             context=info.context.request,
         )
 
-        if not serializer.is_valid():
-            return UserUpdateMutation(
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )  # type:ignore
+        serializer.is_valid(raise_exception=True)
 
         return UserUpdateMutation(user=serializer.save())  # type:ignore
 
@@ -98,7 +96,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
     ) -> "RequestEmailChangeMutation":
         try:
             token = ConfirmationToken.for_data(
-                user=info.context.user,
+                user=info.context.request.user,
                 data=dict(new_email=email),
             )
 
@@ -116,7 +114,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
             logger.exception(e)
             raise e
 
-        return RequestEmailChangeMutation(user=info.context.user.id)  # type:ignore
+        return RequestEmailChangeMutation(user=info.context.request.user.id)  # type:ignore
 
 
 @strawberry.type
@@ -128,7 +126,7 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
     @utils.authorization_required()
     def mutate(info: Info, token: str) -> "ConfirmEmailChangeMutation":
         validated_token = ConfirmationToken(token)
-        user = info.context.user
+        user = info.context.request.user
 
         if user.id != validated_token["user_id"]:
             raise exceptions.ValidationError({"token": "Token is invalid or expired"})
@@ -247,13 +245,13 @@ class EnableMultiFactorMutation(utils.BaseMutation):
     ) -> "EnableMultiFactorMutation":
         # Retrieve a default device or create a new one.
         device = otp.EmailDevice.objects.filter(
-            user__id=info.context.user.id
+            user__id=info.context.request.user.id
         ).first()
         if device is None:
             device = otp.EmailDevice.objects.create(
                 name="default",
                 confirmed=False,
-                user=info.context.user,
+                user=info.context.request.user,
             )
 
         # Send and email challenge if the device isn't confirmed yet.
@@ -278,7 +276,7 @@ class ConfirmMultiFactorMutation(utils.BaseMutation):
         token = input.get("token")
         # Retrieve a default device or create a new one.
         device = otp.EmailDevice.objects.filter(
-            user__id=info.context.user.id
+            user__id=info.context.request.user.id
         ).first()
 
         if device is None:
@@ -312,7 +310,7 @@ class DisableMultiFactorMutation(utils.BaseMutation):
     ) -> "DisableMultiFactorMutation":
         # Retrieve a default device or create a new one.
         device = otp.EmailDevice.objects.filter(
-            user__id=info.context.user.id
+            user__id=info.context.request.user.id
         ).first()
         if device is not None:
             device.delete()
@@ -364,11 +362,11 @@ class DeleteMutation(utils.BaseMutation):
     ) -> "DeleteMutation":
         id = input.get("id")
         queryset = (
-            model.access_by(info.context)
+            model.access_by(info.context.request)
             if hasattr(model, "access_by")
             else model.objects
         )
-        instance = queryset.get(id=id, **filter)
+        instance = queryset.get(id=id)
 
         if validator:
             validator(instance, context=info.context)
@@ -392,15 +390,12 @@ class PartialShipmentMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.PartialShipmentMutationInput
     ) -> "PartialShipmentMutation":
-        shipment = manager.Shipment.access_by(info.context).get(id=id)
+        shipment = manager.Shipment.access_by(info.context.request).get(id=id)
         manager_serializers.can_mutate_shipment(shipment, update=True)
 
         serializer = manager_serializers.Shipment(shipment, data=input, partial=True)
 
-        if not serializer.is_valid():
-            return PartialShipmentMutation(  # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
+        serializer.is_valid(raise_exception=True)
 
         SerializerDecorator[manager_serializers.ShipmentSerializer](
             shipment,
@@ -409,7 +404,7 @@ class PartialShipmentMutation(utils.BaseMutation):
         ).save()
 
         # refetch the shipment to get the updated state with signals processed
-        update = manager.Shipment.access_by(info.context).get(id=id)
+        update = manager.Shipment.access_by(info.context.request).get(id=id)
 
         return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
 
@@ -423,43 +418,38 @@ def create_template_mutation(name: str, template_type: str) -> typing.Type:
 
     @strawberry.type
     class _Mutation(utils.BaseMutation):
-        template: _type = None
+        template: typing.Optional[_type] = None
 
         @staticmethod
         @utils.authentication_required
         @utils.authorization_required()
+        @transaction.atomic
         def mutate(info: Info, **input) -> name:  # type:ignore
             data = input.copy()
             instance = (
-                graph.Template.access_by(info.context).get(id=input["id"])
+                graph.Template.access_by(info.context.request).get(id=input["id"])
                 if "id" in input
                 else None
             )
             customs_data = data.get("customs", {})
 
             if "commodities" in customs_data and instance is not None:
-                customs = getattr(instance, "customs", None)
-                extra = {"context": info.context}
                 save_many_to_many_data(
                     "commodities",
                     serializers.CommodityModelSerializer,
-                    customs,
+                    getattr(instance, "customs", None),
                     payload=customs_data,
-                    **extra,
+                    context=info.context.request,
                 )
 
             serializer = serializers.TemplateModelSerializer(
                 instance,
                 data=data,
-                context=info.context,
+                context=info.context.request,
                 partial=(instance is not None),
             )
 
-            if not serializer.is_valid():
-                return _Mutation(
-                    errors=utils.ErrorType.from_errors(serializer.errors)
-                )  # type:ignore
-
+            serializer.is_valid(raise_exception=True)
             template = serializer.save()
 
             return _Mutation(template=template)  # type:ignore
@@ -487,10 +477,9 @@ UpdateParcelTemplateMutation = create_template_mutation(
     "UpdateParcelTemplateMutation", "parcel"
 )
 
-
 @strawberry.type
 class CreateCarrierConnectionMutation(utils.BaseMutation):
-    connection: typing.Optional[types.ConnectionType] = None
+    connection: types.CarrierConnectionType = None
 
     @staticmethod
     @utils.authentication_required
@@ -503,40 +492,35 @@ class CreateCarrierConnectionMutation(utils.BaseMutation):
             context=info.context.request,
         )
 
-        if not serializer.is_valid():
-            return CreateCarrierConnectionMutation(  # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
+        serializer.is_valid(raise_exception=True)
         connection = serializer.save()
 
-        return CreateCarrierConnectionMutation(connection=connection)  # type:ignore
+        return CreateCarrierConnectionMutation(  # type:ignore
+            connection=types.ConnectionType.to_carrier_settings(connection)
+        )
 
 
 @strawberry.type
 class UpdateCarrierConnectionMutation(utils.BaseMutation):
-    connection: typing.Optional[types.ConnectionType] = None
+    connection: types.CarrierConnectionType = None
 
     @staticmethod
+    @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     def mutate(info: Info, **input) -> "UpdateCarrierConnectionMutation":
         data = input.copy()
+        settings_data = typing.cast(dict, next(iter(data.values()), {}))
+        id = settings_data.get("id")
         instance = providers.Carrier.access_by(info.context.request).get(id=id)
+
         serializer = serializers.PartialConnectionModelSerializer(
             instance,
             data=data,
             partial=True,
-            context=info.context,
+            context=info.context.request,
         )
-
-        if not serializer.is_valid(raise_exception=True):
-            return UpdateCarrierConnectionMutation(  # type:ignore
-                errors=utils.ErrorType.from_errors(serializer.errors)
-            )
-
-        settings_name: str = next((k for k in data.keys()))
-        settings_data = data.get(settings_name, {})
+        serializer.is_valid(raise_exception=True)
 
         if "services" in settings_data:
             save_many_to_many_data(
@@ -544,12 +528,14 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
                 serializers.ServiceLevelModelSerializer,
                 instance.settings,
                 payload=settings_data,
-                context=info.context,
+                context=info.context.request,
             )
 
         connection = serializer.save()
 
-        return UpdateCarrierConnectionMutation(connection=connection)  # type:ignore
+        return UpdateCarrierConnectionMutation(  # type:ignore
+            connection=types.ConnectionType.to_carrier_settings(connection)
+        )
 
 
 @strawberry.type
@@ -566,13 +552,13 @@ class SystemCarrierMutation(utils.BaseMutation):
 
         if input.get("enable"):
             if hasattr(carrier, "active_orgs"):
-                carrier.active_orgs.add(info.context.org)
+                carrier.active_orgs.add(info.context.request.org)
             else:
-                carrier.active_users.add(info.context.user)
+                carrier.active_users.add(info.context.request.user)
         else:
             if hasattr(carrier, "active_orgs"):
-                carrier.active_orgs.remove(info.context.org)
+                carrier.active_orgs.remove(info.context.request.org)
             else:
-                carrier.active_users.remove(info.context.user)
+                carrier.active_users.remove(info.context.request.user)
 
         return SystemCarrierMutation(carrier=carrier) # type: ignore

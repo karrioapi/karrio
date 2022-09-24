@@ -91,7 +91,7 @@ class RegisterUserMutationInput(utils.BaseInput):
     password1: str
     password2: str
     redirect_url: str
-    full_name: typing.Optional[str] = None
+    full_name: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -138,144 +138,177 @@ class DisableMultiFactorMutationInput(utils.BaseInput):
 @strawberry.input
 class MetadataMutationInput(utils.BaseInput):
     id: str
-    object_type: utils.MetadataObjectTypeEnum  # type:ignore
-    added_values: "utils.JSON"  # type:ignore
+    object_type: utils.MetadataObjectTypeEnum
+    added_values: utils.JSON
     delete_keys: typing.Optional[typing.List[str]]
 
 
 @strawberry.input
 class CommodityInput:
-    sku: typing.Optional[str]
-    quantity: typing.Optional[int]
-    weight: typing.Optional[float]
-    description: typing.Optional[str]
-    value_amount: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    origin_country: typing.Optional[utils.CountryCodeEnum]
-    value_currency: typing.Optional[utils.CurrencyCodeEnum]
-    metadata: typing.Optional[utils.JSON]
-    parent_id: typing.Optional[str]
+    weight: float
+    weight_unit: utils.WeightUnitEnum
+    sku: typing.Optional[str] = strawberry.UNSET
+    quantity: typing.Optional[int] = 1
+    description: typing.Optional[str] = strawberry.UNSET
+    value_amount: typing.Optional[float] = strawberry.UNSET
+    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    parent_id: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateCommodityInput(CommodityInput):
+    id: typing.Optional[str] = strawberry.UNSET
+    weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
 
 
 @strawberry.input
 class AddressInput:
-    postal_code: typing.Optional[str]
-    city: typing.Optional[str]
-    federal_tax_id: typing.Optional[str]
-    state_tax_id: typing.Optional[str]
-    person_name: typing.Optional[str]
-    company_name: typing.Optional[str]
     country_code: typing.Optional[utils.CountryCodeEnum]
-    email: typing.Optional[str]
-    phone_number: typing.Optional[str]
-    state_code: typing.Optional[str]
-    suburb: typing.Optional[str]
-    residential: typing.Optional[bool]
-    address_line1: typing.Optional[str]
-    address_line2: typing.Optional[str]
+    postal_code: typing.Optional[str] = strawberry.UNSET
+    city: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    person_name: typing.Optional[str] = strawberry.UNSET
+    company_name: typing.Optional[str] = strawberry.UNSET
+    email: typing.Optional[str] = strawberry.UNSET
+    phone_number: typing.Optional[str] = strawberry.UNSET
+    state_code: typing.Optional[str] = strawberry.UNSET
+    suburb: typing.Optional[str] = strawberry.UNSET
+    residential: typing.Optional[bool] = strawberry.UNSET
+    address_line1: typing.Optional[str] = strawberry.UNSET
+    address_line2: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateAddressInput(AddressInput):
+    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
 
 
 @strawberry.input
 class ParcelInput:
-    weight: typing.Optional[float]
-    width: typing.Optional[float]
-    height: typing.Optional[float]
-    length: typing.Optional[float]
-    packaging_type: typing.Optional[str]
-    package_preset: typing.Optional[str]
-    description: typing.Optional[str]
-    content: typing.Optional[str]
-    is_document: typing.Optional[bool]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum]
-    reference_number: typing.Optional[str]
-    items: typing.Optional[typing.List[CommodityInput]]
+    weight: float
+    weight_unit: utils.WeightUnitEnum
+    width: typing.Optional[float] = strawberry.UNSET
+    height: typing.Optional[float] = strawberry.UNSET
+    length: typing.Optional[float] = strawberry.UNSET
+    packaging_type: typing.Optional[str] = strawberry.UNSET
+    package_preset: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    content: typing.Optional[str] = strawberry.UNSET
+    is_document: typing.Optional[bool] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    reference_number: typing.Optional[str] = strawberry.UNSET
+    items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateParcelInput(ParcelInput):
+    id: typing.Optional[str] = strawberry.UNSET
+    weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
 
 
 @strawberry.input
 class DutyInput:
-    paid_by: typing.Optional[utils.PaidByEnum]
-    currency: typing.Optional[utils.CountryCodeEnum]
-    account_number: typing.Optional[str]
-    declared_value: typing.Optional[float]
-    bill_to: typing.Optional[AddressInput]
+    paid_by: utils.PaidByEnum
+    currency: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    account_number: typing.Optional[str] = strawberry.UNSET
+    declared_value: typing.Optional[float] = strawberry.UNSET
+    bill_to: typing.Optional[AddressInput] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateDutyInput(DutyInput):
+    paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
 
 
 @strawberry.input
 class CustomsInput:
-    certify: typing.Optional[bool]
-    commercial_invoice: typing.Optional[bool]
-    content_type: typing.Optional[utils.CustomsContentTypeEnum]
-    content_description: typing.Optional[str]
-    incoterm: typing.Optional[utils.IncotermCodeEnum]
-    invoice: typing.Optional[str]
-    invoice_date: typing.Optional[datetime.date]
-    signer: typing.Optional[str]
-    duty: typing.Optional[DutyInput]
-    options: typing.Optional[utils.JSON]
-    commodities: typing.Optional[typing.List[CommodityInput]]
+    commodities: typing.List[CommodityInput]
+    certify: typing.Optional[bool] = strawberry.UNSET
+    commercial_invoice: typing.Optional[bool] = strawberry.UNSET
+    content_type: typing.Optional[utils.CustomsContentTypeEnum] = strawberry.UNSET
+    content_description: typing.Optional[str] = strawberry.UNSET
+    incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
+    invoice: typing.Optional[str] = strawberry.UNSET
+    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    signer: typing.Optional[str] = strawberry.UNSET
+    duty: typing.Optional[DutyInput] = strawberry.UNSET
+    options: typing.Optional[utils.JSON] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateCustomsInput(CustomsInput):
+    id: typing.Optional[str] = strawberry.UNSET
+    duty: typing.Optional[UpdateDutyInput] = strawberry.UNSET
+    commodities: typing.List[UpdateCommodityInput] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
 class PaymentInput:
-    account_number: typing.Optional[str]
-    paid_by: typing.Optional[utils.PaidByEnum]
-    currency: typing.Optional[utils.CurrencyCodeEnum]
+    account_number: typing.Optional[str] = strawberry.UNSET
+    paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
+    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
 
 
 @strawberry.input
 class PartialShipmentMutationInput(utils.BaseInput):
     id: str
-    recipient: typing.Optional[AddressInput]
-    shipper: typing.Optional[AddressInput]
-    customs: typing.Optional[CustomsInput]
-    parcels: typing.Optional[typing.List[ParcelInput]]
-    payment: typing.Optional[PaymentInput]
-    options: typing.Optional[utils.JSON]
-    metadata: typing.Optional[utils.JSON]
-    reference: typing.Optional[str]
+    recipient: typing.Optional[AddressInput] = strawberry.UNSET
+    shipper: typing.Optional[AddressInput] = strawberry.UNSET
+    customs: typing.Optional[CustomsInput] = strawberry.UNSET
+    parcels: typing.Optional[typing.List[ParcelInput]] = strawberry.UNSET
+    payment: typing.Optional[PaymentInput] = strawberry.UNSET
+    options: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    reference: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
 class CreateAddressTemplateInput(utils.BaseInput):
     label: str
     address: AddressInput
-    is_default: typing.Optional[bool]
+    is_default: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateAddressTemplateInput(CreateAddressTemplateInput):
-    id: str
+    id: str  # type: ignore
     label: typing.Optional[str]
-    address: typing.Optional[AddressInput]
+    address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
 
 
 @strawberry.input
 class CreateCustomsTemplateInput(utils.BaseInput):
     label: str
     customs: CustomsInput
-    is_default: typing.Optional[bool]
+    is_default: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateCustomsTemplateInput(CreateCustomsTemplateInput):
-    id: str
-    label: typing.Optional[str]
-    customs: typing.Optional[CustomsInput]
+    id: str  # type: ignore
+    label: typing.Optional[str] = strawberry.UNSET
+    is_default: typing.Optional[bool] = strawberry.UNSET
+    customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
 class CreateParcelTemplateInput(utils.BaseInput):
     label: str
     parcel: ParcelInput
-    is_default: typing.Optional[bool]
+    is_default: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateParcelTemplateInput(CreateParcelTemplateInput):
-    id: str
-    label: typing.Optional[str]
-    parcel: typing.Optional[ParcelInput]
+    id: str  # type: ignore
+    label: typing.Optional[str] = strawberry.UNSET
+    is_default: typing.Optional[bool] = strawberry.UNSET
+    parcel: typing.Optional[UpdateParcelInput] = strawberry.UNSET
 
 
 @strawberry.input
@@ -288,17 +321,17 @@ class CreateLabelTemplateInput(utils.BaseInput):
     slug: str
     template: str
     template_type: utils.LabelTemplateTypeEnum
-    width: typing.Optional[int]
-    height: typing.Optional[int]
-    shipment_sample: typing.Optional[utils.JSON]
+    width: typing.Optional[int] = strawberry.UNSET
+    height: typing.Optional[int] = strawberry.UNSET
+    shipment_sample: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateLabelTemplateInput(utils.BaseInput):
     id: str
-    slug: typing.Optional[str]
-    template: typing.Optional[str]
-    template_type: typing.Optional[utils.LabelTemplateTypeEnum]
+    slug: typing.Optional[str] = strawberry.UNSET
+    template: typing.Optional[str] = strawberry.UNSET
+    template_type: typing.Optional[utils.LabelTemplateTypeEnum] = strawberry.UNSET
 
 
 @strawberry.input
@@ -308,29 +341,29 @@ class CreateServiceLevelInput(utils.BaseInput):
     cost: float
     currency: utils.CurrencyCodeEnum
 
-    description: typing.Optional[str]
-    active: typing.Optional[bool]
+    description: typing.Optional[str] = strawberry.UNSET
+    active: typing.Optional[bool] = strawberry.UNSET
 
-    estimated_transit_days: typing.Optional[int]
+    estimated_transit_days: typing.Optional[int] = strawberry.UNSET
 
-    max_weight: typing.Optional[float]
-    max_width: typing.Optional[float]
-    max_height: typing.Optional[float]
-    max_length: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum]
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    max_width: typing.Optional[float] = strawberry.UNSET
+    max_height: typing.Optional[float] = strawberry.UNSET
+    max_length: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
 
-    domicile: typing.Optional[bool]
-    international: typing.Optional[bool]
+    domicile: typing.Optional[bool] = strawberry.UNSET
+    international: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
-class UpdateServiceLevelInput(utils.BaseInput):
-    id: str
-    service_name: typing.Optional[str]
-    service_code: typing.Optional[str]
-    cost: typing.Optional[float]
-    currency: typing.Optional[utils.CurrencyCodeEnum]
+class UpdateServiceLevelInput(CreateServiceLevelInput):
+    id: typing.Optional[str] = strawberry.UNSET
+    service_name: typing.Optional[str] = strawberry.UNSET
+    service_code: typing.Optional[str] = strawberry.UNSET
+    cost: typing.Optional[float] = strawberry.UNSET
+    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
 
 
 def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.Type]:
@@ -349,7 +382,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
         @strawberry.input
         class _CarrierInput(utils.BaseInput):
             if is_update:
-                id: str = strawberry.UNSET
+                id: str
 
             if hasattr(model, "account_country_code"):
                 account_country_code: typing.Optional[str] = strawberry.UNSET
@@ -375,11 +408,12 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
                     **{
                         k: strawberry.UNSET
                         for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
+                        if hasattr(model, k)
                     },
                     "__annotations__": {
                         k: typing.Optional[v] if is_update or k in _optionals else v
                         for k, v in annotations.items()
-                        if k not in _excluded
+                        if k not in _excluded and hasattr(model, k)
                     },
                 },
             )
@@ -400,7 +434,7 @@ CreateCarrierConnectionMutationInput = strawberry.input(
         "CreateCarrierConnectionMutationInput",
         (utils.BaseInput,),
         {
-            **{name: strawberry.UNSET for name, type in CreateCarrierInputs.items()},
+            **{name: strawberry.UNSET for name in CreateCarrierInputs.keys()},
             "__annotations__": {
                 name: typing.Optional[type]
                 for name, type in CreateCarrierInputs.items()
