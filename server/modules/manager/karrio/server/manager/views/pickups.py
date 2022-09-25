@@ -1,13 +1,11 @@
 import logging
 
+from django.urls import path
 from rest_framework import status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-from drf_spectacular.utils import extend_schema, OpenApiExample
-from django.urls import path
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import PickupFilters
@@ -23,9 +21,10 @@ from karrio.server.manager.serializers import (
     PickupCancelData,
 )
 import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Pickups = PaginatedResult("PickupList", Pickup)
 
 
@@ -33,12 +32,12 @@ class PickupList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = PickupFilters
     serializer_class = Pickups
     model = models.Pickup
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List shipment pickups",
@@ -49,7 +48,7 @@ class PickupList(GenericAPIView):
         },
         parameters=PickupFilters.parameters,
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -69,7 +68,7 @@ class PickupList(GenericAPIView):
 
 
 class PickupRequest(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
         summary="Schedule a pickup",
@@ -81,7 +80,7 @@ class PickupRequest(APIView):
         },
         request=PickupData(),
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request POST \\
@@ -127,7 +126,7 @@ class PickupRequest(APIView):
 
 
 class PickupDetails(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve a pickup",
@@ -137,7 +136,7 @@ class PickupDetails(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -152,7 +151,7 @@ class PickupDetails(APIView):
         pickup = models.Pickup.access_by(request).get(pk=pk)
         return Response(Pickup(pickup).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}update",
         summary="Update a pickup",
@@ -165,7 +164,7 @@ class PickupDetails(APIView):
         },
         request=PickupUpdateData(),
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request PATCH \\
@@ -201,7 +200,7 @@ class PickupDetails(APIView):
 
 
 class PickupCancel(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
         summary="Cancel a pickup",
@@ -214,7 +213,7 @@ class PickupCancel(APIView):
         },
         request=PickupCancelData(),
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request POST \\

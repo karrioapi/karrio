@@ -1,12 +1,11 @@
 import logging
 from django.urls import path
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from rest_framework.response import Response
 
+import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 from karrio.server.core.views.api import APIView
@@ -24,8 +23,8 @@ from karrio.server.core.serializers import (
     ErrorMessages,
 )
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 CARRIER_NAMES = list(providers.MODELS.keys())
 
 
@@ -54,7 +53,7 @@ class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDe
 
 
 class ShippingDetails(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
         summary="Buy a shipment label",
@@ -89,7 +88,7 @@ class ShippingDetails(APIView):
 
 
 class ShippingCancel(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
         summary="Void a shipment label",
@@ -100,10 +99,10 @@ class ShippingCancel(APIView):
             424: ErrorMessages(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],

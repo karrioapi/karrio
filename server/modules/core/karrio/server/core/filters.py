@@ -2,14 +2,48 @@ import typing
 from django.db.models import Q
 from django_filters import rest_framework as filters
 
-from karrio.server.core import dataunits
-from karrio.server.core import serializers
+import karrio.server.core.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
+import karrio.server.openapi as openapi
 
 
 class CharInFilter(filters.BaseInFilter, filters.CharFilter):
     pass
+
+
+class CarrierFilters(filters.FilterSet):
+
+    carrier_name = filters.MultipleChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    active = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    system_only = filters.BooleanFilter(
+        required=False,
+        default=False,
+        help_text="This flag indicates that only system carriers should be returned",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "action",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "system_only",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
 
 class ShipmentFilters(filters.FilterSet):
@@ -81,6 +115,81 @@ class ShipmentFilters(filters.FilterSet):
         method="keyword_filter",
         help_text="shipment' keyword and indexes search",
     )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "address",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c for c in dataunits.CARRIER_NAMES],
+        ),
+        openapi.OpenApiParameter(
+            "reference",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "service",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "status",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c.value for c in list(serializers.ShipmentStatus)],
+        ),
+        openapi.OpenApiParameter(
+            "option_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "option_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
     class Meta:
         import karrio.server.manager.models as manager
@@ -192,6 +301,36 @@ class TrackerFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
         """,
     )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c for c in dataunits.CARRIER_NAMES],
+        ),
+        openapi.OpenApiParameter(
+            "status",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c.value for c in list(serializers.TrackerStatus)],
+        ),
+    ]
 
     class Meta:
         import karrio.server.manager.models as manager

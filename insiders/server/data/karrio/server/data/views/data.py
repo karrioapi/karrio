@@ -1,32 +1,31 @@
 import io
 from django.http import JsonResponse
 from django.urls import re_path, path
-from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
-import karrio.server.core.views.api as api
+from karrio.server.data.serializers.data import ImportDataSerializer
 import karrio.server.data.serializers as serializers
 import karrio.server.data.resources as resources
-from karrio.server.data.serializers.data import ImportDataSerializer
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DataImportParameters: list = [
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         name="resource_type",
-        type=OpenApiTypes.STR,
+        type=openapi.OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
         description="The type of the resource to import",
     ),
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         "data_template",
-        type=OpenApiTypes.STR,
+        type=openapi.OpenApiTypes.STR,
         required=False,
         description="""
         A data template slug to use for the import.
@@ -34,9 +33,9 @@ DataImportParameters: list = [
         **When nothing is specified, the system default headers are expected.**
         """,
     ),
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         name="data_file",
-        type=OpenApiTypes.BINARY,
+        type=openapi.OpenApiTypes.BINARY,
     ),
 ]
 
@@ -44,7 +43,7 @@ DataImportParameters: list = [
 class DataImport(api.BaseAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Data"],
         operation_id=f"{ENDPOINT_ID}import_file",
         summary="Import data files",
@@ -96,22 +95,22 @@ class DataImport(api.BaseAPIView):
 
 
 DataExportParameters: list = [
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         name="resource_type",
-        location=OpenApiParameter.PATH,
-        type=OpenApiTypes.STR,
+        location=openapi.OpenApiParameter.PATH,
+        type=openapi.OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
     ),
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         name="export_format",
-        location=OpenApiParameter.PATH,
-        type=OpenApiTypes.STR,
+        location=openapi.OpenApiParameter.PATH,
+        type=openapi.OpenApiTypes.STR,
         enum=[e.name for e in list(serializers.ResourceType)],
     ),
-    OpenApiParameter(
+    openapi.OpenApiParameter(
         "data_template",
-        location=OpenApiParameter.QUERY,
-        type=OpenApiTypes.STR,
+        location=openapi.OpenApiParameter.QUERY,
+        type=openapi.OpenApiTypes.STR,
         required=False,
         description="""
         A data template slug to use for the import.
@@ -123,12 +122,12 @@ DataExportParameters: list = [
 
 
 class DataExport(api.LoginRequiredView, VirtualDownloadView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Data"],
         operation_id=f"{ENDPOINT_ID}export_file",
         summary="Export data files",
         responses={
-            (200, "application/octet-stream"): OpenApiTypes.BINARY,
+            (200, "application/octet-stream"): openapi.OpenApiTypes.BINARY,
             409: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },

@@ -1,12 +1,10 @@
 import logging
-import rest_framework.status as status
+from django.urls import path
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
-
-from django.urls import path
-from drf_spectacular.utils import extend_schema
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import UploadRecordFilter
@@ -22,9 +20,10 @@ from karrio.server.manager.serializers import (
     can_upload_shipment_document,
 )
 import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 DocumentUploadRecords = PaginatedResult("DocumentUploadRecords", DocumentUploadRecord)
 
 
@@ -32,12 +31,12 @@ class DocumentList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = UploadRecordFilter
     serializer_class = DocumentUploadRecords
     model = models.DocumentUploadRecord
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all upload records",
@@ -56,7 +55,7 @@ class DocumentList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}upload",
         summary="Upload documents",
@@ -91,7 +90,7 @@ class DocumentList(GenericAPIView):
 
 
 class DocumentDetails(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve an upload record",

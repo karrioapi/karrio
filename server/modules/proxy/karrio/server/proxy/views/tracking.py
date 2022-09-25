@@ -3,12 +3,10 @@ from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
-from karrio.server.serializers import SerializerDecorator, CharField, Serializer
-from karrio.server.core.views.api import APIView
+import karrio.server.openapi as openapi
 import karrio.server.core.dataunits as dataunits
+from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
     TrackingResponse,
     ErrorResponse,
@@ -24,7 +22,7 @@ ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique ma
 class TrackingAPIView(APIView):
     logging_methods = ["GET"]
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}track_shipment",
         summary="Track a shipment",
@@ -35,23 +33,23 @@ class TrackingAPIView(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=dataunits.NON_HUBS_CARRIERS,
                 required=True,
             ),
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "tracking_number",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 required=True,
             ),
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "hub",
-                location=OpenApiParameter.QUERY,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.STR,
                 required=False,
             ),
         ],

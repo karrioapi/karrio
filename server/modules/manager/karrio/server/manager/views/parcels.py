@@ -1,12 +1,12 @@
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.urls import path
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 
+from karrio.server.manager.router import router
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
     SerializerDecorator,
@@ -17,8 +17,8 @@ from karrio.server.manager.serializers import (
     ParcelSerializer,
     can_mutate_parcel,
 )
-from karrio.server.manager.router import router
 import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -32,7 +32,7 @@ class ParcelList(GenericAPIView):
     )
     serializer_class = Parcels
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all parcels",
@@ -42,7 +42,7 @@ class ParcelList(GenericAPIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -68,7 +68,7 @@ class ParcelList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}create",
         summary="Create a parcel",
@@ -79,7 +79,7 @@ class ParcelList(GenericAPIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request POST \\
@@ -108,7 +108,7 @@ class ParcelList(GenericAPIView):
 
 
 class ParcelDetail(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve a parcel",
@@ -118,7 +118,7 @@ class ParcelDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -135,7 +135,7 @@ class ParcelDetail(APIView):
         address = models.Parcel.access_by(request).get(pk=pk)
         return Response(Parcel(address).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}update",
         summary="Update a parcel",
@@ -148,7 +148,7 @@ class ParcelDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request PATCH \\
@@ -173,7 +173,7 @@ class ParcelDetail(APIView):
 
         return Response(Parcel(parcel).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}discard",
         summary="Remove a parcel",
@@ -184,7 +184,7 @@ class ParcelDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request DELETE \\

@@ -1,5 +1,5 @@
-import base64
 import io
+import base64
 import logging
 from django.conf import settings
 from django.http import JsonResponse
@@ -11,7 +11,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from karrio.server import serializers
 from karrio.server.serializers import SerializerDecorator, PaginatedResult
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.gateway import Carriers
@@ -23,30 +22,12 @@ from karrio.server.core.serializers import (
     CARRIERS,
 )
 from karrio.server.providers.router import router
+import karrio.server.core.filters as filters
 import karrio.server.openapi as openapi
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 CarriersSettingsList = PaginatedResult("CarrierList", CarrierSettings)
-
-
-class CarrierFilters(serializers.FlagsSerializer):
-
-    carrier_name = serializers.ChoiceField(
-        choices=CARRIERS, required=False, help_text="Indicates a carrier (type)"
-    )
-    active = serializers.FlagField(
-        required=False,
-        allow_null=True,
-        default=None,
-        help_text="This flag indicates whether to return active carriers only",
-    )
-    system_only = serializers.FlagField(
-        required=False,
-        allow_null=True,
-        default=False,
-        help_text="This flag indicates that only system carriers should be returned",
-    )
 
 
 class CarrierList(GenericAPIView):
@@ -61,7 +42,15 @@ class CarrierList(GenericAPIView):
             200: CarriersSettingsList(),
             400: ErrorResponse(),
         },
-        parameters=[CarrierFilters()],
+        parameters=[
+            *filters.CarrierFilters.parameters,
+            openapi.OpenApiParameter(
+                "carrier_name",
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
+                enum=[c for c, _ in CARRIERS],
+            )
+        ],
         examples=[
             openapi.OpenApiExample(
                 "bash",
@@ -78,7 +67,7 @@ class CarrierList(GenericAPIView):
         Returns the list of configured carriers
         """
         filter = {
-            **SerializerDecorator[CarrierFilters](data=request.query_params).data,
+            **SerializerDecorator[filters.CarrierFilters](data=request.query_params).data,
             "context": request,
         }
 
