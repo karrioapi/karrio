@@ -419,7 +419,10 @@ OAUTH2_PROVIDER = {
 SPECTACULAR_SETTINGS = {
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
-    "ENUM_NAME_OVERRIDES": {},
+    "ENUM_NAME_OVERRIDES": {
+        "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
+        "ShipmentStatus": "karrio.server.manager.serializers.SHIPMENT_STATUS",
+    },
 }
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,

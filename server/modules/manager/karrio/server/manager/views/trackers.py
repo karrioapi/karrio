@@ -29,16 +29,6 @@ ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique 
 Trackers = serializers.PaginatedResult("TrackerList", TrackingStatus)
 
 
-class TrackerFilter(serializers.Serializer):
-    hub = serializers.CharField(
-        required=False,
-        allow_blank=False,
-        allow_null=False,
-        max_length=50,
-        help_text="A carrier_name of a hub connector",
-    )
-
-
 class TrackerList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
@@ -98,12 +88,24 @@ class TrackersCreate(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            TrackerFilter(),
             OpenApiParameter(
                 "carrier_name",
                 location=OpenApiParameter.PATH,
                 type=OpenApiTypes.STR,
                 enum=dataunits.NON_HUBS_CARRIERS,
+                required=True,
+            ),
+            OpenApiParameter(
+                "tracking_number",
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
+                required=True,
+            ),
+            OpenApiParameter(
+                "hub",
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.STR,
+                required=False,
             ),
         ],
     )
@@ -118,7 +120,7 @@ class TrackersCreate(APIView):
             .first()
         )
 
-        query = serializers.SerializerDecorator[TrackerFilter](data=request.query_params).data
+        query = request.query_params
         carrier_filter = {
             **{k: v for k, v in query.items() if k != "hub"},
             # If a hub is specified, use the hub as carrier to track the package
