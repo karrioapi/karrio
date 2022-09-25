@@ -2317,9 +2317,6 @@ paths:
         name: hub
         schema:
           type: string
-          maxLength: 50
-          minLength: 1
-        description: A carrier_name of a hub connector
       - in: path
         name: tracking_number
         schema:
@@ -2842,9 +2839,6 @@ paths:
         name: hub
         schema:
           type: string
-          maxLength: 50
-          minLength: 1
-        description: A carrier_name of a hub connector
       - in: path
         name: tracking_number
         schema:
@@ -3251,7 +3245,7 @@ components:
           maxLength: 50
         country_code:
           allOf:
-          - $ref: '#/components/schemas/CountryCodeEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           description: The address country code
         email:
           type: string
@@ -3342,7 +3336,7 @@ components:
           maxLength: 50
         country_code:
           allOf:
-          - $ref: '#/components/schemas/CountryCodeEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           description: The address country code
         email:
           type: string
@@ -3427,7 +3421,7 @@ components:
           description: A unique identifier
         status:
           allOf:
-          - $ref: '#/components/schemas/Status421Enum'
+          - $ref: '#/components/schemas/BatchOperationStatus'
           description: The batch operation resource status
       required:
       - status
@@ -3438,7 +3432,7 @@ components:
           type: string
           description: A unique identifier
         status:
-          $ref: '#/components/schemas/Status421Enum'
+          $ref: '#/components/schemas/BatchOperationStatus'
         resource_type:
           $ref: '#/components/schemas/ResourceTypeEnum'
         resources:
@@ -3460,6 +3454,13 @@ components:
       - status
       - test_mode
       - updated_at
+    BatchOperationStatus:
+      enum:
+      - queued
+      - running
+      - completed
+      - failed
+      type: string
     BatchOperations:
       type: object
       properties:
@@ -3627,7 +3628,7 @@ components:
           nullable: true
           description: The origin or manufacture country
           oneOf:
-          - $ref: '#/components/schemas/OriginCountryEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
@@ -3695,7 +3696,7 @@ components:
           nullable: true
           description: The origin or manufacture country
           oneOf:
-          - $ref: '#/components/schemas/OriginCountryEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
@@ -3724,7 +3725,7 @@ components:
       - return_merchandise
       - other
       type: string
-    CountryCodeEnum:
+    CountryEnum:
       enum:
       - AD
       - AE
@@ -4510,7 +4511,7 @@ components:
           nullable: true
           description: The origin or manufacture country
           oneOf:
-          - $ref: '#/components/schemas/OriginCountryEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
@@ -4788,243 +4789,6 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
-    OriginCountryEnum:
-      enum:
-      - AD
-      - AE
-      - AF
-      - AG
-      - AI
-      - AL
-      - AM
-      - AN
-      - AO
-      - AR
-      - AS
-      - AT
-      - AU
-      - AW
-      - AZ
-      - BA
-      - BB
-      - BD
-      - BE
-      - BF
-      - BG
-      - BH
-      - BI
-      - BJ
-      - BM
-      - BN
-      - BO
-      - BR
-      - BS
-      - BT
-      - BW
-      - BY
-      - BZ
-      - CA
-      - CD
-      - CF
-      - CG
-      - CH
-      - CI
-      - CK
-      - CL
-      - CM
-      - CN
-      - CO
-      - CR
-      - CU
-      - CV
-      - CY
-      - CZ
-      - DE
-      - DJ
-      - DK
-      - DM
-      - DO
-      - DZ
-      - EC
-      - EE
-      - EG
-      - ER
-      - ES
-      - ET
-      - FI
-      - FJ
-      - FK
-      - FM
-      - FO
-      - FR
-      - GA
-      - GB
-      - GD
-      - GE
-      - GF
-      - GG
-      - GH
-      - GI
-      - GL
-      - GM
-      - GN
-      - GP
-      - GQ
-      - GR
-      - GT
-      - GU
-      - GW
-      - GY
-      - HK
-      - HN
-      - HR
-      - HT
-      - HU
-      - IC
-      - ID
-      - IE
-      - IL
-      - IN
-      - IQ
-      - IR
-      - IS
-      - IT
-      - JE
-      - JM
-      - JO
-      - JP
-      - KE
-      - KG
-      - KH
-      - KI
-      - KM
-      - KN
-      - KP
-      - KR
-      - KV
-      - KW
-      - KY
-      - KZ
-      - LA
-      - LB
-      - LC
-      - LI
-      - LK
-      - LR
-      - LS
-      - LT
-      - LU
-      - LV
-      - LY
-      - MA
-      - MC
-      - MD
-      - ME
-      - MG
-      - MH
-      - MK
-      - ML
-      - MM
-      - MN
-      - MO
-      - MP
-      - MQ
-      - MR
-      - MS
-      - MT
-      - MU
-      - MV
-      - MW
-      - MX
-      - MY
-      - MZ
-      - NA
-      - NC
-      - NE
-      - NG
-      - NI
-      - NL
-      - 'NO'
-      - NP
-      - NR
-      - NU
-      - NZ
-      - OM
-      - PA
-      - PE
-      - PF
-      - PG
-      - PH
-      - PK
-      - PL
-      - PR
-      - PT
-      - PW
-      - PY
-      - QA
-      - RE
-      - RO
-      - RS
-      - RU
-      - RW
-      - SA
-      - SB
-      - SC
-      - SD
-      - SE
-      - SG
-      - SH
-      - SI
-      - SK
-      - SL
-      - SM
-      - SN
-      - SO
-      - SR
-      - SS
-      - ST
-      - SV
-      - SY
-      - SZ
-      - TC
-      - TD
-      - TG
-      - TH
-      - TJ
-      - TL
-      - TN
-      - TO
-      - TR
-      - TT
-      - TV
-      - TW
-      - TZ
-      - UA
-      - UG
-      - US
-      - UY
-      - UZ
-      - VA
-      - VC
-      - VE
-      - VG
-      - VI
-      - VN
-      - VU
-      - WS
-      - XB
-      - XC
-      - XE
-      - XM
-      - XN
-      - XS
-      - XY
-      - YE
-      - YT
-      - ZA
-      - ZM
-      - ZW
-      type: string
     PaidByEnum:
       enum:
       - sender
@@ -5278,7 +5042,7 @@ components:
           maxLength: 50
         country_code:
           allOf:
-          - $ref: '#/components/schemas/CountryCodeEnum'
+          - $ref: '#/components/schemas/CountryEnum'
           description: The address country code
         email:
           type: string
@@ -6079,7 +5843,7 @@ components:
           description: The list of note or warning messages
         status:
           allOf:
-          - $ref: '#/components/schemas/Status5dfEnum'
+          - $ref: '#/components/schemas/ShipmentStatus'
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -6312,6 +6076,15 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
+    ShipmentStatus:
+      enum:
+      - draft
+      - purchased
+      - cancelled
+      - shipped
+      - in_transit
+      - delivered
+      type: string
     ShipmentUpdateData:
       type: object
       properties:
@@ -6529,7 +6302,7 @@ components:
           description: The list of note or warning messages
         status:
           allOf:
-          - $ref: '#/components/schemas/Status5dfEnum'
+          - $ref: '#/components/schemas/ShipmentStatus'
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -6580,22 +6353,6 @@ components:
       - recipient
       - shipper
       - test_mode
-    Status421Enum:
-      enum:
-      - queued
-      - running
-      - completed
-      - failed
-      type: string
-    Status5dfEnum:
-      enum:
-      - draft
-      - purchased
-      - cancelled
-      - shipped
-      - in_transit
-      - delivered
-      type: string
     TokenObtainPair:
       type: object
       properties:
