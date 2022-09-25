@@ -1,6 +1,6 @@
 import typing
-from karrio.server import serializers
 
+from karrio.server import serializers
 from karrio.server.serializers import (
     owned_model_serializer,
     save_one_to_one_data,
@@ -242,7 +242,6 @@ class PickupUpdateData(PickupSerializer):
         return instance
 
 
-@owned_model_serializer
 class PickupCancelData(serializers.Serializer):
     reason = serializers.CharField(
         required=False, help_text="The reason of the pickup cancellation"

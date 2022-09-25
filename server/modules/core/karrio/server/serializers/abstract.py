@@ -156,6 +156,8 @@ SerializerDecorator = _SerializerDecoratorInitializer()  # type: ignore
 
 def owned_model_serializer(serializer: Type[Serializer]):
     class MetaSerializer(serializer):  # type: ignore
+        context: dict = {}
+
         def __init__(self, *args, **kwargs):
             if "context" in kwargs:
                 context = kwargs.get("context") or {}

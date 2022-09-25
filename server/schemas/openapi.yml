@@ -1600,9 +1600,10 @@ paths:
           description: ''
   /v1/pickups/{carrier_name}/schedule:
     post:
-      operationId: v1_pickups_schedule_create
+      operationId: $$$$schedule
       description: Schedule a pickup for one or many shipments with labels already
         purchased.
+      summary: Schedule a pickup
       parameters:
       - in: path
         name: carrier_name
@@ -1610,7 +1611,32 @@ paths:
           type: string
         required: true
       tags:
-      - v1
+      - Pickups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupData'
+            examples:
+              Bash:
+                value: "\n                curl --request POST \\\n               \
+                  \   --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                  \ 'Authorization: Token <API_KEY>' \\\n                  --data\
+                  \ '{\n                    \"pickup_date\": \"2020-10-25\",\n   \
+                  \                 \"address\": {\n                      \"address_line1\"\
+                  : \"125 Church St\",\n                      \"person_name\": \"\
+                  John Doe\",\n                      \"city\": \"Moncton\",\n    \
+                  \                  \"country_code\": \"CA\",\n                 \
+                  \     \"postal_code\": \"E1C4Z8\",\n                      \"state_code\"\
+                  : \"NB\",\n                    },\n                    \"ready_time\"\
+                  : \"13:00\",\n                    \"closing_time\": \"17:00\",\n\
+                  \                    \"instruction\": \"Should not be folded\",\n\
+                  \                    \"package_location\": \"At the main entrance\
+                  \ hall\",\n                    \"tracking_numbers\": [\n       \
+                  \                 \"8545763607864201002\"\n                    ]\n\
+                  \                }'\n                "
+                summary: bash
+        required: true
       security:
       - TokenBasicAuthentication: []
       - tokenAuth: []
@@ -1618,8 +1644,49 @@ paths:
       - JWTAuthentication: []
       - cookieAuth: []
       responses:
-        '200':
-          description: No response body
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+              examples:
+                Bash:
+                  value: "\n                curl --request POST \\\n             \
+                    \     --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                    \ 'Authorization: Token <API_KEY>' \\\n                  --data\
+                    \ '{\n                    \"pickup_date\": \"2020-10-25\",\n \
+                    \                   \"address\": {\n                      \"address_line1\"\
+                    : \"125 Church St\",\n                      \"person_name\": \"\
+                    John Doe\",\n                      \"city\": \"Moncton\",\n  \
+                    \                    \"country_code\": \"CA\",\n             \
+                    \         \"postal_code\": \"E1C4Z8\",\n                     \
+                    \ \"state_code\": \"NB\",\n                    },\n          \
+                    \          \"ready_time\": \"13:00\",\n                    \"\
+                    closing_time\": \"17:00\",\n                    \"instruction\"\
+                    : \"Should not be folded\",\n                    \"package_location\"\
+                    : \"At the main entrance hall\",\n                    \"tracking_numbers\"\
+                    : [\n                        \"8545763607864201002\"\n       \
+                    \             ]\n                }'\n                "
+                  summary: bash
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/pickups/{id}:
     get:
       operationId: $$$$retrieve
@@ -1665,8 +1732,9 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
     post:
-      operationId: v1_pickups_create
+      operationId: $$$$update
       description: Modify a pickup for one or many shipments with labels already purchased.
+      summary: Update a pickup
       parameters:
       - in: path
         name: id
@@ -1674,7 +1742,25 @@ paths:
           type: string
         required: true
       tags:
-      - v1
+      - Pickups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupUpdateData'
+            examples:
+              Bash:
+                value: "\n                curl --request PATCH \\\n              \
+                  \    --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                  \ 'Authorization: Token <API_KEY>' \\\n                  --data\
+                  \ '{\n                    \"address\": {\n                     \
+                  \ \"phone_number\": \"514-000-0000\",\n                      \"\
+                  residential\": false,\n                      \"email\": \"john@a.com\"\
+                  \n                    },\n                    \"ready_time\": \"\
+                  13:00\",\n                    \"closing_time\": \"20:00\",\n   \
+                  \             }'\n                "
+                summary: bash
+        required: true
       security:
       - TokenBasicAuthentication: []
       - tokenAuth: []
@@ -1683,11 +1769,52 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+              examples:
+                Bash:
+                  value: "\n                curl --request PATCH \\\n            \
+                    \      --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                    \ 'Authorization: Token <API_KEY>' \\\n                  --data\
+                    \ '{\n                    \"address\": {\n                   \
+                    \   \"phone_number\": \"514-000-0000\",\n                    \
+                    \  \"residential\": false,\n                      \"email\": \"\
+                    john@a.com\"\n                    },\n                    \"ready_time\"\
+                    : \"13:00\",\n                    \"closing_time\": \"20:00\"\
+                    ,\n                }'\n                "
+                  summary: bash
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/pickups/{id}/cancel:
     post:
-      operationId: v1_pickups_cancel_create
+      operationId: $$$$cancel
       description: Cancel a pickup of one or more shipments.
+      summary: Cancel a pickup
       parameters:
       - in: path
         name: id
@@ -1695,7 +1822,18 @@ paths:
           type: string
         required: true
       tags:
-      - v1
+      - Pickups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupCancelData'
+            examples:
+              Bash:
+                value: "\n                curl --request POST \\\n               \
+                  \   --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                  \ 'Authorization: Token <API_KEY>'\n                "
+                summary: bash
       security:
       - TokenBasicAuthentication: []
       - tokenAuth: []
@@ -1704,7 +1842,41 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+              examples:
+                Bash:
+                  value: "\n                curl --request POST \\\n             \
+                    \     --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
+                    \ 'Authorization: Token <API_KEY>'\n                "
+                  summary: bash
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/proxy/pickups/{carrier_name}:
     post:
       operationId: '@schedule_pickup'
@@ -2475,8 +2647,9 @@ paths:
           description: ''
   /v1/shipments/{id}/purchase:
     post:
-      operationId: v1_shipments_purchase_create
+      operationId: $$$$$purchase
       description: Select your preferred rates to buy a shipment label.
+      summary: Buy a shipment label
       parameters:
       - in: path
         name: id
@@ -2484,7 +2657,13 @@ paths:
           type: string
         required: true
       tags:
-      - v1
+      - Shipments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentPurchaseData'
+        required: true
       security:
       - TokenBasicAuthentication: []
       - tokenAuth: []
@@ -2493,11 +2672,46 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/shipments/{id}/rates:
     post:
-      operationId: v1_shipments_rates_create
+      operationId: $$$$$rates
       description: Refresh the list of the shipment rates
+      summary: Fetch new shipment rates
       parameters:
       - in: path
         name: id
@@ -2505,7 +2719,12 @@ paths:
           type: string
         required: true
       tags:
-      - v1
+      - Shipments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentRateData'
       security:
       - TokenBasicAuthentication: []
       - tokenAuth: []
@@ -2514,7 +2733,41 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/trackers:
     get:
       operationId: $$$$$$list
@@ -5330,6 +5583,12 @@ components:
       - confirmation_number
       - parcels
       - test_mode
+    PickupCancelData:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: The reason of the pickup cancellation
     PickupCancelRequest:
       type: object
       properties:
@@ -5350,6 +5609,55 @@ components:
           description: The reason of the pickup cancellation
       required:
       - confirmation_number
+    PickupData:
+      type: object
+      properties:
+        pickup_date:
+          type: string
+          description: "\n    The expected pickup date\n\n    Date Format: `YYYY-MM-DD`\n\
+            \    "
+        address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: The pickup address
+        ready_time:
+          type: string
+          description: "\n    The ready time for pickup.\n\n    Time Format: `HH:MM`\n\
+            \    "
+        closing_time:
+          type: string
+          description: "\n    The closing or late time of the pickup\n\n    Time Format:\
+            \ `HH:MM`\n    "
+        instruction:
+          type: string
+          nullable: true
+          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
+            \    "
+        package_location:
+          type: string
+          nullable: true
+          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
+            \ door.\n    "
+        options:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: Advanced carrier specific pickup options
+        tracking_numbers:
+          type: array
+          items:
+            type: string
+          description: The list of shipments to be picked up
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the pickup
+      required:
+      - closing_time
+      - pickup_date
+      - ready_time
+      - tracking_numbers
     PickupList:
       type: object
       properties:
@@ -5427,6 +5735,55 @@ components:
           allOf:
           - $ref: '#/components/schemas/Pickup'
           description: The scheduled pickup's summary
+    PickupUpdateData:
+      type: object
+      properties:
+        pickup_date:
+          type: string
+          description: "\n    The expected pickup date\n\n    Date Format: YYYY-MM-DD\n\
+            \    "
+        address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: The pickup address
+        ready_time:
+          type: string
+          nullable: true
+          description: The ready time for pickup.
+        closing_time:
+          type: string
+          nullable: true
+          description: The closing or late time of the pickup
+        instruction:
+          type: string
+          nullable: true
+          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
+            \    "
+        package_location:
+          type: string
+          nullable: true
+          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
+            \ door.\n    "
+        options:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: Advanced carrier specific pickup options
+        tracking_numbers:
+          type: array
+          items:
+            type: string
+          description: The list of shipments to be picked up
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the pickup
+        confirmation_number:
+          type: string
+          description: pickup identification number
+      required:
+      - confirmation_number
     PickupUpdateRequest:
       type: object
       properties:
@@ -5902,6 +6259,59 @@ components:
             $ref: '#/components/schemas/Shipment'
       required:
       - results
+    ShipmentPurchaseData:
+      type: object
+      properties:
+        selected_rate_id:
+          type: string
+          description: The shipment selected rate.
+        label_type:
+          allOf:
+          - $ref: '#/components/schemas/LabelTypeEnum'
+          default: PDF
+          description: The shipment label file type.
+        payment:
+          allOf:
+          - $ref: '#/components/schemas/Payment'
+          description: The payment details
+        reference:
+          type: string
+          nullable: true
+          description: The shipment reference
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: User metadata for the shipment
+      required:
+      - selected_rate_id
+    ShipmentRateData:
+      type: object
+      properties:
+        services:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: "\n    The requested carrier service for the shipment.\n\n\
+            \    Please consult [the reference](#operation/references) for specific\
+            \ carriers services.<br/>\n    Note that this is a list because on a Multi-carrier\
+            \ rate request you could specify a service per carrier.\n    "
+        carrier_ids:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: "\n    The list of configured carriers you wish to get rates\
+            \ from.\n\n    *Note that the request will be sent to all carriers in\
+            \ nothing is specified*\n    "
+        reference:
+          type: string
+          nullable: true
+          description: The shipment reference
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: User metadata for the shipment
     ShipmentUpdateData:
       type: object
       properties:

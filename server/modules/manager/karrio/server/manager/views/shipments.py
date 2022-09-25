@@ -184,20 +184,20 @@ class ShipmentDetails(APIView):
 class ShipmentRates(APIView):
     logging_methods = ["GET"]
 
-    # @extend_schema(
-    #     tags=["Shipments"],
-    #     operation_id=f"{ENDPOINT_ID}rates",
-    #     summary="Fetch new shipment rates",
-    #     responses={
-    #         200: Shipment(),
-    #         404: ErrorResponse(),
-    #         400: ErrorResponse(),
-    #         409: ErrorResponse(),
-    #         424: ErrorMessages(),
-    #         500: ErrorResponse(),
-    #     },
-    #     request=ShipmentRateData(),
-    # )
+    @extend_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}rates",
+        summary="Fetch new shipment rates",
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=ShipmentRateData(),
+    )
     def post(self, request: Request, pk: str):
         """
         Refresh the list of the shipment rates
@@ -245,20 +245,20 @@ class ShipmentRates(APIView):
 
 
 class ShipmentPurchase(APIView):
-    # @extend_schema(
-    #     tags=["Shipments"],
-    #     operation_id=f"{ENDPOINT_ID}purchase",
-    #     summary="Buy a shipment label",
-    #     responses={
-    #         200: Shipment(),
-    #         404: ErrorResponse(),
-    #         400: ErrorResponse(),
-    #         409: ErrorResponse(),
-    #         424: ErrorMessages(),
-    #         500: ErrorResponse(),
-    #     },
-    #     request=ShipmentPurchaseData(),
-    # )
+    @extend_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}purchase",
+        summary="Buy a shipment label",
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=ShipmentPurchaseData(),
+    )
     def post(self, request: Request, pk: str):
         """
         Select your preferred rates to buy a shipment label.
