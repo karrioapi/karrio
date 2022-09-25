@@ -69,46 +69,46 @@ class PickupList(GenericAPIView):
 
 
 class PickupRequest(APIView):
-    # @extend_schema(
-    #     tags=["Pickups"],
-    #     operation_id=f"{ENDPOINT_ID}schedule",
-    #     summary="Schedule a pickup",
-    #     responses={
-    #         201: Pickup(),
-    #         400: ErrorResponse(),
-    #         424: ErrorMessages(),
-    #         500: ErrorResponse(),
-    #     },
-    #     request=PickupData(),
-    #     examples=[
-    #         OpenApiExample(
-    #             "bash",
-    #             value="""
-    #             curl --request POST \\
-    #               --url /v1/pickups/<PICKUP_ID> \\
-    #               --header 'Authorization: Token <API_KEY>' \\
-    #               --data '{
-    #                 "pickup_date": "2020-10-25",
-    #                 "address": {
-    #                   "address_line1": "125 Church St",
-    #                   "person_name": "John Doe",
-    #                   "city": "Moncton",
-    #                   "country_code": "CA",
-    #                   "postal_code": "E1C4Z8",
-    #                   "state_code": "NB",
-    #                 },
-    #                 "ready_time": "13:00",
-    #                 "closing_time": "17:00",
-    #                 "instruction": "Should not be folded",
-    #                 "package_location": "At the main entrance hall",
-    #                 "tracking_numbers": [
-    #                     "8545763607864201002"
-    #                 ]
-    #             }'
-    #             """,
-    #         ),
-    #     ],
-    # )
+    @extend_schema(
+        tags=["Pickups"],
+        operation_id=f"{ENDPOINT_ID}schedule",
+        summary="Schedule a pickup",
+        responses={
+            201: Pickup(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=PickupData(),
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
+                curl --request POST \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --data '{
+                    "pickup_date": "2020-10-25",
+                    "address": {
+                      "address_line1": "125 Church St",
+                      "person_name": "John Doe",
+                      "city": "Moncton",
+                      "country_code": "CA",
+                      "postal_code": "E1C4Z8",
+                      "state_code": "NB",
+                    },
+                    "ready_time": "13:00",
+                    "closing_time": "17:00",
+                    "instruction": "Should not be folded",
+                    "package_location": "At the main entrance hall",
+                    "tracking_numbers": [
+                        "8545763607864201002"
+                    ]
+                }'
+                """,
+            ),
+        ],
+    )
     def post(self, request: Request, carrier_name: str):
         """
         Schedule a pickup for one or many shipments with labels already purchased.
@@ -152,38 +152,38 @@ class PickupDetails(APIView):
         pickup = models.Pickup.access_by(request).get(pk=pk)
         return Response(Pickup(pickup).data)
 
-    # @extend_schema(
-    #     tags=["Pickups"],
-    #     operation_id=f"{ENDPOINT_ID}update",
-    #     summary="Update a pickup",
-    #     responses={
-    #         200: Pickup(),
-    #         404: ErrorResponse(),
-    #         400: ErrorResponse(),
-    #         424: ErrorMessages(),
-    #         500: ErrorResponse(),
-    #     },
-    #     request=PickupUpdateData(),
-    #     examples=[
-    #         OpenApiExample(
-    #             "bash",
-    #             value="""
-    #             curl --request PATCH \\
-    #               --url /v1/pickups/<PICKUP_ID> \\
-    #               --header 'Authorization: Token <API_KEY>' \\
-    #               --data '{
-    #                 "address": {
-    #                   "phone_number": "514-000-0000",
-    #                   "residential": false,
-    #                   "email": "john@a.com"
-    #                 },
-    #                 "ready_time": "13:00",
-    #                 "closing_time": "20:00",
-    #             }'
-    #             """,
-    #         ),
-    #     ],
-    # )
+    @extend_schema(
+        tags=["Pickups"],
+        operation_id=f"{ENDPOINT_ID}update",
+        summary="Update a pickup",
+        responses={
+            200: Pickup(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=PickupUpdateData(),
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
+                curl --request PATCH \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --data '{
+                    "address": {
+                      "phone_number": "514-000-0000",
+                      "residential": false,
+                      "email": "john@a.com"
+                    },
+                    "ready_time": "13:00",
+                    "closing_time": "20:00",
+                }'
+                """,
+            ),
+        ],
+    )
     def post(self, request: Request, pk: str):
         """
         Modify a pickup for one or many shipments with labels already purchased.
@@ -201,29 +201,29 @@ class PickupDetails(APIView):
 
 
 class PickupCancel(APIView):
-    # @extend_schema(
-    #     tags=["Pickups"],
-    #     operation_id=f"{ENDPOINT_ID}cancel",
-    #     summary="Cancel a pickup",
-    #     responses={
-    #         200: Pickup(),
-    #         404: ErrorResponse(),
-    #         409: ErrorResponse(),
-    #         424: ErrorMessages(),
-    #         500: ErrorResponse(),
-    #     },
-    #     request=PickupCancelData(),
-    #     examples=[
-    #         OpenApiExample(
-    #             "bash",
-    #             value="""
-    #             curl --request POST \\
-    #               --url /v1/pickups/<PICKUP_ID> \\
-    #               --header 'Authorization: Token <API_KEY>'
-    #             """,
-    #         ),
-    #     ],
-    # )
+    @extend_schema(
+        tags=["Pickups"],
+        operation_id=f"{ENDPOINT_ID}cancel",
+        summary="Cancel a pickup",
+        responses={
+            200: Pickup(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=PickupCancelData(),
+        examples=[
+            OpenApiExample(
+                "bash",
+                value="""
+                curl --request POST \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                """,
+            ),
+        ],
+    )
     def post(self, request: Request, pk: str):
         """
         Cancel a pickup of one or more shipments.
@@ -232,7 +232,7 @@ class PickupCancel(APIView):
 
         update = (
             SerializerDecorator[PickupCancelData](
-                pickup, data=request.data, context=request
+                pickup, data=request.data
             )
             .save()
             .instance

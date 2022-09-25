@@ -232,7 +232,6 @@ class ShipmentSerializer(ShipmentData):
         return instance
 
 
-@owned_model_serializer
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
     label_type = ChoiceField(
@@ -297,7 +296,6 @@ class ShipmentUpdateData(Serializer):
     )
 
 
-@owned_model_serializer
 class ShipmentRateData(Serializer):
     services = StringListField(
         required=False,
