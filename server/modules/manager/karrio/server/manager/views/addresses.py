@@ -1,11 +1,10 @@
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.urls import path
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
@@ -18,11 +17,12 @@ from karrio.server.manager.serializers import (
     can_mutate_address,
 )
 from karrio.server.manager.router import router
-from karrio.server.manager import models
+import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Addresses = PaginatedResult("AddressList", Address)
 
 
@@ -33,7 +33,7 @@ class AddressList(GenericAPIView):
     )
     serializer_class = Addresses
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all addresses",
@@ -43,7 +43,7 @@ class AddressList(GenericAPIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -67,7 +67,7 @@ class AddressList(GenericAPIView):
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}create",
         summary="Create an address",
@@ -78,7 +78,7 @@ class AddressList(GenericAPIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request POST \\
@@ -113,7 +113,7 @@ class AddressList(GenericAPIView):
 
 
 class AddressDetail(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve an address",
@@ -123,7 +123,7 @@ class AddressDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request GET \\
@@ -140,7 +140,7 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         return Response(Address(address).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}update",
         summary="Update an address",
@@ -153,7 +153,7 @@ class AddressDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request PATCH \\
@@ -178,7 +178,7 @@ class AddressDetail(APIView):
 
         return Response(Address(address).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
         summary="Discard an address",
@@ -189,7 +189,7 @@ class AddressDetail(APIView):
             500: ErrorResponse(),
         },
         examples=[
-            OpenApiExample(
+            openapi.OpenApiExample(
                 "bash",
                 value="""
                 curl --request DELETE \\

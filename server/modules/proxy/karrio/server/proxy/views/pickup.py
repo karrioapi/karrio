@@ -3,9 +3,8 @@ from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
+import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 from karrio.server.proxy.router import router
@@ -27,7 +26,7 @@ CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
         summary="Schedule a pickup",
@@ -39,10 +38,10 @@ class PickupSchedule(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -59,7 +58,7 @@ class PickupSchedule(APIView):
 
 
 class PickupUpdate(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
         summary="Update a pickup",
@@ -71,10 +70,10 @@ class PickupUpdate(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -91,7 +90,7 @@ class PickupUpdate(APIView):
 
 
 class PickupCancel(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",
         summary="Cancel a pickup",
@@ -103,10 +102,10 @@ class PickupCancel(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],

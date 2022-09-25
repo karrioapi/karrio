@@ -1,9 +1,8 @@
 import logging
+from django.urls import path
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
-from django.urls import path
 
 from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.views.api import APIView
@@ -15,6 +14,7 @@ from karrio.server.core.serializers import (
 )
 from karrio.server.core.gateway import Rates
 from karrio.server.proxy.router import router
+import karrio.server.openapi as openapi
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -26,7 +26,7 @@ Use this service to fetch a shipping rates available.
 
 
 class RateViewAPI(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
         summary="Fetch shipment rates",

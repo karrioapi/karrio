@@ -1,14 +1,14 @@
 from django.urls import path
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
 from rest_framework.request import Request
-from django_filters import rest_framework as filters
-from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.data.filters import BatchOperationFilter
-import karrio.server.core.views.api as api
-import karrio.server.data.models as models
 import karrio.server.data.serializers as serializers
+import karrio.server.data.models as models
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BatchOperations = serializers.PaginatedResult(
@@ -20,12 +20,12 @@ class BatchList(api.GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = BatchOperationFilter
     serializer_class = BatchOperations
     model = models.BatchOperation
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all batch operations",
@@ -49,7 +49,7 @@ class BatchList(api.GenericAPIView):
 
 
 class BatchDetails(api.APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve a batch operation",
