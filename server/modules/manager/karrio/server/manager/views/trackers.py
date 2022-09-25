@@ -1,31 +1,30 @@
 import logging
 
+from django.urls import path
+from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from django.urls import path
-from django.db.models import Q
-from django_filters import rest_framework as filters
-
-import karrio.server.serializers as serializers
-import karrio.server.core.dataunits as dataunits
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
     TrackingStatus,
     ErrorResponse,
     ErrorMessages,
 )
-from karrio.server.core.filters import TrackerFilters
 from karrio.server.manager.router import router
+from karrio.server.core.filters import TrackerFilters
 from karrio.server.manager.serializers import TrackingSerializer
+import karrio.server.core.dataunits as dataunits
+import karrio.server.serializers as serializers
 import karrio.server.manager.models as models
+import karrio.server.core.filters as filters
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Trackers = serializers.PaginatedResult("TrackerList", TrackingStatus)
 
 
@@ -33,7 +32,7 @@ class TrackerList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = TrackerFilters
     serializer_class = Trackers
     model = models.Tracking
@@ -55,10 +54,11 @@ class TrackerList(GenericAPIView):
 
         return queryset.filter(*_filters)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all shipment trackers",
+        parameters=filters.TrackerFilters.parameters,
         responses={
             200: Trackers(),
             404: ErrorResponse(),
@@ -77,7 +77,7 @@ class TrackerList(GenericAPIView):
 class TrackersCreate(APIView):
     logging_methods = ["GET"]
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
         summary="Create a shipment tracker",
@@ -88,23 +88,23 @@ class TrackersCreate(APIView):
             500: ErrorResponse(),
         },
         parameters=[
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "carrier_name",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=dataunits.NON_HUBS_CARRIERS,
                 required=True,
             ),
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "tracking_number",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 required=True,
             ),
-            OpenApiParameter(
+            openapi.OpenApiParameter(
                 "hub",
-                location=OpenApiParameter.QUERY,
-                type=OpenApiTypes.STR,
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.STR,
                 required=False,
             ),
         ],
@@ -147,7 +147,7 @@ class TrackersCreate(APIView):
 class TrackersDetails(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
         summary="Retrieves a shipment tracker",
@@ -171,7 +171,7 @@ class TrackersDetails(APIView):
 
         return Response(TrackingStatus(trackers.first()).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
         summary="Discard a shipment tracker",

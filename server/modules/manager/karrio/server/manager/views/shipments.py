@@ -2,16 +2,15 @@ import io
 import base64
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
 from rest_framework import status
-
-from django.urls import path, re_path
-from drf_spectacular.utils import extend_schema
-from django_filters import rest_framework as filters
-from django.core.files.base import ContentFile
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
 from django_downloadview import VirtualDownloadView
+from django.core.files.base import ContentFile
+from django.urls import path, re_path
+
 
 from karrio.core.utils import DP
 from karrio.server.core.gateway import Carriers
@@ -38,9 +37,11 @@ from karrio.server.manager.serializers import (
     RateSerializer,
 )
 import karrio.server.manager.models as models
+import karrio.server.core.filters as filters
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Shipments = PaginatedResult("ShipmentList", Shipment)
 
 
@@ -48,15 +49,16 @@ class ShipmentList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ShipmentFilters
     serializer_class = Shipments
     model = models.Shipment
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all shipments",
+        parameters=filters.ShipmentFilters.parameters,
         responses={
             200: Shipments(),
             404: ErrorResponse(),
@@ -72,7 +74,7 @@ class ShipmentList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}create",
         summary="Create a shipment",
@@ -98,7 +100,7 @@ class ShipmentList(GenericAPIView):
 
 
 class ShipmentDetails(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve a shipment",
@@ -116,7 +118,7 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(shipment).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}update",
         summary="Update a shipment",
@@ -149,7 +151,7 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(shipment).data)
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
         summary="Cancel a shipment",
@@ -184,7 +186,7 @@ class ShipmentDetails(APIView):
 class ShipmentRates(APIView):
     logging_methods = ["GET"]
 
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}rates",
         summary="Fetch new shipment rates",
@@ -245,7 +247,7 @@ class ShipmentRates(APIView):
 
 
 class ShipmentPurchase(APIView):
-    @extend_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}purchase",
         summary="Buy a shipment label",
@@ -278,7 +280,7 @@ class ShipmentPurchase(APIView):
 
 
 class ShipmentDocs(VirtualDownloadView):
-    @extend_schema(exclude=True)
+    @openapi.extend_schema(exclude=True)
     def get(
         self,
         request: Request,
