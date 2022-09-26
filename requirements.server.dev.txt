@@ -1,3 +1,8 @@
+Django<=3.2.15
+graphene==2.1.9
+graphene-django==2.15.0
+graphql-core==2.3.2
+graphql-relay==2.0.1
 django-debug-toolbar
 
 # Schemas update (change schemas to setup.py before next update)

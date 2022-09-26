@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.dicom",
-    version="2022.10",
+    version="2022.8.3",
     description="Karrio - Dicom Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

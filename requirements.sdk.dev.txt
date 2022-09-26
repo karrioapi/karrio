@@ -1,7 +1,7 @@
 # Schemas update
--e ./schemas/ups
--e ./schemas/dpdhl
--e ./schemas/chronopost
+# -e ./schemas/ups
+# -e ./schemas/dpdhl
+# -e ./schemas/chronopost
 
 # SDK extentions
 -e ./sdk/core

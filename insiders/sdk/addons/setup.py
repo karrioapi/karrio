@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.addons",
-    version="2022.10",
+    version="2022.8.3",
     description="Multi-carrier shipping API integration with python",
     long_description=long_description,
     long_description_content_type="text/markdown",
