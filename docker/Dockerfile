@@ -1,5 +1,5 @@
 # The base image compilation
-FROM python:3.8-slim AS compile-image
+FROM python:3.10-slim AS compile-image
 
 ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
@@ -39,7 +39,7 @@ ENV LOG_DIR /karrio/log
 ENV WORKER_DB_DIR /karrio/data
 ENV STATIC_ROOT_DIR /karrio/static
 
-RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0
+RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc
 RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
