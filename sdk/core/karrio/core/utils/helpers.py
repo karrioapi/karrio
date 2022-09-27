@@ -11,7 +11,7 @@ from PyPDF2 import PdfFileMerger
 from simple_zpl2 import ZPLDocument
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-from typing import List, TypeVar, Callable, Optional, Any
+from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
@@ -209,8 +209,22 @@ def exec_parrallel(
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
     async def run_tasks():
-        return await asyncio.gather(*[asyncio.to_thread(action, args) for args in sequence])
+        return await asyncio.gather(*[
+            asyncio.to_thread(action, args)
+            for args in sequence
+        ])
+
+    if loop and loop.is_running():
+        result = ThreadPoolExecutor().submit(asyncio.run, run_tasks()).result()
+
+        return cast(List[T], result)
+
 
     return asyncio.run(run_tasks())
 
