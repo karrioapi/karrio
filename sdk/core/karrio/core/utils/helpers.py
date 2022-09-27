@@ -209,22 +209,20 @@ def exec_parrallel(
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.get_event_loop()
-
-    async def run_tasks():
+    async def run_tasks(loop):
         return await asyncio.gather(*[
-            asyncio.to_thread(action, args)
+            loop.run_in_executor(None, lambda: action(args))
             for args in sequence
         ])
 
-    result = ThreadPoolExecutor().submit(asyncio.run, run_tasks()).result()
-
-    if loop.is_running() is False:
+    def run_loop():
+        loop = asyncio.new_event_loop()
+        result = loop.run_until_complete(run_tasks(loop))
         loop.close()
 
+        return result
+
+    result = ThreadPoolExecutor().submit(run_loop).result()
     return cast(List[T], result)
 
 
