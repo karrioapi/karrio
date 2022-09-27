@@ -5,7 +5,7 @@ from unittest.mock import patch, ANY
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from tests.dhl_express.fixture import gateway
+from .fixture import gateway
 
 
 class TestDHLShipment(unittest.TestCase):

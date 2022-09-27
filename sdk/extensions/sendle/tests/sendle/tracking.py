@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio import Tracking
 from karrio.core.models import TrackingRequest
-from tests.sendle.fixture import gateway
+from .fixture import gateway
 
 
 class TestCarrierTracking(unittest.TestCase):

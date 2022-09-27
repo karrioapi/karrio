@@ -2,7 +2,7 @@ import unittest
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
-from tests.dpdhl.fixture import gateway
+from .fixture import gateway
 
 
 class TestDPDHLRating(unittest.TestCase):
@@ -12,7 +12,6 @@ class TestDPDHLRating(unittest.TestCase):
 
     def test_parse_rate_response(self):
         parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-        print(DP.to_dict(parsed_response))
         self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
 

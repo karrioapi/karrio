@@ -5,7 +5,7 @@ from unittest.mock import ANY
 from karrio.providers.generic.units import SAMPLE_SHIPMENT_REQUEST
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest
-from tests.generic.fixture import gateway
+from .fixture import gateway
 
 
 class TestGenericShipment(unittest.TestCase):

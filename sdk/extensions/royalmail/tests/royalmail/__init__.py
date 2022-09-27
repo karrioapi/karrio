@@ -1,1 +1,1 @@
-from tests.royalmail.tracking import *
+from .tracking import *

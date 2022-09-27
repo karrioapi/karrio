@@ -3,7 +3,7 @@ from unittest.mock import patch
 import karrio
 import karrio.lib as lib
 from karrio.core.models import TrackingRequest
-from tests.ups_freight.fixture import gateway
+from .fixture import gateway
 
 
 class TestUPSFreightTracking(unittest.TestCase):

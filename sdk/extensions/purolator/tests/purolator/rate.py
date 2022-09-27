@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
 from karrio import Rating
-from tests.purolator.fixture import gateway
+from .fixture import gateway
 
 
 class TestPurolatorQuote(unittest.TestCase):

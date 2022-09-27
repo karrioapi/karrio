@@ -4,7 +4,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from karrio import Tracking
-from tests.fedex.fixture import gateway
+from .fixture import gateway
 
 
 logger = logging.getLogger(__name__)

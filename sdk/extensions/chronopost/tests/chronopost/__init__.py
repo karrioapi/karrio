@@ -1,3 +1,3 @@
-from tests.chronopost.rate import *
-from tests.chronopost.shipment import *
-from tests.chronopost.tracking import *
+from .rate import *
+from .shipment import *
+from .tracking import *

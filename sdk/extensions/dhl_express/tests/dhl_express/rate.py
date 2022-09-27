@@ -5,7 +5,7 @@ import karrio
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
 from karrio import Rating
-from tests.dhl_express.fixture import gateway
+from .fixture import gateway
 
 
 class TestDHLRating(unittest.TestCase):

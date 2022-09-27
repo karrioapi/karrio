@@ -1,1 +1,1 @@
-from tests.tnt.tracking import *
+from .tracking import *

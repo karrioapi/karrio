@@ -8,7 +8,7 @@ from karrio.core.models import (
     PickupUpdateRequest,
 )
 from karrio import Pickup
-from tests.dhl_express.fixture import gateway
+from .fixture import gateway
 
 
 class TestDHLPickup(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_pickup_request(self.BookPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
+            "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
         )
 
         self.assertEqual(serialized_request, PickupRequestXML)
@@ -31,7 +31,7 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_pickup_update_request(self.ModifyPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
+            "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
         )
 
         self.assertEqual(serialized_request, ModifyPURequestXML)
@@ -40,9 +40,9 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_cancel_pickup_request(self.CancelPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            "<MessageTime>[^>]+</MessageTime>",
+            "            <MessageTime>[^>]+</MessageTime>",
             "",
-            re.sub("<CancelTime>[^>]+</CancelTime>", "", request.serialize()),
+            re.sub("    <CancelTime>[^>]+</CancelTime>", "", request.serialize()),
         )
 
         self.assertEqual(serialized_request, CancelPURequestXML)
@@ -198,7 +198,7 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
             <ConditionCode>PU012</ConditionCode>
             <ConditionData> Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.</ConditionData>
         </Condition>
-    </Status>    
+    </Status>
     </Response>
 </res:PickupErrorResponse>
 """
@@ -206,7 +206,7 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
-            
+
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
@@ -222,7 +222,7 @@ CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmln
     <CountryCode>BR</CountryCode>
     <Reason>006</Reason>
     <PickupDate>2013-10-10</PickupDate>
-    
+
 </req:CancelPURequest>
 """
 
@@ -247,7 +247,7 @@ CancelPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
-            
+
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
@@ -340,7 +340,7 @@ PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
-            
+
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>

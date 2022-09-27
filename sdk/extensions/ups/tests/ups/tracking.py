@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
-from tests.ups.fixture import gateway
+from .fixture import gateway
 from karrio import Tracking
 
 

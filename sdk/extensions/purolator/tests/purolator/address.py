@@ -3,7 +3,7 @@ from unittest.mock import patch
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import AddressValidationRequest
-from tests.purolator.fixture import gateway
+from .fixture import gateway
 
 
 class TestPurolatorAddressValidation(unittest.TestCase):

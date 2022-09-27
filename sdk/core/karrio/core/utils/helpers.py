@@ -11,7 +11,7 @@ from PyPDF2 import PdfFileMerger
 from simple_zpl2 import ZPLDocument
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-from typing import List, TypeVar, Callable, Optional, Any
+from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
@@ -199,22 +199,31 @@ def request(
 
 
 def exec_parrallel(
-    function: Callable, sequence: List[S], max_workers: int = 2
+    function: Callable, sequence: List[S], max_workers: int = None
 ) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
-    with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
+    workers = len(sequence) or max_workers or 2
+    with ThreadPoolExecutor(max_workers=workers) as executor:
         requests = {executor.submit(function, item): item for item in sequence}
         return [response.result() for response in as_completed(requests)]
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
-    async def async_action(args):
-        return action(args)
+    async def run_tasks(loop):
+        return await asyncio.gather(*[
+            loop.run_in_executor(None, lambda: action(args))
+            for args in sequence
+        ])
 
-    async def run_tasks():
-        return await asyncio.gather(*[async_action(args) for args in sequence])
+    def run_loop():
+        loop = asyncio.new_event_loop()
+        result = loop.run_until_complete(run_tasks(loop))
+        loop.close()
 
-    return asyncio.run(run_tasks())
+        return result
+
+    result = ThreadPoolExecutor().submit(run_loop).result()
+    return cast(List[T], result)
 
 
 class Location:

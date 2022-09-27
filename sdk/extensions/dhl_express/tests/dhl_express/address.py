@@ -5,7 +5,7 @@ from unittest.mock import patch
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import AddressValidationRequest
-from tests.dhl_express.fixture import gateway
+from .fixture import gateway
 
 
 class TestDHLAddressValidation(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestDHLAddressValidation(unittest.TestCase):
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         self.assertEqual(
-            re.sub("<MessageTime>[^>]+</MessageTime>", "", request.serialize()),
+            re.sub("            <MessageTime>[^>]+</MessageTime>", "", request.serialize()),
             AddressValidationRequestXML,
         )
 
@@ -74,7 +74,7 @@ ParsedAddressValidationResponse = [
 AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd" schemaVersion="2">
     <Request>
         <ServiceHeader>
-            
+
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>

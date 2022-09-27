@@ -3,7 +3,7 @@ from unittest.mock import patch, ANY
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from tests.canadapost.fixture import gateway, LabelResponse
+from .fixture import gateway, LabelResponse
 
 
 class TestCanadaPostShipment(unittest.TestCase):

@@ -4,7 +4,7 @@ from karrio.core.utils import DP
 from karrio.core.models import RateRequest
 from karrio.core.errors import FieldError
 from karrio import Rating
-from tests.eshipper.fixture import gateway
+from .fixture import gateway
 
 
 class TestEShipperRating(unittest.TestCase):

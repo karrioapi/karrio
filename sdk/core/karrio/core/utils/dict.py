@@ -1,3 +1,4 @@
+import enum
 import attr
 import json
 import types
@@ -27,6 +28,8 @@ class DICTPARSE:
                 return str(item)
             if isinstance(item, Callable):
                 return str(item)
+            if isinstance(item, enum.Enum):
+                return item.value
             if hasattr(item, "__dict__"):
                 return item.__dict__
 

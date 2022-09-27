@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, ANY
-from tests.dpdhl.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -53,7 +53,7 @@ class TestDPDHLShipping(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(lib.to_dict(parsed_response))
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):

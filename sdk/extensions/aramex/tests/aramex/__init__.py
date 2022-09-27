@@ -1,1 +1,1 @@
-from tests.aramex.tracking import *
+from .tracking import *

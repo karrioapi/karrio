@@ -1,1 +1,1 @@
-from tests.australiapost.tracking import *
+from .tracking import *

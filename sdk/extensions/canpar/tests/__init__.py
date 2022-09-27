@@ -1,1 +1,1 @@
-from tests.canpar import *
+

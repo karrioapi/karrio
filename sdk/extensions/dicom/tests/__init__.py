@@ -1,1 +1,1 @@
-from tests.dicom import *
+

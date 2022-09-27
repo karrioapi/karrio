@@ -1,1 +1,1 @@
-from tests.addons.universal_shipment import *
+from .universal_shipment import *

@@ -85,7 +85,7 @@ def check_operation(gateway: gateway.Gateway, request: str, **kwargs):
 class IDeserialize:
     """A lazy deserializer type class"""
 
-    deserialize: typing.Callable[[], S]
+    deserialize: typing.Callable[[typing.Any], S]
 
     def parse(self):
         """Execute the response deserialization"""
@@ -306,7 +306,7 @@ class Rating:
                 IDeserialize
             ] = lib.run_asynchronously(lambda g: fail_safe(g)(process)(g), gateways)
 
-            def flatten():
+            def flatten(*args):
                 responses = [p.parse() for p in deserializable_collection]
                 flattened_rates = sum((r for r, _ in responses if r is not None), [])
                 messages = sum((m for _, m in responses), [])

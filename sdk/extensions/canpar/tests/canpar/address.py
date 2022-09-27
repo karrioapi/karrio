@@ -4,7 +4,7 @@ from unittest.mock import patch
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import AddressValidationRequest
-from tests.canpar.fixture import gateway
+from .fixture import gateway
 
 
 class TestCanparAddressValidation(unittest.TestCase):

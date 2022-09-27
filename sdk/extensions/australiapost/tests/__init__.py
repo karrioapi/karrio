@@ -1,1 +1,1 @@
-from tests.australiapost import *
+

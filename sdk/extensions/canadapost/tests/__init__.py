@@ -1,1 +1,1 @@
-from tests.canadapost import *
+

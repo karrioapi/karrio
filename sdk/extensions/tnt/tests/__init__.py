@@ -1,1 +1,1 @@
-from tests.tnt import *
+

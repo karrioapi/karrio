@@ -1,1 +1,1 @@
-from tests.dicom.tracking import *
+from .tracking import *

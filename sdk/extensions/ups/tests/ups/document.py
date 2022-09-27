@@ -3,7 +3,7 @@ from unittest.mock import patch
 import karrio
 import karrio.lib as lib
 import karrio.core.models as models
-from tests.ups.fixture import gateway
+from .fixture import gateway
 
 
 class TestUPSDocument(unittest.TestCase):
