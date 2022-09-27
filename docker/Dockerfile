@@ -5,6 +5,7 @@ ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
 ARG REGISTRY_TOKEN_NAME
 
+RUN apt-get update -y && apt-get install -y gcc
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY "${REQUIREMENTS}" /temp/
@@ -14,7 +15,7 @@ RUN pip install --upgrade pip && \
 
 
 # The runtime image
-FROM python:3.8-slim AS build-image
+FROM python:3.10-slim AS build-image
 
 LABEL maintainer=hello@karrio.io
 LABEL org.opencontainers.image.title="karrio server"

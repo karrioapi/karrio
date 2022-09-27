@@ -4,6 +4,8 @@
 - Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 - Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
 - Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
+- Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
+- Blog: [Blog](https://docs.karrio.io/blog)
 
 <a href="https://karrio.io" target="_blank">
   <picture>
@@ -84,7 +86,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.8
+  danh91.docker.scarf.sh/karrio/server:2022.8.3
 ```
 
 </details>
@@ -109,7 +111,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.8
+    image: danh91.docker.scarf.sh/karrio/server:2022.8.3
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -281,13 +283,6 @@ print(rates)
 ```
 
 </details>
-
-## Resources
-
-- [**Issue Tracker**](https://github.com/karrioapi/karrio/issues)
-- [**Blog**](https://docs.karrio.io/blog)
-
-> [Join us on Discord](https://discord.gg/gS88uE7sEx)
 
 ## License
 
