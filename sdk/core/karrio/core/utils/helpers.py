@@ -199,20 +199,18 @@ def request(
 
 
 def exec_parrallel(
-    function: Callable, sequence: List[S], max_workers: int = 2
+    function: Callable, sequence: List[S], max_workers: int = None
 ) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
-    with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
+    workers = len(sequence) or max_workers or 2
+    with ThreadPoolExecutor(max_workers=workers) as executor:
         requests = {executor.submit(function, item): item for item in sequence}
         return [response.result() for response in as_completed(requests)]
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
-    async def async_action(args):
-        return action(args)
-
     async def run_tasks():
-        return await asyncio.gather(*[async_action(args) for args in sequence])
+        return await asyncio.gather(*[asyncio.to_thread(action, args) for args in sequence])
 
     return asyncio.run(run_tasks())
 
