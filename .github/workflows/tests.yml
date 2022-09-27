@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
+          pip install --upgrade pip
           ./scripts/setup-sdk-env.sh &&
           ./scripts/run-sdk-typecheck.sh &&
           ./scripts/run-sdk-tests.sh
@@ -29,6 +30,7 @@ jobs:
           sudo chown -R 1000 ./
           docker-compose -f docker-compose.test.yml run --rm api bash -c '
             cd app &&
+            pip install --upgrade pip
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.dev.txt &&
             cd -
@@ -53,6 +55,7 @@ jobs:
           sudo chown -R 1000 ./
           docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN api bash -c '
             cd app &&
+            pip install --upgrade pip
             pip install -r requirements.dev.txt &&
             pip install -r requirements.server.insiders.dev.txt &&
             cd -

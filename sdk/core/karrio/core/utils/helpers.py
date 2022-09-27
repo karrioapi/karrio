@@ -212,7 +212,7 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
-        loop = None
+        loop = asyncio.get_event_loop()
 
     async def run_tasks():
         return await asyncio.gather(*[
@@ -220,13 +220,12 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
             for args in sequence
         ])
 
-    if loop and loop.is_running():
-        result = ThreadPoolExecutor().submit(asyncio.run, run_tasks()).result()
+    result = ThreadPoolExecutor().submit(asyncio.run, run_tasks()).result()
 
-        return cast(List[T], result)
+    if loop.is_running() is False:
+        loop.close()
 
-
-    return asyncio.run(run_tasks())
+    return cast(List[T], result)
 
 
 class Location:
