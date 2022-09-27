@@ -16,7 +16,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
 
-Karrio is a tool for courier integration and logistics operations automation using a modern tech stack. Karrio help you manage carrier accounts and improve shipping costs and fulfilment efficiency.
+Karrio is a tool for carrier integration and logistics operations automation using a modern tech stack. Karrio helps you manage carrier accounts, reduce shipping costs and improve fulfilment efficiency.
 
 **Features**
 
