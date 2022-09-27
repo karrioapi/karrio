@@ -18,11 +18,7 @@ jobs:
         run: |
           ./scripts/setup-sdk-env.sh &&
           ./scripts/run-sdk-typecheck.sh &&
-          ./scripts/run-sdk-tests.sh &&
-          pip install coverage codecov &&
-          coverage report && codecov
-        env:
-          CODECOV_TOKEN: f86de243-0032-429c-9fd2-254728e648e1
+          ./scripts/run-sdk-tests.sh
   server-tests:
     runs-on: ubuntu-latest
 
