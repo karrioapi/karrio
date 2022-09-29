@@ -77,7 +77,7 @@ karrio.dhl-universal==2022.8.3
 karrio.dicom==2022.8.3
 karrio.dpdhl==2022.8.3
 karrio.eshipper==2022.8.3
-karrio.fedex==2022.8.3
+karrio.fedex==2022.8.4
 karrio.freightcom==2022.8.3
 karrio.purolator==2022.8.3
 karrio.royalmail==2022.8.3
