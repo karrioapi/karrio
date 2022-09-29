@@ -122,7 +122,11 @@ def rate_request(
         Version=VersionId(ServiceId="crs", Major=28, Intermediate=0, Minor=0),
         ReturnTransitAndCommit=True,
         CarrierCodes=None,
-        VariableOptions=None,
+        VariableOptions=(
+            [option.code for _, option in options.items()]
+            if any(options.items())
+            else None
+        ),
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
             ShipTimestamp=lib.to_date(options.shipment_date.state or datetime.now()),
