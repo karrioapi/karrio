@@ -327,7 +327,7 @@ class ShippingOption(utils.Enum):
     )
     fedex_extra_labor = utils.OptionEnum("EXTRA_LABOR")
     fedex_extreme_length = utils.OptionEnum("EXTREME_LENGTH")
-    fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE")
+    fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_flatbed_trailer = utils.OptionEnum("FLATBED_TRAILER")
     fedex_food = utils.OptionEnum("FOOD")
     fedex_freight_guarantee = utils.OptionEnum("FREIGHT_GUARANTEE")

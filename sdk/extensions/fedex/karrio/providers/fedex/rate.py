@@ -122,7 +122,7 @@ def rate_request(
         Version=VersionId(ServiceId="crs", Major=28, Intermediate=0, Minor=0),
         ReturnTransitAndCommit=True,
         CarrierCodes=None,
-        VariableOptions=None,
+        VariableOptions=(["FEDEX_ONE_RATE"] if options.fedex_one_rate.state else None),
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
             ShipTimestamp=lib.to_date(options.shipment_date.state or datetime.now()),
