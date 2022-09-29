@@ -71,7 +71,7 @@ RateRequestPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcels": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}],
-    "options": {"currency": "USD"},
+    "options": {"currency": "USD", "fedex_one_rate": True},
 }
 
 RateWithPresetPayload = {
@@ -256,6 +256,7 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 <v28:Minor>0</v28:Minor>
             </v28:Version>
             <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
+            <v28:VariableOptions>FEDEX_ONE_RATE</v28:VariableOptions>
             <v28:RequestedShipment>
 
                 <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
