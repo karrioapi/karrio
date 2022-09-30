@@ -51,16 +51,6 @@ class CarrierList(GenericAPIView):
                 enum=[c for c, _ in CARRIERS],
             )
         ],
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url '/v1/carriers' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request):
         """

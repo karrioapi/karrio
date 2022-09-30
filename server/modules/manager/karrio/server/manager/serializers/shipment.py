@@ -263,27 +263,21 @@ class ShipmentUpdateData(Serializer):
     options = PlainDictField(
         required=False,
         allow_null=True,
-        help_text="""
-    <details>
-    <summary>The options available for the shipment.</summary>
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "insurance": 100.00,
-        "cash_on_delivery": 30.00,
-        "shipment_date": "2020-01-01",
-        "dangerous_good": true,
-        "declared_value": 150.00,
-        "email_notification": true,
-        "email_notification_to": "shipper@mail.com",
-        "signature_confirmation": true,
-    }
-    ```
-
-    Please check the docs for carrier specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "shipment_date": "2020-01-01",
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "signature_confirmation": true,
+        }
+        """,
     )
     reference = CharField(
         required=False,
@@ -300,21 +294,18 @@ class ShipmentRateData(Serializer):
     services = StringListField(
         required=False,
         allow_null=True,
-        help_text="""
-    The requested carrier service for the shipment.
-
-    Please consult [the reference](#operation/references) for specific carriers services.<br/>
-    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
-    """,
+        help_text="""The requested carrier service for the shipment.<br/>
+        Please consult [the reference](#operation/references) for specific carriers services.<br/>
+        **Note that this is a list because on a Multi-carrier rate request you could
+        specify a service per carrier.**
+        """,
     )
     carrier_ids = StringListField(
         required=False,
         allow_null=True,
-        help_text="""
-    The list of configured carriers you wish to get rates from.
-
-    *Note that the request will be sent to all carriers in nothing is specified*
-    """,
+        help_text="""The list of configured carriers you wish to get rates from.<br/>
+        **Note that the request will be sent to all carriers in nothing is specified**
+        """,
     )
     reference = CharField(
         required=False,

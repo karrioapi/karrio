@@ -417,6 +417,15 @@ SPECTACULAR_SETTINGS = {
         "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
         "ShipmentStatus": "karrio.server.manager.serializers.SHIPMENT_STATUS",
     },
+    "OAUTH2_FLOWS": ["authorizationCode"],
+    "OAUTH2_AUTHORIZATION_URL": "/oauth/authorize/",
+    "OAUTH2_TOKEN_URL": "/oauth/token/",
+    "OAUTH2_REFRESH_URL": None,
+    "OAUTH2_SCOPES": OAUTH2_PROVIDER["SCOPES"],
+    "AUTHENTICATION_WHITELIST": [
+        _ for _ in AUTHENTICATION_CLASSES
+        if "Session" not in _
+    ]
 }
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
@@ -453,7 +462,6 @@ SWAGGER_SETTINGS = {
         },
     },
 }
-
 REDOC_SETTINGS = {
     "LAZY_RENDERING": False,
     "HIDE_HOSTNAME": True,
@@ -462,7 +470,6 @@ REDOC_SETTINGS = {
 }
 
 # Logging configuration
-
 LOG_LEVEL = "DEBUG" if DEBUG else config("LOG_LEVEL", default="INFO")
 DJANGO_LOG_LEVEL = "INFO" if DEBUG else config("DJANGO_LOG_LEVEL", default="WARNING")
 LOG_FILE_DIR = config("LOG_DIR", default=WORK_DIR)

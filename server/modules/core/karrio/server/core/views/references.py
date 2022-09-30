@@ -53,6 +53,7 @@ References = openapi.OpenApiResponse(
 
 
 @openapi.extend_schema(
+    auth=[],
     methods=["get"],
     tags=["API"],
     operation_id=f"{ENDPOINT_ID}data",

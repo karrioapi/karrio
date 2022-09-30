@@ -27,9 +27,7 @@ DataImportParameters: list = [
         "data_template",
         type=openapi.OpenApiTypes.STR,
         required=False,
-        description="""
-        A data template slug to use for the import.
-
+        description="""A data template slug to use for the import.<br/>
         **When nothing is specified, the system default headers are expected.**
         """,
     ),
@@ -72,12 +70,11 @@ class DataImport(api.BaseAPIView):
         parameters=DataImportParameters,
     )
     def post(self, request: Request):
-        """Import csv, xls and xlsx data files for:
+        """Import csv, xls and xlsx data files for:<br/>
         - tracking data
         - orders data
         - shipments data
-        - billing data (soon)
-
+        - billing data (soon)<br/><br/>
         **This operation will return a batch operation that you can poll to follow
         the import progression.**
         """
@@ -112,9 +109,7 @@ DataExportParameters: list = [
         location=openapi.OpenApiParameter.QUERY,
         type=openapi.OpenApiTypes.STR,
         required=False,
-        description="""
-        A data template slug to use for the import.
-
+        description="""A data template slug to use for the import.<br/>
         **When nothing is specified, the system default headers are expected.**
         """,
     ),

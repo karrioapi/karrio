@@ -41,16 +41,6 @@ class CustomsList(GenericAPIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url '/v1/customs_info' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request):
         """
@@ -77,39 +67,6 @@ class CustomsList(GenericAPIView):
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request POST \\
-                  --url /v1/customs_info \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "content_type": "merchandise",
-                    "incoterm": "DDU",
-                    "commodities": [
-                      {
-                        "weight": 2,
-                        "weight_unit": "KG",
-                        "quantity": 1,
-                        "sku": "XXXXX0000123",
-                        "value_amount": 30,
-                        "value_currency": "USD",
-                        "origin_country": "JM"
-                      }
-                    ],
-                    "duty": {
-                      "paid_by": "recipient",
-                      "currency": "USD",
-                      "declared_value": 60,
-                    },
-                    "certify": true,
-                    "signer": "Kex",
-                  }'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request):
         """
@@ -133,16 +90,6 @@ class CustomsDetail(APIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request, pk: str):
         """
@@ -163,25 +110,6 @@ class CustomsDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request PATCH \\
-                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "content_type": "merchandise",
-                    "duty": {
-                      "paid_by": "recipient",
-                      "currency": "CAD",
-                      "declared_value": 100,
-                    }
-                  }'
-                """,
-            ),
-        ],
     )
     def patch(self, request: Request, pk: str):
         """
@@ -206,16 +134,6 @@ class CustomsDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request DELETE \\
-                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def delete(self, request: Request, pk: str):
         """

@@ -93,11 +93,9 @@ class OrderUpdateData(serializers.Serializer):
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
-        help_text="""
-        <details>
+        help_text="""<details>
         <summary>The options available for the order shipments.</summary>
 
-        ```
         {
             "currency": "USD",
             "paid_by": "third_party",
@@ -109,10 +107,6 @@ class OrderUpdateData(serializers.Serializer):
             "single_item_per_parcel": true,
             "carrier_ids": ["canadapost-test"],
         }
-        ```
-
-        Please check the docs for shipment specific options.
-        </details>
         """,
     )
     metadata = serializers.PlainDictField(
