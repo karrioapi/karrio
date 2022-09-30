@@ -14,40 +14,6 @@ import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
-<<<<<<< HEAD
-References = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        "VERSION": openapi.Schema(type=openapi.TYPE_STRING),
-        "APP_NAME": openapi.Schema(type=openapi.TYPE_STRING),
-        "APP_WEBSITE": openapi.Schema(type=openapi.TYPE_STRING),
-        **{
-            flag: openapi.Schema(type=openapi.TYPE_BOOLEAN)
-            for flag in FEATURE_FLAGS
-        },
-        "ADMIN": openapi.Schema(type=openapi.TYPE_STRING),
-        "OPENAPI": openapi.Schema(type=openapi.TYPE_STRING),
-        "GRAPHQL": openapi.Schema(type=openapi.TYPE_STRING),
-
-        "ADDRESS_AUTO_COMPLETE": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "countries": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "currencies": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "custom_carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "customs_content_type": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "incoterms": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "states": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "services": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "service_names": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "options": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "option_names": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "package_presets": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "packaging_types": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "payment_types": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "carrier_capabilities": openapi.Schema(type=openapi.TYPE_OBJECT),
-        "service_levels": openapi.Schema(type=openapi.TYPE_OBJECT),
-    },
-=======
 References = openapi.OpenApiResponse(
     openapi.OpenApiTypes.OBJECT,
     examples=[
@@ -83,7 +49,6 @@ References = openapi.OpenApiResponse(
             }
         )
     ],
->>>>>>> c3e3097d ((replace) drf-yasg by drf-spectacular for OpenAPI v3 support)
 )
 
 

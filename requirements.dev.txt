@@ -3,6 +3,7 @@ bandit
 black
 coverage
 generateDS
+Jinja2
 mypy
 poetry
 twine

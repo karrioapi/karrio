@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.core",
-    version="2022.8.18",
+    version="2022.10",
     description="Multi-carrier shipping API Core module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,6 +20,7 @@ setup(
         "django-health-check",
         "psutil",
         "pyyaml",
+        "Jinja2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
