@@ -80,8 +80,7 @@ class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
 class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
     otp_token = serializers.CharField(
         required=True,
-        help_text="""
-        The OTP (One Time Password) token received by the user from the
+        help_text="""The OTP (One Time Password) token received by the user from the
         configured Two Factor Authentication method.
         """,
     )
@@ -131,6 +130,7 @@ class TokenObtainPair(jwt_views.TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
     @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}authenticate",
         summary="Obtain auth token pair",
@@ -148,6 +148,7 @@ class TokenRefresh(jwt_views.TokenRefreshView):
     serializer_class = TokenRefreshSerializer
 
     @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}refresh_token",
         summary="Refresh auth token",
@@ -163,6 +164,7 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
 class TokenVerify(jwt_views.TokenVerifyView):
     @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}verify_token",
         summary="Verify token",
@@ -180,12 +182,11 @@ class VerifiedTokenPair(jwt_views.TokenVerifyView):
     serializer_class = VerifiedTokenObtainPairSerializer
 
     @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}get_verified_token",
         summary="Get verified JWT token",
-        description="""
-        Get a verified JWT token pair by submitting a Two-Factor authentication code.
-        """,
+        description="Get a verified JWT token pair by submitting a Two-Factor authentication code.",
         responses={201: TokenPair()},
     )
     def post(self, *args, **kwargs):

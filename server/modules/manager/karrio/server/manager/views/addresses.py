@@ -42,16 +42,6 @@ class AddressList(GenericAPIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url '/v1/addresses' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request):
         """
@@ -77,28 +67,6 @@ class AddressList(GenericAPIView):
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request POST \\
-                  --url /v1/addresses \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "address_line1": "125 Church St",
-                    "person_name": "John Doe",
-                    "company_name": "A corp.",
-                    "phone_number": "+1 514 000 0000",
-                    "city": "Moncton",
-                    "country_code": "CA",
-                    "postal_code": "E1C4Z8",
-                    "residential": false,
-                    "state_code": "NB"
-                }'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request):
         """
@@ -122,16 +90,6 @@ class AddressDetail(APIView):
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request, pk: str):
         """
@@ -152,20 +110,6 @@ class AddressDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request PATCH \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "city": "Pierrefonds"
-                }'
-                """,
-            ),
-        ],
     )
     def patch(self, request: Request, pk: str):
         """
@@ -188,16 +132,6 @@ class AddressDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request DELETE \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def delete(self, request: Request, pk: str):
         """

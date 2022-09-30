@@ -165,11 +165,9 @@ class PickupUpdateData(PickupSerializer):
     )
     pickup_date = serializers.CharField(
         required=False,
-        help_text="""
-    The expected pickup date
-
-    Date Format: YYYY-MM-DD
-    """,
+        help_text="""The expected pickup date.<br/>
+        Date Format: YYYY-MM-DD
+        """,
     )
     ready_time = serializers.CharField(
         required=False,
@@ -187,21 +185,17 @@ class PickupUpdateData(PickupSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The pickup instruction.
-
-    eg: Handle with care.
-    """,
+        help_text="""The pickup instruction.<br/>
+        eg: Handle with care.
+        """,
     )
     package_location = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The package(s) location.
-
-    eg: Behind the entrance door.
-    """,
+        help_text="""The package(s) location.<br/>
+        eg: Behind the entrance door.
+        """,
     )
     tracking_numbers = serializers.StringListField(
         required=False,

@@ -42,11 +42,9 @@ class OrderData(serializers.Serializer):
     source = fields.CharField(
         required=False,
         default="API",
-        help_text="""
-    The order's source.
-
-    e.g. API, POS, ERP, Shopify, Woocommerce, etc.
-    """,
+        help_text="""The order's source.<br/>
+        e.g. API, POS, ERP, Shopify, Woocommerce, etc.
+        """,
     )
     shipping_to = AddressData(
         required=True,
@@ -68,27 +66,21 @@ class OrderData(serializers.Serializer):
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
-        help_text="""
-    <details>
-    <summary>The options available for the order shipments.</summary>
+        help_text="""<details>
+        <summary>The options available for the order shipments.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "paid_by": "third_party",
-        "payment_account_number": "123456789",
-        "duty_paid_by": "third_party",
-        "duty_account_number": "123456789",
-        "invoice_number": "123456789",
-        "invoice_date": "2020-01-01",
-        "single_item_per_parcel": true,
-        "carrier_ids": ["canadapost-test"],
-    }
-    ```
-
-    Please check the docs for shipment specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "paid_by": "third_party",
+            "payment_account_number": "123456789",
+            "duty_paid_by": "third_party",
+            "duty_account_number": "123456789",
+            "invoice_number": "123456789",
+            "invoice_date": "2020-01-01",
+            "single_item_per_parcel": true,
+            "carrier_ids": ["canadapost-test"],
+        }
+        """,
     )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the order."
@@ -137,27 +129,21 @@ class Order(serializers.EntitySerializer):
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
-        help_text="""
-    <details>
-    <summary>The options available for the order shipments.</summary>
+        help_text="""<details>
+        <summary>The options available for the order shipments.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "paid_by": "third_party",
-        "payment_account_number": "123456789",
-        "duty_paid_by": "third_party",
-        "duty_account_number": "123456789",
-        "invoice_number": "123456789",
-        "invoice_date": "2020-01-01",
-        "single_item_per_parcel": true,
-        "carrier_ids": ["canadapost-test"],
-    }
-    ```
-
-    Please check the docs for shipment specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "paid_by": "third_party",
+            "payment_account_number": "123456789",
+            "duty_paid_by": "third_party",
+            "duty_account_number": "123456789",
+            "invoice_number": "123456789",
+            "invoice_date": "2020-01-01",
+            "single_item_per_parcel": true,
+            "carrier_ids": ["canadapost-test"],
+        }
+        """,
     )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the order."
@@ -173,9 +159,7 @@ class Order(serializers.EntitySerializer):
     )
     created_at = fields.CharField(
         required=True,
-        help_text="""
-    The shipment creation datetime
-
-    Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
-    """,
+        help_text="""The shipment creation datetime.<br/>
+        Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
+        """,
     )
