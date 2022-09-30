@@ -26,6 +26,14 @@ AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
 
 class GraphQLView(AccessMixin, views.GraphQLView):
+    def dispatch(self, request, *args, **kwargs):
+        if self.should_render_graphiql(request):
+            context = dict(APP_NAME="Karrio")
+
+            return self._render_graphiql(request, context=context)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def process_result(self, request, result: types.ExecutionResult) -> http.GraphQLHTTPResponse:
         data: http.GraphQLHTTPResponse = {"data": result.data}
 

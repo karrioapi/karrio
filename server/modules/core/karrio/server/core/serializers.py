@@ -58,15 +58,11 @@ class CarrierSettings(serializers.Serializer):
     )
     test_mode = serializers.BooleanField(
         required=True,
-        help_text="""
-    The test flag indicates whether to use a carrier configured for test.
-    """,
+        help_text="The test flag indicates whether to use a carrier configured for test.",
     )
     active = serializers.BooleanField(
         required=True,
-        help_text="""
-    The active flag indicates whether the carrier account is active or not.
-    """,
+        help_text="The active flag indicates whether the carrier account is active or not.",
     )
     object_type = serializers.CharField(default="carrier", help_text="Specifies the object type")
 
@@ -99,22 +95,18 @@ class AddressData(validators.AugmentedAddressSerializer):
         allow_blank=True,
         allow_null=True,
         max_length=10,
-        help_text="""
-    The address postal code
-
-    **(required for shipment purchase)**
-    """,
+        help_text="""The address postal code
+        **(required for shipment purchase)**
+        """,
     )
     city = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         max_length=50,
-        help_text="""
-    The address city.
-
-    **(required for shipment purchase)**
-    """,
+        help_text="""The address city.
+        **(required for shipment purchase)**
+        """,
     )
     federal_tax_id = serializers.CharField(
         required=False,
@@ -135,11 +127,9 @@ class AddressData(validators.AugmentedAddressSerializer):
         allow_blank=True,
         allow_null=True,
         max_length=50,
-        help_text="""
-    attention to
-
-    **(required for shipment purchase)**
-    """,
+        help_text="""Attention to
+        **(required for shipment purchase)**
+        """,
     )
     company_name = serializers.CharField(
         required=False,
@@ -190,8 +180,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         allow_blank=True,
         allow_null=True,
         max_length=100,
-        help_text="""
-        The address line with street number <br/>
+        help_text="""The address line with street number <br/>
         **(required for shipment purchase)**
         """,
     )
@@ -276,21 +265,16 @@ class CommodityData(serializers.Serializer):
     metadata = serializers.PlainDictField(
         required=False,
         allow_null=True,
-        help_text="""
-        <details>
+        help_text="""<details>
         <summary>Commodity user references metadata.</summary>
 
-        ```
         {
             "part_number": "5218487281",
             "reference1": "# ref 1",
             "reference2": "# ref 2",
             "reference3": "# ref 3",
-            "reference4": "# ref 4",
             ...
         }
-        ```
-        </details>
         """,
     )
 
@@ -314,14 +298,10 @@ class ParcelData(validators.PresetSerializer):
         allow_blank=True,
         allow_null=True,
         max_length=50,
-        help_text=f"""
-        The parcel's packaging type.
-
-        **Note that the packaging is optional when using a package preset**
-
+        help_text=f"""The parcel's packaging type.<br/>
+        **Note that the packaging is optional when using a package preset.**<br/>
         values: <br/>
-        {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}
-
+        {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}<br/>
         For carrier specific packaging types, please consult the reference.
         """,
     )
@@ -330,11 +310,9 @@ class ParcelData(validators.PresetSerializer):
         allow_blank=True,
         allow_null=True,
         max_length=50,
-        help_text="""
-    The parcel's package preset.
-
-    For carrier specific package presets, please consult the reference.
-    """,
+        help_text="""The parcel's package preset.<br/>
+        For carrier specific package presets, please consult the reference.
+        """,
     )
     description = serializers.CharField(
         required=False,
@@ -361,7 +339,7 @@ class ParcelData(validators.PresetSerializer):
     )
     dimension_unit = serializers.ChoiceField(
         required=False,
-        allow_blank=True,
+        allow_blank=False,
         allow_null=True,
         choices=DIMENSION_UNIT,
         help_text="The parcel's dimension unit",
@@ -371,7 +349,9 @@ class ParcelData(validators.PresetSerializer):
         required=False,
         allow_null=True,
         max_length=100,
-        help_text="The parcel reference number. (can be used as tracking number for custom carriers)",
+        help_text="""The parcel reference number.<br/>
+        (can be used as tracking number for custom carriers)
+        """,
     )
     freight_class = serializers.CharField(
         required=False,
@@ -382,19 +362,13 @@ class ParcelData(validators.PresetSerializer):
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="""
-        <details>
+        help_text="""<details>
         <summary>Parcel specific options.</summary>
 
-        ```
         {
             "insurance": "100.00",
             "insured_by": "carrier",
         }
-        ```
-
-        Please check the docs for more details.
-        </details>
         """,
     )
 
@@ -470,10 +444,9 @@ class CustomsData(serializers.Serializer):
     duty = Duty(
         required=False,
         allow_null=True,
-        help_text="""
-    The payment details.<br/>
-    Note that this is required for a Dutiable parcel shipped internationally.
-    """,
+        help_text="""The payment details.<br/>
+        **Note that this is required for a Dutiable parcel shipped internationally.**
+        """,
     )
     content_type = serializers.ChoiceField(
         required=False, choices=CUSTOMS_CONTENT_TYPE, allow_blank=True, allow_null=True
@@ -513,25 +486,19 @@ class CustomsData(serializers.Serializer):
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="""
-    <details>
-    <summary>Customs identification options.</summary>
+        help_text="""<details>
+        <summary>Customs identification options.</summary>
 
-    ```
-    {
-        "aes": "5218487281",
-        "eel_pfc": "5218487281",
-        "license_number": "5218487281",
-        "certificate_number": "5218487281",
-        "nip_number": "5218487281",
-        "eori_number": "5218487281",
-        "vat_registration_number": "5218487281",
-    }
-    ```
-
-    Please check the docs for carrier specific options.
-    </details>
-    """,
+        {
+            "aes": "5218487281",
+            "eel_pfc": "5218487281",
+            "license_number": "5218487281",
+            "certificate_number": "5218487281",
+            "nip_number": "5218487281",
+            "eori_number": "5218487281",
+            "vat_registration_number": "5218487281",
+        }
+        """,
     )
 
 
@@ -573,21 +540,17 @@ class Charge(serializers.Serializer):
 class RateRequest(validators.OptionDefaultSerializer):
     shipper = AddressData(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     recipient = AddressData(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     parcels = ParcelData(
         many=True,
@@ -598,37 +561,29 @@ class RateRequest(validators.OptionDefaultSerializer):
     services = serializers.StringListField(
         required=False,
         allow_null=True,
-        help_text="""
-    The requested carrier service for the shipment.<br/>
-    Please consult the reference for specific carriers services.
-
-    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
-    """,
+        help_text="""The requested carrier service for the shipment.<br/>
+        Please consult the reference for specific carriers services.<br/>
+        Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+        """,
     )
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="""
-    <details>
-    <summary>The options available for the shipment.</summary>
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "insurance": 100.00,
-        "cash_on_delivery": 30.00,
-        "shipment_date": "2020-01-01",
-        "dangerous_good": true,
-        "declared_value": 150.00,
-        "email_notification": true,
-        "email_notification_to": "shipper@mail.com",
-        "signature_confirmation": true,
-    }
-    ```
-
-    Please check the docs for carrier specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "shipment_date": "2020-01-01",
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "signature_confirmation": true,
+        }
+        """,
     )
     reference = serializers.CharField(
         required=False,
@@ -639,9 +594,7 @@ class RateRequest(validators.OptionDefaultSerializer):
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,
-        help_text="""
-    The list of configured carriers you wish to get rates from.
-    """,
+        help_text="The list of configured carriers you wish to get rates from.",
     )
 
 
@@ -681,11 +634,9 @@ class PickupRequest(serializers.Serializer):
     pickup_date = serializers.CharField(
         required=True,
         validators=[validators.valid_date_format("pickup_date")],
-        help_text="""
-    The expected pickup date
-
-    Date Format: `YYYY-MM-DD`
-    """,
+        help_text="""The expected pickup date.<br/>
+        Date Format: `YYYY-MM-DD`
+        """,
     )
     address = AddressData(required=True, help_text="The pickup address")
     parcels = ParcelData(
@@ -696,40 +647,32 @@ class PickupRequest(serializers.Serializer):
     ready_time = serializers.CharField(
         required=True,
         validators=[validators.valid_time_format("ready_time")],
-        help_text="""
-    The ready time for pickup.
-
-    Time Format: `HH:MM`
-    """,
+        help_text="""The ready time for pickup.<br/>
+        Time Format: `HH:MM`
+        """,
     )
     closing_time = serializers.CharField(
         required=True,
         validators=[validators.valid_time_format("closing_time")],
-        help_text="""
-    The closing or late time of the pickup
-
-    Time Format: `HH:MM`
-    """,
+        help_text="""The closing or late time of the pickup.<br/>
+        Time Format: `HH:MM`
+        """,
     )
     instruction = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The pickup instruction.
-
-    eg: Handle with care.
-    """,
+        help_text="""The pickup instruction.<br/>
+        eg: Handle with care.
+        """,
     )
     package_location = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The package(s) location.
-
-    eg: Behind the entrance door.
-    """,
+        help_text="""The package(s) location.<br/>
+        eg: Behind the entrance door.
+        """,
     )
     options = serializers.PlainDictField(
         required=False,
@@ -747,11 +690,9 @@ class PickupRequest(serializers.Serializer):
 class PickupUpdateRequest(serializers.Serializer):
     pickup_date = serializers.CharField(
         required=True,
-        help_text="""
-    The expected pickup date
-
-    Date Format: `YYYY-MM-DD`
-    """,
+        help_text="""The expected pickup date.<br/>
+        Date Format: `YYYY-MM-DD`
+        """,
     )
     address = Address(required=True, help_text="The pickup address")
     parcels = Parcel(
@@ -765,40 +706,32 @@ class PickupUpdateRequest(serializers.Serializer):
     ready_time = serializers.CharField(
         required=True,
         validators=[(validators.valid_time_format("ready_time"))],
-        help_text="""
-    The ready time for pickup.
-
-    Time Format: `HH:MM`
-    """,
+        help_text="""The ready time for pickup.
+        Time Format: `HH:MM`
+        """,
     )
     closing_time = serializers.CharField(
         required=True,
         validators=[validators.valid_time_format("closing_time")],
-        help_text="""
-    The closing or late time of the pickup
-
-    Time Format: `HH:MM`
-    """,
+        help_text="""The closing or late time of the pickup.<br/>
+        Time Format: `HH:MM`
+        """,
     )
     instruction = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The pickup instruction.
-
-    eg: Handle with care.
-    """,
+        help_text="""The pickup instruction.<br/>
+        eg: Handle with care.
+        """,
     )
     package_location = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="""
-    The package(s) location.
-
-    eg: Behind the entrance door.
-    """,
+        help_text="""The package(s) location.<br/>
+        eg: Behind the entrance door.
+        """,
     )
     options = serializers.PlainDictField(
         required=False,
@@ -863,11 +796,9 @@ class PickupCancelRequest(serializers.Serializer):
         required=False,
         allow_null=True,
         validators=[validators.valid_date_format("pickup_date")],
-        help_text="""
-    The pickup date
-
-    Date Format: `YYYY-MM-DD`
-    """,
+        help_text="""The pickup date.<br/>
+        Date Format: `YYYY-MM-DD`
+        """,
     )
     reason = serializers.CharField(
         required=False, help_text="The reason of the pickup cancellation"
@@ -912,10 +843,9 @@ class Rate(serializers.EntitySerializer):
     )
     total_charge = serializers.FloatField(
         default=0.0,
-        help_text="""
-    The rate's monetary amount of the total charge.<br/>
-    This is the gross amount of the rate after adding the additional charges
-    """,
+        help_text="""The rate's monetary amount of the total charge.<br/>
+        This is the gross amount of the rate after adding the additional charges
+        """,
     )
     transit_days = serializers.IntegerField(
         required=False, allow_null=True, help_text="The estimated delivery transit days"
@@ -995,21 +925,17 @@ class TrackingStatus(serializers.EntitySerializer, TrackingDetails):
 class ShippingData(validators.OptionDefaultSerializer):
     shipper = AddressData(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     recipient = AddressData(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     parcels = ParcelData(
         many=True, allow_empty=False, help_text="The shipment's parcels"
@@ -1017,36 +943,29 @@ class ShippingData(validators.OptionDefaultSerializer):
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="""
-    <details>
-    <summary>The options available for the shipment.</summary>
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "insurance": 100.00,
-        "cash_on_delivery": 30.00,
-        "shipment_date": "2020-01-01",
-        "dangerous_good": true,
-        "declared_value": 150.00,
-        "email_notification": true,
-        "email_notification_to": "shipper@mail.com",
-        "signature_confirmation": true,
-    }
-    ```
-
-    Please check the docs for carrier specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "shipment_date": "2020-01-01",
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "signature_confirmation": true,
+        }
+        """,
     )
     payment = Payment(required=False, default={}, help_text="The payment details")
     customs = CustomsData(
         required=False,
         allow_null=True,
-        help_text="""
-    The customs details.<br/>
-    Note that this is required for the shipment of an international Dutiable parcel.
-    """,
+        help_text="""The customs details.<br/>
+        **Note that this is required for the shipment of an international Dutiable parcel.**
+        """,
     )
     reference = serializers.CharField(
         required=False,
@@ -1079,25 +998,24 @@ class ShipmentData(ShippingData):
         required=False,
         allow_null=True,
         default=[],
-        help_text="""
-    The requested carrier service for the shipment.
-
-    Please consult the reference for specific carriers services.<br/>
-    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
-    """,
+        help_text="""The requested carrier service for the shipment.<br/>
+        Please consult the reference for specific carriers services.<br/>
+        **Note that this is a list because on a Multi-carrier rate request
+        you could specify a service per carrier.**
+        """,
     )
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,
         default=[],
-        help_text="""
-    The list of configured carriers you wish to get rates from.
-
-    *Note that the request will be sent to all carriers in nothing is specified*
-    """,
+        help_text="""The list of configured carriers you wish to get rates from.<br/>
+        **Note that the request will be sent to all carriers in nothing is specified**
+        """,
     )
     metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the shipment"
+        required=False,
+        default={},
+        help_text="User metadata for the shipment",
     )
 
 
@@ -1193,21 +1111,17 @@ class ShipmentContent(serializers.Serializer):
     )
     shipper = Address(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     recipient = Address(
         required=True,
-        help_text="""
-    The address of the party
-
-    Origin address (ship from) for the **shipper**<br/>
-    Destination address (ship to) for the **recipient**
-    """,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
     )
     parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
 
@@ -1215,47 +1129,38 @@ class ShipmentContent(serializers.Serializer):
         required=False,
         allow_null=True,
         default=[],
-        help_text="""
-    The carriers services requested for the shipment.
-
-    Please consult the reference for specific carriers services.<br/>
-    Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
-    """,
+        help_text="""The carriers services requested for the shipment.<br/>
+        Please consult the reference for specific carriers services.<br/>
+        **Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.**
+        """,
     )
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="""
-    <details>
-    <summary>The options available for the shipment.</summary>
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
 
-    ```
-    {
-        "currency": "USD",
-        "insurance": 100.00,
-        "cash_on_delivery": 30.00,
-        "shipment_date": "2020-01-01",
-        "dangerous_good": true,
-        "declared_value": 150.00,
-        "email_notification": true,
-        "email_notification_to": "shipper@mail.com",
-        "signature_confirmation": true,
-    }
-    ```
-
-    Please check the docs for carrier specific options.
-    </details>
-    """,
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "shipment_date": "2020-01-01",
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "signature_confirmation": true,
+        }
+        """,
     )
 
     payment = Payment(required=False, default={}, help_text="The payment details")
     customs = Customs(
         required=False,
         allow_null=True,
-        help_text="""
-    The customs details.<br/>
-    Note that this is required for the shipment of an international Dutiable parcel.
-    """,
+        help_text="""The customs details.<br/>
+        **Note that this is required for the shipment of an international Dutiable parcel.**
+        """,
     )
     rates = Rate(
         many=True,
@@ -1280,11 +1185,9 @@ class ShipmentContent(serializers.Serializer):
         required=False,
         allow_null=True,
         default=[],
-        help_text="""
-    The list of configured carriers you wish to get rates from.
-
-    *Note that the request will be sent to all carriers in nothing is specified*
-    """,
+        help_text="""The list of configured carriers you wish to get rates from.<br/>
+        **Note that the request will be sent to all carriers in nothing is specified**
+        """,
     )
     tracker_id = serializers.CharField(
         required=False,
@@ -1294,11 +1197,9 @@ class ShipmentContent(serializers.Serializer):
     )
     created_at = serializers.CharField(
         required=True,
-        help_text="""
-    The shipment creation datetime
-
-    Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
-    """,
+        help_text="""The shipment creation datetime.<br/>
+        Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
+        """,
     )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the shipment"

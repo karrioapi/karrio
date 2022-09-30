@@ -47,16 +47,6 @@ class PickupList(GenericAPIView):
             500: ErrorResponse(),
         },
         parameters=PickupFilters.parameters,
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url '/v1/pickups' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request):
         """
@@ -79,34 +69,6 @@ class PickupRequest(APIView):
             500: ErrorResponse(),
         },
         request=PickupData(),
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request POST \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --data '{
-                    "pickup_date": "2020-10-25",
-                    "address": {
-                      "address_line1": "125 Church St",
-                      "person_name": "John Doe",
-                      "city": "Moncton",
-                      "country_code": "CA",
-                      "postal_code": "E1C4Z8",
-                      "state_code": "NB",
-                    },
-                    "ready_time": "13:00",
-                    "closing_time": "17:00",
-                    "instruction": "Should not be folded",
-                    "package_location": "At the main entrance hall",
-                    "tracking_numbers": [
-                        "8545763607864201002"
-                    ]
-                }'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request, carrier_name: str):
         """
@@ -135,16 +97,6 @@ class PickupDetails(APIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request, pk: str):
         """Retrieve a scheduled pickup."""
@@ -163,25 +115,6 @@ class PickupDetails(APIView):
             500: ErrorResponse(),
         },
         request=PickupUpdateData(),
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request PATCH \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --data '{
-                    "address": {
-                      "phone_number": "514-000-0000",
-                      "residential": false,
-                      "email": "john@a.com"
-                    },
-                    "ready_time": "13:00",
-                    "closing_time": "20:00",
-                }'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request, pk: str):
         """
@@ -212,16 +145,6 @@ class PickupCancel(APIView):
             500: ErrorResponse(),
         },
         request=PickupCancelData(),
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request POST \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request, pk: str):
         """

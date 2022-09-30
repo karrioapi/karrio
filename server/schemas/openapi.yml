@@ -9,13 +9,6 @@ paths:
       summary: Instance Metadata
       tags:
       - API
-      security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -87,8 +80,8 @@ paths:
   /api/token/verified:
     post:
       operationId: '&&get_verified_token'
-      description: "\n        Get a verified JWT token pair by submitting a Two-Factor\
-        \ authentication code.\n        "
+      description: Get a verified JWT token pair by submitting a Two-Factor authentication
+        code.
       summary: Get verified JWT token
       tags:
       - API
@@ -134,23 +127,16 @@ paths:
       tags:
       - Addresses
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddressList'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url '/v1/addresses' \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -175,49 +161,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AddressData'
-            examples:
-              Bash:
-                value: "\n                curl --request POST \\\n               \
-                  \   --url /v1/addresses \\\n                  --header 'Authorization:\
-                  \ Token <API_KEY>' \\\n                  --header 'Content-Type:\
-                  \ application/json' \\\n                  --data '{\n          \
-                  \          \"address_line1\": \"125 Church St\",\n             \
-                  \       \"person_name\": \"John Doe\",\n                    \"company_name\"\
-                  : \"A corp.\",\n                    \"phone_number\": \"+1 514 000\
-                  \ 0000\",\n                    \"city\": \"Moncton\",\n        \
-                  \            \"country_code\": \"CA\",\n                    \"postal_code\"\
-                  : \"E1C4Z8\",\n                    \"residential\": false,\n   \
-                  \                 \"state_code\": \"NB\"\n                }'\n \
-                  \               "
-                summary: bash
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Address'
-              examples:
-                Bash:
-                  value: "\n                curl --request POST \\\n             \
-                    \     --url /v1/addresses \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>' \\\n                  --header 'Content-Type:\
-                    \ application/json' \\\n                  --data '{\n        \
-                    \            \"address_line1\": \"125 Church St\",\n         \
-                    \           \"person_name\": \"John Doe\",\n                 \
-                    \   \"company_name\": \"A corp.\",\n                    \"phone_number\"\
-                    : \"+1 514 000 0000\",\n                    \"city\": \"Moncton\"\
-                    ,\n                    \"country_code\": \"CA\",\n           \
-                    \         \"postal_code\": \"E1C4Z8\",\n                    \"\
-                    residential\": false,\n                    \"state_code\": \"\
-                    NB\"\n                }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -245,23 +200,16 @@ paths:
       tags:
       - Addresses
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Address'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url /v1/addresses/<ADDRESS_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -292,36 +240,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedAddressData'
-            examples:
-              Bash:
-                value: "\n                curl --request PATCH \\\n              \
-                  \    --url /v1/addresses/<ADDRESS_ID> \\\n                  --header\
-                  \ 'Authorization: Token <API_KEY>' \\\n                  --header\
-                  \ 'Content-Type: application/json' \\\n                  --data\
-                  \ '{\n                    \"city\": \"Pierrefonds\"\n          \
-                  \      }'\n                "
-                summary: bash
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Address'
-              examples:
-                Bash:
-                  value: "\n                curl --request PATCH \\\n            \
-                    \      --url /v1/addresses/<ADDRESS_ID> \\\n                 \
-                    \ --header 'Authorization: Token <API_KEY>' \\\n             \
-                    \     --header 'Content-Type: application/json' \\\n         \
-                    \         --data '{\n                    \"city\": \"Pierrefonds\"\
-                    \n                }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -360,23 +289,16 @@ paths:
       tags:
       - Addresses
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Address'
-              examples:
-                Bash:
-                  value: "\n                curl --request DELETE \\\n           \
-                    \       --url /v1/addresses/<ADDRESS_ID> \\\n                \
-                    \  --header 'Authorization: Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -404,11 +326,10 @@ paths:
       tags:
       - Batches
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -442,11 +363,10 @@ paths:
       tags:
       - Batches
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -516,23 +436,16 @@ paths:
       tags:
       - Carriers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CarrierList'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url '/v1/carriers' \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -582,11 +495,10 @@ paths:
       tags:
       - Carriers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -615,23 +527,16 @@ paths:
       tags:
       - Customs
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomsList'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url '/v1/customs_info' \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -656,61 +561,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CustomsData'
-            examples:
-              Bash:
-                value: "\n                curl --request POST \\\n               \
-                  \   --url /v1/customs_info \\\n                  --header 'Authorization:\
-                  \ Token <API_KEY>' \\\n                  --header 'Content-Type:\
-                  \ application/json' \\\n                  --data '{\n          \
-                  \          \"content_type\": \"merchandise\",\n                \
-                  \    \"incoterm\": \"DDU\",\n                    \"commodities\"\
-                  : [\n                      {\n                        \"weight\"\
-                  : 2,\n                        \"weight_unit\": \"KG\",\n       \
-                  \                 \"quantity\": 1,\n                        \"sku\"\
-                  : \"XXXXX0000123\",\n                        \"value_amount\": 30,\n\
-                  \                        \"value_currency\": \"USD\",\n        \
-                  \                \"origin_country\": \"JM\"\n                  \
-                  \    }\n                    ],\n                    \"duty\": {\n\
-                  \                      \"paid_by\": \"recipient\",\n           \
-                  \           \"currency\": \"USD\",\n                      \"declared_value\"\
-                  : 60,\n                    },\n                    \"certify\":\
-                  \ true,\n                    \"signer\": \"Kex\",\n            \
-                  \      }'\n                "
-                summary: bash
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customs'
-              examples:
-                Bash:
-                  value: "\n                curl --request POST \\\n             \
-                    \     --url /v1/customs_info \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>' \\\n                  --header 'Content-Type:\
-                    \ application/json' \\\n                  --data '{\n        \
-                    \            \"content_type\": \"merchandise\",\n            \
-                    \        \"incoterm\": \"DDU\",\n                    \"commodities\"\
-                    : [\n                      {\n                        \"weight\"\
-                    : 2,\n                        \"weight_unit\": \"KG\",\n     \
-                    \                   \"quantity\": 1,\n                       \
-                    \ \"sku\": \"XXXXX0000123\",\n                        \"value_amount\"\
-                    : 30,\n                        \"value_currency\": \"USD\",\n\
-                    \                        \"origin_country\": \"JM\"\n        \
-                    \              }\n                    ],\n                   \
-                    \ \"duty\": {\n                      \"paid_by\": \"recipient\"\
-                    ,\n                      \"currency\": \"USD\",\n            \
-                    \          \"declared_value\": 60,\n                    },\n \
-                    \                   \"certify\": true,\n                    \"\
-                    signer\": \"Kex\",\n                  }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -738,24 +600,16 @@ paths:
       tags:
       - Customs
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customs'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n           \
-                    \       --header 'Authorization: Token <API_KEY>'\n          \
-                    \      "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -786,43 +640,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedCustomsData'
-            examples:
-              Bash:
-                value: "\n                curl --request PATCH \\\n              \
-                  \    --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n             \
-                  \     --header 'Authorization: Token <API_KEY>' \\\n           \
-                  \       --header 'Content-Type: application/json' \\\n         \
-                  \         --data '{\n                    \"content_type\": \"merchandise\"\
-                  ,\n                    \"duty\": {\n                      \"paid_by\"\
-                  : \"recipient\",\n                      \"currency\": \"CAD\",\n\
-                  \                      \"declared_value\": 100,\n              \
-                  \      }\n                  }'\n                "
-                summary: bash
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customs'
-              examples:
-                Bash:
-                  value: "\n                curl --request PATCH \\\n            \
-                    \      --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n         \
-                    \         --header 'Authorization: Token <API_KEY>' \\\n     \
-                    \             --header 'Content-Type: application/json' \\\n \
-                    \                 --data '{\n                    \"content_type\"\
-                    : \"merchandise\",\n                    \"duty\": {\n        \
-                    \              \"paid_by\": \"recipient\",\n                 \
-                    \     \"currency\": \"CAD\",\n                      \"declared_value\"\
-                    : 100,\n                    }\n                  }'\n        \
-                    \        "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -861,24 +689,16 @@ paths:
       tags:
       - Customs
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customs'
-              examples:
-                Bash:
-                  value: "\n                curl --request DELETE \\\n           \
-                    \       --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n        \
-                    \          --header 'Authorization: Token <API_KEY>'\n       \
-                    \         "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -902,12 +722,11 @@ paths:
     post:
       operationId: '&&&&$import_file'
       description: |-
-        Import csv, xls and xlsx data files for:
+        Import csv, xls and xlsx data files for:<br/>
         - tracking data
         - orders data
         - shipments data
-        - billing data (soon)
-
+        - billing data (soon)<br/><br/>
         **This operation will return a batch operation that you can poll to follow
         the import progression.**
       summary: Import data files
@@ -921,9 +740,9 @@ paths:
         name: data_template
         schema:
           type: string
-        description: "\n        A data template slug to use for the import.\n\n  \
-          \      **When nothing is specified, the system default headers are expected.**\n\
-          \        "
+        description: "A data template slug to use for the import.<br/>\n        **When\
+          \ nothing is specified, the system default headers are expected.**\n   \
+          \     "
       - in: query
         name: resource_type
         schema:
@@ -950,11 +769,10 @@ paths:
                   type: string
                   format: binary
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '202':
           content:
@@ -982,11 +800,10 @@ paths:
       tags:
       - Documents
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1019,11 +836,10 @@ paths:
               $ref: '#/components/schemas/DocumentUploadData'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -1063,11 +879,10 @@ paths:
       tags:
       - Documents
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1095,11 +910,10 @@ paths:
       tags:
       - Orders
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1132,11 +946,10 @@ paths:
               $ref: '#/components/schemas/OrderData'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -1170,11 +983,10 @@ paths:
       tags:
       - Orders
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1214,11 +1026,10 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderUpdateData'
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1263,11 +1074,10 @@ paths:
       tags:
       - Orders
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -1301,23 +1111,16 @@ paths:
       tags:
       - Parcels
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ParcelList'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url '/v1/parcels' \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1342,39 +1145,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ParcelData'
-            examples:
-              Bash:
-                value: "\n                curl --request POST \\\n               \
-                  \     --url /v1/parcels \\\n                    --header 'Authorization:\
-                  \ Token <API_KEY>' \\\n                    --header 'Content-Type:\
-                  \ application/json' \\\n                    --data '{\n        \
-                  \              \"weight\": 1,\n                      \"weight_unit\"\
-                  : \"KG\",\n                      \"package_preset\": \"canadapost_corrugated_small_box\"\
-                  \n                    }'\n                "
-                summary: bash
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Parcel'
-              examples:
-                Bash:
-                  value: "\n                curl --request POST \\\n             \
-                    \       --url /v1/parcels \\\n                    --header 'Authorization:\
-                    \ Token <API_KEY>' \\\n                    --header 'Content-Type:\
-                    \ application/json' \\\n                    --data '{\n      \
-                    \                \"weight\": 1,\n                      \"weight_unit\"\
-                    : \"KG\",\n                      \"package_preset\": \"canadapost_corrugated_small_box\"\
-                    \n                    }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -1402,23 +1184,16 @@ paths:
       tags:
       - Parcels
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Parcel'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url /v1/parcels/<PARCEL_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1449,36 +1224,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedParcelData'
-            examples:
-              Bash:
-                value: "\n                curl --request PATCH \\\n              \
-                  \      --url /v1/parcels/<PARCEL_ID> \\\n                    --header\
-                  \ 'Authorization: Token <API_KEY>' \\\n                    --header\
-                  \ 'Content-Type: application/json' \\\n                    --data\
-                  \ '{\n                      \"weight\": 1.2,\n                 \
-                  \   }'\n                "
-                summary: bash
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Parcel'
-              examples:
-                Bash:
-                  value: "\n                curl --request PATCH \\\n            \
-                    \        --url /v1/parcels/<PARCEL_ID> \\\n                  \
-                    \  --header 'Authorization: Token <API_KEY>' \\\n            \
-                    \        --header 'Content-Type: application/json' \\\n      \
-                    \              --data '{\n                      \"weight\": 1.2,\n\
-                    \                    }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -1517,24 +1273,16 @@ paths:
       tags:
       - Parcels
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Parcel'
-              examples:
-                Bash:
-                  value: "\n                curl --request DELETE \\\n           \
-                    \         --url /v1/parcels/<PARCEL_ID> \\\n                 \
-                    \   --header 'Authorization: Token <API_KEY>'\n              \
-                    \  "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1562,23 +1310,16 @@ paths:
       tags:
       - Pickups
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PickupList'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url '/v1/pickups' \\\n                  --header 'Authorization:\
-                    \ Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1611,57 +1352,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PickupData'
-            examples:
-              Bash:
-                value: "\n                curl --request POST \\\n               \
-                  \   --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                  \ 'Authorization: Token <API_KEY>' \\\n                  --data\
-                  \ '{\n                    \"pickup_date\": \"2020-10-25\",\n   \
-                  \                 \"address\": {\n                      \"address_line1\"\
-                  : \"125 Church St\",\n                      \"person_name\": \"\
-                  John Doe\",\n                      \"city\": \"Moncton\",\n    \
-                  \                  \"country_code\": \"CA\",\n                 \
-                  \     \"postal_code\": \"E1C4Z8\",\n                      \"state_code\"\
-                  : \"NB\",\n                    },\n                    \"ready_time\"\
-                  : \"13:00\",\n                    \"closing_time\": \"17:00\",\n\
-                  \                    \"instruction\": \"Should not be folded\",\n\
-                  \                    \"package_location\": \"At the main entrance\
-                  \ hall\",\n                    \"tracking_numbers\": [\n       \
-                  \                 \"8545763607864201002\"\n                    ]\n\
-                  \                }'\n                "
-                summary: bash
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pickup'
-              examples:
-                Bash:
-                  value: "\n                curl --request POST \\\n             \
-                    \     --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>' \\\n                  --data\
-                    \ '{\n                    \"pickup_date\": \"2020-10-25\",\n \
-                    \                   \"address\": {\n                      \"address_line1\"\
-                    : \"125 Church St\",\n                      \"person_name\": \"\
-                    John Doe\",\n                      \"city\": \"Moncton\",\n  \
-                    \                    \"country_code\": \"CA\",\n             \
-                    \         \"postal_code\": \"E1C4Z8\",\n                     \
-                    \ \"state_code\": \"NB\",\n                    },\n          \
-                    \          \"ready_time\": \"13:00\",\n                    \"\
-                    closing_time\": \"17:00\",\n                    \"instruction\"\
-                    : \"Should not be folded\",\n                    \"package_location\"\
-                    : \"At the main entrance hall\",\n                    \"tracking_numbers\"\
-                    : [\n                        \"8545763607864201002\"\n       \
-                    \             ]\n                }'\n                "
-                  summary: bash
           description: ''
         '400':
           content:
@@ -1695,23 +1397,16 @@ paths:
       tags:
       - Pickups
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pickup'
-              examples:
-                Bash:
-                  value: "\n                curl --request GET \\\n              \
-                    \    --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1742,43 +1437,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PickupUpdateData'
-            examples:
-              Bash:
-                value: "\n                curl --request PATCH \\\n              \
-                  \    --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                  \ 'Authorization: Token <API_KEY>' \\\n                  --data\
-                  \ '{\n                    \"address\": {\n                     \
-                  \ \"phone_number\": \"514-000-0000\",\n                      \"\
-                  residential\": false,\n                      \"email\": \"john@a.com\"\
-                  \n                    },\n                    \"ready_time\": \"\
-                  13:00\",\n                    \"closing_time\": \"20:00\",\n   \
-                  \             }'\n                "
-                summary: bash
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pickup'
-              examples:
-                Bash:
-                  value: "\n                curl --request PATCH \\\n            \
-                    \      --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>' \\\n                  --data\
-                    \ '{\n                    \"address\": {\n                   \
-                    \   \"phone_number\": \"514-000-0000\",\n                    \
-                    \  \"residential\": false,\n                      \"email\": \"\
-                    john@a.com\"\n                    },\n                    \"ready_time\"\
-                    : \"13:00\",\n                    \"closing_time\": \"20:00\"\
-                    ,\n                }'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1822,30 +1492,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PickupCancelData'
-            examples:
-              Bash:
-                value: "\n                curl --request POST \\\n               \
-                  \   --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                  \ 'Authorization: Token <API_KEY>'\n                "
-                summary: bash
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pickup'
-              examples:
-                Bash:
-                  value: "\n                curl --request POST \\\n             \
-                    \     --url /v1/pickups/<PICKUP_ID> \\\n                  --header\
-                    \ 'Authorization: Token <API_KEY>'\n                "
-                  summary: bash
           description: ''
         '404':
           content:
@@ -1919,11 +1576,10 @@ paths:
               $ref: '#/components/schemas/PickupRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -1997,11 +1653,10 @@ paths:
               $ref: '#/components/schemas/PickupCancelRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2075,11 +1730,10 @@ paths:
               $ref: '#/components/schemas/PickupUpdateRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2122,11 +1776,10 @@ paths:
               $ref: '#/components/schemas/RateRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2168,11 +1821,10 @@ paths:
               $ref: '#/components/schemas/ShippingRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2246,11 +1898,10 @@ paths:
               $ref: '#/components/schemas/ShipmentCancelRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '202':
           content:
@@ -2319,11 +1970,10 @@ paths:
       tags:
       - Proxy
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2355,13 +2005,6 @@ paths:
       summary: Data References
       tags:
       - API
-      security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -2504,11 +2147,10 @@ paths:
       tags:
       - Shipments
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2541,11 +2183,10 @@ paths:
               $ref: '#/components/schemas/ShipmentData'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -2585,11 +2226,10 @@ paths:
       tags:
       - Shipments
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2629,11 +2269,10 @@ paths:
             schema:
               $ref: '#/components/schemas/ShipmentUpdateData'
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2684,11 +2323,10 @@ paths:
       tags:
       - Shipments
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2746,11 +2384,10 @@ paths:
               $ref: '#/components/schemas/ShipmentPurchaseData'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2807,11 +2444,10 @@ paths:
             schema:
               $ref: '#/components/schemas/ShipmentRateData'
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2914,11 +2550,10 @@ paths:
       tags:
       - Trackers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -2988,11 +2623,10 @@ paths:
       tags:
       - Trackers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3032,11 +2666,10 @@ paths:
       tags:
       - Trackers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       - {}
       responses:
         '200':
@@ -3070,11 +2703,10 @@ paths:
       tags:
       - Trackers
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3102,11 +2734,10 @@ paths:
       tags:
       - Webhooks
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3139,11 +2770,10 @@ paths:
               $ref: '#/components/schemas/WebhookData'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -3177,11 +2807,10 @@ paths:
       tags:
       - Webhooks
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '201':
           content:
@@ -3219,11 +2848,10 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedWebhookData'
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3262,11 +2890,10 @@ paths:
       tags:
       - Webhooks
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3306,11 +2933,10 @@ paths:
               $ref: '#/components/schemas/WebhookTestRequest'
         required: true
       security:
-      - TokenBasicAuthentication: []
-      - tokenAuth: []
-      - OAuth2Authentication: []
-      - JWTAuthentication: []
-      - cookieAuth: []
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
       responses:
         '200':
           content:
@@ -3354,14 +2980,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "\n    The address postal code\n\n    **(required for shipment\
-            \ purchase)**\n    "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 10
         city:
           type: string
           nullable: true
-          description: "\n    The address city.\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -3376,8 +3002,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "\n    attention to\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         company_name:
           type: string
@@ -3415,8 +3041,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "\n        The address line with street number <br/>\n    \
-            \    **(required for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -3445,14 +3071,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "\n    The address postal code\n\n    **(required for shipment\
-            \ purchase)**\n    "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 10
         city:
           type: string
           nullable: true
-          description: "\n    The address city.\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -3467,8 +3093,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "\n    attention to\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         company_name:
           type: string
@@ -3506,8 +3132,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "\n        The address line with street number <br/>\n    \
-            \    **(required for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -3690,12 +3316,12 @@ components:
           description: Indicates a specific carrier configuration name.
         test_mode:
           type: boolean
-          description: "\n    The test flag indicates whether to use a carrier configured\
-            \ for test.\n    "
+          description: The test flag indicates whether to use a carrier configured
+            for test.
         active:
           type: boolean
-          description: "\n    The active flag indicates whether the carrier account\
-            \ is active or not.\n    "
+          description: The active flag indicates whether the carrier account is active
+            or not.
         object_type:
           type: string
           default: carrier
@@ -3780,12 +3406,11 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n        <details>\n        <summary>Commodity user references\
-            \ metadata.</summary>\n\n        ```\n        {\n            \"part_number\"\
-            : \"5218487281\",\n            \"reference1\": \"# ref 1\",\n        \
-            \    \"reference2\": \"# ref 2\",\n            \"reference3\": \"# ref\
-            \ 3\",\n            \"reference4\": \"# ref 4\",\n            ...\n  \
-            \      }\n        ```\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        "
         object_type:
           type: string
           default: commodity
@@ -3848,12 +3473,11 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n        <details>\n        <summary>Commodity user references\
-            \ metadata.</summary>\n\n        ```\n        {\n            \"part_number\"\
-            : \"5218487281\",\n            \"reference1\": \"# ref 1\",\n        \
-            \    \"reference2\": \"# ref 2\",\n            \"reference3\": \"# ref\
-            \ 3\",\n            \"reference4\": \"# ref 4\",\n            ...\n  \
-            \      }\n        ```\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        "
       required:
       - weight
       - weight_unit
@@ -4264,8 +3888,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Duty'
           nullable: true
-          description: "\n    The payment details.<br/>\n    Note that this is required\
-            \ for a Dutiable parcel shipped internationally.\n    "
+          description: "The payment details.<br/>\n        **Note that this is required\
+            \ for a Dutiable parcel shipped internationally.**\n        "
         content_type:
           nullable: true
           oneOf:
@@ -4306,13 +3930,13 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>Customs identification options.</summary>\n\
-            \n    ```\n    {\n        \"aes\": \"5218487281\",\n        \"eel_pfc\"\
-            : \"5218487281\",\n        \"license_number\": \"5218487281\",\n     \
-            \   \"certificate_number\": \"5218487281\",\n        \"nip_number\": \"\
-            5218487281\",\n        \"eori_number\": \"5218487281\",\n        \"vat_registration_number\"\
-            : \"5218487281\",\n    }\n    ```\n\n    Please check the docs for carrier\
-            \ specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>Customs identification options.</summary>\n\
+            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
+            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
+            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
+            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
+            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
+            \     "
         object_type:
           type: string
           default: customs_info
@@ -4329,8 +3953,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Duty'
           nullable: true
-          description: "\n    The payment details.<br/>\n    Note that this is required\
-            \ for a Dutiable parcel shipped internationally.\n    "
+          description: "The payment details.<br/>\n        **Note that this is required\
+            \ for a Dutiable parcel shipped internationally.**\n        "
         content_type:
           nullable: true
           oneOf:
@@ -4371,13 +3995,13 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>Customs identification options.</summary>\n\
-            \n    ```\n    {\n        \"aes\": \"5218487281\",\n        \"eel_pfc\"\
-            : \"5218487281\",\n        \"license_number\": \"5218487281\",\n     \
-            \   \"certificate_number\": \"5218487281\",\n        \"nip_number\": \"\
-            5218487281\",\n        \"eori_number\": \"5218487281\",\n        \"vat_registration_number\"\
-            : \"5218487281\",\n    }\n    ```\n\n    Please check the docs for carrier\
-            \ specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>Customs identification options.</summary>\n\
+            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
+            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
+            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
+            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
+            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
+            \     "
       required:
       - commodities
     CustomsList:
@@ -4663,12 +4287,11 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n        <details>\n        <summary>Commodity user references\
-            \ metadata.</summary>\n\n        ```\n        {\n            \"part_number\"\
-            : \"5218487281\",\n            \"reference1\": \"# ref 1\",\n        \
-            \    \"reference2\": \"# ref 2\",\n            \"reference3\": \"# ref\
-            \ 3\",\n            \"reference4\": \"# ref 4\",\n            ...\n  \
-            \      }\n        ```\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        "
         object_type:
           type: string
           default: commodity
@@ -4793,15 +4416,14 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ order shipments.</summary>\n\n    ```\n    {\n        \"currency\":\
-            \ \"USD\",\n        \"paid_by\": \"third_party\",\n        \"payment_account_number\"\
-            : \"123456789\",\n        \"duty_paid_by\": \"third_party\",\n       \
-            \ \"duty_account_number\": \"123456789\",\n        \"invoice_number\"\
-            : \"123456789\",\n        \"invoice_date\": \"2020-01-01\",\n        \"\
-            single_item_per_parcel\": true,\n        \"carrier_ids\": [\"canadapost-test\"\
-            ],\n    }\n    ```\n\n    Please check the docs for shipment specific\
-            \ options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n   \
+            \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n        }\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -4817,8 +4439,8 @@ components:
           description: Specify whether the order is in test mode or not.
         created_at:
           type: string
-          description: "\n    The shipment creation datetime\n\n    Date Format: `YYYY-MM-DD\
-            \ HH:MM:SS.mmmmmmz`\n    "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
       required:
       - created_at
       - line_items
@@ -4838,8 +4460,8 @@ components:
         source:
           type: string
           default: API
-          description: "\n    The order's source.\n\n    e.g. API, POS, ERP, Shopify,\
-            \ Woocommerce, etc.\n    "
+          description: "The order's source.<br/>\n        e.g. API, POS, ERP, Shopify,\
+            \ Woocommerce, etc.\n        "
         shipping_to:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -4863,15 +4485,14 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ order shipments.</summary>\n\n    ```\n    {\n        \"currency\":\
-            \ \"USD\",\n        \"paid_by\": \"third_party\",\n        \"payment_account_number\"\
-            : \"123456789\",\n        \"duty_paid_by\": \"third_party\",\n       \
-            \ \"duty_account_number\": \"123456789\",\n        \"invoice_number\"\
-            : \"123456789\",\n        \"invoice_date\": \"2020-01-01\",\n        \"\
-            single_item_per_parcel\": true,\n        \"carrier_ids\": [\"canadapost-test\"\
-            ],\n    }\n    ```\n\n    Please check the docs for shipment specific\
-            \ options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n   \
+            \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n        }\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -4916,16 +4537,14 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n        <details>\n        <summary>The options available\
-            \ for the order shipments.</summary>\n\n        ```\n        {\n     \
-            \       \"currency\": \"USD\",\n            \"paid_by\": \"third_party\"\
-            ,\n            \"payment_account_number\": \"123456789\",\n          \
-            \  \"duty_paid_by\": \"recipient\",\n            \"duty_account_number\"\
-            : \"123456789\",\n            \"invoice_number\": \"123456789\",\n   \
-            \         \"invoice_date\": \"2020-01-01\",\n            \"single_item_per_parcel\"\
-            : true,\n            \"carrier_ids\": [\"canadapost-test\"],\n       \
-            \ }\n        ```\n\n        Please check the docs for shipment specific\
-            \ options.\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"recipient\",\n     \
+            \       \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n        }\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -4964,17 +4583,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "\n        The parcel's packaging type.\n\n        **Note that\
-            \ the packaging is optional when using a package preset**\n\n        values:\
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
-            \ `your_packaging`\n\n        For carrier specific packaging types, please\
-            \ consult the reference.\n        "
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 50
         package_preset:
           type: string
           nullable: true
-          description: "\n    The parcel's package preset.\n\n    For carrier specific\
-            \ package presets, please consult the reference.\n    "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 50
         description:
           type: string
@@ -5000,7 +4619,6 @@ components:
           description: The parcel's dimension unit
           oneOf:
           - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
@@ -5010,8 +4628,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: The parcel reference number. (can be used as tracking number
-            for custom carriers)
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -5022,11 +4640,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n        <details>\n        <summary>Parcel specific options.</summary>\n\
-            \n        ```\n        {\n            \"insurance\": \"100.00\",\n   \
-            \         \"insured_by\": \"carrier\",\n        }\n        ```\n\n   \
-            \     Please check the docs for more details.\n        </details>\n  \
-            \      "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        "
         object_type:
           type: string
           default: parcel
@@ -5059,17 +4675,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "\n        The parcel's packaging type.\n\n        **Note that\
-            \ the packaging is optional when using a package preset**\n\n        values:\
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
-            \ `your_packaging`\n\n        For carrier specific packaging types, please\
-            \ consult the reference.\n        "
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 50
         package_preset:
           type: string
           nullable: true
-          description: "\n    The parcel's package preset.\n\n    For carrier specific\
-            \ package presets, please consult the reference.\n    "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 50
         description:
           type: string
@@ -5095,7 +4711,6 @@ components:
           description: The parcel's dimension unit
           oneOf:
           - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
@@ -5105,8 +4720,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: The parcel reference number. (can be used as tracking number
-            for custom carriers)
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -5117,11 +4732,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n        <details>\n        <summary>Parcel specific options.</summary>\n\
-            \n        ```\n        {\n            \"insurance\": \"100.00\",\n   \
-            \         \"insured_by\": \"carrier\",\n        }\n        ```\n\n   \
-            \     Please check the docs for more details.\n        </details>\n  \
-            \      "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        "
       required:
       - weight
       - weight_unit
@@ -5151,14 +4764,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "\n    The address postal code\n\n    **(required for shipment\
-            \ purchase)**\n    "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 10
         city:
           type: string
           nullable: true
-          description: "\n    The address city.\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -5173,8 +4786,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "\n    attention to\n\n    **(required for shipment purchase)**\n\
-            \    "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         company_name:
           type: string
@@ -5212,8 +4825,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "\n        The address line with street number <br/>\n    \
-            \    **(required for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -5237,8 +4850,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Duty'
           nullable: true
-          description: "\n    The payment details.<br/>\n    Note that this is required\
-            \ for a Dutiable parcel shipped internationally.\n    "
+          description: "The payment details.<br/>\n        **Note that this is required\
+            \ for a Dutiable parcel shipped internationally.**\n        "
         content_type:
           nullable: true
           oneOf:
@@ -5279,13 +4892,13 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>Customs identification options.</summary>\n\
-            \n    ```\n    {\n        \"aes\": \"5218487281\",\n        \"eel_pfc\"\
-            : \"5218487281\",\n        \"license_number\": \"5218487281\",\n     \
-            \   \"certificate_number\": \"5218487281\",\n        \"nip_number\": \"\
-            5218487281\",\n        \"eori_number\": \"5218487281\",\n        \"vat_registration_number\"\
-            : \"5218487281\",\n    }\n    ```\n\n    Please check the docs for carrier\
-            \ specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>Customs identification options.</summary>\n\
+            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
+            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
+            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
+            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
+            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
+            \     "
     PatchedParcelData:
       type: object
       properties:
@@ -5311,17 +4924,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "\n        The parcel's packaging type.\n\n        **Note that\
-            \ the packaging is optional when using a package preset**\n\n        values:\
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
-            \ `your_packaging`\n\n        For carrier specific packaging types, please\
-            \ consult the reference.\n        "
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 50
         package_preset:
           type: string
           nullable: true
-          description: "\n    The parcel's package preset.\n\n    For carrier specific\
-            \ package presets, please consult the reference.\n    "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 50
         description:
           type: string
@@ -5347,7 +4960,6 @@ components:
           description: The parcel's dimension unit
           oneOf:
           - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
@@ -5357,8 +4969,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: The parcel reference number. (can be used as tracking number
-            for custom carriers)
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -5369,11 +4981,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n        <details>\n        <summary>Parcel specific options.</summary>\n\
-            \n        ```\n        {\n            \"insurance\": \"100.00\",\n   \
-            \         \"insured_by\": \"carrier\",\n        }\n        ```\n\n   \
-            \     Please check the docs for more details.\n        </details>\n  \
-            \      "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        "
     PatchedWebhookData:
       type: object
       properties:
@@ -5461,13 +5071,13 @@ components:
         instruction:
           type: string
           nullable: true
-          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
-            \    "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
-            \ door.\n    "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -5507,8 +5117,8 @@ components:
         pickup_date:
           type: string
           nullable: true
-          description: "\n    The pickup date\n\n    Date Format: `YYYY-MM-DD`\n \
-            \   "
+          description: "The pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         reason:
           type: string
           description: The reason of the pickup cancellation
@@ -5519,30 +5129,30 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "\n    The expected pickup date\n\n    Date Format: `YYYY-MM-DD`\n\
-            \    "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: The pickup address
         ready_time:
           type: string
-          description: "\n    The ready time for pickup.\n\n    Time Format: `HH:MM`\n\
-            \    "
+          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "\n    The closing or late time of the pickup\n\n    Time Format:\
-            \ `HH:MM`\n    "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
-            \    "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
-            \ door.\n    "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -5588,8 +5198,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "\n    The expected pickup date\n\n    Date Format: `YYYY-MM-DD`\n\
-            \    "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -5601,22 +5211,22 @@ components:
           description: The shipment parcels to pickup.
         ready_time:
           type: string
-          description: "\n    The ready time for pickup.\n\n    Time Format: `HH:MM`\n\
-            \    "
+          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "\n    The closing or late time of the pickup\n\n    Time Format:\
-            \ `HH:MM`\n    "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
-            \    "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
-            \ door.\n    "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -5645,8 +5255,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "\n    The expected pickup date\n\n    Date Format: YYYY-MM-DD\n\
-            \    "
+          description: "The expected pickup date.<br/>\n        Date Format: YYYY-MM-DD\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -5662,13 +5272,13 @@ components:
         instruction:
           type: string
           nullable: true
-          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
-            \    "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
-            \ door.\n    "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -5694,8 +5304,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "\n    The expected pickup date\n\n    Date Format: `YYYY-MM-DD`\n\
-            \    "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -5710,22 +5320,22 @@ components:
           description: pickup identification number
         ready_time:
           type: string
-          description: "\n    The ready time for pickup.\n\n    Time Format: `HH:MM`\n\
-            \    "
+          description: "The ready time for pickup.\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "\n    The closing or late time of the pickup\n\n    Time Format:\
-            \ `HH:MM`\n    "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "\n    The pickup instruction.\n\n    eg: Handle with care.\n\
-            \    "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "\n    The package(s) location.\n\n    eg: Behind the entrance\
-            \ door.\n    "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -5765,9 +5375,9 @@ components:
           type: number
           format: double
           default: 0.0
-          description: "\n    The rate's monetary amount of the total charge.<br/>\n\
-            \    This is the gross amount of the rate after adding the additional\
-            \ charges\n    "
+          description: "The rate's monetary amount of the total charge.<br/>\n   \
+            \     This is the gross amount of the rate after adding the additional\
+            \ charges\n        "
         transit_days:
           type: integer
           nullable: true
@@ -5797,15 +5407,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -5816,22 +5426,22 @@ components:
           items:
             type: string
           nullable: true
-          description: "\n    The requested carrier service for the shipment.<br/>\n\
-            \    Please consult the reference for specific carriers services.\n\n\
-            \    Note that this is a list because on a Multi-carrier rate request\
-            \ you could specify a service per carrier.\n    "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         reference:
           type: string
           nullable: true
@@ -5841,8 +5451,7 @@ components:
           items:
             type: string
           nullable: true
-          description: "\n    The list of configured carriers you wish to get rates\
-            \ from.\n    "
+          description: The list of configured carriers you wish to get rates from.
       required:
       - parcels
       - recipient
@@ -5887,15 +5496,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -5907,22 +5516,22 @@ components:
             type: string
           nullable: true
           default: []
-          description: "\n    The carriers services requested for the shipment.\n\n\
-            \    Please consult the reference for specific carriers services.<br/>\n\
-            \    Note that this is a list because on a Multi-carrier rate request\
-            \ you could specify a service per carrier.\n    "
+          description: "The carriers services requested for the shipment.<br/>\n \
+            \       Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.**\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -5935,8 +5544,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Customs'
           nullable: true
-          description: "\n    The customs details.<br/>\n    Note that this is required\
-            \ for the shipment of an international Dutiable parcel.\n    "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         rates:
           type: array
           items:
@@ -5960,17 +5569,17 @@ components:
             type: string
           nullable: true
           default: []
-          description: "\n    The list of configured carriers you wish to get rates\
-            \ from.\n\n    *Note that the request will be sent to all carriers in\
-            \ nothing is specified*\n    "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         tracker_id:
           type: string
           nullable: true
           description: The attached tracker id
         created_at:
           type: string
-          description: "\n    The shipment creation datetime\n\n    Date Format: `YYYY-MM-DD\
-            \ HH:MM:SS.mmmmmmz`\n    "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -6063,15 +5672,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -6081,14 +5690,14 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6101,8 +5710,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
           nullable: true
-          description: "\n    The customs details.<br/>\n    Note that this is required\
-            \ for the shipment of an international Dutiable parcel.\n    "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         reference:
           type: string
           nullable: true
@@ -6122,19 +5731,19 @@ components:
             type: string
           nullable: true
           default: []
-          description: "\n    The requested carrier service for the shipment.\n\n\
-            \    Please consult the reference for specific carriers services.<br/>\n\
-            \    Note that this is a list because on a Multi-carrier rate request\
-            \ you could specify a service per carrier.\n    "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\n\
+            \        you could specify a service per carrier.**\n        "
         carrier_ids:
           type: array
           items:
             type: string
           nullable: true
           default: []
-          description: "\n    The list of configured carriers you wish to get rates\
-            \ from.\n\n    *Note that the request will be sent to all carriers in\
-            \ nothing is specified*\n    "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -6197,18 +5806,19 @@ components:
           items:
             type: string
           nullable: true
-          description: "\n    The requested carrier service for the shipment.\n\n\
-            \    Please consult [the reference](#operation/references) for specific\
-            \ carriers services.<br/>\n    Note that this is a list because on a Multi-carrier\
-            \ rate request you could specify a service per carrier.\n    "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult [the reference](#operation/references) for specific\
+            \ carriers services.<br/>\n        **Note that this is a list because\
+            \ on a Multi-carrier rate request you could\n        specify a service\
+            \ per carrier.**\n        "
         carrier_ids:
           type: array
           items:
             type: string
           nullable: true
-          description: "\n    The list of configured carriers you wish to get rates\
-            \ from.\n\n    *Note that the request will be sent to all carriers in\
-            \ nothing is specified*\n    "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         reference:
           type: string
           nullable: true
@@ -6242,14 +5852,14 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         reference:
           type: string
           nullable: true
@@ -6264,15 +5874,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -6282,14 +5892,14 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6302,8 +5912,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
           nullable: true
-          description: "\n    The customs details.<br/>\n    Note that this is required\
-            \ for the shipment of an international Dutiable parcel.\n    "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         reference:
           type: string
           nullable: true
@@ -6346,15 +5956,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "\n    The address of the party\n\n    Origin address (ship\
-            \ from) for the **shipper**<br/>\n    Destination address (ship to) for\
-            \ the **recipient**\n    "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -6366,22 +5976,22 @@ components:
             type: string
           nullable: true
           default: []
-          description: "\n    The carriers services requested for the shipment.\n\n\
-            \    Please consult the reference for specific carriers services.<br/>\n\
-            \    Note that this is a list because on a Multi-carrier rate request\
-            \ you could specify a service per carrier.\n    "
+          description: "The carriers services requested for the shipment.<br/>\n \
+            \       Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.**\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "\n    <details>\n    <summary>The options available for the\
-            \ shipment.</summary>\n\n    ```\n    {\n        \"currency\": \"USD\"\
-            ,\n        \"insurance\": 100.00,\n        \"cash_on_delivery\": 30.00,\n\
-            \        \"shipment_date\": \"2020-01-01\",\n        \"dangerous_good\"\
-            : true,\n        \"declared_value\": 150.00,\n        \"email_notification\"\
-            : true,\n        \"email_notification_to\": \"shipper@mail.com\",\n  \
-            \      \"signature_confirmation\": true,\n    }\n    ```\n\n    Please\
-            \ check the docs for carrier specific options.\n    </details>\n    "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
+            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
+            \            \"email_notification\": true,\n            \"email_notification_to\"\
+            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
+            \        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6394,8 +6004,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Customs'
           nullable: true
-          description: "\n    The customs details.<br/>\n    Note that this is required\
-            \ for the shipment of an international Dutiable parcel.\n    "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         rates:
           type: array
           items:
@@ -6419,17 +6029,17 @@ components:
             type: string
           nullable: true
           default: []
-          description: "\n    The list of configured carriers you wish to get rates\
-            \ from.\n\n    *Note that the request will be sent to all carriers in\
-            \ nothing is specified*\n    "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         tracker_id:
           type: string
           nullable: true
           description: The attached tracker id
         created_at:
           type: string
-          description: "\n    The shipment creation datetime\n\n    Date Format: `YYYY-MM-DD\
-            \ HH:MM:SS.mmmmmmz`\n    "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -6665,9 +6275,8 @@ components:
           readOnly: true
         otp_token:
           type: string
-          description: "\n        The OTP (One Time Password) token received by the\
-            \ user from the\n        configured Two Factor Authentication method.\n\
-            \        "
+          description: "The OTP (One Time Password) token received by the user from\
+            \ the\n        configured Two Factor Authentication method.\n        "
       required:
       - access
       - otp_token
@@ -6772,27 +6381,22 @@ components:
       - LB
       type: string
   securitySchemes:
-    JWTAuthentication:
+    JWT:
       type: apiKey
       in: header
       name: Authorization
-      description: JWT
-    OAuth2Authentication:
+      description: 'Authorization: Bearer xxx.xxx.xxx'
+    OAuth2:
       type: apiKey
       in: header
       name: Authorization
-      description: Oauth2
-    TokenBasicAuthentication:
+      description: 'Authorization: Bearer xxxxxxxx'
+    Token:
       type: apiKey
       in: header
       name: Authorization
-      description: Token
-    cookieAuth:
+      description: 'Authorization: Token key_xxxxxxxx'
+    TokenBasic:
       type: apiKey
-      in: cookie
-      name: sessionid
-    tokenAuth:
-      type: apiKey
-      in: header
-      name: Authorization
-      description: Token-based authentication with required prefix "Token"
+      in: query
+      description: '-u key_xxxxxxxx:'

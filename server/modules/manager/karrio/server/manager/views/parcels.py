@@ -41,16 +41,6 @@ class ParcelList(GenericAPIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url '/v1/parcels' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request):
         """
@@ -78,22 +68,6 @@ class ParcelList(GenericAPIView):
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request POST \\
-                    --url /v1/parcels \\
-                    --header 'Authorization: Token <API_KEY>' \\
-                    --header 'Content-Type: application/json' \\
-                    --data '{
-                      "weight": 1,
-                      "weight_unit": "KG",
-                      "package_preset": "canadapost_corrugated_small_box"
-                    }'
-                """,
-            ),
-        ],
     )
     def post(self, request: Request):
         """
@@ -117,16 +91,6 @@ class ParcelDetail(APIView):
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request GET \\
-                  --url /v1/parcels/<PARCEL_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def get(self, request: Request, pk: str):
         """
@@ -147,20 +111,6 @@ class ParcelDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request PATCH \\
-                    --url /v1/parcels/<PARCEL_ID> \\
-                    --header 'Authorization: Token <API_KEY>' \\
-                    --header 'Content-Type: application/json' \\
-                    --data '{
-                      "weight": 1.2,
-                    }'
-                """,
-            ),
-        ],
     )
     def patch(self, request: Request, pk: str):
         """
@@ -183,16 +133,6 @@ class ParcelDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        examples=[
-            openapi.OpenApiExample(
-                "bash",
-                value="""
-                curl --request DELETE \\
-                    --url /v1/parcels/<PARCEL_ID> \\
-                    --header 'Authorization: Token <API_KEY>'
-                """,
-            ),
-        ],
     )
     def delete(self, request: Request, pk: str):
         """
