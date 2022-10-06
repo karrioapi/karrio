@@ -133,10 +133,10 @@ def rate_request(
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=commercial,
                 CommercialPlusFlag=commercial_plus,
-                AcceptanceDateTime=lib.fdatetime(
+                AcceptanceDateTime=(lib.fdatetime(
                     (options.shipment_date.state or datetime.today()),
                     output_format="%Y-%m-%dT%H:%M:%S",
-                ),
+                ) if recipient.postal_code else None),
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
                     ExtraServicesType(
