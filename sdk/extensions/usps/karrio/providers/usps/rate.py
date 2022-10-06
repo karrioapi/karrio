@@ -36,7 +36,11 @@ def _extract_details(
     charges: typing.List[SpecialServiceType] = getattr(
         postage.SpecialServices, "SpecialService", []
     )
-    rate = lib.to_decimal(lib.find_element("Rate", postage_node, first=True).text)
+    rate = lib.to_decimal((
+        next(el for el in (lib.find_element("CommercialPlusRate", postage_node, first=True),
+            lib.find_element("CommercialRate", postage_node, first=True),
+            lib.find_element("Rate", postage_node, first=True)) if el is not None)
+    ).text)
     estimated_date = lib.to_date(
         getattr(
             lib.find_element("CommitmentDate", postage_node, first=True), "text", None
