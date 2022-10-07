@@ -123,7 +123,7 @@ def rate_request(
                 ),
                 ZipOrigination=payload.shipper.postal_code,
                 ZipDestination=payload.recipient.postal_code,
-                Pounds=package.weight.LB,
+                Pounds=0,
                 Ounces=package.weight.OZ,
                 Container=container.value,
                 Width=package.width.IN,

@@ -109,7 +109,7 @@ def rate_request(
         Package=[
             PackageType(
                 ID=0,
-                Pounds=package.weight.LB,
+                Pounds=0,
                 Ounces=package.weight.OZ,
                 Machinable=options.usps_option_machinable_item.state or False,
                 MailType=provider_units.PackagingType[
