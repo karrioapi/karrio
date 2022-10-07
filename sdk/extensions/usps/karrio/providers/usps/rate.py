@@ -129,7 +129,9 @@ def rate_request(
                 Width=package.width.IN,
                 Length=package.length.IN,
                 Height=package.height.IN,
-                Girth=package.girth.value,
+                Girth=(
+                    package.girth.value if package.packaging_type == "tube" else None
+                ),
                 Value=options.declared_value.state,
                 AmountToCollect=options.cash_on_delivery.state,
                 SpecialServices=(
