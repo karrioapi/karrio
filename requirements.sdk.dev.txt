@@ -5,10 +5,7 @@
 
 # SDK extentions
 -e ./sdk/core
--e ./insiders/sdk/addons
--e ./insiders/sdk/generic
--e ./insiders/sdk/easypost
-
+-e ./sdk/extensions/generic
 -e ./sdk/extensions/amazon_mws
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
@@ -20,9 +17,7 @@
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpdhl
--e ./sdk/vendors/eshipper
 -e ./sdk/extensions/fedex
--e ./sdk/vendors/freightcom
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
@@ -34,3 +29,8 @@
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
+
+
+-e ./sdk/vendors/easypost
+-e ./sdk/vendors/eshipper
+-e ./sdk/vendors/freightcom
