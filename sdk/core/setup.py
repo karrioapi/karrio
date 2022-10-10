@@ -12,7 +12,7 @@ setup(
     url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
-    license="GPLv3",
+    license="Apache-2.0",
     packages=find_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "jstruct",
