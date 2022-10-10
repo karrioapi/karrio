@@ -44,7 +44,7 @@ setup(
     entry_points={"console_scripts": ["karrio = karrio.server.__main__:main"]},
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
     zip_safe=False,
     include_package_data=True,

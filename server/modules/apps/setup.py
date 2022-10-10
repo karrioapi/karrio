@@ -12,7 +12,7 @@ setup(
     url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
-    license="Karrio Enterprise",
+    license="GPLv3",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "treepoem",

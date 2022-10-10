@@ -5,14 +5,14 @@ description = "DHL eCommerce API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
 homepage="https://github.com/karrioapi/karrio/tree/main/schemas/yanwen"
 authors = ["Karrio <hello@karrio.io>"]
-license = "Apache-2.0"
+license = "GPLv3"
 readme = "README.md"
 packages = [{ include = "yanwen_lib" }]
 classifiers = [
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
 	"Programming Language :: Python :: 3",
-	"License :: OSI Approved :: Apache Software License",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 
 [tool.poetry.dependencies]
