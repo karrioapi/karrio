@@ -7,6 +7,7 @@
 - Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
 - Blog: [Blog](https://docs.karrio.io/blog)
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />
 <a href="https://karrio.io" target="_blank">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo-inverted.svg" height="100px" />
@@ -43,16 +44,15 @@ docker-compose up -d
 
 <img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
-
 ## Get started
 
 ### Option 1: Hobby instance one-line-deploy
 
-```bash 
+```bash
 git clone https://github.com/karrioapi/karrio.git
 cd karrio
 docker-compose up -d
- ``` 
+ ```
 
 - Karrio server accessible at <http://localhost:5002>
 - Karrio dashboard accessible at <http://localhost:3000>
@@ -67,13 +67,11 @@ Follow our <a href="https://docs.karrio.io/installation">Self-Hosting Guide</a> 
 
 Request access to [Karrio Cloud](https://www.karrio.io/get-started).
 
-
 ## Our Philosophy
 
 We help you integrate with your shipping carriers and improve your fulfilment processes without loosing control.
 
 We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
-
 
 ## What are the benefits?
 
@@ -124,5 +122,3 @@ This project uses the [Apache 2 license](LICENSE). The core Karrio platform will
 We are develping some commercial enterprise add-ons (contained in the `/insiders` directory) only offered on our Cloud and Enterprise editions.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
-
-<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />
