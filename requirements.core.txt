@@ -1,9 +1,12 @@
 karrio
 karrio.server
+karrio.server.apps
 karrio.server.core
+karrio.server.data
 karrio.server.events
 karrio.server.graph
 karrio.server.manager
+karrio.server.orders
 karrio.server.pricing
 karrio.server.proxy
 karrio.amazon_mws
@@ -15,7 +18,9 @@ karrio.chronopost
 karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
+karrio.easypost
 karrio.eshipper
+karrio.generic
 karrio.dicom
 karrio.dpdhl
 karrio.fedex

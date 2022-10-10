@@ -1,1 +1,0 @@
-# Karrio Insiders SDK addons

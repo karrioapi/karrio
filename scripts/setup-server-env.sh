@@ -5,13 +5,13 @@ source "scripts/create-new-env.sh"
 
 # Install requirements
 cd "${ROOT}"
-if [[ "$*" != *--insiders* ]];
-then
     pip install -r "${ROOT:?}/requirements.server.dev.txt"
-else
-    pip install -r "${ROOT:?}/requirements.server.insiders.dev.txt"
-fi
 cd -
+
+if [[ "$*" == *--cloud* ]];
+then
+    pip install -r "${CLOUD_REQUIREMENTS:?}"
+fi
 
 
 # Export environment variables
