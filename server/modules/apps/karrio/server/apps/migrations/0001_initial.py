@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('orgs', '0005_auto_20211231_2353'),
         migrations.swappable_dependency(settings.OAUTH2_PROVIDER_APPLICATION_MODEL),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -62,32 +61,6 @@ class Migration(migrations.Migration):
                 'ordering': ['-created_at'],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
-        ),
-        migrations.CreateModel(
-            name='AppLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='apps.app')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='app_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='AppInstallationLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='apps.appinstallation')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='app_installation_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='appinstallation',
-            name='org',
-            field=models.ManyToManyField(related_name='installations', through='apps.AppInstallationLink', to='orgs.Organization'),
-        ),
-        migrations.AddField(
-            model_name='app',
-            name='org',
-            field=models.ManyToManyField(related_name='apps', through='apps.AppLink', to='orgs.Organization'),
         ),
         migrations.AddField(
             model_name='app',
