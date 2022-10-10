@@ -39,32 +39,6 @@ jobs:
             karrio test --failfast karrio.server.pricing.tests &&
             karrio test --failfast karrio.server.manager.tests &&
             karrio test --failfast karrio.server.events.tests &&
-            karrio test --failfast karrio.server.graph.tests
-          '
-
-  server-insiders-tests:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run insiders Tests
-        env:
-          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-          REGISTRY_TOKEN_NAME: ${{ secrets.REGISTRY_TOKEN_NAME }}
-        run: |
-          sudo chown -R 1000 ./
-          docker-compose -f docker-compose.test.yml run --rm -e REGISTRY_TOKEN_NAME=$REGISTRY_TOKEN_NAME -e REGISTRY_TOKEN=$REGISTRY_TOKEN karrio bash -c '
-            cd app &&
-            pip install --upgrade pip &&
-            pip install -r requirements.dev.txt &&
-            pip install -r requirements.server.insiders.dev.txt &&
-            cd -
-            karrio migrate &&
-            karrio test --failfast karrio.server.proxy.tests &&
-            karrio test --failfast karrio.server.pricing.tests &&
-            karrio test --failfast karrio.server.manager.tests &&
-            karrio test --failfast karrio.server.events.tests &&
             karrio test --failfast karrio.server.graph.tests &&
-            karrio test --failfast karrio.server.orgs.tests &&
             karrio test --failfast karrio.server.orders.tests
           '

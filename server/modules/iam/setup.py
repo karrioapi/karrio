@@ -16,7 +16,6 @@ setup(
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "karrio.server.core",
-        "karrio.server.cloud",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
