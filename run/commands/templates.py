@@ -138,14 +138,14 @@ homepage="https://docs.karrio.io/guides/sdk"
 repository="https://github.com/karrioapi/karrio"
 description = "Karrio - {{name}} Shipping Extension"
 authors = ["Karrio <hello@karrio.io>"]
-license = "Apache-2.0"
+license = "GPLv3"
 readme = "README.md"
 packages = [{ include = "karrio" }]
 classifiers=[
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 
 [tool.poetry.dependencies]

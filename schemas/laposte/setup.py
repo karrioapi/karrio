@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name="carrier.laposte",
     version="0.0.0-dev",
-    license="MIT",
+    license="GPLv3",
     packages=find_packages(),
     install_requires=["jstruct"],
     zip_safe=False,
