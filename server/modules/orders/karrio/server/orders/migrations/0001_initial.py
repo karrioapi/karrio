@@ -15,7 +15,6 @@ class Migration(migrations.Migration):
     dependencies = [
         ('manager', '0023_auto_20211227_2141'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('orgs', '0004_auto_20211113_1338'),
     ]
 
     operations = [
@@ -42,14 +41,6 @@ class Migration(migrations.Migration):
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
         migrations.CreateModel(
-            name='OrderLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='orders.order')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.CreateModel(
             name='OrderLineItemLink',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -61,11 +52,6 @@ class Migration(migrations.Migration):
             model_name='order',
             name='line_items',
             field=models.ManyToManyField(related_name='order', through='orders.OrderLineItemLink', to='manager.Commodity'),
-        ),
-        migrations.AddField(
-            model_name='order',
-            name='org',
-            field=models.ManyToManyField(related_name='orders', through='orders.OrderLink', to='orgs.Organization'),
         ),
         migrations.AddField(
             model_name='order',

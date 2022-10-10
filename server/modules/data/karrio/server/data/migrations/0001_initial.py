@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('orgs', '0007_auto_20220628_0044'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -59,31 +58,5 @@ class Migration(migrations.Migration):
                 'ordering': ['-created_at'],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
-        ),
-        migrations.CreateModel(
-            name='DataTemplateLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='data.datatemplate')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='data_template_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='datatemplate',
-            name='org',
-            field=models.ManyToManyField(related_name='data_templates', through='data.DataTemplateLink', to='orgs.Organization'),
-        ),
-        migrations.CreateModel(
-            name='BatchOperationLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='data.batchoperation')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='batch_operation_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='batchoperation',
-            name='org',
-            field=models.ManyToManyField(related_name='batch_operations', through='data.BatchOperationLink', to='orgs.Organization'),
         ),
     ]

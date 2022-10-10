@@ -10,15 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='order',
-            name='org',
-        ),
-        migrations.RemoveField(
-            model_name='order',
-            name='shipments',
-        ),
-        migrations.DeleteModel(
-            name='OrderLink',
-        ),
     ]
