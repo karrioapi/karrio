@@ -3,7 +3,6 @@ import logging
 import strawberry
 import strawberry.schema.config as config
 
-import karrio.server.graph.schemas.base as base
 import karrio.server.graph.schemas as schemas
 
 logger = logging.getLogger(__name__)
