@@ -86,148 +86,18 @@
 
     /* tslint:disable */
     var BASE_PATH = "https://app.karrio.io".replace(/\/+$/, "");
-    var isBlob = function (value) { return typeof Blob !== 'undefined' && value instanceof Blob; };
-    /**
-     * This is the base class for all generated API classes.
-     */
-    var BaseAPI = /** @class */ (function () {
-        function BaseAPI(configuration) {
-            if (configuration === void 0) { configuration = new Configuration(); }
-            var _this = this;
-            this.configuration = configuration;
-            this.fetchApi = function (url, init) { return __awaiter(_this, void 0, void 0, function () {
-                var fetchParams, _i, _a, middleware, response, _b, _c, middleware;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
-                        case 0:
-                            fetchParams = { url: url, init: init };
-                            _i = 0, _a = this.middleware;
-                            _d.label = 1;
-                        case 1:
-                            if (!(_i < _a.length)) return [3 /*break*/, 4];
-                            middleware = _a[_i];
-                            if (!middleware.pre) return [3 /*break*/, 3];
-                            return [4 /*yield*/, middleware.pre(__assign({ fetch: this.fetchApi }, fetchParams))];
-                        case 2:
-                            fetchParams = (_d.sent()) || fetchParams;
-                            _d.label = 3;
-                        case 3:
-                            _i++;
-                            return [3 /*break*/, 1];
-                        case 4: return [4 /*yield*/, (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init)];
-                        case 5:
-                            response = _d.sent();
-                            _b = 0, _c = this.middleware;
-                            _d.label = 6;
-                        case 6:
-                            if (!(_b < _c.length)) return [3 /*break*/, 9];
-                            middleware = _c[_b];
-                            if (!middleware.post) return [3 /*break*/, 8];
-                            return [4 /*yield*/, middleware.post({
-                                    fetch: this.fetchApi,
-                                    url: fetchParams.url,
-                                    init: fetchParams.init,
-                                    response: response.clone(),
-                                })];
-                        case 7:
-                            response = (_d.sent()) || response;
-                            _d.label = 8;
-                        case 8:
-                            _b++;
-                            return [3 /*break*/, 6];
-                        case 9: return [2 /*return*/, response];
-                    }
-                });
-            }); };
-            this.middleware = configuration.middleware;
-        }
-        BaseAPI.prototype.withMiddleware = function () {
-            var _a;
-            var middlewares = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                middlewares[_i] = arguments[_i];
-            }
-            var next = this.clone();
-            next.middleware = (_a = next.middleware).concat.apply(_a, middlewares);
-            return next;
-        };
-        BaseAPI.prototype.withPreMiddleware = function () {
-            var preMiddlewares = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                preMiddlewares[_i] = arguments[_i];
-            }
-            var middlewares = preMiddlewares.map(function (pre) { return ({ pre: pre }); });
-            return this.withMiddleware.apply(this, middlewares);
-        };
-        BaseAPI.prototype.withPostMiddleware = function () {
-            var postMiddlewares = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                postMiddlewares[_i] = arguments[_i];
-            }
-            var middlewares = postMiddlewares.map(function (post) { return ({ post: post }); });
-            return this.withMiddleware.apply(this, middlewares);
-        };
-        BaseAPI.prototype.request = function (context, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var _a, url, init, response;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            _a = this.createFetchParams(context, initOverrides), url = _a.url, init = _a.init;
-                            return [4 /*yield*/, this.fetchApi(url, init)];
-                        case 1:
-                            response = _b.sent();
-                            if (response.status >= 200 && response.status < 300) {
-                                return [2 /*return*/, response];
-                            }
-                            throw response;
-                    }
-                });
-            });
-        };
-        BaseAPI.prototype.createFetchParams = function (context, initOverrides) {
-            var url = this.configuration.basePath + context.path;
-            if (context.query !== undefined && Object.keys(context.query).length !== 0) {
-                // only add the querystring to the URL if there are query parameters.
-                // this is done to avoid urls ending with a "?" character which buggy webservers
-                // do not handle correctly sometimes.
-                url += '?' + this.configuration.queryParamsStringify(context.query);
-            }
-            var body = ((typeof FormData !== "undefined" && context.body instanceof FormData) || context.body instanceof URLSearchParams || isBlob(context.body))
-                ? context.body
-                : JSON.stringify(context.body);
-            var headers = Object.assign({}, this.configuration.headers, context.headers);
-            Object.keys(headers).forEach(function (key) { return headers[key] === undefined ? delete headers[key] : {}; });
-            var init = __assign({ method: context.method, headers: headers, body: body, credentials: this.configuration.credentials }, initOverrides);
-            return { url: url, init: init };
-        };
-        /**
-         * Create a shallow clone of `this` by constructing a new instance
-         * and then shallow cloning data members.
-         */
-        BaseAPI.prototype.clone = function () {
-            var constructor = this.constructor;
-            var next = new constructor(this.configuration);
-            next.middleware = this.middleware.slice();
-            return next;
-        };
-        return BaseAPI;
-    }());
-    var RequiredError = /** @class */ (function (_super) {
-        __extends(RequiredError, _super);
-        function RequiredError(field, msg) {
-            var _this = _super.call(this, msg) || this;
-            _this.field = field;
-            _this.name = "RequiredError";
-            return _this;
-        }
-        return RequiredError;
-    }(Error));
     var Configuration = /** @class */ (function () {
         function Configuration(configuration) {
             if (configuration === void 0) { configuration = {}; }
             this.configuration = configuration;
         }
+        Object.defineProperty(Configuration.prototype, "config", {
+            set: function (configuration) {
+                this.configuration = configuration;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(Configuration.prototype, "basePath", {
             get: function () {
                 return this.configuration.basePath != null ? this.configuration.basePath : BASE_PATH;
@@ -311,6 +181,236 @@
         });
         return Configuration;
     }());
+    var DefaultConfig = new Configuration();
+    /**
+     * This is the base class for all generated API classes.
+     */
+    var BaseAPI = /** @class */ (function () {
+        function BaseAPI(configuration) {
+            if (configuration === void 0) { configuration = DefaultConfig; }
+            var _this = this;
+            this.configuration = configuration;
+            this.fetchApi = function (url, init) { return __awaiter(_this, void 0, void 0, function () {
+                var fetchParams, _i, _a, middleware, response, e_1, _b, _c, middleware, _d, _e, middleware;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            fetchParams = { url: url, init: init };
+                            _i = 0, _a = this.middleware;
+                            _f.label = 1;
+                        case 1:
+                            if (!(_i < _a.length)) return [3 /*break*/, 4];
+                            middleware = _a[_i];
+                            if (!middleware.pre) return [3 /*break*/, 3];
+                            return [4 /*yield*/, middleware.pre(__assign({ fetch: this.fetchApi }, fetchParams))];
+                        case 2:
+                            fetchParams = (_f.sent()) || fetchParams;
+                            _f.label = 3;
+                        case 3:
+                            _i++;
+                            return [3 /*break*/, 1];
+                        case 4:
+                            response = undefined;
+                            _f.label = 5;
+                        case 5:
+                            _f.trys.push([5, 7, , 12]);
+                            return [4 /*yield*/, (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init)];
+                        case 6:
+                            response = _f.sent();
+                            return [3 /*break*/, 12];
+                        case 7:
+                            e_1 = _f.sent();
+                            _b = 0, _c = this.middleware;
+                            _f.label = 8;
+                        case 8:
+                            if (!(_b < _c.length)) return [3 /*break*/, 11];
+                            middleware = _c[_b];
+                            if (!middleware.onError) return [3 /*break*/, 10];
+                            return [4 /*yield*/, middleware.onError({
+                                    fetch: this.fetchApi,
+                                    url: fetchParams.url,
+                                    init: fetchParams.init,
+                                    error: e_1,
+                                    response: response ? response.clone() : undefined,
+                                })];
+                        case 9:
+                            response = (_f.sent()) || response;
+                            _f.label = 10;
+                        case 10:
+                            _b++;
+                            return [3 /*break*/, 8];
+                        case 11:
+                            if (response === undefined) {
+                                if (e_1 instanceof Error) {
+                                    throw new FetchError(e_1, 'The request failed and the interceptors did not return an alternative response');
+                                }
+                                else {
+                                    throw e_1;
+                                }
+                            }
+                            return [3 /*break*/, 12];
+                        case 12:
+                            _d = 0, _e = this.middleware;
+                            _f.label = 13;
+                        case 13:
+                            if (!(_d < _e.length)) return [3 /*break*/, 16];
+                            middleware = _e[_d];
+                            if (!middleware.post) return [3 /*break*/, 15];
+                            return [4 /*yield*/, middleware.post({
+                                    fetch: this.fetchApi,
+                                    url: fetchParams.url,
+                                    init: fetchParams.init,
+                                    response: response.clone(),
+                                })];
+                        case 14:
+                            response = (_f.sent()) || response;
+                            _f.label = 15;
+                        case 15:
+                            _d++;
+                            return [3 /*break*/, 13];
+                        case 16: return [2 /*return*/, response];
+                    }
+                });
+            }); };
+            this.middleware = configuration.middleware;
+        }
+        BaseAPI.prototype.withMiddleware = function () {
+            var _a;
+            var middlewares = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                middlewares[_i] = arguments[_i];
+            }
+            var next = this.clone();
+            next.middleware = (_a = next.middleware).concat.apply(_a, middlewares);
+            return next;
+        };
+        BaseAPI.prototype.withPreMiddleware = function () {
+            var preMiddlewares = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                preMiddlewares[_i] = arguments[_i];
+            }
+            var middlewares = preMiddlewares.map(function (pre) { return ({ pre: pre }); });
+            return this.withMiddleware.apply(this, middlewares);
+        };
+        BaseAPI.prototype.withPostMiddleware = function () {
+            var postMiddlewares = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                postMiddlewares[_i] = arguments[_i];
+            }
+            var middlewares = postMiddlewares.map(function (post) { return ({ post: post }); });
+            return this.withMiddleware.apply(this, middlewares);
+        };
+        BaseAPI.prototype.request = function (context, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _a, url, init, response;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4 /*yield*/, this.createFetchParams(context, initOverrides)];
+                        case 1:
+                            _a = _b.sent(), url = _a.url, init = _a.init;
+                            return [4 /*yield*/, this.fetchApi(url, init)];
+                        case 2:
+                            response = _b.sent();
+                            if (response && (response.status >= 200 && response.status < 300)) {
+                                return [2 /*return*/, response];
+                            }
+                            throw new ResponseError(response, 'Response returned an error code');
+                    }
+                });
+            });
+        };
+        BaseAPI.prototype.createFetchParams = function (context, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var url, headers, initOverrideFn, initParams, overridedInit, _a, init;
+                var _this = this;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            url = this.configuration.basePath + context.path;
+                            if (context.query !== undefined && Object.keys(context.query).length !== 0) {
+                                // only add the querystring to the URL if there are query parameters.
+                                // this is done to avoid urls ending with a "?" character which buggy webservers
+                                // do not handle correctly sometimes.
+                                url += '?' + this.configuration.queryParamsStringify(context.query);
+                            }
+                            headers = Object.assign({}, this.configuration.headers, context.headers);
+                            Object.keys(headers).forEach(function (key) { return headers[key] === undefined ? delete headers[key] : {}; });
+                            initOverrideFn = typeof initOverrides === "function"
+                                ? initOverrides
+                                : function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    return [2 /*return*/, initOverrides];
+                                }); }); };
+                            initParams = {
+                                method: context.method,
+                                headers: headers,
+                                body: context.body,
+                                credentials: this.configuration.credentials,
+                            };
+                            _a = [__assign({}, initParams)];
+                            return [4 /*yield*/, initOverrideFn({
+                                    init: initParams,
+                                    context: context,
+                                })];
+                        case 1:
+                            overridedInit = __assign.apply(void 0, _a.concat([(_b.sent())]));
+                            init = __assign(__assign({}, overridedInit), { body: isFormData(overridedInit.body) ||
+                                    overridedInit.body instanceof URLSearchParams ||
+                                    isBlob(overridedInit.body)
+                                    ? overridedInit.body
+                                    : JSON.stringify(overridedInit.body) });
+                            return [2 /*return*/, { url: url, init: init }];
+                    }
+                });
+            });
+        };
+        /**
+         * Create a shallow clone of `this` by constructing a new instance
+         * and then shallow cloning data members.
+         */
+        BaseAPI.prototype.clone = function () {
+            var constructor = this.constructor;
+            var next = new constructor(this.configuration);
+            next.middleware = this.middleware.slice();
+            return next;
+        };
+        return BaseAPI;
+    }());
+    function isBlob(value) {
+        return typeof Blob !== 'undefined' && value instanceof Blob;
+    }
+    function isFormData(value) {
+        return typeof FormData !== "undefined" && value instanceof FormData;
+    }
+    var ResponseError = /** @class */ (function (_super) {
+        __extends(ResponseError, _super);
+        function ResponseError(response, msg) {
+            var _this = _super.call(this, msg) || this;
+            _this.response = response;
+            _this.name = "ResponseError";
+            return _this;
+        }
+        return ResponseError;
+    }(Error));
+    var FetchError = /** @class */ (function (_super) {
+        __extends(FetchError, _super);
+        function FetchError(cause, msg) {
+            var _this = _super.call(this, msg) || this;
+            _this.cause = cause;
+            _this.name = "FetchError";
+            return _this;
+        }
+        return FetchError;
+    }(Error));
+    var RequiredError = /** @class */ (function (_super) {
+        __extends(RequiredError, _super);
+        function RequiredError(field, msg) {
+            var _this = _super.call(this, msg) || this;
+            _this.field = field;
+            _this.name = "RequiredError";
+            return _this;
+        }
+        return RequiredError;
+    }(Error));
     function exists(json, key) {
         var value = json[key];
         return value !== null && value !== undefined;
@@ -318,24 +418,29 @@
     function querystring(params, prefix) {
         if (prefix === void 0) { prefix = ''; }
         return Object.keys(params)
-            .map(function (key) {
-            var fullKey = prefix + (prefix.length ? "[".concat(key, "]") : key);
-            var value = params[key];
-            if (value instanceof Array) {
-                var multiValue = value.map(function (singleValue) { return encodeURIComponent(String(singleValue)); })
-                    .join("&".concat(encodeURIComponent(fullKey), "="));
-                return "".concat(encodeURIComponent(fullKey), "=").concat(multiValue);
-            }
-            if (value instanceof Date) {
-                return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(value.toISOString()));
-            }
-            if (value instanceof Object) {
-                return querystring(value, fullKey);
-            }
-            return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(String(value)));
-        })
+            .map(function (key) { return querystringSingleKey(key, params[key], prefix); })
             .filter(function (part) { return part.length > 0; })
             .join('&');
+    }
+    function querystringSingleKey(key, value, keyPrefix) {
+        if (keyPrefix === void 0) { keyPrefix = ''; }
+        var fullKey = keyPrefix + (keyPrefix.length ? "[".concat(key, "]") : key);
+        if (value instanceof Array) {
+            var multiValue = value.map(function (singleValue) { return encodeURIComponent(String(singleValue)); })
+                .join("&".concat(encodeURIComponent(fullKey), "="));
+            return "".concat(encodeURIComponent(fullKey), "=").concat(multiValue);
+        }
+        if (value instanceof Set) {
+            var valueAsArray = Array.from(value);
+            return querystringSingleKey(key, valueAsArray, keyPrefix);
+        }
+        if (value instanceof Date) {
+            return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(value.toISOString()));
+        }
+        if (value instanceof Object) {
+            return querystring(value, fullKey);
+        }
+        return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(String(value)));
     }
     var JSONApiResponse = /** @class */ (function () {
         function JSONApiResponse(raw, transformer) {
@@ -386,247 +491,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var AddressCountryCodeEnum;
-    (function (AddressCountryCodeEnum) {
-        AddressCountryCodeEnum["Ad"] = "AD";
-        AddressCountryCodeEnum["Ae"] = "AE";
-        AddressCountryCodeEnum["Af"] = "AF";
-        AddressCountryCodeEnum["Ag"] = "AG";
-        AddressCountryCodeEnum["Ai"] = "AI";
-        AddressCountryCodeEnum["Al"] = "AL";
-        AddressCountryCodeEnum["Am"] = "AM";
-        AddressCountryCodeEnum["An"] = "AN";
-        AddressCountryCodeEnum["Ao"] = "AO";
-        AddressCountryCodeEnum["Ar"] = "AR";
-        AddressCountryCodeEnum["As"] = "AS";
-        AddressCountryCodeEnum["At"] = "AT";
-        AddressCountryCodeEnum["Au"] = "AU";
-        AddressCountryCodeEnum["Aw"] = "AW";
-        AddressCountryCodeEnum["Az"] = "AZ";
-        AddressCountryCodeEnum["Ba"] = "BA";
-        AddressCountryCodeEnum["Bb"] = "BB";
-        AddressCountryCodeEnum["Bd"] = "BD";
-        AddressCountryCodeEnum["Be"] = "BE";
-        AddressCountryCodeEnum["Bf"] = "BF";
-        AddressCountryCodeEnum["Bg"] = "BG";
-        AddressCountryCodeEnum["Bh"] = "BH";
-        AddressCountryCodeEnum["Bi"] = "BI";
-        AddressCountryCodeEnum["Bj"] = "BJ";
-        AddressCountryCodeEnum["Bm"] = "BM";
-        AddressCountryCodeEnum["Bn"] = "BN";
-        AddressCountryCodeEnum["Bo"] = "BO";
-        AddressCountryCodeEnum["Br"] = "BR";
-        AddressCountryCodeEnum["Bs"] = "BS";
-        AddressCountryCodeEnum["Bt"] = "BT";
-        AddressCountryCodeEnum["Bw"] = "BW";
-        AddressCountryCodeEnum["By"] = "BY";
-        AddressCountryCodeEnum["Bz"] = "BZ";
-        AddressCountryCodeEnum["Ca"] = "CA";
-        AddressCountryCodeEnum["Cd"] = "CD";
-        AddressCountryCodeEnum["Cf"] = "CF";
-        AddressCountryCodeEnum["Cg"] = "CG";
-        AddressCountryCodeEnum["Ch"] = "CH";
-        AddressCountryCodeEnum["Ci"] = "CI";
-        AddressCountryCodeEnum["Ck"] = "CK";
-        AddressCountryCodeEnum["Cl"] = "CL";
-        AddressCountryCodeEnum["Cm"] = "CM";
-        AddressCountryCodeEnum["Cn"] = "CN";
-        AddressCountryCodeEnum["Co"] = "CO";
-        AddressCountryCodeEnum["Cr"] = "CR";
-        AddressCountryCodeEnum["Cu"] = "CU";
-        AddressCountryCodeEnum["Cv"] = "CV";
-        AddressCountryCodeEnum["Cy"] = "CY";
-        AddressCountryCodeEnum["Cz"] = "CZ";
-        AddressCountryCodeEnum["De"] = "DE";
-        AddressCountryCodeEnum["Dj"] = "DJ";
-        AddressCountryCodeEnum["Dk"] = "DK";
-        AddressCountryCodeEnum["Dm"] = "DM";
-        AddressCountryCodeEnum["Do"] = "DO";
-        AddressCountryCodeEnum["Dz"] = "DZ";
-        AddressCountryCodeEnum["Ec"] = "EC";
-        AddressCountryCodeEnum["Ee"] = "EE";
-        AddressCountryCodeEnum["Eg"] = "EG";
-        AddressCountryCodeEnum["Er"] = "ER";
-        AddressCountryCodeEnum["Es"] = "ES";
-        AddressCountryCodeEnum["Et"] = "ET";
-        AddressCountryCodeEnum["Fi"] = "FI";
-        AddressCountryCodeEnum["Fj"] = "FJ";
-        AddressCountryCodeEnum["Fk"] = "FK";
-        AddressCountryCodeEnum["Fm"] = "FM";
-        AddressCountryCodeEnum["Fo"] = "FO";
-        AddressCountryCodeEnum["Fr"] = "FR";
-        AddressCountryCodeEnum["Ga"] = "GA";
-        AddressCountryCodeEnum["Gb"] = "GB";
-        AddressCountryCodeEnum["Gd"] = "GD";
-        AddressCountryCodeEnum["Ge"] = "GE";
-        AddressCountryCodeEnum["Gf"] = "GF";
-        AddressCountryCodeEnum["Gg"] = "GG";
-        AddressCountryCodeEnum["Gh"] = "GH";
-        AddressCountryCodeEnum["Gi"] = "GI";
-        AddressCountryCodeEnum["Gl"] = "GL";
-        AddressCountryCodeEnum["Gm"] = "GM";
-        AddressCountryCodeEnum["Gn"] = "GN";
-        AddressCountryCodeEnum["Gp"] = "GP";
-        AddressCountryCodeEnum["Gq"] = "GQ";
-        AddressCountryCodeEnum["Gr"] = "GR";
-        AddressCountryCodeEnum["Gt"] = "GT";
-        AddressCountryCodeEnum["Gu"] = "GU";
-        AddressCountryCodeEnum["Gw"] = "GW";
-        AddressCountryCodeEnum["Gy"] = "GY";
-        AddressCountryCodeEnum["Hk"] = "HK";
-        AddressCountryCodeEnum["Hn"] = "HN";
-        AddressCountryCodeEnum["Hr"] = "HR";
-        AddressCountryCodeEnum["Ht"] = "HT";
-        AddressCountryCodeEnum["Hu"] = "HU";
-        AddressCountryCodeEnum["Ic"] = "IC";
-        AddressCountryCodeEnum["Id"] = "ID";
-        AddressCountryCodeEnum["Ie"] = "IE";
-        AddressCountryCodeEnum["Il"] = "IL";
-        AddressCountryCodeEnum["In"] = "IN";
-        AddressCountryCodeEnum["Iq"] = "IQ";
-        AddressCountryCodeEnum["Ir"] = "IR";
-        AddressCountryCodeEnum["Is"] = "IS";
-        AddressCountryCodeEnum["It"] = "IT";
-        AddressCountryCodeEnum["Je"] = "JE";
-        AddressCountryCodeEnum["Jm"] = "JM";
-        AddressCountryCodeEnum["Jo"] = "JO";
-        AddressCountryCodeEnum["Jp"] = "JP";
-        AddressCountryCodeEnum["Ke"] = "KE";
-        AddressCountryCodeEnum["Kg"] = "KG";
-        AddressCountryCodeEnum["Kh"] = "KH";
-        AddressCountryCodeEnum["Ki"] = "KI";
-        AddressCountryCodeEnum["Km"] = "KM";
-        AddressCountryCodeEnum["Kn"] = "KN";
-        AddressCountryCodeEnum["Kp"] = "KP";
-        AddressCountryCodeEnum["Kr"] = "KR";
-        AddressCountryCodeEnum["Kv"] = "KV";
-        AddressCountryCodeEnum["Kw"] = "KW";
-        AddressCountryCodeEnum["Ky"] = "KY";
-        AddressCountryCodeEnum["Kz"] = "KZ";
-        AddressCountryCodeEnum["La"] = "LA";
-        AddressCountryCodeEnum["Lb"] = "LB";
-        AddressCountryCodeEnum["Lc"] = "LC";
-        AddressCountryCodeEnum["Li"] = "LI";
-        AddressCountryCodeEnum["Lk"] = "LK";
-        AddressCountryCodeEnum["Lr"] = "LR";
-        AddressCountryCodeEnum["Ls"] = "LS";
-        AddressCountryCodeEnum["Lt"] = "LT";
-        AddressCountryCodeEnum["Lu"] = "LU";
-        AddressCountryCodeEnum["Lv"] = "LV";
-        AddressCountryCodeEnum["Ly"] = "LY";
-        AddressCountryCodeEnum["Ma"] = "MA";
-        AddressCountryCodeEnum["Mc"] = "MC";
-        AddressCountryCodeEnum["Md"] = "MD";
-        AddressCountryCodeEnum["Me"] = "ME";
-        AddressCountryCodeEnum["Mg"] = "MG";
-        AddressCountryCodeEnum["Mh"] = "MH";
-        AddressCountryCodeEnum["Mk"] = "MK";
-        AddressCountryCodeEnum["Ml"] = "ML";
-        AddressCountryCodeEnum["Mm"] = "MM";
-        AddressCountryCodeEnum["Mn"] = "MN";
-        AddressCountryCodeEnum["Mo"] = "MO";
-        AddressCountryCodeEnum["Mp"] = "MP";
-        AddressCountryCodeEnum["Mq"] = "MQ";
-        AddressCountryCodeEnum["Mr"] = "MR";
-        AddressCountryCodeEnum["Ms"] = "MS";
-        AddressCountryCodeEnum["Mt"] = "MT";
-        AddressCountryCodeEnum["Mu"] = "MU";
-        AddressCountryCodeEnum["Mv"] = "MV";
-        AddressCountryCodeEnum["Mw"] = "MW";
-        AddressCountryCodeEnum["Mx"] = "MX";
-        AddressCountryCodeEnum["My"] = "MY";
-        AddressCountryCodeEnum["Mz"] = "MZ";
-        AddressCountryCodeEnum["Na"] = "NA";
-        AddressCountryCodeEnum["Nc"] = "NC";
-        AddressCountryCodeEnum["Ne"] = "NE";
-        AddressCountryCodeEnum["Ng"] = "NG";
-        AddressCountryCodeEnum["Ni"] = "NI";
-        AddressCountryCodeEnum["Nl"] = "NL";
-        AddressCountryCodeEnum["No"] = "NO";
-        AddressCountryCodeEnum["Np"] = "NP";
-        AddressCountryCodeEnum["Nr"] = "NR";
-        AddressCountryCodeEnum["Nu"] = "NU";
-        AddressCountryCodeEnum["Nz"] = "NZ";
-        AddressCountryCodeEnum["Om"] = "OM";
-        AddressCountryCodeEnum["Pa"] = "PA";
-        AddressCountryCodeEnum["Pe"] = "PE";
-        AddressCountryCodeEnum["Pf"] = "PF";
-        AddressCountryCodeEnum["Pg"] = "PG";
-        AddressCountryCodeEnum["Ph"] = "PH";
-        AddressCountryCodeEnum["Pk"] = "PK";
-        AddressCountryCodeEnum["Pl"] = "PL";
-        AddressCountryCodeEnum["Pr"] = "PR";
-        AddressCountryCodeEnum["Pt"] = "PT";
-        AddressCountryCodeEnum["Pw"] = "PW";
-        AddressCountryCodeEnum["Py"] = "PY";
-        AddressCountryCodeEnum["Qa"] = "QA";
-        AddressCountryCodeEnum["Re"] = "RE";
-        AddressCountryCodeEnum["Ro"] = "RO";
-        AddressCountryCodeEnum["Rs"] = "RS";
-        AddressCountryCodeEnum["Ru"] = "RU";
-        AddressCountryCodeEnum["Rw"] = "RW";
-        AddressCountryCodeEnum["Sa"] = "SA";
-        AddressCountryCodeEnum["Sb"] = "SB";
-        AddressCountryCodeEnum["Sc"] = "SC";
-        AddressCountryCodeEnum["Sd"] = "SD";
-        AddressCountryCodeEnum["Se"] = "SE";
-        AddressCountryCodeEnum["Sg"] = "SG";
-        AddressCountryCodeEnum["Sh"] = "SH";
-        AddressCountryCodeEnum["Si"] = "SI";
-        AddressCountryCodeEnum["Sk"] = "SK";
-        AddressCountryCodeEnum["Sl"] = "SL";
-        AddressCountryCodeEnum["Sm"] = "SM";
-        AddressCountryCodeEnum["Sn"] = "SN";
-        AddressCountryCodeEnum["So"] = "SO";
-        AddressCountryCodeEnum["Sr"] = "SR";
-        AddressCountryCodeEnum["Ss"] = "SS";
-        AddressCountryCodeEnum["St"] = "ST";
-        AddressCountryCodeEnum["Sv"] = "SV";
-        AddressCountryCodeEnum["Sy"] = "SY";
-        AddressCountryCodeEnum["Sz"] = "SZ";
-        AddressCountryCodeEnum["Tc"] = "TC";
-        AddressCountryCodeEnum["Td"] = "TD";
-        AddressCountryCodeEnum["Tg"] = "TG";
-        AddressCountryCodeEnum["Th"] = "TH";
-        AddressCountryCodeEnum["Tj"] = "TJ";
-        AddressCountryCodeEnum["Tl"] = "TL";
-        AddressCountryCodeEnum["Tn"] = "TN";
-        AddressCountryCodeEnum["To"] = "TO";
-        AddressCountryCodeEnum["Tr"] = "TR";
-        AddressCountryCodeEnum["Tt"] = "TT";
-        AddressCountryCodeEnum["Tv"] = "TV";
-        AddressCountryCodeEnum["Tw"] = "TW";
-        AddressCountryCodeEnum["Tz"] = "TZ";
-        AddressCountryCodeEnum["Ua"] = "UA";
-        AddressCountryCodeEnum["Ug"] = "UG";
-        AddressCountryCodeEnum["Us"] = "US";
-        AddressCountryCodeEnum["Uy"] = "UY";
-        AddressCountryCodeEnum["Uz"] = "UZ";
-        AddressCountryCodeEnum["Va"] = "VA";
-        AddressCountryCodeEnum["Vc"] = "VC";
-        AddressCountryCodeEnum["Ve"] = "VE";
-        AddressCountryCodeEnum["Vg"] = "VG";
-        AddressCountryCodeEnum["Vi"] = "VI";
-        AddressCountryCodeEnum["Vn"] = "VN";
-        AddressCountryCodeEnum["Vu"] = "VU";
-        AddressCountryCodeEnum["Ws"] = "WS";
-        AddressCountryCodeEnum["Xb"] = "XB";
-        AddressCountryCodeEnum["Xc"] = "XC";
-        AddressCountryCodeEnum["Xe"] = "XE";
-        AddressCountryCodeEnum["Xm"] = "XM";
-        AddressCountryCodeEnum["Xn"] = "XN";
-        AddressCountryCodeEnum["Xs"] = "XS";
-        AddressCountryCodeEnum["Xy"] = "XY";
-        AddressCountryCodeEnum["Ye"] = "YE";
-        AddressCountryCodeEnum["Yt"] = "YT";
-        AddressCountryCodeEnum["Za"] = "ZA";
-        AddressCountryCodeEnum["Zm"] = "ZM";
-        AddressCountryCodeEnum["Zw"] = "ZW";
-    })(AddressCountryCodeEnum || (AddressCountryCodeEnum = {}));
     function AddressFromJSON(json) {
         return AddressFromJSONTyped(json);
     }
@@ -685,247 +549,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var AddressDataCountryCodeEnum;
-    (function (AddressDataCountryCodeEnum) {
-        AddressDataCountryCodeEnum["Ad"] = "AD";
-        AddressDataCountryCodeEnum["Ae"] = "AE";
-        AddressDataCountryCodeEnum["Af"] = "AF";
-        AddressDataCountryCodeEnum["Ag"] = "AG";
-        AddressDataCountryCodeEnum["Ai"] = "AI";
-        AddressDataCountryCodeEnum["Al"] = "AL";
-        AddressDataCountryCodeEnum["Am"] = "AM";
-        AddressDataCountryCodeEnum["An"] = "AN";
-        AddressDataCountryCodeEnum["Ao"] = "AO";
-        AddressDataCountryCodeEnum["Ar"] = "AR";
-        AddressDataCountryCodeEnum["As"] = "AS";
-        AddressDataCountryCodeEnum["At"] = "AT";
-        AddressDataCountryCodeEnum["Au"] = "AU";
-        AddressDataCountryCodeEnum["Aw"] = "AW";
-        AddressDataCountryCodeEnum["Az"] = "AZ";
-        AddressDataCountryCodeEnum["Ba"] = "BA";
-        AddressDataCountryCodeEnum["Bb"] = "BB";
-        AddressDataCountryCodeEnum["Bd"] = "BD";
-        AddressDataCountryCodeEnum["Be"] = "BE";
-        AddressDataCountryCodeEnum["Bf"] = "BF";
-        AddressDataCountryCodeEnum["Bg"] = "BG";
-        AddressDataCountryCodeEnum["Bh"] = "BH";
-        AddressDataCountryCodeEnum["Bi"] = "BI";
-        AddressDataCountryCodeEnum["Bj"] = "BJ";
-        AddressDataCountryCodeEnum["Bm"] = "BM";
-        AddressDataCountryCodeEnum["Bn"] = "BN";
-        AddressDataCountryCodeEnum["Bo"] = "BO";
-        AddressDataCountryCodeEnum["Br"] = "BR";
-        AddressDataCountryCodeEnum["Bs"] = "BS";
-        AddressDataCountryCodeEnum["Bt"] = "BT";
-        AddressDataCountryCodeEnum["Bw"] = "BW";
-        AddressDataCountryCodeEnum["By"] = "BY";
-        AddressDataCountryCodeEnum["Bz"] = "BZ";
-        AddressDataCountryCodeEnum["Ca"] = "CA";
-        AddressDataCountryCodeEnum["Cd"] = "CD";
-        AddressDataCountryCodeEnum["Cf"] = "CF";
-        AddressDataCountryCodeEnum["Cg"] = "CG";
-        AddressDataCountryCodeEnum["Ch"] = "CH";
-        AddressDataCountryCodeEnum["Ci"] = "CI";
-        AddressDataCountryCodeEnum["Ck"] = "CK";
-        AddressDataCountryCodeEnum["Cl"] = "CL";
-        AddressDataCountryCodeEnum["Cm"] = "CM";
-        AddressDataCountryCodeEnum["Cn"] = "CN";
-        AddressDataCountryCodeEnum["Co"] = "CO";
-        AddressDataCountryCodeEnum["Cr"] = "CR";
-        AddressDataCountryCodeEnum["Cu"] = "CU";
-        AddressDataCountryCodeEnum["Cv"] = "CV";
-        AddressDataCountryCodeEnum["Cy"] = "CY";
-        AddressDataCountryCodeEnum["Cz"] = "CZ";
-        AddressDataCountryCodeEnum["De"] = "DE";
-        AddressDataCountryCodeEnum["Dj"] = "DJ";
-        AddressDataCountryCodeEnum["Dk"] = "DK";
-        AddressDataCountryCodeEnum["Dm"] = "DM";
-        AddressDataCountryCodeEnum["Do"] = "DO";
-        AddressDataCountryCodeEnum["Dz"] = "DZ";
-        AddressDataCountryCodeEnum["Ec"] = "EC";
-        AddressDataCountryCodeEnum["Ee"] = "EE";
-        AddressDataCountryCodeEnum["Eg"] = "EG";
-        AddressDataCountryCodeEnum["Er"] = "ER";
-        AddressDataCountryCodeEnum["Es"] = "ES";
-        AddressDataCountryCodeEnum["Et"] = "ET";
-        AddressDataCountryCodeEnum["Fi"] = "FI";
-        AddressDataCountryCodeEnum["Fj"] = "FJ";
-        AddressDataCountryCodeEnum["Fk"] = "FK";
-        AddressDataCountryCodeEnum["Fm"] = "FM";
-        AddressDataCountryCodeEnum["Fo"] = "FO";
-        AddressDataCountryCodeEnum["Fr"] = "FR";
-        AddressDataCountryCodeEnum["Ga"] = "GA";
-        AddressDataCountryCodeEnum["Gb"] = "GB";
-        AddressDataCountryCodeEnum["Gd"] = "GD";
-        AddressDataCountryCodeEnum["Ge"] = "GE";
-        AddressDataCountryCodeEnum["Gf"] = "GF";
-        AddressDataCountryCodeEnum["Gg"] = "GG";
-        AddressDataCountryCodeEnum["Gh"] = "GH";
-        AddressDataCountryCodeEnum["Gi"] = "GI";
-        AddressDataCountryCodeEnum["Gl"] = "GL";
-        AddressDataCountryCodeEnum["Gm"] = "GM";
-        AddressDataCountryCodeEnum["Gn"] = "GN";
-        AddressDataCountryCodeEnum["Gp"] = "GP";
-        AddressDataCountryCodeEnum["Gq"] = "GQ";
-        AddressDataCountryCodeEnum["Gr"] = "GR";
-        AddressDataCountryCodeEnum["Gt"] = "GT";
-        AddressDataCountryCodeEnum["Gu"] = "GU";
-        AddressDataCountryCodeEnum["Gw"] = "GW";
-        AddressDataCountryCodeEnum["Gy"] = "GY";
-        AddressDataCountryCodeEnum["Hk"] = "HK";
-        AddressDataCountryCodeEnum["Hn"] = "HN";
-        AddressDataCountryCodeEnum["Hr"] = "HR";
-        AddressDataCountryCodeEnum["Ht"] = "HT";
-        AddressDataCountryCodeEnum["Hu"] = "HU";
-        AddressDataCountryCodeEnum["Ic"] = "IC";
-        AddressDataCountryCodeEnum["Id"] = "ID";
-        AddressDataCountryCodeEnum["Ie"] = "IE";
-        AddressDataCountryCodeEnum["Il"] = "IL";
-        AddressDataCountryCodeEnum["In"] = "IN";
-        AddressDataCountryCodeEnum["Iq"] = "IQ";
-        AddressDataCountryCodeEnum["Ir"] = "IR";
-        AddressDataCountryCodeEnum["Is"] = "IS";
-        AddressDataCountryCodeEnum["It"] = "IT";
-        AddressDataCountryCodeEnum["Je"] = "JE";
-        AddressDataCountryCodeEnum["Jm"] = "JM";
-        AddressDataCountryCodeEnum["Jo"] = "JO";
-        AddressDataCountryCodeEnum["Jp"] = "JP";
-        AddressDataCountryCodeEnum["Ke"] = "KE";
-        AddressDataCountryCodeEnum["Kg"] = "KG";
-        AddressDataCountryCodeEnum["Kh"] = "KH";
-        AddressDataCountryCodeEnum["Ki"] = "KI";
-        AddressDataCountryCodeEnum["Km"] = "KM";
-        AddressDataCountryCodeEnum["Kn"] = "KN";
-        AddressDataCountryCodeEnum["Kp"] = "KP";
-        AddressDataCountryCodeEnum["Kr"] = "KR";
-        AddressDataCountryCodeEnum["Kv"] = "KV";
-        AddressDataCountryCodeEnum["Kw"] = "KW";
-        AddressDataCountryCodeEnum["Ky"] = "KY";
-        AddressDataCountryCodeEnum["Kz"] = "KZ";
-        AddressDataCountryCodeEnum["La"] = "LA";
-        AddressDataCountryCodeEnum["Lb"] = "LB";
-        AddressDataCountryCodeEnum["Lc"] = "LC";
-        AddressDataCountryCodeEnum["Li"] = "LI";
-        AddressDataCountryCodeEnum["Lk"] = "LK";
-        AddressDataCountryCodeEnum["Lr"] = "LR";
-        AddressDataCountryCodeEnum["Ls"] = "LS";
-        AddressDataCountryCodeEnum["Lt"] = "LT";
-        AddressDataCountryCodeEnum["Lu"] = "LU";
-        AddressDataCountryCodeEnum["Lv"] = "LV";
-        AddressDataCountryCodeEnum["Ly"] = "LY";
-        AddressDataCountryCodeEnum["Ma"] = "MA";
-        AddressDataCountryCodeEnum["Mc"] = "MC";
-        AddressDataCountryCodeEnum["Md"] = "MD";
-        AddressDataCountryCodeEnum["Me"] = "ME";
-        AddressDataCountryCodeEnum["Mg"] = "MG";
-        AddressDataCountryCodeEnum["Mh"] = "MH";
-        AddressDataCountryCodeEnum["Mk"] = "MK";
-        AddressDataCountryCodeEnum["Ml"] = "ML";
-        AddressDataCountryCodeEnum["Mm"] = "MM";
-        AddressDataCountryCodeEnum["Mn"] = "MN";
-        AddressDataCountryCodeEnum["Mo"] = "MO";
-        AddressDataCountryCodeEnum["Mp"] = "MP";
-        AddressDataCountryCodeEnum["Mq"] = "MQ";
-        AddressDataCountryCodeEnum["Mr"] = "MR";
-        AddressDataCountryCodeEnum["Ms"] = "MS";
-        AddressDataCountryCodeEnum["Mt"] = "MT";
-        AddressDataCountryCodeEnum["Mu"] = "MU";
-        AddressDataCountryCodeEnum["Mv"] = "MV";
-        AddressDataCountryCodeEnum["Mw"] = "MW";
-        AddressDataCountryCodeEnum["Mx"] = "MX";
-        AddressDataCountryCodeEnum["My"] = "MY";
-        AddressDataCountryCodeEnum["Mz"] = "MZ";
-        AddressDataCountryCodeEnum["Na"] = "NA";
-        AddressDataCountryCodeEnum["Nc"] = "NC";
-        AddressDataCountryCodeEnum["Ne"] = "NE";
-        AddressDataCountryCodeEnum["Ng"] = "NG";
-        AddressDataCountryCodeEnum["Ni"] = "NI";
-        AddressDataCountryCodeEnum["Nl"] = "NL";
-        AddressDataCountryCodeEnum["No"] = "NO";
-        AddressDataCountryCodeEnum["Np"] = "NP";
-        AddressDataCountryCodeEnum["Nr"] = "NR";
-        AddressDataCountryCodeEnum["Nu"] = "NU";
-        AddressDataCountryCodeEnum["Nz"] = "NZ";
-        AddressDataCountryCodeEnum["Om"] = "OM";
-        AddressDataCountryCodeEnum["Pa"] = "PA";
-        AddressDataCountryCodeEnum["Pe"] = "PE";
-        AddressDataCountryCodeEnum["Pf"] = "PF";
-        AddressDataCountryCodeEnum["Pg"] = "PG";
-        AddressDataCountryCodeEnum["Ph"] = "PH";
-        AddressDataCountryCodeEnum["Pk"] = "PK";
-        AddressDataCountryCodeEnum["Pl"] = "PL";
-        AddressDataCountryCodeEnum["Pr"] = "PR";
-        AddressDataCountryCodeEnum["Pt"] = "PT";
-        AddressDataCountryCodeEnum["Pw"] = "PW";
-        AddressDataCountryCodeEnum["Py"] = "PY";
-        AddressDataCountryCodeEnum["Qa"] = "QA";
-        AddressDataCountryCodeEnum["Re"] = "RE";
-        AddressDataCountryCodeEnum["Ro"] = "RO";
-        AddressDataCountryCodeEnum["Rs"] = "RS";
-        AddressDataCountryCodeEnum["Ru"] = "RU";
-        AddressDataCountryCodeEnum["Rw"] = "RW";
-        AddressDataCountryCodeEnum["Sa"] = "SA";
-        AddressDataCountryCodeEnum["Sb"] = "SB";
-        AddressDataCountryCodeEnum["Sc"] = "SC";
-        AddressDataCountryCodeEnum["Sd"] = "SD";
-        AddressDataCountryCodeEnum["Se"] = "SE";
-        AddressDataCountryCodeEnum["Sg"] = "SG";
-        AddressDataCountryCodeEnum["Sh"] = "SH";
-        AddressDataCountryCodeEnum["Si"] = "SI";
-        AddressDataCountryCodeEnum["Sk"] = "SK";
-        AddressDataCountryCodeEnum["Sl"] = "SL";
-        AddressDataCountryCodeEnum["Sm"] = "SM";
-        AddressDataCountryCodeEnum["Sn"] = "SN";
-        AddressDataCountryCodeEnum["So"] = "SO";
-        AddressDataCountryCodeEnum["Sr"] = "SR";
-        AddressDataCountryCodeEnum["Ss"] = "SS";
-        AddressDataCountryCodeEnum["St"] = "ST";
-        AddressDataCountryCodeEnum["Sv"] = "SV";
-        AddressDataCountryCodeEnum["Sy"] = "SY";
-        AddressDataCountryCodeEnum["Sz"] = "SZ";
-        AddressDataCountryCodeEnum["Tc"] = "TC";
-        AddressDataCountryCodeEnum["Td"] = "TD";
-        AddressDataCountryCodeEnum["Tg"] = "TG";
-        AddressDataCountryCodeEnum["Th"] = "TH";
-        AddressDataCountryCodeEnum["Tj"] = "TJ";
-        AddressDataCountryCodeEnum["Tl"] = "TL";
-        AddressDataCountryCodeEnum["Tn"] = "TN";
-        AddressDataCountryCodeEnum["To"] = "TO";
-        AddressDataCountryCodeEnum["Tr"] = "TR";
-        AddressDataCountryCodeEnum["Tt"] = "TT";
-        AddressDataCountryCodeEnum["Tv"] = "TV";
-        AddressDataCountryCodeEnum["Tw"] = "TW";
-        AddressDataCountryCodeEnum["Tz"] = "TZ";
-        AddressDataCountryCodeEnum["Ua"] = "UA";
-        AddressDataCountryCodeEnum["Ug"] = "UG";
-        AddressDataCountryCodeEnum["Us"] = "US";
-        AddressDataCountryCodeEnum["Uy"] = "UY";
-        AddressDataCountryCodeEnum["Uz"] = "UZ";
-        AddressDataCountryCodeEnum["Va"] = "VA";
-        AddressDataCountryCodeEnum["Vc"] = "VC";
-        AddressDataCountryCodeEnum["Ve"] = "VE";
-        AddressDataCountryCodeEnum["Vg"] = "VG";
-        AddressDataCountryCodeEnum["Vi"] = "VI";
-        AddressDataCountryCodeEnum["Vn"] = "VN";
-        AddressDataCountryCodeEnum["Vu"] = "VU";
-        AddressDataCountryCodeEnum["Ws"] = "WS";
-        AddressDataCountryCodeEnum["Xb"] = "XB";
-        AddressDataCountryCodeEnum["Xc"] = "XC";
-        AddressDataCountryCodeEnum["Xe"] = "XE";
-        AddressDataCountryCodeEnum["Xm"] = "XM";
-        AddressDataCountryCodeEnum["Xn"] = "XN";
-        AddressDataCountryCodeEnum["Xs"] = "XS";
-        AddressDataCountryCodeEnum["Xy"] = "XY";
-        AddressDataCountryCodeEnum["Ye"] = "YE";
-        AddressDataCountryCodeEnum["Yt"] = "YT";
-        AddressDataCountryCodeEnum["Za"] = "ZA";
-        AddressDataCountryCodeEnum["Zm"] = "ZM";
-        AddressDataCountryCodeEnum["Zw"] = "ZW";
-    })(AddressDataCountryCodeEnum || (AddressDataCountryCodeEnum = {}));
     function AddressDataFromJSON(json) {
         return AddressDataFromJSONTyped(json);
     }
@@ -994,76 +617,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var BatchObjectStatusEnum;
-    (function (BatchObjectStatusEnum) {
-        BatchObjectStatusEnum["Queued"] = "queued";
-        BatchObjectStatusEnum["Running"] = "running";
-        BatchObjectStatusEnum["Completed"] = "completed";
-        BatchObjectStatusEnum["Failed"] = "failed";
-    })(BatchObjectStatusEnum || (BatchObjectStatusEnum = {}));
-
-    /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var BatchOperationStatusEnum;
-    (function (BatchOperationStatusEnum) {
-        BatchOperationStatusEnum["Queued"] = "queued";
-        BatchOperationStatusEnum["Running"] = "running";
-        BatchOperationStatusEnum["Completed"] = "completed";
-        BatchOperationStatusEnum["Failed"] = "failed";
-    })(BatchOperationStatusEnum || (BatchOperationStatusEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var BatchOperationResourceTypeEnum;
-    (function (BatchOperationResourceTypeEnum) {
-        BatchOperationResourceTypeEnum["Order"] = "order";
-        BatchOperationResourceTypeEnum["Shipment"] = "shipment";
-        BatchOperationResourceTypeEnum["Tracking"] = "tracking";
-        BatchOperationResourceTypeEnum["Billing"] = "billing";
-    })(BatchOperationResourceTypeEnum || (BatchOperationResourceTypeEnum = {}));
-
-    /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var CarrierSettingsCarrierNameEnum;
-    (function (CarrierSettingsCarrierNameEnum) {
-        CarrierSettingsCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        CarrierSettingsCarrierNameEnum["Aramex"] = "aramex";
-        CarrierSettingsCarrierNameEnum["Australiapost"] = "australiapost";
-        CarrierSettingsCarrierNameEnum["Canadapost"] = "canadapost";
-        CarrierSettingsCarrierNameEnum["Canpar"] = "canpar";
-        CarrierSettingsCarrierNameEnum["Chronopost"] = "chronopost";
-        CarrierSettingsCarrierNameEnum["DhlExpress"] = "dhl_express";
-        CarrierSettingsCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        CarrierSettingsCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        CarrierSettingsCarrierNameEnum["Dicom"] = "dicom";
-        CarrierSettingsCarrierNameEnum["Dpdhl"] = "dpdhl";
-        CarrierSettingsCarrierNameEnum["Easypost"] = "easypost";
-        CarrierSettingsCarrierNameEnum["Eshipper"] = "eshipper";
-        CarrierSettingsCarrierNameEnum["Fedex"] = "fedex";
-        CarrierSettingsCarrierNameEnum["Freightcom"] = "freightcom";
-        CarrierSettingsCarrierNameEnum["Generic"] = "generic";
-        CarrierSettingsCarrierNameEnum["Purolator"] = "purolator";
-        CarrierSettingsCarrierNameEnum["Royalmail"] = "royalmail";
-        CarrierSettingsCarrierNameEnum["Sendle"] = "sendle";
-        CarrierSettingsCarrierNameEnum["SfExpress"] = "sf_express";
-        CarrierSettingsCarrierNameEnum["Tnt"] = "tnt";
-        CarrierSettingsCarrierNameEnum["Ups"] = "ups";
-        CarrierSettingsCarrierNameEnum["UpsFreight"] = "ups_freight";
-        CarrierSettingsCarrierNameEnum["Usps"] = "usps";
-        CarrierSettingsCarrierNameEnum["UspsInternational"] = "usps_international";
-        CarrierSettingsCarrierNameEnum["Yanwen"] = "yanwen";
-        CarrierSettingsCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(CarrierSettingsCarrierNameEnum || (CarrierSettingsCarrierNameEnum = {}));
     function CarrierSettingsFromJSON(json) {
         return CarrierSettingsFromJSONTyped(json);
     }
@@ -1126,255 +679,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var CommodityWeightUnitEnum;
-    (function (CommodityWeightUnitEnum) {
-        CommodityWeightUnitEnum["Kg"] = "KG";
-        CommodityWeightUnitEnum["Lb"] = "LB";
-    })(CommodityWeightUnitEnum || (CommodityWeightUnitEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var CommodityOriginCountryEnum;
-    (function (CommodityOriginCountryEnum) {
-        CommodityOriginCountryEnum["Ad"] = "AD";
-        CommodityOriginCountryEnum["Ae"] = "AE";
-        CommodityOriginCountryEnum["Af"] = "AF";
-        CommodityOriginCountryEnum["Ag"] = "AG";
-        CommodityOriginCountryEnum["Ai"] = "AI";
-        CommodityOriginCountryEnum["Al"] = "AL";
-        CommodityOriginCountryEnum["Am"] = "AM";
-        CommodityOriginCountryEnum["An"] = "AN";
-        CommodityOriginCountryEnum["Ao"] = "AO";
-        CommodityOriginCountryEnum["Ar"] = "AR";
-        CommodityOriginCountryEnum["As"] = "AS";
-        CommodityOriginCountryEnum["At"] = "AT";
-        CommodityOriginCountryEnum["Au"] = "AU";
-        CommodityOriginCountryEnum["Aw"] = "AW";
-        CommodityOriginCountryEnum["Az"] = "AZ";
-        CommodityOriginCountryEnum["Ba"] = "BA";
-        CommodityOriginCountryEnum["Bb"] = "BB";
-        CommodityOriginCountryEnum["Bd"] = "BD";
-        CommodityOriginCountryEnum["Be"] = "BE";
-        CommodityOriginCountryEnum["Bf"] = "BF";
-        CommodityOriginCountryEnum["Bg"] = "BG";
-        CommodityOriginCountryEnum["Bh"] = "BH";
-        CommodityOriginCountryEnum["Bi"] = "BI";
-        CommodityOriginCountryEnum["Bj"] = "BJ";
-        CommodityOriginCountryEnum["Bm"] = "BM";
-        CommodityOriginCountryEnum["Bn"] = "BN";
-        CommodityOriginCountryEnum["Bo"] = "BO";
-        CommodityOriginCountryEnum["Br"] = "BR";
-        CommodityOriginCountryEnum["Bs"] = "BS";
-        CommodityOriginCountryEnum["Bt"] = "BT";
-        CommodityOriginCountryEnum["Bw"] = "BW";
-        CommodityOriginCountryEnum["By"] = "BY";
-        CommodityOriginCountryEnum["Bz"] = "BZ";
-        CommodityOriginCountryEnum["Ca"] = "CA";
-        CommodityOriginCountryEnum["Cd"] = "CD";
-        CommodityOriginCountryEnum["Cf"] = "CF";
-        CommodityOriginCountryEnum["Cg"] = "CG";
-        CommodityOriginCountryEnum["Ch"] = "CH";
-        CommodityOriginCountryEnum["Ci"] = "CI";
-        CommodityOriginCountryEnum["Ck"] = "CK";
-        CommodityOriginCountryEnum["Cl"] = "CL";
-        CommodityOriginCountryEnum["Cm"] = "CM";
-        CommodityOriginCountryEnum["Cn"] = "CN";
-        CommodityOriginCountryEnum["Co"] = "CO";
-        CommodityOriginCountryEnum["Cr"] = "CR";
-        CommodityOriginCountryEnum["Cu"] = "CU";
-        CommodityOriginCountryEnum["Cv"] = "CV";
-        CommodityOriginCountryEnum["Cy"] = "CY";
-        CommodityOriginCountryEnum["Cz"] = "CZ";
-        CommodityOriginCountryEnum["De"] = "DE";
-        CommodityOriginCountryEnum["Dj"] = "DJ";
-        CommodityOriginCountryEnum["Dk"] = "DK";
-        CommodityOriginCountryEnum["Dm"] = "DM";
-        CommodityOriginCountryEnum["Do"] = "DO";
-        CommodityOriginCountryEnum["Dz"] = "DZ";
-        CommodityOriginCountryEnum["Ec"] = "EC";
-        CommodityOriginCountryEnum["Ee"] = "EE";
-        CommodityOriginCountryEnum["Eg"] = "EG";
-        CommodityOriginCountryEnum["Er"] = "ER";
-        CommodityOriginCountryEnum["Es"] = "ES";
-        CommodityOriginCountryEnum["Et"] = "ET";
-        CommodityOriginCountryEnum["Fi"] = "FI";
-        CommodityOriginCountryEnum["Fj"] = "FJ";
-        CommodityOriginCountryEnum["Fk"] = "FK";
-        CommodityOriginCountryEnum["Fm"] = "FM";
-        CommodityOriginCountryEnum["Fo"] = "FO";
-        CommodityOriginCountryEnum["Fr"] = "FR";
-        CommodityOriginCountryEnum["Ga"] = "GA";
-        CommodityOriginCountryEnum["Gb"] = "GB";
-        CommodityOriginCountryEnum["Gd"] = "GD";
-        CommodityOriginCountryEnum["Ge"] = "GE";
-        CommodityOriginCountryEnum["Gf"] = "GF";
-        CommodityOriginCountryEnum["Gg"] = "GG";
-        CommodityOriginCountryEnum["Gh"] = "GH";
-        CommodityOriginCountryEnum["Gi"] = "GI";
-        CommodityOriginCountryEnum["Gl"] = "GL";
-        CommodityOriginCountryEnum["Gm"] = "GM";
-        CommodityOriginCountryEnum["Gn"] = "GN";
-        CommodityOriginCountryEnum["Gp"] = "GP";
-        CommodityOriginCountryEnum["Gq"] = "GQ";
-        CommodityOriginCountryEnum["Gr"] = "GR";
-        CommodityOriginCountryEnum["Gt"] = "GT";
-        CommodityOriginCountryEnum["Gu"] = "GU";
-        CommodityOriginCountryEnum["Gw"] = "GW";
-        CommodityOriginCountryEnum["Gy"] = "GY";
-        CommodityOriginCountryEnum["Hk"] = "HK";
-        CommodityOriginCountryEnum["Hn"] = "HN";
-        CommodityOriginCountryEnum["Hr"] = "HR";
-        CommodityOriginCountryEnum["Ht"] = "HT";
-        CommodityOriginCountryEnum["Hu"] = "HU";
-        CommodityOriginCountryEnum["Ic"] = "IC";
-        CommodityOriginCountryEnum["Id"] = "ID";
-        CommodityOriginCountryEnum["Ie"] = "IE";
-        CommodityOriginCountryEnum["Il"] = "IL";
-        CommodityOriginCountryEnum["In"] = "IN";
-        CommodityOriginCountryEnum["Iq"] = "IQ";
-        CommodityOriginCountryEnum["Ir"] = "IR";
-        CommodityOriginCountryEnum["Is"] = "IS";
-        CommodityOriginCountryEnum["It"] = "IT";
-        CommodityOriginCountryEnum["Je"] = "JE";
-        CommodityOriginCountryEnum["Jm"] = "JM";
-        CommodityOriginCountryEnum["Jo"] = "JO";
-        CommodityOriginCountryEnum["Jp"] = "JP";
-        CommodityOriginCountryEnum["Ke"] = "KE";
-        CommodityOriginCountryEnum["Kg"] = "KG";
-        CommodityOriginCountryEnum["Kh"] = "KH";
-        CommodityOriginCountryEnum["Ki"] = "KI";
-        CommodityOriginCountryEnum["Km"] = "KM";
-        CommodityOriginCountryEnum["Kn"] = "KN";
-        CommodityOriginCountryEnum["Kp"] = "KP";
-        CommodityOriginCountryEnum["Kr"] = "KR";
-        CommodityOriginCountryEnum["Kv"] = "KV";
-        CommodityOriginCountryEnum["Kw"] = "KW";
-        CommodityOriginCountryEnum["Ky"] = "KY";
-        CommodityOriginCountryEnum["Kz"] = "KZ";
-        CommodityOriginCountryEnum["La"] = "LA";
-        CommodityOriginCountryEnum["Lb"] = "LB";
-        CommodityOriginCountryEnum["Lc"] = "LC";
-        CommodityOriginCountryEnum["Li"] = "LI";
-        CommodityOriginCountryEnum["Lk"] = "LK";
-        CommodityOriginCountryEnum["Lr"] = "LR";
-        CommodityOriginCountryEnum["Ls"] = "LS";
-        CommodityOriginCountryEnum["Lt"] = "LT";
-        CommodityOriginCountryEnum["Lu"] = "LU";
-        CommodityOriginCountryEnum["Lv"] = "LV";
-        CommodityOriginCountryEnum["Ly"] = "LY";
-        CommodityOriginCountryEnum["Ma"] = "MA";
-        CommodityOriginCountryEnum["Mc"] = "MC";
-        CommodityOriginCountryEnum["Md"] = "MD";
-        CommodityOriginCountryEnum["Me"] = "ME";
-        CommodityOriginCountryEnum["Mg"] = "MG";
-        CommodityOriginCountryEnum["Mh"] = "MH";
-        CommodityOriginCountryEnum["Mk"] = "MK";
-        CommodityOriginCountryEnum["Ml"] = "ML";
-        CommodityOriginCountryEnum["Mm"] = "MM";
-        CommodityOriginCountryEnum["Mn"] = "MN";
-        CommodityOriginCountryEnum["Mo"] = "MO";
-        CommodityOriginCountryEnum["Mp"] = "MP";
-        CommodityOriginCountryEnum["Mq"] = "MQ";
-        CommodityOriginCountryEnum["Mr"] = "MR";
-        CommodityOriginCountryEnum["Ms"] = "MS";
-        CommodityOriginCountryEnum["Mt"] = "MT";
-        CommodityOriginCountryEnum["Mu"] = "MU";
-        CommodityOriginCountryEnum["Mv"] = "MV";
-        CommodityOriginCountryEnum["Mw"] = "MW";
-        CommodityOriginCountryEnum["Mx"] = "MX";
-        CommodityOriginCountryEnum["My"] = "MY";
-        CommodityOriginCountryEnum["Mz"] = "MZ";
-        CommodityOriginCountryEnum["Na"] = "NA";
-        CommodityOriginCountryEnum["Nc"] = "NC";
-        CommodityOriginCountryEnum["Ne"] = "NE";
-        CommodityOriginCountryEnum["Ng"] = "NG";
-        CommodityOriginCountryEnum["Ni"] = "NI";
-        CommodityOriginCountryEnum["Nl"] = "NL";
-        CommodityOriginCountryEnum["No"] = "NO";
-        CommodityOriginCountryEnum["Np"] = "NP";
-        CommodityOriginCountryEnum["Nr"] = "NR";
-        CommodityOriginCountryEnum["Nu"] = "NU";
-        CommodityOriginCountryEnum["Nz"] = "NZ";
-        CommodityOriginCountryEnum["Om"] = "OM";
-        CommodityOriginCountryEnum["Pa"] = "PA";
-        CommodityOriginCountryEnum["Pe"] = "PE";
-        CommodityOriginCountryEnum["Pf"] = "PF";
-        CommodityOriginCountryEnum["Pg"] = "PG";
-        CommodityOriginCountryEnum["Ph"] = "PH";
-        CommodityOriginCountryEnum["Pk"] = "PK";
-        CommodityOriginCountryEnum["Pl"] = "PL";
-        CommodityOriginCountryEnum["Pr"] = "PR";
-        CommodityOriginCountryEnum["Pt"] = "PT";
-        CommodityOriginCountryEnum["Pw"] = "PW";
-        CommodityOriginCountryEnum["Py"] = "PY";
-        CommodityOriginCountryEnum["Qa"] = "QA";
-        CommodityOriginCountryEnum["Re"] = "RE";
-        CommodityOriginCountryEnum["Ro"] = "RO";
-        CommodityOriginCountryEnum["Rs"] = "RS";
-        CommodityOriginCountryEnum["Ru"] = "RU";
-        CommodityOriginCountryEnum["Rw"] = "RW";
-        CommodityOriginCountryEnum["Sa"] = "SA";
-        CommodityOriginCountryEnum["Sb"] = "SB";
-        CommodityOriginCountryEnum["Sc"] = "SC";
-        CommodityOriginCountryEnum["Sd"] = "SD";
-        CommodityOriginCountryEnum["Se"] = "SE";
-        CommodityOriginCountryEnum["Sg"] = "SG";
-        CommodityOriginCountryEnum["Sh"] = "SH";
-        CommodityOriginCountryEnum["Si"] = "SI";
-        CommodityOriginCountryEnum["Sk"] = "SK";
-        CommodityOriginCountryEnum["Sl"] = "SL";
-        CommodityOriginCountryEnum["Sm"] = "SM";
-        CommodityOriginCountryEnum["Sn"] = "SN";
-        CommodityOriginCountryEnum["So"] = "SO";
-        CommodityOriginCountryEnum["Sr"] = "SR";
-        CommodityOriginCountryEnum["Ss"] = "SS";
-        CommodityOriginCountryEnum["St"] = "ST";
-        CommodityOriginCountryEnum["Sv"] = "SV";
-        CommodityOriginCountryEnum["Sy"] = "SY";
-        CommodityOriginCountryEnum["Sz"] = "SZ";
-        CommodityOriginCountryEnum["Tc"] = "TC";
-        CommodityOriginCountryEnum["Td"] = "TD";
-        CommodityOriginCountryEnum["Tg"] = "TG";
-        CommodityOriginCountryEnum["Th"] = "TH";
-        CommodityOriginCountryEnum["Tj"] = "TJ";
-        CommodityOriginCountryEnum["Tl"] = "TL";
-        CommodityOriginCountryEnum["Tn"] = "TN";
-        CommodityOriginCountryEnum["To"] = "TO";
-        CommodityOriginCountryEnum["Tr"] = "TR";
-        CommodityOriginCountryEnum["Tt"] = "TT";
-        CommodityOriginCountryEnum["Tv"] = "TV";
-        CommodityOriginCountryEnum["Tw"] = "TW";
-        CommodityOriginCountryEnum["Tz"] = "TZ";
-        CommodityOriginCountryEnum["Ua"] = "UA";
-        CommodityOriginCountryEnum["Ug"] = "UG";
-        CommodityOriginCountryEnum["Us"] = "US";
-        CommodityOriginCountryEnum["Uy"] = "UY";
-        CommodityOriginCountryEnum["Uz"] = "UZ";
-        CommodityOriginCountryEnum["Va"] = "VA";
-        CommodityOriginCountryEnum["Vc"] = "VC";
-        CommodityOriginCountryEnum["Ve"] = "VE";
-        CommodityOriginCountryEnum["Vg"] = "VG";
-        CommodityOriginCountryEnum["Vi"] = "VI";
-        CommodityOriginCountryEnum["Vn"] = "VN";
-        CommodityOriginCountryEnum["Vu"] = "VU";
-        CommodityOriginCountryEnum["Ws"] = "WS";
-        CommodityOriginCountryEnum["Xb"] = "XB";
-        CommodityOriginCountryEnum["Xc"] = "XC";
-        CommodityOriginCountryEnum["Xe"] = "XE";
-        CommodityOriginCountryEnum["Xm"] = "XM";
-        CommodityOriginCountryEnum["Xn"] = "XN";
-        CommodityOriginCountryEnum["Xs"] = "XS";
-        CommodityOriginCountryEnum["Xy"] = "XY";
-        CommodityOriginCountryEnum["Ye"] = "YE";
-        CommodityOriginCountryEnum["Yt"] = "YT";
-        CommodityOriginCountryEnum["Za"] = "ZA";
-        CommodityOriginCountryEnum["Zm"] = "ZM";
-        CommodityOriginCountryEnum["Zw"] = "ZW";
-    })(CommodityOriginCountryEnum || (CommodityOriginCountryEnum = {}));
     function CommodityFromJSON(json) {
         return CommodityFromJSONTyped(json);
     }
@@ -1423,255 +727,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var CommodityDataWeightUnitEnum;
-    (function (CommodityDataWeightUnitEnum) {
-        CommodityDataWeightUnitEnum["Kg"] = "KG";
-        CommodityDataWeightUnitEnum["Lb"] = "LB";
-    })(CommodityDataWeightUnitEnum || (CommodityDataWeightUnitEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var CommodityDataOriginCountryEnum;
-    (function (CommodityDataOriginCountryEnum) {
-        CommodityDataOriginCountryEnum["Ad"] = "AD";
-        CommodityDataOriginCountryEnum["Ae"] = "AE";
-        CommodityDataOriginCountryEnum["Af"] = "AF";
-        CommodityDataOriginCountryEnum["Ag"] = "AG";
-        CommodityDataOriginCountryEnum["Ai"] = "AI";
-        CommodityDataOriginCountryEnum["Al"] = "AL";
-        CommodityDataOriginCountryEnum["Am"] = "AM";
-        CommodityDataOriginCountryEnum["An"] = "AN";
-        CommodityDataOriginCountryEnum["Ao"] = "AO";
-        CommodityDataOriginCountryEnum["Ar"] = "AR";
-        CommodityDataOriginCountryEnum["As"] = "AS";
-        CommodityDataOriginCountryEnum["At"] = "AT";
-        CommodityDataOriginCountryEnum["Au"] = "AU";
-        CommodityDataOriginCountryEnum["Aw"] = "AW";
-        CommodityDataOriginCountryEnum["Az"] = "AZ";
-        CommodityDataOriginCountryEnum["Ba"] = "BA";
-        CommodityDataOriginCountryEnum["Bb"] = "BB";
-        CommodityDataOriginCountryEnum["Bd"] = "BD";
-        CommodityDataOriginCountryEnum["Be"] = "BE";
-        CommodityDataOriginCountryEnum["Bf"] = "BF";
-        CommodityDataOriginCountryEnum["Bg"] = "BG";
-        CommodityDataOriginCountryEnum["Bh"] = "BH";
-        CommodityDataOriginCountryEnum["Bi"] = "BI";
-        CommodityDataOriginCountryEnum["Bj"] = "BJ";
-        CommodityDataOriginCountryEnum["Bm"] = "BM";
-        CommodityDataOriginCountryEnum["Bn"] = "BN";
-        CommodityDataOriginCountryEnum["Bo"] = "BO";
-        CommodityDataOriginCountryEnum["Br"] = "BR";
-        CommodityDataOriginCountryEnum["Bs"] = "BS";
-        CommodityDataOriginCountryEnum["Bt"] = "BT";
-        CommodityDataOriginCountryEnum["Bw"] = "BW";
-        CommodityDataOriginCountryEnum["By"] = "BY";
-        CommodityDataOriginCountryEnum["Bz"] = "BZ";
-        CommodityDataOriginCountryEnum["Ca"] = "CA";
-        CommodityDataOriginCountryEnum["Cd"] = "CD";
-        CommodityDataOriginCountryEnum["Cf"] = "CF";
-        CommodityDataOriginCountryEnum["Cg"] = "CG";
-        CommodityDataOriginCountryEnum["Ch"] = "CH";
-        CommodityDataOriginCountryEnum["Ci"] = "CI";
-        CommodityDataOriginCountryEnum["Ck"] = "CK";
-        CommodityDataOriginCountryEnum["Cl"] = "CL";
-        CommodityDataOriginCountryEnum["Cm"] = "CM";
-        CommodityDataOriginCountryEnum["Cn"] = "CN";
-        CommodityDataOriginCountryEnum["Co"] = "CO";
-        CommodityDataOriginCountryEnum["Cr"] = "CR";
-        CommodityDataOriginCountryEnum["Cu"] = "CU";
-        CommodityDataOriginCountryEnum["Cv"] = "CV";
-        CommodityDataOriginCountryEnum["Cy"] = "CY";
-        CommodityDataOriginCountryEnum["Cz"] = "CZ";
-        CommodityDataOriginCountryEnum["De"] = "DE";
-        CommodityDataOriginCountryEnum["Dj"] = "DJ";
-        CommodityDataOriginCountryEnum["Dk"] = "DK";
-        CommodityDataOriginCountryEnum["Dm"] = "DM";
-        CommodityDataOriginCountryEnum["Do"] = "DO";
-        CommodityDataOriginCountryEnum["Dz"] = "DZ";
-        CommodityDataOriginCountryEnum["Ec"] = "EC";
-        CommodityDataOriginCountryEnum["Ee"] = "EE";
-        CommodityDataOriginCountryEnum["Eg"] = "EG";
-        CommodityDataOriginCountryEnum["Er"] = "ER";
-        CommodityDataOriginCountryEnum["Es"] = "ES";
-        CommodityDataOriginCountryEnum["Et"] = "ET";
-        CommodityDataOriginCountryEnum["Fi"] = "FI";
-        CommodityDataOriginCountryEnum["Fj"] = "FJ";
-        CommodityDataOriginCountryEnum["Fk"] = "FK";
-        CommodityDataOriginCountryEnum["Fm"] = "FM";
-        CommodityDataOriginCountryEnum["Fo"] = "FO";
-        CommodityDataOriginCountryEnum["Fr"] = "FR";
-        CommodityDataOriginCountryEnum["Ga"] = "GA";
-        CommodityDataOriginCountryEnum["Gb"] = "GB";
-        CommodityDataOriginCountryEnum["Gd"] = "GD";
-        CommodityDataOriginCountryEnum["Ge"] = "GE";
-        CommodityDataOriginCountryEnum["Gf"] = "GF";
-        CommodityDataOriginCountryEnum["Gg"] = "GG";
-        CommodityDataOriginCountryEnum["Gh"] = "GH";
-        CommodityDataOriginCountryEnum["Gi"] = "GI";
-        CommodityDataOriginCountryEnum["Gl"] = "GL";
-        CommodityDataOriginCountryEnum["Gm"] = "GM";
-        CommodityDataOriginCountryEnum["Gn"] = "GN";
-        CommodityDataOriginCountryEnum["Gp"] = "GP";
-        CommodityDataOriginCountryEnum["Gq"] = "GQ";
-        CommodityDataOriginCountryEnum["Gr"] = "GR";
-        CommodityDataOriginCountryEnum["Gt"] = "GT";
-        CommodityDataOriginCountryEnum["Gu"] = "GU";
-        CommodityDataOriginCountryEnum["Gw"] = "GW";
-        CommodityDataOriginCountryEnum["Gy"] = "GY";
-        CommodityDataOriginCountryEnum["Hk"] = "HK";
-        CommodityDataOriginCountryEnum["Hn"] = "HN";
-        CommodityDataOriginCountryEnum["Hr"] = "HR";
-        CommodityDataOriginCountryEnum["Ht"] = "HT";
-        CommodityDataOriginCountryEnum["Hu"] = "HU";
-        CommodityDataOriginCountryEnum["Ic"] = "IC";
-        CommodityDataOriginCountryEnum["Id"] = "ID";
-        CommodityDataOriginCountryEnum["Ie"] = "IE";
-        CommodityDataOriginCountryEnum["Il"] = "IL";
-        CommodityDataOriginCountryEnum["In"] = "IN";
-        CommodityDataOriginCountryEnum["Iq"] = "IQ";
-        CommodityDataOriginCountryEnum["Ir"] = "IR";
-        CommodityDataOriginCountryEnum["Is"] = "IS";
-        CommodityDataOriginCountryEnum["It"] = "IT";
-        CommodityDataOriginCountryEnum["Je"] = "JE";
-        CommodityDataOriginCountryEnum["Jm"] = "JM";
-        CommodityDataOriginCountryEnum["Jo"] = "JO";
-        CommodityDataOriginCountryEnum["Jp"] = "JP";
-        CommodityDataOriginCountryEnum["Ke"] = "KE";
-        CommodityDataOriginCountryEnum["Kg"] = "KG";
-        CommodityDataOriginCountryEnum["Kh"] = "KH";
-        CommodityDataOriginCountryEnum["Ki"] = "KI";
-        CommodityDataOriginCountryEnum["Km"] = "KM";
-        CommodityDataOriginCountryEnum["Kn"] = "KN";
-        CommodityDataOriginCountryEnum["Kp"] = "KP";
-        CommodityDataOriginCountryEnum["Kr"] = "KR";
-        CommodityDataOriginCountryEnum["Kv"] = "KV";
-        CommodityDataOriginCountryEnum["Kw"] = "KW";
-        CommodityDataOriginCountryEnum["Ky"] = "KY";
-        CommodityDataOriginCountryEnum["Kz"] = "KZ";
-        CommodityDataOriginCountryEnum["La"] = "LA";
-        CommodityDataOriginCountryEnum["Lb"] = "LB";
-        CommodityDataOriginCountryEnum["Lc"] = "LC";
-        CommodityDataOriginCountryEnum["Li"] = "LI";
-        CommodityDataOriginCountryEnum["Lk"] = "LK";
-        CommodityDataOriginCountryEnum["Lr"] = "LR";
-        CommodityDataOriginCountryEnum["Ls"] = "LS";
-        CommodityDataOriginCountryEnum["Lt"] = "LT";
-        CommodityDataOriginCountryEnum["Lu"] = "LU";
-        CommodityDataOriginCountryEnum["Lv"] = "LV";
-        CommodityDataOriginCountryEnum["Ly"] = "LY";
-        CommodityDataOriginCountryEnum["Ma"] = "MA";
-        CommodityDataOriginCountryEnum["Mc"] = "MC";
-        CommodityDataOriginCountryEnum["Md"] = "MD";
-        CommodityDataOriginCountryEnum["Me"] = "ME";
-        CommodityDataOriginCountryEnum["Mg"] = "MG";
-        CommodityDataOriginCountryEnum["Mh"] = "MH";
-        CommodityDataOriginCountryEnum["Mk"] = "MK";
-        CommodityDataOriginCountryEnum["Ml"] = "ML";
-        CommodityDataOriginCountryEnum["Mm"] = "MM";
-        CommodityDataOriginCountryEnum["Mn"] = "MN";
-        CommodityDataOriginCountryEnum["Mo"] = "MO";
-        CommodityDataOriginCountryEnum["Mp"] = "MP";
-        CommodityDataOriginCountryEnum["Mq"] = "MQ";
-        CommodityDataOriginCountryEnum["Mr"] = "MR";
-        CommodityDataOriginCountryEnum["Ms"] = "MS";
-        CommodityDataOriginCountryEnum["Mt"] = "MT";
-        CommodityDataOriginCountryEnum["Mu"] = "MU";
-        CommodityDataOriginCountryEnum["Mv"] = "MV";
-        CommodityDataOriginCountryEnum["Mw"] = "MW";
-        CommodityDataOriginCountryEnum["Mx"] = "MX";
-        CommodityDataOriginCountryEnum["My"] = "MY";
-        CommodityDataOriginCountryEnum["Mz"] = "MZ";
-        CommodityDataOriginCountryEnum["Na"] = "NA";
-        CommodityDataOriginCountryEnum["Nc"] = "NC";
-        CommodityDataOriginCountryEnum["Ne"] = "NE";
-        CommodityDataOriginCountryEnum["Ng"] = "NG";
-        CommodityDataOriginCountryEnum["Ni"] = "NI";
-        CommodityDataOriginCountryEnum["Nl"] = "NL";
-        CommodityDataOriginCountryEnum["No"] = "NO";
-        CommodityDataOriginCountryEnum["Np"] = "NP";
-        CommodityDataOriginCountryEnum["Nr"] = "NR";
-        CommodityDataOriginCountryEnum["Nu"] = "NU";
-        CommodityDataOriginCountryEnum["Nz"] = "NZ";
-        CommodityDataOriginCountryEnum["Om"] = "OM";
-        CommodityDataOriginCountryEnum["Pa"] = "PA";
-        CommodityDataOriginCountryEnum["Pe"] = "PE";
-        CommodityDataOriginCountryEnum["Pf"] = "PF";
-        CommodityDataOriginCountryEnum["Pg"] = "PG";
-        CommodityDataOriginCountryEnum["Ph"] = "PH";
-        CommodityDataOriginCountryEnum["Pk"] = "PK";
-        CommodityDataOriginCountryEnum["Pl"] = "PL";
-        CommodityDataOriginCountryEnum["Pr"] = "PR";
-        CommodityDataOriginCountryEnum["Pt"] = "PT";
-        CommodityDataOriginCountryEnum["Pw"] = "PW";
-        CommodityDataOriginCountryEnum["Py"] = "PY";
-        CommodityDataOriginCountryEnum["Qa"] = "QA";
-        CommodityDataOriginCountryEnum["Re"] = "RE";
-        CommodityDataOriginCountryEnum["Ro"] = "RO";
-        CommodityDataOriginCountryEnum["Rs"] = "RS";
-        CommodityDataOriginCountryEnum["Ru"] = "RU";
-        CommodityDataOriginCountryEnum["Rw"] = "RW";
-        CommodityDataOriginCountryEnum["Sa"] = "SA";
-        CommodityDataOriginCountryEnum["Sb"] = "SB";
-        CommodityDataOriginCountryEnum["Sc"] = "SC";
-        CommodityDataOriginCountryEnum["Sd"] = "SD";
-        CommodityDataOriginCountryEnum["Se"] = "SE";
-        CommodityDataOriginCountryEnum["Sg"] = "SG";
-        CommodityDataOriginCountryEnum["Sh"] = "SH";
-        CommodityDataOriginCountryEnum["Si"] = "SI";
-        CommodityDataOriginCountryEnum["Sk"] = "SK";
-        CommodityDataOriginCountryEnum["Sl"] = "SL";
-        CommodityDataOriginCountryEnum["Sm"] = "SM";
-        CommodityDataOriginCountryEnum["Sn"] = "SN";
-        CommodityDataOriginCountryEnum["So"] = "SO";
-        CommodityDataOriginCountryEnum["Sr"] = "SR";
-        CommodityDataOriginCountryEnum["Ss"] = "SS";
-        CommodityDataOriginCountryEnum["St"] = "ST";
-        CommodityDataOriginCountryEnum["Sv"] = "SV";
-        CommodityDataOriginCountryEnum["Sy"] = "SY";
-        CommodityDataOriginCountryEnum["Sz"] = "SZ";
-        CommodityDataOriginCountryEnum["Tc"] = "TC";
-        CommodityDataOriginCountryEnum["Td"] = "TD";
-        CommodityDataOriginCountryEnum["Tg"] = "TG";
-        CommodityDataOriginCountryEnum["Th"] = "TH";
-        CommodityDataOriginCountryEnum["Tj"] = "TJ";
-        CommodityDataOriginCountryEnum["Tl"] = "TL";
-        CommodityDataOriginCountryEnum["Tn"] = "TN";
-        CommodityDataOriginCountryEnum["To"] = "TO";
-        CommodityDataOriginCountryEnum["Tr"] = "TR";
-        CommodityDataOriginCountryEnum["Tt"] = "TT";
-        CommodityDataOriginCountryEnum["Tv"] = "TV";
-        CommodityDataOriginCountryEnum["Tw"] = "TW";
-        CommodityDataOriginCountryEnum["Tz"] = "TZ";
-        CommodityDataOriginCountryEnum["Ua"] = "UA";
-        CommodityDataOriginCountryEnum["Ug"] = "UG";
-        CommodityDataOriginCountryEnum["Us"] = "US";
-        CommodityDataOriginCountryEnum["Uy"] = "UY";
-        CommodityDataOriginCountryEnum["Uz"] = "UZ";
-        CommodityDataOriginCountryEnum["Va"] = "VA";
-        CommodityDataOriginCountryEnum["Vc"] = "VC";
-        CommodityDataOriginCountryEnum["Ve"] = "VE";
-        CommodityDataOriginCountryEnum["Vg"] = "VG";
-        CommodityDataOriginCountryEnum["Vi"] = "VI";
-        CommodityDataOriginCountryEnum["Vn"] = "VN";
-        CommodityDataOriginCountryEnum["Vu"] = "VU";
-        CommodityDataOriginCountryEnum["Ws"] = "WS";
-        CommodityDataOriginCountryEnum["Xb"] = "XB";
-        CommodityDataOriginCountryEnum["Xc"] = "XC";
-        CommodityDataOriginCountryEnum["Xe"] = "XE";
-        CommodityDataOriginCountryEnum["Xm"] = "XM";
-        CommodityDataOriginCountryEnum["Xn"] = "XN";
-        CommodityDataOriginCountryEnum["Xs"] = "XS";
-        CommodityDataOriginCountryEnum["Xy"] = "XY";
-        CommodityDataOriginCountryEnum["Ye"] = "YE";
-        CommodityDataOriginCountryEnum["Yt"] = "YT";
-        CommodityDataOriginCountryEnum["Za"] = "ZA";
-        CommodityDataOriginCountryEnum["Zm"] = "ZM";
-        CommodityDataOriginCountryEnum["Zw"] = "ZW";
-    })(CommodityDataOriginCountryEnum || (CommodityDataOriginCountryEnum = {}));
     function CommodityDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1695,165 +750,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var DutyPaidByEnum;
-    (function (DutyPaidByEnum) {
-        DutyPaidByEnum["Sender"] = "sender";
-        DutyPaidByEnum["Recipient"] = "recipient";
-        DutyPaidByEnum["ThirdParty"] = "third_party";
-    })(DutyPaidByEnum || (DutyPaidByEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var DutyCurrencyEnum;
-    (function (DutyCurrencyEnum) {
-        DutyCurrencyEnum["Eur"] = "EUR";
-        DutyCurrencyEnum["Aed"] = "AED";
-        DutyCurrencyEnum["Usd"] = "USD";
-        DutyCurrencyEnum["Xcd"] = "XCD";
-        DutyCurrencyEnum["Amd"] = "AMD";
-        DutyCurrencyEnum["Ang"] = "ANG";
-        DutyCurrencyEnum["Aoa"] = "AOA";
-        DutyCurrencyEnum["Ars"] = "ARS";
-        DutyCurrencyEnum["Aud"] = "AUD";
-        DutyCurrencyEnum["Awg"] = "AWG";
-        DutyCurrencyEnum["Azn"] = "AZN";
-        DutyCurrencyEnum["Bam"] = "BAM";
-        DutyCurrencyEnum["Bbd"] = "BBD";
-        DutyCurrencyEnum["Bdt"] = "BDT";
-        DutyCurrencyEnum["Xof"] = "XOF";
-        DutyCurrencyEnum["Bgn"] = "BGN";
-        DutyCurrencyEnum["Bhd"] = "BHD";
-        DutyCurrencyEnum["Bif"] = "BIF";
-        DutyCurrencyEnum["Bmd"] = "BMD";
-        DutyCurrencyEnum["Bnd"] = "BND";
-        DutyCurrencyEnum["Bob"] = "BOB";
-        DutyCurrencyEnum["Brl"] = "BRL";
-        DutyCurrencyEnum["Bsd"] = "BSD";
-        DutyCurrencyEnum["Btn"] = "BTN";
-        DutyCurrencyEnum["Bwp"] = "BWP";
-        DutyCurrencyEnum["Byn"] = "BYN";
-        DutyCurrencyEnum["Bzd"] = "BZD";
-        DutyCurrencyEnum["Cad"] = "CAD";
-        DutyCurrencyEnum["Cdf"] = "CDF";
-        DutyCurrencyEnum["Xaf"] = "XAF";
-        DutyCurrencyEnum["Chf"] = "CHF";
-        DutyCurrencyEnum["Nzd"] = "NZD";
-        DutyCurrencyEnum["Clp"] = "CLP";
-        DutyCurrencyEnum["Cny"] = "CNY";
-        DutyCurrencyEnum["Cop"] = "COP";
-        DutyCurrencyEnum["Crc"] = "CRC";
-        DutyCurrencyEnum["Cuc"] = "CUC";
-        DutyCurrencyEnum["Cve"] = "CVE";
-        DutyCurrencyEnum["Czk"] = "CZK";
-        DutyCurrencyEnum["Djf"] = "DJF";
-        DutyCurrencyEnum["Dkk"] = "DKK";
-        DutyCurrencyEnum["Dop"] = "DOP";
-        DutyCurrencyEnum["Dzd"] = "DZD";
-        DutyCurrencyEnum["Egp"] = "EGP";
-        DutyCurrencyEnum["Ern"] = "ERN";
-        DutyCurrencyEnum["Etb"] = "ETB";
-        DutyCurrencyEnum["Fjd"] = "FJD";
-        DutyCurrencyEnum["Gbp"] = "GBP";
-        DutyCurrencyEnum["Gel"] = "GEL";
-        DutyCurrencyEnum["Ghs"] = "GHS";
-        DutyCurrencyEnum["Gmd"] = "GMD";
-        DutyCurrencyEnum["Gnf"] = "GNF";
-        DutyCurrencyEnum["Gtq"] = "GTQ";
-        DutyCurrencyEnum["Gyd"] = "GYD";
-        DutyCurrencyEnum["Hkd"] = "HKD";
-        DutyCurrencyEnum["Hnl"] = "HNL";
-        DutyCurrencyEnum["Hrk"] = "HRK";
-        DutyCurrencyEnum["Htg"] = "HTG";
-        DutyCurrencyEnum["Huf"] = "HUF";
-        DutyCurrencyEnum["Idr"] = "IDR";
-        DutyCurrencyEnum["Ils"] = "ILS";
-        DutyCurrencyEnum["Inr"] = "INR";
-        DutyCurrencyEnum["Irr"] = "IRR";
-        DutyCurrencyEnum["Isk"] = "ISK";
-        DutyCurrencyEnum["Jmd"] = "JMD";
-        DutyCurrencyEnum["Jod"] = "JOD";
-        DutyCurrencyEnum["Jpy"] = "JPY";
-        DutyCurrencyEnum["Kes"] = "KES";
-        DutyCurrencyEnum["Kgs"] = "KGS";
-        DutyCurrencyEnum["Khr"] = "KHR";
-        DutyCurrencyEnum["Kmf"] = "KMF";
-        DutyCurrencyEnum["Kpw"] = "KPW";
-        DutyCurrencyEnum["Krw"] = "KRW";
-        DutyCurrencyEnum["Kwd"] = "KWD";
-        DutyCurrencyEnum["Kyd"] = "KYD";
-        DutyCurrencyEnum["Kzt"] = "KZT";
-        DutyCurrencyEnum["Lak"] = "LAK";
-        DutyCurrencyEnum["Lkr"] = "LKR";
-        DutyCurrencyEnum["Lrd"] = "LRD";
-        DutyCurrencyEnum["Lsl"] = "LSL";
-        DutyCurrencyEnum["Lyd"] = "LYD";
-        DutyCurrencyEnum["Mad"] = "MAD";
-        DutyCurrencyEnum["Mdl"] = "MDL";
-        DutyCurrencyEnum["Mga"] = "MGA";
-        DutyCurrencyEnum["Mkd"] = "MKD";
-        DutyCurrencyEnum["Mmk"] = "MMK";
-        DutyCurrencyEnum["Mnt"] = "MNT";
-        DutyCurrencyEnum["Mop"] = "MOP";
-        DutyCurrencyEnum["Mro"] = "MRO";
-        DutyCurrencyEnum["Mur"] = "MUR";
-        DutyCurrencyEnum["Mvr"] = "MVR";
-        DutyCurrencyEnum["Mwk"] = "MWK";
-        DutyCurrencyEnum["Mxn"] = "MXN";
-        DutyCurrencyEnum["Myr"] = "MYR";
-        DutyCurrencyEnum["Mzn"] = "MZN";
-        DutyCurrencyEnum["Nad"] = "NAD";
-        DutyCurrencyEnum["Xpf"] = "XPF";
-        DutyCurrencyEnum["Ngn"] = "NGN";
-        DutyCurrencyEnum["Nio"] = "NIO";
-        DutyCurrencyEnum["Nok"] = "NOK";
-        DutyCurrencyEnum["Npr"] = "NPR";
-        DutyCurrencyEnum["Omr"] = "OMR";
-        DutyCurrencyEnum["Pen"] = "PEN";
-        DutyCurrencyEnum["Pgk"] = "PGK";
-        DutyCurrencyEnum["Php"] = "PHP";
-        DutyCurrencyEnum["Pkr"] = "PKR";
-        DutyCurrencyEnum["Pln"] = "PLN";
-        DutyCurrencyEnum["Pyg"] = "PYG";
-        DutyCurrencyEnum["Qar"] = "QAR";
-        DutyCurrencyEnum["Rsd"] = "RSD";
-        DutyCurrencyEnum["Rub"] = "RUB";
-        DutyCurrencyEnum["Rwf"] = "RWF";
-        DutyCurrencyEnum["Sar"] = "SAR";
-        DutyCurrencyEnum["Sbd"] = "SBD";
-        DutyCurrencyEnum["Scr"] = "SCR";
-        DutyCurrencyEnum["Sdg"] = "SDG";
-        DutyCurrencyEnum["Sek"] = "SEK";
-        DutyCurrencyEnum["Sgd"] = "SGD";
-        DutyCurrencyEnum["Shp"] = "SHP";
-        DutyCurrencyEnum["Sll"] = "SLL";
-        DutyCurrencyEnum["Sos"] = "SOS";
-        DutyCurrencyEnum["Srd"] = "SRD";
-        DutyCurrencyEnum["Ssp"] = "SSP";
-        DutyCurrencyEnum["Std"] = "STD";
-        DutyCurrencyEnum["Syp"] = "SYP";
-        DutyCurrencyEnum["Szl"] = "SZL";
-        DutyCurrencyEnum["Thb"] = "THB";
-        DutyCurrencyEnum["Tjs"] = "TJS";
-        DutyCurrencyEnum["Tnd"] = "TND";
-        DutyCurrencyEnum["Top"] = "TOP";
-        DutyCurrencyEnum["Try"] = "TRY";
-        DutyCurrencyEnum["Ttd"] = "TTD";
-        DutyCurrencyEnum["Twd"] = "TWD";
-        DutyCurrencyEnum["Tzs"] = "TZS";
-        DutyCurrencyEnum["Uah"] = "UAH";
-        DutyCurrencyEnum["Uyu"] = "UYU";
-        DutyCurrencyEnum["Uzs"] = "UZS";
-        DutyCurrencyEnum["Vef"] = "VEF";
-        DutyCurrencyEnum["Vnd"] = "VND";
-        DutyCurrencyEnum["Vuv"] = "VUV";
-        DutyCurrencyEnum["Wst"] = "WST";
-        DutyCurrencyEnum["Yer"] = "YER";
-        DutyCurrencyEnum["Zar"] = "ZAR";
-    })(DutyCurrencyEnum || (DutyCurrencyEnum = {}));
     function DutyFromJSON(json) {
         return DutyFromJSONTyped(json);
     }
@@ -1886,38 +782,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var CustomsContentTypeEnum;
-    (function (CustomsContentTypeEnum) {
-        CustomsContentTypeEnum["Documents"] = "documents";
-        CustomsContentTypeEnum["Gift"] = "gift";
-        CustomsContentTypeEnum["Sample"] = "sample";
-        CustomsContentTypeEnum["Merchandise"] = "merchandise";
-        CustomsContentTypeEnum["ReturnMerchandise"] = "return_merchandise";
-        CustomsContentTypeEnum["Other"] = "other";
-    })(CustomsContentTypeEnum || (CustomsContentTypeEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var CustomsIncotermEnum;
-    (function (CustomsIncotermEnum) {
-        CustomsIncotermEnum["Cfr"] = "CFR";
-        CustomsIncotermEnum["Cif"] = "CIF";
-        CustomsIncotermEnum["Cip"] = "CIP";
-        CustomsIncotermEnum["Cpt"] = "CPT";
-        CustomsIncotermEnum["Daf"] = "DAF";
-        CustomsIncotermEnum["Ddp"] = "DDP";
-        CustomsIncotermEnum["Ddu"] = "DDU";
-        CustomsIncotermEnum["Deq"] = "DEQ";
-        CustomsIncotermEnum["Des"] = "DES";
-        CustomsIncotermEnum["Exw"] = "EXW";
-        CustomsIncotermEnum["Fas"] = "FAS";
-        CustomsIncotermEnum["Fca"] = "FCA";
-        CustomsIncotermEnum["Fob"] = "FOB";
-    })(CustomsIncotermEnum || (CustomsIncotermEnum = {}));
     function CustomsFromJSON(json) {
         return CustomsFromJSONTyped(json);
     }
@@ -1943,38 +807,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var CustomsDataContentTypeEnum;
-    (function (CustomsDataContentTypeEnum) {
-        CustomsDataContentTypeEnum["Documents"] = "documents";
-        CustomsDataContentTypeEnum["Gift"] = "gift";
-        CustomsDataContentTypeEnum["Sample"] = "sample";
-        CustomsDataContentTypeEnum["Merchandise"] = "merchandise";
-        CustomsDataContentTypeEnum["ReturnMerchandise"] = "return_merchandise";
-        CustomsDataContentTypeEnum["Other"] = "other";
-    })(CustomsDataContentTypeEnum || (CustomsDataContentTypeEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var CustomsDataIncotermEnum;
-    (function (CustomsDataIncotermEnum) {
-        CustomsDataIncotermEnum["Cfr"] = "CFR";
-        CustomsDataIncotermEnum["Cif"] = "CIF";
-        CustomsDataIncotermEnum["Cip"] = "CIP";
-        CustomsDataIncotermEnum["Cpt"] = "CPT";
-        CustomsDataIncotermEnum["Daf"] = "DAF";
-        CustomsDataIncotermEnum["Ddp"] = "DDP";
-        CustomsDataIncotermEnum["Ddu"] = "DDU";
-        CustomsDataIncotermEnum["Deq"] = "DEQ";
-        CustomsDataIncotermEnum["Des"] = "DES";
-        CustomsDataIncotermEnum["Exw"] = "EXW";
-        CustomsDataIncotermEnum["Fas"] = "FAS";
-        CustomsDataIncotermEnum["Fca"] = "FCA";
-        CustomsDataIncotermEnum["Fob"] = "FOB";
-    })(CustomsDataIncotermEnum || (CustomsDataIncotermEnum = {}));
     function CustomsDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2014,6 +846,52 @@
     }
 
     /* tslint:disable */
+    function Data200ResponseFromJSON(json) {
+        return Data200ResponseFromJSONTyped(json);
+    }
+    function Data200ResponseFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
+            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
+            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
+            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
+            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
+            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
+            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
+            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
+            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
+            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
+            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
+            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
+            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
+            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
+            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
+            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
+            'address_auto_complete': !exists(json, 'ADDRESS_AUTO_COMPLETE') ? undefined : json['ADDRESS_AUTO_COMPLETE'],
+            'countries': !exists(json, 'countries') ? undefined : json['countries'],
+            'currencies': !exists(json, 'currencies') ? undefined : json['currencies'],
+            'carriers': !exists(json, 'carriers') ? undefined : json['carriers'],
+            'custom_carriers': !exists(json, 'custom_carriers') ? undefined : json['custom_carriers'],
+            'customs_content_type': !exists(json, 'customs_content_type') ? undefined : json['customs_content_type'],
+            'incoterms': !exists(json, 'incoterms') ? undefined : json['incoterms'],
+            'states': !exists(json, 'states') ? undefined : json['states'],
+            'services': !exists(json, 'services') ? undefined : json['services'],
+            'service_names': !exists(json, 'service_names') ? undefined : json['service_names'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'option_names': !exists(json, 'option_names') ? undefined : json['option_names'],
+            'package_presets': !exists(json, 'package_presets') ? undefined : json['package_presets'],
+            'packaging_types': !exists(json, 'packaging_types') ? undefined : json['packaging_types'],
+            'payment_types': !exists(json, 'payment_types') ? undefined : json['payment_types'],
+            'carrier_capabilities': !exists(json, 'carrier_capabilities') ? undefined : json['carrier_capabilities'],
+            'service_levels': !exists(json, 'service_levels') ? undefined : json['service_levels'],
+        };
+    }
+
+    /* tslint:disable */
     function MessageFromJSON(json) {
         return MessageFromJSONTyped(json);
     }
@@ -2045,329 +923,6 @@
     }
 
     /* tslint:disable */
-    function InlineResponse200FromJSON(json) {
-        return InlineResponse200FromJSONTyped(json);
-    }
-    function InlineResponse200FromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
-            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
-            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
-            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
-            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
-            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
-            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
-            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
-            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
-            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
-            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
-            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
-            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
-            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
-            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
-        };
-    }
-
-    /* tslint:disable */
-    function InlineResponse2001FromJSON(json) {
-        return InlineResponse2001FromJSONTyped(json);
-    }
-    function InlineResponse2001FromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
-            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
-            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
-            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
-            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
-            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
-            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
-            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
-            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
-            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
-            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
-            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
-            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
-            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
-            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
-            'address_auto_complete': !exists(json, 'ADDRESS_AUTO_COMPLETE') ? undefined : json['ADDRESS_AUTO_COMPLETE'],
-            'countries': !exists(json, 'countries') ? undefined : json['countries'],
-            'currencies': !exists(json, 'currencies') ? undefined : json['currencies'],
-            'carriers': !exists(json, 'carriers') ? undefined : json['carriers'],
-            'customs_content_type': !exists(json, 'customs_content_type') ? undefined : json['customs_content_type'],
-            'incoterms': !exists(json, 'incoterms') ? undefined : json['incoterms'],
-            'states': !exists(json, 'states') ? undefined : json['states'],
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'service_names': !exists(json, 'service_names') ? undefined : json['service_names'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'option_names': !exists(json, 'option_names') ? undefined : json['option_names'],
-            'package_presets': !exists(json, 'package_presets') ? undefined : json['package_presets'],
-            'packaging_types': !exists(json, 'packaging_types') ? undefined : json['packaging_types'],
-            'payment_types': !exists(json, 'payment_types') ? undefined : json['payment_types'],
-            'carrier_capabilities': !exists(json, 'carrier_capabilities') ? undefined : json['carrier_capabilities'],
-            'service_levels': !exists(json, 'service_levels') ? undefined : json['service_levels'],
-        };
-    }
-
-    /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var LineItemWeightUnitEnum;
-    (function (LineItemWeightUnitEnum) {
-        LineItemWeightUnitEnum["Kg"] = "KG";
-        LineItemWeightUnitEnum["Lb"] = "LB";
-    })(LineItemWeightUnitEnum || (LineItemWeightUnitEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var LineItemOriginCountryEnum;
-    (function (LineItemOriginCountryEnum) {
-        LineItemOriginCountryEnum["Ad"] = "AD";
-        LineItemOriginCountryEnum["Ae"] = "AE";
-        LineItemOriginCountryEnum["Af"] = "AF";
-        LineItemOriginCountryEnum["Ag"] = "AG";
-        LineItemOriginCountryEnum["Ai"] = "AI";
-        LineItemOriginCountryEnum["Al"] = "AL";
-        LineItemOriginCountryEnum["Am"] = "AM";
-        LineItemOriginCountryEnum["An"] = "AN";
-        LineItemOriginCountryEnum["Ao"] = "AO";
-        LineItemOriginCountryEnum["Ar"] = "AR";
-        LineItemOriginCountryEnum["As"] = "AS";
-        LineItemOriginCountryEnum["At"] = "AT";
-        LineItemOriginCountryEnum["Au"] = "AU";
-        LineItemOriginCountryEnum["Aw"] = "AW";
-        LineItemOriginCountryEnum["Az"] = "AZ";
-        LineItemOriginCountryEnum["Ba"] = "BA";
-        LineItemOriginCountryEnum["Bb"] = "BB";
-        LineItemOriginCountryEnum["Bd"] = "BD";
-        LineItemOriginCountryEnum["Be"] = "BE";
-        LineItemOriginCountryEnum["Bf"] = "BF";
-        LineItemOriginCountryEnum["Bg"] = "BG";
-        LineItemOriginCountryEnum["Bh"] = "BH";
-        LineItemOriginCountryEnum["Bi"] = "BI";
-        LineItemOriginCountryEnum["Bj"] = "BJ";
-        LineItemOriginCountryEnum["Bm"] = "BM";
-        LineItemOriginCountryEnum["Bn"] = "BN";
-        LineItemOriginCountryEnum["Bo"] = "BO";
-        LineItemOriginCountryEnum["Br"] = "BR";
-        LineItemOriginCountryEnum["Bs"] = "BS";
-        LineItemOriginCountryEnum["Bt"] = "BT";
-        LineItemOriginCountryEnum["Bw"] = "BW";
-        LineItemOriginCountryEnum["By"] = "BY";
-        LineItemOriginCountryEnum["Bz"] = "BZ";
-        LineItemOriginCountryEnum["Ca"] = "CA";
-        LineItemOriginCountryEnum["Cd"] = "CD";
-        LineItemOriginCountryEnum["Cf"] = "CF";
-        LineItemOriginCountryEnum["Cg"] = "CG";
-        LineItemOriginCountryEnum["Ch"] = "CH";
-        LineItemOriginCountryEnum["Ci"] = "CI";
-        LineItemOriginCountryEnum["Ck"] = "CK";
-        LineItemOriginCountryEnum["Cl"] = "CL";
-        LineItemOriginCountryEnum["Cm"] = "CM";
-        LineItemOriginCountryEnum["Cn"] = "CN";
-        LineItemOriginCountryEnum["Co"] = "CO";
-        LineItemOriginCountryEnum["Cr"] = "CR";
-        LineItemOriginCountryEnum["Cu"] = "CU";
-        LineItemOriginCountryEnum["Cv"] = "CV";
-        LineItemOriginCountryEnum["Cy"] = "CY";
-        LineItemOriginCountryEnum["Cz"] = "CZ";
-        LineItemOriginCountryEnum["De"] = "DE";
-        LineItemOriginCountryEnum["Dj"] = "DJ";
-        LineItemOriginCountryEnum["Dk"] = "DK";
-        LineItemOriginCountryEnum["Dm"] = "DM";
-        LineItemOriginCountryEnum["Do"] = "DO";
-        LineItemOriginCountryEnum["Dz"] = "DZ";
-        LineItemOriginCountryEnum["Ec"] = "EC";
-        LineItemOriginCountryEnum["Ee"] = "EE";
-        LineItemOriginCountryEnum["Eg"] = "EG";
-        LineItemOriginCountryEnum["Er"] = "ER";
-        LineItemOriginCountryEnum["Es"] = "ES";
-        LineItemOriginCountryEnum["Et"] = "ET";
-        LineItemOriginCountryEnum["Fi"] = "FI";
-        LineItemOriginCountryEnum["Fj"] = "FJ";
-        LineItemOriginCountryEnum["Fk"] = "FK";
-        LineItemOriginCountryEnum["Fm"] = "FM";
-        LineItemOriginCountryEnum["Fo"] = "FO";
-        LineItemOriginCountryEnum["Fr"] = "FR";
-        LineItemOriginCountryEnum["Ga"] = "GA";
-        LineItemOriginCountryEnum["Gb"] = "GB";
-        LineItemOriginCountryEnum["Gd"] = "GD";
-        LineItemOriginCountryEnum["Ge"] = "GE";
-        LineItemOriginCountryEnum["Gf"] = "GF";
-        LineItemOriginCountryEnum["Gg"] = "GG";
-        LineItemOriginCountryEnum["Gh"] = "GH";
-        LineItemOriginCountryEnum["Gi"] = "GI";
-        LineItemOriginCountryEnum["Gl"] = "GL";
-        LineItemOriginCountryEnum["Gm"] = "GM";
-        LineItemOriginCountryEnum["Gn"] = "GN";
-        LineItemOriginCountryEnum["Gp"] = "GP";
-        LineItemOriginCountryEnum["Gq"] = "GQ";
-        LineItemOriginCountryEnum["Gr"] = "GR";
-        LineItemOriginCountryEnum["Gt"] = "GT";
-        LineItemOriginCountryEnum["Gu"] = "GU";
-        LineItemOriginCountryEnum["Gw"] = "GW";
-        LineItemOriginCountryEnum["Gy"] = "GY";
-        LineItemOriginCountryEnum["Hk"] = "HK";
-        LineItemOriginCountryEnum["Hn"] = "HN";
-        LineItemOriginCountryEnum["Hr"] = "HR";
-        LineItemOriginCountryEnum["Ht"] = "HT";
-        LineItemOriginCountryEnum["Hu"] = "HU";
-        LineItemOriginCountryEnum["Ic"] = "IC";
-        LineItemOriginCountryEnum["Id"] = "ID";
-        LineItemOriginCountryEnum["Ie"] = "IE";
-        LineItemOriginCountryEnum["Il"] = "IL";
-        LineItemOriginCountryEnum["In"] = "IN";
-        LineItemOriginCountryEnum["Iq"] = "IQ";
-        LineItemOriginCountryEnum["Ir"] = "IR";
-        LineItemOriginCountryEnum["Is"] = "IS";
-        LineItemOriginCountryEnum["It"] = "IT";
-        LineItemOriginCountryEnum["Je"] = "JE";
-        LineItemOriginCountryEnum["Jm"] = "JM";
-        LineItemOriginCountryEnum["Jo"] = "JO";
-        LineItemOriginCountryEnum["Jp"] = "JP";
-        LineItemOriginCountryEnum["Ke"] = "KE";
-        LineItemOriginCountryEnum["Kg"] = "KG";
-        LineItemOriginCountryEnum["Kh"] = "KH";
-        LineItemOriginCountryEnum["Ki"] = "KI";
-        LineItemOriginCountryEnum["Km"] = "KM";
-        LineItemOriginCountryEnum["Kn"] = "KN";
-        LineItemOriginCountryEnum["Kp"] = "KP";
-        LineItemOriginCountryEnum["Kr"] = "KR";
-        LineItemOriginCountryEnum["Kv"] = "KV";
-        LineItemOriginCountryEnum["Kw"] = "KW";
-        LineItemOriginCountryEnum["Ky"] = "KY";
-        LineItemOriginCountryEnum["Kz"] = "KZ";
-        LineItemOriginCountryEnum["La"] = "LA";
-        LineItemOriginCountryEnum["Lb"] = "LB";
-        LineItemOriginCountryEnum["Lc"] = "LC";
-        LineItemOriginCountryEnum["Li"] = "LI";
-        LineItemOriginCountryEnum["Lk"] = "LK";
-        LineItemOriginCountryEnum["Lr"] = "LR";
-        LineItemOriginCountryEnum["Ls"] = "LS";
-        LineItemOriginCountryEnum["Lt"] = "LT";
-        LineItemOriginCountryEnum["Lu"] = "LU";
-        LineItemOriginCountryEnum["Lv"] = "LV";
-        LineItemOriginCountryEnum["Ly"] = "LY";
-        LineItemOriginCountryEnum["Ma"] = "MA";
-        LineItemOriginCountryEnum["Mc"] = "MC";
-        LineItemOriginCountryEnum["Md"] = "MD";
-        LineItemOriginCountryEnum["Me"] = "ME";
-        LineItemOriginCountryEnum["Mg"] = "MG";
-        LineItemOriginCountryEnum["Mh"] = "MH";
-        LineItemOriginCountryEnum["Mk"] = "MK";
-        LineItemOriginCountryEnum["Ml"] = "ML";
-        LineItemOriginCountryEnum["Mm"] = "MM";
-        LineItemOriginCountryEnum["Mn"] = "MN";
-        LineItemOriginCountryEnum["Mo"] = "MO";
-        LineItemOriginCountryEnum["Mp"] = "MP";
-        LineItemOriginCountryEnum["Mq"] = "MQ";
-        LineItemOriginCountryEnum["Mr"] = "MR";
-        LineItemOriginCountryEnum["Ms"] = "MS";
-        LineItemOriginCountryEnum["Mt"] = "MT";
-        LineItemOriginCountryEnum["Mu"] = "MU";
-        LineItemOriginCountryEnum["Mv"] = "MV";
-        LineItemOriginCountryEnum["Mw"] = "MW";
-        LineItemOriginCountryEnum["Mx"] = "MX";
-        LineItemOriginCountryEnum["My"] = "MY";
-        LineItemOriginCountryEnum["Mz"] = "MZ";
-        LineItemOriginCountryEnum["Na"] = "NA";
-        LineItemOriginCountryEnum["Nc"] = "NC";
-        LineItemOriginCountryEnum["Ne"] = "NE";
-        LineItemOriginCountryEnum["Ng"] = "NG";
-        LineItemOriginCountryEnum["Ni"] = "NI";
-        LineItemOriginCountryEnum["Nl"] = "NL";
-        LineItemOriginCountryEnum["No"] = "NO";
-        LineItemOriginCountryEnum["Np"] = "NP";
-        LineItemOriginCountryEnum["Nr"] = "NR";
-        LineItemOriginCountryEnum["Nu"] = "NU";
-        LineItemOriginCountryEnum["Nz"] = "NZ";
-        LineItemOriginCountryEnum["Om"] = "OM";
-        LineItemOriginCountryEnum["Pa"] = "PA";
-        LineItemOriginCountryEnum["Pe"] = "PE";
-        LineItemOriginCountryEnum["Pf"] = "PF";
-        LineItemOriginCountryEnum["Pg"] = "PG";
-        LineItemOriginCountryEnum["Ph"] = "PH";
-        LineItemOriginCountryEnum["Pk"] = "PK";
-        LineItemOriginCountryEnum["Pl"] = "PL";
-        LineItemOriginCountryEnum["Pr"] = "PR";
-        LineItemOriginCountryEnum["Pt"] = "PT";
-        LineItemOriginCountryEnum["Pw"] = "PW";
-        LineItemOriginCountryEnum["Py"] = "PY";
-        LineItemOriginCountryEnum["Qa"] = "QA";
-        LineItemOriginCountryEnum["Re"] = "RE";
-        LineItemOriginCountryEnum["Ro"] = "RO";
-        LineItemOriginCountryEnum["Rs"] = "RS";
-        LineItemOriginCountryEnum["Ru"] = "RU";
-        LineItemOriginCountryEnum["Rw"] = "RW";
-        LineItemOriginCountryEnum["Sa"] = "SA";
-        LineItemOriginCountryEnum["Sb"] = "SB";
-        LineItemOriginCountryEnum["Sc"] = "SC";
-        LineItemOriginCountryEnum["Sd"] = "SD";
-        LineItemOriginCountryEnum["Se"] = "SE";
-        LineItemOriginCountryEnum["Sg"] = "SG";
-        LineItemOriginCountryEnum["Sh"] = "SH";
-        LineItemOriginCountryEnum["Si"] = "SI";
-        LineItemOriginCountryEnum["Sk"] = "SK";
-        LineItemOriginCountryEnum["Sl"] = "SL";
-        LineItemOriginCountryEnum["Sm"] = "SM";
-        LineItemOriginCountryEnum["Sn"] = "SN";
-        LineItemOriginCountryEnum["So"] = "SO";
-        LineItemOriginCountryEnum["Sr"] = "SR";
-        LineItemOriginCountryEnum["Ss"] = "SS";
-        LineItemOriginCountryEnum["St"] = "ST";
-        LineItemOriginCountryEnum["Sv"] = "SV";
-        LineItemOriginCountryEnum["Sy"] = "SY";
-        LineItemOriginCountryEnum["Sz"] = "SZ";
-        LineItemOriginCountryEnum["Tc"] = "TC";
-        LineItemOriginCountryEnum["Td"] = "TD";
-        LineItemOriginCountryEnum["Tg"] = "TG";
-        LineItemOriginCountryEnum["Th"] = "TH";
-        LineItemOriginCountryEnum["Tj"] = "TJ";
-        LineItemOriginCountryEnum["Tl"] = "TL";
-        LineItemOriginCountryEnum["Tn"] = "TN";
-        LineItemOriginCountryEnum["To"] = "TO";
-        LineItemOriginCountryEnum["Tr"] = "TR";
-        LineItemOriginCountryEnum["Tt"] = "TT";
-        LineItemOriginCountryEnum["Tv"] = "TV";
-        LineItemOriginCountryEnum["Tw"] = "TW";
-        LineItemOriginCountryEnum["Tz"] = "TZ";
-        LineItemOriginCountryEnum["Ua"] = "UA";
-        LineItemOriginCountryEnum["Ug"] = "UG";
-        LineItemOriginCountryEnum["Us"] = "US";
-        LineItemOriginCountryEnum["Uy"] = "UY";
-        LineItemOriginCountryEnum["Uz"] = "UZ";
-        LineItemOriginCountryEnum["Va"] = "VA";
-        LineItemOriginCountryEnum["Vc"] = "VC";
-        LineItemOriginCountryEnum["Ve"] = "VE";
-        LineItemOriginCountryEnum["Vg"] = "VG";
-        LineItemOriginCountryEnum["Vi"] = "VI";
-        LineItemOriginCountryEnum["Vn"] = "VN";
-        LineItemOriginCountryEnum["Vu"] = "VU";
-        LineItemOriginCountryEnum["Ws"] = "WS";
-        LineItemOriginCountryEnum["Xb"] = "XB";
-        LineItemOriginCountryEnum["Xc"] = "XC";
-        LineItemOriginCountryEnum["Xe"] = "XE";
-        LineItemOriginCountryEnum["Xm"] = "XM";
-        LineItemOriginCountryEnum["Xn"] = "XN";
-        LineItemOriginCountryEnum["Xs"] = "XS";
-        LineItemOriginCountryEnum["Xy"] = "XY";
-        LineItemOriginCountryEnum["Ye"] = "YE";
-        LineItemOriginCountryEnum["Yt"] = "YT";
-        LineItemOriginCountryEnum["Za"] = "ZA";
-        LineItemOriginCountryEnum["Zm"] = "ZM";
-        LineItemOriginCountryEnum["Zw"] = "ZW";
-    })(LineItemOriginCountryEnum || (LineItemOriginCountryEnum = {}));
     function LineItemFromJSON(json) {
         return LineItemFromJSONTyped(json);
     }
@@ -2394,18 +949,6 @@
     }
 
     /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
-     *
-     * The version of the OpenAPI document: 2022.8.3
-     * Contact:
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
     function OperationFromJSON(json) {
         return OperationFromJSONTyped(json);
     }
@@ -2420,18 +963,6 @@
     }
 
     /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
-     *
-     * The version of the OpenAPI document: 2022.8.3
-     * Contact:
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
     function OperationConfirmationFromJSON(json) {
         return OperationConfirmationFromJSONTyped(json);
     }
@@ -2462,23 +993,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ParcelWeightUnitEnum;
-    (function (ParcelWeightUnitEnum) {
-        ParcelWeightUnitEnum["Kg"] = "KG";
-        ParcelWeightUnitEnum["Lb"] = "LB";
-    })(ParcelWeightUnitEnum || (ParcelWeightUnitEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var ParcelDimensionUnitEnum;
-    (function (ParcelDimensionUnitEnum) {
-        ParcelDimensionUnitEnum["Cm"] = "CM";
-        ParcelDimensionUnitEnum["In"] = "IN";
-    })(ParcelDimensionUnitEnum || (ParcelDimensionUnitEnum = {}));
     function ParcelFromJSON(json) {
         return ParcelFromJSONTyped(json);
     }
@@ -2535,165 +1049,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var PaymentPaidByEnum;
-    (function (PaymentPaidByEnum) {
-        PaymentPaidByEnum["Sender"] = "sender";
-        PaymentPaidByEnum["Recipient"] = "recipient";
-        PaymentPaidByEnum["ThirdParty"] = "third_party";
-    })(PaymentPaidByEnum || (PaymentPaidByEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var PaymentCurrencyEnum;
-    (function (PaymentCurrencyEnum) {
-        PaymentCurrencyEnum["Eur"] = "EUR";
-        PaymentCurrencyEnum["Aed"] = "AED";
-        PaymentCurrencyEnum["Usd"] = "USD";
-        PaymentCurrencyEnum["Xcd"] = "XCD";
-        PaymentCurrencyEnum["Amd"] = "AMD";
-        PaymentCurrencyEnum["Ang"] = "ANG";
-        PaymentCurrencyEnum["Aoa"] = "AOA";
-        PaymentCurrencyEnum["Ars"] = "ARS";
-        PaymentCurrencyEnum["Aud"] = "AUD";
-        PaymentCurrencyEnum["Awg"] = "AWG";
-        PaymentCurrencyEnum["Azn"] = "AZN";
-        PaymentCurrencyEnum["Bam"] = "BAM";
-        PaymentCurrencyEnum["Bbd"] = "BBD";
-        PaymentCurrencyEnum["Bdt"] = "BDT";
-        PaymentCurrencyEnum["Xof"] = "XOF";
-        PaymentCurrencyEnum["Bgn"] = "BGN";
-        PaymentCurrencyEnum["Bhd"] = "BHD";
-        PaymentCurrencyEnum["Bif"] = "BIF";
-        PaymentCurrencyEnum["Bmd"] = "BMD";
-        PaymentCurrencyEnum["Bnd"] = "BND";
-        PaymentCurrencyEnum["Bob"] = "BOB";
-        PaymentCurrencyEnum["Brl"] = "BRL";
-        PaymentCurrencyEnum["Bsd"] = "BSD";
-        PaymentCurrencyEnum["Btn"] = "BTN";
-        PaymentCurrencyEnum["Bwp"] = "BWP";
-        PaymentCurrencyEnum["Byn"] = "BYN";
-        PaymentCurrencyEnum["Bzd"] = "BZD";
-        PaymentCurrencyEnum["Cad"] = "CAD";
-        PaymentCurrencyEnum["Cdf"] = "CDF";
-        PaymentCurrencyEnum["Xaf"] = "XAF";
-        PaymentCurrencyEnum["Chf"] = "CHF";
-        PaymentCurrencyEnum["Nzd"] = "NZD";
-        PaymentCurrencyEnum["Clp"] = "CLP";
-        PaymentCurrencyEnum["Cny"] = "CNY";
-        PaymentCurrencyEnum["Cop"] = "COP";
-        PaymentCurrencyEnum["Crc"] = "CRC";
-        PaymentCurrencyEnum["Cuc"] = "CUC";
-        PaymentCurrencyEnum["Cve"] = "CVE";
-        PaymentCurrencyEnum["Czk"] = "CZK";
-        PaymentCurrencyEnum["Djf"] = "DJF";
-        PaymentCurrencyEnum["Dkk"] = "DKK";
-        PaymentCurrencyEnum["Dop"] = "DOP";
-        PaymentCurrencyEnum["Dzd"] = "DZD";
-        PaymentCurrencyEnum["Egp"] = "EGP";
-        PaymentCurrencyEnum["Ern"] = "ERN";
-        PaymentCurrencyEnum["Etb"] = "ETB";
-        PaymentCurrencyEnum["Fjd"] = "FJD";
-        PaymentCurrencyEnum["Gbp"] = "GBP";
-        PaymentCurrencyEnum["Gel"] = "GEL";
-        PaymentCurrencyEnum["Ghs"] = "GHS";
-        PaymentCurrencyEnum["Gmd"] = "GMD";
-        PaymentCurrencyEnum["Gnf"] = "GNF";
-        PaymentCurrencyEnum["Gtq"] = "GTQ";
-        PaymentCurrencyEnum["Gyd"] = "GYD";
-        PaymentCurrencyEnum["Hkd"] = "HKD";
-        PaymentCurrencyEnum["Hnl"] = "HNL";
-        PaymentCurrencyEnum["Hrk"] = "HRK";
-        PaymentCurrencyEnum["Htg"] = "HTG";
-        PaymentCurrencyEnum["Huf"] = "HUF";
-        PaymentCurrencyEnum["Idr"] = "IDR";
-        PaymentCurrencyEnum["Ils"] = "ILS";
-        PaymentCurrencyEnum["Inr"] = "INR";
-        PaymentCurrencyEnum["Irr"] = "IRR";
-        PaymentCurrencyEnum["Isk"] = "ISK";
-        PaymentCurrencyEnum["Jmd"] = "JMD";
-        PaymentCurrencyEnum["Jod"] = "JOD";
-        PaymentCurrencyEnum["Jpy"] = "JPY";
-        PaymentCurrencyEnum["Kes"] = "KES";
-        PaymentCurrencyEnum["Kgs"] = "KGS";
-        PaymentCurrencyEnum["Khr"] = "KHR";
-        PaymentCurrencyEnum["Kmf"] = "KMF";
-        PaymentCurrencyEnum["Kpw"] = "KPW";
-        PaymentCurrencyEnum["Krw"] = "KRW";
-        PaymentCurrencyEnum["Kwd"] = "KWD";
-        PaymentCurrencyEnum["Kyd"] = "KYD";
-        PaymentCurrencyEnum["Kzt"] = "KZT";
-        PaymentCurrencyEnum["Lak"] = "LAK";
-        PaymentCurrencyEnum["Lkr"] = "LKR";
-        PaymentCurrencyEnum["Lrd"] = "LRD";
-        PaymentCurrencyEnum["Lsl"] = "LSL";
-        PaymentCurrencyEnum["Lyd"] = "LYD";
-        PaymentCurrencyEnum["Mad"] = "MAD";
-        PaymentCurrencyEnum["Mdl"] = "MDL";
-        PaymentCurrencyEnum["Mga"] = "MGA";
-        PaymentCurrencyEnum["Mkd"] = "MKD";
-        PaymentCurrencyEnum["Mmk"] = "MMK";
-        PaymentCurrencyEnum["Mnt"] = "MNT";
-        PaymentCurrencyEnum["Mop"] = "MOP";
-        PaymentCurrencyEnum["Mro"] = "MRO";
-        PaymentCurrencyEnum["Mur"] = "MUR";
-        PaymentCurrencyEnum["Mvr"] = "MVR";
-        PaymentCurrencyEnum["Mwk"] = "MWK";
-        PaymentCurrencyEnum["Mxn"] = "MXN";
-        PaymentCurrencyEnum["Myr"] = "MYR";
-        PaymentCurrencyEnum["Mzn"] = "MZN";
-        PaymentCurrencyEnum["Nad"] = "NAD";
-        PaymentCurrencyEnum["Xpf"] = "XPF";
-        PaymentCurrencyEnum["Ngn"] = "NGN";
-        PaymentCurrencyEnum["Nio"] = "NIO";
-        PaymentCurrencyEnum["Nok"] = "NOK";
-        PaymentCurrencyEnum["Npr"] = "NPR";
-        PaymentCurrencyEnum["Omr"] = "OMR";
-        PaymentCurrencyEnum["Pen"] = "PEN";
-        PaymentCurrencyEnum["Pgk"] = "PGK";
-        PaymentCurrencyEnum["Php"] = "PHP";
-        PaymentCurrencyEnum["Pkr"] = "PKR";
-        PaymentCurrencyEnum["Pln"] = "PLN";
-        PaymentCurrencyEnum["Pyg"] = "PYG";
-        PaymentCurrencyEnum["Qar"] = "QAR";
-        PaymentCurrencyEnum["Rsd"] = "RSD";
-        PaymentCurrencyEnum["Rub"] = "RUB";
-        PaymentCurrencyEnum["Rwf"] = "RWF";
-        PaymentCurrencyEnum["Sar"] = "SAR";
-        PaymentCurrencyEnum["Sbd"] = "SBD";
-        PaymentCurrencyEnum["Scr"] = "SCR";
-        PaymentCurrencyEnum["Sdg"] = "SDG";
-        PaymentCurrencyEnum["Sek"] = "SEK";
-        PaymentCurrencyEnum["Sgd"] = "SGD";
-        PaymentCurrencyEnum["Shp"] = "SHP";
-        PaymentCurrencyEnum["Sll"] = "SLL";
-        PaymentCurrencyEnum["Sos"] = "SOS";
-        PaymentCurrencyEnum["Srd"] = "SRD";
-        PaymentCurrencyEnum["Ssp"] = "SSP";
-        PaymentCurrencyEnum["Std"] = "STD";
-        PaymentCurrencyEnum["Syp"] = "SYP";
-        PaymentCurrencyEnum["Szl"] = "SZL";
-        PaymentCurrencyEnum["Thb"] = "THB";
-        PaymentCurrencyEnum["Tjs"] = "TJS";
-        PaymentCurrencyEnum["Tnd"] = "TND";
-        PaymentCurrencyEnum["Top"] = "TOP";
-        PaymentCurrencyEnum["Try"] = "TRY";
-        PaymentCurrencyEnum["Ttd"] = "TTD";
-        PaymentCurrencyEnum["Twd"] = "TWD";
-        PaymentCurrencyEnum["Tzs"] = "TZS";
-        PaymentCurrencyEnum["Uah"] = "UAH";
-        PaymentCurrencyEnum["Uyu"] = "UYU";
-        PaymentCurrencyEnum["Uzs"] = "UZS";
-        PaymentCurrencyEnum["Vef"] = "VEF";
-        PaymentCurrencyEnum["Vnd"] = "VND";
-        PaymentCurrencyEnum["Vuv"] = "VUV";
-        PaymentCurrencyEnum["Wst"] = "WST";
-        PaymentCurrencyEnum["Yer"] = "YER";
-        PaymentCurrencyEnum["Zar"] = "ZAR";
-    })(PaymentCurrencyEnum || (PaymentCurrencyEnum = {}));
     function PaymentFromJSON(json) {
         return PaymentFromJSONTyped(json);
     }
@@ -2766,28 +1121,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShipmentLabelTypeEnum;
-    (function (ShipmentLabelTypeEnum) {
-        ShipmentLabelTypeEnum["Pdf"] = "PDF";
-        ShipmentLabelTypeEnum["Zpl"] = "ZPL";
-        ShipmentLabelTypeEnum["Png"] = "PNG";
-    })(ShipmentLabelTypeEnum || (ShipmentLabelTypeEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var ShipmentStatusEnum;
-    (function (ShipmentStatusEnum) {
-        ShipmentStatusEnum["Draft"] = "draft";
-        ShipmentStatusEnum["Purchased"] = "purchased";
-        ShipmentStatusEnum["Cancelled"] = "cancelled";
-        ShipmentStatusEnum["Shipped"] = "shipped";
-        ShipmentStatusEnum["InTransit"] = "in_transit";
-        ShipmentStatusEnum["Delivered"] = "delivered";
-    })(ShipmentStatusEnum || (ShipmentStatusEnum = {}));
     function ShipmentFromJSON(json) {
         return ShipmentFromJSONTyped(json);
     }
@@ -2830,18 +1163,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var OrderStatusEnum;
-    (function (OrderStatusEnum) {
-        OrderStatusEnum["Unfulfilled"] = "unfulfilled";
-        OrderStatusEnum["Cancelled"] = "cancelled";
-        OrderStatusEnum["Fulfilled"] = "fulfilled";
-        OrderStatusEnum["Delivered"] = "delivered";
-        OrderStatusEnum["Partial"] = "partial";
-    })(OrderStatusEnum || (OrderStatusEnum = {}));
     function OrderFromJSON(json) {
         return OrderFromJSONTyped(json);
     }
@@ -2920,23 +1241,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ParcelDataWeightUnitEnum;
-    (function (ParcelDataWeightUnitEnum) {
-        ParcelDataWeightUnitEnum["Kg"] = "KG";
-        ParcelDataWeightUnitEnum["Lb"] = "LB";
-    })(ParcelDataWeightUnitEnum || (ParcelDataWeightUnitEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var ParcelDataDimensionUnitEnum;
-    (function (ParcelDataDimensionUnitEnum) {
-        ParcelDataDimensionUnitEnum["Cm"] = "CM";
-        ParcelDataDimensionUnitEnum["In"] = "IN";
-    })(ParcelDataDimensionUnitEnum || (ParcelDataDimensionUnitEnum = {}));
     function ParcelDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3151,6 +1455,35 @@
     }
 
     /* tslint:disable */
+    function Ping200ResponseFromJSON(json) {
+        return Ping200ResponseFromJSONTyped(json);
+    }
+    function Ping200ResponseFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
+            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
+            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
+            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
+            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
+            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
+            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
+            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
+            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
+            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
+            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
+            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
+            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
+            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
+            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
+            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
+            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
+        };
+    }
+
+    /* tslint:disable */
     function RateRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3199,16 +1532,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShipmentDataLabelTypeEnum;
-    (function (ShipmentDataLabelTypeEnum) {
-        ShipmentDataLabelTypeEnum["Pdf"] = "PDF";
-        ShipmentDataLabelTypeEnum["Zpl"] = "ZPL";
-        ShipmentDataLabelTypeEnum["Png"] = "PNG";
-    })(ShipmentDataLabelTypeEnum || (ShipmentDataLabelTypeEnum = {}));
     function ShipmentDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3249,16 +1572,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShipmentPurchaseDataLabelTypeEnum;
-    (function (ShipmentPurchaseDataLabelTypeEnum) {
-        ShipmentPurchaseDataLabelTypeEnum["Pdf"] = "PDF";
-        ShipmentPurchaseDataLabelTypeEnum["Zpl"] = "ZPL";
-        ShipmentPurchaseDataLabelTypeEnum["Png"] = "PNG";
-    })(ShipmentPurchaseDataLabelTypeEnum || (ShipmentPurchaseDataLabelTypeEnum = {}));
     function ShipmentPurchaseDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3292,16 +1605,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShipmentUpdateDataLabelTypeEnum;
-    (function (ShipmentUpdateDataLabelTypeEnum) {
-        ShipmentUpdateDataLabelTypeEnum["Pdf"] = "PDF";
-        ShipmentUpdateDataLabelTypeEnum["Zpl"] = "ZPL";
-        ShipmentUpdateDataLabelTypeEnum["Png"] = "PNG";
-    })(ShipmentUpdateDataLabelTypeEnum || (ShipmentUpdateDataLabelTypeEnum = {}));
     function ShipmentUpdateDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3319,16 +1622,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShippingRequestLabelTypeEnum;
-    (function (ShippingRequestLabelTypeEnum) {
-        ShippingRequestLabelTypeEnum["Pdf"] = "PDF";
-        ShippingRequestLabelTypeEnum["Zpl"] = "ZPL";
-        ShippingRequestLabelTypeEnum["Png"] = "PNG";
-    })(ShippingRequestLabelTypeEnum || (ShippingRequestLabelTypeEnum = {}));
     function ShippingRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -3351,28 +1644,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var ShippingResponseLabelTypeEnum;
-    (function (ShippingResponseLabelTypeEnum) {
-        ShippingResponseLabelTypeEnum["Pdf"] = "PDF";
-        ShippingResponseLabelTypeEnum["Zpl"] = "ZPL";
-        ShippingResponseLabelTypeEnum["Png"] = "PNG";
-    })(ShippingResponseLabelTypeEnum || (ShippingResponseLabelTypeEnum = {})); /**
-    * @export
-    * @enum {string}
-    */
-    var ShippingResponseStatusEnum;
-    (function (ShippingResponseStatusEnum) {
-        ShippingResponseStatusEnum["Draft"] = "draft";
-        ShippingResponseStatusEnum["Purchased"] = "purchased";
-        ShippingResponseStatusEnum["Cancelled"] = "cancelled";
-        ShippingResponseStatusEnum["Shipped"] = "shipped";
-        ShippingResponseStatusEnum["InTransit"] = "in_transit";
-        ShippingResponseStatusEnum["Delivered"] = "delivered";
-    })(ShippingResponseStatusEnum || (ShippingResponseStatusEnum = {}));
     function ShippingResponseFromJSON(json) {
         return ShippingResponseFromJSONTyped(json);
     }
@@ -3428,18 +1699,6 @@
     }
 
     /* tslint:disable */
-    /* eslint-disable */
-    /**
-     * Karrio API
-     *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2022.8.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
-     *
-     * The version of the OpenAPI document: 2022.8.3
-     * Contact:
-     *
-     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
-     * https://openapi-generator.tech
-     * Do not edit the class manually.
-     */
     function TokenPairFromJSON(json) {
         return TokenPairFromJSONTyped(json);
     }
@@ -3497,18 +1756,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var TrackingStatusStatusEnum;
-    (function (TrackingStatusStatusEnum) {
-        TrackingStatusStatusEnum["Pending"] = "pending";
-        TrackingStatusStatusEnum["InTransit"] = "in_transit";
-        TrackingStatusStatusEnum["Incident"] = "incident";
-        TrackingStatusStatusEnum["Delivered"] = "delivered";
-        TrackingStatusStatusEnum["Unknown"] = "unknown";
-    })(TrackingStatusStatusEnum || (TrackingStatusStatusEnum = {}));
     function TrackingStatusFromJSON(json) {
         return TrackingStatusFromJSONTyped(json);
     }
@@ -3578,28 +1825,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var WebhookEnabledEventsEnum;
-    (function (WebhookEnabledEventsEnum) {
-        WebhookEnabledEventsEnum["All"] = "all";
-        WebhookEnabledEventsEnum["ShipmentPurchased"] = "shipment_purchased";
-        WebhookEnabledEventsEnum["ShipmentCancelled"] = "shipment_cancelled";
-        WebhookEnabledEventsEnum["ShipmentFulfilled"] = "shipment_fulfilled";
-        WebhookEnabledEventsEnum["TrackerCreated"] = "tracker_created";
-        WebhookEnabledEventsEnum["TrackerUpdated"] = "tracker_updated";
-        WebhookEnabledEventsEnum["OrderCreated"] = "order_created";
-        WebhookEnabledEventsEnum["OrderUpdated"] = "order_updated";
-        WebhookEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
-        WebhookEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
-        WebhookEnabledEventsEnum["OrderDelivered"] = "order_delivered";
-        WebhookEnabledEventsEnum["BatchQueued"] = "batch_queued";
-        WebhookEnabledEventsEnum["BatchFailed"] = "batch_failed";
-        WebhookEnabledEventsEnum["BatchRunning"] = "batch_running";
-        WebhookEnabledEventsEnum["BatchCompleted"] = "batch_completed";
-    })(WebhookEnabledEventsEnum || (WebhookEnabledEventsEnum = {}));
     function WebhookFromJSON(json) {
         return WebhookFromJSONTyped(json);
     }
@@ -3621,28 +1846,6 @@
     }
 
     /* tslint:disable */
-    /**
-    * @export
-    * @enum {string}
-    */
-    var WebhookDataEnabledEventsEnum;
-    (function (WebhookDataEnabledEventsEnum) {
-        WebhookDataEnabledEventsEnum["All"] = "all";
-        WebhookDataEnabledEventsEnum["ShipmentPurchased"] = "shipment_purchased";
-        WebhookDataEnabledEventsEnum["ShipmentCancelled"] = "shipment_cancelled";
-        WebhookDataEnabledEventsEnum["ShipmentFulfilled"] = "shipment_fulfilled";
-        WebhookDataEnabledEventsEnum["TrackerCreated"] = "tracker_created";
-        WebhookDataEnabledEventsEnum["TrackerUpdated"] = "tracker_updated";
-        WebhookDataEnabledEventsEnum["OrderCreated"] = "order_created";
-        WebhookDataEnabledEventsEnum["OrderUpdated"] = "order_updated";
-        WebhookDataEnabledEventsEnum["OrderFulfilled"] = "order_fulfilled";
-        WebhookDataEnabledEventsEnum["OrderCancelled"] = "order_cancelled";
-        WebhookDataEnabledEventsEnum["OrderDelivered"] = "order_delivered";
-        WebhookDataEnabledEventsEnum["BatchQueued"] = "batch_queued";
-        WebhookDataEnabledEventsEnum["BatchFailed"] = "batch_failed";
-        WebhookDataEnabledEventsEnum["BatchRunning"] = "batch_running";
-        WebhookDataEnabledEventsEnum["BatchCompleted"] = "batch_completed";
-    })(WebhookDataEnabledEventsEnum || (WebhookDataEnabledEventsEnum = {}));
     function WebhookDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -4058,7 +2261,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return InlineResponse2001FromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return Data200ResponseFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4159,7 +2362,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return InlineResponse200FromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return Ping200ResponseFromJSON(jsonValue); })];
                     }
                 });
             });
@@ -4420,74 +2623,6 @@
         };
         return CarriersApi;
     }(BaseAPI));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var GetServicesCarrierNameEnum;
-    (function (GetServicesCarrierNameEnum) {
-        GetServicesCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        GetServicesCarrierNameEnum["Aramex"] = "aramex";
-        GetServicesCarrierNameEnum["Australiapost"] = "australiapost";
-        GetServicesCarrierNameEnum["Canadapost"] = "canadapost";
-        GetServicesCarrierNameEnum["Canpar"] = "canpar";
-        GetServicesCarrierNameEnum["Chronopost"] = "chronopost";
-        GetServicesCarrierNameEnum["DhlExpress"] = "dhl_express";
-        GetServicesCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        GetServicesCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        GetServicesCarrierNameEnum["Dicom"] = "dicom";
-        GetServicesCarrierNameEnum["Dpdhl"] = "dpdhl";
-        GetServicesCarrierNameEnum["Easypost"] = "easypost";
-        GetServicesCarrierNameEnum["Eshipper"] = "eshipper";
-        GetServicesCarrierNameEnum["Fedex"] = "fedex";
-        GetServicesCarrierNameEnum["Freightcom"] = "freightcom";
-        GetServicesCarrierNameEnum["Generic"] = "generic";
-        GetServicesCarrierNameEnum["Purolator"] = "purolator";
-        GetServicesCarrierNameEnum["Royalmail"] = "royalmail";
-        GetServicesCarrierNameEnum["Sendle"] = "sendle";
-        GetServicesCarrierNameEnum["SfExpress"] = "sf_express";
-        GetServicesCarrierNameEnum["Tnt"] = "tnt";
-        GetServicesCarrierNameEnum["Ups"] = "ups";
-        GetServicesCarrierNameEnum["UpsFreight"] = "ups_freight";
-        GetServicesCarrierNameEnum["Usps"] = "usps";
-        GetServicesCarrierNameEnum["UspsInternational"] = "usps_international";
-        GetServicesCarrierNameEnum["Yanwen"] = "yanwen";
-        GetServicesCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(GetServicesCarrierNameEnum || (GetServicesCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var ListCarrierNameEnum;
-    (function (ListCarrierNameEnum) {
-        ListCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        ListCarrierNameEnum["Aramex"] = "aramex";
-        ListCarrierNameEnum["Australiapost"] = "australiapost";
-        ListCarrierNameEnum["Canadapost"] = "canadapost";
-        ListCarrierNameEnum["Canpar"] = "canpar";
-        ListCarrierNameEnum["Chronopost"] = "chronopost";
-        ListCarrierNameEnum["DhlExpress"] = "dhl_express";
-        ListCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        ListCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        ListCarrierNameEnum["Dicom"] = "dicom";
-        ListCarrierNameEnum["Dpdhl"] = "dpdhl";
-        ListCarrierNameEnum["Easypost"] = "easypost";
-        ListCarrierNameEnum["Eshipper"] = "eshipper";
-        ListCarrierNameEnum["Fedex"] = "fedex";
-        ListCarrierNameEnum["Freightcom"] = "freightcom";
-        ListCarrierNameEnum["Generic"] = "generic";
-        ListCarrierNameEnum["Purolator"] = "purolator";
-        ListCarrierNameEnum["Royalmail"] = "royalmail";
-        ListCarrierNameEnum["Sendle"] = "sendle";
-        ListCarrierNameEnum["SfExpress"] = "sf_express";
-        ListCarrierNameEnum["Tnt"] = "tnt";
-        ListCarrierNameEnum["Ups"] = "ups";
-        ListCarrierNameEnum["UpsFreight"] = "ups_freight";
-        ListCarrierNameEnum["Usps"] = "usps";
-        ListCarrierNameEnum["UspsInternational"] = "usps_international";
-        ListCarrierNameEnum["Yanwen"] = "yanwen";
-        ListCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(ListCarrierNameEnum || (ListCarrierNameEnum = {}));
 
     /* tslint:disable */
     /**
@@ -5751,173 +3886,6 @@
         };
         return ProxyApi;
     }(BaseAPI));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var CancelPickupCarrierNameEnum;
-    (function (CancelPickupCarrierNameEnum) {
-        CancelPickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        CancelPickupCarrierNameEnum["Aramex"] = "aramex";
-        CancelPickupCarrierNameEnum["Australiapost"] = "australiapost";
-        CancelPickupCarrierNameEnum["Canadapost"] = "canadapost";
-        CancelPickupCarrierNameEnum["Canpar"] = "canpar";
-        CancelPickupCarrierNameEnum["Chronopost"] = "chronopost";
-        CancelPickupCarrierNameEnum["DhlExpress"] = "dhl_express";
-        CancelPickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        CancelPickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        CancelPickupCarrierNameEnum["Dicom"] = "dicom";
-        CancelPickupCarrierNameEnum["Dpdhl"] = "dpdhl";
-        CancelPickupCarrierNameEnum["Easypost"] = "easypost";
-        CancelPickupCarrierNameEnum["Eshipper"] = "eshipper";
-        CancelPickupCarrierNameEnum["Fedex"] = "fedex";
-        CancelPickupCarrierNameEnum["Freightcom"] = "freightcom";
-        CancelPickupCarrierNameEnum["Generic"] = "generic";
-        CancelPickupCarrierNameEnum["Purolator"] = "purolator";
-        CancelPickupCarrierNameEnum["Royalmail"] = "royalmail";
-        CancelPickupCarrierNameEnum["Sendle"] = "sendle";
-        CancelPickupCarrierNameEnum["SfExpress"] = "sf_express";
-        CancelPickupCarrierNameEnum["Tnt"] = "tnt";
-        CancelPickupCarrierNameEnum["Ups"] = "ups";
-        CancelPickupCarrierNameEnum["UpsFreight"] = "ups_freight";
-        CancelPickupCarrierNameEnum["Usps"] = "usps";
-        CancelPickupCarrierNameEnum["UspsInternational"] = "usps_international";
-        CancelPickupCarrierNameEnum["Yanwen"] = "yanwen";
-        CancelPickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(CancelPickupCarrierNameEnum || (CancelPickupCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var SchedulePickupCarrierNameEnum;
-    (function (SchedulePickupCarrierNameEnum) {
-        SchedulePickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        SchedulePickupCarrierNameEnum["Aramex"] = "aramex";
-        SchedulePickupCarrierNameEnum["Australiapost"] = "australiapost";
-        SchedulePickupCarrierNameEnum["Canadapost"] = "canadapost";
-        SchedulePickupCarrierNameEnum["Canpar"] = "canpar";
-        SchedulePickupCarrierNameEnum["Chronopost"] = "chronopost";
-        SchedulePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
-        SchedulePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        SchedulePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        SchedulePickupCarrierNameEnum["Dicom"] = "dicom";
-        SchedulePickupCarrierNameEnum["Dpdhl"] = "dpdhl";
-        SchedulePickupCarrierNameEnum["Easypost"] = "easypost";
-        SchedulePickupCarrierNameEnum["Eshipper"] = "eshipper";
-        SchedulePickupCarrierNameEnum["Fedex"] = "fedex";
-        SchedulePickupCarrierNameEnum["Freightcom"] = "freightcom";
-        SchedulePickupCarrierNameEnum["Generic"] = "generic";
-        SchedulePickupCarrierNameEnum["Purolator"] = "purolator";
-        SchedulePickupCarrierNameEnum["Royalmail"] = "royalmail";
-        SchedulePickupCarrierNameEnum["Sendle"] = "sendle";
-        SchedulePickupCarrierNameEnum["SfExpress"] = "sf_express";
-        SchedulePickupCarrierNameEnum["Tnt"] = "tnt";
-        SchedulePickupCarrierNameEnum["Ups"] = "ups";
-        SchedulePickupCarrierNameEnum["UpsFreight"] = "ups_freight";
-        SchedulePickupCarrierNameEnum["Usps"] = "usps";
-        SchedulePickupCarrierNameEnum["UspsInternational"] = "usps_international";
-        SchedulePickupCarrierNameEnum["Yanwen"] = "yanwen";
-        SchedulePickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(SchedulePickupCarrierNameEnum || (SchedulePickupCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var TrackShipmentCarrierNameEnum;
-    (function (TrackShipmentCarrierNameEnum) {
-        TrackShipmentCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        TrackShipmentCarrierNameEnum["Aramex"] = "aramex";
-        TrackShipmentCarrierNameEnum["Australiapost"] = "australiapost";
-        TrackShipmentCarrierNameEnum["Canadapost"] = "canadapost";
-        TrackShipmentCarrierNameEnum["Canpar"] = "canpar";
-        TrackShipmentCarrierNameEnum["Chronopost"] = "chronopost";
-        TrackShipmentCarrierNameEnum["DhlExpress"] = "dhl_express";
-        TrackShipmentCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        TrackShipmentCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        TrackShipmentCarrierNameEnum["Dicom"] = "dicom";
-        TrackShipmentCarrierNameEnum["Dpdhl"] = "dpdhl";
-        TrackShipmentCarrierNameEnum["Fedex"] = "fedex";
-        TrackShipmentCarrierNameEnum["Generic"] = "generic";
-        TrackShipmentCarrierNameEnum["Purolator"] = "purolator";
-        TrackShipmentCarrierNameEnum["Royalmail"] = "royalmail";
-        TrackShipmentCarrierNameEnum["Sendle"] = "sendle";
-        TrackShipmentCarrierNameEnum["SfExpress"] = "sf_express";
-        TrackShipmentCarrierNameEnum["Tnt"] = "tnt";
-        TrackShipmentCarrierNameEnum["Ups"] = "ups";
-        TrackShipmentCarrierNameEnum["UpsFreight"] = "ups_freight";
-        TrackShipmentCarrierNameEnum["Usps"] = "usps";
-        TrackShipmentCarrierNameEnum["UspsInternational"] = "usps_international";
-        TrackShipmentCarrierNameEnum["Yanwen"] = "yanwen";
-        TrackShipmentCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(TrackShipmentCarrierNameEnum || (TrackShipmentCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var UpdatePickupCarrierNameEnum;
-    (function (UpdatePickupCarrierNameEnum) {
-        UpdatePickupCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        UpdatePickupCarrierNameEnum["Aramex"] = "aramex";
-        UpdatePickupCarrierNameEnum["Australiapost"] = "australiapost";
-        UpdatePickupCarrierNameEnum["Canadapost"] = "canadapost";
-        UpdatePickupCarrierNameEnum["Canpar"] = "canpar";
-        UpdatePickupCarrierNameEnum["Chronopost"] = "chronopost";
-        UpdatePickupCarrierNameEnum["DhlExpress"] = "dhl_express";
-        UpdatePickupCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        UpdatePickupCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        UpdatePickupCarrierNameEnum["Dicom"] = "dicom";
-        UpdatePickupCarrierNameEnum["Dpdhl"] = "dpdhl";
-        UpdatePickupCarrierNameEnum["Easypost"] = "easypost";
-        UpdatePickupCarrierNameEnum["Eshipper"] = "eshipper";
-        UpdatePickupCarrierNameEnum["Fedex"] = "fedex";
-        UpdatePickupCarrierNameEnum["Freightcom"] = "freightcom";
-        UpdatePickupCarrierNameEnum["Generic"] = "generic";
-        UpdatePickupCarrierNameEnum["Purolator"] = "purolator";
-        UpdatePickupCarrierNameEnum["Royalmail"] = "royalmail";
-        UpdatePickupCarrierNameEnum["Sendle"] = "sendle";
-        UpdatePickupCarrierNameEnum["SfExpress"] = "sf_express";
-        UpdatePickupCarrierNameEnum["Tnt"] = "tnt";
-        UpdatePickupCarrierNameEnum["Ups"] = "ups";
-        UpdatePickupCarrierNameEnum["UpsFreight"] = "ups_freight";
-        UpdatePickupCarrierNameEnum["Usps"] = "usps";
-        UpdatePickupCarrierNameEnum["UspsInternational"] = "usps_international";
-        UpdatePickupCarrierNameEnum["Yanwen"] = "yanwen";
-        UpdatePickupCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(UpdatePickupCarrierNameEnum || (UpdatePickupCarrierNameEnum = {}));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var VoidLabelCarrierNameEnum;
-    (function (VoidLabelCarrierNameEnum) {
-        VoidLabelCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        VoidLabelCarrierNameEnum["Aramex"] = "aramex";
-        VoidLabelCarrierNameEnum["Australiapost"] = "australiapost";
-        VoidLabelCarrierNameEnum["Canadapost"] = "canadapost";
-        VoidLabelCarrierNameEnum["Canpar"] = "canpar";
-        VoidLabelCarrierNameEnum["Chronopost"] = "chronopost";
-        VoidLabelCarrierNameEnum["DhlExpress"] = "dhl_express";
-        VoidLabelCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        VoidLabelCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        VoidLabelCarrierNameEnum["Dicom"] = "dicom";
-        VoidLabelCarrierNameEnum["Dpdhl"] = "dpdhl";
-        VoidLabelCarrierNameEnum["Easypost"] = "easypost";
-        VoidLabelCarrierNameEnum["Eshipper"] = "eshipper";
-        VoidLabelCarrierNameEnum["Fedex"] = "fedex";
-        VoidLabelCarrierNameEnum["Freightcom"] = "freightcom";
-        VoidLabelCarrierNameEnum["Generic"] = "generic";
-        VoidLabelCarrierNameEnum["Purolator"] = "purolator";
-        VoidLabelCarrierNameEnum["Royalmail"] = "royalmail";
-        VoidLabelCarrierNameEnum["Sendle"] = "sendle";
-        VoidLabelCarrierNameEnum["SfExpress"] = "sf_express";
-        VoidLabelCarrierNameEnum["Tnt"] = "tnt";
-        VoidLabelCarrierNameEnum["Ups"] = "ups";
-        VoidLabelCarrierNameEnum["UpsFreight"] = "ups_freight";
-        VoidLabelCarrierNameEnum["Usps"] = "usps";
-        VoidLabelCarrierNameEnum["UspsInternational"] = "usps_international";
-        VoidLabelCarrierNameEnum["Yanwen"] = "yanwen";
-        VoidLabelCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(VoidLabelCarrierNameEnum || (VoidLabelCarrierNameEnum = {}));
 
     /* tslint:disable */
     /**
@@ -6599,37 +4567,6 @@
         };
         return TrackersApi;
     }(BaseAPI));
-    /**
-        * @export
-        * @enum {string}
-        */
-    var CreateCarrierNameEnum;
-    (function (CreateCarrierNameEnum) {
-        CreateCarrierNameEnum["AmazonMws"] = "amazon_mws";
-        CreateCarrierNameEnum["Aramex"] = "aramex";
-        CreateCarrierNameEnum["Australiapost"] = "australiapost";
-        CreateCarrierNameEnum["Canadapost"] = "canadapost";
-        CreateCarrierNameEnum["Canpar"] = "canpar";
-        CreateCarrierNameEnum["Chronopost"] = "chronopost";
-        CreateCarrierNameEnum["DhlExpress"] = "dhl_express";
-        CreateCarrierNameEnum["DhlPoland"] = "dhl_poland";
-        CreateCarrierNameEnum["DhlUniversal"] = "dhl_universal";
-        CreateCarrierNameEnum["Dicom"] = "dicom";
-        CreateCarrierNameEnum["Dpdhl"] = "dpdhl";
-        CreateCarrierNameEnum["Fedex"] = "fedex";
-        CreateCarrierNameEnum["Generic"] = "generic";
-        CreateCarrierNameEnum["Purolator"] = "purolator";
-        CreateCarrierNameEnum["Royalmail"] = "royalmail";
-        CreateCarrierNameEnum["Sendle"] = "sendle";
-        CreateCarrierNameEnum["SfExpress"] = "sf_express";
-        CreateCarrierNameEnum["Tnt"] = "tnt";
-        CreateCarrierNameEnum["Ups"] = "ups";
-        CreateCarrierNameEnum["UpsFreight"] = "ups_freight";
-        CreateCarrierNameEnum["Usps"] = "usps";
-        CreateCarrierNameEnum["UspsInternational"] = "usps_international";
-        CreateCarrierNameEnum["Yanwen"] = "yanwen";
-        CreateCarrierNameEnum["Yunexpress"] = "yunexpress";
-    })(CreateCarrierNameEnum || (CreateCarrierNameEnum = {}));
 
     /* tslint:disable */
     /**
