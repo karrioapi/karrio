@@ -122,7 +122,7 @@ def render_reference_descriptions(request):
 
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    {% for carrier, name in refs.get("carriers", {}).items() -%}{% if carrier != "generic" -%}
+    {% for carrier, name in carriers.items() -%}{% if carrier != "generic" -%}
     | {{ carrier }} | {{ name }} |
     {% endif -%}{% endfor %}
 
@@ -139,7 +139,7 @@ def render_reference_descriptions(request):
 
     {% for carrier, services in refs.get("services", {}).items() -%}{% if carrier != "generic" -%}
 
-    ### {{ refs.get("carriers", {}).get(carrier, "") }}
+    ### {{ carriers.get(carrier, "") }}
 
 
     | Code         | Service Name |
@@ -159,7 +159,7 @@ def render_reference_descriptions(request):
 
     {% for carrier, presets in refs.get("package_presets", {}).items() -%}
 
-    ### {{ refs.get("carriers", {}).get(carrier, "") }}
+    ### {{ carriers.get(carrier, "") }}
 
 
     | Code         | Dimensions   |
@@ -170,7 +170,11 @@ def render_reference_descriptions(request):
     {% endfor %}
 
     """
-    ).render(refs=refs, format_preset=format_preset)
+    ).render(
+        refs=refs,
+        format_preset=format_preset,
+        carriers={**refs.get("carriers", {}), **refs.get("custom_carriers", {})}
+    )
 
 
 class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):

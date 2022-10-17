@@ -91,7 +91,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
 
         references.update(
             dict(
-                carriers={**references["carriers"], **extra_carriers},
+                custom_carriers=extra_carriers,
                 services={**references["services"], **extra_services},
                 service_names={**references["service_names"], **extra_service_names},
             )

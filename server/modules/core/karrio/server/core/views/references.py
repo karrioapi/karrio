@@ -33,6 +33,7 @@ References = openapi.Schema(
         "countries": openapi.Schema(type=openapi.TYPE_OBJECT),
         "currencies": openapi.Schema(type=openapi.TYPE_OBJECT),
         "carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
+        "custom_carriers": openapi.Schema(type=openapi.TYPE_OBJECT),
         "customs_content_type": openapi.Schema(type=openapi.TYPE_OBJECT),
         "incoterms": openapi.Schema(type=openapi.TYPE_OBJECT),
         "states": openapi.Schema(type=openapi.TYPE_OBJECT),
