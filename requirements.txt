@@ -82,8 +82,8 @@ karrio.freightcom==2022.8.3
 karrio.purolator==2022.8.3
 karrio.royalmail==2022.8.3
 karrio.sendle==2022.8.3
-karrio.server==2022.8.3
-karrio.server.core==2022.8.1
+karrio.server==2022.8.5
+karrio.server.core==2022.8.5
 karrio.server.events==2022.8
 karrio.server.graph==2022.8
 karrio.server.manager==2022.8
