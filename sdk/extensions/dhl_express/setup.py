@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.dhl_express",
-    version="2022.8.3",
+    version="2022.8.5",
     description="Karrio - DHL Express Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
