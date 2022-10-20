@@ -16,6 +16,7 @@ from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShp
 import time
 import typing
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.core.errors as errors
 import karrio.providers.dhl_express.error as provider_error
@@ -193,7 +194,7 @@ def rate_request(
                     DeclaredValue=(options.declared_value.state or 1.0),
                     DeclaredCurrency=(
                         options.currency.state
-                        or provider_units.CountryCurrency[
+                        or units.CountryCurrency[
                             payload.shipper.country_code
                         ].value
                     ),
