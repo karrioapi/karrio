@@ -15,12 +15,12 @@ def forwards_func(apps, schema_editor):
     for client in Client.objects.using(db_alias).all():
         client.features = {
             flag: flag in client.feature_flags
-            for flag in conf.settings.FEATURE_FLAGS.keys()
+            for flag, _ in conf.settings.FEATURE_FLAGS
         }
         clients.append(client)
 
     if any(clients):
-        Client.objects.using(db_alias).bulk_update(client, fields=["features"])
+        Client.objects.using(db_alias).bulk_update(clients, fields=["features"])
 
 
 def reverse_func(apps, schema_editor):

@@ -3332,6 +3332,10 @@
                                             "type": "object",
                                             "properties": {}
                                         },
+                                        "custom_carriers": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
                                         "customs_content_type": {
                                             "type": "object",
                                             "properties": {}
