@@ -71,7 +71,7 @@ karrio.australiapost==2022.8.3
 karrio.canadapost==2022.8
 karrio.canpar==2022.8.3
 karrio.chronopost==2022.8.3
-karrio.dhl-express==2022.8.3
+karrio.dhl-express==2022.8.5
 karrio.dhl-poland==2022.8.3
 karrio.dhl-universal==2022.8.3
 karrio.dicom==2022.8.3
