@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Jul 15 10:03:41 2021 by generateDS.py version 2.39.2.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Fri Oct 21 12:33:20 2022 by generateDS.py version 2.41.1.
+# Python 3.10.8 (v3.10.8:aaaf517424, Oct 11 2022, 10:14:40) [Clang 13.0.0 (clang-1300.0.29.30)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./vendor/schemas/shipping_request.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio-bridges/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipping_request.py" ./vendor/schemas/shipping_request.xsd
+#   /Users/danielk/Documents/karrio/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./freightcom_lib/shipping_request.py" ./vendor/schemas/shipping_request.xsd
 #
 # Current working directory (os.getcwd()):
 #   freightcom
@@ -30,14 +30,12 @@ import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
-try:
-    from lxml import etree as etree_
-except ModulenotfoundExp_ :
-    from xml.etree import ElementTree as etree_
+from lxml import etree as etree_
 
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -192,6 +190,33 @@ except ModulenotfoundExp_ as exp:
                 return self.__name
             def dst(self, dt):
                 return None
+        def __str__(self):
+            settings = {
+                'str_pretty_print': True,
+                'str_indent_level': 0,
+                'str_namespaceprefix': '',
+                'str_name': self.__class__.__name__,
+                'str_namespacedefs': '',
+            }
+            for n in settings:
+                if hasattr(self, n):
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
+            output = StringIO()
+            self.export(
+                output,
+                settings['str_indent_level'],
+                pretty_print=settings['str_pretty_print'],
+                namespaceprefix_=settings['str_namespaceprefix'],
+                name_=settings['str_name'],
+                namespacedef_=settings['str_namespacedefs']
+            )
+            strval = output.getvalue()
+            output.close()
+            return strval
         def gds_format_string(self, input_data, input_name=''):
             return input_data
         def gds_parse_string(self, input_data, node=None, input_name=''):
@@ -202,11 +227,11 @@ except ModulenotfoundExp_ as exp:
             else:
                 return input_data
         def gds_format_base64(self, input_data, input_name=''):
-            return base64.b64encode(input_data)
+            return base64.b64encode(input_data).decode('ascii')
         def gds_validate_base64(self, input_data, node=None, input_name=''):
             return input_data
         def gds_format_integer(self, input_data, input_name=''):
-            return '%d' % input_data
+            return '%d' % int(input_data)
         def gds_parse_integer(self, input_data, node=None, input_name=''):
             try:
                 ival = int(input_data)
@@ -233,7 +258,7 @@ except ModulenotfoundExp_ as exp:
                     raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
-            return ('%.15f' % input_data).rstrip('0')
+            return ('%.15f' % float(input_data)).rstrip('0')
         def gds_parse_float(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -322,6 +347,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -501,6 +527,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -746,6 +773,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -875,7 +903,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element, mapping_=None, nsmap_=None):
+    def to_etree(self, element, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -895,7 +923,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self, mapping_=None, nsmap_=None):
+    def to_etree_simple(self, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -2923,7 +2951,10 @@ class CustomsInvoiceType(GeneratedsSuper):
         self.BillTo_nsprefix_ = None
         self.Contact = Contact
         self.Contact_nsprefix_ = None
-        self.Item = Item
+        if Item is None:
+            self.Item = []
+        else:
+            self.Item = Item
         self.Item_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -2952,11 +2983,17 @@ class CustomsInvoiceType(GeneratedsSuper):
         return self.Item
     def set_Item(self, Item):
         self.Item = Item
+    def add_Item(self, value):
+        self.Item.append(value)
+    def insert_Item_at(self, index, value):
+        self.Item.insert(index, value)
+    def replace_Item_at(self, index, value):
+        self.Item[index] = value
     def _hasContent(self):
         if (
             self.BillTo is not None or
             self.Contact is not None or
-            self.Item is not None
+            self.Item
         ):
             return True
         else:
@@ -2997,9 +3034,9 @@ class CustomsInvoiceType(GeneratedsSuper):
         if self.Contact is not None:
             namespaceprefix_ = self.Contact_nsprefix_ + ':' if (UseCapturedNS_ and self.Contact_nsprefix_) else ''
             self.Contact.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Contact', pretty_print=pretty_print)
-        if self.Item is not None:
+        for Item_ in self.Item:
             namespaceprefix_ = self.Item_nsprefix_ + ':' if (UseCapturedNS_ and self.Item_nsprefix_) else ''
-            self.Item.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Item', pretty_print=pretty_print)
+            Item_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Item', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -3027,7 +3064,7 @@ class CustomsInvoiceType(GeneratedsSuper):
         elif nodeName_ == 'Item':
             obj_ = ItemType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Item = obj_
+            self.Item.append(obj_)
             obj_.original_tagname_ = 'Item'
 # end class CustomsInvoiceType
 
@@ -3468,9 +3505,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 
@@ -3524,7 +3562,7 @@ def parse(inFileName, silence=False, print_warnings=True):
 
 
 def parseEtree(inFileName, silence=False, print_warnings=True,
-               mapping=None, nsmap=None):
+               mapping=None, reverse_mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3535,12 +3573,15 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
         rootClass = Freightcom
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
-    # Enable Python to collect the space used by the DOM.
     if mapping is None:
         mapping = {}
+    if reverse_mapping is None:
+        reverse_mapping = {}
     rootElement = rootObj.to_etree(
-        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
-    reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
+        None, name_=rootTag, mapping_=mapping,
+        reverse_mapping_=reverse_mapping, nsmap_=nsmap)
+    reverse_node_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    # Enable Python to collect the space used by the DOM.
     if not SaveElementTreeNode:
         doc = None
         rootNode = None
@@ -3557,7 +3598,7 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
             len(gds_collector.get_messages()), ))
         gds_collector.write_messages(sys.stderr)
         sys.stderr.write(separator)
-    return rootObj, rootElement, mapping, reverse_mapping
+    return rootObj, rootElement, mapping, reverse_node_mapping
 
 
 def parseString(inString, silence=False, print_warnings=True):

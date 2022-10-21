@@ -1,9 +1,10 @@
 import unittest
 from unittest.mock import patch, ANY
+from .fixture import gateway
+
+import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from karrio import Shipment
-from .fixture import gateway
 
 
 class TestFreightcomShipment(unittest.TestCase):
@@ -27,7 +28,7 @@ class TestFreightcomShipment(unittest.TestCase):
     def test_create_shipment(self):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            Shipment.create(self.ShipmentRequest).from_(gateway)
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -35,7 +36,7 @@ class TestFreightcomShipment(unittest.TestCase):
     def test_cancel_shipment(self):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -44,7 +45,7 @@ class TestFreightcomShipment(unittest.TestCase):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
@@ -53,7 +54,7 @@ class TestFreightcomShipment(unittest.TestCase):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
-                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -104,7 +105,7 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "freightcom",
         "carrier_name": "freightcom",
-        "docs": {"label": "[base-64 encoded String]"},
+        "docs": {"label": ANY, "invoice": ANY},
         "meta": {"rate_provider": "Freightcom", "service_name": "central_transport"},
         "selected_rate": {
             "carrier_id": "freightcom",

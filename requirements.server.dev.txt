@@ -38,7 +38,7 @@ django-debug-toolbar
 
 # Carrier Hub Extentions in Development
 # -e ./sdk/vendors/eshipper
-# -e ./sdk/vendors/freightcom
+-e ./sdk/vendors/freightcom
 
 
 karrio
@@ -66,7 +66,7 @@ karrio.usps_international
 karrio.yanwen
 karrio.yunexpress
 karrio.eshipper
-karrio.freightcom
+# karrio.freightcom
 
 
 # karrio server core modules
