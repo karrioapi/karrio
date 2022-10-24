@@ -1,4 +1,4 @@
-Django<=3.2.15
+Django<=3.2.16
 graphene==2.1.9
 graphene-django==2.15.0
 graphql-core==2.3.2
