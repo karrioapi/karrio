@@ -874,14 +874,16 @@ class CustomsInfo(models.Customs):
         customs: models.Customs = None,
         option_type: typing.Type[utils.Enum] = utils.Enum,
         weight_unit: str = None,
+        default_to: typing.Optional[models.Customs] = None,
     ):
+        _customs = customs or default_to
         options = Options(
-            getattr(customs, "options", None) or {},
+            getattr(_customs, "options", None) or {},
             option_type=option_type,
             base_option_type=CustomsOption,
         )
 
-        self._customs = customs
+        self._customs = _customs
         self._options = options
         self._weight_unit = weight_unit
 

@@ -53,6 +53,10 @@ def _extract_shipment(
     rate_provider, service, service_name = provider_units.ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
+    invoice = (
+        dict(invoice=shipping.CustomsInvoice)
+        if shipping.CustomsInvoice else {}
+    )
     charges = [
         ("Base charge", quote.baseCharge),
         ("Fuel surcharge", quote.fuelSurcharge),
@@ -86,10 +90,7 @@ def _extract_shipment(
             if shipping.Quote is not None
             else None
         ),
-        docs=models.Documents(
-            label=shipping.Labels,
-            invoice=shipping.CustomsInvoice,
-        ),
+        docs=models.Documents(label=shipping.Labels, **invoice),
         meta=dict(
             rate_provider=rate_provider,
             service_name=service_name,
@@ -113,7 +114,24 @@ def shipping_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    customs = lib.to_customs_info(payload.customs)
+    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    customs = lib.to_customs_info(
+        payload.customs,
+        weight_unit=packages.weight_unit,
+        default_to=(
+            models.Customs(commodities=(
+                packages.items
+                if any(packages.items)
+                else [models.Commodity(
+                    quantity=1,
+                    sku=f"000{index}",
+                    weight=pkg.weight.value,
+                    weight_unit=pkg.weight_unit.value,
+                    description=pkg.parcel.content,
+                ) for index, pkg in enumerate(packages, start=1)]
+            )) if is_intl else None
+        )
+    )
 
     packaging_type = provider_units.FreightPackagingType.map(
         packages.package_type or "small_box"
@@ -126,7 +144,14 @@ def shipping_request(
     payment_type = (
         provider_units.PaymentType[payload.payment.paid_by] if payload.payment else None
     )
-    bill_to = lib.to_address(getattr(customs.duty, "bill_to", None) or payload.shipper)
+    duty_paid_by = provider_units.PaymentType.map(
+        getattr(customs.duty, "paid_by", None) or "sender"
+    ).name
+    bill_to = lib.to_address(getattr(customs.duty, "bill_to", None) or (
+        payload.shipper
+        if duty_paid_by == "sender"
+        else payload.recipient
+    ))
 
     request = Freightcom(
         version="3.1.0",
@@ -251,10 +276,11 @@ def shipping_request(
                     ),
                     Item=[
                         ItemType(
-                            code=item.sku,
-                            description=item.description,
-                            originCountry=item.origin_country,
+                            code=item.sku or "0000",
+                            description=item.description or "item",
+                            originCountry=item.origin_country or payload.shipper.country_code,
                             unitPrice=item.value_amount,
+                            quantity=item.quantity or 1,
                         )
                         for item in customs.commodities
                     ],
