@@ -46,21 +46,39 @@ def _extract_details(
 
 
 def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
-    package = lib.to_packages(
-        payload.parcels, package_option_type=provider_units.ShippingOption
-    ).single
     service = provider_units.Service.map(payload.service).value_or_key
-    constoms_options = getattr(payload.customs, "options", {})
+    package = lib.to_packages(
+        payload.parcels,
+        package_option_type=provider_units.ShippingOption,
+    ).single
+
     payment = payload.payment or models.Payment()
     payor = payment.address or (
         payload.shipper if payment.paid_by == "sender" else payload.recipient
     )
-
     options = lib.to_shipping_options(
         payload,
         payor=payor,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
+    )
+    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    customs = lib.to_customs_info(
+        payload.customs,
+        weight_unit=package.weight_unit,
+        default_to=(
+            models.Customs(commodities=(
+                package.parcel.items
+                if any(package.parcel.items)
+                else [models.Commodity(
+                    sku="0000",
+                    quantity=1,
+                    weight=package.weight.value,
+                    weight_unit=package.weight_unit.value,
+                    description=package.parcel.content,
+                )]
+            )) if is_intl else None
+        )
     )
 
     requests = dict(
@@ -111,14 +129,14 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                 options={option.code: option.state for _, option in options.items()},
                 customs_info=(
                     easypost.CustomsInfo(
-                        contents_explanation=payload.customs.content_description,
-                        contents_type=payload.customs.content_type,
-                        customs_certify=payload.customs.certify,
-                        customs_signer=payload.customs.signer,
-                        eel_pfc=constoms_options.get("eel_pfc"),
-                        non_delivery_option=constoms_options.get("non_delivery_option"),
-                        restriction_type=constoms_options.get("restriction_type"),
-                        declaration=constoms_options.get("declaration"),
+                        contents_explanation=customs.content_description,
+                        contents_type=customs.content_type,
+                        customs_certify=customs.certify,
+                        customs_signer=(customs.signer or payload.shipper.person_name),
+                        eel_pfc=customs.options.eel_pfc.state,
+                        non_delivery_option=customs.options.non_delivery_option.state,
+                        restriction_type=customs.options.restriction_type.state,
+                        declaration=customs.options.declaration.state,
                         customs_items=[
                             easypost.CustomsItem(
                                 description=item.description,
@@ -133,11 +151,9 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                                 printed_commodity_identifier=(item.sku or item.id),
                                 hs_tariff_number=item.hs_code,
                             )
-                            for item in payload.customs.commodities
+                            for item in customs.commodities
                         ],
-                    )
-                    if payload.customs is not None
-                    else None
+                    ) if payload.customs else None
                 ),
             )
         ),
