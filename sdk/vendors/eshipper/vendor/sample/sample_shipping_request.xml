@@ -18,10 +18,11 @@
         <Reference name="" code="" />
         <CustomsInvoice Currency="str" brokerName="John Doe" contactCompany="MERITCON INC" shipperTaxID="Jim" receiverTaxID="John Doe" contactName="str" contactPhone="str">
             <BillTo company="ABC Towing" name="Alfred" address1="444 Highway 401" city="Toronto" state="ON" zip="A1B 2C3" country="CA" />
-            <Contact name="Rizwan" phone="555-555-4444" />
-            <Item code="str" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000.00" skuCode="0394h304j"/>
             <DutiesTaxes consigneeAccount="str" sedNumber="str" dutiable="true" billTo="receiver" />
             <InBondManifest locationOfGoods="CANADA WORLDWIDE SLC4358" nameOfCarrier="AIR CANADA" vehicleIdentification="12345" customsClearedBy="CANADA WORLDWIDE" handlingInfo="CANADA WORLDWIDE SERVICES INC. TO ARRANGE DELIVERY" previousCargoControlNum="1234" weight="12.34" weightUOM="LBS"/>
+            <Contact name="Rizwan" phone="555-555-4444" />
+            <Item code="str" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000.00" skuCode="0394h304j"/>
+            <Item code="XXXX" description="T-shirt" originCountry="US" quantity="5" unitPrice="50.00" />
         </CustomsInvoice>
     </ShippingRequest>
 </EShipper>

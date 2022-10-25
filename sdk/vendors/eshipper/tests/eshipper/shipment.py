@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch, ANY
+import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from karrio import Shipment
 from .fixture import gateway
 
 
@@ -27,7 +27,7 @@ class TestEShipperShipment(unittest.TestCase):
     def test_create_shipment(self):
         with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            Shipment.create(self.ShipmentRequest).from_(gateway)
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -35,7 +35,7 @@ class TestEShipperShipment(unittest.TestCase):
     def test_cancel_shipment(self):
         with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -44,7 +44,7 @@ class TestEShipperShipment(unittest.TestCase):
         with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
@@ -53,7 +53,7 @@ class TestEShipperShipment(unittest.TestCase):
         with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
-                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(
@@ -110,7 +110,7 @@ shipment_data = {
         "insurance": 70.0,
     },
     "customs": {
-        "duty": {"paid_by": "receiver"},
+        "duty": {"paid_by": "recipient"},
         "commodities": [
             {
                 "sku": "1234",
@@ -121,16 +121,14 @@ shipment_data = {
             }
         ],
     },
-    "payment": {
-        "paid_by": "third_party",
-    },
+    "payment": { "paid_by": "third_party" },
 }
 
 ParsedShipmentResponse = [
     {
         "carrier_id": "eshipper",
         "carrier_name": "eshipper",
-        "docs": {"label": "[base-64 encoded String]"},
+        "docs": {"label": ANY, "invoice": ANY},
         "meta": {
             "rate_provider": "fedex",
             "service_name": "fedex_ground",
@@ -177,10 +175,10 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
             <Package length="3" width="5" height="4" weight="5" type="Pallet" freightClass="70" insuranceAmount="100." description="desc."/>
         </Packages>
         <Payment type="3rd Party"/>
-        <CustomsInvoice>
+        <CustomsInvoice contactCompany="Test Company" contactName="RizTo" contactPhone="4162223333">
             <BillTo company="Test Company" name="RizTo" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
             <Contact name="RizTo" phone="4162223333"/>
-            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000."/>
+            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000." skuCode="1234"/>
         </CustomsInvoice>
     </ShippingRequest>
 </EShipper>
