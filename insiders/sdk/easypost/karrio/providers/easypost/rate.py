@@ -50,12 +50,27 @@ def _extract_details(
 
 def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     package = lib.to_packages(
-        payload.parcels, package_option_type=provider_units.ShippingOption
+        payload.parcels,
+        package_option_type=provider_units.ShippingOption,
     ).single
     options = lib.to_shipping_options(
         payload,
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
+    )
+    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    customs = (
+        models.Customs(commodities=(
+            package.parcel.items
+            if any(package.parcel.items)
+            else [models.Commodity(
+                sku="0000",
+                quantity=1,
+                weight=package.weight.value,
+                weight_unit=package.weight_unit.value,
+            )]
+        ))
+        if is_intl else None
     )
 
     requests = easypost.ShipmentRequest(
@@ -101,6 +116,28 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                 ).value,
             ),
             options={option.code: option.state for _, option in options.items()},
+            customs_info=(
+                easypost.CustomsInfo(
+                    contents_type="other",
+                    customs_certify=True,
+                    customs_signer=payload.shipper.person_name,
+                    customs_items=[
+                        easypost.CustomsItem(
+                            description=item.description,
+                            origin_country=item.origin_country,
+                            quantity=item.quantity,
+                            value=item.value_amount,
+                            weight=units.Weight(item.weight, item.weight_unit).OZ,
+                            code=item.sku,
+                            manufacturer=None,
+                            currency=item.value_currency,
+                            eccn=(item.metadata or {}).get("eccn"),
+                            printed_commodity_identifier=(item.sku or item.id),
+                            hs_tariff_number=item.hs_code,
+                        ) for item in customs.commodities
+                    ],
+                ) if customs else None
+            ),
         )
     )
 

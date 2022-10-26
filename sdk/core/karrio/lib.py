@@ -354,11 +354,13 @@ def to_customs_info(
     customs: models.Customs,
     option_type: typing.Type[utils.Enum] = None,
     weight_unit: str = None,
+    default_to: typing.Optional[models.Customs] = None,
 ):
     return units.CustomsInfo(
         customs,
         option_type=option_type or utils.Enum,
         weight_unit=weight_unit,
+        default_to=default_to,
     )
 
 

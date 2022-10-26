@@ -1,4 +1,4 @@
-Django<=3.2.15
+Django<=3.2.16
 graphene==2.1.9
 graphene-django==2.15.0
 graphql-core==2.3.2
@@ -11,7 +11,7 @@ django-debug-toolbar
 # -e ./schemas/chronopost
 
 # Carrier Extentions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
@@ -37,11 +37,11 @@ django-debug-toolbar
 # -e ./sdk/extensions/yunexpress
 
 # Carrier Hub Extentions in Development
-# -e ./sdk/vendors/eshipper
-# -e ./sdk/vendors/freightcom
+-e ./sdk/vendors/eshipper
+-e ./sdk/vendors/freightcom
 
 
-karrio
+# karrio
 karrio.amazon_mws
 karrio.aramex
 karrio.australiapost
@@ -65,8 +65,8 @@ karrio.usps
 karrio.usps_international
 karrio.yanwen
 karrio.yunexpress
-karrio.eshipper
-karrio.freightcom
+# karrio.eshipper
+# karrio.freightcom
 
 
 # karrio server core modules
