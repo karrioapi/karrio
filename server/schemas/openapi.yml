@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: '2022.8'
+  version: '2022.10'
 paths:
   /:
     get:
@@ -33,6 +33,8 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORG_LEVEL_BILLING: true
+                    TENANT_LEVEL_BILLING: true
                     ADMIN: ''
                     OPENAPI: ''
                     GRAPHQL: ''
@@ -2029,6 +2031,8 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORG_LEVEL_BILLING: true
+                    TENANT_LEVEL_BILLING: true
                     ADMIN: ''
                     OPENAPI: ''
                     GRAPHQL: ''

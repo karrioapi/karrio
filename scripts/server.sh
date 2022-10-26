@@ -6,7 +6,7 @@ source "scripts/activate-env.sh" > /dev/null 2>&1
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
 	cd "${ROOT:?}"
-    karrio export_schema >| "${ROOT:?}/server/schemas/schema.graphql"
+    apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/server/schemas/graphql.json"
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
@@ -16,8 +16,9 @@ elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/.codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/server/schemas/openapi.json \
+		-i /local/server/schemas/openapi.yml \
         -g typescript-fetch \
+        --skip-validate-spec \
 		-o /local/.codegen/typescript/api/generated \
         --additional-properties=typescriptThreePlus=true \
         --additional-properties=modelPropertyNaming=snake_case \
