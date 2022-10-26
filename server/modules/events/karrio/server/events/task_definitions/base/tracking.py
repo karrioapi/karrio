@@ -17,7 +17,7 @@ from karrio.core.models import TrackingDetails, Message, TrackingEvent
 import karrio.server.core.utils as utils
 import karrio.server.manager.models as models
 import karrio.server.core.datatypes as datatypes
-import karrio.server.core.serializers as serializers
+import karrio.server.manager.serializers as serializers
 
 logger = logging.getLogger(__name__)
 Delay = int
