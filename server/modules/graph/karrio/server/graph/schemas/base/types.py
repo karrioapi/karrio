@@ -184,6 +184,7 @@ class CommodityType:
     object_type: str
     id: typing.Optional[str]
     sku: typing.Optional[str]
+    hs_code: typing.Optional[str]
     quantity: typing.Optional[int]
     weight: typing.Optional[float]
     description: typing.Optional[str]
@@ -239,6 +240,7 @@ class ParcelType:
     is_document: typing.Optional[bool]
     weight_unit: typing.Optional[utils.WeightUnitEnum]
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
+    freight_class: typing.Optional[str]
     reference_number: typing.Optional[str]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
@@ -440,7 +442,7 @@ class TrackerType:
         filter: typing.Optional[inputs.TrackerFilter] = strawberry.UNSET,
     ) -> utils.Connection["TrackerType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
-        queryset = filters.TrackerFilter(
+        queryset = filters.TrackerFilters(
             _filter.to_dict(), manager.Tracking.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
@@ -508,7 +510,7 @@ class ShipmentType:
         filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
     ) -> utils.Connection["ShipmentType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
-        queryset = filters.ShipmentFilter(
+        queryset = filters.ShipmentFilters(
             _filter.to_dict(), manager.Shipment.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
