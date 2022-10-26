@@ -28,6 +28,7 @@ class TracingRecordFilter(utils.Paginated):
 
 @strawberry.input
 class TrackerFilter(utils.Paginated):
+    tracking_number: typing.Optional[str] = strawberry.UNSET
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -37,6 +38,7 @@ class TrackerFilter(utils.Paginated):
 
 @strawberry.input
 class ShipmentFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
     address: typing.Optional[str] = strawberry.UNSET
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
