@@ -594,6 +594,7 @@ class ConnectionType:
     carrier_id: str
     carrier_name: str
     test_mode: bool
+    capabilities: typing.List[str]
 
     @staticmethod
     @utils.authentication_required
