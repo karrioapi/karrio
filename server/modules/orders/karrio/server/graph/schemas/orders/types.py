@@ -14,6 +14,7 @@ class LineItemType:
     object_type: str
     id: typing.Optional[str]
     sku: typing.Optional[str]
+    hs_code: typing.Optional[str]
     quantity: typing.Optional[int]
     weight: typing.Optional[float]
     description: typing.Optional[str]
@@ -34,6 +35,8 @@ class LineItemType:
 class OrderType:
     object_type: str
     id: str
+    order_id: str
+    source: str
     shipping_to: base.types.AddressType
     shipping_from: typing.Optional[base.types.AddressType]
     billing_address: typing.Optional[base.types.AddressType]
@@ -41,6 +44,7 @@ class OrderType:
     metadata: utils.JSON
     options: utils.JSON
     status: inputs.OrderStatusEnum
+    test_mode: bool
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[base.types.UserType]
