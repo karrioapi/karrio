@@ -23,15 +23,16 @@ class CreateOrderMutationInput(utils.BaseInput):
 
 @strawberry.input
 class OrderFilter(utils.Paginated):
-    id: typing.List[str] = strawberry.UNSET
-    source: typing.List[str] = strawberry.UNSET
-    order_id: typing.List[str] = strawberry.UNSET
-    ontion_key: typing.List[str] = strawberry.UNSET
-    address: typing.Optional[str] = strawberry.UNSET
-    ontion_value: typing.List[str] = strawberry.UNSET
-    metadata_key: typing.List[str] = strawberry.UNSET
-    metadata_value: typing.List[str] = strawberry.UNSET
-    status: typing.List[OrderStatusEnum] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    keyword: typing.Optional[str] = strawberry.UNSET
+    source: typing.Optional[typing.List[str]] = strawberry.UNSET
+    order_id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    ontion_key: typing.Optional[typing.List[str]] = strawberry.UNSET
+    address: typing.Optional[typing.List[str]] = strawberry.UNSET
+    ontion_value: typing.Optional[typing.List[str]] = strawberry.UNSET
+    metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET
+    metadata_value: typing.Optional[typing.List[str]] = strawberry.UNSET
+    status: typing.Optional[typing.List[OrderStatusEnum]] = strawberry.UNSET
 
 
 @strawberry.input
