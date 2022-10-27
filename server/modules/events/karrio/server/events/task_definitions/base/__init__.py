@@ -16,7 +16,7 @@ def background_trackers_update():
     from karrio.server.events.task_definitions.base.tracking import update_trackers
 
     @utils.run_on_all_tenants
-    def _run():
+    def _run(**kwargs):
         try:
             update_trackers()
         except Exception as e:

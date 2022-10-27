@@ -91,9 +91,9 @@ def run_on_all_tenants(func):
 
             for tenant in tenants:
                 with tenant_utils.tenant_context(tenant):
-                    return func(*args, **kwargs, schema=tenant.schema_name)
+                    func(*args, **kwargs, schema=tenant.schema_name)
         else:
-            return func(*args, **kwargs)
+            func(*args, **kwargs)
 
     return wrapper
 
