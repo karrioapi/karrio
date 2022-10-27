@@ -613,6 +613,7 @@ class ConnectionType:
         return CarrierSettings[carrier.carrier_name](
             id=carrier.id,
             carrier_name=carrier.carrier_name,
+            capabilities=carrier.capabilities,
             **serializers.ConnectionModelSerializer(
                 {carrier.carrier_name: model_to_dict(carrier.settings)}
             ).data[carrier.carrier_name]
