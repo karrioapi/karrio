@@ -167,15 +167,15 @@ class ChargeType:
 
 @strawberry.type
 class RateType:
-    id: typing.Optional[str]
-    carrier_name: typing.Optional[str]
-    carrier_id: typing.Optional[str]
+    id: str
+    carrier_name: str
+    carrier_id: str
+    service: str
+    test_mode: bool
+    total_charge: float
     currency: utils.CurrencyCodeEnum
     transit_days: typing.Optional[int]
-    service: typing.Optional[str]
-    total_charge: typing.Optional[float]
     extra_charges: typing.List[ChargeType]
-    test_mode: typing.Optional[bool]
     meta: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
