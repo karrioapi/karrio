@@ -16,10 +16,10 @@ class TestTrackers(APITestCase):
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.get(f"{url}")
+            response = self.client.post(f"{url}")
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
 
     def test_shipment_tracking_retry(self):
@@ -30,12 +30,12 @@ class TestTrackers(APITestCase):
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            self.client.get(f"{url}")
+            self.client.post(f"{url}")
             sleep(0.1)
-            response = self.client.get(f"{url}")
+            response = self.client.post(f"{url}")
             response_data = json.loads(response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertDictEqual(response_data, TRACKING_RESPONSE)
         self.assertEqual(len(self.user.tracking_set.all()), 1)
 
