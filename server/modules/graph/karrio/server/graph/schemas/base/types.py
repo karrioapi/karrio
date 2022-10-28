@@ -564,11 +564,11 @@ class SystemConnectionType:
     updated_at: typing.Optional[datetime.datetime]
 
     @strawberry.field
-    def carrier_name(self: providers.Carrier) -> typing.Optional[str]:
+    def carrier_name(self: providers.Carrier) -> str:
         return getattr(self, "settings", self).carrier_name
 
     @strawberry.field
-    def enabled(self: providers.Carrier, info: Info) -> typing.Optional[bool]:
+    def enabled(self: providers.Carrier, info: Info) -> bool:
         if hasattr(self, "active_orgs"):
             return self.active_orgs.filter(id=info.context.request.org.id).exists()
 
