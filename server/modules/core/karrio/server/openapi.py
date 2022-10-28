@@ -9,8 +9,10 @@ class JWTAuthentication(OpenApiAuthenticationExtension):
 
     def get_security_definition(self, auto_schema):
         return {
-            'type': 'apiKey',
             'in': 'header',
+            'type': 'apiKey',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
             'name': 'Authorization',
             "description": "Authorization: Bearer xxx.xxx.xxx",
         }
@@ -35,8 +37,9 @@ class TokenBasicAuthentication(OpenApiAuthenticationExtension):
 
     def get_security_definition(self, auto_schema):
         return {
-            'type': 'apiKey',
-            'in': 'query',
+            'type': 'http',
+            'scheme': 'basic',
+            'name': 'Authorization',
             "description": "-u key_xxxxxxxx:",
         }
 

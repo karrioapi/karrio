@@ -18,7 +18,6 @@ elif [[ "$*" == *gen:ts:cli* ]]; then
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/server/schemas/openapi.yml \
         -g typescript-fetch \
-        --skip-validate-spec \
 		-o /local/.codegen/typescript/api/generated \
         --additional-properties=typescriptThreePlus=true \
         --additional-properties=modelPropertyNaming=snake_case \
