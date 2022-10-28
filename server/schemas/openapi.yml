@@ -6386,8 +6386,10 @@ components:
       type: string
   securitySchemes:
     JWT:
-      type: apiKey
       in: header
+      type: apiKey
+      scheme: bearer
+      bearerFormat: JWT
       name: Authorization
       description: 'Authorization: Bearer xxx.xxx.xxx'
     OAuth2:
@@ -6401,6 +6403,7 @@ components:
       name: Authorization
       description: 'Authorization: Token key_xxxxxxxx'
     TokenBasic:
-      type: apiKey
-      in: query
+      type: http
+      scheme: basic
+      name: Authorization
       description: '-u key_xxxxxxxx:'
