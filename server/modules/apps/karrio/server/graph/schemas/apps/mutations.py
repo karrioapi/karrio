@@ -13,6 +13,7 @@ import karrio.server.apps.models as models
 @strawberry.type
 class CreateAppMutation(utils.BaseMutation):
     app: typing.Optional[types.AppType] = None
+    client_secret: typing.Optional[str] = None
 
     @staticmethod
     @utils.authentication_required
