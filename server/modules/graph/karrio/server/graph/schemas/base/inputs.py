@@ -142,7 +142,7 @@ class MetadataMutationInput(utils.BaseInput):
     id: str
     object_type: utils.MetadataObjectTypeEnum
     added_values: utils.JSON
-    delete_keys: typing.Optional[typing.List[str]]
+    discarded_keys: typing.Optional[typing.List[str]]
 
 
 @strawberry.input

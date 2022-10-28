@@ -181,12 +181,13 @@ class RateType:
 
 @strawberry.type
 class CommodityType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
+    weight: float
+    quantity: int
+    metadata: utils.JSON
     sku: typing.Optional[str]
     hs_code: typing.Optional[str]
-    quantity: typing.Optional[int]
-    weight: typing.Optional[float]
     description: typing.Optional[str]
     value_amount: typing.Optional[float]
     weight_unit: typing.Optional[utils.WeightUnitEnum]
@@ -195,22 +196,21 @@ class CommodityType:
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[UserType]
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     parent_id: typing.Optional[str] = strawberry.UNSET
     parent: typing.Optional["CommodityType"] = strawberry.UNSET
 
 
 @strawberry.type
 class AddressType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
     postal_code: typing.Optional[str]
     city: typing.Optional[str]
     federal_tax_id: typing.Optional[str]
     state_tax_id: typing.Optional[str]
     person_name: typing.Optional[str]
     company_name: typing.Optional[str]
-    country_code: typing.Optional[utils.CountryCodeEnum]
+    country_code: utils.CountryCodeEnum
     email: typing.Optional[str]
     phone_number: typing.Optional[str]
     state_code: typing.Optional[str]
@@ -227,8 +227,8 @@ class AddressType:
 
 @strawberry.type
 class ParcelType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
     weight: typing.Optional[float]
     width: typing.Optional[float]
     height: typing.Optional[float]
@@ -259,8 +259,8 @@ class DutyType:
 
 @strawberry.type
 class CustomsType:
-    object_type: str
     id: str
+    object_type: str
     certify: typing.Optional[bool] = strawberry.UNSET
     commercial_invoice: typing.Optional[bool] = strawberry.UNSET
     content_type: typing.Optional[utils.CustomsContentTypeEnum] = strawberry.UNSET
@@ -288,8 +288,8 @@ class CustomsType:
 
 @strawberry.type
 class AddressTemplateType:
-    object_type: str
     id: str
+    object_type: str
     label: str
     address: AddressType
     is_default: typing.Optional[bool] = None
@@ -322,8 +322,8 @@ class AddressTemplateType:
 
 @strawberry.type
 class ParcelTemplateType:
-    object_type: str
     id: str
+    object_type: str
     label: str
     parcel: ParcelType
     is_default: typing.Optional[bool]
@@ -349,8 +349,8 @@ class ParcelTemplateType:
 
 @strawberry.type
 class CustomsTemplateType:
-    object_type: str
     id: str
+    object_type: str
     label: str
     customs: CustomsType
     is_default: typing.Optional[bool]
@@ -405,29 +405,29 @@ class TrackingEventType:
 
 @strawberry.type
 class TrackerType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
-    tracking_number: typing.Optional[str]
-    status: typing.Optional[utils.TrackerStatusEnum]
-    events: typing.Optional[typing.List[TrackingEventType]]
+    tracking_number: str
+    test_mode: bool
+    metadata: utils.JSON
+    status: utils.TrackerStatusEnum
+    events: typing.List[TrackingEventType]
     delivered: typing.Optional[bool]
     estimated_delivery: typing.Optional[datetime.date]
-    test_mode: typing.Optional[bool]
     options: typing.Optional[utils.JSON]
     meta: typing.Optional[utils.JSON]
-    metadata: typing.Optional[utils.JSON]
     shipment: typing.Optional["ShipmentType"]
-    messages: typing.Optional[typing.List[MessageType]]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
+    messages: typing.List[MessageType]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: UserType
 
     @strawberry.field
-    def carrier_id(self: manager.Customs) -> typing.List[str]:
+    def carrier_id(self: manager.Tracking) -> str:
         return getattr(self.tracking_carrier, "carrier_id", None)
 
     @strawberry.field
-    def carrier_name(self: manager.Customs) -> typing.List[str]:
+    def carrier_name(self: manager.Tracking) -> str:
         return getattr(self.tracking_carrier, "carrier_name", None)
 
     @staticmethod
@@ -450,7 +450,6 @@ class TrackerType:
 
 @strawberry.type
 class PaymentType:
-    id: typing.Optional[str]
     account_number: typing.Optional[str]
     paid_by: typing.Optional[utils.PaidByEnum]
     currency: typing.Optional[utils.CurrencyCodeEnum]
@@ -458,16 +457,18 @@ class PaymentType:
 
 @strawberry.type
 class ShipmentType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
-    status: typing.Optional[utils.ShipmentStatusEnum]
-    recipient: typing.Optional[AddressType]
-    shipper: typing.Optional[AddressType]
+    test_mode: bool
+    shipper: AddressType
+    recipient: AddressType
+    metadata: utils.JSON
+    status: utils.ShipmentStatusEnum
     label_type: typing.Optional[utils.LabelTypeEnum]
     tracking_number: typing.Optional[str]
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
-    test_mode: typing.Optional[bool]
+    parcels: typing.List[ParcelType]
     reference: typing.Optional[str]
     customs: typing.Optional[CustomsType]
     selected_rate: typing.Optional[RateType]
@@ -476,26 +477,24 @@ class ShipmentType:
     services: typing.Optional[typing.List[str]]
     messages: typing.Optional[typing.List[MessageType]]
     meta: typing.Optional[utils.JSON]
-    metadata: typing.Optional[utils.JSON]
     rates: typing.Optional[typing.List[RateType]]
-    parcels: typing.Optional[typing.List[ParcelType]]
     service: typing.Optional[str]
-    carrier_ids: typing.Optional[typing.List[str]]
+    carrier_ids: typing.List[str]
     selected_rate_id: typing.Optional[str]
     tracker_id: typing.Optional[str]
     label_url: typing.Optional[str]
     invoice_url: typing.Optional[str]
     tracker: typing.Optional[TrackerType]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: UserType
 
     @strawberry.field
-    def carrier_id(self: manager.Customs) -> typing.List[str]:
+    def carrier_id(self: manager.Shipment) -> typing.List[str]:
         return getattr(self.tracking_carrier, "carrier_id", None)
 
     @strawberry.field
-    def carrier_name(self: manager.Customs) -> typing.List[str]:
+    def carrier_name(self: manager.Shipment) -> typing.List[str]:
         return getattr(self.tracking_carrier, "carrier_name", None)
 
     @staticmethod
@@ -518,8 +517,8 @@ class ShipmentType:
 
 @strawberry.type
 class ServiceLevelType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
     service_name: typing.Optional[str]
     service_code: typing.Optional[str]
     description: typing.Optional[str]
@@ -543,8 +542,8 @@ class ServiceLevelType:
 
 @strawberry.type
 class LabelTemplateType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
     slug: typing.Optional[str]
     template: typing.Optional[str]
     template_type: typing.Optional[utils.LabelTemplateTypeEnum]
@@ -624,7 +623,7 @@ def create_carrier_settings_type(name: str, model):
 
     @strawberry.type
     class _Settings(ConnectionType):
-        metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+        metadata: utils.JSON = strawberry.UNSET
 
         if hasattr(model, "account_country_code"):
             account_country_code: str = strawberry.UNSET

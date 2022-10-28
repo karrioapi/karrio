@@ -11,12 +11,13 @@ import karrio.server.orders.models as models
 
 @strawberry.type
 class LineItemType:
+    id: str
     object_type: str
-    id: typing.Optional[str]
+    quantity: int
+    weight: float
+    metadata: utils.JSON
     sku: typing.Optional[str]
     hs_code: typing.Optional[str]
-    quantity: typing.Optional[int]
-    weight: typing.Optional[float]
     description: typing.Optional[str]
     value_amount: typing.Optional[float]
     weight_unit: typing.Optional[utils.WeightUnitEnum]
@@ -26,15 +27,14 @@ class LineItemType:
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[base.types.UserType]
     parent_id: typing.Optional[str] = None
-    metadata: typing.Optional[utils.JSON] = None
     unfulfilled_quantity: typing.Optional[int] = None
     parent: typing.Optional[base.types.CommodityType] = None
 
 
 @strawberry.type
 class OrderType:
-    object_type: str
     id: str
+    object_type: str
     order_id: str
     source: str
     shipping_to: base.types.AddressType
@@ -45,9 +45,9 @@ class OrderType:
     options: utils.JSON
     status: inputs.OrderStatusEnum
     test_mode: bool
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[base.types.UserType]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: base.types.UserType
 
     @strawberry.field
     def line_items(self: models.Order) -> typing.List[LineItemType]:
