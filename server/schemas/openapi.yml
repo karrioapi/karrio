@@ -2578,7 +2578,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
   /v1/trackers/{carrier_name}/{tracking_number}:
-    get:
+    post:
       operationId: $$$$$$create
       description: |-
         This API creates or retrieves (if existent) a tracking status object containing the

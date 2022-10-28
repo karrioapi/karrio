@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework import status
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
@@ -75,8 +76,6 @@ class TrackerList(GenericAPIView):
 
 
 class TrackersCreate(APIView):
-    logging_methods = ["GET"]
-
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
@@ -108,8 +107,9 @@ class TrackersCreate(APIView):
                 required=False,
             ),
         ],
+        request=None,
     )
-    def get(self, request: Request, carrier_name: str, tracking_number: str):
+    def post(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -141,7 +141,10 @@ class TrackersCreate(APIView):
             .instance
         )
 
-        return Response(TrackingStatus(tracker).data)
+        return Response(
+            TrackingStatus(tracker).data,
+            status=status.HTTP_202_ACCEPTED,
+        )
 
 
 class TrackersDetails(APIView):
