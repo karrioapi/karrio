@@ -490,12 +490,12 @@ class ShipmentType:
     created_by: UserType
 
     @strawberry.field
-    def carrier_id(self: manager.Shipment) -> typing.List[str]:
-        return getattr(self.tracking_carrier, "carrier_id", None)
+    def carrier_id(self: manager.Shipment) -> typing.Optional[str]:
+        return getattr(self.selected_rate_carrier, "carrier_id", None)
 
     @strawberry.field
-    def carrier_name(self: manager.Shipment) -> typing.List[str]:
-        return getattr(self.tracking_carrier, "carrier_name", None)
+    def carrier_name(self: manager.Shipment) -> typing.Optional[str]:
+        return getattr(self.selected_rate_carrier, "carrier_name", None)
 
     @staticmethod
     @utils.authentication_required
