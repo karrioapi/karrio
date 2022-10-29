@@ -6393,9 +6393,10 @@ components:
       name: Authorization
       description: 'Authorization: Bearer xxx.xxx.xxx'
     OAuth2:
-      type: apiKey
+      type: oauth2
       in: header
       name: Authorization
+      flow: authorizationCode
       description: 'Authorization: Bearer xxxxxxxx'
     Token:
       type: apiKey
