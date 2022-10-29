@@ -6396,7 +6396,14 @@ components:
       type: oauth2
       in: header
       name: Authorization
-      flow: authorizationCode
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize/
+          tokenUrl: /oauth/token/
+          scopes:
+            read: Reading scope
+            write: Writing scope
+            openid: OpenID connect
       description: 'Authorization: Bearer xxxxxxxx'
     Token:
       type: apiKey

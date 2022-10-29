@@ -1,3 +1,4 @@
+from django.conf import settings
 from drf_spectacular.types import *
 from drf_spectacular.utils import *
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
@@ -53,6 +54,12 @@ class OAuth2Authentication(OpenApiAuthenticationExtension):
             'type': 'oauth2',
             'in': 'header',
             'name': 'Authorization',
-            'flow': 'authorizationCode',
+            'flows': {
+                'authorizationCode': {
+                    'authorizationUrl': '/oauth/authorize/',
+                    'tokenUrl': '/oauth/token/',
+                    'scopes': settings.OAUTH2_PROVIDER["SCOPES"],
+                }
+            },
             'description': "Authorization: Bearer xxxxxxxx",
         }
