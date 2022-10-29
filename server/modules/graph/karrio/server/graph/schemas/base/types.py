@@ -242,10 +242,10 @@ class ParcelType:
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
     freight_class: typing.Optional[str]
     reference_number: typing.Optional[str]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
-    items: typing.Optional[typing.List[CommodityType]]
+    items: typing.List[CommodityType]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: UserType
 
 
 @strawberry.type
