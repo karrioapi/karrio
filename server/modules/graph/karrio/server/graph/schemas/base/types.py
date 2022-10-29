@@ -670,17 +670,17 @@ class ConnectionType:
     @staticmethod
     @utils.authentication_required
     def resolve_list(info) -> typing.List["CarrierConnectionType"]:
-        connections = providers.Carrier.access_by(info.context).filter(
+        connections = providers.Carrier.access_by(info.context.request).filter(
             created_by__isnull=False,
-            test_mode=getattr(info.context, "test_mode", False),
+            test_mode=getattr(info.context.request, "test_mode", False),
         )
 
         return list(
-            map(ConnectionType.to_carrier_settings, connections)
+            map(ConnectionType.parse, connections)
         )
 
     @staticmethod
-    def to_carrier_settings(carrier: providers.Carrier) -> "CarrierConnectionType":
+    def parse(carrier: providers.Carrier) -> "CarrierConnectionType":
         return CarrierSettings[carrier.carrier_name](
             id=carrier.id,
             carrier_name=carrier.carrier_name,

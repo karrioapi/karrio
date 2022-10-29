@@ -395,6 +395,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
             if hasattr(model, "services"):
                 services: typing.Optional[_service_type] = strawberry.UNSET
 
+            active: typing.Optional[bool] = True
             metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
         annotations = {
