@@ -496,7 +496,7 @@ class CreateCarrierConnectionMutation(utils.BaseMutation):
         connection = serializer.save()
 
         return CreateCarrierConnectionMutation(  # type:ignore
-            connection=types.ConnectionType.to_carrier_settings(connection)
+            connection=types.ConnectionType.parse(connection)
         )
 
 
@@ -534,7 +534,7 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
         connection = serializer.save()
 
         return UpdateCarrierConnectionMutation(  # type:ignore
-            connection=types.ConnectionType.to_carrier_settings(connection)
+            connection=types.ConnectionType.parse(connection)
         )
 
 
