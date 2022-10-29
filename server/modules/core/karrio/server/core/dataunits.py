@@ -42,8 +42,8 @@ def contextual_metadata(request: Request):
         "APP_NAME": settings.APP_NAME,
         **({"APP_WEBSITE": settings.APP_WEBSITE} if settings.APP_WEBSITE else {}),
         "ADMIN": f"{host}admin/",
-        "OPENAPI": f"{host}openapi",
-        "GRAPHQL": f"{host}graphql",
+        "OPENAPI": f"{host}openapi/",
+        "GRAPHQL": f"{host}graphql/",
         **{
             flag: getattr(settings, flag, None)
             for flag, _ in settings.FEATURE_FLAGS
