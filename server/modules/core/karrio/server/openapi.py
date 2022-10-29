@@ -50,8 +50,9 @@ class OAuth2Authentication(OpenApiAuthenticationExtension):
 
     def get_security_definition(self, auto_schema):
         return {
-            'type': 'apiKey',
+            'type': 'oauth2',
             'in': 'header',
             'name': 'Authorization',
+            'flow': 'authorizationCode',
             'description': "Authorization: Bearer xxxxxxxx",
         }
