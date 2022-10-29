@@ -3,6 +3,8 @@ import operator
 import typing
 import logging
 from django.db import models
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes import models as contenttypes
 from rest_framework import exceptions
@@ -14,6 +16,7 @@ import karrio.server.iam.serializers as serializers
 import karrio.server.iam.models as iam
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 @utils.skip_on_loadata
@@ -165,7 +168,11 @@ def check_context_permissions(context=None, keys: typing.List[str] = [], **kwarg
     groups = [group for group, _ in serializers.PERMISSION_GROUPS if group in keys]
 
     if any(groups) and users.Group.objects.exists():
-        user = context.org.organization_users.filter(user__id=context.request.user.id).first()
+        user = (
+            context.org.organization_users.filter(user__id=context.user.id)
+            if settings.MULTI_ORGANIZATIONS
+            else User.objects.filter(id=context.user.id)
+        ).first()
         token = getattr(context, "token", None)
         group_filters = functools.reduce(
             operator.and_, (models.Q(groups__name=x) for x in groups)

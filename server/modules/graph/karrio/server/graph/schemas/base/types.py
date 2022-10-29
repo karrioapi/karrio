@@ -155,28 +155,59 @@ class MessageType:
     carrier_id: typing.Optional[str]
     message: typing.Optional[str]
     code: typing.Optional[str]
-    details: typing.Optional[utils.JSON] = strawberry.UNSET
+    details: typing.Optional[utils.JSON] = None
+
+    @staticmethod
+    def parse(charge: dict):
+        return MessageType(**{
+            k:v for k,v
+            in charge.items()
+            if k in MessageType.__annotations__
+        })
 
 
 @strawberry.type
 class ChargeType:
-    name: typing.Optional[str]
-    amount: typing.Optional[float]
-    currency: utils.CurrencyCodeEnum
+    name: typing.Optional[str] = None
+    amount: typing.Optional[float] = None
+    currency: utils.CurrencyCodeEnum = None
+
+    @staticmethod
+    def parse(charge: dict):
+        return ChargeType(**{
+            k:v for k,v
+            in charge.items()
+            if k in ChargeType.__annotations__
+        })
 
 
 @strawberry.type
 class RateType:
     id: str
+    object_type: str
     carrier_name: str
     carrier_id: str
     service: str
     test_mode: bool
     total_charge: float
     currency: utils.CurrencyCodeEnum
-    transit_days: typing.Optional[int]
     extra_charges: typing.List[ChargeType]
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = None
+    transit_days: typing.Optional[int] = None
+
+    @staticmethod
+    def parse(rate: dict):
+        return RateType(**{
+            **{
+                k:v for k,v
+                in rate.items()
+                if k in RateType.__annotations__
+            },
+            "extra_charges": [
+                ChargeType.parse(charge)
+                for charge in (rate.get("extra_charges") or [])
+            ]
+        })
 
 
 @strawberry.type
@@ -196,8 +227,8 @@ class CommodityType:
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[UserType]
-    parent_id: typing.Optional[str] = strawberry.UNSET
-    parent: typing.Optional["CommodityType"] = strawberry.UNSET
+    parent_id: typing.Optional[str] = None
+    parent: typing.Optional["CommodityType"] = None
 
 
 @strawberry.type
@@ -222,7 +253,7 @@ class AddressType:
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[UserType]
     validate_location: typing.Optional[bool]
-    validation: typing.Optional[utils.JSON] = strawberry.UNSET
+    validation: typing.Optional[utils.JSON] = None
 
 
 @strawberry.type
@@ -242,10 +273,13 @@ class ParcelType:
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
     freight_class: typing.Optional[str]
     reference_number: typing.Optional[str]
-    items: typing.List[CommodityType]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
+
+    @strawberry.field
+    def items(self: manager.Parcel) -> typing.List[CommodityType]:
+        return self.items.all()
 
 
 @strawberry.type
@@ -376,9 +410,9 @@ class CustomsTemplateType:
 
 @strawberry.type
 class DefaultTemplatesType:
-    default_address: typing.Optional[AddressTemplateType]
-    default_customs: typing.Optional[CustomsTemplateType]
-    default_parcel: typing.Optional[ParcelTemplateType]
+    default_address: typing.Optional[AddressTemplateType] = None
+    default_customs: typing.Optional[CustomsTemplateType] = None
+    default_parcel: typing.Optional[ParcelTemplateType] = None
 
     @staticmethod
     @utils.authentication_required
@@ -396,11 +430,19 @@ class DefaultTemplatesType:
 
 @strawberry.type
 class TrackingEventType:
-    description: typing.Optional[str]
-    location: typing.Optional[str]
-    code: typing.Optional[str]
-    date: typing.Optional[str]
-    time: typing.Optional[str]
+    description: typing.Optional[str] = None
+    location: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    date: typing.Optional[str] = None
+    time: typing.Optional[str] = None
+
+    @staticmethod
+    def parse(charge: dict):
+        return TrackingEventType(**{
+            k:v for k,v
+            in charge.items()
+            if k in TrackingEventType.__annotations__
+        })
 
 
 @strawberry.type
@@ -411,13 +453,11 @@ class TrackerType:
     test_mode: bool
     metadata: utils.JSON
     status: utils.TrackerStatusEnum
-    events: typing.List[TrackingEventType]
     delivered: typing.Optional[bool]
     estimated_delivery: typing.Optional[datetime.date]
     options: typing.Optional[utils.JSON]
     meta: typing.Optional[utils.JSON]
     shipment: typing.Optional["ShipmentType"]
-    messages: typing.List[MessageType]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
@@ -429,6 +469,14 @@ class TrackerType:
     @strawberry.field
     def carrier_name(self: manager.Tracking) -> str:
         return getattr(self.tracking_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def events(self: manager.Tracking) -> typing.List[TrackingEventType]:
+        return [TrackingEventType.parse(msg) for msg in self.events or []]
+
+    @strawberry.field
+    def messages(self: manager.Tracking) -> typing.List[MessageType]:
+        return [MessageType.parse(msg) for msg in self.messages or []]
 
     @staticmethod
     @utils.authentication_required
@@ -450,9 +498,9 @@ class TrackerType:
 
 @strawberry.type
 class PaymentType:
-    account_number: typing.Optional[str]
-    paid_by: typing.Optional[utils.PaidByEnum]
-    currency: typing.Optional[utils.CurrencyCodeEnum]
+    account_number: typing.Optional[str] = None
+    paid_by: typing.Optional[utils.PaidByEnum] = None
+    currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
 
 @strawberry.type
@@ -462,22 +510,17 @@ class ShipmentType:
     test_mode: bool
     shipper: AddressType
     recipient: AddressType
+    options: utils.JSON
     metadata: utils.JSON
     status: utils.ShipmentStatusEnum
+    meta: typing.Optional[utils.JSON]
     label_type: typing.Optional[utils.LabelTypeEnum]
     tracking_number: typing.Optional[str]
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
-    parcels: typing.List[ParcelType]
     reference: typing.Optional[str]
     customs: typing.Optional[CustomsType]
-    selected_rate: typing.Optional[RateType]
-    payment: typing.Optional[PaymentType]
-    options: typing.Optional[utils.JSON]
     services: typing.Optional[typing.List[str]]
-    messages: typing.Optional[typing.List[MessageType]]
-    meta: typing.Optional[utils.JSON]
-    rates: typing.Optional[typing.List[RateType]]
     service: typing.Optional[str]
     carrier_ids: typing.List[str]
     selected_rate_id: typing.Optional[str]
@@ -496,6 +539,35 @@ class ShipmentType:
     @strawberry.field
     def carrier_name(self: manager.Shipment) -> typing.Optional[str]:
         return getattr(self.selected_rate_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def parcels(self: manager.Shipment) -> typing.List[ParcelType]:
+        return self.parcels.all()
+
+    @strawberry.field
+    def rates(self: manager.Shipment) -> typing.List[RateType]:
+        return (
+            [RateType.parse(rate) for rate in self.rates]
+            if self.rates else None
+        )
+
+    @strawberry.field
+    def selected_rate(self: manager.Shipment) -> typing.Optional[RateType]:
+        return (
+            RateType.parse(self.selected_rate)
+            if self.selected_rate else None
+        )
+
+    @strawberry.field
+    def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
+        return (
+            PaymentType(**self.payment)
+            if self.payment else None
+        )
+
+    @strawberry.field
+    def messages(self: manager.Tracking) -> typing.List[MessageType]:
+        return [MessageType.parse(msg) for msg in self.messages or []]
 
     @staticmethod
     @utils.authentication_required

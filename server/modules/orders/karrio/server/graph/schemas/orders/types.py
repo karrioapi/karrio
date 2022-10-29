@@ -40,7 +40,6 @@ class OrderType:
     shipping_to: base.types.AddressType
     shipping_from: typing.Optional[base.types.AddressType]
     billing_address: typing.Optional[base.types.AddressType]
-    shipments: typing.List[base.types.ShipmentType]
     metadata: utils.JSON
     options: utils.JSON
     status: inputs.OrderStatusEnum
@@ -52,6 +51,10 @@ class OrderType:
     @strawberry.field
     def line_items(self: models.Order) -> typing.List[LineItemType]:
         return self.line_items.all()
+
+    @strawberry.field
+    def shipments(self: models.Order) -> typing.List[base.types.ShipmentType]:
+        return self.shipments
 
     @staticmethod
     @utils.authentication_required
