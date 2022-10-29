@@ -40,6 +40,6 @@ class UpdateWebhookMutationInput(utils.BaseInput):
 @strawberry.input
 class EventFilter(utils.Paginated):
     entity_id: typing.Optional[str] = strawberry.UNSET
-    type: typing.List[EventStatusEnum] = strawberry.UNSET
+    type: typing.Optional[typing.List[EventStatusEnum]] = strawberry.UNSET
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
