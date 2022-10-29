@@ -17,6 +17,5 @@ class IamConfig(AppConfig):
 
             # Setup default permission groups and apply to existing orgs on start up
             utils.run_on_all_tenants(permissions.setup_groups)()
-            utils.run_on_all_tenants(permissions.apply_for_org_users)()
 
         _init()

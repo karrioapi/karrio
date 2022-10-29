@@ -11,6 +11,9 @@ class ContextPermission(PermissionsMixin):
         verbose_name = _("context permission")
         verbose_name_plural = _("context permission")
 
+    def __str__(self) -> str:
+        return f'{self.object_pk} - {self.content_type}'
+
     content_type = models.ForeignKey(
         to="contenttypes.ContentType",
         on_delete=models.CASCADE,
