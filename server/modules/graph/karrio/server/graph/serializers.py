@@ -291,6 +291,7 @@ def create_carrier_model_serializers(partial: bool = False):
 
 
 CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
+PARTIAL_CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers(True)
 
 
 @serializers.owned_model_serializer
@@ -314,8 +315,9 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
             "",
         )
-        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_data = validated_data.get(name, {})
+        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+        settings_name = serializer.Meta.model.__name__.lower()
 
         payload = {
             key: value
@@ -329,11 +331,12 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             context=context,
         )
         settings = serializers.save_one_to_one_data(
-            name, serializer, payload={name: payload}, context=context
+            settings_name, serializer, payload={settings_name: payload}, context=context,
         )
 
-        services = settings_data.get("services") or getattr(
-            settings, "default_services", []
+        services = (
+            settings_data.get("services") or
+            getattr(settings, "default_services", [])
         )
         if any(services):
             serializers.save_many_to_many_data(
@@ -351,26 +354,25 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data: dict, context: serializers.Context, **kwargs):
-        name = next(
-            (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
-            "",
-        )
-        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+        carrier_name = instance.settings.carrier_name
+        settings_name = instance.settings.__class__.__name__.lower()
+        serializer = CARRIER_MODEL_SERIALIZERS.get(carrier_name)
 
         payload = {
             key: value
-            for key, value in validated_data.get(name, {}).items()
+            for key, value in validated_data.get(carrier_name, {}).items()
             if key not in ["id", "services", "label_template"]
         }
+
         settings = serializers.save_one_to_one_data(
-            name,
+            settings_name,
             serializer,
             instance,
-            payload={name: payload},
+            payload={settings_name: payload},
             context=context,
         )
 
-        template = validated_data.get(name, {}).get("label_template")
+        template = validated_data.get(carrier_name, {}).get("label_template")
         if template:
             settings.label_template = serializers.save_one_to_one_data(
                 "label_template",
@@ -381,7 +383,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             )
             settings.save()
 
-        return getattr(settings, "carrier_ptr", None)
+        return getattr(settings, "carrier_ptr", instance)
 
 
 ConnectionModelSerializer = type(
@@ -398,6 +400,6 @@ PartialConnectionModelSerializer = type(
     (ConnectionModelSerializerBase,),
     {
         _name: serializers.make_fields_optional(_serializer)(required=False)
-        for _name, _serializer in create_carrier_model_serializers(True).items()
+        for _name, _serializer in PARTIAL_CARRIER_MODEL_SERIALIZERS.items()
     },
 )
