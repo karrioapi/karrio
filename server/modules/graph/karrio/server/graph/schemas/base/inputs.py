@@ -182,6 +182,7 @@ class AddressInput:
     residential: typing.Optional[bool] = strawberry.UNSET
     address_line1: typing.Optional[str] = strawberry.UNSET
     address_line2: typing.Optional[str] = strawberry.UNSET
+    validate_location: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
