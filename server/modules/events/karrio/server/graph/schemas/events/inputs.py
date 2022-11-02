@@ -22,7 +22,7 @@ class WebhookFilter(utils.Paginated):
     url: typing.Optional[str] = strawberry.UNSET
     disabled: typing.Optional[bool] = strawberry.UNSET
     test_mode: typing.Optional[bool] = strawberry.UNSET
-    events: typing.List[EventStatusEnum] = strawberry.UNSET
+    events: typing.Optional[typing.List[EventStatusEnum]] = strawberry.UNSET
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
 

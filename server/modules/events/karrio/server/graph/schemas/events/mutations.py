@@ -2,7 +2,6 @@ import typing
 import strawberry
 from strawberry.types import Info
 
-import karrio.lib as lib
 import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.events.types as types
 import karrio.server.graph.schemas.events.inputs as inputs
