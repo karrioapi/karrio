@@ -233,7 +233,6 @@ def create_carrier_model_serializers(partial: bool = False):
     def _create_model_serializer(carrier_name: str, carrier_model):
         _name = carrier_name
         _extra_fields: dict = {}
-        _extra_exclude: list = []
 
         if hasattr(carrier_model, "account_country_code"):
             _extra_fields.update(
@@ -269,7 +268,6 @@ def create_carrier_model_serializers(partial: bool = False):
                 "created_by",
                 "capabilities",
                 "active_users",
-                *_extra_exclude,
             )
 
         return serializers.owned_model_serializer(

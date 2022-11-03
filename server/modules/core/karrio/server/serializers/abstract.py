@@ -342,6 +342,15 @@ def exclude_id_field(serializer: Type[ModelSerializer]):
     return type(serializer.__name__, (serializer,), dict(Meta=_Meta))
 
 
+def is_field_optional(model, field_name: str) -> bool:
+    field = getattr(model, field_name)
+
+    if hasattr(field, "field"):
+        return field.field.null
+
+    return False
+
+
 def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> dict:
     """This function checks if the payload contains dictionary with the keys and if so, it
     mutate the values content by removing any null values and adding the new one.
