@@ -4,6 +4,7 @@ import datetime
 import strawberry
 
 import karrio.server.providers.models as providers
+import karrio.server.serializers as serializers
 import karrio.server.graph.utils as utils
 
 
@@ -415,7 +416,15 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
                         if hasattr(model, k)
                     },
                     "__annotations__": {
-                        k: typing.Optional[v] if is_update or k in _optionals else v
+                        k: (
+                            typing.Optional[v]
+                            if (
+                                is_update or
+                                k in _optionals or
+                                serializers.is_field_optional(model, k)
+                            )
+                            else v
+                        )
                         for k, v in annotations.items()
                         if k not in _excluded and hasattr(model, k)
                     },

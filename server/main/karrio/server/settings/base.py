@@ -491,7 +491,7 @@ LOGGING = {
             "style": "{",
         },
         "simple": {
-            "format": "{levelname} {message}",
+            "format": "{levelname} {filename} {lineno} {message}",
             "style": "{",
         },
     },

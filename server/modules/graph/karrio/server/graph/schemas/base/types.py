@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
 import karrio.server.core.filters as filters
+import karrio.server.serializers as serializers
 import karrio.server.user.serializers as user_serializers
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
@@ -18,7 +19,6 @@ import karrio.server.tracing.models as tracing
 import karrio.server.graph.models as graph
 import karrio.server.core.models as core
 import karrio.server.graph.schemas.base.inputs as inputs
-import karrio.server.graph.serializers as serializers
 import karrio.server.graph.utils as utils
 
 User = get_user_model()
@@ -675,19 +675,32 @@ class ConnectionType:
             test_mode=getattr(info.context.request, "test_mode", False),
         )
 
-        return list(
-            map(ConnectionType.parse, connections)
-        )
+        return list(map(ConnectionType.parse, connections))
 
     @staticmethod
     def parse(carrier: providers.Carrier) -> "CarrierConnectionType":
-        return CarrierSettings[carrier.carrier_name](
+        carrier_name = (
+            carrier.carrier_name
+            if carrier.carrier_name in providers.MODELS
+            else "generic"
+        )
+        _RawSettings = pydoc.locate(f"karrio.mappers.{carrier_name}.Settings")
+        settings = {
+            key: getattr(carrier.settings, key)
+            for key in model_to_dict(carrier.settings).keys()
+            if key in _RawSettings.__annotations__
+        }
+        services = (
+            dict(services=carrier.settings.services.all())
+            if "services" in settings else {}
+        )
+
+        return CarrierSettings[carrier_name](
             id=carrier.id,
-            carrier_name=carrier.carrier_name,
+            active=carrier.active,
+            carrier_name=carrier_name,
             capabilities=carrier.capabilities,
-            **serializers.ConnectionModelSerializer(
-                {carrier.carrier_name: model_to_dict(carrier.settings)}
-            ).data[carrier.carrier_name]
+            **{**settings, **services}
         )
 
 def create_carrier_settings_type(name: str, model):
@@ -698,20 +711,23 @@ def create_carrier_settings_type(name: str, model):
         metadata: utils.JSON = strawberry.UNSET
 
         if hasattr(model, "account_country_code"):
-            account_country_code: str = strawberry.UNSET
+            account_country_code: typing.Optional[str] = strawberry.UNSET
 
         if hasattr(model, "label_template"):
             label_template: typing.Optional[LabelTemplateType] = strawberry.UNSET
 
         if hasattr(model, "services"):
-
             @strawberry.field
-            def services(self: providers.Carrier) -> typing.List[ServiceLevelType]:
+            def services(self: providers.Carrier) -> typing.Optional[typing.List[ServiceLevelType]]:
                 return self.services.all()
 
     annotations = {
         **getattr(_RawSettings, "__annotations__", {}),
         **getattr(_Settings, "__annotations__", {}),
+        **(
+            dict(services=typing.Optional[typing.List[ServiceLevelType]])
+            if hasattr(model, "services") else {}
+        )
     }
 
     return strawberry.type(
@@ -725,9 +741,12 @@ def create_carrier_settings_type(name: str, model):
                     if hasattr(model, k)
                 },
                 "__annotations__": {
-                    k: v
+                    k: (
+                        typing.Optional[v]
+                        if serializers.is_field_optional(model, k) else v
+                    )
                     for k, v in annotations.items()
-                    if k not in ["services"] and hasattr(model, k)
+                    if hasattr(model, k)
                 },
             },
         )
