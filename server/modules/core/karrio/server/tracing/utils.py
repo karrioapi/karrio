@@ -17,14 +17,23 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
     tracer = tracer or getattr(context, "tracer", Tracer())
 
     # Process Karrio SDK tracing records to persist records of interest.
+    @utils.async_wrapper
     @utils.tenant_aware
     def persist_records(**kwarg):
-        if len(tracer.records) == 0:
+        actor = getattr(context, "user", None)
+
+        if len(tracer.records) == 0 or getattr(actor, "id", None) is None:
             return
 
         try:
-            actor = getattr(context, "user", None)
             records = []
+            exists = models.TracingRecord.access_by(context).filter(
+                meta__request_log_id__isnull=False,
+                meta__request_log_id=tracer.context.get("request_log_id")
+            ).exists()
+
+            if exists:
+                return
 
             for record in tracer.records:
                 connection: Settings = record.metadata.get("connection")
@@ -35,7 +44,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
                         record=record.data,
                         timestamp=record.timestamp,
                         created_by_id=getattr(actor, "id", None),
-                        test_mode=getattr(connection, "test", False),
+                        test_mode=getattr(connection, "test_mode", False),
                         meta=DP.to_dict(
                             {
                                 "tracer_id": tracer.id,
@@ -71,7 +80,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
         except Exception as e:
             logger.error(e, exc_info=False)
 
-    futures.ThreadPoolExecutor(max_workers=1).submit(persist_records, schema=schema)
+    persist_records(schema=schema)
 
 
 def set_tracing_context(**kwargs):

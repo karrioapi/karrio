@@ -45,6 +45,7 @@ def _extract_rate(
     rate: RateReplyDetail = lib.to_object(RateReplyDetail, detail_node)
     service = provider_units.ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
+    applied_options = rate.AppliedOptions
 
     shipment_rate, shipment_discount = typing.cast(
         typing.Tuple[ShipmentRateDetail, Money],
@@ -73,6 +74,11 @@ def _extract_rate(
         if estimated_delivery is not None
         else None
     )
+    applied_options = (
+        dict(applied_options=applied_options)
+        if (applied_options is not None and len(applied_options) > 0)
+        else {}
+    )
 
     return models.RateDetails(
         carrier_name=settings.carrier_name,
@@ -92,7 +98,7 @@ def _extract_rate(
             for name, amount in charges
             if amount
         ],
-        meta=dict(service_name=service.name_or_key),
+        meta=dict(service_name=service.name_or_key, **applied_options)
     )
 
 

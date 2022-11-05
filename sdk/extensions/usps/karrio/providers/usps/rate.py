@@ -36,12 +36,13 @@ def _extract_details(
     charges: typing.List[SpecialServiceType] = getattr(
         postage.SpecialServices, "SpecialService", []
     )
-    rate = lib.to_decimal(lib.find_element("Rate", postage_node, first=True).text)
-    estimated_date = lib.to_date(
-        getattr(
-            lib.find_element("CommitmentDate", postage_node, first=True), "text", None
-        )
-    )
+    rate = lib.to_decimal((
+        lib.find_element("CommercialPlusRate", postage_node, first=True) or
+        lib.find_element("CommercialRate", postage_node, first=True) or
+        lib.find_element("Rate", postage_node, first=True)
+    ).text)
+    commitment_date_node = lib.find_element("CommitmentDate", postage_node, first=True)
+    estimated_date = lib.to_date(getattr(commitment_date_node, "text", None))
     transit = (
         (estimated_date.date() - datetime.now().date()).days
         if estimated_date is not None
@@ -119,13 +120,15 @@ def rate_request(
                 ),
                 ZipOrigination=payload.shipper.postal_code,
                 ZipDestination=payload.recipient.postal_code,
-                Pounds=package.weight.LB,
+                Pounds=0,
                 Ounces=package.weight.OZ,
                 Container=container.value,
                 Width=package.width.IN,
                 Length=package.length.IN,
                 Height=package.height.IN,
-                Girth=package.girth.value,
+                Girth=(
+                    package.girth.value if package.packaging_type == "tube" else None
+                ),
                 Value=options.declared_value.state,
                 AmountToCollect=options.cash_on_delivery.state,
                 SpecialServices=(

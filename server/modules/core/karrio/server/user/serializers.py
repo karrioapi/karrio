@@ -41,7 +41,7 @@ class TokenSerializer(Serializer):
             org = getattr(context, "org", None)
 
         ctx = Context(user, org, test_mode)
-        tokens = Token.access_by(ctx)
+        tokens = Token.access_by(ctx).filter(user__id=getattr(user, "id", None))
 
         if tokens.exists():
             return tokens.first()

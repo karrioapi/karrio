@@ -15,12 +15,11 @@ class Record:
     timestamp: float
     metadata: dict = {}
 
-
-@attr.s(auto_attribs=True)
 class Tracer:
-    id: str = attr.ib(factory=lambda: str(uuid.uuid4()))
-    _recordings: typing.Dict[futures.Future, dict] = {}
-    _context: typing.Dict[str, typing.Any] = {}
+    def __init__(self, id: str = None) -> None:
+        self.id = id or str(uuid.uuid4())
+        self.inner_context: typing.Dict[str, typing.Any] = {}
+        self.inner_recordings: typing.Dict[futures.Future, dict] = {}
 
     def trace(
         self, data: typing.Any, key: str, metadata: dict = {}, format: str = None
@@ -34,7 +33,7 @@ class Tracer:
             )
 
         promise = futures.ThreadPoolExecutor(max_workers=1)
-        self._recordings.update({promise.submit(_save): data})
+        self.inner_recordings.update({promise.submit(_save): data})
 
         return data
 
@@ -43,11 +42,11 @@ class Tracer:
 
     @property
     def records(self) -> typing.List[Record]:
-        return [rec.result() for rec in futures.as_completed(self._recordings)]
+        return [rec.result() for rec in futures.as_completed(self.inner_recordings)]
 
     @property
     def context(self) -> typing.Dict[str, typing.Any]:
-        return self._context
+        return self.inner_context
 
     def add_context(self, data: typing.Dict[str, typing.Any]):
-        self._context.update(data)
+        self.inner_context.update(data)

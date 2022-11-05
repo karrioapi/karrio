@@ -71,13 +71,11 @@ class TrackingAPIView(APIView):
             ),
         }
 
-        response = Shipments.track(data, context=request, carrier_filter=carrier_filter)
+        response = Shipments.track(data, context=request, **carrier_filter)
 
         return Response(
             TrackingResponse(response).data,
-            status=status.HTTP_200_OK
-            if response.tracking is not None
-            else status.HTTP_404_NOT_FOUND,
+            status=(status.HTTP_200_OK if response.tracking is not None else status.HTTP_404_NOT_FOUND),
         )
 
 

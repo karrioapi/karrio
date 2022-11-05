@@ -227,12 +227,14 @@ class ServiceClassID(Enum):
     usps_priority_mail_express_hold_for_pickup = "2"
     usps_priority_mail_express = "3"
     usps_standard_post = "4"
+    usps_bpm_parcels = "5"
     usps_media_mail = "6"
     usps_library_mail = "7"
     usps_priority_mail_express_flat_rate_envelope = "13"
     usps_first_class_mail_large_postcards = "15"
     usps_priority_mail_flat_rate_envelope = "16"
     usps_priority_mail_medium_flat_rate_box = "17"
+    usps_bpm_flats = "20"
     usps_priority_mail_large_flat_rate_box = "22"
     usps_priority_mail_express_sunday_holiday_delivery = "23"
     usps_priority_mail_express_sunday_holiday_delivery_flat_rate_envelope = "25"
@@ -270,6 +272,12 @@ class ServiceClassID(Enum):
     usps_priority_mail_express_padded_flat_rate_envelope = "62"
     usps_priority_mail_express_padded_flat_rate_envelope_hold_for_pickup = "63"
     usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = "64"
+    usps_parcel_select_ground = "77"
+    usps_priority_mail_cubic = "84"
+    usps_parcel_select_ground_cubic = "92"
+    usps_bpm_flats_hold_for_pickup = "2020"
+    usps_parcel_select_ground_hold_for_pickup = "2071"
+    usps_bpm_parcels_hold_for_pickup = "2077"
 
 
 class ServiceType(Enum):

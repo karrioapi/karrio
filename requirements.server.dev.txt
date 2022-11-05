@@ -18,12 +18,12 @@ django-debug-toolbar
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
-# -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/extensions/dpdhl
-# -e ./sdk/extensions/fedex
+-e ./sdk/extensions/fedex
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
@@ -31,14 +31,14 @@ django-debug-toolbar
 # -e ./sdk/extensions/tnt
 # -e ./sdk/extensions/ups
 # -e ./sdk/extensions/ups_freight
-# -e ./sdk/extensions/usps
-# -e ./sdk/extensions/usps_international
+-e ./sdk/extensions/usps
+-e ./sdk/extensions/usps_international
 # -e ./sdk/extensions/yanwen
 # -e ./sdk/extensions/yunexpress
 
 # Carrier Hub Extentions in Development
--e ./sdk/vendors/eshipper
--e ./sdk/vendors/freightcom
+# -e ./sdk/vendors/eshipper
+# -e ./sdk/vendors/freightcom
 
 
 # karrio
@@ -53,7 +53,7 @@ karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
 karrio.dpdhl
-karrio.fedex
+# karrio.fedex
 karrio.purolator
 karrio.royalmail
 karrio.sendle
@@ -65,8 +65,8 @@ karrio.usps
 karrio.usps_international
 karrio.yanwen
 karrio.yunexpress
-# karrio.eshipper
-# karrio.freightcom
+karrio.eshipper
+karrio.freightcom
 
 
 # karrio server core modules
