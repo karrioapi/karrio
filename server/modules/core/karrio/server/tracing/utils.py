@@ -44,7 +44,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
                         record=record.data,
                         timestamp=record.timestamp,
                         created_by_id=getattr(actor, "id", None),
-                        test_mode=getattr(connection, "test", False),
+                        test_mode=getattr(connection, "test_mode", False),
                         meta=DP.to_dict(
                             {
                                 "tracer_id": tracer.id,
