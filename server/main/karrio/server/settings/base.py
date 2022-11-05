@@ -17,6 +17,7 @@ from decouple import AutoConfig
 from datetime import timedelta
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -44,7 +45,10 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-test-mode",
+    "x-org-id",
+]
 
 # HTTPS configuration
 if USE_HTTPS is True:
