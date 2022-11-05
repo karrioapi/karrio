@@ -144,9 +144,9 @@ def rate_request(
                     Piece=[
                         PieceType(
                             PieceID=package.parcel.id or f"{index}",
-                            PackageTypeCode=provider_units.DCTPackageType[
+                            PackageTypeCode=provider_units.DCTPackageType.map(
                                 package.packaging_type or "your_packaging"
-                            ].value,
+                            ).value,
                             Depth=package.length.map(provider_units.MeasurementOptions)[
                                 dim_unit.name
                             ],

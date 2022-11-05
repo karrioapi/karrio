@@ -96,7 +96,7 @@ def shipment_request(
         or packages.compatible_units
     )
 
-    package_type = provider_units.PackageType[packages.package_type].value
+    package_type = provider_units.PackageType.map(packages.package_type).value
     label_format, label_template = provider_units.LabelType[
         payload.label_type or "PDF_6x4"
     ].value

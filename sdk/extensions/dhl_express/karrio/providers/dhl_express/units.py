@@ -247,6 +247,14 @@ class PackageType(Flag):
     dhl_parcel = "PA"
     dhl_your_packaging = "YP"
 
+    """ Mapp from DCT package type """
+    dhl_flyer_smalls = dhl_flyer
+    dhl_parcels_conveyables = dhl_other_dhl_packaging
+    dhl_non_conveyables = dhl_other_dhl_packaging
+    dhl_pallets = dhl_freight
+    dhl_double_pallets = dhl_freight
+    dhl_box = dhl_jumbo_box
+
     """ Unified Packaging type mapping """
     envelope = dhl_express_envelope
     pak = dhl_flyer
