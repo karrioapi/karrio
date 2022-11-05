@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from usps_lib.intl_rate_v2_request import (
     IntlRateV2Request,
     PackageType,
@@ -109,7 +109,7 @@ def rate_request(
         Package=[
             PackageType(
                 ID=0,
-                Pounds=package.weight.LB,
+                Pounds=0,
                 Ounces=package.weight.OZ,
                 Machinable=options.usps_option_machinable_item.state or False,
                 MailType=provider_units.PackagingType[
@@ -133,10 +133,9 @@ def rate_request(
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=commercial,
                 CommercialPlusFlag=commercial_plus,
-                AcceptanceDateTime=lib.fdatetime(
-                    (options.shipment_date.state or datetime.today()),
-                    output_format="%Y-%m-%dT%H:%M:%S",
-                ),
+                AcceptanceDateTime=(datetime.isoformat(
+                                    (options.shipment_date.state or datetime.now(timezone.utc)),
+                ) if recipient.postal_code else None),
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
                     ExtraServicesType(

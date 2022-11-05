@@ -158,9 +158,7 @@ def shipment_request(
                         Description=item.description,
                         Quantity=item.quantity,
                         Value=item.value_amount,
-                        NetPounds=units.Weight(
-                            item.weight, units.WeightUnit[item.weight_unit or "LB"]
-                        ).LB,
+                        NetPounds=0,
                         NetOunces=units.Weight(
                             item.weight, units.WeightUnit[item.weight_unit or "LB"]
                         ).OZ,

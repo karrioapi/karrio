@@ -66,6 +66,16 @@ class PackagePresets(utils.Flag):
         ),
         **PRESET_DEFAULTS
     )
+    fedex_extra_large_box = units.PackagePreset(
+        **dict(
+            weight=20.0,
+            width=11.88,
+            height=11.00,
+            length=10.75,
+            packaging_type="extra_large_box",
+        ),
+        **PRESET_DEFAULTS
+    )
     fedex_10_kg_box = units.PackagePreset(
         **dict(
             weight=10.0,
@@ -142,6 +152,10 @@ class PackagingType(utils.Flag):
     fedex_envelope = "FEDEX_ENVELOPE"
     fedex_pak = "FEDEX_PAK"
     fedex_box = "FEDEX_BOX"
+    fedex_small_box = "FEDEX_SMALL_BOX"
+    fedex_medium_box = "FEDEX_MEDIUM_BOX"
+    fedex_large_box = "FEDEX_LARGE_BOX"
+    fedex_extra_large_box = "FEDEX_EXTRA_LARGE_BOX"
     fedex_10_kg_box = "FEDEX_10KG_BOX"
     fedex_25_kg_box = "FEDEX_25KG_BOX"
     fedex_tube = "FEDEX_TUBE"
@@ -152,9 +166,10 @@ class PackagingType(utils.Flag):
     pak = fedex_pak
     tube = fedex_tube
     pallet = your_packaging
-    small_box = fedex_10_kg_box
-    medium_box = fedex_box
-    large_box = fedex_25_kg_box
+    small_box = fedex_small_box
+    medium_box = fedex_medium_box
+    large_box = fedex_large_box
+    extra_large_box = fedex_extra_large_box
 
 
 class PhysicalPackagingType(utils.Flag):
@@ -209,6 +224,7 @@ class FreightPackagingType(utils.Flag):
     small_box = fedex_small_box
     medium_box = fedex_medium_box
     large_box = fedex_large_box
+    extra_large_box = fedex_extra_large_box
 
 
 class PaymentType(utils.Flag):
