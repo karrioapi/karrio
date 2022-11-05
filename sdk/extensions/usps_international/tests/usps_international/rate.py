@@ -125,7 +125,7 @@ ERROR_XML = """<?xml version="1.0" encoding="UTF-8"?>
 RATE_REQUEST_XML = """<IntlRateV2Request USERID="username">
     <Revision>2</Revision>
     <Package ID="0">
-        <Pounds>3</Pounds>
+        <Pounds>0</Pounds>
         <Ounces>49.97</Ounces>
         <Machinable>false</Machinable>
         <MailType>PACKAGE</MailType>

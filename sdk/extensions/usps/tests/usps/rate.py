@@ -162,13 +162,12 @@ RATE_REQUEST_XML = """<RateV4Request USERID="username">
         <Service>Priority</Service>
         <ZipOrigination>44106</ZipOrigination>
         <ZipDestination>20770</ZipDestination>
-        <Pounds>1</Pounds>
+        <Pounds>0</Pounds>
         <Ounces>16</Ounces>
         <Container>VARIABLE</Container>
         <Width>5</Width>
         <Length>3</Length>
         <Height>5</Height>
-        <Girth>40.64</Girth>
         <SpecialServices>
             <SpecialService>108</SpecialService>
             <SpecialService>100</SpecialService>

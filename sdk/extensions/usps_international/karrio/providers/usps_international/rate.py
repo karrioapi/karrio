@@ -102,6 +102,9 @@ def rate_request(
 
     commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
     commercial_plus = next(("Y" for svc in services if "plus" in svc.name), "N")
+    acceptance_date = (
+        datetime.isoformat((options.shipment_date.state or datetime.now(timezone.utc)),
+    ) if recipient.postal_code else None)
 
     request = IntlRateV2Request(
         USERID=settings.username,
@@ -133,9 +136,7 @@ def rate_request(
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=commercial,
                 CommercialPlusFlag=commercial_plus,
-                AcceptanceDateTime=(datetime.isoformat(
-                                    (options.shipment_date.state or datetime.now(timezone.utc)),
-                ) if recipient.postal_code else None),
+                AcceptanceDateTime=acceptance_date,
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
                     ExtraServicesType(
