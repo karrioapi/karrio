@@ -10,7 +10,7 @@ class ChronopostSettings(Carrier):
 
     password = models.CharField(max_length=50)
     account_number = models.CharField(max_length=50, blank=True, default='')
-    account_country_code = models.CharField(max_length=3, blank=True, choices=COUNTRIES)
+    account_country_code = models.CharField(max_length=3, blank=True, null=True, choices=COUNTRIES)
 
     @property
     def carrier_name(self) -> str:

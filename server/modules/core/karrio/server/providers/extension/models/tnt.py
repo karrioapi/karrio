@@ -11,7 +11,7 @@ class TNTSettings(Carrier):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     account_number = models.CharField(max_length=100)
-    account_country_code = models.CharField(max_length=3, choices=COUNTRIES)
+    account_country_code = models.CharField(max_length=3, blank=True, null=True, choices=COUNTRIES)
 
     @property
     def carrier_name(self) -> str:
