@@ -86,7 +86,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.8.6
+  danh91.docker.scarf.sh/karrio/server:2022.8.7
 ```
 
 </details>
@@ -111,7 +111,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.8.6
+    image: danh91.docker.scarf.sh/karrio/server:2022.8.7
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True
@@ -174,14 +174,17 @@ pip install karrio.canadapost
 <details>
 <summary>Additional carrier extensions</summary>
 
+- `karrio.amazon`
 - `karrio.aramex`
 - `karrio.australiapost`
 - `karrio.canadapost`
 - `karrio.canpar`
+- `karrio.chronopost`
 - `karrio.dhl-express`
 - `karrio.dhl-poland`
 - `karrio.dhl-universal`
 - `karrio.dicom`
+- `karrio.dpdhl`
 - `karrio.fedex`
 - `karrio.purolator`
 - `karrio.royalmail`
@@ -189,6 +192,7 @@ pip install karrio.canadapost
 - `karrio.sf-express`
 - `karrio.tnt`
 - `karrio.ups`
+- `karrio.ups-freight`
 - `karrio.usps`
 - `karrio.usps-international`
 - `karrio.yanwen`
