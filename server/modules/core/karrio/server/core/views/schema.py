@@ -259,16 +259,12 @@ def render_tags(request, APP_NAME):
                     When using the proxy API, no objects are created in the {APP_NAME} system.
                 """,
             },
-            (
-                {
-                    "name": "Orders",
-                    "description": f"""This is an object representing your a {APP_NAME} order.
-                    You can create {APP_NAME} orders to organize your shipments and ship line items separately.
-                    """,
-                }
-                if settings.ORDERS_MANAGEMENT
-                else None
-            ),
+            {
+                "name": "Orders",
+                "description": f"""This is an object representing your a {APP_NAME} order.
+                You can create {APP_NAME} orders to organize your shipments and ship line items separately.
+                """,
+            },
             {
                 "name": "Webhooks",
                 "description": f"""This is an object representing your a {APP_NAME} webhook.
@@ -276,25 +272,12 @@ def render_tags(request, APP_NAME):
                 {APP_NAME} account.
                 """,
             },
-            (
-                {
-                    "name": "Data",
-                    "description": f"""These operations allow you import or export data from your {APP_NAME} account.
-                    """,
-                }
-                if settings.DATA_IMPORT_EXPORT
-                else None
-            ),
-            (
-                {
-                    "name": "Batches",
-                    "description": f"""This is an object representing your a {APP_NAME} batch operation.
-                    You can retrieve all batch operations historically for your {APP_NAME} account.
-                    """,
-                }
-                if settings.DATA_IMPORT_EXPORT
-                else None
-            ),
+            {
+                "name": "Batches",
+                "description": f"""This is an object representing your a {APP_NAME} batch operation.
+                You can retrieve all batch operations historically for your {APP_NAME} account.
+                """,
+            },
             {
                 "name": "Reference & Enums",
                 "description": render_reference_descriptions(request),
