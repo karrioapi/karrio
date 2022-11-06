@@ -380,7 +380,7 @@ def CreateCarrierSettingTypes(carrier_model):
     _extra_fields: dict = dict(metadata=generic.GenericScalar(default_value={}))
 
     if hasattr(carrier_model, "account_country_code"):
-        _extra_fields.update(account_country_code=graphene.String(required=True))
+        _extra_fields.update(account_country_code=graphene.String(required=False))
 
     if hasattr(carrier_model, "label_template"):
         _extra_fields.update(
