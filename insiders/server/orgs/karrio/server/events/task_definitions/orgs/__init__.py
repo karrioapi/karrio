@@ -1,7 +1,8 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-import logging
 import time
+import logging
+from django.conf import settings
 from huey.contrib.djhuey import db_task
 
 import karrio.server.core.utils as utils
@@ -11,20 +12,19 @@ logger = logging.getLogger(__name__)
 
 
 @db_task()
+@utils.error_wrapper
+@utils.async_wrapper
 @utils.tenant_aware
-def cleanup_orgs(*args, **kwargs):
-    @utils.run_async
-    def _actual():
-        try:
-            time.sleep(5)
-            logger.info(f"> cleanup organizations...")
-            models.Organization.objects.filter(
-                owner__isnull=True, users__isnull=True
-            ).delete()
-        except Exception as e:
-            logger.warning(f"Error during organizations cleanup {e}")
+def cleanup_orgs(**kwargs):
+    if settings.MULTI_TENANTS and kwargs.get('schema') == 'public':
+        return
 
-    _actual()
+    time.sleep(5)
+    logger.info(f"> cleanup organizations...")
+    models.Organization.objects.filter(
+        owner__isnull=True, users__isnull=True
+    ).delete()
+
 
 
 TASK_DEFINITIONS = [

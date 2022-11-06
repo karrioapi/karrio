@@ -49,6 +49,18 @@ def run_async(callable: Callable[[], Any]) -> futures.Future:
     return futures.ThreadPoolExecutor(max_workers=1).submit(callable)
 
 
+def error_wrapper(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            logger.error(e)
+            raise e
+
+    return wrapper
+
+
 def async_wrapper(func):
     @functools.wraps(func)
     def wrapper(*args, run_synchronous: bool = False, **kwargs):
