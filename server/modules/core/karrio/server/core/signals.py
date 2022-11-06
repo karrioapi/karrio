@@ -19,20 +19,7 @@ def update_settings(current):
     for key in CONSTANCE_CONFIG_KEYS:
         setattr(settings, key, getattr(current, key))
 
-    # settings.EMAIL_USE_TLS = current.EMAIL_USE_TLS
-    # settings.EMAIL_HOST_USER = current.EMAIL_HOST_USER
-    # settings.EMAIL_HOST_PASSWORD = current.EMAIL_HOST_PASSWORD
-    # settings.EMAIL_HOST = current.EMAIL_HOST
-    # settings.EMAIL_PORT = current.EMAIL_PORT
-    # settings.EMAIL_FROM_ADDRESS = current.EMAIL_FROM_ADDRESS
-
-    # settings.EMAIL_SERVER = current.EMAIL_HOST
-    # settings.EMAIL_ADDRESS = current.EMAIL_HOST_USER
-    # settings.EMAIL_PASSWORD = current.EMAIL_HOST_PASSWORD
     settings.EMAIL_ENABLED = all(
         cfg is not None and cfg != '' for cfg
         in [current.EMAIL_HOST, current.EMAIL_HOST_USER, current.EMAIL_HOST_PASSWORD]
     )
-
-    # settings.GOOGLE_CLOUD_API_KEY = current.GOOGLE_CLOUD_API_KEY
-    # settings.CANADAPOST_ADDRESS_COMPLETE_API_KEY = current.CANADAPOST_ADDRESS_COMPLETE_API_KEY
