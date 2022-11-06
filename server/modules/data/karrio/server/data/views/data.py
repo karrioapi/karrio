@@ -42,7 +42,7 @@ class DataImport(api.BaseAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     @openapi.extend_schema(
-        tags=["Data"],
+        tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}import_file",
         summary="Import data files",
         responses={
@@ -118,7 +118,7 @@ DataExportParameters: list = [
 
 class DataExport(api.LoginRequiredView, VirtualDownloadView):
     @openapi.extend_schema(
-        tags=["Data"],
+        tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}export_file",
         summary="Export data files",
         responses={
@@ -164,9 +164,9 @@ class DataExport(api.LoginRequiredView, VirtualDownloadView):
 
 
 urlpatterns = [
-    path("data/import", DataImport.as_view(), name="data-import"),
+    path("batches/data/import", DataImport.as_view(), name="data-import"),
     re_path(
-        r"^data/export/(?P<resource_type>\w+).(?P<export_format>\w+)",
+        r"^batches/data/export/(?P<resource_type>\w+).(?P<export_format>\w+)",
         csrf_exempt(DataExport.as_view()),
         name="data-export",
     ),
