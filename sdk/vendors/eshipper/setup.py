@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.eshipper",
-    version="2022.8.6",
+    version="2022.8.7",
     description="Karrio - eShipper Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
