@@ -113,7 +113,8 @@ shipment_data = {
         "duty": {"paid_by": "recipient"},
         "commodities": [
             {
-                "sku": "1234",
+                "sku": "098765",
+                "hs_code": "1234",
                 "description": "Laptop computer",
                 "origin_country": "US",
                 "quantity": 100,
@@ -178,7 +179,7 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
         <CustomsInvoice contactCompany="Test Company" contactName="RizTo" contactPhone="4162223333">
             <BillTo company="Test Company" name="RizTo" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
             <Contact name="RizTo" phone="4162223333"/>
-            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000." skuCode="1234"/>
+            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000." skuCode="098765"/>
         </CustomsInvoice>
     </ShippingRequest>
 </EShipper>

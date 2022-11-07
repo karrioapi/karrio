@@ -288,12 +288,12 @@ def shipping_request(
                     ),
                     Item=[
                         ItemType(
-                            code=item.sku or "0000",
+                            code=item.hs_code or "0000",
                             description=item.description or "item",
                             originCountry=item.origin_country or payload.shipper.country_code,
                             unitPrice=item.value_amount,
                             quantity=item.quantity or 1,
-                            skuCode=item.hs_code or item.sku,
+                            skuCode=item.sku,
                         )
                         for item in customs.commodities
                     ],
