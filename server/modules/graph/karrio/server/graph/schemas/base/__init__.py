@@ -1,3 +1,4 @@
+import typing
 import strawberry
 from strawberry.types import Info
 
@@ -18,10 +19,10 @@ class Query:
     user: types.UserType = strawberry.field(resolver=types.UserType.resolve)
     token: types.TokenType = strawberry.field(resolver=types.TokenType.resolve)
 
-    user_connections: types.CarrierConnectionType = strawberry.field(
+    user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
         resolver=types.ConnectionType.resolve_list
     )
-    system_connections: types.SystemConnectionType = strawberry.field(
+    system_connections: typing.List[types.SystemConnectionType] = strawberry.field(
         resolver=types.SystemConnectionType.resolve_list
     )
 
