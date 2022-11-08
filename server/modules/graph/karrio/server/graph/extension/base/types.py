@@ -127,11 +127,10 @@ class RateType(graphene.ObjectType):
     test_mode = graphene.Boolean(required=True)
     meta = generic.GenericScalar()
 
-
 class CommodityType(utils.BaseObjectType):
     weight_unit = utils.WeightUnitEnum()
-    origin_country = utils.CountryCodeEnum()
-    value_currency = utils.CurrencyCodeEnum()
+    origin_country = graphene.String()
+    value_currency = graphene.String()
     parent_id = graphene.String()
     metadata = generic.GenericScalar()
 
