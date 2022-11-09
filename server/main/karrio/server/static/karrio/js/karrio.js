@@ -321,7 +321,7 @@
         };
         BaseAPI.prototype.createFetchParams = function (context, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var url, headers, initOverrideFn, initParams, overridedInit, _a, init;
+                var url, headers, initOverrideFn, initParams, overriddenInit, _a, init;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
@@ -352,12 +352,12 @@
                                     context: context,
                                 })];
                         case 1:
-                            overridedInit = __assign.apply(void 0, _a.concat([(_b.sent())]));
-                            init = __assign(__assign({}, overridedInit), { body: isFormData(overridedInit.body) ||
-                                    overridedInit.body instanceof URLSearchParams ||
-                                    isBlob(overridedInit.body)
-                                    ? overridedInit.body
-                                    : JSON.stringify(overridedInit.body) });
+                            overriddenInit = __assign.apply(void 0, _a.concat([(_b.sent())]));
+                            init = __assign(__assign({}, overriddenInit), { body: isFormData(overriddenInit.body) ||
+                                    overriddenInit.body instanceof URLSearchParams ||
+                                    isBlob(overriddenInit.body)
+                                    ? overriddenInit.body
+                                    : JSON.stringify(overriddenInit.body) });
                             return [2 /*return*/, { url: url, init: init }];
                     }
                 });

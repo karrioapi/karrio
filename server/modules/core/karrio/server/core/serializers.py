@@ -248,18 +248,18 @@ class CommodityData(serializers.Serializer):
         help_text="The commodity's hs_code number",
     )
     value_amount = serializers.FloatField(
-        required=False, allow_null=True, help_text="The monetary value of the commodity"
-    )
-    value_currency = serializers.CharField(
         required=False,
-        allow_blank=True,
         allow_null=True,
-        max_length=3,
+        help_text="The monetary value of the commodity",
+    )
+    value_currency = serializers.ChoiceField(
+        required=False,
+        allow_null=True,
+        choices=CURRENCIES,
         help_text="The currency of the commodity value amount",
     )
     origin_country = serializers.ChoiceField(
         required=False,
-        allow_blank=True,
         allow_null=True,
         choices=COUNTRIES,
         help_text="The origin or manufacture country",
