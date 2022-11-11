@@ -2342,16 +2342,19 @@ SHIPMENT_SAMPLE = {
 }
 
 
-def create_barcode(value) -> str:
+def create_barcode(value, options: dict = {}) -> str:
     barcode = Code128(value, writer=ImageWriter()).render(
-        writer_options=dict(
-            quiet_zone=1.0,
-            module_width=0.5,
-            module_height=30.0,
-            font_size=1,
-            text_distance=0.0,
-            dpi=300,
-        ),
+        writer_options=dict(**{
+            **dict(
+                quiet_zone=1.0,
+                module_width=0.5,
+                module_height=30.0,
+                font_size=1,
+                text_distance=0.0,
+                dpi=300,
+            ),
+            **options,
+        }),
         text="",
     )
     buffer = io.BytesIO()
@@ -2360,10 +2363,11 @@ def create_barcode(value) -> str:
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 
-def generate_code(data, code_type: str = "code128") -> str:
+def generate_code(data, code_type: str = "code128", options: dict = {}) -> str:
     barcode = treepoem.generate_barcode(
         barcode_type=code_type,
         data=data,
+        options=options,
     )
     buffer = io.BytesIO()
     barcode.convert("1").save(buffer, "PNG")
