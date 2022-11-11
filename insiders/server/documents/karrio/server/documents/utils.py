@@ -1,5 +1,6 @@
-import base64
 import io
+import base64
+import treepoem
 from barcode import Code128
 from barcode.writer import ImageWriter
 from karrio.core.utils import DF
@@ -2355,6 +2356,17 @@ def create_barcode(value) -> str:
     )
     buffer = io.BytesIO()
     barcode.save(buffer, "PNG")
+
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+def generate_code(data, code_type: str = "code128") -> str:
+    barcode = treepoem.generate_barcode(
+        barcode_type=code_type,
+        data=data,
+    )
+    buffer = io.BytesIO()
+    barcode.convert("1").save(buffer, "PNG")
 
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
