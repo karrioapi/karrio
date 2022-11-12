@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.documents",
-    version="2022.8",
+    version="2022.8.9",
     description="Multi-carrier shipping API apps module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,6 +15,7 @@ setup(
     license="Karrio Enterprise",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
+        "treepoem",
         "weasyprint",
         "karrio.server.core",
         "karrio.server.orgs",
