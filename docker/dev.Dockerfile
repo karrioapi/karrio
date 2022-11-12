@@ -1,6 +1,7 @@
 # The base image compilation
 FROM python:3.10-slim AS compile-image
 RUN python -m venv /karrio/venv
+RUN apt-get update -y && apt-get install -y gcc
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY . /karrio/app/
 RUN cd /karrio/app && \
@@ -11,6 +12,7 @@ RUN cd /karrio/app && \
 # The runtime image
 FROM python:3.10-slim AS build-image
 
+RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
 RUN useradd -m karrio -d /karrio
 USER karrio
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
