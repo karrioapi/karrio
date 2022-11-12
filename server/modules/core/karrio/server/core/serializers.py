@@ -598,6 +598,16 @@ class RateRequest(validators.OptionDefaultSerializer):
     )
 
 
+class TrackingData(serializers.Serializer):
+    tracking_number = serializers.CharField(
+        required=True,
+        help_text="The package tracking number",
+    )
+    carrier_name = serializers.CharField(
+        required=True,
+        help_text="The tracking carrier"
+    )
+
 class TrackingRequest(serializers.Serializer):
 
     tracking_numbers = serializers.StringListField(

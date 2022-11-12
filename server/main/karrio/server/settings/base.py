@@ -421,6 +421,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {
         "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
+        "CurrencyEnum": "karrio.server.core.serializers.CURRENCIES",
         "ShipmentStatus": "karrio.server.manager.serializers.SHIPMENT_STATUS",
     },
     "OAUTH2_FLOWS": ["authorizationCode"],

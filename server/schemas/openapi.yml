@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: '2022.10'
+  version: 2022.8.9
 paths:
   /:
     get:
@@ -388,6 +388,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /v1/batches/data/import:
+    post:
+      operationId: '&&&&$import_file'
+      description: |-
+        Import csv, xls and xlsx data files for:<br/>
+        - tracking data
+        - orders data
+        - shipments data
+        - billing data (soon)<br/><br/>
+        **This operation will return a batch operation that you can poll to follow
+        the import progression.**
+      summary: Import data files
+      parameters:
+      - in: query
+        name: data_file
+        schema:
+          type: string
+          format: binary
+      - in: query
+        name: data_template
+        schema:
+          type: string
+        description: "A data template slug to use for the import.<br/>\n        **When\
+          \ nothing is specified, the system default headers are expected.**\n   \
+          \     "
+      - in: query
+        name: resource_type
+        schema:
+          type: string
+          enum:
+          - billing
+          - order
+          - shipment
+          - tracking
+        description: The type of the resource to import
+      tags:
+      - Batches
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                resource_type:
+                  type: string
+                data_template:
+                  type: string
+                data_file:
+                  type: string
+                  format: binary
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperation'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/carriers:
     get:
       operationId: '&&list'
@@ -709,80 +783,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
         '409':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-  /v1/data/import:
-    post:
-      operationId: '&&&&$import_file'
-      description: |-
-        Import csv, xls and xlsx data files for:<br/>
-        - tracking data
-        - orders data
-        - shipments data
-        - billing data (soon)<br/><br/>
-        **This operation will return a batch operation that you can poll to follow
-        the import progression.**
-      summary: Import data files
-      parameters:
-      - in: query
-        name: data_file
-        schema:
-          type: string
-          format: binary
-      - in: query
-        name: data_template
-        schema:
-          type: string
-        description: "A data template slug to use for the import.<br/>\n        **When\
-          \ nothing is specified, the system default headers are expected.**\n   \
-          \     "
-      - in: query
-        name: resource_type
-        schema:
-          type: string
-          enum:
-          - billing
-          - order
-          - shipment
-          - tracking
-        description: The type of the resource to import
-      tags:
-      - Data
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                resource_type:
-                  type: string
-                data_template:
-                  type: string
-                data_file:
-                  type: string
-                  format: binary
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchOperation'
-          description: ''
-        '400':
           content:
             application/json:
               schema:
@@ -1923,7 +1923,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessages'
           description: ''
-  /v1/proxy/tracking/{carrier_name}/{tracking_number}:
+  /v1/proxy/tracking:
+    post:
+      operationId: '@@@@get_tracking'
+      description: You can track a shipment by specifying the carrier and the shipment
+        tracking number.
+      summary: Get tracking details
+      parameters:
+      - in: query
+        name: hub
+        schema:
+          type: string
+      tags:
+      - Proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackingData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/proxy/tracking/{tracking_number}:
     get:
       operationId: '@@@@track_shipment'
       description: You can track a shipment by specifying the carrier and the shipment
@@ -1976,6 +2025,7 @@ paths:
       - Token: []
       - OAuth2: []
       - JWT: []
+      deprecated: true
       responses:
         '200':
           content:
@@ -2493,7 +2543,7 @@ paths:
     get:
       operationId: $$$$$$list
       description: Retrieve all shipment trackers.
-      summary: List all shipment trackers
+      summary: List all package trackers
       parameters:
       - in: query
         name: carrier_name
@@ -2577,15 +2627,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/trackers/{carrier_name}/{tracking_number}:
     post:
+      operationId: $$$$$$add
+      description: |-
+        This API creates or retrieves (if existent) a tracking status object containing the
+        details and events of a shipping in progress.
+      summary: Add a package tracker
+      parameters:
+      - in: query
+        name: hub
+        schema:
+          type: string
+      tags:
+      - Trackers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackingData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingStatus'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/trackers/{carrier_name}/{tracking_number}:
+    get:
       operationId: $$$$$$create
       description: |-
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
-      summary: Create a shipment tracker
+      summary: Create a package tracker
       parameters:
       - in: path
+        name: carrier_name
+        schema:
+          type: string
+        required: true
+      - in: query
         name: carrier_name
         schema:
           type: string
@@ -2631,6 +2735,7 @@ paths:
       - Token: []
       - OAuth2: []
       - JWT: []
+      deprecated: true
       responses:
         '200':
           content:
@@ -2659,8 +2764,8 @@ paths:
   /v1/trackers/{id_or_tracking_number}:
     get:
       operationId: $$$$$$retrieves
-      description: Retrieve a shipment tracker
-      summary: Retrieves a shipment tracker
+      description: Retrieve a package tracker
+      summary: Retrieves a package tracker
       parameters:
       - in: path
         name: id_or_tracking_number
@@ -2696,8 +2801,8 @@ paths:
           description: ''
     delete:
       operationId: $$$$$$remove
-      description: Discard a shipment tracker.
-      summary: Discard a shipment tracker
+      description: Discard a package tracker.
+      summary: Discard a package tracker
       parameters:
       - in: path
         name: id_or_tracking_number
@@ -3391,16 +3496,16 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
-          type: string
           nullable: true
           description: The currency of the commodity value amount
-          maxLength: 3
+          oneOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          - $ref: '#/components/schemas/NullEnum'
         origin_country:
           nullable: true
           description: The origin or manufacture country
           oneOf:
           - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
@@ -3458,16 +3563,16 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
-          type: string
           nullable: true
           description: The currency of the commodity value amount
-          maxLength: 3
+          oneOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          - $ref: '#/components/schemas/NullEnum'
         origin_country:
           nullable: true
           description: The origin or manufacture country
           oneOf:
           - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
@@ -4272,16 +4377,16 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
-          type: string
           nullable: true
           description: The currency of the commodity value amount
-          maxLength: 3
+          oneOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          - $ref: '#/components/schemas/NullEnum'
         origin_country:
           nullable: true
           description: The origin or manufacture country
           oneOf:
           - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
@@ -6168,6 +6273,18 @@ components:
             $ref: '#/components/schemas/TrackingStatus'
       required:
       - results
+    TrackingData:
+      type: object
+      properties:
+        tracking_number:
+          type: string
+          description: The package tracking number
+        carrier_name:
+          type: string
+          description: The tracking carrier
+      required:
+      - carrier_name
+      - tracking_number
     TrackingEvent:
       type: object
       properties:
