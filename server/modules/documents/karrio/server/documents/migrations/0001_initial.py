@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('orgs', '0005_auto_20211231_2353'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -39,18 +38,5 @@ class Migration(migrations.Migration):
                 'ordering': ['-created_at'],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
-        ),
-        migrations.CreateModel(
-            name='DocumentTemplateLink',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='link', to='documents.documenttemplate')),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='document_template_links', to='orgs.organization')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='documenttemplate',
-            name='org',
-            field=models.ManyToManyField(related_name='document_templates', through='documents.DocumentTemplateLink', to='orgs.Organization'),
         ),
     ]

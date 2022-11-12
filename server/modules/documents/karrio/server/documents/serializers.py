@@ -12,4 +12,4 @@ class TemplateRelatedObject(enum.Enum):
 class DocumentTemplateModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DocumentTemplate
-        exclude = ["created_at", "updated_at", "created_by", "org"]
+        exclude = ["created_at", "updated_at", "created_by"]
