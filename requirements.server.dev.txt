@@ -73,6 +73,7 @@ django-debug-toolbar
 -e ./server/modules/iam
 -e ./server/modules/apps
 -e ./server/modules/data
+-e ./server/modules/documents
 -e ./server/modules/proxy
 -e ./server/modules/manager
 -e ./server/modules/pricing
