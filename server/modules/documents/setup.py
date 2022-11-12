@@ -18,10 +18,8 @@ setup(
         "treepoem",
         "weasyprint",
         "karrio.server.core",
-        "karrio.server.orgs",
         "karrio.server.graph",
         "karrio.server.manager",
-        "karrio.server.cloud",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
