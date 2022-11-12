@@ -21,7 +21,7 @@ def document_updated(sender, instance, *args, **kwargs):
     if "created_at" in changes:
         duplicates = models.DocumentTemplate.objects.filter(
             slug=instance.slug,
-            org=instance.link.org,
+            **({"org__id": instance.link.org.id} if hasattr(instance, "link") else {})
         ).count()
 
         if duplicates > 1:
