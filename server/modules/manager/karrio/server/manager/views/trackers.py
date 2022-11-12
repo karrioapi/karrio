@@ -11,6 +11,7 @@ from rest_framework import status
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
+    TrackingData,
     TrackingStatus,
     ErrorResponse,
     ErrorMessages,
@@ -58,7 +59,7 @@ class TrackerList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
-        summary="List all shipment trackers",
+        summary="List all package trackers",
         parameters=filters.TrackerFilters.parameters,
         responses={
             200: Trackers(),
@@ -74,12 +75,11 @@ class TrackerList(GenericAPIView):
         response = self.paginate_queryset(TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 
-
-class TrackersCreate(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
-        operation_id=f"{ENDPOINT_ID}create",
-        summary="Create a shipment tracker",
+        operation_id=f"{ENDPOINT_ID}add",
+        summary="Add a package tracker",
+        request=TrackingData(),
         responses={
             200: TrackingStatus(),
             400: ErrorResponse(),
@@ -88,16 +88,78 @@ class TrackersCreate(APIView):
         },
         parameters=[
             openapi.OpenApiParameter(
-                "carrier_name",
-                location=openapi.OpenApiParameter.PATH,
+                "hub",
+                location=openapi.OpenApiParameter.QUERY,
                 type=openapi.OpenApiTypes.STR,
-                enum=dataunits.NON_HUBS_CARRIERS,
-                required=True,
+                required=False,
             ),
+        ],
+    )
+    def post(self, request: Request):
+        """
+        This API creates or retrieves (if existent) a tracking status object containing the
+        details and events of a shipping in progress.
+        """
+        query = request.query_params
+        serializer = TrackingData(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        instance = (
+            models.Tracking.access_by(request)
+            .filter(tracking_number=data["tracking_number"])
+            .first()
+        )
+
+        carrier_filter = {
+            **{k: v for k, v in query.items() if k != "hub"},
+            # If a hub is specified, use the hub as carrier to track the package
+            "carrier_name": (query.get("hub") if "hub" in query else data["carrier_name"]),
+        }
+        data = {
+            "tracking_number": data["tracking_number"],
+            "options": (
+                {data["tracking_number"]: {"carrier": data["carrier_name"]}} if "hub" in query else {}
+            ),
+        }
+
+        tracker = (
+            serializers.SerializerDecorator[TrackingSerializer](
+                instance, data=data, context=request
+            )
+            .save(carrier_filter=carrier_filter)
+            .instance
+        )
+
+        return Response(
+            TrackingStatus(tracker).data,
+            status=status.HTTP_202_ACCEPTED,
+        )
+
+class TrackersCreate(APIView):
+    @openapi.extend_schema(
+        tags=["Trackers"],
+        operation_id=f"{ENDPOINT_ID}create",
+        summary="Create a package tracker",
+        deprecated=True,
+        responses={
+            200: TrackingStatus(),
+            400: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        parameters=[
             openapi.OpenApiParameter(
                 "tracking_number",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
+                required=True,
+            ),
+            openapi.OpenApiParameter(
+                "carrier_name",
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.STR,
+                enum=dataunits.NON_HUBS_CARRIERS,
                 required=True,
             ),
             openapi.OpenApiParameter(
@@ -109,7 +171,7 @@ class TrackersCreate(APIView):
         ],
         request=None,
     )
-    def post(self, request: Request, carrier_name: str, tracking_number: str):
+    def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -153,7 +215,7 @@ class TrackersDetails(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieves",
-        summary="Retrieves a shipment tracker",
+        summary="Retrieves a package tracker",
         responses={
             200: TrackingStatus(),
             404: ErrorMessages(),
@@ -162,7 +224,7 @@ class TrackersDetails(APIView):
     )
     def get(self, request: Request, id_or_tracking_number: str):
         """
-        Retrieve a shipment tracker
+        Retrieve a package tracker
         """
         __filter = Q(pk=id_or_tracking_number) | Q(
             tracking_number=id_or_tracking_number
@@ -177,7 +239,7 @@ class TrackersDetails(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
-        summary="Discard a shipment tracker",
+        summary="Discard a package tracker",
         responses={
             200: TrackingStatus(),
             404: ErrorResponse(),
@@ -186,7 +248,7 @@ class TrackersDetails(APIView):
     )
     def delete(self, request: Request, id_or_tracking_number: str):
         """
-        Discard a shipment tracker.
+        Discard a package tracker.
         """
         tracker = models.Tracking.access_by(request).get(
             Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
@@ -207,7 +269,7 @@ router.urls.append(
 )
 router.urls.append(
     path(
-        "trackers/<carrier_name>/<tracking_number>",
+        "trackers/<str:carrier_name>/<str:tracking_number>",
         TrackersCreate.as_view(),
         name="shipment-tracker",
     )
