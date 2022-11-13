@@ -4,35 +4,35 @@ import karrio.server.serializers as serializers
 
 
 class ResourceType(Enum):
-    order = "order"
-    shipment = "shipment"
-    tracking = "tracking"
+    order = "orders"
+    shipment = "shipments"
+    trackers = "trackers"
     billing = "billing"
 
     @classmethod
     def get_default_mapping(cls, resource_type: str) -> dict:
         from karrio.server.data import resources
 
-        if resource_type == "order":
+        if resource_type == "orders":
             return resources.orders.DEFAULT_HEADERS
-        if resource_type == "shipment":
+        if resource_type == "shipments":
             return resources.shipments.DEFAULT_HEADERS
-        if resource_type == "tracking":
-            return resources.tracking.DEFAULT_HEADERS
+        if resource_type == "trackers":
+            return resources.trackers.DEFAULT_HEADERS
 
         return {}
 
     @classmethod
     def get_model(cls, resource_type: str) -> dict:
-        if resource_type == "order":
+        if resource_type == "orders":
             from karrio.server.orders.models import Order
 
             return Order
-        if resource_type == "shipment":
+        if resource_type == "shipments":
             from karrio.server.manager.models import Shipment
 
             return Shipment
-        if resource_type == "tracking":
+        if resource_type == "trackers":
             from karrio.server.manager.models import Tracking
 
             return Tracking
@@ -43,15 +43,17 @@ class ResourceType(Enum):
 class ResourceStatus(Enum):
     queued = "queued"
     created = "created"
-    failed = "failed"
+    has_errors = "has_errors"
+    incomplete = "incomplete"
     processed = "processed"
 
 
 class BatchOperationStatus(Enum):
     queued = "queued"
     running = "running"
-    completed = "completed"
     failed = "failed"
+    completed = "completed"
+    completed_with_errors = "completed_with_errors"
 
 
 RESOURCE_TYPE = [(c.value, c.value) for c in list(ResourceType)]

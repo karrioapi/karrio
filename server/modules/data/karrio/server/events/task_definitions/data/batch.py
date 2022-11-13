@@ -31,7 +31,7 @@ def trigger_batch_processing(
         if batch_operation is not None:
             import_data = data["import_data"]
             dataset = data["dataset"]
-            resource = resources.get_resource(
+            resource = resources.get_import_resource(
                 resource_type=batch_operation.resource_type,
                 params=import_data,
                 context=context,
@@ -57,20 +57,18 @@ def process_resources(
     context: serializers.Context,
 ):
     result = resource.import_data(dataset, dry_run=False)
-
-    _object_model = serializers.ResourceType.get_model(resource_type)
-    _object_ids = [row.object_id for row in result.rows]
-    _objects: list = []
-    for _object in _object_model.objects.filter(id__in=_object_ids):
-        _object.link = _object.__class__.link.related.related_model.objects.create(
-            org=context.org, item=_object
-        )
-
-    _object_model.objects.bulk_update(_objects, fields=["updated_at"])
+    _object_ids = [(row.object_id, row.errors) for row in result.rows]
 
     return [
-        dict(id=id, status=serializers.ResourceStatus.queued.value)
-        for id in _object_ids
+        dict(
+            id=id,
+            status=(
+                serializers.ResourceStatus.failed.value
+                if any(errors)
+                else serializers.ResourceStatus.queued.value
+            ),
+        )
+        for id, errors in _object_ids
     ]
 
 

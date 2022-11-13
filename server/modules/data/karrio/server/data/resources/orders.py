@@ -1,44 +1,67 @@
 from django.db.models import Q
 from import_export import resources
 
-from karrio.core.utils import NF
-from karrio.server.orders import models
+import karrio.lib as lib
+import karrio.server.serializers as serializers
+from karrio.server.orders.serializers.order import OrderSerializer
 from karrio.server.orders.filters import OrderFilters
+from karrio.server.orders import models
 
 DEFAULT_HEADERS = {
     # Order details
     "id": "ID",
-    "order_id": "Order ID/Number",
+    "order_id": "Order number",
     "order_date": "Order date",
-    "order_source": "Source",
+    "order_source": "Order source",
     "order_status": "Status",
     "order_total": "Total",
     "order_currency": "Order Currency",
     "order_created_at": "Created at",
-    # Lineitem details
-    "description": "Lineitem title",
-    "quantity": "Lineitem quantity",
-    "sku": "Lineitem sku",
+    # Item details
+    "description": "Item title",
+    "quantity": "Item quantity",
+    "sku": "Item sku",
     "hs_code": "HS tariff number",
-    "value_amount": "Lineitem price",
-    "value_currency": "Lineitem currency",
-    "weight": "Lineitem weight",
-    "weight_unit": "Lineitem weight unit",
+    "value_amount": "Item price",
+    "value_currency": "Item currency",
+    "weight": "Item weight",
+    "weight_unit": "Item weight unit",
     # Shipping details
-    "recipient_name": "Recipient name",
-    "recipient_company": "Company",
-    "recipient_address_line1": "address Line 1",
-    "recipient_address_line2": "address Line 2",
-    "recipient_city": "city",
-    "recipient_state": "State/Province",
-    "recipient_postal_code": "Zip/Postal Code",
-    "recipient_country": "country",
-    "recipient_residential": "residential",
-    "metadata": "Metadata",
+    "shipping_to_name": "Shipping name",
+    "shipping_to_company": "Shipping company",
+    "shipping_to_address1": "Shipping address 1",
+    "shipping_to_address2": "Shipping address 2",
+    "shipping_to_city": "Shipping city",
+    "shipping_to_state": "Shipping state",
+    "shipping_to_postal_code": "Shipping postal code",
+    "shipping_to_country": "Shipping country",
+    "shipping_to_residential": "Shipping residential",
+    # Billing details
+    "shipping_from_name": "From name",
+    "shipping_from_company": "From company",
+    "shipping_from_address1": "From address 1",
+    "shipping_from_address2": "From address 2",
+    "shipping_from_city": "From city",
+    "shipping_from_state": "From state",
+    "shipping_from_postal_code": "From postal code",
+    "shipping_from_country": "From country",
+    "shipping_from_residential": "From residential",
+    # Billing details
+    "billing_name": "Billing name",
+    "billing_company": "Billing company",
+    "billing_address1": "Billing address 1",
+    "billing_address2": "Billing address 2",
+    "billing_city": "Billing city",
+    "billing_state": "Billing state",
+    "billing_postal_code": "Billing postal code",
+    "billing_country": "Billing country",
+    # extra
+    "metadata": "Item Metadata",
+    "options": "Options",
 }
 
 
-def order_resource(query_params: dict, context, **kwargs):
+def order_export_resource(query_params: dict, context, **kwargs):
     queryset = models.LineItem.access_by(context)
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (
@@ -121,64 +144,316 @@ def order_resource(query_params: dict, context, **kwargs):
             def dehydrate_order_total(self, row):
                 return sum(
                     [
-                        NF.decimal(li.value_amount) or 0.0
+                        lib.to_decimal(li.value_amount) or 0.0
                         for li in row.order.line_items.all()
                     ],
                     0.0,
                 )
 
-        if "recipient_name" not in _exclude:
-            recipient_name = resources.Field()
+        if "options" not in _exclude:
+            options = resources.Field()
 
-            def dehydrate_recipient_name(self, row):
+            def dehydrate_options(self, row):
+                return row.order.options
+
+        if "shipping_to_name" not in _exclude:
+            shipping_to_name = resources.Field()
+
+            def dehydrate_shipping_to_name(self, row):
                 return row.order.shipping_to.person_name
 
-        if "recipient_company" not in _exclude:
-            recipient_company = resources.Field()
+        if "shipping_to_company" not in _exclude:
+            shipping_to_company = resources.Field()
 
-            def dehydrate_recipient_company(self, row):
+            def dehydrate_shipping_to_company(self, row):
                 return row.order.shipping_to.company_name
 
-        if "recipient_address_line1" not in _exclude:
-            recipient_address_line1 = resources.Field()
+        if "shipping_to_address1" not in _exclude:
+            shipping_to_address1 = resources.Field()
 
-            def dehydrate_recipient_address_line1(self, row):
+            def dehydrate_shipping_to_address1(self, row):
                 return row.order.shipping_to.address_line1
 
-        if "recipient_address_line2" not in _exclude:
-            recipient_address_line2 = resources.Field()
+        if "shipping_to_address2" not in _exclude:
+            shipping_to_address2 = resources.Field()
 
-            def dehydrate_recipient_address_line2(self, row):
+            def dehydrate_shipping_to_address2(self, row):
                 return row.order.shipping_to.address_line2
 
-        if "recipient_city" not in _exclude:
-            recipient_city = resources.Field()
+        if "shipping_to_city" not in _exclude:
+            shipping_to_city = resources.Field()
 
-            def dehydrate_recipient_city(self, row):
+            def dehydrate_shipping_to_city(self, row):
                 return row.order.shipping_to.city
 
-        if "recipient_state" not in _exclude:
-            recipient_state = resources.Field()
+        if "shipping_to_state" not in _exclude:
+            shipping_to_state = resources.Field()
 
-            def dehydrate_recipient_state(self, row):
+            def dehydrate_shipping_to_state(self, row):
                 return row.order.shipping_to.state_code
 
-        if "recipient_postal_code" not in _exclude:
-            recipient_postal_code = resources.Field()
+        if "shipping_to_postal_code" not in _exclude:
+            shipping_to_postal_code = resources.Field()
 
-            def dehydrate_recipient_postal_code(self, row):
+            def dehydrate_shipping_to_postal_code(self, row):
                 return row.order.shipping_to.postal_code
 
-        if "recipient_country" not in _exclude:
-            recipient_country = resources.Field()
+        if "shipping_to_country" not in _exclude:
+            shipping_to_country = resources.Field()
 
-            def dehydrate_recipient_country(self, row):
+            def dehydrate_shipping_to_country(self, row):
                 return row.order.shipping_to.country_code
 
-        if "recipient_residential" not in _exclude:
-            recipient_residential = resources.Field()
+        if "shipping_to_residential" not in _exclude:
+            shipping_to_residential = resources.Field()
 
-            def dehydrate_recipient_residential(self, row):
+            def dehydrate_shipping_to_residential(self, row):
                 return "yes" if row.order.shipping_to.residential else "no"
+
+        if "shipping_from_name" not in _exclude:
+            shipping_from_name = resources.Field()
+
+            def dehydrate_shipping_from_name(self, row):
+                return getattr(row.order.shipping_from, "person_name", None)
+
+        if "shipping_from_company" not in _exclude:
+            shipping_from_company = resources.Field()
+
+            def dehydrate_shipping_from_company(self, row):
+                return getattr(row.order.shipping_from, "company_name", None)
+
+        if "shipping_from_address1" not in _exclude:
+            shipping_from_address1 = resources.Field()
+
+            def dehydrate_shipping_from_address1(self, row):
+                return getattr(row.order.shipping_from, "address_line1", None)
+
+        if "shipping_from_address2" not in _exclude:
+            shipping_from_address2 = resources.Field()
+
+            def dehydrate_shipping_from_address2(self, row):
+                return getattr(row.order.shipping_from, "address_line2", None)
+
+        if "shipping_from_city" not in _exclude:
+            shipping_from_city = resources.Field()
+
+            def dehydrate_shipping_from_city(self, row):
+                return getattr(row.order.shipping_from, "city", None)
+
+        if "shipping_from_state" not in _exclude:
+            shipping_from_state = resources.Field()
+
+            def dehydrate_shipping_from_state(self, row):
+                return getattr(row.order.shipping_from, "state_code", None)
+
+        if "shipping_from_postal_code" not in _exclude:
+            shipping_from_postal_code = resources.Field()
+
+            def dehydrate_shipping_from_postal_code(self, row):
+                return getattr(row.order.shipping_from, "postal_code", None)
+
+        if "shipping_from_country" not in _exclude:
+            shipping_from_country = resources.Field()
+
+            def dehydrate_shipping_from_country(self, row):
+                return getattr(row.order.shipping_from, "country_code", None)
+
+
+        if "shipping_from_residential" not in _exclude:
+            shipping_from_residential = resources.Field()
+
+            def dehydrate_shipping_from_residential(self, row):
+                if getattr(row.order.shipping_from, "country_code", None) is None:
+                    return None
+
+                return "yes" if row.order.shipping_from.residential else "no"
+
+        if "billing_name" not in _exclude:
+            billing_name = resources.Field()
+
+            def dehydrate_billing_name(self, row):
+                return getattr(row.order.billing_address, "person_name", None)
+
+        if "billing_company" not in _exclude:
+            billing_company = resources.Field()
+
+            def dehydrate_billing_company(self, row):
+                return getattr(row.order.billing_address, "company_name", None)
+
+        if "billing_address1" not in _exclude:
+            billing_address1 = resources.Field()
+
+            def dehydrate_billing_address1(self, row):
+                return getattr(row.order.billing_address, "address_line1", None)
+
+        if "billing_address2" not in _exclude:
+            billing_address2 = resources.Field()
+
+            def dehydrate_billing_address2(self, row):
+                return getattr(row.order.billing_address, "address_line2", None)
+
+        if "billing_city" not in _exclude:
+            billing_city = resources.Field()
+
+            def dehydrate_billing_city(self, row):
+                return getattr(row.order.billing_address, "city", None)
+
+        if "billing_state" not in _exclude:
+            billing_state = resources.Field()
+
+            def dehydrate_billing_state(self, row):
+                return getattr(row.order.billing_address, "state_code", None)
+
+        if "billing_postal_code" not in _exclude:
+            billing_postal_code = resources.Field()
+
+            def dehydrate_billing_postal_code(self, row):
+                return getattr(row.order.billing_address, "postal_code", None)
+
+        if "billing_country" not in _exclude:
+            billing_country = resources.Field()
+
+            def dehydrate_billing_country(self, row):
+                return getattr(row.order.billing_address, "country_code", None)
+
+    return Resource()
+
+
+def order_import_resource(query_params: dict, context, data_fields: dict = None):
+    queryset = models.Order.access_by(context)
+    field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
+    _exclude = query_params.get("exclude", "").split(",")
+    _fields = (
+        "id",
+        "order_id",
+        "order_date",
+        "order_source",
+        "order_status",
+        "options",
+        "description",
+        "quantity",
+        "sku",
+        "hs_code",
+        "value_amount",
+        "value_currency",
+        "weight",
+        "weight_unit",
+        "metadata",
+        "shipping_to_name",
+        "shipping_to_company",
+        "shipping_to_address1",
+        "shipping_to_address2",
+        "shipping_to_city",
+        "shipping_to_state",
+        "shipping_to_postal_code",
+        "shipping_to_country",
+        "shipping_to_residential",
+        "shipping_from_name",
+        "shipping_from_company",
+        "shipping_from_address1",
+        "shipping_from_address2",
+        "shipping_from_city",
+        "shipping_from_state",
+        "shipping_from_postal_code",
+        "shipping_from_country",
+        "shipping_from_residential",
+        "billing_name",
+        "billing_company",
+        "billing_address1",
+        "billing_address2",
+        "billing_city",
+        "billing_state",
+        "billing_postal_code",
+        "billing_country",
+    )
+
+    _Base = type("ResourceFields", (resources.ModelResource,), {
+        k: resources.Field(readonly=(k not in models.Order.__dict__))
+        for k in field_headers.keys()
+        if k not in _exclude
+    })
+
+    class Resource(_Base, resources.ModelResource):
+        class Meta:
+            model = models.Order
+            fields = _fields
+            exclude = _exclude
+            export_order = [k for k in field_headers.keys() if k not in _exclude]
+            force_init_instance = True
+
+
+        def get_queryset(self):
+            return queryset
+
+        def get_export_headers(self):
+            headers = super().get_export_headers()
+            return [field_headers.get(k, k) for k in headers]
+
+        def init_instance(self, row=None):
+            data = lib.to_dict(dict(
+                status="unfulfilled",
+                test_mode=context.test_mode,
+                created_by_id = context.user.id,
+                order_id=row.get(field_headers['order_id']),
+                order_date=row.get(field_headers['order_date']),
+                source=row.get(field_headers['order_source']),
+                options=lib.to_dict(row.get(field_headers['options']) or "{}"),
+                shipping_to=dict(
+                    person_name=row.get(field_headers['shipping_to_name']),
+                    company_name=row.get(field_headers['shipping_to_company']),
+                    address_line1=row.get(field_headers['shipping_to_address1']),
+                    address_line2=row.get(field_headers['shipping_to_address2']),
+                    city=row.get(field_headers['shipping_to_city']),
+                    state_code=row.get(field_headers['shipping_to_state']),
+                    postal_code=row.get(field_headers['shipping_to_postal_code']),
+                    country_code=row.get(field_headers['shipping_to_country']),
+                    residential=row.get(field_headers['shipping_to_residential']),
+                ),
+                line_items=[
+                    dict(
+                        description=row.get(field_headers['description']),
+                        quantity=row.get(field_headers['quantity']),
+                        sku=row.get(field_headers['sku']),
+                        hs_code=row.get(field_headers['hs_code']),
+                        value_amount=row.get(field_headers['value_amount']),
+                        value_currency=row.get(field_headers['value_currency']),
+                        weight=row.get(field_headers['weight']),
+                        weight_unit=row.get(field_headers['weight_unit']),
+                    )
+                ],
+                shipping_from=(
+                    dict(
+                        person_name=row.get(field_headers['shipping_from_name']),
+                        company_name=row.get(field_headers['shipping_from_company']),
+                        address_line1=row.get(field_headers['shipping_from_address1']),
+                        address_line2=row.get(field_headers['shipping_from_address2']),
+                        city=row.get(field_headers['shipping_from_city']),
+                        state_code=row.get(field_headers['shipping_from_state']),
+                        postal_code=row.get(field_headers['shipping_from_postal_code']),
+                        country_code=row.get(field_headers['shipping_from_country']),
+                        residential=row.get(field_headers['shipping_from_residential']),
+                    ) if any(['Billing' in key for key in row.keys()]) else None
+                ),
+                billing_address=(
+                    dict(
+                        person_name=row.get(field_headers['billing_name']),
+                        company_name=row.get(field_headers['billing_company']),
+                        address_line1=row.get(field_headers['billing_address1']),
+                        address_line2=row.get(field_headers['billing_address2']),
+                        city=row.get(field_headers['billing_city']),
+                        state_code=row.get(field_headers['billing_state']),
+                        postal_code=row.get(field_headers['billing_postal_code']),
+                        country_code=row.get(field_headers['billing_country']),
+                    ) if any(['Billing' in key for key in row.keys()]) else None
+                ),
+            ))
+
+            instance = (
+                serializers.SerializerDecorator[OrderSerializer](
+                    data=data, context=context
+                ).save().instance
+            )
+
+            return instance
 
     return Resource()

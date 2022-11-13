@@ -1,9 +1,9 @@
-import functools
 import time
+import typing
 import logging
 import datetime
+import functools
 from itertools import groupby
-from typing import List, Tuple
 
 from django.conf import settings
 from django.utils import timezone
@@ -21,8 +21,8 @@ import karrio.server.manager.serializers as serializers
 
 logger = logging.getLogger(__name__)
 Delay = int
-RequestBatches = Tuple[Gateway, IRequestFrom, Delay, List[models.Tracking]]
-BatchResponse = List[Tuple[TrackingDetails, List[Message]]]
+RequestBatches = typing.Tuple[Gateway, IRequestFrom, Delay, typing.List[models.Tracking]]
+BatchResponse = typing.List[typing.Tuple[TrackingDetails,typing.List[Message]]]
 
 DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
     settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
@@ -33,7 +33,7 @@ def update_trackers(
     delta: datetime.timedelta = datetime.timedelta(
         seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
     ),
-    tracker_ids: List[str] = [],
+    tracker_ids: typing.List[str] = [],
 ):
     logger.info("> starting scheduled trackers update")
 
@@ -50,7 +50,7 @@ def update_trackers(
         trackers_grouped_by_carrier = [
             list(g) for _, g in groupby(active_trackers, key=lambda t: t.carrier_id)
         ]
-        request_batches: List[RequestBatches] = sum(
+        request_batches: typing.List[RequestBatches] = sum(
             [create_request_batches(group) for group in trackers_grouped_by_carrier], []
         )
 
@@ -62,7 +62,7 @@ def update_trackers(
     logger.info("> ending scheduled trackers update")
 
 
-def create_request_batches(trackers: List[models.Tracking]) -> List[RequestBatches]:
+def create_request_batches(trackers: typing.List[models.Tracking]) -> typing.List[RequestBatches]:
     start = 0
     end = 10
     batches = []
@@ -117,7 +117,7 @@ def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
 
 
 def save_updated_trackers(
-    responses: List[BatchResponse], trackers: List[models.Tracking]
+    responses: typing.List[BatchResponse], trackers: typing.List[models.Tracking]
 ):
     logger.info("> saving updated trackers")
 
@@ -183,8 +183,9 @@ def save_updated_trackers(
 
 
 def process_events(
-    response_events: List[TrackingEvent], current_events: List[dict]
-) -> List[dict]:
+    response_events: typing.List[TrackingEvent],
+    current_events: typing.List[dict],
+) -> typing.List[dict]:
     if any(response_events):
         return DP.to_dict(response_events)
 

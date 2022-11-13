@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 @serializers.owned_model_serializer
+class DataTemplateModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DataTemplate
+        exclude = ["created_at", "updated_at", "created_by", "org"]
+
+
+@serializers.owned_model_serializer
 class ImportDataSerializer(serializers.ImportData):
     @transaction.atomic
     def create(
@@ -33,7 +40,7 @@ class ImportDataSerializer(serializers.ImportData):
             "data_fields",
             serializers.ResourceType.get_default_mapping(resource_type),
         )
-        resource = resources.get_resource(
+        resource = resources.get_import_resource(
             resource_type=resource_type,
             data_fields=data_fields,
             params=validated_data,
@@ -72,13 +79,6 @@ class ImportDataSerializer(serializers.ImportData):
         )
 
         return operation
-
-
-@serializers.owned_model_serializer
-class DataTemplateModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.DataTemplate
-        exclude = ["created_at", "updated_at", "created_by", "org"]
 
 
 def check_dataset_validation_errors(validation):

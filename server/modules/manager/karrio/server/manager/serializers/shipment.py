@@ -9,11 +9,11 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
+
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.serializers import (
-    SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
@@ -21,20 +21,21 @@ from karrio.server.serializers import (
     Context,
     PlainDictField,
     StringListField,
+    SerializerDecorator,
 )
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
-    Documents,
+    LABEL_TYPES,
+    ShipmentCancelRequest,
+    ShipmentDetails,
     ShipmentStatus,
+    TrackerStatus,
     ShipmentData,
+    Documents,
     Shipment,
     Payment,
-    Rate,
-    ShipmentCancelRequest,
-    LABEL_TYPES,
     Message,
-    TrackerStatus,
-    ShipmentDetails,
+    Rate,
 )
 from karrio.server.manager.serializers.address import AddressSerializer
 from karrio.server.manager.serializers.customs import CustomsSerializer
@@ -81,6 +82,7 @@ class ShipmentSerializer(ShipmentData):
     def create(
         self, validated_data: dict, context: Context, **kwargs
     ) -> models.Shipment:
+        fetch_rates = validated_data.get("fetch_rates") is not False
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
@@ -99,37 +101,38 @@ class ShipmentSerializer(ShipmentData):
             **validated_data,
             **({"services": services} if any(services) else {}),
         }
+        rates = validated_data.get("rates") or []
+        messages = validated_data.get("messages") or []
 
         # Get live rates.
-        rate_response: datatypes.RateResponse = (
-            SerializerDecorator[RateSerializer](data=rating_data, context=context)
-            .save(carriers=carriers)
-            .instance
-        )
-
-        shipment_data = {
-            **{
-                key: value
-                for key, value in validated_data.items()
-                if key in models.Shipment.DIRECT_PROPS and value is not None
-            },
-            "customs": save_one_to_one_data(
-                "customs", CustomsSerializer, payload=validated_data, context=context
-            ),
-            "shipper": save_one_to_one_data(
-                "shipper", AddressSerializer, payload=validated_data, context=context
-            ),
-            "recipient": save_one_to_one_data(
-                "recipient", AddressSerializer, payload=validated_data, context=context
-            ),
-        }
+        if fetch_rates:
+            rate_response: datatypes.RateResponse = (
+                SerializerDecorator[RateSerializer](data=rating_data, context=context)
+                .save(carriers=carriers)
+                .instance
+            )
+            rates = lib.to_dict(rate_response.rates)
+            messages = lib.to_dict(rate_response.messages)
 
         shipment = models.Shipment.objects.create(
             **{
-                **shipment_data,
+                **{
+                    key: value for key, value in validated_data.items()
+                    if key in models.Shipment.DIRECT_PROPS and value is not None
+                },
+                "customs": save_one_to_one_data(
+                    "customs", CustomsSerializer, payload=validated_data, context=context
+                ),
+                "shipper": save_one_to_one_data(
+                    "shipper", AddressSerializer, payload=validated_data, context=context
+                ),
+                "recipient": save_one_to_one_data(
+                    "recipient", AddressSerializer, payload=validated_data, context=context
+                ),
+                "rates": rates,
                 "payment": payment,
-                "rates": lib.to_dict(rate_response.rates),
-                "messages": lib.to_dict(rate_response.messages),
+                "services": services,
+                "messages": messages,
                 "test_mode": context.test_mode,
             }
         )
@@ -145,7 +148,7 @@ class ShipmentSerializer(ShipmentData):
         )
 
         # Buy label if preferred service is already selected.
-        if service:
+        if service and fetch_rates:
             return buy_shipment_label(shipment, context, service=service)
 
         return shipment
@@ -224,7 +227,8 @@ class ShipmentSerializer(ShipmentData):
             instance.selected_rate_carrier = carrier
             changes += ["selected_rate", "selected_rate_carrier"]
 
-        instance.save(update_fields=changes)
+        if any(changes):
+            instance.save(update_fields=changes)
 
         if "carrier_ids" in validated_data:
             instance.carriers.set(carriers)
@@ -355,12 +359,55 @@ class ShipmentCancelSerializer(Shipment):
         return instance
 
 
+def fetch_shipment_rates(
+    shipment: models.Shipment,
+    context: typing.Any,
+    data: dict = dict(),
+) -> models.Shipment:
+    carrier_ids = (
+        data["carrier_ids"]
+        if "carrier_ids" in data
+        else shipment.carrier_ids
+    )
+
+    carriers = gateway.Carriers.list(
+        active=True,
+        capability="shipping",
+        context=context,
+        carrier_ids=carrier_ids,
+    )
+
+    rate_response: datatypes.RateResponse = (
+        SerializerDecorator[RateSerializer](
+            context=context, data={**ShipmentData(shipment).data, **data}
+        )
+        .save(carriers=carriers)
+        .instance
+    )
+
+    updated_shipment = (
+        SerializerDecorator[ShipmentSerializer](
+            shipment,
+            context=context,
+            data={
+                "rates": Rate(rate_response.rates, many=True).data,
+                "messages": lib.to_dict(rate_response.messages),
+                **data,
+            },
+        )
+        .save(carriers=carriers)
+        .instance
+    )
+
+    return updated_shipment
+
+
 def buy_shipment_label(
     shipment: models.Shipment,
     context: typing.Any,
     data: dict = dict(),
     service: str = None,
-):
+) -> models.Shipment:
     selected_rate_id = (
         data.get("selected_rate_id")
         if service is None

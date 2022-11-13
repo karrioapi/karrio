@@ -6,4 +6,4 @@ import karrio.server.data.models as models
 class BatchOperationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BatchOperation
-        exclude = ["created_at", "updated_at", "created_by", "org"]
+        exclude = ["created_at", "updated_at", "created_by"]

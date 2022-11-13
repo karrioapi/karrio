@@ -19,6 +19,7 @@ from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     process_dictionaries_mutations,
+    fetch_shipment_rates,
     SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
@@ -207,43 +208,15 @@ class ShipmentRates(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, update=True)
 
-        rate_payload = process_dictionaries_mutations(
-            ["metadata"],
-            SerializerDecorator[ShipmentRateData](data=request.data).data,
-            shipment,
-        )
-        carrier_ids = (
-            rate_payload["carrier_ids"]
-            if "carrier_ids" in rate_payload
-            else shipment.carrier_ids
-        )
+        payload = SerializerDecorator[ShipmentRateData](data=request.data).data
 
-        carriers = Carriers.list(
-            active=True,
-            capability="shipping",
-            context=request,
-            carrier_ids=carrier_ids,
-        )
-
-        rate_response: RateResponse = (
-            SerializerDecorator[RateSerializer](
-                context=request, data={**ShipmentData(shipment).data, **rate_payload}
-            )
-            .save(carriers=carriers)
-            .instance
-        )
-
-        SerializerDecorator[ShipmentSerializer](
+        update = fetch_shipment_rates(
             shipment,
             context=request,
-            data={
-                "rates": Rate(rate_response.rates, many=True).data,
-                "messages": DP.to_dict(rate_response.messages),
-                **rate_payload,
-            },
-        ).save(carriers=carriers)
+            data=process_dictionaries_mutations(["metadata"], payload, shipment),
+        )
 
-        return Response(Shipment(shipment).data)
+        return Response(Shipment(update).data)
 
 
 class ShipmentPurchase(APIView):
