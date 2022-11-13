@@ -2,12 +2,14 @@ import json
 from django.db.models import Q
 from import_export import resources
 
-from karrio.core.utils import DP, DF
+import karrio.lib as lib
+from karrio.server import serializers
 from karrio.core.units import Packages
-from karrio.server.core import serializers
-from karrio.server.core import datatypes as types, dataunits as units
 from karrio.server.manager import models
+from karrio.server.core import serializers as core
 from karrio.server.core.filters import ShipmentFilters
+from karrio.server.manager.serializers import ShipmentSerializer
+from karrio.server.core import datatypes as types, dataunits as units
 
 DEFAULT_HEADERS = {
     "id": "ID",
@@ -17,8 +19,10 @@ DEFAULT_HEADERS = {
     "shipper_id": "Shipper ID",
     "shipper_name": "Shipper name",
     "shipper_company": "Shipper Company",
-    "shipper_address_line1": "Shipper address line 1",
-    "shipper_address_line2": "Shipper address line 2",
+    "shipper_phone": "Shipper phone",
+    "shipper_email": "Shipper email",
+    "shipper_address1": "Shipper address 1",
+    "shipper_address2": "Shipper address 2",
     "shipper_city": "Shipper city",
     "shipper_state": "Shipper state",
     "shipper_postal_code": "Shipper postal code",
@@ -27,15 +31,22 @@ DEFAULT_HEADERS = {
     "recipient_id": "Recipient ID",
     "recipient_name": "Recipient name",
     "recipient_company": "Recipient Company",
-    "recipient_address_line1": "Recipient address line 1",
-    "recipient_address_line2": "Recipient address line 2",
+    "recipient_phone": "Recipient phone",
+    "recipient_email": "Recipient email",
+    "recipient_address1": "Recipient address 1",
+    "recipient_address2": "Recipient address 2",
     "recipient_city": "Recipient city",
     "recipient_state": "Recipient state",
     "recipient_postal_code": "Recipient postal code",
     "recipient_country": "Recipient country",
     "recipient_residential": "Recipient residential",
-    "weight": "Weight",
-    "weight_unit": "Weight unit",
+    "parcel_width": "Parcel width",
+    "parcel_height": "Parcel height",
+    "parcel_length": "Parcel length",
+    "parcel_dimension_unit": "Parcel dimension unit",
+    "parcel_weight": "Parcel weight",
+    "parcel_weight_unit": "Parcel weight unit",
+    "parcel_package_preset": "Parcel package preset",
     "pieces": "Number of pieces",
     "service": "Service",
     "carrier": "Carrier",
@@ -47,7 +58,7 @@ DEFAULT_HEADERS = {
 }
 
 
-def shipment_resource(query_params: dict, context, **kwargs):
+def shipment_export_resource(query_params: dict, context, **kwargs):
     queryset = models.Shipment.access_by(context)
     _exclude = query_params.get("exclude", "").split(",")
     _fields = (
@@ -77,6 +88,11 @@ def shipment_resource(query_params: dict, context, **kwargs):
             headers = super().get_export_headers()
             return [DEFAULT_HEADERS.get(k, k) for k in headers]
 
+        @staticmethod
+        def packages(row):
+            parcels = core.Parcel(row.parcels, many=True).data
+            return Packages([lib.to_object(types.Parcel, p) for p in parcels])
+
         if "service" not in _exclude:
             service = resources.Field()
 
@@ -92,10 +108,9 @@ def shipment_resource(query_params: dict, context, **kwargs):
             def dehydrate_carrier(self, row):
                 carrier = getattr(row, "selected_rate_carrier", None)
                 settings = getattr(carrier, "settings", None)
-                return getattr(
-                    settings,
-                    "display_name",
-                    units.REFERENCE_MODELS["carriers"][carrier.carrier_name],
+                return (
+                    getattr(settings, "display_name", None) or
+                    units.REFERENCE_MODELS["carriers"].get(carrier.carrier_name)
                 )
 
         if "pieces" not in _exclude:
@@ -122,27 +137,55 @@ def shipment_resource(query_params: dict, context, **kwargs):
             def dehydrate_paid_by(self, row):
                 return (getattr(row, "payment") or {}).get("paid_by", None)
 
-        if "weight" not in _exclude:
-            weight = resources.Field()
-            weight_unit = resources.Field()
+        if "parcel_weight" not in _exclude:
+            parcel_weight = resources.Field()
 
-            @staticmethod
-            def packages(row):
-                parcels = serializers.Parcel(row.parcels, many=True).data
-                return Packages([DP.to_object(types.Parcel, p) for p in parcels])
-
-            def dehydrate_weight(self, row):
+            def dehydrate_parcel_weight(self, row):
                 return self.packages(row).weight.value
 
-            def dehydrate_weight_unit(self, row):
-                return self.packages(row).weight.unit
+        if "parcel_weight_unit" not in _exclude:
+            parcel_weight_unit = resources.Field()
+
+            def dehydrate_parcel_weight_unit(self, row):
+                return self.packages(row).weight_unit
+
+        if "parcel_length" not in _exclude:
+            parcel_length = resources.Field()
+
+            def dehydrate_parcel_length(self, row):
+                return self.packages(row)[0].parcel.length
+
+        if "parcel_width" not in _exclude:
+            parcel_width = resources.Field()
+
+            def dehydrate_parcel_width(self, row):
+                return self.packages(row)[0].parcel.width
+
+        if "parcel_height" not in _exclude:
+            parcel_height = resources.Field()
+
+            def dehydrate_parcel_height(self, row):
+                return self.packages(row)[0].parcel.height
+
+        if "parcel_dimension_unit" not in _exclude:
+            parcel_dimension_unit = resources.Field()
+
+            def dehydrate_parcel_dimension_unit(self, row):
+                _, unit = self.packages(row).compatible_units
+                return unit.value
+
+        if "parcel_package_preset" not in _exclude:
+            parcel_package_preset = resources.Field()
+
+            def dehydrate_parcel_package_preset(self, row):
+                return self.packages(row)[0].parcel.package_preset
 
         if "shipment_date" not in _exclude:
             shipment_date = resources.Field()
 
             def dehydrate_shipment_date(self, row):
                 return (getattr(row, "options") or {}).get("shipment_date", None) or (
-                    DF.fdate(row.created_at, "%Y-%m-%m %H:%M:%M")
+                    lib.fdate(row.created_at, "%Y-%m-%m %H:%M:%M")
                 )
 
         if "shipper_id" not in _exclude:
@@ -163,16 +206,28 @@ def shipment_resource(query_params: dict, context, **kwargs):
             def dehydrate_shipper_company(self, row):
                 return row.shipper.company_name
 
-        if "shipper_address_line1" not in _exclude:
-            shipper_address_line1 = resources.Field()
+        if "shipper_phone" not in _exclude:
+            shipper_phone = resources.Field()
 
-            def dehydrate_shipper_address_line1(self, row):
+            def dehydrate_shipper_phone(self, row):
+                return row.shipper.phone_number
+
+        if "shipper_email" not in _exclude:
+            shipper_email = resources.Field()
+
+            def dehydrate_shipper_email(self, row):
+                return row.shipper.email
+
+        if "shipper_address1" not in _exclude:
+            shipper_address1 = resources.Field()
+
+            def dehydrate_shipper_address1(self, row):
                 return row.shipper.address_line1
 
-        if "shipper_address_line2" not in _exclude:
-            shipper_address_line2 = resources.Field()
+        if "shipper_address2" not in _exclude:
+            shipper_address2 = resources.Field()
 
-            def dehydrate_shipper_address_line2(self, row):
+            def dehydrate_shipper_address2(self, row):
                 return row.shipper.address_line2
 
         if "shipper_city" not in _exclude:
@@ -223,16 +278,28 @@ def shipment_resource(query_params: dict, context, **kwargs):
             def dehydrate_recipient_company(self, row):
                 return row.recipient.company_name
 
-        if "recipient_address_line1" not in _exclude:
-            recipient_address_line1 = resources.Field()
+        if "recipient_phone" not in _exclude:
+            recipient_phone = resources.Field()
 
-            def dehydrate_recipient_address_line1(self, row):
+            def dehydrate_recipient_phone(self, row):
+                return row.recipient.phone_number
+
+        if "recipient_email" not in _exclude:
+            recipient_email = resources.Field()
+
+            def dehydrate_recipient_email(self, row):
+                return row.recipient.email
+
+        if "recipient_address1" not in _exclude:
+            recipient_address1 = resources.Field()
+
+            def dehydrate_recipient_address1(self, row):
                 return row.recipient.address_line1
 
-        if "recipient_address_line2" not in _exclude:
-            recipient_address_line2 = resources.Field()
+        if "recipient_address2" not in _exclude:
+            recipient_address2 = resources.Field()
 
-            def dehydrate_recipient_address_line2(self, row):
+            def dehydrate_recipient_address2(self, row):
                 return row.recipient.address_line2
 
         if "recipient_city" not in _exclude:
@@ -270,5 +337,115 @@ def shipment_resource(query_params: dict, context, **kwargs):
 
             def dehydrate_options(self, row):
                 return json.loads(json.dumps(row.options))
+
+    return Resource()
+
+
+def shipment_import_resource(query_params: dict, context, data_fields: dict = None):
+    queryset = models.Shipment.access_by(context)
+    field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
+    _exclude = query_params.get("exclude", "").split(",")
+    _fields = (
+        "shipper_name",
+        "shipper_company",
+        "shipper_address_line1",
+        "shipper_address_line2",
+        "shipper_city",
+        "shipper_state",
+        "shipper_postal_code",
+        "shipper_country",
+        "shipper_residential",
+        "recipient_name",
+        "recipient_company",
+        "recipient_address_line1",
+        "recipient_address_line2",
+        "recipient_city",
+        "recipient_state",
+        "recipient_postal_code",
+        "recipient_country",
+        "recipient_residential",
+        "parcel_width",
+        "parcel_height",
+        "parcel_length",
+        "parcel_dimension_unit",
+        "parcel_weight",
+        "parcel_weight_unit",
+        "parcel_package_preset",
+        "service",
+        "reference",
+        "options",
+    )
+
+    _Base = type("ResourceFields", (resources.ModelResource,), {
+        k: resources.Field(readonly=(k not in models.Shipment.__dict__))
+        for k in field_headers.keys()
+        if k not in _exclude
+    })
+
+    class Resource(_Base, resources.ModelResource):
+        class Meta:
+            model = models.Shipment
+            fields = _fields
+            exclude = _exclude
+            export_order = [k for k in field_headers.keys() if k not in _exclude]
+
+        def get_queryset(self):
+            return queryset
+
+        def get_export_headers(self):
+            headers = super().get_export_headers()
+            return [field_headers.get(k, k) for k in headers]
+
+        def init_instance(self, row=None):
+            service = row.get(field_headers['service'])
+            data = lib.to_dict(dict(
+                status="draft",
+                test_mode=context.test_mode,
+                created_by_id=context.user.id,
+                services=([service] if service else []),
+                meta=(dict(service=service) if service else {}),
+                options=lib.to_dict(row.get(field_headers['options']) or "{}"),
+                shipper=dict(
+                    person_name=row.get(field_headers['shipper_name']),
+                    company_name=row.get(field_headers['shipper_company']),
+                    address_line1=row.get(field_headers['shipper_address1']),
+                    address_line2=row.get(field_headers['shipper_address2']),
+                    city=row.get(field_headers['shipper_city']),
+                    state_code=row.get(field_headers['shipper_state']),
+                    postal_code=row.get(field_headers['shipper_postal_code']),
+                    country_code=row.get(field_headers['shipper_country']),
+                    residential=row.get(field_headers['shipper_residential']),
+                ),
+                recipient=dict(
+                    person_name=row.get(field_headers['recipient_name']),
+                    company_name=row.get(field_headers['recipient_company']),
+                    address_line1=row.get(field_headers['recipient_address1']),
+                    address_line2=row.get(field_headers['recipient_address2']),
+                    city=row.get(field_headers['recipient_city']),
+                    state_code=row.get(field_headers['recipient_state']),
+                    postal_code=row.get(field_headers['recipient_postal_code']),
+                    country_code=row.get(field_headers['recipient_country']),
+                    residential=row.get(field_headers['recipient_residential']),
+                ),
+                parcels=[
+                    dict(
+                        weight=row.get(field_headers['parcel_weight']),
+                        weight_unit=row.get(field_headers['parcel_weight_unit']) or 'KG',
+                        width=row.get(field_headers['parcel_width']),
+                        height=row.get(field_headers['parcel_height']),
+                        length=row.get(field_headers['parcel_length']),
+                        dimension_unit=row.get(field_headers['parcel_dimension_unit']) or 'CM',
+                        package_preset=row.get(field_headers['parcel_package_preset']),
+                    )
+                ],
+            ))
+
+            instance = (
+                serializers.SerializerDecorator[ShipmentSerializer](data=data, context=context)
+                .save(fetch_rates=False)
+                .instance
+            )
+
+            return instance
 
     return Resource()

@@ -32,6 +32,7 @@ from karrio.server.manager.serializers.shipment import (
     reset_related_shipment_rates,
     can_mutate_shipment,
     buy_shipment_label,
+    fetch_shipment_rates,
 )
 from karrio.server.manager.serializers.pickup import (
     PickupData,

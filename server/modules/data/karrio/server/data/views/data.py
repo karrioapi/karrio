@@ -71,7 +71,7 @@ class DataImport(api.BaseAPIView):
     )
     def post(self, request: Request):
         """Import csv, xls and xlsx data files for:<br/>
-        - tracking data
+        - trackers data
         - orders data
         - shipments data
         - billing data (soon)<br/><br/>

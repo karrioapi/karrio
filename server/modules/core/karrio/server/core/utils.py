@@ -55,7 +55,7 @@ def error_wrapper(func):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
             raise e
 
     return wrapper

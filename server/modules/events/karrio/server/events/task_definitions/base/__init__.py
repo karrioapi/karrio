@@ -13,12 +13,12 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = int(
 
 @db_periodic_task(crontab(minute=f"*/{DEFAULT_TRACKERS_UPDATE_INTERVAL}"))
 def background_trackers_update():
-    from karrio.server.events.task_definitions.base.tracking import update_trackers
+    from karrio.server.events.task_definitions.base import tracking
 
     @utils.run_on_all_tenants
     def _run(**kwargs):
         try:
-            update_trackers()
+            tracking.update_trackers()
         except Exception as e:
             logger.error(f"failed to crawl tracking statuses: {e}")
 
@@ -28,12 +28,10 @@ def background_trackers_update():
 @db_task()
 @utils.tenant_aware
 def notify_webhooks(*args, **kwargs):
-    from karrio.server.events.task_definitions.base.webhook import (
-        notify_webhook_subscribers,
-    )
+    from karrio.server.events.task_definitions.base import webhook
 
     utils.failsafe(
-        lambda: notify_webhook_subscribers(*args, **kwargs),
+        lambda: webhook.notify_webhook_subscribers(*args, **kwargs),
         "An error occured during webhook notification: $error",
     )
 

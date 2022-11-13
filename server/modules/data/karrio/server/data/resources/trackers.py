@@ -1,17 +1,21 @@
+import json
 from import_export import resources
 
-from karrio.server.core import utils, gateway, exceptions
+import karrio.server.serializers as serializers
 import karrio.server.manager.models as manager
+from karrio.server.core import utils, gateway, exceptions
+
 
 DEFAULT_HEADERS = {
     "id": "ID",
     "tracking_number": "Tracking Number",
     "status": "Status",
     "tracking_carrier": "Carrier",
+    "options": "Options",
 }
 
 
-def tracking_resource(query_params: dict, context, data_fields: dict = None):
+def tracker_export_resource(query_params: dict, context, data_fields: dict = None):
     queryset = manager.Tracking.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -20,6 +24,50 @@ def tracking_resource(query_params: dict, context, data_fields: dict = None):
         "tracking_number",
         "status",
         "tracking_carrier",
+        "options",
+    )
+
+    class Resource(resources.ModelResource):
+        class Meta:
+            model = manager.Tracking
+            fields = _fields
+            exclude = _exclude
+            export_order = [k for k in field_headers.keys() if k not in _exclude]
+
+        def get_queryset(self):
+            return queryset
+
+        def get_export_headers(self):
+            headers = super().get_export_headers()
+            return [field_headers.get(k, k) for k in headers]
+
+        if "tracking_carrier" not in _exclude:
+            tracking_carrier = resources.Field()
+
+            def dehydrate_tracking_carrier(self, row):
+                carrier = getattr(row, "tracking_carrier", None)
+
+                return getattr(carrier, "carrier_name", None)
+
+        if "options" not in _exclude:
+            options = resources.Field(default=None)
+
+            def dehydrate_options(self, row):
+                return json.loads(json.dumps(row.options))
+
+    return Resource()
+
+
+def tracker_import_resource(query_params: dict, context, data_fields: dict = None):
+    queryset = manager.Tracking.access_by(context)
+    field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
+    _exclude = query_params.get("exclude", "").split(",")
+    _fields = (
+        "id",
+        "tracking_number",
+        "status",
+        "tracking_carrier",
+        "options",
     )
 
     class Resource(resources.ModelResource):
@@ -38,14 +86,20 @@ def tracking_resource(query_params: dict, context, data_fields: dict = None):
 
         def before_save_instance(self, instance, using_transactions, dry_run):
             instance.status = "unknown"
+            instance.test_mode = context.test_mode
             instance.created_by_id = context.user.id
-            instance.test_mode = query_params.get("test_mode") or True
             instance.events = utils.default_tracking_event(
                 description="Awaiting update from carrier...",
                 code="UNKNOWN",
             )
 
             return super().before_save_instance(instance, using_transactions, dry_run)
+
+        def save_instance(self, instance, is_create, using_transactions=True, dry_run=False):
+            result = super().save_instance(instance, is_create, using_transactions, dry_run)
+            serializers.link_org(instance, context)
+
+            return result
 
         def before_import(self, dataset, using_transactions, dry_run, **kwargs):
             if dry_run:
