@@ -15,7 +15,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
-# -e ./sdk/extensions/canadapost
+-e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
 # -e ./sdk/extensions/dhl_express
@@ -45,7 +45,7 @@ karrio
 karrio.amazon_mws
 karrio.aramex
 karrio.australiapost
-karrio.canadapost
+# karrio.canadapost
 karrio.canpar
 karrio.chronopost
 karrio.dhl-express

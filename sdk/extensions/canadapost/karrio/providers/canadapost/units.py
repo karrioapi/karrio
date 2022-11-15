@@ -176,7 +176,7 @@ def shipping_options_initializer(
     )
 
     if is_international and no_international_option_specified:
-        options.update({ShippingOption.canadapost_return_to_sender.name: True})
+        options.update({ShippingOption.canadapost_return_at_senders_expense.name: True})
 
     # Apply package options if specified.
     if package_options is not None:
