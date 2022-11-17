@@ -12869,6 +12869,18 @@
               "deprecationReason": null,
               "description": "",
               "isDeprecated": false,
+              "name": "serialized_data",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSONString",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
               "name": "action",
               "type": {
                 "kind": "NON_NULL",
@@ -12997,6 +13009,12 @@
               "description": "delete",
               "isDeprecated": false,
               "name": "A_2"
+            },
+            {
+              "deprecationReason": null,
+              "description": "access",
+              "isDeprecated": false,
+              "name": "A_3"
             }
           ],
           "fields": null,
