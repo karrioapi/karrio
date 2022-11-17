@@ -338,9 +338,9 @@ def to_shipping_options(
 
 
 def to_services(
-    services: dict,
+    services: typing.List[str],
     service_type: typing.Type[utils.Enum] = None,
-    initializer: typing.Optional[typing.Callable[[dict], units.Services]] = None,
+    initializer: typing.Optional[typing.Callable[[typing.List[str]], units.Services]] = None,
     **kwargs,
 ) -> units.Services:
 

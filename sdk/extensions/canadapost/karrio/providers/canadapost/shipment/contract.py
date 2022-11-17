@@ -78,7 +78,7 @@ def shipment_request(
     )
 
     customs = lib.to_customs_info(payload.customs)
-    duty = getattr(customs, "duty", models.Duty())
+    duty = getattr(customs, "duty", None) or models.Duty()
     label_encoding, label_format = provider_units.LabelType[
         payload.label_type or "PDF_4x6"
     ].value
@@ -178,7 +178,7 @@ def shipment_request(
             ),
             customs=(
                 CustomsType(
-                    currency=options.currency.state or provider_units.Currency.CAD.name,
+                    currency=options.currency.state or units.Currency.CAD.name,
                     conversion_from_cad=None,
                     reason_for_export="OTH",
                     other_reason=customs.content_type,
@@ -207,7 +207,7 @@ def shipment_request(
                     if any(customs.commodities or [])
                     else None,
                 )
-                if customs is not None
+                if payload.customs is not None
                 else None
             ),
             references=ReferencesType(

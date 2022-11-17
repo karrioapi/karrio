@@ -60,17 +60,19 @@ def _extract_shipment(
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     pin: PIN = lib.find_element("ShipmentPIN", response, PIN, first=True)
-    document = (
-        lib.find_element("DocumentDetail", response, DocumentDetail, first=True)
-        or DocumentDetail()
-    )
+    documents = lib.find_element("DocumentDetail", response, DocumentDetail)
+    label = next((doc for doc in documents if "BillOfLading" in doc.DocumentType), DocumentDetail())
+    invoice = next((doc for doc in documents if "Invoice" in doc.DocumentType), None)
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=pin.Value,
         shipment_identifier=pin.Value,
-        docs=models.Documents(label=document.Data),
+        docs=models.Documents(
+            label=getattr(label, "Data", ""),
+            **(dict(invoice=invoice.Data) if invoice else {}),
+        ),
     )
 
 
@@ -107,10 +109,10 @@ def _shipment_request(
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
     shipper_phone_number = units.Phone(
-        payload.shipper.phone_number, payload.shipper.country_code
+        payload.shipper.phone_number or "000 000 0000", payload.shipper.country_code
     )
     recipient_phone_number = units.Phone(
-        payload.recipient.phone_number, payload.recipient.country_code
+        payload.recipient.phone_number or "000 000 0000", payload.recipient.country_code
     )
     printing = provider_units.PrintType.map(payload.label_type or "PDF").value
 
@@ -285,9 +287,9 @@ def _shipment_request(
                                 ContentDetail=[
                                     ContentDetail(
                                         Description=item.description,
-                                        HarmonizedCode=item.hs_code,
-                                        CountryOfManufacture=item.origin_country,
-                                        ProductCode=item.sku,
+                                        HarmonizedCode=item.hs_code or "0000",
+                                        CountryOfManufacture=(item.origin_country or payload.shipper.country_code),
+                                        ProductCode=item.sku or "0000",
                                         UnitValue=item.value_amount,
                                         Quantity=item.quantity,
                                         NAFTADocumentIndicator=None,
@@ -305,19 +307,15 @@ def _shipment_request(
                         ),
                         BuyerInformation=None,
                         PreferredCustomsBroker=None,
-                        DutyInformation=(
-                            DutyInformation(
-                                BillDutiesToParty=provider_units.DutyPaymentType[
-                                    payload.customs.duty.paid_by
-                                ].value,
-                                BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                                Currency=payload.customs.duty.currency,
-                            )
-                            if payload.customs is not None
-                            else None
+                        DutyInformation=DutyInformation(
+                            BillDutiesToParty=provider_units.DutyPaymentType.map(
+                                payload.customs.duty.paid_by
+                            ).value or "Sender",
+                            BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
+                            Currency=(payload.customs.duty.currency or options.currence.state),
                         ),
-                        ImportExportType=None,
-                        CustomsInvoiceDocumentIndicator=None,
+                        ImportExportType="Permanent",
+                        CustomsInvoiceDocumentIndicator=True,
                     )
                     if is_international
                     else None

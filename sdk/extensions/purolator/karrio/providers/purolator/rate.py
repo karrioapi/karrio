@@ -95,28 +95,27 @@ def rate_request(
         required=["weight"],
     )
     service = units.Services(payload.services, provider_units.ShippingService).first
+    is_international = payload.shipper.country_code != payload.recipient.country_code
+
+    service = lib.to_services(
+        payload.services,
+        is_international=is_international,
+        recipient_country=payload.recipient.country_code,
+        service_type=provider_units.ShippingService,
+        initializer=provider_units.shipping_services_initializer,
+    ).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         service_is_defined=(getattr(service, "value", None) in payload.services),
         initializer=provider_units.shipping_options_initializer,
     )
-
     shipper_phone = units.Phone(
         payload.shipper.phone_number, payload.shipper.country_code or "CA"
     )
     recipient_phone = units.Phone(
         payload.recipient.phone_number, payload.recipient.country_code
     )
-    is_international = payload.shipper.country_code != payload.recipient.country_code
-
-    # When no specific service is requested, set a default one.
-    if service is None:
-        service = provider_units.ShippingService[
-            "purolator_express_international"
-            if is_international
-            else "purolator_express"
-        ]
 
     request = lib.create_envelope(
         header_content=RequestContext(
@@ -279,11 +278,7 @@ def rate_request(
                         ContentDetails=None,
                         BuyerInformation=None,
                         PreferredCustomsBroker=None,
-                        DutyInformation=DutyInformation(
-                            BillDutiesToParty=provider_units.DutyPaymentType.recipient.value,
-                            BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                            Currency=options.currency.state,
-                        ),
+                        DutyInformation=None,
                         ImportExportType=None,
                         CustomsInvoiceDocumentIndicator=None,
                     )

@@ -271,6 +271,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
         <destination>
             <name>Jain</name>
             <company>CGI</company>
+            <client-voice-number>000 000 0000</client-voice-number>
             <address-details>
                 <address-line-1>23 jardin private</address-line-1>
                 <city>Ottawa</city>
@@ -342,6 +343,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
         <destination>
             <name>Jain</name>
             <company>CGI</company>
+            <client-voice-number>000 000 0000</client-voice-number>
             <address-details>
                 <address-line-1>23 jardin private</address-line-1>
                 <city>Ottawa</city>

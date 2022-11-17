@@ -345,6 +345,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
+                            <v26:Value>10</v26:Value>
                         </v26:Weight>
                         <v26:Quantity>1</v26:Quantity>
                         <v26:QuantityUnits>EA</v26:QuantityUnits>
@@ -522,6 +523,7 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                         <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
+                            <v26:Value>10</v26:Value>
                         </v26:Weight>
                         <v26:Quantity>1</v26:Quantity>
                         <v26:QuantityUnits>EA</v26:QuantityUnits>
@@ -699,6 +701,7 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                         <v26:HarmonizedCode>00339BB</v26:HarmonizedCode>
                         <v26:Weight>
                             <v26:Units>LB</v26:Units>
+                            <v26:Value>10</v26:Value>
                         </v26:Weight>
                         <v26:Quantity>1</v26:Quantity>
                         <v26:QuantityUnits>EA</v26:QuantityUnits>
