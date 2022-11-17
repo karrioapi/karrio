@@ -134,11 +134,16 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = payload.customs
+    customs = lib.to_customs_info(payload.customs)
     duty = (
-        (customs.duty or models.Duty(paid_by="sender")) if customs is not None else None
+        (customs.duty or models.Duty())
+        if payload.customs is not None else None
     )
-    bill_to = lib.to_address(getattr(duty, "bill_to", None) or shipper)
+    bill_to = lib.to_address(getattr(duty, "bill_to", None) or (
+        payload.shipper
+        if duty.paid_by == "sender"
+        else payload.recipient
+    ))
     label_type, label_format = provider_units.LabelType[
         payload.label_type or "PDF_4x6"
     ].value
@@ -341,8 +346,10 @@ def shipment_request(
                                 Payor=(
                                     Payor(
                                         ResponsibleParty=Party(
-                                            AccountNumber=duty.account_number
-                                            or settings.account_number,
+                                            AccountNumber=(
+                                                duty.account_number
+                                                or settings.account_number
+                                            ),
                                             Tins=bill_to.taxes,
                                         )
                                     )
@@ -353,15 +360,13 @@ def shipment_request(
                         CustomsValue=(
                             Money(
                                 Currency=(
-                                    getattr(duty, "currency", options.currency.state)
+                                    duty.currency
+                                    or options.currency.state
                                     or "USD"
                                 ),
                                 Amount=(
-                                    getattr(
-                                        duty,
-                                        "declared_value",
-                                        options.declared_value.state,
-                                    )
+                                    duty.declared_value
+                                    or options.declared_value.state
                                     or 0.0
                                 ),
                             )
@@ -379,9 +384,9 @@ def shipment_request(
                                 SpecialInstructions=None,
                                 DeclarationStatement=None,
                                 PaymentTerms=None,
-                                Purpose=provider_units.PurposeType[
+                                Purpose=provider_units.PurposeType.map(
                                     customs.content_type or "other"
-                                ].value,
+                                ).value,
                                 PurposeOfShipmentDescription=None,
                                 CustomerReferences=(
                                     [
@@ -396,9 +401,9 @@ def shipment_request(
                                 OriginatorName=(
                                     shipper.company_name or shipper.person_name
                                 ),
-                                TermsOfSale=provider_units.Incoterm[
+                                TermsOfSale=provider_units.Incoterm.map(
                                     customs.incoterm or "DDU"
-                                ].value,
+                                ).value,
                             )
                             if customs.commercial_invoice
                             else None

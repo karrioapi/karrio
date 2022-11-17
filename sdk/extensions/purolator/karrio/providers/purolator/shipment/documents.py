@@ -18,13 +18,17 @@ def get_shipping_documents_request(
 ) -> Serializable[Envelope]:
     is_international = payload.shipper.country_code != payload.recipient.country_code
     label_type = PrintType.map(payload.label_type or "PDF").name
-    document_type = SF.concat_str(
+    documents = [SF.concat_str(
         ("International" if is_international else "Domestic"),
         "BillOfLading",
         ("Thermal" if label_type == "ZPL" else ""),
         separator="",
         join=True,
-    )
+    )]
+
+    # TODO: Find what is missing to get customs invoice.
+    # if is_international:
+    #     documents.append("CustomsInvoice")
 
     request = create_envelope(
         header_content=RequestContext(
@@ -41,7 +45,7 @@ def get_shipping_documents_request(
                 DocumentCriteria=[
                     DocumentCriteria(
                         PIN=PIN(Value=pin),
-                        DocumentTypes=DocumentTypes(DocumentType=[document_type]),
+                        DocumentTypes=DocumentTypes(DocumentType=documents),
                     )
                 ]
             ),

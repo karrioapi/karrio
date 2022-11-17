@@ -1,3 +1,4 @@
+import typing
 from karrio.core import units
 from karrio.core.utils import Enum, Flag
 from karrio.core.units import MeasurementOptionsType, PackagePreset
@@ -193,3 +194,24 @@ class ShippingService(Enum):
         "PurolatorExpressInternationalBox10:30AM"
     )
     purolator_express_international_box_12_00 = "PurolatorExpressInternationalBox12:00"
+
+
+def shipping_services_initializer(
+    services: typing.List[str],
+    is_international: bool = False,
+    recipient_country: str = None,
+) -> units.Services:
+    """
+    Apply default values to the given services.
+    """
+
+    # When no specific service is requested, set a default.
+    if not any([svc in ShippingService for svc in services]):  # type: ignore
+        if is_international is False:
+            services.append(ShippingService.purolator_express.name)  # type: ignore
+        elif recipient_country == "US":
+            services.append(ShippingService.purolator_express_us.name)  # type: ignore
+        else:
+            services.append(ShippingService.purolator_express_international.name)  # type: ignore
+
+    return units.Services(services, ShippingService)

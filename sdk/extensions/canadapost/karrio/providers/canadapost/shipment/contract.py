@@ -77,8 +77,8 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = payload.customs
-    duty = getattr(customs, "duty", models.Duty())
+    customs = lib.to_customs_info(payload.customs)
+    duty = getattr(customs, "duty", None) or models.Duty()
     label_encoding, label_format = provider_units.LabelType[
         payload.label_type or "PDF_4x6"
     ].value
@@ -99,8 +99,8 @@ def shipment_request(
             service_code=service,
             sender=SenderType(
                 name=payload.shipper.person_name,
-                company=payload.shipper.company_name or "Not Applicable",
-                contact_phone=payload.shipper.phone_number,
+                company=(payload.shipper.company_name or "Not Applicable"),
+                contact_phone=(payload.shipper.phone_number or "000 000 0000"),
                 address_details=AddressDetailsType(
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
@@ -116,7 +116,7 @@ def shipment_request(
                 name=payload.recipient.person_name,
                 company=payload.recipient.company_name,
                 additional_address_info=None,
-                client_voice_number=payload.recipient.phone_number,
+                client_voice_number=payload.recipient.phone_number or "000 000 0000",
                 address_details=DestinationAddressDetailsType(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
@@ -178,7 +178,7 @@ def shipment_request(
             ),
             customs=(
                 CustomsType(
-                    currency=options.currency.state or provider_units.Currency.CAD.name,
+                    currency=options.currency.state or units.Currency.CAD.name,
                     conversion_from_cad=None,
                     reason_for_export="OTH",
                     other_reason=customs.content_type,
@@ -191,14 +191,14 @@ def shipment_request(
                             item=[
                                 SkuType(
                                     customs_number_of_units=item.quantity,
-                                    customs_description=item.description,
-                                    sku=item.sku,
+                                    customs_description=(item.description or item.sku or "N/B"),
+                                    sku=item.sku or "0000",
                                     hs_tariff_code=item.hs_code,
-                                    unit_weight=units.WeightUnit.KG.value.lower(),
+                                    unit_weight=(item.weight or 1),
                                     customs_value_per_unit=item.value_amount,
                                     customs_unit_of_measure=None,
-                                    country_of_origin=item.origin_country,
-                                    province_of_origin=None,
+                                    country_of_origin=(item.origin_country or payload.shipper.country_code),
+                                    province_of_origin=payload.shipper.state_code or "N/B",
                                 )
                                 for item in customs.commodities
                             ]
@@ -207,7 +207,7 @@ def shipment_request(
                     if any(customs.commodities or [])
                     else None,
                 )
-                if customs is not None
+                if payload.customs is not None
                 else None
             ),
             references=ReferencesType(

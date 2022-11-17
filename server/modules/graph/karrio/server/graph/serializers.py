@@ -117,7 +117,7 @@ class ParcelModelSerializer(validators.PresetSerializer, serializers.ModelSerial
 
     class Meta:
         model = manager.Parcel
-        exclude = ["created_at", "updated_at", "created_by"]
+        exclude = ["created_at", "updated_at", "created_by", "items"]
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 

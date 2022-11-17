@@ -90,10 +90,6 @@ def rate_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
-        is_international=(
-            payload.recipient.country_code is not None
-            and payload.recipient.country_code != "CA"
-        ),
         initializer=provider_units.shipping_options_initializer,
     )
 

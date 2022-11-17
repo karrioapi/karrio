@@ -40,6 +40,16 @@ class PaymentType(Flag):
     sender = shipper
     recipient = receiver
 
+class DutyBillToType(Flag):
+    receiver = "Receiver"
+    shipper = "Shipper"
+    consignee_account = "Consignee Account"
+
+    """ Unified payment type mapping """
+    sender = shipper
+    recipient = receiver
+    third_party = consignee_account
+
 
 class ShippingService(Enum):
     eshipper_all = "0"
