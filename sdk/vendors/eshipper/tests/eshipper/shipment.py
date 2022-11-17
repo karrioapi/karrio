@@ -180,6 +180,7 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
             <BillTo company="Test Company" name="RizTo" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
             <Contact name="RizTo" phone="4162223333"/>
             <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000." skuCode="098765"/>
+            <DutiesTaxes dutiable="Yes" billTo="Receiver"/>
         </CustomsInvoice>
     </ShippingRequest>
 </EShipper>

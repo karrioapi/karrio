@@ -13,6 +13,7 @@ from eshipper_lib.shipping_request import (
     CustomsInvoiceType,
     ItemType,
     BillToType,
+    DutiesTaxesType,
 )
 from eshipper_lib.shipping_reply import (
     ShippingReplyType,
@@ -271,7 +272,14 @@ def shipping_request(
                     shipperTaxID=bill_to.tax_id,
                     contactName=bill_to.person_name,
                     contactPhone=bill_to.phone_number,
-                    DutiesTaxes=None,
+                    DutiesTaxes=DutiesTaxesType(
+                        consigneeAccount=customs.duty.account_number,
+                        sedNumber=None,
+                        dutiable=("No" if packages.is_document else "Yes"),
+                        billTo=provider_units.DutyBillToType.map(
+                            customs.duty.paid_by or "shipper"
+                        ).value,
+                    ),
                     InBondManifest=None,
                     BillTo=BillToType(
                         company=bill_to.company_name,
