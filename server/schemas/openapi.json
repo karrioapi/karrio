@@ -8178,7 +8178,6 @@
                 "required": [
                     "carrier_id",
                     "carrier_name",
-                    "currency",
                     "test_mode"
                 ],
                 "type": "object",
