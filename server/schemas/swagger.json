@@ -7140,7 +7140,6 @@
             "required": [
                 "carrier_name",
                 "carrier_id",
-                "currency",
                 "test_mode"
             ],
             "type": "object",

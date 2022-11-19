@@ -139,8 +139,8 @@ class PickupCancelRequest(BasePickupCancelRequest):
 class Rate:
     carrier_name: str
     carrier_id: str
-    currency: str
 
+    currency: str = None
     transit_days: int = None
     service: str = None
     total_charge: float = 0.0

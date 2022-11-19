@@ -272,7 +272,7 @@ class RateDetails:
     carrier_name: str
     carrier_id: str
     service: str
-    currency: str
+    currency: str = None
     total_charge: float = 0.0
     transit_days: int = None
     extra_charges: List[ChargeDetails] = JList[ChargeDetails]

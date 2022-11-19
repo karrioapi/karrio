@@ -898,7 +898,7 @@ class Rate(serializers.EntitySerializer):
         required=True, help_text="The targeted carrier's name (unique identifier)"
     )
     currency = serializers.CharField(
-        required=True, help_text="The rate monetary values currency code"
+        required=False, help_text="The rate monetary values currency code"
     )
     service = serializers.CharField(
         required=False,

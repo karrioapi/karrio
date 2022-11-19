@@ -1089,7 +1089,7 @@
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'currency': json['currency'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
             'service': !exists(json, 'service') ? undefined : json['service'],
             'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
             'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
