@@ -9,11 +9,11 @@ karrio test --failfast karrio.server.pricing.tests &&
 karrio test --failfast karrio.server.manager.tests &&
 karrio test --failfast karrio.server.events.tests &&
 karrio test --failfast karrio.server.graph.tests &&
+karrio test --failfast karrio.server.orders.tests &&
 
-if [[ "$*" != *--insiders* ]];
+if [[ "$*" != *--cloud* ]];
 then
     echo "done..."
 else
-    karrio test --failfast karrio.server.orgs.tests &&
-    karrio test --failfast karrio.server.orders.tests
+    karrio test --failfast karrio.server.orgs.tests
 fi

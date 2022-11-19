@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2022.8.9
+  version: 2022.8.10
 paths:
   /:
     get:
@@ -393,7 +393,7 @@ paths:
       operationId: '&&&&$import_file'
       description: |-
         Import csv, xls and xlsx data files for:<br/>
-        - tracking data
+        - trackers data
         - orders data
         - shipments data
         - billing data (soon)<br/><br/>
@@ -421,7 +421,7 @@ paths:
           - billing
           - order
           - shipment
-          - tracking
+          - trackers
         description: The type of the resource to import
       tags:
       - Batches
@@ -3334,8 +3334,9 @@ components:
       enum:
       - queued
       - running
-      - completed
       - failed
+      - completed
+      - completed_with_errors
       type: string
     BatchOperations:
       type: object
@@ -5508,7 +5509,6 @@ components:
       required:
       - carrier_id
       - carrier_name
-      - currency
       - test_mode
     RateRequest:
       type: object
@@ -5582,9 +5582,9 @@ components:
       - rates
     ResourceTypeEnum:
       enum:
-      - order
-      - shipment
-      - tracking
+      - orders
+      - shipments
+      - trackers
       - billing
       type: string
     Shipment:

@@ -140,7 +140,7 @@ router.urls.append(
 # Deprecated will be removed soon.
 router.urls.append(
     path(
-        "proxy/tracking/<tracking_number>",
+        "proxy/tracking/<str:carrier_name>/<str:tracking_number>",
         TrackingAPI.as_view(),
         name="shipment-tracking",
     )
