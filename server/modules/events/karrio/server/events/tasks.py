@@ -1,9 +1,9 @@
+import typing
 import logging
 import pkgutil
-import typing
 import karrio.server.events.task_definitions as definitions
 
-logger = logging.getLevelName(__name__)
+logger = logging.getLogger(__name__)
 DEFINITIONS: typing.List[typing.Any] = []
 
 # Register karrio background tasks
