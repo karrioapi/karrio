@@ -29,13 +29,13 @@ class Query:
     default_templates: types.DefaultTemplatesType = strawberry.field(
         resolver=types.DefaultTemplatesType.resolve
     )
-    address_templates: types.AddressTemplateType = strawberry.field(
+    address_templates: utils.Connection[types.AddressTemplateType] = strawberry.field(
         resolver=types.AddressTemplateType.resolve_list
     )
-    customs_templates: types.CustomsTemplateType = strawberry.field(
+    customs_templates: utils.Connection[types.CustomsTemplateType] = strawberry.field(
         resolver=types.CustomsTemplateType.resolve_list
     )
-    parcel_templates: types.ParcelTemplateType = strawberry.field(
+    parcel_templates: utils.Connection[types.ParcelTemplateType] = strawberry.field(
         resolver=types.ParcelTemplateType.resolve_list
     )
 
