@@ -63,19 +63,8 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
 
             saved_records = models.TracingRecord.objects.bulk_create(records)
 
-            if (settings.MULTI_ORGANIZATIONS) and (
-                getattr(context, "org", None) is not None
-            ):
-                _linked = []
-
-                for record in saved_records:
-                    record.link = (
-                        record.__class__.link.related.related_model.objects.create(
-                            org=context.org, item=record
-                        )
-                    )
-
-                models.TracingRecord.objects.bulk_update(_linked, fields=["updated_at"])
+            if getattr(context, "org", None) is not None:
+                serializers.bulk_link_org(saved_records, context)
 
             logger.info("successfully saved tracing records...")
         except Exception as e:

@@ -218,6 +218,20 @@ def link_org(entity: ModelSerializer, context: Context):
         )
 
 
+def bulk_link_org(entities: List[models.Model], context: Context):
+    if len(entities) == 0 or settings.MULTI_ORGANIZATIONS is False:
+        return
+
+    EntityLinkModel = entities[0].__class__.link.related.related_model
+    links = []
+
+    for entity in entities:
+        entity.link = EntityLinkModel(org=context.org, item=entity)
+        links.append(entity.link)
+
+    EntityLinkModel.objects.bulk_create(links)
+
+
 def get_object_context(entity) -> Context:
     org = (
         entity.org.first()
