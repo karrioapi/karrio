@@ -449,9 +449,10 @@ def order_import_resource(query_params: dict, context, data_fields: dict = None)
             ))
 
             instance = (
-                serializers.SerializerDecorator[OrderSerializer](
-                    data=data, context=context
-                ).save().instance
+                OrderSerializer
+                .map(data=data, context=context)
+                .save()
+                .instance
             )
 
             return instance

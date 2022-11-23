@@ -8,7 +8,6 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
     CustomsData,
@@ -73,7 +72,7 @@ class CustomsList(GenericAPIView):
         Create a new customs declaration.
         """
         customs = (
-            SerializerDecorator[CustomsSerializer](data=request.data, context=request)
+            CustomsSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -118,7 +117,7 @@ class CustomsDetail(APIView):
         customs = models.Customs.access_by(request).get(pk=pk)
         can_mutate_customs(customs)
 
-        SerializerDecorator[CustomsSerializer](
+        CustomsSerializer.map(
             customs, data=request.data, context=request
         ).save()
 

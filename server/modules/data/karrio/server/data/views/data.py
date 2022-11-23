@@ -79,9 +79,7 @@ class DataImport(api.BaseAPIView):
         the import progression.**
         """
         operation = (
-            serializers.SerializerDecorator[ImportDataSerializer](
-                data=request.data, context=request
-            )
+            ImportDataSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )

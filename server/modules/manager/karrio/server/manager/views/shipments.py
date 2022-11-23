@@ -11,23 +11,17 @@ from django_downloadview import VirtualDownloadView
 from django.core.files.base import ContentFile
 from django.urls import path, re_path
 
-
-from karrio.core.utils import DP
-from karrio.server.core.gateway import Carriers
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     process_dictionaries_mutations,
     fetch_shipment_rates,
-    SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
     ErrorMessages,
     Shipment,
     ShipmentData,
-    RateResponse,
-    Rate,
     buy_shipment_label,
     can_mutate_shipment,
     ShipmentSerializer,
@@ -35,7 +29,6 @@ from karrio.server.manager.serializers import (
     ShipmentUpdateData,
     ShipmentPurchaseData,
     ShipmentCancelSerializer,
-    RateSerializer,
 )
 import karrio.server.manager.models as models
 import karrio.server.core.filters as filters
@@ -92,7 +85,8 @@ class ShipmentList(GenericAPIView):
         Create a new shipment instance.
         """
         shipment = (
-            SerializerDecorator[ShipmentSerializer](data=request.data, context=request)
+            ShipmentSerializer
+            .map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -141,16 +135,20 @@ class ShipmentDetails(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, update=True)
 
-        payload = SerializerDecorator[ShipmentUpdateData](data=request.data).data
-        SerializerDecorator[ShipmentSerializer](
-            shipment,
-            context=request,
-            data=process_dictionaries_mutations(
-                ["metadata", "options"], payload, shipment
-            ),
-        ).save()
+        payload = ShipmentUpdateData.map(data=request.data).data
+        update = (
+            ShipmentSerializer.map(
+                shipment,
+                context=request,
+                data=process_dictionaries_mutations(
+                    ["metadata", "options"], payload, shipment
+                ),
+            )
+            .save()
+            .instance
+        )
 
-        return Response(Shipment(shipment).data)
+        return Response(Shipment(update).data)
 
     @openapi.extend_schema(
         tags=["Shipments"],
@@ -170,13 +168,11 @@ class ShipmentDetails(APIView):
         Void a shipment with the associated label.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-
         can_mutate_shipment(shipment, delete=True)
 
         update = (
-            SerializerDecorator[ShipmentCancelSerializer](
-                shipment, data={}, context=request
-            )
+            ShipmentCancelSerializer
+            .map(shipment, context=request)
             .save()
             .instance
         )
@@ -208,7 +204,7 @@ class ShipmentRates(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, update=True)
 
-        payload = SerializerDecorator[ShipmentRateData](data=request.data).data
+        payload = ShipmentRateData.map(data=request.data).data
 
         update = fetch_shipment_rates(
             shipment,
@@ -241,7 +237,7 @@ class ShipmentPurchase(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, purchase=True, update=True)
 
-        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
+        payload = ShipmentPurchaseData.map(data=request.data).data
 
         update = buy_shipment_label(
             shipment,

@@ -9,7 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.serializers import (
     process_dictionaries_mutations,
-    SerializerDecorator,
     PaginatedResult,
 )
 from karrio.server.orders.router import router
@@ -77,7 +76,8 @@ class OrderList(api.GenericAPIView):
         Create a new order object.
         """
         order = (
-            SerializerDecorator[OrderSerializer](data=request.data, context=request)
+            OrderSerializer
+            .map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -125,16 +125,20 @@ class OrderDetail(api.APIView):
         order = models.Order.access_by(request).get(pk=pk)
         can_mutate_order(order, update=True)
 
-        payload = SerializerDecorator[OrderUpdateData](data=request.data).data
-        SerializerDecorator[OrderSerializer](
-            order,
-            context=request,
-            data=process_dictionaries_mutations(
-                ["metadata", "options"], payload, order
-            ),
-        ).save()
+        payload = OrderUpdateData.map(data=request.data).data
+        update = (
+            OrderSerializer.map(
+                order,
+                context=request,
+                data=process_dictionaries_mutations(
+                    ["metadata", "options"], payload, order
+                ),
+            )
+            .save()
+            .instance
+        )
 
-        return Response(Order(order).data)
+        return Response(Order(update).data)
 
     @openapi.extend_schema(
         tags=["Orders"],

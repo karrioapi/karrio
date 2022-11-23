@@ -11,7 +11,6 @@ from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import PickupFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     Pickup,
     ErrorResponse,
@@ -79,7 +78,7 @@ class PickupRequest(APIView):
         }
 
         pickup = (
-            SerializerDecorator[PickupData](data=request.data, context=request)
+            PickupData.map(data=request.data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )
@@ -122,7 +121,7 @@ class PickupDetails(APIView):
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
         instance = (
-            SerializerDecorator[PickupUpdateData](
+            PickupUpdateData.map(
                 pickup, data=request.data, context=request
             )
             .save()
@@ -153,9 +152,7 @@ class PickupCancel(APIView):
         pickup = models.Pickup.access_by(request).get(pk=pk)
 
         update = (
-            SerializerDecorator[PickupCancelData](
-                pickup, data=request.data
-            )
+            PickupCancelData.map(pickup, data=request.data)
             .save()
             .instance
         )

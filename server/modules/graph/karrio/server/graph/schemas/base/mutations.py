@@ -11,7 +11,6 @@ from django.db import transaction
 
 from karrio.core.utils import DP
 from karrio.server.conf import settings
-from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.utils import ConfirmationToken, send_email
 from karrio.server.user.serializers import TokenSerializer, Token
 from karrio.server.serializers.abstract import save_many_to_many_data
@@ -75,7 +74,7 @@ class TokenMutation(utils.BaseMutation):
                 tokens.delete()
 
         token = (
-            SerializerDecorator[TokenSerializer](data={}, context=info.context.request)
+            TokenSerializer.map(data={}, context=info.context.request)
             .save()
             .instance
         )
@@ -397,7 +396,7 @@ class PartialShipmentMutation(utils.BaseMutation):
 
         serializer.is_valid(raise_exception=True)
 
-        SerializerDecorator[manager_serializers.ShipmentSerializer](
+        manager_serializers.ShipmentSerializer.map(
             shipment,
             context=info.context,
             data=DP.to_dict(serializer.validated_data),

@@ -14,7 +14,6 @@ from karrio.server.manager.serializers import (
     ErrorMessages,
     PaginatedResult,
     DocumentUploadData,
-    SerializerDecorator,
     DocumentUploadRecord,
     DocumentUploadSerializer,
     can_upload_shipment_document,
@@ -77,7 +76,7 @@ class DocumentList(GenericAPIView):
         can_upload_shipment_document(shipment)
 
         upload_record = (
-            SerializerDecorator[DocumentUploadSerializer](
+            DocumentUploadSerializer.map(
                 (shipment.shipment_upload_record if hasattr(shipment, "shipment_upload_record") else None),
                 data=request.data,
                 context=request,
