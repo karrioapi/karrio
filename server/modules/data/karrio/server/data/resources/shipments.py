@@ -341,7 +341,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
     return Resource()
 
 
-def shipment_import_resource(query_params: dict, context, data_fields: dict = None):
+def shipment_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
     queryset = models.Shipment.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -398,12 +398,15 @@ def shipment_import_resource(query_params: dict, context, data_fields: dict = No
 
         def init_instance(self, row=None):
             service = row.get(field_headers['service'])
+            svc = ({} if service is None else dict(service=service))
+            batch = ({} if batch_id is None else dict(batch_id=batch_id))
+
             data = lib.to_dict(dict(
                 status="draft",
                 test_mode=context.test_mode,
                 created_by_id=context.user.id,
                 services=([service] if service else []),
-                meta=(dict(service=service) if service else {}),
+                meta={**svc, **batch},
                 options=lib.to_dict(row.get(field_headers['options']) or "{}"),
                 shipper=dict(
                     person_name=row.get(field_headers['shipper_name']),

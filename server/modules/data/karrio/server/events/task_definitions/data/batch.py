@@ -35,6 +35,7 @@ def trigger_batch_import(
                 resource_type=batch_operation.resource_type,
                 params=import_data,
                 context=context,
+                batch_id=batch_id,
             )
 
             batch_resources = process_resources(resource, dataset)
