@@ -319,7 +319,7 @@ def order_export_resource(query_params: dict, context, **kwargs):
     return Resource()
 
 
-def order_import_resource(query_params: dict, context, data_fields: dict = None):
+def order_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
     queryset = models.Order.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -390,6 +390,8 @@ def order_import_resource(query_params: dict, context, data_fields: dict = None)
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):
+            meta = ({} if batch_id is None else dict(meta=dict(batch_id=batch_id)))
+
             data = lib.to_dict(dict(
                 status="unfulfilled",
                 test_mode=context.test_mode,
@@ -446,6 +448,7 @@ def order_import_resource(query_params: dict, context, data_fields: dict = None)
                         country_code=row.get(field_headers['billing_country']),
                     ) if any(['Billing' in key for key in row.keys()]) else None
                 ),
+                **meta,
             ))
 
             instance = (

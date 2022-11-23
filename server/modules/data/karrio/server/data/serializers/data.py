@@ -83,11 +83,24 @@ class ImportDataSerializer(serializers.ImportData):
 
 
 def check_dataset_validation_errors(validation):
+    if any(validation.base_errors):
+        raise exceptions.APIExceptions(
+            validation.base_errors,
+            code="invalid_data",
+        )
 
-    errors = [
-        err.error
-        for err in sum([row.errors for row in validation.rows], validation.base_errors)
-    ]
+    errors = []
+    flattened_row_errors = sum(
+        [
+            [(i, e.error) for e in row.errors]
+            for i, row in enumerate(validation.rows)
+        ],
+        []
+    )
+
+    for index, error in flattened_row_errors:
+        setattr(error, "index", index)
+        errors.append(error)
 
     if any(errors):
         raise exceptions.APIExceptions(
