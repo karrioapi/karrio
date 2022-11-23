@@ -39,6 +39,23 @@ class ResourceType(Enum):
 
         return None
 
+    @classmethod
+    def get_serialiazer(cls, resource_type: str) -> dict:
+        if resource_type == "orders":
+            from karrio.server.data.serializers import BatchOrderData
+
+            return BatchOrderData
+        if resource_type == "shipments":
+            from karrio.server.data.serializers import BatchShipmentData
+
+            return BatchShipmentData
+        if resource_type == "trackers":
+            from karrio.server.data.serializers import BatchTrackerData
+
+            return BatchTrackerData
+
+        return None
+
 
 class ResourceStatus(Enum):
     queued = "queued"
@@ -68,7 +85,13 @@ class ImportData(serializers.Serializer):
 
 class BatchObject(serializers.EntitySerializer):
     status = fields.ChoiceField(
-        choices=OPERATION_STATUS, help_text="The batch operation resource status"
+        choices=OPERATION_STATUS,
+        help_text="The batch operation resource status",
+    )
+    errors = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="Resource processing errors",
     )
 
 

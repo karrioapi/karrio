@@ -15,13 +15,13 @@ User = get_user_model()
 
 
 @utils.tenant_aware
-def trigger_batch_processing(
+def trigger_batch_import(
     batch_id: str,
     data: dict,
     ctx: dict,
     **kwargs,
 ):
-    logger.info(f"> starting batch operation processing ({batch_id})")
+    logger.info(f"> starting batch import operation ({batch_id})")
     try:
         context = retrieve_context(ctx)
         batch_operation = (
@@ -29,32 +29,58 @@ def trigger_batch_processing(
         )
 
         if batch_operation is not None:
-            import_data = data["import_data"]
             dataset = data["dataset"]
+            import_data = data["import_data"]
             resource = resources.get_import_resource(
                 resource_type=batch_operation.resource_type,
                 params=import_data,
                 context=context,
             )
 
-            batch_resources = process_resources(
-                batch_operation.resource_type, resource, dataset, context
-            )
+            batch_resources = process_resources(resource, dataset)
             update_batch_operation_resources(batch_operation, batch_resources)
         else:
             logger.info("batch operation not found")
 
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
-    logger.info(f"> ending batch operation processing ({batch_id})")
+    logger.info(f"> ending batch import operation ({batch_id})")
+
+
+@utils.tenant_aware
+def trigger_batch_saving(
+    batch_id: str,
+    data: dict,
+    ctx: dict,
+    **kwargs,
+):
+    logger.info(f"> beging batch resources saving ({batch_id})")
+    try:
+        context = retrieve_context(ctx)
+        batch_operation = (
+            models.BatchOperation.access_by(context).filter(pk=batch_id).first()
+        )
+
+        if batch_operation is not None:
+
+            batch_seriazlizer = serializers.ResourceType.get_serialiazer(
+                batch_operation.resource_type
+            )
+            batch_resources = batch_seriazlizer.save_resources(data, batch_id, context)
+            update_batch_operation_resources(batch_operation, batch_resources)
+        else:
+            logger.info("batch operation not found")
+
+    except Exception as e:
+        logger.exception(e)
+
+    logger.info(f"> ending batch resources saving ({batch_id})")
 
 
 def process_resources(
-    resource_type: str,
     resource: ModelResource,
     dataset: tablib.Dataset,
-    context: serializers.Context,
 ):
     result = resource.import_data(dataset, dry_run=False)
     _object_ids = [(row.object_id, row.errors) for row in result.rows]
@@ -79,8 +105,8 @@ def update_batch_operation_resources(
     try:
         logger.debug(f"update batch operation {batch_operation.id}")
 
-        batch_operation.status = serializers.BatchOperationStatus.running.value
         batch_operation.resources = batch_resources
+        batch_operation.status = serializers.BatchOperationStatus.running.value
         batch_operation.save(update_fields=["resources", "status"])
 
         logger.debug(f"batch operation {batch_operation.id} updated successfully")

@@ -3,7 +3,6 @@ import logging
 from django.db import transaction
 
 from karrio.server.conf import settings
-import karrio.server.events.tasks as tasks
 import karrio.server.core.exceptions as exceptions
 import karrio.server.data.models as models
 import karrio.server.data.resources as resources
@@ -26,6 +25,8 @@ class ImportDataSerializer(serializers.ImportData):
     def create(
         self, validated_data: dict, context: serializers.Context, **kwargs
     ) -> models.BatchOperation:
+        import karrio.server.events.tasks as tasks
+
         resource_type = validated_data["resource_type"]
         data_field = validated_data["data_file"]
         template = (
@@ -64,7 +65,7 @@ class ImportDataSerializer(serializers.ImportData):
             .instance
         )
 
-        tasks.queue_batch(
+        tasks.queue_batch_import(
             operation.id,
             data=dict(
                 dataset=dataset,

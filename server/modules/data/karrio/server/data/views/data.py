@@ -70,7 +70,7 @@ class DataImport(api.BaseAPIView):
         parameters=DataImportParameters,
     )
     def post(self, request: Request):
-        """Import csv, xls and xlsx data files for:<br/>
+        """Import csv, xls and xlsx data files for: `Beta`<br/>
         - trackers data
         - orders data
         - shipments data

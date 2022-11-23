@@ -36,9 +36,7 @@ class BatchList(api.GenericAPIView):
         },
     )
     def get(self, _: Request):
-        """
-        Retrieve all batch operations.
-        """
+        """Retrieve all batch operations. `Beta`"""
 
         batches = self.filter_queryset(self.get_queryset())
         response = self.paginate_queryset(
@@ -60,13 +58,13 @@ class BatchDetails(api.APIView):
         },
     )
     def get(self, request: Request, pk: str):
-        """Retrieve a batch operation."""
+        """Retrieve a batch operation. `Beta`"""
         batch = models.BatchOperation.access_by(request).get(pk=pk)
 
         return Response(serializers.BatchOperation(batch).data)
 
 
 urlpatterns = [
-    path("batches", BatchList.as_view(), name="batch-list"),
-    path("batches/<str:pk>", BatchDetails.as_view(), name="batch-details"),
+    path("batches/operations", BatchList.as_view(), name="batch-list"),
+    path("batches/operations/<str:pk>", BatchDetails.as_view(), name="batch-details"),
 ]
