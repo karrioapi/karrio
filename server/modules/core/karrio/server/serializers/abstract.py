@@ -78,7 +78,7 @@ class AbstractSerializer:
 
 
 class Serializer(serializers.Serializer, AbstractSerializer):
-    pass
+    context: dict = {}
 
 
 class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):

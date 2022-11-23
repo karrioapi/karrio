@@ -320,79 +320,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/batches:
-    get:
-      operationId: '&&&&$list'
-      description: Retrieve all batch operations.
-      summary: List all batch operations
-      tags:
-      - Batches
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchOperations'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-  /v1/batches/{id}:
-    get:
-      operationId: '&&&&$retrieve'
-      description: Retrieve a batch operation.
-      summary: Retrieve a batch operation
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      tags:
-      - Batches
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchOperation'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
   /v1/batches/data/import:
     post:
       operationId: '&&&&$import_file'
       description: |-
-        Import csv, xls and xlsx data files for:<br/>
+        Import csv, xls and xlsx data files for: `Beta`<br/>
         - trackers data
         - orders data
         - shipments data
@@ -451,6 +383,185 @@ paths:
                 $ref: '#/components/schemas/BatchOperation'
           description: ''
         '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/batches/operations:
+    get:
+      operationId: '&&&&$list'
+      description: Retrieve all batch operations. `Beta`
+      summary: List all batch operations
+      tags:
+      - Batches
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperations'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/batches/operations/{id}:
+    get:
+      operationId: '&&&&$retrieve'
+      description: Retrieve a batch operation. `Beta`
+      summary: Retrieve a batch operation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Batches
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperation'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/batches/orders:
+    post:
+      operationId: '&&&&$create_orders'
+      description: Create multiple orders in a single batch. `Beta`
+      summary: Create orders
+      tags:
+      - Batches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchOrderData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperation'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/batches/shipments:
+    post:
+      operationId: '&&&&$create_shipments'
+      description: Create multiple shipments in a single batch. `Beta`
+      summary: Create shipments
+      tags:
+      - Batches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchShipmentData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperation'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/batches/trackers:
+    post:
+      operationId: '&&&&$create_trackers'
+      description: Create multiple trackers in a single batch. `Beta`
+      summary: Create trackers
+      tags:
+      - Batches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchTrackerData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperation'
+          description: ''
+        '404':
           content:
             application/json:
               schema:
@@ -1972,7 +2083,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/proxy/tracking/{tracking_number}:
+  /v1/proxy/tracking/{carrier_name}/{tracking_number}:
     get:
       operationId: '@@@@track_shipment'
       description: You can track a shipment by specifying the carrier and the shipment
@@ -3299,6 +3410,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/BatchOperationStatus'
           description: The batch operation resource status
+        errors:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: Resource processing errors
       required:
       - status
     BatchOperation:
@@ -3358,6 +3474,36 @@ components:
             $ref: '#/components/schemas/BatchOperation'
       required:
       - results
+    BatchOrderData:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderData'
+          description: The list of orders to process.
+      required:
+      - orders
+    BatchShipmentData:
+      type: object
+      properties:
+        shipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentData'
+          description: The list of shipments to process.
+      required:
+      - shipments
+    BatchTrackerData:
+      type: object
+      properties:
+        trackers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingData'
+          description: The list of tracking info to process.
+      required:
+      - trackers
     BlankEnum:
       enum:
       - ''
