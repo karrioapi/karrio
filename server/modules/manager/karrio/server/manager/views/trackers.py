@@ -124,9 +124,8 @@ class TrackerList(GenericAPIView):
         }
 
         tracker = (
-            serializers.SerializerDecorator[TrackingSerializer](
-                instance, data=data, context=request
-            )
+            TrackingSerializer
+            .map(instance, data=data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )
@@ -196,9 +195,8 @@ class TrackersCreate(APIView):
         }
 
         tracker = (
-            serializers.SerializerDecorator[TrackingSerializer](
-                instance, data=data, context=request
-            )
+            TrackingSerializer
+            .map(instance, data=data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )

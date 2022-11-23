@@ -3,7 +3,6 @@ import logging
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
-from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 import karrio.lib as lib
 import karrio.core.units as units
@@ -14,6 +13,7 @@ import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.serializers import (
+    Serializer, CharField, ChoiceField, BooleanField,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
@@ -21,7 +21,6 @@ from karrio.server.serializers import (
     Context,
     PlainDictField,
     StringListField,
-    SerializerDecorator,
 )
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
@@ -107,7 +106,7 @@ class ShipmentSerializer(ShipmentData):
         # Get live rates.
         if fetch_rates:
             rate_response: datatypes.RateResponse = (
-                SerializerDecorator[RateSerializer](data=rating_data, context=context)
+                RateSerializer.map(data=rating_data, context=context)
                 .save(carriers=carriers)
                 .instance
             )
@@ -378,15 +377,14 @@ def fetch_shipment_rates(
     )
 
     rate_response: datatypes.RateResponse = (
-        SerializerDecorator[RateSerializer](
-            context=context, data={**ShipmentData(shipment).data, **data}
-        )
+        RateSerializer
+        .map(context=context, data={**ShipmentData(shipment).data, **data})
         .save(carriers=carriers)
         .instance
     )
 
     updated_shipment = (
-        SerializerDecorator[ShipmentSerializer](
+        ShipmentSerializer.map(
             shipment,
             context=context,
             data={
@@ -419,7 +417,7 @@ def buy_shipment_label(
 
     # Submit shipment to carriers
     response: Shipment = (
-        SerializerDecorator[ShipmentPurchaseSerializer](
+        ShipmentPurchaseSerializer.map(
             context=context,
             data={**Shipment(shipment).data, **payload},
         )
@@ -434,7 +432,7 @@ def buy_shipment_label(
 
     # Update shipment state
     purchased_shipment = (
-        SerializerDecorator[ShipmentSerializer](
+        ShipmentSerializer.map(
             shipment,
             context=context,
             data={

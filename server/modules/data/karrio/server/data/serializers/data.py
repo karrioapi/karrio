@@ -56,7 +56,7 @@ class ImportDataSerializer(serializers.ImportData):
         check_dataset_validation_errors(validation)
 
         operation = (
-            serializers.SerializerDecorator[batch.BatchOperationModelSerializer](
+            batch.BatchOperationModelSerializer.map(
                 data=dict(resource_type=resource_type, test_mode=context.test_mode),
                 context=context,
             )

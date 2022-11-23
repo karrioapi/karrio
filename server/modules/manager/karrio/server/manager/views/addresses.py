@@ -8,7 +8,6 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
     AddressData,
@@ -73,7 +72,7 @@ class AddressList(GenericAPIView):
         Create a new address.
         """
         address = (
-            SerializerDecorator[AddressSerializer](data=request.data, context=request)
+            AddressSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -118,7 +117,7 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         can_mutate_address(address, update=True)
 
-        SerializerDecorator[AddressSerializer](address, data=request.data).save()
+        AddressSerializer.map(address, data=request.data).save()
 
         return Response(Address(address).data)
 

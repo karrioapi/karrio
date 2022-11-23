@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
     RateRequest,
@@ -40,16 +39,16 @@ class RateViewAPI(APIView):
         request=RateRequest(),
     )
     def post(self, request: Request):
-        payload = SerializerDecorator[RateRequest](data=request.data).data
+        payload = RateRequest.map(data=request.data).data
 
         response = Rates.fetch(payload, context=request)
-
-        return Response(
-            RateResponse(response).data,
-            status=status.HTTP_207_MULTI_STATUS
+        status_code = (
+            status.HTTP_207_MULTI_STATUS
             if len(response.messages) > 0
-            else status.HTTP_200_OK,
+            else status.HTTP_200_OK
         )
+
+        return Response(RateResponse(response).data, status=status_code)
 
 
 router.urls.append(path("proxy/rates", RateViewAPI.as_view(), name="shipment-rates"))

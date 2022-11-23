@@ -70,7 +70,7 @@ class ShippingDetails(APIView):
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
         """
-        payload = serializers.SerializerDecorator[ShippingRequestValidation](data=request.data).data
+        payload = ShippingRequestValidation.map(data=request.data).data
 
         response = Shipments.create(
             payload,
@@ -111,8 +111,7 @@ class ShippingCancel(APIView):
         """
         Cancel a shipment and the label previously created
         """
-        payload = serializers.SerializerDecorator[ShipmentCancelRequest](data=request.data).data
-
+        payload = ShipmentCancelRequest.map(data=request.data).data
         response = Shipments.cancel(payload, context=request, carrier_name=carrier_name)
 
         return Response(

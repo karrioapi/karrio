@@ -45,9 +45,7 @@ class CarrierSerializer(serializers.Serializer):
                 if "id" in carrier_config_data
                 else []
             )
-            carrier_config = serializers.SerializerDecorator[serializer](
-                *_args, data=carrier_config_data
-            ).data
+            carrier_config = serializer.map(*_args, data=carrier_config_data).data
             kwargs.update(
                 data=dict(carrier_name=carrier_name, carrier_config=carrier_config)
             )

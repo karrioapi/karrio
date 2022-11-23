@@ -8,18 +8,10 @@ from django.forms.models import model_to_dict
 from rest_framework import serializers
 from drf_spectacular.types import OpenApiTypes
 
-from karrio.core.utils import DP
+import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
-
-
-class AbstractSerializer:
-    def create(self, validated_data, **kwargs):
-        super().create(validated_data)
-
-    def update(self, instance, validated_data, **kwargs):
-        super().update(instance, validated_data, **kwargs)
 
 
 class Context(NamedTuple):
@@ -29,6 +21,60 @@ class Context(NamedTuple):
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+
+class DecoratedSerializer:
+    def __init__(
+        self,
+        instance: models.Model = None,
+        serializer: "Serializer" = None,
+    ):
+        self._instance = instance
+        self._serializer = serializer
+
+    @property
+    def data(self) -> Optional[dict]:
+        return (
+            self._serializer.validated_data
+            if self._serializer is not None
+            else None
+        )
+
+    @property
+    def instance(self) -> models.Model:
+        return self._instance
+
+    def save(self, **kwargs) -> "DecoratedSerializer":
+        if self._serializer is not None:
+            self._instance = self._serializer.save(**kwargs)
+
+        return self
+
+
+class AbstractSerializer:
+    def create(self, validated_data, **kwargs):
+        super().create(validated_data)
+
+    def update(self, instance, validated_data, **kwargs):
+        super().update(instance, validated_data, **kwargs)
+
+    @classmethod
+    def map(cls, instance=None, data: Union[str, dict] = None, **kwargs) -> "DecoratedSerializer":
+        if data is None and instance is None:
+            serializer = None
+        else:
+            serializer = (
+                cls(data=data or {}, **kwargs)  # type:ignore
+                if instance is None
+                else cls(instance, data=data or {}, **{**kwargs, "partial": True})  # type:ignore
+            )
+
+            serializer.is_valid(raise_exception=True)  # type:ignore
+
+        return DecoratedSerializer(
+            instance=instance,
+            serializer=serializer,   # type:ignore
+        )
 
 
 class Serializer(serializers.Serializer, AbstractSerializer):
@@ -108,50 +154,6 @@ def PaginatedResult(serializer_name: str, content_serializer: Type[Serializer]):
             results=content_serializer(many=True),
         ),
     )
-
-
-class _SerializerDecoratorInitializer(Generic[T]):
-    def __getitem__(self, serializer_type: Type[Serializer]):
-        class Decorator:
-            def __init__(self, instance=None, data: Union[str, dict] = None, **kwargs):
-                self._instance = instance
-
-                if data is None and instance is None:
-                    self._serializer = None
-
-                else:
-                    self._serializer: serializer_type = (  # type: ignore
-                        serializer_type(data=data, **kwargs)
-                        if instance is None
-                        else serializer_type(
-                            instance, data=data, **{**kwargs, "partial": True}
-                        )
-                    )
-
-                    self._serializer.is_valid(raise_exception=True)
-
-            @property
-            def data(self) -> Optional[dict]:
-                return (
-                    self._serializer.validated_data
-                    if self._serializer is not None
-                    else None
-                )
-
-            @property
-            def instance(self):
-                return self._instance
-
-            def save(self, **kwargs) -> "Decorator":
-                if self._serializer is not None:
-                    self._instance = self._serializer.save(**kwargs)
-
-                return self
-
-        return Decorator
-
-
-SerializerDecorator = _SerializerDecoratorInitializer()  # type: ignore
 
 
 def owned_model_serializer(serializer: Type[Serializer]):
@@ -254,11 +256,13 @@ def save_many_to_many_data(
         )
 
         if item_instance is None:
-            item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
+            item = serializer.map(data=data, **kwargs).save().instance
         else:
             item = (
-                SerializerDecorator[serializer](
-                    instance=item_instance, data=data, **{**kwargs, "partial": True}
+                serializer.map(
+                    data=data,
+                    instance=item_instance,
+                    **{**kwargs, "partial": True},
                 )
                 .save()
                 .instance
@@ -286,16 +290,13 @@ def save_one_to_one_data(
         setattr(parent, name, None)
 
     if instance is None:
-        new_instance = (
-            SerializerDecorator[serializer](data=data, **kwargs).save().instance
-        )
+        new_instance = serializer.map(data=data, **kwargs).save().instance
         parent and setattr(parent, name, new_instance)  # type: ignore
         return new_instance
 
     return (
-        SerializerDecorator[serializer](
-            instance=instance, data=data, partial=True, **kwargs
-        )
+        serializer
+        .map(instance=instance, data=data, partial=True, **kwargs)
         .save()
         .instance
     )
@@ -372,7 +373,7 @@ def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> di
     data = payload.copy()
 
     for key in [k for k in keys if k in payload]:
-        options = DP.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+        options = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
         data.update({key: options})
 
     return data

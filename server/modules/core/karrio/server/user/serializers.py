@@ -2,7 +2,6 @@ from karrio.server.serializers import (
     owned_model_serializer,
     Serializer,
     Context,
-    SerializerDecorator,
 )
 from karrio.server.user.models import Token
 
@@ -46,6 +45,4 @@ class TokenSerializer(Serializer):
         if tokens.exists():
             return tokens.first()
 
-        return (
-            SerializerDecorator[TokenSerializer](data={}, context=ctx).save().instance
-        )
+        return TokenSerializer.map(data={}, context=ctx).save().instance

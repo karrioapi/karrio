@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 from karrio.core import utils
 from karrio.server.core.utils import identity
-from karrio.server.serializers import Context, SerializerDecorator
+from karrio.server.serializers import Context
 from karrio.server.events import models
 from karrio.server.events import serializers
 
@@ -32,7 +32,7 @@ def notify_webhook_subscribers(
     )
 
     webhooks = models.Webhook.access_by(context).filter(*query)
-    SerializerDecorator[serializers.EventSerializer](
+    serializers.EventSerializer.map(
         data=dict(
             type=event,
             data=data,

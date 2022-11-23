@@ -11,7 +11,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from karrio.server.serializers import SerializerDecorator, PaginatedResult
+from karrio.server.serializers import PaginatedResult
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.gateway import Carriers
 from karrio.server.core import datatypes, dataunits
@@ -56,10 +56,7 @@ class CarrierList(GenericAPIView):
         """
         Returns the list of configured carriers
         """
-        filter = {
-            **SerializerDecorator[filters.CarrierFilters](data=request.query_params).data,
-            "context": request,
-        }
+        filter = {**request.query_params, "context": request }
 
         carriers = [carrier.data for carrier in Carriers.list(**filter)]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)

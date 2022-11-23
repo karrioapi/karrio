@@ -441,7 +441,8 @@ def shipment_import_resource(query_params: dict, context, data_fields: dict = No
             ))
 
             instance = (
-                serializers.SerializerDecorator[ShipmentSerializer](data=data, context=context)
+                ShipmentSerializer
+                .map(data=data, context=context)
                 .save(fetch_rates=False)
                 .instance
             )

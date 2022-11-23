@@ -9,7 +9,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from karrio.server.manager.router import router
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
     ParcelData,
@@ -74,7 +73,7 @@ class ParcelList(GenericAPIView):
         Create a new parcel.
         """
         parcel = (
-            SerializerDecorator[ParcelSerializer](data=request.data, context=request)
+            ParcelSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -119,7 +118,7 @@ class ParcelDetail(APIView):
         parcel = models.Parcel.access_by(request).get(pk=pk)
         can_mutate_parcel(parcel, update=True)
 
-        SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
+        ParcelSerializer.map(parcel, data=request.data).save()
 
         return Response(Parcel(parcel).data)
 

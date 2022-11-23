@@ -8,7 +8,7 @@ from rest_framework.pagination import LimitOffsetPagination
 
 import karrio.server.openapi as openapi
 from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.serializers import SerializerDecorator, PaginatedResult, PlainDictField
+from karrio.server.serializers import PaginatedResult, PlainDictField
 from karrio.server.core.serializers import Operation, ErrorResponse
 from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
 from karrio.server.events.task_definitions.base.webhook import notify_subscribers
@@ -62,7 +62,7 @@ class WebhookList(GenericAPIView):
     def post(self, request: Request):
         """Create a new webhook."""
         webhook = (
-            SerializerDecorator[WebhookSerializer](data=request.data, context=request)
+            WebhookSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -106,7 +106,7 @@ class WebhookDetails(APIView):
         """
         webhook = models.Webhook.access_by(request).get(pk=pk)
 
-        SerializerDecorator[WebhookSerializer](webhook, data=request.data).save()
+        WebhookSerializer.map(webhook, data=request.data).save()
         return Response(Webhook(webhook).data)
 
     @openapi.extend_schema(
