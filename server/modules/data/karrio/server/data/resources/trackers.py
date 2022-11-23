@@ -109,7 +109,7 @@ def tracker_import_resource(query_params: dict, context, data_fields: dict = Non
                 )
                 carriers = {
                     carrier_name: gateway.Carriers.first(
-                        context=context, carrier_name=carrier_name
+                        context=context, carrier_name=carrier_name, capability='tracking',
                     )
                     for carrier_name in set(carrier_col)
                 }
