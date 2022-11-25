@@ -31,7 +31,8 @@ class WebhookFilter(django_filters.FilterSet):
 
     def events_filter(self, queryset, name, values):
         return queryset.filter(
-            Q(enabled_events__contains=values) | Q(enabled_events__contains=["all"])
+            Q(enabled_events__contains=values)
+            | Q(enabled_events__contains=["all"])
         )
 
 

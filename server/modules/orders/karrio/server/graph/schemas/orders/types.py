@@ -67,7 +67,7 @@ class OrderType:
         info,
         filter: typing.Optional[inputs.OrderFilter] = strawberry.UNSET,
     ) -> utils.Connection["OrderType"]:
-        _filter = filter if filter is not strawberry.UNSET else inputs.OrderFilter()
+        _filter = filter if not utils.is_unset(filter) else inputs.OrderFilter()
         queryset = filters.OrderFilters(
             _filter.to_dict(), models.Order.access_by(info.context.request)
         ).qs

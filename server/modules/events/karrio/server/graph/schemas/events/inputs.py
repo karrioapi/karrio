@@ -14,7 +14,6 @@ class CreateWebhookMutationInput(utils.BaseInput):
     enabled_events: typing.List[EventStatusEnum]
     description: typing.Optional[str] = strawberry.UNSET
     disabled: typing.Optional[bool] = False
-    test_mode: typing.Optional[bool] = False
 
 
 @strawberry.input
@@ -34,7 +33,6 @@ class UpdateWebhookMutationInput(utils.BaseInput):
     enabled_events: typing.List[EventStatusEnum] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     disabled: typing.Optional[bool] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input

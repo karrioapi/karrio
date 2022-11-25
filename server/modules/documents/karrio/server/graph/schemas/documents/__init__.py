@@ -41,6 +41,6 @@ class Mutation:
     ) -> base.mutations.DeleteMutation:
         return base.mutations.DeleteMutation.mutate(
             info,
-            models.DocumentTemplate,
+            model=models.DocumentTemplate,
             **input.to_dict()
         )

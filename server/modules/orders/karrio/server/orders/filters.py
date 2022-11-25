@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.conf import settings
 from django_filters import rest_framework as filters
 
 from karrio.server.core.filters import CharInFilter
@@ -136,6 +137,21 @@ class OrderFilters(filters.FilterSet):
         fields: list = []
 
     def keyword_filter(self, queryset, name, value):
+        if 'postgres' in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+            return queryset.annotate(search=SearchVector(
+                'shipping_to__address_line1',
+                'shipping_to__address_line2',
+                'shipping_to__postal_code',
+                'shipping_to__person_name',
+                'shipping_to__company_name',
+                'shipping_to__city',
+                'shipping_to__email',
+                'shipping_to__phone_number',
+                'order_id',
+                'source',
+            )).filter(search=value)
+
         return queryset.filter(
             Q(shipping_to__address_line1__icontains=value)
             | Q(shipping_to__address_line2__icontains=value)
@@ -150,6 +166,19 @@ class OrderFilters(filters.FilterSet):
         )
 
     def address_filter(self, queryset, name, value):
+        if 'postgres' in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+            return queryset.annotate(search=SearchVector(
+                'shipping_to__address_line1',
+                'shipping_to__address_line2',
+                'shipping_to__postal_code',
+                'shipping_to__person_name',
+                'shipping_to__company_name',
+                'shipping_to__city',
+                'shipping_to__email',
+                'shipping_to__phone_number',
+            )).filter(search=value)
+
         return queryset.filter(
             Q(shipping_to__address_line1__icontains=value)
             | Q(shipping_to__address_line2__icontains=value)

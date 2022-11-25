@@ -1,5 +1,6 @@
 import typing
 from django.db.models import Q
+from django.conf import settings
 from django_filters import rest_framework as filters
 
 import karrio.server.core.serializers as serializers
@@ -198,6 +199,22 @@ class ShipmentFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def address_filter(self, queryset, name, value):
+        if "postgres" in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "recipient__address_line1",
+                    "recipient__address_line2",
+                    "recipient__postal_code",
+                    "recipient__person_name",
+                    "recipient__company_name",
+                    "recipient__city",
+                    "recipient__email",
+                    "recipient__phone_number",
+                )
+            ).filter(search=value)
+
         return queryset.filter(
             Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)
@@ -211,6 +228,24 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def keyword_filter(self, queryset, name, value):
+        if "postgres" in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "reference",
+                    "tracking_number",
+                    "recipient__address_line1",
+                    "recipient__address_line2",
+                    "recipient__postal_code",
+                    "recipient__person_name",
+                    "recipient__company_name",
+                    "recipient__city",
+                    "recipient__email",
+                    "recipient__phone_number",
+                )
+            ).filter(search=value)
+
         return queryset.filter(
             Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)

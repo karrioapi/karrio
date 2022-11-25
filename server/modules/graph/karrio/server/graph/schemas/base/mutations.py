@@ -330,11 +330,12 @@ class MetadataMutation(utils.BaseMutation):
     def mutate(
         info: Info,
         id: str,
-        object_type: typing.Any,
+        object_type: utils.MetadataObjectTypeEnum,
         added_values: dict = {},
         discarded_keys: list = [],
     ) -> "MetadataMutation":
-        instance = object_type.access_by(info.context.request).get(id=id)
+        object_model = utils.MetadataObjectType[object_type].value
+        instance = object_model.access_by(info.context.request).get(id=id)
         instance.metadata = {
             key: value
             for key, value in (instance.metadata or {}).items()

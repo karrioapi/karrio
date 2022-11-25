@@ -5,11 +5,12 @@ import typing
 import functools
 import strawberry
 import dataclasses
-from django import conf as django
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
+import karrio.server.apps.models as apps
+import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
 import karrio.server.core.permissions as permissions
@@ -60,28 +61,18 @@ TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
 )
 
 
-def metadata_object_types() -> enum.Enum:
-    _types = [
-        ("carrier", providers.Carrier),
-        ("commodity", manager.Commodity),
-        ("shipment", manager.Shipment),
-        ("tracker", manager.Tracking),
-    ]
-
-    if django.settings.ORDERS_MANAGEMENT:
-        import karrio.server.orders.models as orders
-
-        _types.append(("order", orders.Order))
-
-    if django.settings.APPS_MANAGEMENT:
-        import karrio.server.apps.models as apps
-
-        _types.append(("app", apps.App))
-
-    return enum.Enum("MetadataObjectType", _types)
+class MetadataObjectType(lib.Flag):
+    app = apps.App
+    carrier = providers.Carrier
+    commodity = manager.Commodity
+    shipment = manager.Shipment
+    tracker = manager.Tracking
+    order = orders.Order
 
 
-MetadataObjectTypeEnum: typing.Any = strawberry.enum(metadata_object_types())  # type: ignore
+MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
+    enum.Enum("MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)])
+)
 
 
 def authentication_required(func):

@@ -72,4 +72,5 @@ class GraphQLView(AccessMixin, views.GraphQLView):
 
 urlpatterns = [
     path("graphql/", csrf_exempt(GraphQLView.as_view(schema=schema.schema)), name="graphql"),
+    path("graphql", csrf_exempt(GraphQLView.as_view(schema=schema.schema)), name="graphql-api"),
 ]
