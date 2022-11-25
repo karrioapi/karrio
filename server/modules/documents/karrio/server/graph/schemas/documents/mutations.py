@@ -21,7 +21,7 @@ class CreateDocumentTemplateMutation(utils.BaseMutation):
     ) -> "CreateDocumentTemplateMutation":
         serializer = serializers.DocumentTemplateModelSerializer(
             data=input,
-            context=info.context,
+            context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
 
@@ -44,7 +44,7 @@ class UpdateDocumentTemplateMutation(utils.BaseMutation):
             instance,
             data=input,
             partial=True,
-            context=info.context,
+            context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
 

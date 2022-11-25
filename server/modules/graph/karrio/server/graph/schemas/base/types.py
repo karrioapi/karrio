@@ -198,6 +198,7 @@ class RateType:
     @staticmethod
     def parse(rate: dict):
         return RateType(**{
+            "object_type": "rate",
             **{
                 k:v for k,v
                 in rate.items()
@@ -709,6 +710,9 @@ def create_carrier_settings_type(name: str, model):
     @strawberry.type
     class _Settings(ConnectionType):
         metadata: utils.JSON = strawberry.UNSET
+
+        if hasattr(model, "account_number"):
+            account_number: typing.Optional[str] = strawberry.UNSET
 
         if hasattr(model, "account_country_code"):
             account_country_code: typing.Optional[str] = strawberry.UNSET

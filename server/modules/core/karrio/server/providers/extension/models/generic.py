@@ -10,9 +10,9 @@ class GenericSettings(Carrier):
         verbose_name = "Custom Carrier Settings"
         verbose_name_plural = "Custom Carrier Settings"
 
-    display_name = models.CharField(max_length=50, help_text="Carrier display name")
+    display_name = models.CharField(max_length=30, help_text="Carrier display name")
     custom_carrier_name = models.CharField(
-        max_length=50,
+        max_length=30,
         validators=[RegexValidator(r"^[a-z0-9_]+$")],
         help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
     )
@@ -20,7 +20,7 @@ class GenericSettings(Carrier):
     label_template = models.OneToOneField(
         "LabelTemplate", null=True, blank=True, on_delete=models.CASCADE
     )
-    account_number = models.CharField(max_length=25, blank=True)
+    account_number = models.CharField(max_length=20, null=True, blank=True, default="")
     account_country_code = models.CharField(
         max_length=3, null=True, blank=True, choices=COUNTRIES
     )

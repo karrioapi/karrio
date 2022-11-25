@@ -218,7 +218,7 @@ class UpdateParcelInput(ParcelInput):
 @strawberry.input
 class DutyInput:
     paid_by: utils.PaidByEnum
-    currency: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     account_number: typing.Optional[str] = strawberry.UNSET
     declared_value: typing.Optional[float] = strawberry.UNSET
     bill_to: typing.Optional[AddressInput] = strawberry.UNSET
@@ -375,7 +375,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
         _name = f"{'Update' if is_update else ''}{model.__name__}Input"
         _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
         _excluded = ["services", "id"]
-        _optionals = ["account_country_code", "label_template"]
+        _optionals = ["account_country_code", "label_template", "test_mode"]
         _template_type: typing.Any = (
             "UpdateLabelTemplateInput" if is_update else "CreateLabelTemplateInput"
         )

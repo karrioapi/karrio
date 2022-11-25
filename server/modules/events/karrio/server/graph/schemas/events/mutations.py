@@ -45,7 +45,7 @@ class UpdateWebhookMutation(utils.BaseMutation):
             webhook,
             data=input,
             partial=True,
-            context=info.context,
+            context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
