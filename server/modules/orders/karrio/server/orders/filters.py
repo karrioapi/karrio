@@ -1,8 +1,7 @@
 from django.db.models import Q
 from django.conf import settings
-from django_filters import rest_framework as filters
 
-from karrio.server.core.filters import CharInFilter
+import karrio.server.filters as filters
 import karrio.server.orders.serializers as serializers
 import karrio.server.orders.models as models
 import karrio.server.openapi as openapi
@@ -13,17 +12,17 @@ class OrderFilters(filters.FilterSet):
         method="address_filter",
         help_text="customer address line",
     )
-    id = CharInFilter(
+    id = filters.CharInFilter(
         field_name="id",
         lookup_expr='in',
         help_text="id(s).",
     )
-    order_id = CharInFilter(
+    order_id = filters.CharInFilter(
         field_name="order_id",
         method="order_id_filter",
         help_text="source order order_id(s).",
     )
-    source = CharInFilter(
+    source = filters.CharInFilter(
         field_name="source",
         method="source_filter",
         help_text="order source(s).",
@@ -43,7 +42,7 @@ class OrderFilters(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.OrderStatus)],
         help_text="order statuses.",
     )
-    option_key = CharInFilter(
+    option_key = filters.CharInFilter(
         field_name="options",
         method="option_key_filter",
         help_text="order option keys.",
@@ -53,7 +52,7 @@ class OrderFilters(filters.FilterSet):
         method="option_value_filter",
         help_text="order option value",
     )
-    metadata_key = CharInFilter(
+    metadata_key = filters.CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
         help_text="order metadata keys.",

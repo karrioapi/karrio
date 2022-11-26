@@ -11,6 +11,7 @@ from karrio.server.user.models import Token
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class Result:
     data: dict = None
@@ -65,9 +66,11 @@ class GraphTestCase(BaseAPITestCase):
             consumer_secret="password",
         )
 
-    def query(self, query: str, operation_name: str = None, variables: dict = None) -> Result:
+    def query(
+        self, query: str, operation_name: str = None, variables: dict = None
+    ) -> Result:
         url = reverse("karrio.server.graph:graphql")
-        data =  dict(
+        data = dict(
             query=query,
             variables=variables,
             operation_name=operation_name,
@@ -81,7 +84,10 @@ class GraphTestCase(BaseAPITestCase):
         )
 
     def assertResponseNoErrors(self, result: Result):
-        if result.status_code != status.HTTP_200_OK or result.data.get("errors") is not None:
+        if (
+            result.status_code != status.HTTP_200_OK
+            or result.data.get("errors") is not None
+        ):
             print(result.data)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)

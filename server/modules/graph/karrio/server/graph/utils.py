@@ -144,17 +144,6 @@ class BaseInput:
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         return dataclass_to_dict(self)
 
-    def to_filter_dict(self) -> typing.Dict[str, typing.Any]:
-        result = self.to_dict()
-        return {
-            key: (
-                ','.join(val)
-                if self.__annotations__.get(key) == typing.Optional[typing.List[str]]
-                else val
-            )
-            for key, val in result.items()
-        }
-
 
 @strawberry.type
 class BaseMutation:

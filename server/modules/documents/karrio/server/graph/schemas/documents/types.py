@@ -37,6 +37,6 @@ class DocumentTemplateType:
     ) -> utils.Connection["DocumentTemplateType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.DocumentTemplateFilter()
         queryset = filters.DocumentTemplateFilter(
-            _filter.to_filter_dict(), models.DocumentTemplate.access_by(info.context.request)
+            _filter.to_dict(), models.DocumentTemplate.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())

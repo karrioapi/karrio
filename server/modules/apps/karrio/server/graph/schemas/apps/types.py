@@ -40,7 +40,7 @@ class AppType:
     ) -> utils.Connection["AppType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.AppFilter()
         queryset = filters.AppFilter(
-            _filter.to_filter_dict(), models.App.access_by(info.context.request)
+            _filter.to_dict(), models.App.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -78,7 +78,7 @@ class PrivateAppType:
     ) -> utils.Connection["PrivateAppType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.AppFilter()
         queryset = filters.AppFilter(
-            _filter.to_filter_dict(), models.App.access_by(info.context.request)
+            _filter.to_dict(), models.App.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -107,6 +107,6 @@ class AppInstallationType:
     ) -> utils.Connection["AppInstallationType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.AppInstallationFilter()
         queryset = filters.AppInstallationFilter(
-            _filter.to_filter_dict(), models.AppInstallation.access_by(info.context.request)
+            _filter.to_dict(), models.AppInstallation.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
