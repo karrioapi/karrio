@@ -321,21 +321,14 @@ class DeleteMutationInput(utils.BaseInput):
 
 
 @strawberry.input
-class CreateLabelTemplateInput(utils.BaseInput):
+class LabelTemplateInput(utils.BaseInput):
     slug: str
     template: str
     template_type: utils.LabelTemplateTypeEnum
     width: typing.Optional[int] = strawberry.UNSET
     height: typing.Optional[int] = strawberry.UNSET
     shipment_sample: typing.Optional[utils.JSON] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateLabelTemplateInput(utils.BaseInput):
-    id: str
-    slug: typing.Optional[str] = strawberry.UNSET
-    template: typing.Optional[str] = strawberry.UNSET
-    template_type: typing.Optional[utils.LabelTemplateTypeEnum] = strawberry.UNSET
+    id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -376,9 +369,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
         _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
         _excluded = ["services", "id"]
         _optionals = ["account_country_code", "label_template", "test_mode"]
-        _template_type: typing.Any = (
-            "UpdateLabelTemplateInput" if is_update else "CreateLabelTemplateInput"
-        )
+        _template_type: typing.Any = "LabelTemplateInput"
         _service_type: typing.Any = typing.List[ # type: ignore
             "UpdateServiceLevelInput" if is_update else "CreateServiceLevelInput"
         ]
