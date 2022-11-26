@@ -144,6 +144,17 @@ class BaseInput:
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         return dataclass_to_dict(self)
 
+    def to_filter_dict(self) -> typing.Dict[str, typing.Any]:
+        result = self.to_dict()
+        return {
+            key: (
+                ','.join(val)
+                if self.__annotations__.get(key) == typing.Optional[typing.List[str]]
+                else val
+            )
+            for key, val in result.items()
+        }
+
 
 @strawberry.type
 class BaseMutation:
@@ -227,7 +238,7 @@ def paginated_connection(
             start_cursor=edges[0].cursor if edges else None,
             end_cursor=edges[-2].cursor if len(edges) > 1 else None,
         ),
-        edges=edges[:-1],
+        edges=(edges[:-1] if len(edges) > first else edges),
     )
 
 

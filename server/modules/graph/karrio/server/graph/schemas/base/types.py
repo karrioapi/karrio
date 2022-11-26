@@ -85,7 +85,7 @@ class LogType:
     ) -> utils.Connection["LogType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.LogFilter()
         queryset = filters.LogFilter(
-            _filter.to_dict(), core.APILog.access_by(info.context.request)
+            _filter.to_filter_dict(), core.APILog.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -129,7 +129,7 @@ class TracingRecordType:
     ) -> utils.Connection["TracingRecordType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TracingRecordFilter()
         queryset = filters.TracingRecordFilter(
-            _filter.to_dict(), tracing.TracingRecord.access_by(info.context.request)
+            _filter.to_filter_dict(), tracing.TracingRecord.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -492,7 +492,7 @@ class TrackerType:
     ) -> utils.Connection["TrackerType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
         queryset = filters.TrackerFilters(
-            _filter.to_dict(), manager.Tracking.access_by(info.context.request)
+            _filter.to_filter_dict(), manager.Tracking.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -583,7 +583,7 @@ class ShipmentType:
     ) -> utils.Connection["ShipmentType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
         queryset = filters.ShipmentFilters(
-            _filter.to_dict(), manager.Shipment.access_by(info.context.request)
+            _filter.to_filter_dict(), manager.Shipment.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
