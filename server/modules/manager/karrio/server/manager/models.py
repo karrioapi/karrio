@@ -98,6 +98,9 @@ class ParcelManager(models.Manager):
             .prefetch_related(
                 "items",
             )
+            .order_by(
+                "-created_by"
+            )
         )
 
 
@@ -113,7 +116,7 @@ class Parcel(OwnedEntity):
         db_table = "parcel"
         verbose_name = "Parcel"
         verbose_name_plural = "Parcels"
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     id = models.CharField(
         max_length=50,
@@ -172,7 +175,7 @@ class Commodity(OwnedEntity):
         db_table = "commodity"
         verbose_name = "Commodity"
         verbose_name_plural = "Commodities"
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     id = models.CharField(
         max_length=50,

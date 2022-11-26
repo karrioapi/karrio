@@ -352,7 +352,11 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data: dict, context: serializers.Context, **kwargs):
-        carrier_name = instance.settings.carrier_name
+        carrier_name = (
+            instance.settings.carrier_name
+            if instance.settings.carrier_name in providers.MODELS
+            else 'generic'
+        )
         settings_name = instance.settings.__class__.__name__.lower()
         serializer = CARRIER_MODEL_SERIALIZERS.get(carrier_name)
 
@@ -371,6 +375,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         )
 
         template = validated_data.get(carrier_name, {}).get("label_template")
+
         if template:
             settings.label_template = serializers.save_one_to_one_data(
                 "label_template",

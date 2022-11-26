@@ -509,33 +509,37 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     def mutate(info: Info, **input) -> "UpdateCarrierConnectionMutation":
-        data = input.copy()
-        settings_data = typing.cast(dict, next(iter(data.values()), {}))
-        id = settings_data.get("id")
-        instance = providers.Carrier.access_by(info.context.request).get(id=id)
+        try:
+            data = input.copy()
+            settings_data = typing.cast(dict, next(iter(data.values()), {}))
+            id = settings_data.get("id")
+            instance = providers.Carrier.access_by(info.context.request).get(id=id)
 
-        serializer = serializers.PartialConnectionModelSerializer(
-            instance,
-            data=data,
-            partial=True,
-            context=info.context.request,
-        )
-        serializer.is_valid(raise_exception=True)
-
-        if "services" in settings_data:
-            save_many_to_many_data(
-                "services",
-                serializers.ServiceLevelModelSerializer,
-                instance.settings,
-                payload=settings_data,
+            serializer = serializers.PartialConnectionModelSerializer(
+                instance,
+                data=data,
+                partial=True,
                 context=info.context.request,
             )
+            serializer.is_valid(raise_exception=True)
 
-        connection = serializer.save()
+            if "services" in settings_data:
+                save_many_to_many_data(
+                    "services",
+                    serializers.ServiceLevelModelSerializer,
+                    instance.settings,
+                    payload=settings_data,
+                    context=info.context.request,
+                )
 
-        return UpdateCarrierConnectionMutation(  # type:ignore
-            connection=types.ConnectionType.parse(connection)
-        )
+            connection = serializer.save()
+
+            return UpdateCarrierConnectionMutation(  # type:ignore
+                connection=types.ConnectionType.parse(connection)
+            )
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
 
 @strawberry.type
