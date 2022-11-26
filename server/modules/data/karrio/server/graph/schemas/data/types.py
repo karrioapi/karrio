@@ -35,7 +35,7 @@ class DataTemplateType:
     ) -> utils.Connection["DataTemplateType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.DataTemplateFilter()
         queryset = filters.DataTemplateFilter(
-            _filter.to_dict(), models.DataTemplate.access_by(info.context.request)
+            _filter.to_filter_dict(), models.DataTemplate.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -73,6 +73,6 @@ class BatchOperationType:
     ) -> utils.Connection["BatchOperationType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.BatchOperationFilter()
         queryset = filters.BatchOperationFilter(
-            _filter.to_dict(), models.BatchOperation.access_by(info.context.request)
+            _filter.to_filter_dict(), models.BatchOperation.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())

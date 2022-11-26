@@ -67,8 +67,14 @@ class OrderType:
         info,
         filter: typing.Optional[inputs.OrderFilter] = strawberry.UNSET,
     ) -> utils.Connection["OrderType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.OrderFilter()
-        queryset = filters.OrderFilters(
-            _filter.to_dict(), models.Order.access_by(info.context.request)
-        ).qs
-        return utils.paginated_connection(queryset, **_filter.pagination())
+        try:
+            _filter = filter if not utils.is_unset(filter) else inputs.OrderFilter()
+            queryset = filters.OrderFilters(
+                _filter.to_filter_dict(), models.Order.access_by(info.context.request)
+            ).qs
+            return utils.paginated_connection(queryset, **_filter.pagination())
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.exception(e)
+            raise e

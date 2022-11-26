@@ -15,7 +15,7 @@ class OrderFilters(filters.FilterSet):
     )
     id = CharInFilter(
         field_name="id",
-        method="id_filter",
+        lookup_expr='in',
         help_text="id(s).",
     )
     order_id = CharInFilter(
