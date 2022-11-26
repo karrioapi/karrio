@@ -38,7 +38,7 @@ class WebhookType:
     ) -> utils.Connection["WebhookType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.WebhookFilter()
         queryset = filters.WebhookFilter(
-            _filter.to_filter_dict(), models.Webhook.access_by(info.context.request)
+            _filter.to_dict(), models.Webhook.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -74,6 +74,6 @@ class EventType:
     ) -> utils.Connection["EventType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.EventFilter()
         queryset = filters.EventFilter(
-            _filter.to_filter_dict(), models.Event.access_by(info.context.request)
+            _filter.to_dict(), models.Event.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())

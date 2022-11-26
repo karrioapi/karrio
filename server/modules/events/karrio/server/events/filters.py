@@ -1,29 +1,29 @@
 import typing
-import django_filters
 from django.db.models import Q
 
 import karrio.server.events.serializers as serializers
 import karrio.server.events.models as models
+import karrio.server.filters as filters
 
 
-class WebhookFilter(django_filters.FilterSet):
-    created_after = django_filters.DateTimeFilter(
+class WebhookFilter(filters.FilterSet):
+    created_after = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
-    created_before = django_filters.DateTimeFilter(
+    created_before = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    description = django_filters.CharFilter(
+    description = filters.CharFilter(
         field_name="description", lookup_expr="icontains"
     )
-    events = django_filters.MultipleChoiceFilter(
+    events = filters.MultipleChoiceFilter(
         field_name="enabled_events",
         method="events_filter",
         choices=[(s, s) for s in serializers.EVENT_TYPES],
     )
-    disabled = django_filters.BooleanFilter(field_name="disabled")
-    test_mode = django_filters.BooleanFilter(field_name="test_mode")
-    url = django_filters.CharFilter(field_name="url", lookup_expr="icontains")
+    disabled = filters.BooleanFilter(field_name="disabled")
+    test_mode = filters.BooleanFilter(field_name="test_mode")
+    url = filters.CharFilter(field_name="url", lookup_expr="icontains")
 
     class Meta:
         model = models.Webhook
@@ -36,15 +36,15 @@ class WebhookFilter(django_filters.FilterSet):
         )
 
 
-class EventFilter(django_filters.FilterSet):
-    entity_id = django_filters.CharFilter(method="entity_filter", field_name="response")
-    date_after = django_filters.DateTimeFilter(
+class EventFilter(filters.FilterSet):
+    entity_id = filters.CharFilter(method="entity_filter", field_name="response")
+    date_after = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
-    date_before = django_filters.DateTimeFilter(
+    date_before = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
-    type = django_filters.MultipleChoiceFilter(
+    type = filters.MultipleChoiceFilter(
         field_name="type",
         method="types_filter",
         choices=[

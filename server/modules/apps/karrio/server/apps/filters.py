@@ -1,11 +1,11 @@
 import django_filters
 from django.db.models import Q
 
-import karrio.server.core.filters as filters
+import karrio.server.filters as filters
 import karrio.server.apps.models as models
 
 
-class AppInstallationFilter(django_filters.FilterSet):
+class AppInstallationFilter(filters.FilterSet):
     created_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
@@ -32,7 +32,7 @@ class AppInstallationFilter(django_filters.FilterSet):
         return queryset.filter(Q(metadata__values__contains=value))
 
 
-class AppFilter(django_filters.FilterSet):
+class AppFilter(filters.FilterSet):
     feature = django_filters.CharFilter(field_name="features", lookup_expr="icontains")
     created_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"

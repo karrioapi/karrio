@@ -1,5 +1,4 @@
-from django_filters import rest_framework as filters
-
+import karrio.server.filters as filters
 import karrio.server.data.models as models
 import karrio.server.data.serializers as serializers
 

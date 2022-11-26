@@ -43,7 +43,6 @@ class TestAddressTemplate(GraphTestCase):
 
     def test_create_address_template(self):
         response = self._create_address_template()
-
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, ADDRESS_TEMPLATE_RESPONSE)
 
@@ -582,17 +581,6 @@ CUSTOMS_TEMPLATE_RESPONSE = {
                     "commodities": [
                         {
                             "id": ANY,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
-                            "weight": 0.75,
-                            "quantity": 4,
-                            "weight_unit": "KG",
-                            "description": None,
-                            "value_amount": None,
-                            "value_currency": None,
-                            "origin_country": None
-                        },
-                        {
-                            "id": ANY,
                             "sku": "6787L8K7J8L7J8L7K8",
                             "weight": 1.15,
                             "quantity": 1,
@@ -600,12 +588,23 @@ CUSTOMS_TEMPLATE_RESPONSE = {
                             "description": None,
                             "value_amount": None,
                             "value_currency": None,
-                            "origin_country": None
-                        }
-                    ]
-                }
+                            "origin_country": None,
+                        },
+                        {
+                            "id": ANY,
+                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "weight": 0.75,
+                            "quantity": 4,
+                            "weight_unit": "KG",
+                            "description": None,
+                            "value_amount": None,
+                            "value_currency": None,
+                            "origin_country": None,
+                        },
+                    ],
+                },
             },
-            "errors": None
+            "errors": None,
         }
     }
 }
@@ -641,7 +640,7 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                         "currency": None,
                         "account_number": None,
                         "declared_value": None,
-                        "bill_to": None
+                        "bill_to": None,
                     },
                     "invoice": None,
                     "signer": None,
@@ -649,30 +648,30 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                     "commodities": [
                         {
                             "id": ANY,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "sku": "6787L8K7J8L7J8L7K8",
                             "weight": 1.0,
                             "quantity": 1,
                             "weight_unit": "LB",
                             "description": None,
                             "value_amount": None,
                             "value_currency": None,
-                            "origin_country": None
+                            "origin_country": None,
                         },
                         {
                             "id": ANY,
-                            "sku": "6787L8K7J8L7J8L7K8",
-                            "weight": 1.15,
-                            "quantity": 1,
+                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "weight": 0.75,
+                            "quantity": 4,
                             "weight_unit": "KG",
                             "description": None,
                             "value_amount": None,
                             "value_currency": None,
-                            "origin_country": None
-                        }
-                    ]
-                }
+                            "origin_country": None,
+                        },
+                    ],
+                },
             },
-            "errors": None
+            "errors": None,
         }
     }
 }

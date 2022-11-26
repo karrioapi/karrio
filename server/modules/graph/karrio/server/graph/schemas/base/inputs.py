@@ -46,7 +46,7 @@ class ShipmentFilter(utils.Paginated):
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
     service: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[typing.List[str]] = strawberry.UNSET
+    status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
     option_key: typing.Optional[typing.List[str]] = strawberry.UNSET
     option_value: typing.Optional[str] = strawberry.UNSET
     metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET

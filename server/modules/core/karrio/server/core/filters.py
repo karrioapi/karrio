@@ -1,17 +1,14 @@
 import typing
 from django.db.models import Q
 from django.conf import settings
-from django_filters import rest_framework as filters
 
 import karrio.server.core.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
+import karrio.server.filters as filters
 import karrio.server.openapi as openapi
 
-
-class CharInFilter(filters.BaseInFilter, filters.CharFilter):
-    pass
 
 
 class CarrierFilters(filters.FilterSet):
@@ -75,10 +72,9 @@ class ShipmentFilters(filters.FilterSet):
         lookup_expr="icontains",
         help_text="a shipment reference",
     )
-    service = CharInFilter(
+    service = filters.CharInFilter(
         method="service_filter",
         field_name="selected_rate__service",
-        lookup_expr="in",
         help_text="preferred carrier services.",
     )
     status = filters.MultipleChoiceFilter(
@@ -89,7 +85,7 @@ class ShipmentFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
         """,
     )
-    option_key = CharInFilter(
+    option_key = filters.CharInFilter(
         field_name="options",
         method="option_key_filter",
         help_text="shipment option keys.",
@@ -99,7 +95,7 @@ class ShipmentFilters(filters.FilterSet):
         method="option_value_filter",
         help_text="shipment option value",
     )
-    metadata_key = CharInFilter(
+    metadata_key = filters.CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
         help_text="shipment metadata keys.",
