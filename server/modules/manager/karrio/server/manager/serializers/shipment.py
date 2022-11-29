@@ -13,7 +13,10 @@ import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.serializers import (
-    Serializer, CharField, ChoiceField, BooleanField,
+    Serializer,
+    CharField,
+    ChoiceField,
+    BooleanField,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
@@ -116,17 +119,27 @@ class ShipmentSerializer(ShipmentData):
         shipment = models.Shipment.objects.create(
             **{
                 **{
-                    key: value for key, value in validated_data.items()
+                    key: value
+                    for key, value in validated_data.items()
                     if key in models.Shipment.DIRECT_PROPS and value is not None
                 },
                 "customs": save_one_to_one_data(
-                    "customs", CustomsSerializer, payload=validated_data, context=context
+                    "customs",
+                    CustomsSerializer,
+                    payload=validated_data,
+                    context=context,
                 ),
                 "shipper": save_one_to_one_data(
-                    "shipper", AddressSerializer, payload=validated_data, context=context
+                    "shipper",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
                 ),
                 "recipient": save_one_to_one_data(
-                    "recipient", AddressSerializer, payload=validated_data, context=context
+                    "recipient",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
                 ),
                 "rates": rates,
                 "payment": payment,
@@ -363,11 +376,7 @@ def fetch_shipment_rates(
     context: typing.Any,
     data: dict = dict(),
 ) -> models.Shipment:
-    carrier_ids = (
-        data["carrier_ids"]
-        if "carrier_ids" in data
-        else shipment.carrier_ids
-    )
+    carrier_ids = data["carrier_ids"] if "carrier_ids" in data else shipment.carrier_ids
 
     carriers = gateway.Carriers.list(
         active=True,
@@ -377,8 +386,9 @@ def fetch_shipment_rates(
     )
 
     rate_response: datatypes.RateResponse = (
-        RateSerializer
-        .map(context=context, data={**ShipmentData(shipment).data, **data})
+        RateSerializer.map(
+            context=context, data={**ShipmentData(shipment).data, **data}
+        )
         .save(carriers=carriers)
         .instance
     )
@@ -520,14 +530,14 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     if (
         carrier
         and "dhl" in carrier.carrier_name
-        and "get_tracking" not in carrier.gateway.capabilities
+        and "get_tracking" not in carrier.gateway.proxy_methods
     ):
         carrier = gateway.Carriers.first(
             carrier_name="dhl_universal",
             context=context,
         )
 
-    if carrier is not None and "get_tracking" in carrier.gateway.capabilities:
+    if carrier is not None and "get_tracking" in carrier.gateway.proxy_methods:
         # Create shipment tracker
         try:
             tracker = models.Tracking.objects.create(

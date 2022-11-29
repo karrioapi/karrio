@@ -233,11 +233,11 @@ def filter_rate_carrier_compatible_gateways(
         carrier.gateway
         for carrier in carriers
         if (
-            # If no carrier list is provided, and gateway has rating capability.
+            # If no carrier list is provided, and gateway has "rating" capability.
             ("rating" in carrier.gateway.capabilities and len(carrier_ids) > 0)
             # If a carrier list is provided, and gateway is in the list.
             or (
-                # the gateway has rating capability.
+                # the gateway has "rating" capability.
                 "rating" in carrier.gateway.capabilities
                 # and no explicit carrier list is provided.
                 and len(carrier_ids) == 0

@@ -283,7 +283,7 @@ class Shipments:
         # The request call is wrapped in utils.identity to simplify mocking in tests
         confirmation, messages = (
             utils.identity(lambda: request.from_(carrier.gateway).parse())
-            if "cancel_shipment" in carrier.gateway.capabilities
+            if "cancel_shipment" in carrier.gateway.proxy_methods
             else (
                 datatypes.Confirmation(
                     carrier_name=carrier.gateway.settings.carrier_name,
@@ -327,9 +327,13 @@ class Shipments:
         )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        results, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
+        results, messages = utils.identity(
+            lambda: request.from_(carrier.gateway).parse()
+        )
 
-        if not any(results or []) and (raise_on_error or utils.is_sdk_message(messages)):
+        if not any(results or []) and (
+            raise_on_error or utils.is_sdk_message(messages)
+        ):
             raise exceptions.APIException(
                 detail=messages,
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -390,10 +394,14 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Pickup.schedule(datatypes.PickupRequest(**lib.to_dict(payload)))
+        request = karrio.Pickup.schedule(
+            datatypes.PickupRequest(**lib.to_dict(payload))
+        )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        pickup, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
+        pickup, messages = utils.identity(
+            lambda: request.from_(carrier.gateway).parse()
+        )
 
         if pickup is None:
             raise exceptions.APIException(
@@ -432,7 +440,9 @@ class Pickups:
         )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        pickup, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
+        pickup, messages = utils.identity(
+            lambda: request.from_(carrier.gateway).parse()
+        )
 
         if pickup is None:
             raise exceptions.APIException(
@@ -472,7 +482,7 @@ class Pickups:
         # The request call is wrapped in utils.identity to simplify mocking in tests
         confirmation, messages = (
             utils.identity(lambda: request.from_(carrier.gateway).parse())
-            if "cancel_shipment" in carrier.gateway.features
+            if "cancel_shipment" in carrier.gateway.proxy_methods
             else (
                 datatypes.Confirmation(
                     carrier_name=carrier.gateway.settings.carrier_name,
@@ -501,7 +511,9 @@ class Rates:
 
     @staticmethod
     def fetch(
-        payload: dict, carriers: typing.List[providers.Carrier] = None, **carrier_filters,
+        payload: dict,
+        carriers: typing.List[providers.Carrier] = None,
+        **carrier_filters,
     ) -> datatypes.RateResponse:
         carrier_ids = payload.get("carrier_ids", [])
         services = payload.get("services", [])
@@ -570,7 +582,6 @@ class Rates:
 
 
 class Documents:
-
     @staticmethod
     def upload(
         payload: dict,
@@ -584,7 +595,7 @@ class Documents:
             }
         )
 
-        if 'upload_document' not in carrier.gateway.capabilities:
+        if "upload_document" not in carrier.gateway.proxy_methods:
             raise exceptions.APIException(
                 detail=f"trade document upload is not supported by carrier: '{carrier.carrier_id}'",
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
@@ -613,5 +624,5 @@ class Documents:
                 "test_mode": carrier.test_mode,
                 "id": f"sdoc_{uuid.uuid4().hex}",
                 "messages": lib.to_dict(messages),
-            }
+            },
         )

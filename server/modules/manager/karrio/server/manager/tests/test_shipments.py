@@ -161,7 +161,7 @@ class TestShipmentPurchase(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-
+            print(response_data)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
