@@ -1,14 +1,13 @@
-"""
-
-"""
+"""Karrio Interface references."""
 import attr
+import pydoc
+import typing
 import pkgutil
-from typing import Dict, List
 
+import karrio.lib as lib
 import karrio.mappers as mappers
 import karrio.core.units as units
-from karrio.core.utils import DP
-from karrio.core.metadata import Metadata
+import karrio.core.metadata as metadata
 
 
 PROVIDERS = None
@@ -16,7 +15,7 @@ PROVIDERS_DATA = None
 REFERENCES = None
 
 
-def import_extensions() -> Dict[str, Metadata]:
+def import_extensions() -> typing.Dict[str, metadata.Metadata]:
     global PROVIDERS
     modules = {
         name: __import__(f"{mappers.__name__}.{name}", fromlist=[name])
@@ -30,7 +29,7 @@ def import_extensions() -> Dict[str, Metadata]:
     return PROVIDERS
 
 
-def collect_providers_data() -> Dict[str, dict]:
+def collect_providers_data() -> typing.Dict[str, dict]:
     global PROVIDERS_DATA
     if PROVIDERS is None:
         import_extensions()
@@ -50,8 +49,18 @@ def collect_providers_data() -> Dict[str, dict]:
     return PROVIDERS_DATA
 
 
-def detect_capabilities(proxy_type: object) -> List[str]:
-    return [prop for prop in proxy_type.__dict__.keys() if "_" not in prop[0]]
+def detect_capabilities(proxy_methods: typing.List[str]) -> typing.List[str]:
+    r = set([units.CarrierCapabilities.map_capability(prop) for prop in proxy_methods])
+
+    return list(r)
+
+
+def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
+    return [
+        prop
+        for prop in proxy_type.__dict__.keys()
+        if "_" not in prop[0] and prop != "settings"
+    ]
 
 
 def collect_references() -> dict:
@@ -95,7 +104,7 @@ def collect_references() -> dict:
         "services": services,
         "options": options,
         "carrier_capabilities": {
-            key: detect_capabilities(mapper["Proxy"])
+            key: detect_capabilities(detect_proxy_methods(mapper["Proxy"]))
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get("Proxy") is not None
         },
@@ -105,7 +114,7 @@ def collect_references() -> dict:
             if mapper.get("packaging_types") is not None
         },
         "package_presets": {
-            key: {c.name: DP.to_dict(c.value) for c in list(mapper["package_presets"])}  # type: ignore
+            key: {c.name: lib.to_dict(c.value) for c in list(mapper["package_presets"])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get("package_presets") is not None
         },
@@ -118,10 +127,15 @@ def collect_references() -> dict:
             for name, value in services.items()
         },
         "service_levels": {
-            key: DP.to_dict(mapper.get("service_levels"))
+            key: lib.to_dict(mapper.get("service_levels"))
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get("service_levels") is not None
         },
     }
 
     return REFERENCES
+
+
+def get_carrier_capabilities(carrier_name) -> typing.List[str]:
+    proxy_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Proxy")
+    return detect_capabilities(detect_proxy_methods(proxy_class))
