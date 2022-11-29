@@ -138,4 +138,5 @@ def collect_references() -> dict:
 
 def get_carrier_capabilities(carrier_name) -> typing.List[str]:
     proxy_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Proxy")
-    return detect_capabilities(detect_proxy_methods(proxy_class))
+    proxy_methods = detect_proxy_methods(proxy_class)
+    return detect_capabilities(proxy_methods)
