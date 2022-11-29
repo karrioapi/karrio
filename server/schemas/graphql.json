@@ -21635,6 +21635,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -22700,6 +22710,16 @@
             "defaultValue": null
           },
           {
+            "name": "freight_class",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "items",
             "description": null,
             "type": {
@@ -22938,6 +22958,16 @@
           },
           {
             "name": "reference_number",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "freight_class",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -29810,7 +29840,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "AddressInput",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -29820,7 +29850,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "AddressInput",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -29830,7 +29860,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "CustomsInput",
+              "name": "UpdateCustomsInput",
               "ofType": null
             },
             "defaultValue": null
@@ -29846,7 +29876,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ParcelInput",
+                  "name": "UpdateParcelInput",
                   "ofType": null
                 }
               }
