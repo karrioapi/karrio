@@ -188,6 +188,7 @@ class AddressInput:
 
 @strawberry.input
 class UpdateAddressInput(AddressInput):
+    id: typing.Optional[str] = strawberry.UNSET
     country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
 
 
@@ -205,6 +206,7 @@ class ParcelInput:
     is_document: typing.Optional[bool] = strawberry.UNSET
     dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
     reference_number: typing.Optional[str] = strawberry.UNSET
+    freight_class: typing.Optional[str] = strawberry.UNSET
     items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
 
 
@@ -261,10 +263,10 @@ class PaymentInput:
 @strawberry.input
 class PartialShipmentMutationInput(utils.BaseInput):
     id: str
-    recipient: typing.Optional[AddressInput] = strawberry.UNSET
-    shipper: typing.Optional[AddressInput] = strawberry.UNSET
-    customs: typing.Optional[CustomsInput] = strawberry.UNSET
-    parcels: typing.Optional[typing.List[ParcelInput]] = strawberry.UNSET
+    recipient: typing.Optional[UpdateAddressInput] = strawberry.UNSET
+    shipper: typing.Optional[UpdateAddressInput] = strawberry.UNSET
+    customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET
+    parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
     payment: typing.Optional[PaymentInput] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
@@ -370,7 +372,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
         _excluded = ["services", "id"]
         _optionals = ["account_country_code", "label_template", "test_mode"]
         _template_type: typing.Any = "LabelTemplateInput"
-        _service_type: typing.Any = typing.List[ # type: ignore
+        _service_type: typing.Any = typing.List[  # type: ignore
             "UpdateServiceLevelInput" if is_update else "CreateServiceLevelInput"
         ]
 
@@ -410,9 +412,9 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
                         k: (
                             typing.Optional[v]
                             if (
-                                is_update or
-                                k in _optionals or
-                                serializers.is_field_optional(model, k)
+                                is_update
+                                or k in _optionals
+                                or serializers.is_field_optional(model, k)
                             )
                             else v
                         )

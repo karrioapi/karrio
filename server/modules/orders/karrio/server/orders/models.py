@@ -113,6 +113,7 @@ class Order(OwnedEntity):
     metadata = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
+    meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
     test_mode = models.BooleanField()
 
     @property
