@@ -2,6 +2,7 @@
 
 from django.db import migrations
 import functools
+import karrio.lib as lib
 import karrio.references as ref
 import karrio.server.core.fields
 import karrio.server.core.models
@@ -18,7 +19,7 @@ def forwards_func(apps, schema_editor):
         carrier_name, _ = providers.Carrier.resolve_settings(carrier)
         raw_capabilities = ref.get_carrier_capabilities(carrier_name)
         carrier.carrier_capabilities = [
-            c for c in carrier.capabilities if c in raw_capabilities
+            c for c in lib.to_dict(carrier.capabilities) if c in raw_capabilities
         ]
         _carriers.append(carrier)
 
