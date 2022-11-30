@@ -276,10 +276,11 @@ PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DB_ENGINE = config("DATABASE_ENGINE", default="postgresql_psycopg2")
+DB_NAME = os.path.join(WORK_DIR, "db.sqlite3") if "sqlite3" in DB_ENGINE else "db"
 
 DATABASES = {
     "default": {
-        "NAME": config("DATABASE_NAME", default="db"),
+        "NAME": config("DATABASE_NAME", default=DB_NAME),
         "ENGINE": "django.db.backends.{}".format(DB_ENGINE),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
@@ -398,10 +399,7 @@ SIMPLE_JWT = {
 }
 
 # Oauth2 config
-OIDC_RSA_PRIVATE_KEY = (
-    config("OIDC_RSA_PRIVATE_KEY", default="")
-    .replace("\\n", "\n")
-)
+OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
@@ -430,9 +428,8 @@ SPECTACULAR_SETTINGS = {
     "OAUTH2_REFRESH_URL": None,
     "OAUTH2_SCOPES": OAUTH2_PROVIDER["SCOPES"],
     "AUTHENTICATION_WHITELIST": [
-        _ for _ in AUTHENTICATION_CLASSES
-        if "Session" not in _
-    ]
+        _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
+    ],
 }
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
@@ -465,7 +462,7 @@ SWAGGER_SETTINGS = {
             "description": """
             `Authorization: Bearer xxxxxxxx`
             """,
-            "scopes": OAUTH2_PROVIDER["SCOPES"]
+            "scopes": OAUTH2_PROVIDER["SCOPES"],
         },
     },
 }

@@ -63,7 +63,7 @@ class Carrier(core.OwnedEntity):
     active_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="active_users"
     )
-    capabilities = fields.MultiChoiceJSONField(
+    capabilities = fields.MultiChoiceField(
         choices=CAPABILITIES_CHOICES,
         default=core.field_default([]),
         help_text="Select the capabilities of the carrier that you want to enable",

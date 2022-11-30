@@ -29,19 +29,15 @@ class Migration(migrations.Migration):
             model_name="carrier",
             name="capabilities",
             field=karrio.server.core.fields.MultiChoiceField(
-                base_field=models.CharField(
-                    choices=[
-                        ("pickup", "pickup"),
-                        ("rating", "rating"),
-                        ("shipping", "shipping"),
-                        ("tracking", "tracking"),
-                        ("paperless", "paperless"),
-                    ],
-                    max_length=50,
-                ),
+                choices=[
+                    ("pickup", "pickup"),
+                    ("rating", "rating"),
+                    ("shipping", "shipping"),
+                    ("tracking", "tracking"),
+                    ("paperless", "paperless"),
+                ],
                 default=karrio.core.units.CarrierCapabilities.get_capabilities,
                 help_text="Select the capabilities of the carrier that you want to enable",
-                size=5,
             ),
         ),
         migrations.RunPython(forwards_func, reverse_func),

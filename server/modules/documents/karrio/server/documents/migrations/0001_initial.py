@@ -19,23 +19,50 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DocumentTemplate',
+            name="DocumentTemplate",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'doc_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
-                ('slug', models.SlugField(max_length=20, validators=[django.core.validators.RegexValidator('^[a-z0-9_]+$')])),
-                ('name', models.CharField(max_length=50)),
-                ('template', models.TextField()),
-                ('description', models.CharField(blank=True, max_length=50, null=True)),
-                ('related_objects', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=25), size=None)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.CharField(
+                        default=functools.partial(
+                            karrio.server.core.models.base.uuid,
+                            *(),
+                            **{"prefix": "doc_"}
+                        ),
+                        editable=False,
+                        max_length=50,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "slug",
+                    models.SlugField(
+                        max_length=20,
+                        validators=[
+                            django.core.validators.RegexValidator("^[a-z0-9_]+$")
+                        ],
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                ("template", models.TextField()),
+                ("description", models.CharField(blank=True, max_length=50, null=True)),
+                ("related_objects", models.JSONField(blank=True, null=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Document Template',
-                'verbose_name_plural': 'Document Templates',
-                'db_table': 'document-template',
-                'ordering': ['-created_at'],
+                "verbose_name": "Document Template",
+                "verbose_name_plural": "Document Templates",
+                "db_table": "document-template",
+                "ordering": ["-created_at"],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),

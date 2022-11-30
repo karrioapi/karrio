@@ -10,7 +10,11 @@ import karrio.server.openapi as openapi
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.serializers import PaginatedResult, PlainDictField
 from karrio.server.core.serializers import Operation, ErrorResponse
-from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
+from karrio.server.events.serializers.webhook import (
+    WebhookData,
+    Webhook,
+    WebhookSerializer,
+)
 from karrio.server.events.task_definitions.base.webhook import notify_subscribers
 from karrio.server.events.router import router
 from karrio.server.events import models
@@ -62,9 +66,7 @@ class WebhookList(GenericAPIView):
     def post(self, request: Request):
         """Create a new webhook."""
         webhook = (
-            WebhookSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
+            WebhookSerializer.map(data=request.data, context=request).save().instance
         )
 
         return Response(Webhook(webhook).data, status=status.HTTP_201_CREATED)

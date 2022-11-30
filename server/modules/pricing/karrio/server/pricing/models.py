@@ -9,7 +9,7 @@ from django.contrib.postgres.fields import DecimalRangeField
 
 from karrio.core.models import ChargeDetails
 from karrio.core.utils import DP, NF
-from karrio.server.core.fields import MultiChoiceField, MultiChoiceJSONField
+from karrio.server.core.fields import MultiChoiceField, MultiChoiceField
 from karrio.server.core.models import Entity, uuid, register_model
 from karrio.server.core.dataunits import REFERENCE_MODELS
 from karrio.server.core.datatypes import RateResponse, Rate
@@ -67,7 +67,7 @@ class Surcharge(Entity):
         For <strong>PERCENTAGE</strong>: rate ($22) and amount (5) will result in a new total_charge of ($23.10)
         """,
     )
-    carriers = MultiChoiceJSONField(
+    carriers = MultiChoiceField(
         choices=CARRIERS,
         null=True,
         blank=True,
@@ -86,7 +86,7 @@ class Surcharge(Entity):
         Note that by default, the surcharge is applied to all carrier accounts
         """,
     )
-    services = MultiChoiceJSONField(
+    services = MultiChoiceField(
         choices=SERVICES,
         null=True,
         blank=True,

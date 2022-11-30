@@ -1,17 +1,19 @@
 from karrio.server.serializers import owned_model_serializer
-from karrio.server.events.serializers import WebhookData
-from karrio.server.events.models import Webhook
+from karrio.server.events.serializers import WebhookData, Webhook
+import karrio.server.events.models as models
 
 
 @owned_model_serializer
 class WebhookSerializer(WebhookData):
-    def create(self, validated_data: dict, context, **kwargs) -> Webhook:
-        return Webhook.objects.create(
+    def create(self, validated_data: dict, context, **kwargs) -> models.Webhook:
+        return models.Webhook.objects.create(
             test_mode=getattr(context, "test_mode", False),
             **validated_data,
         )
 
-    def update(self, instance: Webhook, validated_data: dict, **kwargs) -> Webhook:
+    def update(
+        self, instance: models.Webhook, validated_data: dict, **kwargs
+    ) -> models.Webhook:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 
