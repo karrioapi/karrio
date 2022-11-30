@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2022.8.10
+  version: 2022.8.15
 paths:
   /:
     get:
@@ -3570,6 +3570,9 @@ components:
         carrier_id:
           type: string
           description: Indicates a specific carrier configuration name.
+        display_name:
+          type: string
+          description: The carrier verbose name.
         test_mode:
           type: boolean
           description: The test flag indicates whether to use a carrier configured
@@ -4680,6 +4683,11 @@ components:
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
             : [\"canadapost-test\"],\n        }\n        "
+        meta:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: system related metadata.
         metadata:
           type: object
           additionalProperties: {}

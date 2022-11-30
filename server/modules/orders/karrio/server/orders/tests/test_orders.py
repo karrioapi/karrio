@@ -281,6 +281,7 @@ ORDER_RESPONSE = {
         },
     ],
     "options": {},
+    "meta": {},
     "metadata": {},
     "shipments": [],
     "test_mode": True,
@@ -424,6 +425,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         },
     ],
     "options": {},
+    "meta": {},
     "metadata": {},
     "shipments": [
         {
@@ -629,6 +631,7 @@ FULFILLED_ORDER_RESPONSE = {
         },
     ],
     "options": {},
+    "meta": {},
     "metadata": {},
     "shipments": [
         {
@@ -848,6 +851,7 @@ PARTIAL_ORDER_RESPONSE = {
             "unfulfilled_quantity": 1,
         },
     ],
+    "meta": {},
     "options": {},
     "metadata": {},
     "shipments": [
