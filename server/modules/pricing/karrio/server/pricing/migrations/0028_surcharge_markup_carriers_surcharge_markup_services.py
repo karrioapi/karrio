@@ -2,6 +2,7 @@
 
 from django.db import migrations
 import karrio.server.core.fields
+import karrio.lib as lib
 
 
 def forwards_func(apps, schema_editor):
@@ -10,8 +11,8 @@ def forwards_func(apps, schema_editor):
     _charges = []
 
     for markup in Markup.objects.using(db_alias).all():
-        markup.markup_carriers = markup.carriers
-        markup.markup_services = markup.services
+        markup.markup_carriers = lib.to_dict(markup.carriers)
+        markup.markup_services = lib.to_dict(markup.services)
         _charges.append(markup)
 
     Markup.objects.using(db_alias).bulk_update(

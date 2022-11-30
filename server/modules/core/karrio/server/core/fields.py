@@ -4,10 +4,9 @@ from django.db import models
 
 class MultiChoiceField(models.JSONField):
     def formfield(self, **kwargs):
-        defaults = {
-            "form_class": forms.MultipleChoiceField,
-            "widget": forms.SelectMultiple,
-            "choices": self.choices,
-        }
+        defaults = {"choices_form_class": forms.TypedMultipleChoiceField}
         defaults.update(kwargs)
-        return super(models.JSONField, self).formfield(**defaults)
+        return super().formfield(**defaults)
+
+    def validate(self, value, model_instance):
+        pass
