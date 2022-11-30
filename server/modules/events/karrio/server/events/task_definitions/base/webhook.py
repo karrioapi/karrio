@@ -10,7 +10,7 @@ from karrio.core import utils
 from karrio.server.core.utils import identity
 from karrio.server.serializers import Context
 from karrio.server.events import models
-from karrio.server.events import serializers
+import karrio.server.events.serializers.event as serializers
 
 logger = logging.getLogger(__name__)
 NotificationResponse = typing.Tuple[str, requests.Response]

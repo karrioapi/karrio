@@ -115,11 +115,12 @@ class TracingRecordType:
         except:
             return self.meta
 
-
     @staticmethod
     @utils.authentication_required
     def resolve(info, id: str) -> typing.Optional["TracingRecordType"]:
-        return tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
+        return (
+            tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
+        )
 
     @staticmethod
     @utils.authentication_required
@@ -159,11 +160,9 @@ class MessageType:
 
     @staticmethod
     def parse(charge: dict):
-        return MessageType(**{
-            k:v for k,v
-            in charge.items()
-            if k in MessageType.__annotations__
-        })
+        return MessageType(
+            **{k: v for k, v in charge.items() if k in MessageType.__annotations__}
+        )
 
 
 @strawberry.type
@@ -174,11 +173,9 @@ class ChargeType:
 
     @staticmethod
     def parse(charge: dict):
-        return ChargeType(**{
-            k:v for k,v
-            in charge.items()
-            if k in ChargeType.__annotations__
-        })
+        return ChargeType(
+            **{k: v for k, v in charge.items() if k in ChargeType.__annotations__}
+        )
 
 
 @strawberry.type
@@ -197,18 +194,16 @@ class RateType:
 
     @staticmethod
     def parse(rate: dict):
-        return RateType(**{
-            "object_type": "rate",
+        return RateType(
             **{
-                k:v for k,v
-                in rate.items()
-                if k in RateType.__annotations__
-            },
-            "extra_charges": [
-                ChargeType.parse(charge)
-                for charge in (rate.get("extra_charges") or [])
-            ]
-        })
+                "object_type": "rate",
+                **{k: v for k, v in rate.items() if k in RateType.__annotations__},
+                "extra_charges": [
+                    ChargeType.parse(charge)
+                    for charge in (rate.get("extra_charges") or [])
+                ],
+            }
+        )
 
 
 @strawberry.type
@@ -342,11 +337,11 @@ class AddressTemplateType:
                 if _filter.label != strawberry.UNSET
                 else {}
             ),
-            ** (
+            **(
                 {"address__icontain": _filter.address}
                 if _filter.address != strawberry.UNSET
                 else {}
-            )
+            ),
         }
         queryset = graph.Template.access_by(info.context.request).filter(
             address__isnull=False, **_query
@@ -439,11 +434,13 @@ class TrackingEventType:
 
     @staticmethod
     def parse(charge: dict):
-        return TrackingEventType(**{
-            k:v for k,v
-            in charge.items()
-            if k in TrackingEventType.__annotations__
-        })
+        return TrackingEventType(
+            **{
+                k: v
+                for k, v in charge.items()
+                if k in TrackingEventType.__annotations__
+            }
+        )
 
 
 @strawberry.type
@@ -547,24 +544,15 @@ class ShipmentType:
 
     @strawberry.field
     def rates(self: manager.Shipment) -> typing.List[RateType]:
-        return (
-            [RateType.parse(rate) for rate in self.rates]
-            if self.rates else None
-        )
+        return [RateType.parse(rate) for rate in self.rates] if self.rates else None
 
     @strawberry.field
     def selected_rate(self: manager.Shipment) -> typing.Optional[RateType]:
-        return (
-            RateType.parse(self.selected_rate)
-            if self.selected_rate else None
-        )
+        return RateType.parse(self.selected_rate) if self.selected_rate else None
 
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
-        return (
-            PaymentType(**self.payment)
-            if self.payment else None
-        )
+        return PaymentType(**self.payment) if self.payment else None
 
     @strawberry.field
     def messages(self: manager.Tracking) -> typing.List[MessageType]:
@@ -693,7 +681,8 @@ class ConnectionType:
         }
         services = (
             dict(services=carrier.settings.services.all())
-            if "services" in settings else {}
+            if "services" in settings
+            else {}
         )
 
         return CarrierSettings[carrier_name](
@@ -701,8 +690,9 @@ class ConnectionType:
             active=carrier.active,
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
-            **{**settings, **services}
+            **{**settings, **services},
         )
+
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
@@ -721,8 +711,11 @@ def create_carrier_settings_type(name: str, model):
             label_template: typing.Optional[LabelTemplateType] = strawberry.UNSET
 
         if hasattr(model, "services"):
+
             @strawberry.field
-            def services(self: providers.Carrier) -> typing.Optional[typing.List[ServiceLevelType]]:
+            def services(
+                self: providers.Carrier,
+            ) -> typing.Optional[typing.List[ServiceLevelType]]:
                 return self.services.all()
 
     annotations = {
@@ -730,8 +723,9 @@ def create_carrier_settings_type(name: str, model):
         **getattr(_Settings, "__annotations__", {}),
         **(
             dict(services=typing.Optional[typing.List[ServiceLevelType]])
-            if hasattr(model, "services") else {}
-        )
+            if hasattr(model, "services")
+            else {}
+        ),
     }
 
     return strawberry.type(
@@ -747,7 +741,8 @@ def create_carrier_settings_type(name: str, model):
                 "__annotations__": {
                     k: (
                         typing.Optional[v]
-                        if serializers.is_field_optional(model, k) else v
+                        if serializers.is_field_optional(model, k)
+                        else v
                     )
                     for k, v in annotations.items()
                     if hasattr(model, k)
@@ -762,6 +757,5 @@ CarrierSettings = {
     for name, model in providers.MODELS.items()
 }
 CarrierConnectionType: typing.Any = strawberry.union(
-    "CarrierConnectionType",
-    types=(*(T for T in CarrierSettings.values()),)
+    "CarrierConnectionType", types=(*(T for T in CarrierSettings.values()),)
 )

@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="carrier",
             name="carrier_capabilities",
-            field=karrio.server.core.fields.MultiChoiceJSONField(
+            field=karrio.server.core.fields.MultiChoiceField(
                 choices=[
                     ("pickup", "pickup"),
                     ("rating", "rating"),

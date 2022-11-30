@@ -18,25 +18,48 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Webhook',
+            name="Webhook",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(karrio.server.core.models.uuid, *(), **{'prefix': 'web_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
-                ('enabled_events', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=200), size=None)),
-                ('url', models.URLField()),
-                ('test_mode', models.BooleanField()),
-                ('disabled', models.BooleanField(default=False, null=True)),
-                ('description', models.CharField(blank=True, max_length=200, null=True)),
-                ('last_event_at', models.DateTimeField(null=True)),
-                ('failure_streak_count', models.IntegerField(default=0)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.CharField(
+                        default=functools.partial(
+                            karrio.server.core.models.uuid, *(), **{"prefix": "web_"}
+                        ),
+                        editable=False,
+                        max_length=50,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "enabled_events",
+                    karrio.server.core.fields.MultiChoiceField(blank=True),
+                ),
+                ("url", models.URLField()),
+                ("test_mode", models.BooleanField()),
+                ("disabled", models.BooleanField(default=False, null=True)),
+                (
+                    "description",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                ("last_event_at", models.DateTimeField(null=True)),
+                ("failure_streak_count", models.IntegerField(default=0)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Webhook',
-                'verbose_name_plural': 'Webhooks',
-                'db_table': 'webhook',
-                'ordering': ['-created_at'],
+                "verbose_name": "Webhook",
+                "verbose_name_plural": "Webhooks",
+                "db_table": "webhook",
+                "ordering": ["-created_at"],
             },
         ),
     ]

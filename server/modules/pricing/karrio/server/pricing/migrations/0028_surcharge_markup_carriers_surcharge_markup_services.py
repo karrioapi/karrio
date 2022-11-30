@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="surcharge",
             name="markup_carriers",
-            field=karrio.server.core.fields.MultiChoiceJSONField(
+            field=karrio.server.core.fields.MultiChoiceField(
                 blank=True,
                 choices=[
                     ("amazon_mws", "amazon_mws"),
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="surcharge",
             name="markup_services",
-            field=karrio.server.core.fields.MultiChoiceJSONField(
+            field=karrio.server.core.fields.MultiChoiceField(
                 blank=True,
                 choices=[
                     ("amazon_shipping_ground", "amazon_shipping_ground"),
