@@ -42,6 +42,7 @@ class OrderType:
     billing_address: typing.Optional[base.types.AddressType]
     metadata: utils.JSON
     options: utils.JSON
+    meta: utils.JSON
     status: inputs.OrderStatusEnum
     test_mode: bool
     created_at: datetime.datetime
@@ -75,6 +76,7 @@ class OrderType:
             return utils.paginated_connection(queryset, **_filter.pagination())
         except Exception as e:
             import logging
+
             logger = logging.getLogger(__name__)
             logger.exception(e)
             raise e

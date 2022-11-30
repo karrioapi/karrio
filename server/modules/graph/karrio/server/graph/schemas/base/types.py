@@ -628,6 +628,10 @@ class SystemConnectionType:
         return getattr(self, "settings", self).carrier_name
 
     @strawberry.field
+    def display_name(self: providers.Carrier) -> str:
+        return self.carrier_display_name
+
+    @strawberry.field
     def enabled(self: providers.Carrier, info: Info) -> bool:
         if hasattr(self, "active_orgs"):
             return self.active_orgs.filter(id=info.context.request.org.id).exists()
@@ -655,6 +659,10 @@ class ConnectionType:
     carrier_name: str
     test_mode: bool
     capabilities: typing.List[str]
+
+    @strawberry.field
+    def display_name(self: providers.Carrier) -> str:
+        return self.carrier_display_name
 
     @staticmethod
     @utils.authentication_required

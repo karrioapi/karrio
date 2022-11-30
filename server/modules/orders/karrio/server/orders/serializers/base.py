@@ -145,6 +145,9 @@ class Order(serializers.EntitySerializer):
         }
         """,
     )
+    meta = serializers.PlainDictField(
+        required=False, allow_null=True, help_text="system related metadata."
+    )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the order."
     )
