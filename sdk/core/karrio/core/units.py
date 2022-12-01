@@ -902,7 +902,7 @@ class CustomsInfo(models.Customs):
 
     @property
     def duty(self) -> typing.Optional[models.Duty]:  # type:ignore
-        return getattr(self._customs, "duty", None)
+        return getattr(self._customs, "duty", models.Duty())
 
     @property
     def commodities(self) -> Products:  # type:ignore
