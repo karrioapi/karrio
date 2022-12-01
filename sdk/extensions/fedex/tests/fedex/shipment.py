@@ -387,6 +387,11 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <v26:CustomerReferenceType>CUSTOMER_REFERENCE</v26:CustomerReferenceType>
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
+                    <v26:SpecialServicesRequested>
+                        <v26:SignatureOptionDetail>
+                            <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
+                        </v26:SignatureOptionDetail>
+                    </v26:SpecialServicesRequested>
                 </v26:RequestedPackageLineItems>
             </v26:RequestedShipment>
         </v26:ProcessShipmentRequest>
@@ -565,6 +570,11 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                         <v26:CustomerReferenceType>CUSTOMER_REFERENCE</v26:CustomerReferenceType>
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
+                    <v26:SpecialServicesRequested>
+                        <v26:SignatureOptionDetail>
+                            <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
+                        </v26:SignatureOptionDetail>
+                    </v26:SpecialServicesRequested>
                 </v26:RequestedPackageLineItems>
             </v26:RequestedShipment>
         </v26:ProcessShipmentRequest>
@@ -747,6 +757,11 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                         <v26:CustomerReferenceType>CUSTOMER_REFERENCE</v26:CustomerReferenceType>
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
+                    <v26:SpecialServicesRequested>
+                        <v26:SignatureOptionDetail>
+                            <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
+                        </v26:SignatureOptionDetail>
+                    </v26:SpecialServicesRequested>
                 </v26:RequestedPackageLineItems>
             </v26:RequestedShipment>
         </v26:ProcessShipmentRequest>
