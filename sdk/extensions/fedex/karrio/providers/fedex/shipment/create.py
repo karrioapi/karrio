@@ -36,7 +36,9 @@ from fedex_lib.ship_service_v26 import (
     ShippingDocumentSpecification,
     CommercialInvoiceDetail,
     ShippingDocumentFormat,
-    PackageSpecialServicesRequested, SignatureOptionDetail, SignatureOptionType,
+    PackageSpecialServicesRequested,
+    SignatureOptionDetail,
+    SignatureOptionType,
 )
 
 import typing
