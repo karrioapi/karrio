@@ -305,7 +305,7 @@ def shipment_request(
                                             ),
                                         ),
                                         FormatSpecification=ShipmentNotificationFormatSpecification(
-                                            Type="TEXT"
+                                            Type="HTML"
                                         ),
                                     )
                                 ],
