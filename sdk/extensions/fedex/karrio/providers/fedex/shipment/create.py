@@ -559,7 +559,7 @@ def shipment_request(
                             SignatureOptionDetail=SignatureOptionDetail(
                                 OptionType=(
                                     SignatureOptionType.ADULT
-                                    if options.signature_confirmation
+                                    if options.signature_confirmation.state
                                     else SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),
