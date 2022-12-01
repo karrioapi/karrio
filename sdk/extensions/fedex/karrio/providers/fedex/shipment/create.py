@@ -36,6 +36,7 @@ from fedex_lib.ship_service_v26 import (
     ShippingDocumentSpecification,
     CommercialInvoiceDetail,
     ShippingDocumentFormat,
+    PackageSpecialServicesRequested, SignatureOptionDetail, SignatureOptionType,
 )
 
 import typing
@@ -552,7 +553,15 @@ def shipment_request(
                             if any(payload.reference or "")
                             else None
                         ),
-                        SpecialServicesRequested=None,
+                        SpecialServicesRequested=PackageSpecialServicesRequested(
+                            SignatureOptionDetail=SignatureOptionDetail(
+                                OptionType=(
+                                    SignatureOptionType.ADULT
+                                    if options.signature_confirmation
+                                    else SignatureOptionType.SERVICE_DEFAULT
+                                )
+                            ),
+                        ),
                         ContentRecords=None,
                     )
                 ],
