@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio",
-    version="2022.8.11",
+    version="2022.8.12",
     description="Multi-carrier shipping API integration with python",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -24,7 +24,6 @@ setup(
         "phonenumbers",
         "python-barcode",
         "PyPDF2",
-        "simple_zpl2",
     ],
     classifiers=[
         "Intended Audience :: Developers",

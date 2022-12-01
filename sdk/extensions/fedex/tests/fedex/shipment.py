@@ -312,7 +312,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                                 </v26:Localization>
                             </v26:NotificationDetail>
                             <v26:FormatSpecification>
-                                <v26:Type>TEXT</v26:Type>
+                                <v26:Type>HTML</v26:Type>
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
@@ -495,7 +495,7 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                                 </v26:Localization>
                             </v26:NotificationDetail>
                             <v26:FormatSpecification>
-                                <v26:Type>TEXT</v26:Type>
+                                <v26:Type>HTML</v26:Type>
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
@@ -678,7 +678,7 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                                 </v26:Localization>
                             </v26:NotificationDetail>
                             <v26:FormatSpecification>
-                                <v26:Type>TEXT</v26:Type>
+                                <v26:Type>HTML</v26:Type>
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
