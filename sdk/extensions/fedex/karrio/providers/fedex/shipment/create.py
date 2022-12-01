@@ -141,7 +141,7 @@ def shipment_request(
     )
     bill_to = lib.to_address(getattr(duty, "bill_to", None) or (
         payload.shipper
-        if duty.paid_by == "sender"
+        if getattr(payload.payment, "paid_by", "sender") == "sender"
         else payload.recipient
     ))
     label_type, label_format = provider_units.LabelType[
@@ -249,7 +249,7 @@ def shipment_request(
                 SoldTo=None,
                 ShippingChargesPayment=Payment(
                     PaymentType=provider_units.PaymentType[
-                        payload.payment.paid_by or "sender"
+                        getattr(payload.payment, "paid_by", None) or "sender"
                     ].value,
                     Payor=Payor(
                         ResponsibleParty=Party(
@@ -341,7 +341,7 @@ def shipment_request(
                         DutiesPayment=(
                             Payment(
                                 PaymentType=provider_units.PaymentType[
-                                    duty.paid_by or "sender"
+                                    getattr(duty, "paid_by", None) or "sender"
                                 ].value,
                                 Payor=(
                                     Payor(
