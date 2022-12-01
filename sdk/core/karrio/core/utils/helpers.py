@@ -76,7 +76,7 @@ def bundle_imgs(base64_strings: List[str]) -> Image:
 def bundle_zpls(base64_strings: List[str]) -> str:
     doc = ''
     for b64_str in base64_strings:
-        doc += f'{NEW_LINE}{base64.b64decode(b64_str).decode("utf-8")}'
+        doc += f'{base64.b64decode(b64_str).decode("utf-8")}{NEW_LINE}'
 
     return doc
 
