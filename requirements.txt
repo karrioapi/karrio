@@ -68,7 +68,7 @@ karrio==2022.8.12
 karrio.amazon-mws==2022.8.3
 karrio.aramex==2022.8.3
 karrio.australiapost==2022.8.3
-karrio.canadapost==2022.8
+karrio.canadapost==2022.8.11
 karrio.canpar==2022.8.3
 karrio.chronopost==2022.8.3
 karrio.dhl-express==2022.8.7
