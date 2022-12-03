@@ -48,14 +48,6 @@ It can be installed as a simple set of python libraries to do the low level carr
 > Source code for all editions is contained in this repository.
 See the [License section](#license) for more details.
 
-## Status
-
-- [x] Alpha: We are testing Karrio with a closed set of customers.
-- [x] Private Beta: Stable enough for most non-enterprise use-cases
-- [x] Public Beta: Anyone can apply over at [karrio.io](https://karrio.io)
-- [ ] Public: Production-ready
-
-We are currently in Public Beta. Watch "releases" of this repo to get notified of major updates.
 
 ## Self-hosted installation
 
@@ -86,7 +78,7 @@ docker run -d \
   -e ADMIN_EMAIL=admin@example.com \
   -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.8.7
+  danh91.docker.scarf.sh/karrio/server:2022.8.12
 ```
 
 </details>
@@ -111,7 +103,7 @@ services:
       - db_network
 
   karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.8.7
+    image: danh91.docker.scarf.sh/karrio/server:2022.8.12
     restart: unless-stopped
     environment:
       - DEBUG_MODE=True

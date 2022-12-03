@@ -543,7 +543,7 @@ def image_to_pdf(
 
 def bundle_pdfs(
     base64_strings: typing.List[str],
-) -> utils.PdfFileMerger:
+) -> utils.PdfMerger:
     return utils.bundle_pdfs(base64_strings)
 
 

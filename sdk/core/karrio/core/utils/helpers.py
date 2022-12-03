@@ -7,8 +7,7 @@ import base64
 import uuid
 import urllib.parse
 from PIL import Image, ImageFile
-from PyPDF2 import PdfFileMerger
-from simple_zpl2 import ZPLDocument
+from PyPDF2 import PdfMerger
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from typing import List, TypeVar, Callable, Optional, Any, cast
@@ -19,6 +18,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
+NEW_LINE = '''
+'''
 
 
 def identity(value: Any) -> Any:
@@ -42,8 +43,8 @@ def image_to_pdf(image_str: str) -> str:
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def bundle_pdfs(base64_strings: List[str]) -> PdfFileMerger:
-    merger = PdfFileMerger(strict=False)
+def bundle_pdfs(base64_strings: List[str]) -> PdfMerger:
+    merger = PdfMerger(strict=False)
 
     for b64_str in base64_strings:
         buffer = to_buffer(b64_str)
@@ -73,11 +74,11 @@ def bundle_imgs(base64_strings: List[str]) -> Image:
 
 
 def bundle_zpls(base64_strings: List[str]) -> str:
-    doc = ZPLDocument()
+    doc = ''
     for b64_str in base64_strings:
-        doc.add_zpl_raw(base64.b64decode(b64_str).decode("utf-8"))
+        doc += f'{base64.b64decode(b64_str).decode("utf-8")}{NEW_LINE}'
 
-    return doc.zpl_text
+    return doc
 
 
 def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
