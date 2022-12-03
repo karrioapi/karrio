@@ -185,6 +185,9 @@ class ServiceLevel(OwnedEntity):
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)
 
+    def __str__(self):
+        return f"{self.id} | {self.service_name}"
+
     @property
     def object_type(self):
         return "service_level"
