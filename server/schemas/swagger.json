@@ -4692,6 +4692,12 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "display_name": {
+                    "title": "Display name",
+                    "description": "The carrier verbose name.",
+                    "type": "string",
+                    "minLength": 1
+                },
                 "test_mode": {
                     "title": "Test mode",
                     "description": "\nThe test flag indicates whether to use a carrier configured for test.\n",

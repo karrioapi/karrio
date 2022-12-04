@@ -32,9 +32,7 @@ class TestFeDexTracking(unittest.TestCase):
             mock.return_value = TrackingResponseXML
             parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
@@ -72,18 +70,32 @@ ParsedAuthError = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier_name": "fedex",
             "carrier_id": "carrier_id",
+            "carrier_name": "fedex",
             "delivered": False,
             "estimated_delivery": "2016-11-17",
             "events": [
                 {
+                    "code": "AE",
+                    "date": "2022-12-02",
+                    "description": "Shipment arriving early",
+                    "location": "LETHBRIDGE, AB, T1H5K9, CA",
+                    "time": "14:24",
+                },
+                {
+                    "code": "PU",
+                    "date": "2022-12-02",
+                    "description": "Picked up",
+                    "location": "LETHBRIDGE, AB, T1H5K9, CA",
+                    "time": "14:21",
+                },
+                {
                     "code": "OC",
-                    "date": "2016-11-17",
+                    "date": "2022-12-02",
                     "description": "Shipment information sent to FedEx",
                     "location": "CUSTOMER",
-                    "time": "03:13",
-                }
+                    "time": "09:56",
+                },
             ],
             "tracking_number": "794887075005",
         }
@@ -402,11 +414,39 @@ TrackingResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlso
                   <Eligibility>INELIGIBLE</Eligibility>
                </DeliveryOptionEligibilityDetails>
                <Events>
-                  <Timestamp>2016-11-17T03:13:01-06:00</Timestamp>
+                  <Timestamp>2022-12-02T14:24:00-07:00</Timestamp>
+                  <EventType>AE</EventType>
+                  <EventDescription>Shipment arriving early</EventDescription>
+                  <Address>
+                        <City>LETHBRIDGE</City>
+                        <StateOrProvinceCode>AB</StateOrProvinceCode>
+                        <PostalCode>T1H5K9</PostalCode>
+                        <CountryCode>CA</CountryCode>
+                        <CountryName>Canada</CountryName>
+                        <Residential>false</Residential>
+                  </Address>
+                  <ArrivalLocation>PICKUP_LOCATION</ArrivalLocation>
+               </Events>
+               <Events>
+                  <Timestamp>2022-12-02T14:21:00-07:00</Timestamp>
+                  <EventType>PU</EventType>
+                  <EventDescription>Picked up</EventDescription>
+                  <Address>
+                        <City>LETHBRIDGE</City>
+                        <StateOrProvinceCode>AB</StateOrProvinceCode>
+                        <PostalCode>T1H5K9</PostalCode>
+                        <CountryCode>CA</CountryCode>
+                        <CountryName>Canada</CountryName>
+                        <Residential>false</Residential>
+                  </Address>
+                  <ArrivalLocation>PICKUP_LOCATION</ArrivalLocation>
+               </Events>
+               <Events>
+                  <Timestamp>2022-12-02T09:56:11-06:00</Timestamp>
                   <EventType>OC</EventType>
                   <EventDescription>Shipment information sent to FedEx</EventDescription>
                   <Address>
-                     <Residential>false</Residential>
+                        <Residential>false</Residential>
                   </Address>
                   <ArrivalLocation>CUSTOMER</ArrivalLocation>
                </Events>

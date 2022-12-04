@@ -52,6 +52,9 @@ class CarrierSettings(serializers.Serializer):
     carrier_id = serializers.CharField(
         required=True, help_text="Indicates a specific carrier configuration name."
     )
+    display_name = serializers.CharField(
+        required=False, help_text="The carrier verbose name."
+    )
     test_mode = serializers.BooleanField(
         required=True,
         help_text="""

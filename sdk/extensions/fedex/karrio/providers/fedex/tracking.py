@@ -1,4 +1,3 @@
-from typing import List, Tuple, Optional
 from fedex_lib.track_service_v19 import (
     TrackDetail,
     TrackRequest,
@@ -9,16 +8,12 @@ from fedex_lib.track_service_v19 import (
     TrackPackageIdentifier,
     TrackingDateOrTimestamp,
 )
-from karrio.core.utils import Serializable, Element, XP, DF
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.fedex.error as provider_error
+import karrio.providers.fedex.utils as provider_utils
 from karrio.core.utils.soap import create_envelope, apply_namespaceprefix
-from karrio.core.models import (
-    TrackingRequest,
-    TrackingDetails,
-    TrackingEvent,
-    Message,
-)
-from karrio.providers.fedex.error import parse_error_response
-from karrio.providers.fedex.utils import Settings
 
 estimated_date_formats = [
     "%Y-%m-%dT%H:%M:%S%z",
@@ -27,8 +22,9 @@ estimated_date_formats = [
 
 
 def parse_tracking_response(
-    response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
+    response: lib.Element, 
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
     tracking_details = [
         _extract_tracking(track_detail_node, settings)
@@ -36,19 +32,20 @@ def parse_tracking_response(
     ]
     return (
         [details for details in tracking_details if details is not None],
-        parse_error_response(response, settings),
+        provider_error.parse_error_response(response, settings),
     )
 
 
 def _extract_tracking(
-    detail_node: Element, settings: Settings
-) -> Optional[TrackingDetails]:
-    track_detail = TrackDetail()
-    track_detail.build(detail_node)
+    detail_node: lib.Element, 
+    settings: provider_utils.Settings,
+) -> typing.Optional[models.TrackingDetails]:
+    track_detail = lib.to_object(TrackDetail, detail_node)
+
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    date_or_timestamps = XP.find("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
+    date_or_timestamps = lib.find_element("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
     estimated_delivery = (
         _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_DELIVERY")
         or _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_TENDER")
@@ -56,16 +53,27 @@ def _extract_tracking(
         or _parse_date_or_timestamp(date_or_timestamps, "ESTIMATED_DELIVERY")
     )
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=track_detail.TrackingNumber,
         events=[
-            TrackingEvent(
-                date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+            models.TrackingEvent(
+                date=lib.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                time=lib.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
                 code=e.EventType,
-                location=e.ArrivalLocation,
+                location=(
+                    lib.join(
+                        e.Address.City,
+                        e.Address.StateOrProvinceCode,
+                        e.Address.PostalCode,
+                        e.Address.CountryCode,
+                        join=True,
+                        separator=", ",
+                    )
+                    if e.Address and any(e.Address.City or "")
+                    else e.ArrivalLocation
+                ),
                 description=e.EventDescription,
             )
             for e in track_detail.Events
@@ -76,12 +84,12 @@ def _extract_tracking(
 
 
 def _parse_date_or_timestamp(
-    date_or_timestamps: List[TrackingDateOrTimestamp], type: str
-) -> Optional[str]:
+    date_or_timestamps: typing.List[TrackingDateOrTimestamp], type: str
+) -> typing.Optional[str]:
     return next(
         iter(
             [
-                DF.fdate(d.DateOrTimestamp, try_formats=estimated_date_formats)
+                lib.fdate(d.DateOrTimestamp, try_formats=estimated_date_formats)
                 for d in date_or_timestamps
                 if d.Type == type
             ]
@@ -91,8 +99,9 @@ def _parse_date_or_timestamp(
 
 
 def tracking_request(
-    payload: TrackingRequest, settings: Settings
-) -> Serializable[TrackRequest]:
+    payload: models.TrackingRequest, 
+    settings: provider_utils.Settings,
+) -> lib.Serializable[TrackRequest]:
     request = TrackRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
@@ -122,7 +131,7 @@ def tracking_request(
         TransactionTimeOutValueInMilliseconds=None,
         ProcessingOptions=["INCLUDE_DETAILED_SCANS"],
     )
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: TrackRequest) -> str:
@@ -132,4 +141,4 @@ def _request_serializer(request: TrackRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v18")
 
-    return XP.export(envelope, namespacedef_=namespacedef_)
+    return lib.to_xml(envelope, namespacedef_=namespacedef_)

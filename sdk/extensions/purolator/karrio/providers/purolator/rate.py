@@ -197,7 +197,10 @@ def rate_request(
                 ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service.value,
-                    Description=packages.description,
+                    Description=(
+                        packages.description[:25]
+                        if any(packages.description or "") else None
+                    ),
                     TotalWeight=(
                         TotalWeight(
                             Value=packages.weight.map(

@@ -61,7 +61,12 @@ References = openapi.Schema(
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
-    return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
+    try:
+        return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
+    except Exception as e:
+        import logging
+        logging.exception(e)
+        raise e
 
 
 router.urls.append(path("references", references))

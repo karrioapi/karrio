@@ -35,9 +35,11 @@ class CarrierSettings:
         test_mode: bool = None,
         active: bool = None,
         id: str = None,
+        display_name: str = None,
         **kwargs
     ):
         self.carrier_name = carrier_name
+        self.display_name = display_name
         self.carrier_id = carrier_id
         self.active = active
         self.test_mode = test_mode

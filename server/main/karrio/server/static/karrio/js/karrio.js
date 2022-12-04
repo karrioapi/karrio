@@ -628,6 +628,7 @@
             'id': json['id'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
+            'display_name': !exists(json, 'display_name') ? undefined : json['display_name'],
             'test_mode': json['test_mode'],
             'active': json['active'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
