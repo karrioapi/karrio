@@ -196,7 +196,10 @@ def _shipment_request(
                 ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service,
-                    Description=packages.description,
+                    Description=(
+                        packages.description[:25]
+                        if any(packages.description or "") else None
+                    ),
                     TotalWeight=(
                         TotalWeight(
                             Value=packages.weight.map(
@@ -286,7 +289,7 @@ def _shipment_request(
                             ArrayOfContentDetail(
                                 ContentDetail=[
                                     ContentDetail(
-                                        Description=item.description,
+                                        Description=(item.description or "")[:25],
                                         HarmonizedCode=item.hs_code or "0000",
                                         CountryOfManufacture=(item.origin_country or payload.shipper.country_code),
                                         ProductCode=item.sku or "0000",
