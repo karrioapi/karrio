@@ -340,9 +340,13 @@ class LabelTemplateType(utils.BaseObjectType):
 
 class BaseConnectionType:
     carrier_name = graphene.String(required=True)
+    display_name = graphene.String(required=False)
 
     def resolve_carrier_name(self, info):
-        return getattr(self, "settings", self).carrier_name
+        return self.settings.carrier_name
+
+    def resolve_display_name(self, info):
+        return self.carrier_display_name
 
 
 class SystemConnectionType(BaseConnectionType, utils.BaseObjectType):

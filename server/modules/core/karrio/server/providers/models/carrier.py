@@ -125,6 +125,7 @@ class Carrier(OwnedEntity):
             {
                 "id": self.settings.id,
                 "carrier_name": self.settings.carrier_name,
+                "display_name": self.settings.carrier_display_name,
                 **model_to_dict(self.settings),
                 **_extra,
             }
@@ -143,6 +144,16 @@ class Carrier(OwnedEntity):
         )
 
         return gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
+
+    @property
+    def carrier_display_name(self):
+        if hasattr(self.settings, "display_name"):
+            return self.settings.display_name
+        
+        import karrio.references as references
+        return references.collect_references()["carriers"].get(
+            self.settings.carrier_name
+        )
 
 
 @register_model

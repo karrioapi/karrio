@@ -5751,6 +5751,12 @@
                         "type": "string",
                         "description": "Indicates a specific carrier configuration name."
                     },
+                    "display_name": {
+                        "title": "Display name",
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The carrier verbose name."
+                    },
                     "test_mode": {
                         "title": "Test mode",
                         "type": "boolean",
