@@ -629,7 +629,7 @@ class SystemConnectionType:
 
     @strawberry.field
     def display_name(self: providers.Carrier) -> str:
-        return getattr(self, "display_name", "")
+        return getattr(self, "carrier_display_name", "")
 
     @strawberry.field
     def enabled(self: providers.Carrier, info: Info) -> bool:
