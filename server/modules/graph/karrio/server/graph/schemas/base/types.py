@@ -72,6 +72,12 @@ class LogType:
         except:
             return self.query_params
 
+    @strawberry.field
+    def records(self: tracing.TracingRecord) -> typing.List["TracingRecordType"]:
+        return tracing.TracingRecord.objects.filter(
+            meta__request_log_id__icontains=self.id
+        )
+
     @staticmethod
     @utils.authentication_required
     def resolve(info, id: int) -> typing.Optional["LogType"]:
@@ -97,9 +103,9 @@ class TracingRecordType:
     key: typing.Optional[str]
     timestamp: typing.Optional[float]
     test_mode: typing.Optional[bool]
+    created_by: typing.Optional[UserType]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
 
     @strawberry.field
     def record(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
