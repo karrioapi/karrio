@@ -3563,13 +3563,17 @@ components:
         id:
           type: string
           description: A unique address identifier
+        object_type:
+          type: string
+          default: carrier
+          description: Specifies the object type
+        carrier_id:
+          type: string
+          description: Indicates a specific carrier configuration name.
         carrier_name:
           allOf:
           - $ref: '#/components/schemas/CarrierNameEnum'
           description: Indicates a carrier (type)
-        carrier_id:
-          type: string
-          description: Indicates a specific carrier configuration name.
         display_name:
           type: string
           description: The carrier verbose name.
@@ -3581,10 +3585,12 @@ components:
           type: boolean
           description: The active flag indicates whether the carrier account is active
             or not.
-        object_type:
-          type: string
-          default: carrier
-          description: Specifies the object type
+        capabilities:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: The carrier supported and enabled capabilities.
       required:
       - active
       - carrier_id

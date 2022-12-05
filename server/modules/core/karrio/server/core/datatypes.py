@@ -62,6 +62,7 @@ class CarrierSettings:
                 "capabilities",
                 "active_users",
                 "active_orgs",
+                "display_name",
             ]
         }
 
@@ -255,7 +256,6 @@ class Tracking:
     test_mode: bool = None
     options: Dict = {}
     meta: dict = None
-
 
 
 @attr.s(auto_attribs=True)
