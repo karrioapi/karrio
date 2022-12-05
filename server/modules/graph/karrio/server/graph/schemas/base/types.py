@@ -616,9 +616,9 @@ class LabelTemplateType:
 @strawberry.type
 class SystemConnectionType:
     id: str
+    active: bool
     carrier_id: str
     test_mode: bool
-    active: bool
     capabilities: typing.List[str]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
@@ -629,7 +629,7 @@ class SystemConnectionType:
 
     @strawberry.field
     def display_name(self: providers.Carrier) -> str:
-        return self.carrier_display_name
+        return getattr(self, "display_name", "")
 
     @strawberry.field
     def enabled(self: providers.Carrier, info: Info) -> bool:
@@ -657,12 +657,9 @@ class ConnectionType:
     active: bool
     carrier_id: str
     carrier_name: str
-    test_mode: bool
+    display_name: str
     capabilities: typing.List[str]
-
-    @strawberry.field
-    def display_name(self: providers.Carrier) -> str:
-        return self.carrier_display_name
+    test_mode: bool
 
     @staticmethod
     @utils.authentication_required
@@ -692,13 +689,14 @@ class ConnectionType:
             if "services" in settings
             else {}
         )
+        display_name = dict(display_name=carrier.carrier_display_name)
 
         return CarrierSettings[carrier_name](
             id=carrier.id,
             active=carrier.active,
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
-            **{**settings, **services},
+            **{**settings, **services, **display_name},
         )
 
 
