@@ -1,86 +1,43 @@
 version: '3'
 
 services:
-  api:
-    image: karrio/dev
-    build:
-      context: ./
-      dockerfile: docker/dev.Dockerfile
-    container_name: api
-    env_file: .env
-    environment:
-      DATABASE_HOST: "db"
-    volumes:
-      - .:/karrio/app/
-      - karriostatics:/karrio/static
-    ports:
-      - "5002:5002"
-    depends_on:
-      - db
-      - redis
-    networks:
-      - db_network
-      - web_network
-    command: karrio runserver 0.0.0.0:5002
-
-  worker:
-    image: karrio/dev
-    container_name: worker
-    env_file: .env
-    environment:
-      DATABASE_HOST: "db"
-    volumes:
-      - .:/karrio/app/
-      - karriodata:/karrio/data
-    depends_on:
-      - db
-    networks:
-      - db_network
-    command: karrio run_huey -w 2
-
-  nginx:
-    container_name: nginx
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - karriostatics:/static
-    networks:
-      - web_network
-    depends_on:
-      - api
-
   db:
-    image: postgres
     container_name: db
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      PGDATA: /var/lib/postgresql/data/karrio-dev
+      PGDATA: /var/lib/postgresql/data/karrio
+
+  karrio:
+    container_name: karrio
+    image: danh91.docker.scarf.sh/karrio/server:2022.8.15
+    restart: unless-stopped
     ports:
-      - "5432:5432"
-    networks:
-      - db_network
+      - "5002:5002"
+    depends_on:
+      - db
+    environment:
+      DEBUG_MODE: True
+      DATABASE_NAME: "db"
+      DATABASE_HOST: "db"
+      DATABASE_USERNAME: "postgres"
+      DATABASE_PASSWORD: "postgres"
+      DETACHED_WORKER: False
 
-  redis:
-    restart: always
-    container_name: redis
-    image: redis:latest
+  dashboard:
+    container_name: dashboard
+    image: danh91.docker.scarf.sh/karrio/dashboard:2022.8.15
     ports:
-      - "6379:6379"
-    volumes:
-      - redisdata:/data
-
-volumes:
-  redisdata:
-  karriodata:
-  karriostatics:
-    driver: local
-
-networks:
-  db_network:
-    driver: bridge
-  web_network:
-    driver: bridge
+      - "3000:3000"
+    depends_on:
+      - karrio
+    environment:
+      - 'NEXT_PUBLIC_KARRIO_API_URL=http://localhost:5002'
+      - 'KARRIO_HOSTNAME=http://karrio:5002'
+      - 'NEXTAUTH_URL=http://localhost:3000'
+      - JWT_SECRET="RANDOM_SECRET"

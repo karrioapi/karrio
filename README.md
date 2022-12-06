@@ -14,281 +14,88 @@
   </picture>
 </a>
 
+Open Source Shipping Integration & Automation
+
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
 
-Karrio is a tool for carrier integration and logistics operations automation using a modern tech stack. Karrio helps you manage carrier accounts, reduce shipping costs and improve fulfilment efficiency.
+Karrio is a tool for integrating and automating shipping and logistics operations using a modern tech stack. Karrio helps you manage carrier accounts, reduce shipping costs and improve fulfilment efficiency.
 
-**Features**
+**Get up and running in 1 minute with:**
+
+```sh
+git clone https://github.com/karrioapi/karrio.git
+cd karrio
+docker-compose up -d
+```
+
+## Features
 
 - **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
 - **Extensible**: Build anything with webhooks, API and metadata.
 - **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
 - **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
-- **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page.
+- **Tracking**: Create package tracker, get real time tracking status and deliver a great shopping experience.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
 - **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
 
 <img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
-## Try it now
 
-There are several ways to use Karrio:
+## Get started
 
-- [Karrio Cloud](https://karrio.io) let's you use the fullset of shipping features.
-you don't need to deploy anything. We will manage and scale your infrastructure.
-- [Karrio OSS](#karrio-oss) is an open-source version of karrio that provides
-the core functionality of karrio (rating API, tracking API, shipping API),
-but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
-- [Karrio SDK](#karrio-sdk) is the core of the karrio abstraction layer.
-It can be installed as a simple set of python libraries to do the low level carrier integration scripting yourself.
+### Option 1: Hobby instance one-line-deploy
 
-> Source code for all editions is contained in this repository.
-See the [License section](#license) for more details.
+```bash 
+git clone https://github.com/karrioapi/karrio.git
+cd karrio
+docker-compose up -d
+ ``` 
 
+- Karrio server accessible at <http://localhost:5002>
+- Karrio dashboard accessible at <http://localhost:3000>
 
-## Self-hosted installation
+Default Login: admin@example.com | demo
 
-### Karrio OSS
+### Option 2: Production instance on your infrastructure
 
-> check the latest version tags of the karrio/server image on [Docker Hub](https://hub.docker.com/r/karrio/server/tags)
+Follow our <a href="https://docs.karrio.io/installation">Self-Hosting Guide</a> for all major cloud service providers and on-premise deploys
 
-<details>
-<summary>Using our Docker image</summary>
+### Option 3: If you prefer a fully hosted version
 
-- Start a Postgres database
-
-```bash
-docker run -d \
-  --name db --rm \
-  -e POSTGRES_DB=db \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  postgres
-```
-
-- Run your shipping API
-
-```bash
-docker run -d \
-  --name karrio --rm \
-  -e DEBUG_MODE=True \
-  -e ADMIN_EMAIL=admin@example.com \
-  -e ADMIN_PASSWORD=demo \
-  --link=db:db -p 5002:5002 \
-  danh91.docker.scarf.sh/karrio/server:2022.8.15
-```
-
-</details>
-
-<details>
-<summary>Or using docker-compose</summary>
-
-- Create a `docker-compose.yml` file
-
-```yaml
-version: '3'
-
-services:
-  db:
-    image: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "db"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    networks:
-      - db_network
-
-  karrio:
-    image: danh91.docker.scarf.sh/karrio/server:2022.8.15
-    restart: unless-stopped
-    environment:
-      - DEBUG_MODE=True
-      - ALLOWED_HOSTS=*
-      - ADMIN_EMAIL=admin@example.com
-      - ADMIN_PASSWORD=demo
-      - DATABASE_NAME=db
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
-    depends_on:
-      - db
-    networks:
-      - db_network
-
-volumes:
-  karriodb:
-    driver: local
-
-networks:
-  db_network:
-    driver: bridge
-```
-
-- Run the application
-
-```terminal
-docker-compose up
-```
-
-</details>
-
-Karrio should now be running at <http://localhost:5002>
-
-**Default Login**
-
-| email             | Password |
-| ----------------- | -------- |
-| admin@example.com | demo     |
-
-### Official Karrio Server Client Libraries
-
-- [Node](https://github.com/karrioapi/karrio-node)
-- [PHP](https://github.com/karrioapi/karrio-php)
-- [Python](https://github.com/karrioapi/karrio-python)
-
-## Karrio SDK
-
-### Installation
-
-```bash
-# install karrio core
-pip install karrio
-
-# eg: install the karrio canadapost extention
-pip install karrio.canadapost
-```
-
-<details>
-<summary>Additional carrier extensions</summary>
-
-- `karrio.amazon`
-- `karrio.aramex`
-- `karrio.australiapost`
-- `karrio.canadapost`
-- `karrio.canpar`
-- `karrio.chronopost`
-- `karrio.dhl-express`
-- `karrio.dhl-poland`
-- `karrio.dhl-universal`
-- `karrio.dicom`
-- `karrio.dpdhl`
-- `karrio.fedex`
-- `karrio.purolator`
-- `karrio.royalmail`
-- `karrio.sendle`
-- `karrio.sf-express`
-- `karrio.tnt`
-- `karrio.ups`
-- `karrio.ups-freight`
-- `karrio.usps`
-- `karrio.usps-international`
-- `karrio.yanwen`
-- `karrio.yunexpress`
-
-</details>
-
-### Usage
-
-<details>
-<summary>Rates Fetching</summary>
-
-- Fetch shipping rates
-
-```python
-import karrio
-from karrio.core.models import Address, Parcel, RateRequest
-from karrio.mappers.canadapost import Settings
+Request access to [Karrio Cloud](https://www.karrio.io/get-started).
 
 
-# Initialize a carrier gateway
-canadapost = karrio.gateway["canadapost"].create(
-    Settings(
-        username="6e93d53968881714",
-        password="0bfa9fcb9853d1f51ee57a",
-        customer_number="2004381",
-        contract_id="42708517",
-        test=True
-    )
-)
+## Our Philosophy
 
-# Fetching shipment rates
+We help you integrate with your shipping carriers and improve your fulfilment processes without loosing control.
 
-# Provide the shipper's address
-shipper = Address(
-    postal_code="V6M2V9",
-    city="Vancouver",
-    country_code="CA",
-    state_code="BC",
-    address_line1="5840 Oak St"
-)
+We believe that the logistics industry can greatly benefit from a unified, open and standardize shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
-# Provide the recipient's address
-recipient = Address(
-    postal_code="E1C4Z8",
-    city="Moncton",
-    country_code="CA",
-    state_code="NB",
-    residential=False,
-    address_line1="125 Church St"
-)
 
-# Specify your package dimensions and weight
-parcel = Parcel(
-    height=3.0,
-    length=6.0,
-    width=3.0,
-    weight=0.5,
-    weight_unit='KG',
-    dimension_unit='CM'
-)
+## What is are the benefits?
 
-# Prepare a rate request
-rate_request = RateRequest(
-    shipper=shipper,
-    recipient=recipient,
-    parcels=[parcel],
-    services=["canadapost_xpresspost"],
-)
+Karrio is the only **product-focused** open-source shipping platform with label generation, customs documentation generation and package tracking API that **you can host on your own infrastructure**.
 
-# Send a rate request using a carrier gateway
-response = karrio.Rating.fetch(rate_request).from_(canadapost)
+We are an open-source alternative to manual in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
-# Parse the returned response
-rates, messages = response.parse()
+Karrio makes modern shipping accessible to - enterprise (finance, healthcare) in regulated industries and government agencies. Furthermore, Karrio, enables platforms (Marketplace, eCommerce, ERP, WMS, OMS, 3PLs, Manufacturing system) to seamlessly integrate, launch faster, scale and monetize shipping.
 
-print(rates)
-# [
-#     RateDetails(
-#         carrier_name="canadapost",
-#         carrier_id="canadapost",
-#         currency="CAD",
-#         transit_days=2,
-#         service="canadapost_xpresspost",
-#         total_charge=13.64,
-#         extra_charges=[
-#             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
-#             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
-#         ],
-#     )
-# ]
-```
+## Developing locally & Contributing
 
-</details>
+See our Docs for instructions on [developing Karrio locally](https://docs.karrio.io/development/setup).
 
-## License
+We <3 contributions big or small, check out our [guide on how to get started](https://docs.karrio.io/contributing).
 
-This repository contains both OSS-licensed and non-OSS-licensed files.
-We maintain one repository rather than two separate repositories mainly for development convenience.
+Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairing%20session&body=I'd%20like%20to%20do%20a%20pairing%20session!) to chat with a member of our team.
 
-All files in the `/insiders` fall under the [Karrio LICENSE](/insiders/LICENSE).
+## Open-source vs. paid
 
-The remaining files fall under the [Apache 2 license](LICENSE).
-Karrio OSS is built only from the Apache-licensed files in this repository.
+This project uses the [Apache 2 license](LICENSE). The core Karrio platform will always remain open and free.
+
+We are develping some commercial enterprise add-ons (contained in the `/insiders` directory) only offered on our Cloud and Enterprise editions.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
 
