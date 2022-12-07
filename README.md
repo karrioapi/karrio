@@ -72,7 +72,7 @@ Request access to [Karrio Cloud](https://www.karrio.io/get-started).
 
 We help you integrate with your shipping carriers and improve your fulfilment processes without loosing control.
 
-We believe that the logistics industry can greatly benefit from a unified, open and standardize shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
+We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
 
 ## What is are the benefits?
