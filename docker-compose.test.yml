@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  api:
+  karrio:
     image: karrio/test
     build:
       context: ./
@@ -16,22 +16,13 @@ services:
       - "5002:5002"
     depends_on:
       - db
-      - redis
     networks:
       - db_network
-
-  redis:
-    extends:
-      file: docker-compose.yml
-      service: redis
 
   db:
     extends:
       file: docker-compose.yml
       service: db
-
-volumes:
-  redisdata:
 
 networks:
   db_network:
