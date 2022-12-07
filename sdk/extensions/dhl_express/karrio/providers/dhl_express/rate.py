@@ -97,8 +97,8 @@ def rate_request(
     is_dutiable = not is_document  # parcel and not document only so it is dutiable.
     products = lib.to_services(
         payload.services,
-        is_international=is_international,
         is_document=is_document,
+        is_international=is_international,
         is_envelope=("envelope" in (packages.package_type or "")),
         initializer=provider_units.shipping_services_initializer,
     )
@@ -170,11 +170,7 @@ def rate_request(
                     if options.dhl_shipment_insurance.state
                     else None
                 ),
-                InsuredValue=(
-                    options.dhl_shipment_insurance.state
-                    if options.dhl_shipment_insurance.state
-                    else None
-                ),
+                InsuredValue=options.dhl_shipment_insurance.state,
                 PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
