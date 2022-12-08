@@ -36,7 +36,7 @@ docker-compose up -d
 - **Extensible**: Build anything with webhooks, API and metadata.
 - **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
 - **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
-- **Tracking**: Create package tracker, get real time tracking status and deliver a great shopping experience.
+- **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
 - **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 - **Cloud**: Optimized for deployments using Docker.
 - **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
@@ -75,13 +75,13 @@ We help you integrate with your shipping carriers and improve your fulfilment pr
 We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
 
-## What is are the benefits?
+## What are the benefits?
 
 Karrio is the only **product-focused** open-source shipping platform with label generation, customs documentation generation and package tracking API that **you can host on your own infrastructure**.
 
 We are an open-source alternative to manual in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
-Karrio makes modern shipping accessible to - enterprise (finance, healthcare) in regulated industries and government agencies. Furthermore, Karrio, enables platforms (Marketplace, eCommerce, ERP, WMS, OMS, 3PLs, Manufacturing system) to seamlessly integrate, launch faster, scale and monetize shipping.
+Karrio makes modern shipping accessible to - enterprises (finance, healthcare, etc..) in regulated industries and government agencies. Furthermore, Karrio, enables platforms (Marketplace, eCommerce, ERP, WMS, OMS, 3PLs, Manufacturing system, etc...) to seamlessly integrate, launch faster, scale and monetize shipping.
 
 ## Developing locally & Contributing
 
