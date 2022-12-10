@@ -3,12 +3,11 @@ import typing
 import datetime
 import strawberry
 from strawberry.types import Info
-from karrio.server.core import gateway
-
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+from karrio.server.core import gateway
 import karrio.lib as lib
 import karrio.server.core.filters as filters
 import karrio.server.serializers as serializers
@@ -18,8 +17,8 @@ import karrio.server.manager.models as manager
 import karrio.server.tracing.models as tracing
 import karrio.server.graph.models as graph
 import karrio.server.core.models as core
-import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.utils as utils
+import karrio.server.graph.schemas.base.inputs as inputs
 
 User = get_user_model()
 
@@ -73,10 +72,22 @@ class LogType:
             return self.query_params
 
     @strawberry.field
-    def records(self: tracing.TracingRecord) -> typing.List["TracingRecordType"]:
-        return tracing.TracingRecord.objects.filter(
+    def records(
+        self: tracing.TracingRecord, info: Info
+    ) -> typing.List["TracingRecordType"]:
+        queryset = tracing.TracingRecord.objects.filter(
             meta__request_log_id__icontains=self.id
         )
+
+        if User.objects.filter(
+            id=info.context.request.user.id, is_staff=False
+        ).exists():
+            system_carriers = providers.Carrier.objects.filter(created_by__isnull=True)
+            queryset = queryset.exclude(
+                meta__carrier_account_id__in=system_carriers.values_list("id")
+            )
+
+        return queryset
 
     @staticmethod
     @utils.authentication_required
