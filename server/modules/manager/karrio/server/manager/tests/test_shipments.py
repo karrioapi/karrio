@@ -161,7 +161,7 @@ class TestShipmentPurchase(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
@@ -353,6 +353,7 @@ SHIPMENT_RESPONSE = {
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
+    "billing_address": None,
     "services": [],
     "options": {"shipment_date": ANY},
     "customs": None,
@@ -501,6 +502,7 @@ PURCHASED_SHIPMENT = {
     "services": [],
     "options": {"shipment_date": ANY},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
@@ -638,6 +640,7 @@ CANCEL_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
@@ -753,6 +756,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {

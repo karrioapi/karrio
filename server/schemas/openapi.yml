@@ -4155,6 +4155,11 @@ components:
           nullable: true
           description: "The payment details.<br/>\n        **Note that this is required\
             \ for a Dutiable parcel shipped internationally.**\n        "
+        duty_billing_address:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          nullable: true
+          description: The duty payor address.
         content_type:
           nullable: true
           oneOf:
@@ -4220,6 +4225,11 @@ components:
           nullable: true
           description: "The payment details.<br/>\n        **Note that this is required\
             \ for a Dutiable parcel shipped internationally.**\n        "
+        duty_billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The duty payor address.
         content_type:
           nullable: true
           oneOf:
@@ -4433,11 +4443,6 @@ components:
           type: string
           nullable: true
           description: The duty payment account number
-        bill_to:
-          allOf:
-          - $ref: '#/components/schemas/Address'
-          nullable: true
-          description: The duty billing address
     EnabledEventsEnum:
       enum:
       - all
@@ -5122,6 +5127,11 @@ components:
           nullable: true
           description: "The payment details.<br/>\n        **Note that this is required\
             \ for a Dutiable parcel shipped internationally.**\n        "
+        duty_billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The duty payor address.
         content_type:
           nullable: true
           oneOf:
@@ -5809,6 +5819,11 @@ components:
             currency: null
             account_number: null
           description: The payment details
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          nullable: true
+          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/Customs'
@@ -5975,6 +5990,11 @@ components:
             currency: null
             account_number: null
           description: The payment details
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
@@ -6177,6 +6197,11 @@ components:
             currency: null
             account_number: null
           description: The payment details
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
@@ -6269,6 +6294,11 @@ components:
             currency: null
             account_number: null
           description: The payment details
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          nullable: true
+          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/Customs'

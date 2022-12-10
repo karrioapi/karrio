@@ -23,7 +23,8 @@ def forwards_func(apps, schema_editor):
         ]
         _carriers.append(carrier)
 
-    Carrier.objects.using(db_alias).bulk_update(_carriers, ["carrier_capabilities"])
+    if any(_carriers):
+        Carrier.objects.using(db_alias).bulk_update(_carriers, ["carrier_capabilities"])
 
 
 def reverse_func(apps, schema_editor):

@@ -320,6 +320,7 @@ class CustomsType:
     updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_by: typing.Optional[UserType] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
+    duty_billing_address: typing.Optional[AddressType]
 
     @strawberry.field
     def duty(self: manager) -> typing.Optional[DutyType]:
@@ -534,6 +535,7 @@ class ShipmentType:
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
     reference: typing.Optional[str]
+    billing_address: typing.Optional[AddressType]
     customs: typing.Optional[CustomsType]
     services: typing.Optional[typing.List[str]]
     service: typing.Optional[str]

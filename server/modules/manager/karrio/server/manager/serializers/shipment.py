@@ -141,6 +141,12 @@ class ShipmentSerializer(ShipmentData):
                     payload=validated_data,
                     context=context,
                 ),
+                "billing_address": save_one_to_one_data(
+                    "billing_address",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
                 "rates": rates,
                 "payment": payment,
                 "services": services,
@@ -196,6 +202,13 @@ class ShipmentSerializer(ShipmentData):
         )
         save_one_to_one_data(
             "recipient",
+            AddressSerializer,
+            instance,
+            payload=validated_data,
+            context=context,
+        )
+        save_one_to_one_data(
+            "billing_address",
             AddressSerializer,
             instance,
             payload=validated_data,

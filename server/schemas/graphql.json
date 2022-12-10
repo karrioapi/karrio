@@ -10689,6 +10689,18 @@
             "deprecationReason": null
           },
           {
+            "name": "duty_billing_address",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AddressType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "duty",
             "description": null,
             "args": [],
@@ -12826,6 +12838,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "billing_address",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AddressType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -22485,6 +22509,16 @@
             "defaultValue": null
           },
           {
+            "name": "duty_billing_address",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UpdateAddressInput",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "options",
             "description": null,
             "type": {
@@ -22895,6 +22929,16 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "UpdateDutyInput",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "duty_billing_address",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -30512,6 +30556,16 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "PaymentInput",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "billing_address",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null

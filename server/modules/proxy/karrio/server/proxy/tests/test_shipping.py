@@ -228,6 +228,7 @@ SHIPPING_RESPONSE = {
     "services": [],
     "options": {"shipment_date": ANY},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
