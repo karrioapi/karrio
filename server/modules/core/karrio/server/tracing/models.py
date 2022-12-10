@@ -26,6 +26,11 @@ class TracingRecord(OwnedEntity):
                 condition=models.Q(meta__request_log_id__isnull=False),
                 name="request_log_idx",
             ),
+            models.Index(
+                json.KeyTextTransform("carrier_account_id", "meta"),
+                condition=models.Q(meta__carrier_account_id__isnull=False),
+                name="carrier_account_idx",
+            ),
         ]
 
     id = models.CharField(
