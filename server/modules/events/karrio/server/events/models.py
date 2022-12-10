@@ -2,7 +2,6 @@ from functools import partial
 from django.db import models
 from django.conf import settings
 from django.db.models.fields import json
-from django.contrib.postgres import fields
 
 import karrio.server.core.models as core
 import karrio.server.core.fields as core_fields
@@ -74,7 +73,7 @@ class Event(core.OwnedEntity):
         editable=False,
     )
 
-    type = models.CharField(max_length=50)
+    type = models.CharField(max_length=50, db_index=True)
     data = models.JSONField(default=core.field_default({}))
     test_mode = models.BooleanField(null=False)
     pending_webhooks = models.IntegerField(default=0)

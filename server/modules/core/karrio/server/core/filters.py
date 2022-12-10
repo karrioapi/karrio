@@ -10,7 +10,6 @@ import karrio.server.filters as filters
 import karrio.server.openapi as openapi
 
 
-
 class CarrierFilters(filters.FilterSet):
 
     carrier_name = filters.MultipleChoiceFilter(

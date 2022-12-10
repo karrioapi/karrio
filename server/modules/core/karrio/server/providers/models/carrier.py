@@ -46,12 +46,13 @@ class Carrier(core.OwnedEntity):
     carrier_id = models.CharField(
         max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
+        db_index=True,
     )
     test_mode = models.BooleanField(
         default=True, db_column="test_mode", help_text="Toggle carrier connection mode"
     )
     active = models.BooleanField(
-        default=True, help_text="Disable/Hide carrier from clients"
+        default=True, help_text="Disable/Hide carrier from clients", db_index=True
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
