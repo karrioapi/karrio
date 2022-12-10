@@ -7,12 +7,15 @@ class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
 
 class FilterSet(django_filters.FilterSet):
     def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
-        data.update({
-            key: (
-                ','.join(val)
-                if self.base_filters.get(key).__class__ == CharInFilter
-                else val
-            )
-            for key, val in data.items()
-        })
+        data = {
+            **data,
+            **{
+                key: (
+                    ",".join(val)
+                    if self.base_filters.get(key).__class__ == CharInFilter
+                    else val
+                )
+                for key, val in data.items()
+            },
+        }
         super().__init__(data, queryset, request=request, prefix=prefix)
