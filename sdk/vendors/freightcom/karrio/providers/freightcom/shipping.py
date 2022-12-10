@@ -53,10 +53,7 @@ def _extract_shipment(
     rate_provider, service, service_name = provider_units.ShippingService.info(
         quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
-    invoice = (
-        dict(invoice=shipping.CustomsInvoice)
-        if shipping.CustomsInvoice else {}
-    )
+    invoice = dict(invoice=shipping.CustomsInvoice) if shipping.CustomsInvoice else {}
     charges = [
         ("Base charge", quote.baseCharge),
         ("Fuel surcharge", quote.fuelSurcharge),
@@ -114,23 +111,33 @@ def shipping_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+
     is_intl = payload.shipper.country_code != payload.recipient.country_code
     customs = lib.to_customs_info(
         payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
         weight_unit=packages.weight_unit,
         default_to=(
-            models.Customs(commodities=(
-                packages.items
-                if any(packages.items)
-                else [models.Commodity(
-                    quantity=1,
-                    sku=f"000{index}",
-                    weight=pkg.weight.value,
-                    weight_unit=pkg.weight_unit.value,
-                    description=pkg.parcel.content,
-                ) for index, pkg in enumerate(packages, start=1)]
-            )) if is_intl else None
-        )
+            models.Customs(
+                commodities=(
+                    packages.items
+                    if any(packages.items)
+                    else [
+                        models.Commodity(
+                            quantity=1,
+                            sku=f"000{index}",
+                            weight=pkg.weight.value,
+                            weight_unit=pkg.weight_unit.value,
+                            description=pkg.parcel.content,
+                        )
+                        for index, pkg in enumerate(packages, start=1)
+                    ]
+                )
+            )
+            if is_intl
+            else None
+        ),
     )
 
     packaging_type = provider_units.FreightPackagingType.map(
@@ -141,17 +148,10 @@ def shipping_request(
         if packaging_type in [provider_units.FreightPackagingType.pallet.value]
         else "Package"
     )
+    payment = payload.payment or models.Payment()
     payment_type = (
-        provider_units.PaymentType[payload.payment.paid_by] if payload.payment else None
+        provider_units.PaymentType[payment.paid_by] if payload.payment else None
     )
-    duty_paid_by = provider_units.PaymentType.map(
-        getattr(customs.duty, "paid_by", None) or "sender"
-    ).name
-    bill_to = lib.to_address(getattr(customs.duty, "bill_to", None) or (
-        payload.shipper
-        if duty_paid_by == "sender"
-        else payload.recipient
-    ))
 
     request = Freightcom(
         version="3.1.0",
@@ -249,11 +249,7 @@ def shipping_request(
                 ],
                 type_=packaging,
             ),
-            Payment=(
-                RequestPaymentType(type_=payment_type)
-                if payload.payment is not None
-                else None
-            ),
+            Payment=(RequestPaymentType(type_=payment_type) if payment_type else None),
             Reference=(
                 [ReferenceType(name="REF", code=payload.reference)]
                 if payload.reference != ""
@@ -262,29 +258,35 @@ def shipping_request(
             CustomsInvoice=(
                 CustomsInvoiceType(
                     BillTo=BillToType(
-                        company=bill_to.company_name,
-                        name=bill_to.person_name,
-                        address1=lib.join(bill_to.address_line1, join=True),
-                        city=bill_to.city,
-                        state=bill_to.state_code,
-                        zip=bill_to.postal_code,
-                        country=bill_to.country_code,
+                        company=customs.duty_billing_address.company_name,
+                        name=customs.duty_billing_address.person_name,
+                        address1=lib.join(
+                            customs.duty_billing_address.address_line1, join=True
+                        ),
+                        city=customs.duty_billing_address.city,
+                        state=customs.duty_billing_address.state_code,
+                        zip=customs.duty_billing_address.postal_code,
+                        country=customs.duty_billing_address.country_code,
                     ),
                     Contact=ContactType(
-                        name=bill_to.person_name,
-                        phone=bill_to.phone_number,
+                        name=customs.duty_billing_address.person_name,
+                        phone=customs.duty_billing_address.phone_number,
                     ),
                     Item=[
                         ItemType(
                             code=(item.hs_code or item.sku or "0000"),
                             description=item.description or "item",
-                            originCountry=item.origin_country or payload.shipper.country_code,
+                            originCountry=(
+                                item.origin_country or payload.shipper.country_code
+                            ),
                             unitPrice=item.value_amount,
-                            quantity=item.quantity or 1,
+                            quantity=(item.quantity or 1),
                         )
                         for item in customs.commodities
                     ],
-                ) if payload.customs else None
+                )
+                if payload.customs
+                else None
             ),
         ),
     )

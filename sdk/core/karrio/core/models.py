@@ -88,7 +88,6 @@ class Payment:
     paid_by: str = "sender"
     currency: str = None
     account_number: str = None
-    address: Address = JStruct[Address]
     id: str = None
 
 
@@ -100,7 +99,6 @@ class Duty:
     currency: str = None
     account_number: str = None
     declared_value: float = None
-    bill_to: Address = JStruct[Address]
     id: str = None
 
 
@@ -117,6 +115,7 @@ class Customs:
     invoice: str = None
     invoice_date: str = None
     duty: Duty = JStruct[Duty]
+    duty_billing_address: Address = JStruct[Address]
     commercial_invoice: bool = False
     options: Dict = {}
     id: str = None
@@ -134,6 +133,7 @@ class ShipmentRequest:
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
+    billing_address: Address = JStruct[Address]
 
     options: Dict = {}
     reference: str = ""

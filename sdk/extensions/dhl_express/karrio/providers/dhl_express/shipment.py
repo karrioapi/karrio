@@ -103,7 +103,12 @@ def shipment_request(
     payment = payload.payment or models.Payment(
         paid_by="sender", account_number=settings.account_number
     )
-    customs = lib.to_customs_info(payload.customs, weight_unit=weight_unit.value)
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=weight_unit.value,
+    )
     is_document = all(p.parcel.is_document for p in packages)
     is_dutiable = is_document is False and customs.duty is not None
     options = lib.to_shipping_options(
@@ -115,7 +120,6 @@ def shipment_request(
     )
 
     duty = customs.duty or models.Duty(paid_by="sender")
-    bill_to = lib.to_address(duty.bill_to)
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
 
@@ -167,10 +171,10 @@ def shipment_request(
         ),
         Dutiable=(
             Dutiable(
-                DeclaredValue=duty.declared_value
-                or options.declared_value.state
-                or 1.0,
-                DeclaredCurrency=duty.currency or options.currency.state or "USD",
+                DeclaredValue=(
+                    duty.declared_value or options.declared_value.state or 1.0
+                ),
+                DeclaredCurrency=(duty.currency or options.currency.state or "USD"),
                 ScheduleB=None,
                 ExportLicense=customs.options.license_number.state,
                 ShipperEIN=None,
@@ -203,21 +207,21 @@ def shipment_request(
                 MxStateCode=None,
                 InvoiceNumber=(customs.invoice or "N/A"),
                 InvoiceDate=(customs.invoice_date or time.strftime("%Y-%m-%d")),
-                BillToCompanyName=bill_to.company_name,
-                BillToContactName=bill_to.person_name,
-                BillToAddressLine=bill_to.address_line,
-                BillToCity=bill_to.city,
-                BillToPostcode=bill_to.postal_code,
-                BillToSuburb=bill_to.extra,
-                BillToCountryName=bill_to.country_name,
-                BillToPhoneNumber=bill_to.phone_number,
+                BillToCompanyName=customs.duty_billing_address.company_name,
+                BillToContactName=customs.duty_billing_address.person_name,
+                BillToAddressLine=customs.duty_billing_address.address_line,
+                BillToCity=customs.duty_billing_address.city,
+                BillToPostcode=customs.duty_billing_address.postal_code,
+                BillToSuburb=customs.duty_billing_address.extra,
+                BillToCountryName=customs.duty_billing_address.country_name,
+                BillToPhoneNumber=customs.duty_billing_address.phone_number,
                 BillToPhoneNumberExtn=None,
                 BillToFaxNumber=None,
-                BillToFederalTaxID=bill_to.federal_tax_id,
+                BillToFederalTaxID=customs.duty_billing_address.federal_tax_id,
                 Remarks=customs.content_description,
                 DestinationPort=None,
                 TermsOfPayment=None,
-                PayerGSTVAT=bill_to.state_tax_id,
+                PayerGSTVAT=customs.duty_billing_address.state_tax_id,
                 SignatureImage=None,
                 ReceiverReference=None,
                 ExporterId=None,
