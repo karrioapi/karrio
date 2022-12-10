@@ -73,9 +73,6 @@ class Order(OwnedEntity):
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
-        indexes = [
-            models.Index(fields=["order_id"], name="order_id_idx"),
-        ]
 
     id = models.CharField(
         max_length=50,
@@ -83,11 +80,11 @@ class Order(OwnedEntity):
         default=partial(uuid, prefix="ord_"),
         editable=False,
     )
-    order_id = models.CharField(max_length=50)
+    order_id = models.CharField(max_length=50, db_index=True)
     order_date = models.DateField(default=datetime.date.today)
-    source = models.CharField(max_length=50, null=True, blank=True)
+    source = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     status = models.CharField(
-        max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0]
+        max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0], db_index=True
     )
     shipping_to = models.OneToOneField(
         "manager.Address", on_delete=models.CASCADE, related_name="recipient_order"
