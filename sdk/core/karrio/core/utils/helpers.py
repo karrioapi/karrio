@@ -18,8 +18,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
-NEW_LINE = '''
-'''
+NEW_LINE = """
+"""
 
 
 def identity(value: Any) -> Any:
@@ -74,7 +74,7 @@ def bundle_imgs(base64_strings: List[str]) -> Image:
 
 
 def bundle_zpls(base64_strings: List[str]) -> str:
-    doc = ''
+    doc = ""
     for b64_str in base64_strings:
         doc += f'{base64.b64decode(b64_str).decode("utf-8")}{NEW_LINE}'
 
@@ -212,10 +212,9 @@ def exec_parrallel(
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
     async def run_tasks(loop):
-        return await asyncio.gather(*[
-            loop.run_in_executor(None, lambda: action(args))
-            for args in sequence
-        ])
+        return await asyncio.gather(
+            *[loop.run_in_executor(None, lambda: action(args)) for args in sequence]
+        )
 
     def run_loop():
         loop = asyncio.new_event_loop()
