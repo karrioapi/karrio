@@ -130,23 +130,20 @@ def shipment_request(
         required=["weight"],
         package_option_type=provider_units.ShippingOption,
     )
-    service = provider_units.ServiceType.map(payload.service).value_or_key
+
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-
-    customs = lib.to_customs_info(payload.customs)
-    duty = (
-        (customs.duty or models.Duty())
-        if payload.customs is not None else None
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
     )
-    bill_to = lib.to_address(getattr(duty, "bill_to", None) or (
-        payload.shipper
-        if getattr(payload.payment, "paid_by", "sender") == "sender"
-        else payload.recipient
-    ))
+
+    payment = payload.payment or Payment()
+    service = provider_units.ServiceType.map(payload.service).value_or_key
     label_type, label_format = provider_units.LabelType[
         payload.label_type or "PDF_4x6"
     ].value
@@ -252,13 +249,12 @@ def shipment_request(
                 SoldTo=None,
                 ShippingChargesPayment=Payment(
                     PaymentType=provider_units.PaymentType[
-                        getattr(payload.payment, "paid_by", None) or "sender"
+                        getattr(payment, "paid_by", None) or "sender"
                     ].value,
                     Payor=Payor(
                         ResponsibleParty=Party(
                             AccountNumber=(
-                                payload.payment.account_number
-                                or settings.account_number
+                                payment.account_number or settings.account_number
                             ),
                         )
                     ),
@@ -344,16 +340,16 @@ def shipment_request(
                         DutiesPayment=(
                             Payment(
                                 PaymentType=provider_units.PaymentType[
-                                    getattr(duty, "paid_by", None) or "sender"
+                                    getattr(customs.duty, "paid_by", None) or "sender"
                                 ].value,
                                 Payor=(
                                     Payor(
                                         ResponsibleParty=Party(
                                             AccountNumber=(
-                                                duty.account_number
+                                                customs.duty.account_number
                                                 or settings.account_number
                                             ),
-                                            Tins=bill_to.taxes,
+                                            Tins=customs.duty_billing_address.taxes,
                                         )
                                     )
                                 ),
@@ -363,12 +359,12 @@ def shipment_request(
                         CustomsValue=(
                             Money(
                                 Currency=(
-                                    duty.currency
+                                    customs.duty.currency
                                     or options.currency.state
                                     or "USD"
                                 ),
                                 Amount=(
-                                    duty.declared_value
+                                    customs.duty.declared_value
                                     or options.declared_value.state
                                     or 0.0
                                 ),
@@ -431,7 +427,9 @@ def shipment_request(
                                 QuantityUnits="EA",
                                 AdditionalMeasures=None,
                                 UnitPrice=Money(
-                                    Currency=(options.currency.state or duty.currency),
+                                    Currency=(
+                                        options.currency.state or customs.duty.currency
+                                    ),
                                     Amount=item.value_amount,
                                 ),
                                 CustomsValue=None,

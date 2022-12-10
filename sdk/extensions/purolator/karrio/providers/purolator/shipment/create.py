@@ -61,7 +61,10 @@ def _extract_shipment(
 ) -> models.ShipmentDetails:
     pin: PIN = lib.find_element("ShipmentPIN", response, PIN, first=True)
     documents = lib.find_element("DocumentDetail", response, DocumentDetail)
-    label = next((doc for doc in documents if "BillOfLading" in doc.DocumentType), DocumentDetail())
+    label = next(
+        (doc for doc in documents if "BillOfLading" in doc.DocumentType),
+        DocumentDetail(),
+    )
     invoice = next((doc for doc in documents if "Invoice" in doc.DocumentType), None)
 
     return models.ShipmentDetails(
@@ -100,13 +103,16 @@ def _shipment_request(
         provider_units.PackagePresets,
         required=["weight"],
     )
-    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
+    payment = payload.payment or models.Payment()
+    customs = lib.to_customs_info(payload.customs)
+    printing = provider_units.PrintType.map(payload.label_type or "PDF").value
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     is_international = payload.shipper.country_code != payload.recipient.country_code
     shipper_phone_number = units.Phone(
         payload.shipper.phone_number or "000 000 0000", payload.shipper.country_code
@@ -114,7 +120,6 @@ def _shipment_request(
     recipient_phone_number = units.Phone(
         payload.recipient.phone_number or "000 000 0000", payload.recipient.country_code
     )
-    printing = provider_units.PrintType.map(payload.label_type or "PDF").value
 
     request = lib.create_envelope(
         header_content=RequestContext(
@@ -198,7 +203,8 @@ def _shipment_request(
                     ServiceID=service,
                     Description=(
                         packages.description[:25]
-                        if any(packages.description or "") else None
+                        if any(packages.description or "")
+                        else None
                     ),
                     TotalWeight=(
                         TotalWeight(
@@ -291,7 +297,10 @@ def _shipment_request(
                                     ContentDetail(
                                         Description=(item.description or "")[:25],
                                         HarmonizedCode=item.hs_code or "0000",
-                                        CountryOfManufacture=(item.origin_country or payload.shipper.country_code),
+                                        CountryOfManufacture=(
+                                            item.origin_country
+                                            or payload.shipper.country_code
+                                        ),
                                         ProductCode=item.sku or "0000",
                                         UnitValue=item.value_amount,
                                         Quantity=item.quantity,
@@ -302,7 +311,7 @@ def _shipment_request(
                                         TextileIndicator=None,
                                         TextileManufacturer=None,
                                     )
-                                    for item in payload.customs.commodities
+                                    for item in customs.commodities
                                 ]
                             )
                             if not packages.is_document
@@ -312,10 +321,11 @@ def _shipment_request(
                         PreferredCustomsBroker=None,
                         DutyInformation=DutyInformation(
                             BillDutiesToParty=provider_units.DutyPaymentType.map(
-                                payload.customs.duty.paid_by
-                            ).value or "Sender",
+                                customs.duty.paid_by
+                            ).value
+                            or "Sender",
                             BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                            Currency=(payload.customs.duty.currency or options.currence.state),
+                            Currency=(customs.duty.currency or options.currence.state),
                         ),
                         ImportExportType="Permanent",
                         CustomsInvoiceDocumentIndicator=True,
@@ -326,14 +336,12 @@ def _shipment_request(
                 ReturnShipmentInformation=None,
                 PaymentInformation=(
                     PaymentInformation(
-                        PaymentType=provider_units.PaymentType[
-                            payload.payment.paid_by
-                        ].value,
+                        PaymentType=provider_units.PaymentType[payment.paid_by].value,
                         RegisteredAccountNumber=(
-                            payload.payment.account_number or settings.account_number
+                            payment.account_number or settings.account_number
                         ),
                         BillingAccountNumber=(
-                            payload.payment.account_number or settings.account_number
+                            payment.account_number or settings.account_number
                         ),
                         CreditCardInformation=None,
                     )

@@ -94,15 +94,15 @@ def shipment_request(
         provider_units.PaymentType.map(payment.paid_by)
         or provider_units.PaymentType.prepaid
     ).value
-    payer = lib.to_address(
+    billing_address = lib.to_address(
         {
             provider_units.PaymentType.prepaid.value: (
-                payment.address or payload.shipper
+                payload.billing_address or payload.shipper
             ),
             provider_units.PaymentType.freight_collect.value: (
-                payment.address or payload.recipient
+                payload.billing_address or payload.recipient
             ),
-            provider_units.PaymentType.bill_to_third_party.value: payment.address,
+            provider_units.PaymentType.bill_to_third_party.value: payload.billing_address,
         }[payment_type]
     )
 
@@ -144,21 +144,25 @@ def shipment_request(
                 ),
                 PaymentInformation=ups.PaymentInformationType(
                     Payer=ups.ShipFromType(
-                        Name=(payer.company_name or payer.person_name or "N/A"),
+                        Name=(
+                            billing_address.company_name
+                            or billing_address.person_name
+                            or "N/A"
+                        ),
                         Address=ups.AddressType(
-                            AddressLine=payer.address_line,
-                            City=payer.city,
-                            StateProvinceCode=payer.state_code,
-                            PostalCode=payer.postal_code,
-                            CountryCode=payer.country_code,
+                            AddressLine=billing_address.address_line,
+                            City=billing_address.city,
+                            StateProvinceCode=billing_address.state_code,
+                            PostalCode=billing_address.postal_code,
+                            CountryCode=billing_address.country_code,
                         ),
                         ShipperNumber=(
                             payment.account_number or settings.account_number
                         ),
-                        AttentionName=payer.person_name,
+                        AttentionName=billing_address.person_name,
                         Phone=(
-                            ups.PhoneType(Number=payer.phone_number)
-                            if payer.phone_number is not None
+                            ups.PhoneType(Number=billing_address.phone_number)
+                            if billing_address.phone_number is not None
                             else None
                         ),
                     ),

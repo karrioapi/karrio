@@ -53,7 +53,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
     ).single
 
     payment = payload.payment or models.Payment()
-    payor = payment.address or (
+    payor = payload.billing_address or (
         payload.shipper if payment.paid_by == "sender" else payload.recipient
     )
     options = lib.to_shipping_options(
@@ -67,18 +67,24 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         payload.customs,
         weight_unit=package.weight_unit,
         default_to=(
-            models.Customs(commodities=(
-                package.parcel.items
-                if any(package.parcel.items)
-                else [models.Commodity(
-                    sku="0000",
-                    quantity=1,
-                    weight=package.weight.value,
-                    weight_unit=package.weight_unit.value,
-                    description=package.parcel.content,
-                )]
-            )) if is_intl else None
-        )
+            models.Customs(
+                commodities=(
+                    package.parcel.items
+                    if any(package.parcel.items)
+                    else [
+                        models.Commodity(
+                            sku="0000",
+                            quantity=1,
+                            weight=package.weight.value,
+                            weight_unit=package.weight_unit.value,
+                            description=package.parcel.content,
+                        )
+                    ]
+                )
+            )
+            if is_intl
+            else None
+        ),
     )
 
     requests = dict(
@@ -153,7 +159,9 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                             )
                             for item in customs.commodities
                         ],
-                    ) if payload.customs else None
+                    )
+                    if payload.customs
+                    else None
                 ),
             )
         ),
