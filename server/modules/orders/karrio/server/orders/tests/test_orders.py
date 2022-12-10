@@ -512,6 +512,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "services": [],
             "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+            "billing_address": None,
             "customs": None,
             "rates": [
                 {
@@ -733,6 +734,7 @@ FULFILLED_ORDER_RESPONSE = {
             "services": [],
             "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+            "billing_address": None,
             "customs": None,
             "rates": [
                 {
@@ -939,6 +941,7 @@ PARTIAL_ORDER_RESPONSE = {
             "services": [],
             "options": {"currency": "CAD", "shipment_date": ANY},
             "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+            "billing_address": None,
             "customs": None,
             "rates": [
                 {

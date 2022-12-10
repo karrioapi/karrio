@@ -38,7 +38,9 @@ class UserModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
-class AddressModelSerializer(validators.AugmentedAddressSerializer, serializers.ModelSerializer):
+class AddressModelSerializer(
+    validators.AugmentedAddressSerializer, serializers.ModelSerializer
+):
     country_code = serializers.CharField(required=False)
 
     class Meta:
@@ -329,12 +331,14 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             context=context,
         )
         settings = serializers.save_one_to_one_data(
-            settings_name, serializer, payload={settings_name: payload}, context=context,
+            settings_name,
+            serializer,
+            payload={settings_name: payload},
+            context=context,
         )
 
-        services = (
-            settings_data.get("services") or
-            getattr(settings, "default_services", [])
+        services = settings_data.get("services") or getattr(
+            settings, "default_services", []
         )
         if any(services):
             serializers.save_many_to_many_data(
@@ -351,11 +355,13 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         return getattr(settings, "carrier_ptr", None)
 
     @transaction.atomic
-    def update(self, instance, validated_data: dict, context: serializers.Context, **kwargs):
+    def update(
+        self, instance, validated_data: dict, context: serializers.Context, **kwargs
+    ):
         carrier_name = (
             instance.settings.carrier_name
             if instance.settings.carrier_name in providers.MODELS
-            else 'generic'
+            else "generic"
         )
         settings_name = instance.settings.__class__.__name__.lower()
         serializer = CARRIER_MODEL_SERIALIZERS.get(carrier_name)

@@ -24,6 +24,7 @@ class Address(OwnedEntity):
     HIDDEN_PROPS = (
         "shipper_shipment",
         "recipient_shipment",
+        "billing_address_shipment",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
         *(
             ("shipper_order", "recipient_order")
@@ -79,6 +80,15 @@ class Address(OwnedEntity):
             return self.shipper_shipment
         if hasattr(self, "recipient_shipment"):
             return self.recipient_shipment
+        if hasattr(self, "billing_address_shipment"):
+            return self.billing_address_shipment
+
+        return None
+
+    @property
+    def customs(self):
+        if hasattr(self, "duty_billing_address_customs"):
+            return self.duty_billing_address_customs
 
         return None
 
@@ -266,6 +276,7 @@ class CustomsManager(models.Manager):
             .prefetch_related(
                 "commodities",
                 "created_by",
+                "duty_billing_address",
             )
         )
 
@@ -285,7 +296,7 @@ class Customs(OwnedEntity):
         "invoice_date",
         "options",
     ]
-    RELATIONAL_PROPS = ["commodities"]
+    RELATIONAL_PROPS = ["commodities", "duty_billing_address"]
     HIDDEN_PROPS = (
         "customs_shipment",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
@@ -325,6 +336,12 @@ class Customs(OwnedEntity):
 
     commodities = models.ManyToManyField(
         "Commodity", blank=True, related_name="commodity_customs"
+    )
+    duty_billing_address = models.OneToOneField(
+        "Address",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="duty_billing_address_customs",
     )
 
     def delete(self, *args, **kwargs):
@@ -545,6 +562,7 @@ class ShipmentManager(models.Manager):
                 "selected_rate_carrier",
                 "created_by",
                 "shipment_tracker",
+                "billing_address",
             )
         )
 
@@ -568,7 +586,14 @@ class Shipment(OwnedEntity):
         "created_by",
         "reference",
     ]
-    RELATIONAL_PROPS = ["shipper", "recipient", "parcels", "customs", "selected_rate"]
+    RELATIONAL_PROPS = [
+        "shipper",
+        "recipient",
+        "parcels",
+        "customs",
+        "selected_rate",
+        "billing_address",
+    ]
     HIDDEN_PROPS = (
         "carriers",
         "label",
@@ -611,6 +636,12 @@ class Shipment(OwnedEntity):
     )
     shipper = models.OneToOneField(
         "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
+    )
+    billing_address = models.OneToOneField(
+        "Address",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="billing_address_shipment",
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
 

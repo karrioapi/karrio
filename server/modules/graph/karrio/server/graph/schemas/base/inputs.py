@@ -243,6 +243,7 @@ class CustomsInput:
     invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
     signer: typing.Optional[str] = strawberry.UNSET
     duty: typing.Optional[DutyInput] = strawberry.UNSET
+    duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -250,6 +251,7 @@ class CustomsInput:
 class UpdateCustomsInput(CustomsInput):
     id: typing.Optional[str] = strawberry.UNSET
     duty: typing.Optional[UpdateDutyInput] = strawberry.UNSET
+    duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     commodities: typing.List[UpdateCommodityInput] = strawberry.UNSET  # type: ignore
 
 
@@ -268,6 +270,7 @@ class PartialShipmentMutationInput(utils.BaseInput):
     customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET
     parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
     payment: typing.Optional[PaymentInput] = strawberry.UNSET
+    billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET

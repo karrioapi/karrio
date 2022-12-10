@@ -445,14 +445,12 @@ class Duty(serializers.Serializer):
         allow_null=True,
         help_text="The duty payment account number",
     )
-    bill_to = Address(
-        required=False, allow_null=True, help_text="The duty billing address"
-    )
 
 
 @serializers.allow_model_id(
     [
         ("commodities", "karrio.server.manager.models.Commodity"),
+        ("duty_billing_address", "karrio.server.manager.models.Address"),
     ]
 )
 class CustomsData(serializers.Serializer):
@@ -466,6 +464,9 @@ class CustomsData(serializers.Serializer):
         help_text="""The payment details.<br/>
         **Note that this is required for a Dutiable parcel shipped internationally.**
         """,
+    )
+    duty_billing_address = AddressData(
+        required=False, allow_null=True, help_text="The duty payor address."
     )
     content_type = serializers.ChoiceField(
         required=False, choices=CUSTOMS_CONTENT_TYPE, allow_blank=True, allow_null=True
@@ -531,6 +532,9 @@ class Customs(serializers.EntitySerializer, CustomsData):
     )
     commodities = Commodity(
         required=False, many=True, help_text="The parcel content items"
+    )
+    duty_billing_address = Address(
+        required=False, allow_null=True, help_text="The duty payor address."
     )
 
 
@@ -965,6 +969,7 @@ class TrackingStatus(serializers.EntitySerializer, TrackingDetails):
         ("recipient", "karrio.server.manager.models.Address"),
         ("parcels", "karrio.server.manager.models.Parcel"),
         ("customs", "karrio.server.manager.models.Customs"),
+        ("billing_address", "karrio.server.manager.models.Address"),
     ]
 )
 class ShippingData(validators.OptionDefaultSerializer):
@@ -1005,6 +1010,9 @@ class ShippingData(validators.OptionDefaultSerializer):
         """,
     )
     payment = Payment(required=False, default={}, help_text="The payment details")
+    billing_address = AddressData(
+        required=False, allow_null=True, help_text="The payor address."
+    )
     customs = CustomsData(
         required=False,
         allow_null=True,
@@ -1202,8 +1210,10 @@ class ShipmentContent(serializers.Serializer):
         }
         """,
     )
-
     payment = Payment(required=False, default={}, help_text="The payment details")
+    billing_address = Address(
+        required=False, allow_null=True, help_text="The payor address."
+    )
     customs = Customs(
         required=False,
         allow_null=True,
