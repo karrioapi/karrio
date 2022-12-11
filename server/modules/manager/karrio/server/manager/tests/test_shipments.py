@@ -174,12 +174,12 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_shipment(self):
         url = reverse(
-            "karrio.server.manager:shipment-details",
+            "karrio.server.manager:shipment-cancel",
             kwargs=dict(pk=self.shipment.pk),
         )
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
-            response = self.client.delete(url)
+            response = self.client.post(url)
             response_data = json.loads(response.content)
 
             mock.assert_not_called()
@@ -188,7 +188,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_purchased_shipment(self):
         url = reverse(
-            "karrio.server.manager:shipment-details",
+            "karrio.server.manager:shipment-cancel",
             kwargs=dict(pk=self.shipment.pk),
         )
         self.shipment.status = "purchased"
@@ -198,7 +198,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_CANCEL_VALUE
-            response = self.client.delete(url)
+            response = self.client.post(url)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
