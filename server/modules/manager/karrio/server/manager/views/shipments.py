@@ -85,10 +85,7 @@ class ShipmentList(GenericAPIView):
         Create a new shipment instance.
         """
         shipment = (
-            ShipmentSerializer
-            .map(data=request.data, context=request)
-            .save()
-            .instance
+            ShipmentSerializer.map(data=request.data, context=request).save().instance
         )
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
@@ -150,6 +147,8 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(update).data)
 
+
+class ShipmentCancel(APIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
@@ -163,19 +162,14 @@ class ShipmentDetails(APIView):
             500: ErrorResponse(),
         },
     )
-    def delete(self, request: Request, pk: str):
+    def post(self, request: Request, pk: str):
         """
         Void a shipment with the associated label.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, delete=True)
 
-        update = (
-            ShipmentCancelSerializer
-            .map(shipment, context=request)
-            .save()
-            .instance
-        )
+        update = ShipmentCancelSerializer.map(shipment, context=request).save().instance
 
         return Response(Shipment(update).data)
 
@@ -283,6 +277,9 @@ class ShipmentDocs(VirtualDownloadView):
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
 router.urls.append(
     path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details")
+)
+router.urls.append(
+    path("shipments/<str:pk>/cancel", ShipmentCancel.as_view(), name="shipment-cancel")
 )
 router.urls.append(
     path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates")
