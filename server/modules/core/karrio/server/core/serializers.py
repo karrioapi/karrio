@@ -114,7 +114,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=30,
         help_text="""The address city.
         **(required for shipment purchase)**
         """,
@@ -123,21 +123,21 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=20,
         help_text="The party frederal tax id",
     )
     state_tax_id = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=20,
         help_text="The party state id",
     )
     person_name = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=30,
         help_text="""Attention to
         **(required for shipment purchase)**
         """,
@@ -146,7 +146,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=30,
         help_text="The company name if the party is a company",
     )
     country_code = serializers.ChoiceField(
@@ -161,10 +161,9 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=20,
         help_text="The party phone number.",
     )
-
     state_code = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -190,7 +189,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=35,
         help_text="""The address line with street number <br/>
         **(required for shipment purchase)**
         """,
@@ -199,7 +198,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=35,
         help_text="The address line with suite number",
     )
     validate_location = serializers.BooleanField(
@@ -231,7 +230,7 @@ class CommodityData(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=250,
+        max_length=35,
         help_text="A description of the commodity",
     )
     quantity = serializers.IntegerField(
@@ -243,14 +242,14 @@ class CommodityData(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=35,
         help_text="The commodity's sku number",
     )
     hs_code = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=35,
         help_text="The commodity's hs_code number",
     )
     value_amount = serializers.FloatField(
@@ -699,6 +698,7 @@ class PickupRequest(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""The pickup instruction.<br/>
         eg: Handle with care.
         """,
@@ -707,6 +707,7 @@ class PickupRequest(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""The package(s) location.<br/>
         eg: Behind the entrance door.
         """,
@@ -758,6 +759,7 @@ class PickupUpdateRequest(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""The pickup instruction.<br/>
         eg: Handle with care.
         """,
@@ -766,6 +768,7 @@ class PickupUpdateRequest(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
+        max_length=50,
         help_text="""The package(s) location.<br/>
         eg: Behind the entrance door.
         """,
@@ -1024,7 +1027,7 @@ class ShippingData(validators.OptionDefaultSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=35,
         help_text="The shipment reference",
     )
     label_type = serializers.ChoiceField(

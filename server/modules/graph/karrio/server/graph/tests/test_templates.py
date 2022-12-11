@@ -554,7 +554,7 @@ CUSTOMS_TEMPLATE_DATA = {
                 {
                     "weight": 0.75,
                     "weight_unit": "KG",
-                    "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                    "sku": "3PO4I5J4PO5I4HI5OH",
                     "quantity": 4,
                 },
             ],
@@ -592,7 +592,7 @@ CUSTOMS_TEMPLATE_RESPONSE = {
                         },
                         {
                             "id": ANY,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "sku": "3PO4I5J4PO5I4HI5OH",
                             "weight": 0.75,
                             "quantity": 4,
                             "weight_unit": "KG",
@@ -659,7 +659,7 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                         },
                         {
                             "id": ANY,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "sku": "3PO4I5J4PO5I4HI5OH",
                             "weight": 0.75,
                             "quantity": 4,
                             "weight_unit": "KG",
