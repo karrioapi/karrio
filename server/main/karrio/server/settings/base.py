@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import importlib
+import dj_database_url
 from pathlib import Path
-from decouple import AutoConfig
 from datetime import timedelta
+from decouple import AutoConfig
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
@@ -288,6 +289,10 @@ DATABASES = {
         "PORT": config("DATABASE_PORT", default="5432"),
     }
 }
+
+if config("DATABASE_URL", default=None):
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES["default"].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
