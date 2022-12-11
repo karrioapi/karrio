@@ -31,6 +31,7 @@ setup(
         "django-oauth-toolkit",
         "drf-api-tracking",
         "drf-spectacular",
+        "dj-database-url",
         "gunicorn",
         "hiredis",
         "uvicorn",
