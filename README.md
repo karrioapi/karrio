@@ -81,7 +81,15 @@ Karrio is the only **product-focused** open-source shipping platform with label 
 
 We are an open-source alternative to manual in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
-Karrio makes modern shipping accessible to - enterprises (finance, healthcare, etc..) in regulated industries and government agencies. Furthermore, Karrio, enables platforms (Marketplace, eCommerce, ERP, WMS, OMS, 3PLs, Manufacturing system, etc...) to seamlessly integrate, launch faster, scale and monetize shipping.
+
+**Shipping for enterprise**
+
+Karrio makes modern shipping accessible to retailers as well as enterprises in regulated industries and government agencies.
+
+**Shipping for platforms**
+
+With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and shippers and consumers experience on your Marketplace, eCommerce, ERP, WMS, OMS and apps. 
+
 
 ## Support
 
