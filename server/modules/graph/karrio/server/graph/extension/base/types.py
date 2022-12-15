@@ -334,7 +334,9 @@ class LabelTemplateType(utils.BaseObjectType):
 
     class Meta:
         model = providers.LabelTemplate
-        exclude = ("genericsettings",)
+        exclude = (
+            ("genericsettings",) if 'generic' in providers.MODELS else []
+        )
         interfaces = (utils.CustomNode,)
 
 
