@@ -11,7 +11,7 @@ class DHLExpressSettings(Carrier):
     site_id = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200, blank=True, default='')
-    account_country_code = models.CharField(max_length=3, blank=True, choices=COUNTRIES)
+    account_country_code = models.CharField(max_length=3, blank=True, null=True, choices=COUNTRIES)
 
     @property
     def carrier_name(self) -> str:
