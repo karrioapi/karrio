@@ -94,6 +94,7 @@ class ShipmentFilters(filters.FilterSet):
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
             | Q(recipient__company_name__icontains=value)
+            | Q(recipient__country_code__icontains=value)
             | Q(recipient__city__icontains=value)
             | Q(recipient__email__icontains=value)
             | Q(recipient__phone_number__icontains=value)
@@ -106,11 +107,12 @@ class ShipmentFilters(filters.FilterSet):
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
             | Q(recipient__company_name__icontains=value)
+            | Q(recipient__country_code__icontains=value)
             | Q(recipient__city__icontains=value)
             | Q(recipient__email__icontains=value)
             | Q(recipient__phone_number__icontains=value)
-            | Q(reference__icontains=value)
             | Q(tracking_number__icontains=value)
+            | Q(reference__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):

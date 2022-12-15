@@ -73,21 +73,21 @@ class TokenAdmin(admin.ModelAdmin):
     fields = ("user", "test_mode")
     ordering = ("-created",)
 
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        return query.filter(user=request.user)
+
     if settings.MULTI_ORGANIZATIONS:
         from karrio.server.orgs.admin import TokenLinkInline
 
         inlines = [TokenLinkInline]
 
-    def get_queryset(self, request):
-        query = super().get_queryset(request)
-        return query.filter(user=request.user)
-
-    def get_form(self, request, obj, change, **kwargs):
-        form = super().get_form(request, obj, change, **kwargs)
-        form.base_fields["user"].queryset = User.objects.filter(
-            orgs_organization__users__id=request.user.id
-        ).distinct()
-        return form
+        def get_form(self, request, obj, change, **kwargs):
+            form = super().get_form(request, obj, change, **kwargs)
+            form.base_fields["user"].queryset = User.objects.filter(
+                orgs_organization__users__id=request.user.id
+            ).distinct()
+            return form
 
 
 admin.site.register(User, UserAdmin)

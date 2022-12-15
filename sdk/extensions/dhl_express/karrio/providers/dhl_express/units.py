@@ -313,19 +313,20 @@ def shipping_services_initializer(
     """
     Apply default product codes to the list of products.
     """
-    if not any(_ for _ in products if _ in ProductCode):  # type: ignore
-        if is_international and is_document:
-            products.append("dhl_express_worldwide_doc")
-        elif is_international:
-            products.append("dhl_express_worldwide_nondoc")
-        elif is_document and is_envelope:
-            products.append("dhl_express_envelope_doc")
-        elif is_document:
-            products.append("dhl_domestic_express_doc")
-        else:
-            products.append("dhl_express_12_00_nondoc")
+    
+    if is_international and is_document:
+        products.append("dhl_express_worldwide_doc")
 
-    return units.Services(products, ProductCode)
+    if is_international and (is_document is False):
+        products.append("dhl_express_worldwide_nondoc")
+
+    if (is_international is False) and (is_document and is_envelope):
+        products.append("dhl_express_envelope_doc")
+
+    if (is_international is False) and is_document and (is_envelope is False):
+        products.append("dhl_domestic_express_doc")
+
+    return units.Services(list(set(products)), ProductCode)
 
 
 class ShippingOption(Enum):

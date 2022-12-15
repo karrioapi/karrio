@@ -236,16 +236,8 @@ def create_carrier_model_serializers(partial: bool = False):
         _extra_exclude = []
 
         if hasattr(carrier_model, "account_country_code"):
-            required = (
-                False
-                if partial
-                else not (
-                    carrier_model.account_country_code.field.blank
-                    or carrier_model.account_country_code.field.null
-                )
-            )
             _extra_fields.update(
-                account_country_code=serializers.CharField(required=required)
+                account_country_code=serializers.CharField(required=False, allow_null=True)
             )
 
         if hasattr(carrier_model, "services"):
