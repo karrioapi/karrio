@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2022.8.15
+  version: 2022.8.16
 paths:
   /:
     get:
@@ -2475,7 +2475,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-    delete:
+  /v1/shipments/{id}/cancel:
+    post:
       operationId: $$$$$cancel
       description: Void a shipment with the associated label.
       summary: Cancel a shipment
@@ -3208,28 +3209,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 50
+          maxLength: 20
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 50
+          maxLength: 20
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 30
         country_code:
           allOf:
           - $ref: '#/components/schemas/CountryEnum'
@@ -3242,7 +3243,7 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 50
+          maxLength: 20
         state_code:
           type: string
           nullable: true
@@ -3263,12 +3264,12 @@ components:
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 100
+          maxLength: 35
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 100
+          maxLength: 35
         validate_location:
           type: boolean
           nullable: true
@@ -3299,28 +3300,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 50
+          maxLength: 20
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 50
+          maxLength: 20
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 30
         country_code:
           allOf:
           - $ref: '#/components/schemas/CountryEnum'
@@ -3333,7 +3334,7 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 50
+          maxLength: 20
         state_code:
           type: string
           nullable: true
@@ -3354,12 +3355,12 @@ components:
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 100
+          maxLength: 35
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 100
+          maxLength: 35
         validate_location:
           type: boolean
           nullable: true
@@ -3631,7 +3632,7 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 250
+          maxLength: 35
         quantity:
           type: integer
           default: 1
@@ -3640,12 +3641,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 100
+          maxLength: 35
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 100
+          maxLength: 35
         value_amount:
           type: number
           format: double
@@ -3698,7 +3699,7 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 250
+          maxLength: 35
         quantity:
           type: integer
           default: 1
@@ -3707,12 +3708,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 100
+          maxLength: 35
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 100
+          maxLength: 35
         value_amount:
           type: number
           format: double
@@ -4517,7 +4518,7 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 250
+          maxLength: 35
         quantity:
           type: integer
           default: 1
@@ -4526,12 +4527,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 100
+          maxLength: 35
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 100
+          maxLength: 35
         value_amount:
           type: number
           format: double
@@ -5047,28 +5048,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 50
+          maxLength: 20
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 50
+          maxLength: 20
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 30
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 30
         country_code:
           allOf:
           - $ref: '#/components/schemas/CountryEnum'
@@ -5081,7 +5082,7 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 50
+          maxLength: 20
         state_code:
           type: string
           nullable: true
@@ -5102,12 +5103,12 @@ components:
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 100
+          maxLength: 35
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 100
+          maxLength: 35
         validate_location:
           type: boolean
           nullable: true
@@ -5353,11 +5354,13 @@ components:
           nullable: true
           description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
             \        "
+          maxLength: 50
         package_location:
           type: string
           nullable: true
           description: "The package(s) location.<br/>\n        eg: Behind the entrance\
             \ door.\n        "
+          maxLength: 50
         options:
           type: object
           additionalProperties: {}
@@ -5428,11 +5431,13 @@ components:
           nullable: true
           description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
             \        "
+          maxLength: 50
         package_location:
           type: string
           nullable: true
           description: "The package(s) location.<br/>\n        eg: Behind the entrance\
             \ door.\n        "
+          maxLength: 50
         options:
           type: object
           additionalProperties: {}
@@ -5502,11 +5507,13 @@ components:
           nullable: true
           description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
             \        "
+          maxLength: 50
         package_location:
           type: string
           nullable: true
           description: "The package(s) location.<br/>\n        eg: Behind the entrance\
             \ door.\n        "
+          maxLength: 50
         options:
           type: object
           additionalProperties: {}
@@ -5611,11 +5618,13 @@ components:
           nullable: true
           description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
             \        "
+          maxLength: 50
         package_location:
           type: string
           nullable: true
           description: "The package(s) location.<br/>\n        eg: Behind the entrance\
             \ door.\n        "
+          maxLength: 50
         options:
           type: object
           additionalProperties: {}
@@ -6005,7 +6014,7 @@ components:
           type: string
           nullable: true
           description: The shipment reference
-          maxLength: 100
+          maxLength: 35
         label_type:
           allOf:
           - $ref: '#/components/schemas/LabelTypeEnum'
@@ -6212,7 +6221,7 @@ components:
           type: string
           nullable: true
           description: The shipment reference
-          maxLength: 100
+          maxLength: 35
         label_type:
           allOf:
           - $ref: '#/components/schemas/LabelTypeEnum'

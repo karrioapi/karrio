@@ -2,8 +2,10 @@ import io
 import base64
 import treepoem
 from barcode import Code128
+from datetime import datetime
 from barcode.writer import ImageWriter
-from karrio.core.utils import DF
+import karrio.lib as lib
+
 
 ORDER_SAMPLE = dict(
     order={
@@ -2377,4 +2379,5 @@ def generate_code(data, code_type: str = "code128", options: dict = {}) -> str:
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 
-date_format = DF.fdatetime
+datetime = datetime
+date_format = lib.fdatetime

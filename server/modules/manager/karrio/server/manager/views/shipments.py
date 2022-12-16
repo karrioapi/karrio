@@ -153,6 +153,7 @@ class ShipmentCancel(APIView):
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
         summary="Cancel a shipment",
+        request=None,
         responses={
             200: Shipment(),
             404: ErrorResponse(),
