@@ -2,6 +2,7 @@ import pydoc
 import typing
 import functools
 from uuid import uuid4
+from django.db import models
 from django.conf import settings
 
 T = typing.TypeVar("T")
@@ -34,13 +35,14 @@ class ControlledAccessModel:
         else:
             key = "user"
 
-        extra = (
-            dict(test_mode=context.test_mode)
-            if hasattr(cls, "test_mode") and test_mode is not None
-            else {}
-        )
+        query = get_access_filter(context, key)
 
-        return cls.objects.filter(get_access_filter(context, key), **extra)
+        if hasattr(cls, "test_mode") and test_mode is not None:
+            query = query & models.Q(
+                models.Q(test_mode=context.test_mode) | models.Q(test_mode__isnull=True)
+            )
+
+        return cls.objects.filter(query)
 
 
 def register_model(model: T) -> T:

@@ -9,6 +9,7 @@ from rest_framework_tracking import mixins
 from rest_framework import status
 
 from karrio.core.utils import DP
+from karrio.server.serializers import link_org
 from karrio.server.tracing.utils import set_tracing_context
 from karrio.server.core.utils import failsafe
 from karrio.server.core.authentication import (
@@ -33,7 +34,7 @@ class LoggingMixin(mixins.LoggingMixin):
             else DP.jsonify(self.log["query_params"])
         )
         response = (
-            None
+            dict(response=response)
             if "response" not in self.log
             else (
                 DP.jsonify(self.log["response"])
@@ -41,28 +42,27 @@ class LoggingMixin(mixins.LoggingMixin):
                 else self.log["response"]
             )
         )
-        entity_id = failsafe(
-            lambda: None if response is None else DP.to_dict(response)["id"]
-        )
+        entity_id = failsafe(lambda: DP.to_dict(response)["id"])
+        test_mode = failsafe(lambda: self.request.test_mode)
+
+        if test_mode is None and '"test_mode": true' in (self.log["response"] or ""):
+            test_mode = True
+        if test_mode is None and '"test_mode": false' in (self.log["response"] or ""):
+            test_mode = False
 
         log = APILogIndex(
             **{
                 **self.log,
                 "data": data,
                 "response": response,
-                "query_params": query_params,
                 "entity_id": entity_id,
+                "test_mode": test_mode,
+                "query_params": query_params,
             }
         )
-        log.save()
 
-        if (settings.MULTI_ORGANIZATIONS) and (
-            getattr(self.request, "org", None) is not None
-        ):
-            log.link = log.__class__.link.related.related_model.objects.create(
-                org=self.request.org, item=log
-            )
-            log.save()
+        log.save()
+        link_org(log, self.request)
 
         set_tracing_context(
             request_log_id=getattr(log, "id", None),
