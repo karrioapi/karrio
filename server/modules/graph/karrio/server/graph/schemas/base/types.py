@@ -49,6 +49,7 @@ class LogType:
     host: typing.Optional[str]
     method: typing.Optional[str]
     status_code: typing.Optional[int]
+    test_mode: typing.Optional[bool]
 
     @strawberry.field
     def data(self: core.APILog) -> typing.Optional[utils.JSON]:
@@ -92,7 +93,7 @@ class LogType:
     @staticmethod
     @utils.authentication_required
     def resolve(info, id: int) -> typing.Optional["LogType"]:
-        return core.APILog.access_by(info.context.request).filter(id=id).first()
+        return core.APILogIndex.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
@@ -102,7 +103,7 @@ class LogType:
     ) -> utils.Connection["LogType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.LogFilter()
         queryset = filters.LogFilter(
-            _filter.to_dict(), core.APILog.access_by(info.context.request)
+            _filter.to_dict(), core.APILogIndex.access_by(info.context.request)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
