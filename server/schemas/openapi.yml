@@ -33,6 +33,10 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORDER_DATA_RETENTION: true
+                    TRACKER_DATA_RETENTION: true
+                    SHIPMENT_DATA_RETENTION: true
+                    API_LOGS_DATA_RETENTION: true
                     ORG_LEVEL_BILLING: true
                     TENANT_LEVEL_BILLING: true
                     ADMIN: ''
@@ -2192,6 +2196,10 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORDER_DATA_RETENTION: true
+                    TRACKER_DATA_RETENTION: true
+                    SHIPMENT_DATA_RETENTION: true
+                    API_LOGS_DATA_RETENTION: true
                     ORG_LEVEL_BILLING: true
                     TENANT_LEVEL_BILLING: true
                     ADMIN: ''
