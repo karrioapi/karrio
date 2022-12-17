@@ -12,7 +12,9 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = decouple.config(
     "TRACKING_PULSE", default=7200, cast=int
 )  # value is seconds. so 10800 seconds = 3 Hours
 
-WORKER_IMMEDIATE_MODE = decouple.config("WORKER_IMMEDIATE_MODE", default=False)
+WORKER_IMMEDIATE_MODE = decouple.config(
+    "WORKER_IMMEDIATE_MODE", default=False, cast=bool
+)
 
 REDIS_HOST = decouple.config("REDIS_HOST", default=None)
 REDIS_PORT = decouple.config("REDIS_PORT", default=None)
