@@ -2919,6 +2919,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+    put:
+      operationId: $$$$$$update
+      description: Mixin to log requests
+      summary: Update tracker data
+      parameters:
+      - in: path
+        name: id_or_tracking_number
+        schema:
+          type: string
+        required: true
+      tags:
+      - Trackers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackerUpdateData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingStatus'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
     delete:
       operationId: $$$$$$remove
       description: Discard a package tracker.
@@ -6480,6 +6533,13 @@ components:
             $ref: '#/components/schemas/TrackingStatus'
       required:
       - results
+    TrackerUpdateData:
+      type: object
+      properties:
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: User metadata for the tracker
     TrackingData:
       type: object
       properties:
