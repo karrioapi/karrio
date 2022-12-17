@@ -74,9 +74,7 @@ class TokenMutation(utils.BaseMutation):
                 tokens.delete()
 
         token = (
-            TokenSerializer.map(data={}, context=info.context.request)
-            .save()
-            .instance
+            TokenSerializer.map(data={}, context=info.context.request).save().instance
         )
 
         return TokenMutation(token=token)  # type:ignore
@@ -113,7 +111,9 @@ class RequestEmailChangeMutation(utils.BaseMutation):
             logger.exception(e)
             raise e
 
-        return RequestEmailChangeMutation(user=info.context.request.user.id)  # type:ignore
+        return RequestEmailChangeMutation(
+            user=info.context.request.user.id
+        )  # type:ignore
 
 
 @strawberry.type
@@ -391,7 +391,7 @@ class PartialShipmentMutation(utils.BaseMutation):
         info: Info, **input: inputs.PartialShipmentMutationInput
     ) -> "PartialShipmentMutation":
         shipment = manager.Shipment.access_by(info.context.request).get(id=id)
-        manager_serializers.can_mutate_shipment(shipment, update=True)
+        manager_serializers.can_mutate_shipment(shipment, update=True, payload=input)
 
         serializer = manager_serializers.Shipment(shipment, data=input, partial=True)
 
@@ -476,6 +476,7 @@ CreateParcelTemplateMutation = create_template_mutation(
 UpdateParcelTemplateMutation = create_template_mutation(
     "UpdateParcelTemplateMutation", "parcel"
 )
+
 
 @strawberry.type
 class CreateCarrierConnectionMutation(utils.BaseMutation):
@@ -565,4 +566,4 @@ class SystemCarrierMutation(utils.BaseMutation):
             else:
                 carrier.active_users.remove(info.context.request.user)
 
-        return SystemCarrierMutation(carrier=carrier) # type: ignore
+        return SystemCarrierMutation(carrier=carrier)  # type: ignore

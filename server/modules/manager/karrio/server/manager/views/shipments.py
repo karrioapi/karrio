@@ -130,9 +130,9 @@ class ShipmentDetails(APIView):
         It is not for editing the parcels of a shipment.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-        can_mutate_shipment(shipment, update=True)
-
         payload = ShipmentUpdateData.map(data=request.data).data
+        can_mutate_shipment(shipment, update=True, payload=request.data)
+
         update = (
             ShipmentSerializer.map(
                 shipment,

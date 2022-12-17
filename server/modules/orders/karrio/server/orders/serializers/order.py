@@ -166,7 +166,10 @@ def can_mutate_order(
     order: models.Order,
     update: bool = False,
     delete: bool = False,
+    payload: dict = None,
 ):
+    if update and [*(payload or {}).keys()] == ["metadata"]:
+        return
 
     if update and order.status in [
         serializers.OrderStatus.delivered.value,
