@@ -277,6 +277,12 @@ class PartialShipmentMutationInput(utils.BaseInput):
 
 
 @strawberry.input
+class ChangeShipmentStatusMutationInput(utils.BaseInput):
+    id: str
+    status: typing.Optional[utils.ManualShipmentStatusEnum]
+
+
+@strawberry.input
 class CreateAddressTemplateInput(utils.BaseInput):
     label: str
     address: AddressInput
