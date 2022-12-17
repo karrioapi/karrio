@@ -385,7 +385,7 @@ class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
-    entity_id = filters.CharFilter(field_name="apilogindex__entity_id")
+    entity_id = filters.CharFilter(field_name="entity_id")
     method = filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
@@ -406,7 +406,7 @@ class LogFilter(filters.FilterSet):
     )
 
     class Meta:
-        model = core.APILog
+        model = core.APILogIndex
         fields: typing.List[str] = []
 
     def status_filter(self, queryset, name, value):

@@ -43,7 +43,9 @@ class Query:
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
-    tracingrecord: types.LogType = strawberry.field(resolver=types.TracingRecordType.resolve)
+    tracingrecord: types.LogType = strawberry.field(
+        resolver=types.TracingRecordType.resolve
+    )
     tracingrecords: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
@@ -189,7 +191,9 @@ class Mutation:
     def delete_carrier_connection(
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(info, model=providers.Carrier, **input.to_dict())
+        return mutations.DeleteMutation.mutate(
+            info, model=providers.Carrier, **input.to_dict()
+        )
 
     @strawberry.mutation
     def partial_shipment_update(
@@ -204,10 +208,18 @@ class Mutation:
         return mutations.MetadataMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
+    def change_shipment_status(
+        self, info: Info, input: inputs.ChangeShipmentStatusMutationInput
+    ) -> mutations.ChangeShipmentStatusMutation:
+        return mutations.ChangeShipmentStatusMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
     def delete_template(
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(info, model=graph.Template, **input.to_dict())
+        return mutations.DeleteMutation.mutate(
+            info, model=graph.Template, **input.to_dict()
+        )
 
     @strawberry.mutation
     def discard_commodity(

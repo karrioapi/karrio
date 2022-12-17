@@ -14,12 +14,12 @@ from karrio.server.conf import settings
 from karrio.server.core.utils import ConfirmationToken, send_email
 from karrio.server.user.serializers import TokenSerializer, Token
 from karrio.server.serializers.abstract import save_many_to_many_data
-import karrio.server.manager as manager
 import karrio.server.providers.models as providers
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
+import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
@@ -407,6 +407,39 @@ class PartialShipmentMutation(utils.BaseMutation):
         update = manager.Shipment.access_by(info.context.request).get(id=id)
 
         return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
+
+
+@strawberry.type
+class ChangeShipmentStatusMutation(utils.BaseMutation):
+    shipment: typing.Optional[types.ShipmentType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required(["manage_shipments"])
+    def mutate(
+        info: Info, **input: inputs.ChangeShipmentStatusMutationInput
+    ) -> "ChangeShipmentStatusMutation":
+        shipment = manager.Shipment.access_by(info.context.request).get(id=input["id"])
+
+        if shipment.status in [
+            utils.ShipmentStatusEnum.draft.name,
+            utils.ShipmentStatusEnum.cancelled.name,
+        ]:
+            raise exceptions.ValidationError(
+                _(f"{shipment.status} shipment cannot be changed to {input['status']}"),
+                code="invalid_operation",
+            )
+
+        if getattr(shipment, "tracker", None) is not None:
+            raise exceptions.ValidationError(
+                _(f"this shipment is tracked automatically by API"),
+                code="invalid_operation",
+            )
+
+        shipment.status = input["status"]
+        shipment.save(update_fields=["status"])
+
+        return ChangeShipmentStatusMutation(shipment=shipment)  # type:ignore
 
 
 def create_template_mutation(name: str, template_type: str) -> typing.Type:

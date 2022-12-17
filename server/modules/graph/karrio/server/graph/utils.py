@@ -25,6 +25,14 @@ JSON: typing.Any = strawberry.scalar(
     typing.NewType("JSON", object),
     description="The `JSON` scalar type represents JSON values as specified by ECMA-404",
 )
+MANUAL_SHIPMENT_STATUSES = [
+    (_.name, _.name)
+    for _ in [
+        # serializers.ShipmentStatus.shipped,
+        serializers.ShipmentStatus.in_transit,
+        serializers.ShipmentStatus.delivered,
+    ]
+]
 
 CurrencyCodeEnum: typing.Any = strawberry.enum(  # type: ignore
     enum.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
@@ -56,6 +64,9 @@ LabelTemplateTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 ShipmentStatusEnum: typing.Any = strawberry.enum(  # type: ignore
     enum.Enum("ShipmentStatusEnum", serializers.SHIPMENT_STATUS)
 )
+ManualShipmentStatusEnum: typing.Any = strawberry.enum(  # type: ignore
+    enum.Enum("ManualShipmentStatusEnum", MANUAL_SHIPMENT_STATUSES)
+)
 TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
     enum.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
 )
@@ -71,7 +82,9 @@ class MetadataObjectType(lib.Flag):
 
 
 MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)])
+    enum.Enum(
+        "MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)]
+    )
 )
 
 
@@ -237,17 +250,22 @@ def is_unset(v: typing.Any) -> bool:
 
 def _dict_factory(items):
     if isinstance(next(iter(items), None), tuple):
-        return dict([
-            (key, _dict_factory(value) if isinstance(value, list) else value)
-            for key, value in items
-            if not is_unset(value)
-        ])
+        return dict(
+            [
+                (key, _dict_factory(value) if isinstance(value, list) else value)
+                for key, value in items
+                if not is_unset(value)
+            ]
+        )
 
     return items
 
 
 def dataclass_to_dict(data):
-    return lib.to_dict(dataclasses.asdict(
-        data,
-        dict_factory=_dict_factory,
-    ), clear_empty=False)
+    return lib.to_dict(
+        dataclasses.asdict(
+            data,
+            dict_factory=_dict_factory,
+        ),
+        clear_empty=False,
+    )
