@@ -471,6 +471,9 @@ class TrackingManager(models.Manager):
 
 @register_model
 class Tracking(OwnedEntity):
+    DIRECT_PROPS = [
+        "metadata",
+    ]
     HIDDEN_PROPS = (
         "tracking_carrier",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),

@@ -11,14 +11,19 @@ from rest_framework import status
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.serializers import (
-    TrackingData,
     TrackingStatus,
     ErrorResponse,
     ErrorMessages,
+    TrackingData,
+)
+from karrio.server.manager.serializers import (
+    process_dictionaries_mutations,
+    can_mutate_tracker,
+    TrackingSerializer,
+    TrackerUpdateData,
 )
 from karrio.server.manager.router import router
 from karrio.server.core.filters import TrackerFilters
-from karrio.server.manager.serializers import TrackingSerializer
 import karrio.server.core.dataunits as dataunits
 import karrio.server.serializers as serializers
 import karrio.server.manager.models as models
@@ -114,18 +119,21 @@ class TrackerList(GenericAPIView):
         carrier_filter = {
             **{k: v for k, v in query.items() if k != "hub"},
             # If a hub is specified, use the hub as carrier to track the package
-            "carrier_name": (query.get("hub") if "hub" in query else data["carrier_name"]),
+            "carrier_name": (
+                query.get("hub") if "hub" in query else data["carrier_name"]
+            ),
         }
         data = {
             "tracking_number": data["tracking_number"],
             "options": (
-                {data["tracking_number"]: {"carrier": data["carrier_name"]}} if "hub" in query else {}
+                {data["tracking_number"]: {"carrier": data["carrier_name"]}}
+                if "hub" in query
+                else {}
             ),
         }
 
         tracker = (
-            TrackingSerializer
-            .map(instance, data=data, context=request)
+            TrackingSerializer.map(instance, data=data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )
@@ -134,6 +142,7 @@ class TrackerList(GenericAPIView):
             TrackingStatus(tracker).data,
             status=status.HTTP_202_ACCEPTED,
         )
+
 
 class TrackersCreate(APIView):
     @openapi.extend_schema(
@@ -195,8 +204,7 @@ class TrackersCreate(APIView):
         }
 
         tracker = (
-            TrackingSerializer
-            .map(instance, data=data, context=request)
+            TrackingSerializer.map(instance, data=data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )
@@ -233,6 +241,40 @@ class TrackersDetails(APIView):
             models.Tracking.objects.get(__filter)
 
         return Response(TrackingStatus(trackers.first()).data)
+
+    @openapi.extend_schema(
+        tags=["Trackers"],
+        operation_id=f"{ENDPOINT_ID}update",
+        summary="Update tracker data",
+        responses={
+            200: TrackingStatus(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
+        request=TrackerUpdateData(),
+    )
+    def put(self, request: Request, id_or_tracking_number: str):
+        tracker = models.Tracking.access_by(request).get(
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
+        )
+        can_mutate_tracker(tracker, update=True, payload=request.data)
+
+        payload = TrackerUpdateData.map(data=request.data).data
+        update = (
+            TrackerUpdateData.map(
+                tracker,
+                context=request,
+                data=process_dictionaries_mutations(
+                    ["metadata", "options"], payload, tracker
+                ),
+            )
+            .save()
+            .instance
+        )
+
+        return Response(TrackingStatus(update).data)
 
     @openapi.extend_schema(
         tags=["Trackers"],
