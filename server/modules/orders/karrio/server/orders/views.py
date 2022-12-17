@@ -75,12 +75,7 @@ class OrderList(api.GenericAPIView):
         """
         Create a new order object.
         """
-        order = (
-            OrderSerializer
-            .map(data=request.data, context=request)
-            .save()
-            .instance
-        )
+        order = OrderSerializer.map(data=request.data, context=request).save().instance
 
         return Response(Order(order).data, status=status.HTTP_201_CREATED)
 
@@ -123,9 +118,10 @@ class OrderDetail(api.APIView):
         It is not for editing the line items of an order.
         """
         order = models.Order.access_by(request).get(pk=pk)
-        can_mutate_order(order, update=True)
-
         payload = OrderUpdateData.map(data=request.data).data
+
+        can_mutate_order(order, update=True, payload=request.data)
+
         update = (
             OrderSerializer.map(
                 order,

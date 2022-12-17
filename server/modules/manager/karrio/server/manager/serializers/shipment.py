@@ -486,7 +486,11 @@ def can_mutate_shipment(
     update: bool = False,
     delete: bool = False,
     purchase: bool = False,
+    payload: dict = None,
 ):
+    if update and [*(payload or {}).keys()] == ["metadata"]:
+        return
+
     if purchase and shipment.status == ShipmentStatus.purchased.value:
         raise exceptions.APIException(
             f"The shipment is '{shipment.status}' and cannot be purchased again",

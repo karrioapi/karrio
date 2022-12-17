@@ -20,7 +20,10 @@ class CreateOrderMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.CreateOrderMutationInput
     ) -> "CreateOrderMutation":
-        count = models.Order.access_by(info.context.request).filter(source="manual").count() + 1
+        count = (
+            models.Order.access_by(info.context.request).filter(source="manual").count()
+            + 1
+        )
         order_id = "1" + str(count).zfill(5)  # TODO: make this grow beyond 2 million
 
         serializer = serializers.OrderSerializer(
@@ -46,13 +49,14 @@ class PartialOrderUpdateMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.PartialOrderUpdateMutationInput
     ) -> "PartialOrderUpdateMutation":
+        data = lib.to_dict(input)
         order = models.Order.access_by(info.context.request).get(id=input.get("id"))
-        serializers.can_mutate_order(order, update=True)
+        serializers.can_mutate_order(order, update=True, payload=data)
 
         serializer = serializers.OrderSerializer(
             order,
             context=info.context,
-            data=lib.to_dict(input),
+            data=data,
             partial=True,
         )
         serializer.is_valid(raise_exception=True)
