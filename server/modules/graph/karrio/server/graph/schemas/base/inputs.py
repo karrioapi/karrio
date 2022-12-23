@@ -22,7 +22,7 @@ class LogFilter(utils.Paginated):
 @strawberry.input
 class TracingRecordFilter(utils.Paginated):
     key: typing.Optional[str] = strawberry.UNSET
-    request_log_id: typing.Optional[str] = strawberry.UNSET
+    request_log_id: typing.Optional[int] = strawberry.UNSET
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
 
