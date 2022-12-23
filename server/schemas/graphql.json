@@ -232,13 +232,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "LogType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "LogType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -290,13 +286,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "TracingRecordType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "TracingRecordType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -348,13 +340,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ShipmentType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ShipmentType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -406,13 +394,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "TrackerType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "TrackerType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

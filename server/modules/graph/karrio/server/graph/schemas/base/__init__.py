@@ -39,21 +39,27 @@ class Query:
         resolver=types.ParcelTemplateType.resolve_list
     )
 
-    log: types.LogType = strawberry.field(resolver=types.LogType.resolve)
+    log: typing.Optional[types.LogType] = strawberry.field(
+        resolver=types.LogType.resolve
+    )
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
-    tracingrecord: types.TracingRecordType = strawberry.field(
+    tracingrecord: typing.Optional[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve
     )
     tracingrecords: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
-    shipment: types.ShipmentType = strawberry.field(resolver=types.ShipmentType.resolve)
+    shipment: typing.Optional[types.ShipmentType] = strawberry.field(
+        resolver=types.ShipmentType.resolve
+    )
     shipments: utils.Connection[types.ShipmentType] = strawberry.field(
         resolver=types.ShipmentType.resolve_list
     )
-    tracker: types.TrackerType = strawberry.field(resolver=types.TrackerType.resolve)
+    tracker: typing.Optional[types.TrackerType] = strawberry.field(
+        resolver=types.TrackerType.resolve
+    )
     trackers: utils.Connection[types.TrackerType] = strawberry.field(
         resolver=types.TrackerType.resolve_list
     )
