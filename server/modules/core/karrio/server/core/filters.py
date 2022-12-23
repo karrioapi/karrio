@@ -423,7 +423,7 @@ class TracingRecordFilter(filters.FilterSet):
         field_name="key",
         help_text="the tacing log key.",
     )
-    request_log_id = filters.CharFilter(
+    request_log_id = filters.NumberFilter(
         method="request_log_id_filter",
         field_name="meta__request_log_id",
         lookup_expr="icontains",
