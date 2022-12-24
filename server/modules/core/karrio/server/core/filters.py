@@ -204,6 +204,7 @@ class ShipmentFilters(filters.FilterSet):
                     "recipient__postal_code",
                     "recipient__person_name",
                     "recipient__company_name",
+                    "recipient__country_code",
                     "recipient__city",
                     "recipient__email",
                     "recipient__phone_number",
@@ -211,7 +212,8 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(recipient__address_line1__icontains=value)
+            Q(id__icontains=value)
+            | Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
@@ -235,6 +237,7 @@ class ShipmentFilters(filters.FilterSet):
                     "recipient__postal_code",
                     "recipient__person_name",
                     "recipient__company_name",
+                    "recipient__country_code",
                     "recipient__city",
                     "recipient__email",
                     "recipient__phone_number",
@@ -242,7 +245,8 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(recipient__address_line1__icontains=value)
+            Q(id__icontains=value)
+            | Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
