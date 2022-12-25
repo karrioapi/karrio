@@ -1,9 +1,14 @@
+import functools
 from django import forms
 from django.db import models
 from django.contrib import admin
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 import karrio.references as ref
 import karrio.server.providers.models as carriers
+
+User = get_user_model()
 
 
 def model_admin(carrier):
@@ -16,6 +21,7 @@ def model_admin(carrier):
             if hasattr(carrier, "services")
             else ["active_users"]
         )
+        inlines = []
         formfield_overrides = {
             models.CharField: {
                 "widget": forms.TextInput(
@@ -60,7 +66,68 @@ def model_admin(carrier):
                     ).distinct()
                     return formset
 
-            inlines = [_ServiceInline]
+            inlines += [_ServiceInline]
+
+        if settings.MULTI_ORGANIZATIONS:
+
+            class ActiveOrgInline(admin.TabularInline):
+                model = carrier.active_orgs.through
+                verbose_name = "Activated for organization"
+                extra = 0
+
+                def get_formset(self, request, obj, **kwargs):
+                    from karrio.server.orgs.models import Organization
+
+                    initial = []
+                    orgs = Organization.objects.filter(
+                        users__id=request.user.id
+                    ).distinct()
+                    self.max_num = orgs.count()
+
+                    if obj is None and request.method == "GET":
+                        self.extra = orgs.count()
+                        initial += [{"organization": o.id} for o in orgs]
+
+                    formset = super().get_formset(request, obj, **kwargs)
+                    formset.__init__ = functools.partialmethod(
+                        formset.__init__, initial=initial
+                    )
+                    organization_field = formset.form.base_fields["organization"]
+                    organization_field.queryset = orgs
+                    organization_field.widget.can_add_related = False
+                    organization_field.widget.can_change_related = False
+
+                    return formset
+
+            inlines += [ActiveOrgInline]
+        else:
+
+            class ActiveUserInline(admin.TabularInline):
+                model = carrier.active_users.through
+                exta = 0
+                verbose_name = "Activated for user"
+
+                def get_formset(self, request, obj, **kwargs):
+                    initial = []
+                    users = User.objects.all()
+                    self.max_num = users.count()
+
+                    if obj is None and request.method == "GET":
+                        self.extra = users.count()
+                        initial += [{"user": o.id} for o in users]
+
+                    formset = super().get_formset(request, obj, **kwargs)
+                    formset.__init__ = functools.partialmethod(
+                        formset.__init__, initial=initial
+                    )
+                    user_field = formset.form.base_fields["user"]
+                    user_field.queryset = users
+                    user_field.widget.can_add_related = False
+                    user_field.widget.can_change_related = False
+
+                    return formset
+
+            inlines += [ActiveUserInline]
 
         def get_queryset(self, request):
             query = super().get_queryset(request)
@@ -86,7 +153,6 @@ def model_admin(carrier):
 
 @admin.register(carriers.ServiceLevel)
 class ServiceLevelAdmin(admin.ModelAdmin):
-    # form = ServiceLevelForm
     list_display = ("__str__",)
 
     def has_module_permission(self, request):
