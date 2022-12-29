@@ -14,7 +14,7 @@ def constance_updated(sender, key, old_value, new_value, **kwargs):
 
 
 def update_settings(current):
-    CONSTANCE_CONFIG_KEYS = [key for key in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, "key")]
+    CONSTANCE_CONFIG_KEYS = [key for key in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, key)]
 
     for key in CONSTANCE_CONFIG_KEYS:
         setattr(settings, key, getattr(current, key))

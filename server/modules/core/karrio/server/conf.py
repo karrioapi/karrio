@@ -33,9 +33,9 @@ class _Settings:
 
         if item in FEATURE_FLAGS and self._get_tenant() is not None:
             feature_flags = getattr(self._get_tenant(), "feature_flags", {})
+            
             return (
-                feature_flags.get(item)
-                or getattr(base_settings, item, None)
+                feature_flags.get(item, getattr(base_settings, item, None))
             )
 
         return getattr(base_settings, item, FALLBACK_VALUES.get(item))

@@ -135,7 +135,9 @@ ALLOW_SIGNUP = (
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
-ALLOW_MULTI_ACCOUNT = MULTI_ORGANIZATIONS
+ALLOW_MULTI_ACCOUNT = config(
+    "ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool
+)
 ORDERS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
 )
