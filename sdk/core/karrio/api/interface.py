@@ -133,11 +133,7 @@ class Address:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"validate an address. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.AddressValidationRequest)
-            else models.AddressValidationRequest(**args)
-        )
+        payload = lib.to_object(models.AddressValidationRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "validate_address")
@@ -172,11 +168,7 @@ class Pickup:
             IRequestWith: a lazy request dataclass instance
         """
         logger.debug(f"book a pickup. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.PickupRequest)
-            else models.PickupRequest(**args)
-        )
+        payload = lib.to_object(models.PickupRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "schedule_pickup")
@@ -205,11 +197,7 @@ class Pickup:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"cancel a pickup. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.PickupCancelRequest)
-            else models.PickupCancelRequest(**args)
-        )
+        payload = lib.to_object(models.PickupCancelRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "cancel_pickup")
@@ -240,11 +228,7 @@ class Pickup:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"update a pickup. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.PickupUpdateRequest)
-            else models.PickupUpdateRequest(**args)
-        )
+        payload = lib.to_object(models.PickupUpdateRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "modify_pickup")
@@ -279,9 +263,7 @@ class Rating:
             IRequestFromMany: a lazy request dataclass instance
         """
         logger.debug(f"fetch shipment rates. payload: {lib.to_json(args)}")
-        payload = (
-            args if isinstance(args, models.RateRequest) else models.RateRequest(**args)
-        )
+        payload = lib.to_object(models.RateRequest, lib.to_dict(args))
 
         def action(gateways: typing.List[gateway.Gateway]):
             def process(gateway: gateway.Gateway):
@@ -332,11 +314,7 @@ class Shipment:
             IRequestWith: a lazy request dataclass instance
         """
         logger.debug(f"create a shipment. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.ShipmentRequest)
-            else models.ShipmentRequest(**args)
-        )
+        payload = lib.to_object(models.ShipmentRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(
@@ -369,11 +347,7 @@ class Shipment:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"void a shipment. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.ShipmentCancelRequest)
-            else models.ShipmentCancelRequest(**args)
-        )
+        payload = lib.to_object(models.ShipmentCancelRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(gateway, "cancel_shipment")
@@ -408,11 +382,7 @@ class Tracking:
             IRequestFrom: a lazy request dataclass instance
         """
         logger.debug(f"track a shipment. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.TrackingRequest)
-            else models.TrackingRequest(**args)
-        )
+        payload = lib.to_object(models.TrackingRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "get_tracking")
@@ -446,11 +416,7 @@ class Document:
             IRequestWith: a lazy request dataclass instance
         """
         logger.debug(f"upload a document. payload: {lib.to_json(args)}")
-        payload = (
-            args
-            if isinstance(args, models.DocumentUploadRequest)
-            else models.DocumentUploadRequest(**args)
-        )
+        payload = lib.to_object(models.DocumentUploadRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
             is_valid, abortion = check_operation(

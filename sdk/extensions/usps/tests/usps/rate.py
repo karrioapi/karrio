@@ -58,7 +58,10 @@ RATE_PAYLOAD = {
         }
     ],
     "services": ["usps_priority"],
-    "options": {"usps_signature_confirmation": True, "usps_insurance": 55.0},
+    "options": {
+        "usps_insurance": 55.0,
+        "usps_signature_confirmation": True, 
+    },
 }
 
 PARSED_RATE_RESPONSE = [
@@ -169,8 +172,8 @@ RATE_REQUEST_XML = """<RateV4Request USERID="username">
         <Length>3</Length>
         <Height>5</Height>
         <SpecialServices>
-            <SpecialService>108</SpecialService>
             <SpecialService>100</SpecialService>
+            <SpecialService>108</SpecialService>
         </SpecialServices>
         <Machinable>false</Machinable>
     </Package>
