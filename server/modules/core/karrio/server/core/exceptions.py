@@ -50,7 +50,7 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    status_code = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
     code = get_code(exc)
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, SDKValidationError):
@@ -93,7 +93,7 @@ def custom_exception_handler(exc, context):
         if errors is not None:
             return Response(
                 DP.to_dict(errors),
-                status=exc.status_code or status_code,
+                status=status_code,
                 headers=getattr(response, "headers", None),
             )
 
@@ -111,7 +111,7 @@ def custom_exception_handler(exc, context):
                     ]
                 )
             ),
-            status=exc.status_code or status_code,
+            status=status_code,
             headers=getattr(response, "headers", None),
         )
 

@@ -193,8 +193,9 @@ def request(
 
         with urlopen(_request) as f:
             _response = process_response(_request_id, f.read(), decoder, trace)
+
     except HTTPError as e:
-        _response = process_error(_request_id, e, on_error)
+        _response = process_error(_request_id, e, on_error, trace)
 
     return _response
 

@@ -64,7 +64,7 @@ Jinja2==3.1.2
 jsonfield==3.1.0
 jstruct==2021.11
 jwcrypto==1.4.2
-karrio==2022.8.12
+karrio==2022.8.17
 karrio.amazon-mws==2022.8.3
 karrio.aramex==2022.8.3
 karrio.australiapost==2022.8.3
@@ -82,8 +82,8 @@ karrio.freightcom==2022.8.7
 karrio.purolator==2022.8.11
 karrio.royalmail==2022.8.3
 karrio.sendle==2022.8.3
-karrio.server==2022.8.16.3
-karrio.server.core==2022.8.16.3
+karrio.server==2022.8.17
+karrio.server.core==2022.8.17
 karrio.server.events==2022.8.7
 karrio.server.graph==2022.8.16
 karrio.server.manager==2022.8
