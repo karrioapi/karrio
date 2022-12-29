@@ -53,12 +53,16 @@ def filter_service_level(
         or settings.account_country_code == request.recipient.country_code
     )
     is_international = not is_domicile
+    selected_services = [
+        s.service_code for s in settings.services
+        if s.service_code in request.services
+    ]
 
     def match_requirements(package: Package, service: ServiceLevel) -> bool:
         # Check if service requested
-        explicitly_requested = service.service_code in request.services
-        implicitly_requested = len(request.services or []) == 0
-        excluded = len(request.services or []) > 0 and not explicitly_requested
+        explicitly_requested = service.service_code in selected_services
+        implicitly_requested = len(selected_services or []) == 0
+        excluded = len(selected_services or []) > 0 and not explicitly_requested
 
         if not service.active or excluded:
             return False

@@ -1,1 +1,1 @@
-from tests.core.universal_rate import *
+from .universal_rate import *

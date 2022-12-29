@@ -11,7 +11,7 @@ django-debug-toolbar
 # -e ./schemas/chronopost
 
 # Carrier Extentions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
@@ -41,7 +41,7 @@ django-debug-toolbar
 # -e ./sdk/vendors/freightcom
 
 
-karrio
+# karrio
 karrio.amazon_mws
 karrio.aramex
 karrio.australiapost
