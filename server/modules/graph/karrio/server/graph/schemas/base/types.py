@@ -83,10 +83,14 @@ class LogType:
         if User.objects.filter(
             id=info.context.request.user.id, is_staff=False
         ).exists():
-            system_carriers = providers.Carrier.objects.filter(created_by__isnull=True)
-            queryset = queryset.exclude(
-                meta__carrier_account_id__in=system_carriers.values_list("id")
-            )
+            # exclude system carriers records if user is not staff
+            system_carriers = [
+                item["id"]
+                for item in providers.Carrier.objects.filter(
+                    created_by__isnull=True
+                ).values("id")
+            ]
+            queryset = queryset.exclude(meta__carrier_account_id__in=system_carriers)
 
         return queryset
 
