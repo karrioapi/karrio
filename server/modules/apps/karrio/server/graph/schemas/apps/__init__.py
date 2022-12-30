@@ -17,7 +17,9 @@ class Query:
     apps: utils.Connection[types.AppType] = strawberry.field(
         resolver=types.AppType.resolve_list
     )
-    private_app: types.PrivateAppType = strawberry.field(resolver=types.PrivateAppType.resolve)
+    private_app: types.PrivateAppType = strawberry.field(
+        resolver=types.PrivateAppType.resolve
+    )
     private_apps: utils.Connection[types.PrivateAppType] = strawberry.field(
         resolver=types.PrivateAppType.resolve_list
     )
@@ -45,9 +47,7 @@ class Mutation:
         self, info: Info, input: base.inputs.DeleteMutationInput
     ) -> base.mutations.DeleteMutation:
         return base.mutations.DeleteMutation.mutate(
-            info,
-            models.App,
-            **input.to_dict()
+            info, model=models.App, **input.to_dict()
         )
 
     @strawberry.mutation

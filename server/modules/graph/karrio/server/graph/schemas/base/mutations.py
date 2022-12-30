@@ -1,5 +1,6 @@
 import typing
 import logging
+import datetime
 import strawberry
 from strawberry.types import Info
 from rest_framework import exceptions
@@ -106,6 +107,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
                     token=token,
                     link=redirect_url,
                 ),
+                expiry=(datetime.datetime.now() + datetime.timedelta(hours=2)),
             )
         except Exception as e:
             logger.exception(e)
@@ -155,10 +157,14 @@ class RegisterUserMutation(utils.BaseMutation):
                 "Please contact your administrator to create an account."
             )
 
-        form = forms.UserRegistrationForm(**input)
-        user = form.save()
+        try:
+            form = forms.SignUpForm(input)
+            user = form.save()
 
-        return RegisterUserMutation(user=user)  # type:ignore
+            return RegisterUserMutation(user=user)  # type:ignore
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
 
 @strawberry.type
@@ -167,9 +173,13 @@ class ConfirmEmailMutation(utils.BaseMutation):
 
     @staticmethod
     def mutate(info: Info, token: str) -> "ConfirmEmailMutation":
-        success, _ = email_verification.verify_token(token)
+        try:
+            success, _ = email_verification.verify_token(token)
 
-        return ConfirmEmailMutation(success=success)  # type:ignore
+            return ConfirmEmailMutation(success=success)  # type:ignore
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
 
 @strawberry.type
@@ -182,9 +192,12 @@ class ChangePasswordMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.ChangePasswordMutationInput
     ) -> "ChangePasswordMutation":
-        form = forms.PasswordChangeForm(**input, user=info.context.request.user)
-
-        return ChangePasswordMutation(user=form.save())  # type:ignore
+        form = forms.PasswordChangeForm(info.context.request.user, data=input)
+        if form.is_valid():
+            user = form.save()
+            return ChangePasswordMutation(user=user)  # type:ignore
+        else:
+            raise exceptions.ValidationError(form.errors)
 
 
 @strawberry.type
@@ -196,10 +209,13 @@ class RequestPasswordResetMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.RequestPasswordResetMutationInput
     ) -> "RequestPasswordResetMutation":
-        form = forms.ResetPasswordRequestForm(**input, user=info.context.request.user)
-        form.save(request=info.context.request)
+        form = forms.ResetPasswordRequestForm(data=input)
 
-        return RequestPasswordResetMutation(**form.cleaned_data)  # type:ignore
+        if form.is_valid():
+            form.save(request=info.context.request)
+            return RequestPasswordResetMutation(**form.cleaned_data)  # type:ignore
+        else:
+            raise exceptions.ValidationError(form.errors)
 
 
 @strawberry.type
@@ -207,7 +223,7 @@ class ConfirmPasswordResetMutation(utils.BaseMutation):
     user: typing.Optional[types.UserType] = None
 
     @staticmethod
-    def get_user(cls, uidb64):
+    def get_user(uidb64):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = types.User._default_manager.get(pk=uid)
@@ -222,14 +238,17 @@ class ConfirmPasswordResetMutation(utils.BaseMutation):
         return user
 
     @staticmethod
-    @utils.authentication_required
     def mutate(
         info: Info, **input: inputs.ConfirmPasswordResetMutationInput
     ) -> "ConfirmPasswordResetMutation":
-        form = forms.ConfirmPasswordResetForm(**input, user=info.context.request.user)
-        user = ConfirmPasswordResetMutation.get_user(input.get("uid"))  # type:ignore
+        uuid = input.get("uid")
+        user = ConfirmPasswordResetMutation.get_user(uuid)  # type:ignore
+        form = forms.ConfirmPasswordResetForm(user, data=input)
 
-        return ConfirmPasswordResetMutation(user=form.save())  # type:ignore
+        if form.is_valid():
+            return ConfirmPasswordResetMutation(user=form.save())  # type:ignore
+        else:
+            raise exceptions.ValidationError(form.errors)
 
 
 @strawberry.type

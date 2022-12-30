@@ -1,3 +1,4 @@
+import datetime
 from django_email_verification.token import default_token_generator
 from django_email_verification.confirm import (
     Thread,
@@ -15,8 +16,10 @@ def send_email(user, redirect_url, thread=True, **kwargs):
         if kwargs.get("custom_salt"):
             default_token_generator.key_salt = kwargs["custom_salt"]
 
-        expiry_ = kwargs.get("expiry")
-        token, expiry = default_token_generator.make_token(user, expiry_)
+        _expiry = kwargs.get("expiry") or (
+            datetime.datetime.now() + datetime.timedelta(days=30)
+        )
+        token, expiry = default_token_generator.make_token(user, _expiry, kind="MAIL")
 
         domain = redirect_url
         sender = _get_validated_field("EMAIL_FROM_ADDRESS")

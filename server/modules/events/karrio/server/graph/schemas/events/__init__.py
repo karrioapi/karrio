@@ -43,7 +43,5 @@ class Mutation:
         self, info: Info, input: base.inputs.DeleteMutationInput
     ) -> base.mutations.DeleteMutation:
         return base.mutations.DeleteMutation.mutate(
-            info,
-            models.Webhook,
-            **input.to_dict()
+            info, model=models.Webhook, **input.to_dict()
         )
