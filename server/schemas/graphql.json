@@ -993,13 +993,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "OrganizationType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "OrganizationType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1054,13 +1050,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "OrganizationInvitationType",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "OrganizationInvitationType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -21633,7 +21625,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "uuid",
+            "name": "uid",
             "description": null,
             "type": {
               "kind": "NON_NULL",

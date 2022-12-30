@@ -117,7 +117,7 @@ class RequestPasswordResetMutationInput(utils.BaseInput):
 
 @strawberry.input
 class ConfirmPasswordResetMutationInput(utils.BaseInput):
-    uuid: str
+    uid: str
     token: str
     new_password1: str
     new_password2: str
