@@ -10,11 +10,14 @@ from django_otp.plugins.otp_email import models as otp
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 
-from karrio.core.utils import DP
+import karrio.lib as lib
 from karrio.server.conf import settings
+from karrio.server.serializers import (
+    save_many_to_many_data,
+    process_dictionaries_mutations,
+)
 from karrio.server.core.utils import ConfirmationToken, send_email
 from karrio.server.user.serializers import TokenSerializer, Token
-from karrio.server.serializers.abstract import save_many_to_many_data
 import karrio.server.providers.models as providers
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
@@ -409,17 +412,15 @@ class PartialShipmentMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.PartialShipmentMutationInput
     ) -> "PartialShipmentMutation":
+        id = input["id"]
         shipment = manager.Shipment.access_by(info.context.request).get(id=id)
+        payload = manager_serializers.ShipmentUpdateData.map(data=input).data
         manager_serializers.can_mutate_shipment(shipment, update=True, payload=input)
-
-        serializer = manager_serializers.Shipment(shipment, data=input, partial=True)
-
-        serializer.is_valid(raise_exception=True)
 
         manager_serializers.ShipmentSerializer.map(
             shipment,
-            context=info.context,
-            data=DP.to_dict(serializer.validated_data),
+            context=info.context.request,
+            data=process_dictionaries_mutations(["options"], payload, shipment),
         ).save()
 
         # refetch the shipment to get the updated state with signals processed

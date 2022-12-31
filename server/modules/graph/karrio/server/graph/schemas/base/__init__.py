@@ -255,7 +255,7 @@ class Mutation:
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
             info,
-            model=manager.Customs,
+            model=manager.Parcel,
             validator=manager_serializers.can_mutate_parcel,
             **input.to_dict()
         )

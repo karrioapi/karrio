@@ -150,8 +150,9 @@ class MetadataMutationInput(utils.BaseInput):
 class CommodityInput:
     weight: float
     weight_unit: utils.WeightUnitEnum
-    sku: typing.Optional[str] = strawberry.UNSET
     quantity: typing.Optional[int] = 1
+    sku: typing.Optional[str] = strawberry.UNSET
+    hs_code: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     value_amount: typing.Optional[float] = strawberry.UNSET
     origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
@@ -163,6 +164,7 @@ class CommodityInput:
 @strawberry.input
 class UpdateCommodityInput(CommodityInput):
     id: typing.Optional[str] = strawberry.UNSET
+    quantity: typing.Optional[int] = strawberry.UNSET
     weight: typing.Optional[float] = strawberry.UNSET
     weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
 
@@ -215,6 +217,7 @@ class UpdateParcelInput(ParcelInput):
     id: typing.Optional[str] = strawberry.UNSET
     weight: typing.Optional[float] = strawberry.UNSET
     weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
@@ -271,8 +274,9 @@ class PartialShipmentMutationInput(utils.BaseInput):
     parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
     payment: typing.Optional[PaymentInput] = strawberry.UNSET
     billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
+    label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    options: typing.Optional[utils.JSON] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
 
 
