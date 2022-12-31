@@ -291,7 +291,6 @@ class ShipmentUpdateData(Serializer):
     payment = Payment(required=False, help_text="The payment details")
     options = PlainDictField(
         required=False,
-        allow_null=True,
         help_text="""<details>
         <summary>The options available for the shipment.</summary>
 

@@ -22681,6 +22681,16 @@
             "defaultValue": null
           },
           {
+            "name": "quantity",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": "1"
+          },
+          {
             "name": "sku",
             "description": null,
             "type": {
@@ -22691,14 +22701,14 @@
             "defaultValue": null
           },
           {
-            "name": "quantity",
+            "name": "hs_code",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
-            "defaultValue": "1"
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -23108,6 +23118,16 @@
             "defaultValue": null
           },
           {
+            "name": "quantity",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "sku",
             "description": null,
             "type": {
@@ -23118,14 +23138,14 @@
             "defaultValue": null
           },
           {
-            "name": "quantity",
+            "name": "hs_code",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
-            "defaultValue": "1"
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -23767,7 +23787,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "CommodityInput",
+                  "name": "UpdateCommodityInput",
                   "ofType": null
                 }
               }
@@ -30684,7 +30704,17 @@
             "defaultValue": null
           },
           {
-            "name": "options",
+            "name": "label_type",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "LabelTypeEnum",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "metadata",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -30694,7 +30724,7 @@
             "defaultValue": null
           },
           {
-            "name": "metadata",
+            "name": "options",
             "description": null,
             "type": {
               "kind": "SCALAR",

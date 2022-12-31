@@ -568,7 +568,7 @@ class ShipmentType:
 
     @strawberry.field
     def rates(self: manager.Shipment) -> typing.List[RateType]:
-        return [RateType.parse(rate) for rate in self.rates] if self.rates else None
+        return [RateType.parse(rate) for rate in self.rates or []]
 
     @strawberry.field
     def selected_rate(self: manager.Shipment) -> typing.Optional[RateType]:

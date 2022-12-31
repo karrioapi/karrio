@@ -34,11 +34,7 @@ class DecoratedSerializer:
 
     @property
     def data(self) -> Optional[dict]:
-        return (
-            self._serializer.validated_data
-            if self._serializer is not None
-            else None
-        )
+        return self._serializer.validated_data if self._serializer is not None else None
 
     @property
     def instance(self) -> models.Model:
@@ -59,21 +55,25 @@ class AbstractSerializer:
         super().update(instance, validated_data, **kwargs)
 
     @classmethod
-    def map(cls, instance=None, data: Union[str, dict] = None, **kwargs) -> "DecoratedSerializer":
+    def map(
+        cls, instance=None, data: Union[str, dict] = None, **kwargs
+    ) -> "DecoratedSerializer":
         if data is None and instance is None:
             serializer = None
         else:
             serializer = (
                 cls(data=data or {}, **kwargs)  # type:ignore
                 if instance is None
-                else cls(instance, data=data or {}, **{**kwargs, "partial": True})  # type:ignore
+                else cls(
+                    instance, data=data or {}, **{**kwargs, "partial": True}
+                )  # type:ignore
             )
 
             serializer.is_valid(raise_exception=True)  # type:ignore
 
         return DecoratedSerializer(
             instance=instance,
-            serializer=serializer,   # type:ignore
+            serializer=serializer,  # type:ignore
         )
 
 
@@ -234,9 +234,7 @@ def bulk_link_org(entities: List[models.Model], context: Context):
 
 def get_object_context(entity) -> Context:
     org = (
-        entity.org.first()
-        if (hasattr(entity, "org") and entity.org.exists())
-        else None
+        entity.org.first() if (hasattr(entity, "org") and entity.org.exists()) else None
     )
 
     return Context(
@@ -309,8 +307,7 @@ def save_one_to_one_data(
         return new_instance
 
     return (
-        serializer
-        .map(instance=instance, data=data, partial=True, **kwargs)
+        serializer.map(instance=instance, data=data, partial=True, **kwargs)
         .save()
         .instance
     )
@@ -387,7 +384,7 @@ def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> di
     data = payload.copy()
 
     for key in [k for k in keys if k in payload]:
-        options = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
-        data.update({key: options})
+        value = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+        data.update({key: value})
 
     return data
