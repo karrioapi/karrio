@@ -189,7 +189,7 @@ class ShipmentSerializer(ShipmentData):
                 prop = getattr(instance, key)
                 # Delete related data from database if payload set to null
                 if hasattr(prop, "delete"):
-                    prop.delete()
+                    prop.delete(keep_parents=True)
                     setattr(instance, key, None)
                     validated_data.pop(key)
 
@@ -474,10 +474,22 @@ def buy_shipment_label(
 
 def reset_related_shipment_rates(shipment: typing.Optional[models.Shipment]):
     if shipment is not None:
-        shipment.selected_rate = None
-        shipment.rates = []
-        shipment.messages = []
-        shipment.save()
+        changes = []
+
+        if shipment.selected_rate is not None:
+            changes += ["selected_rate"]
+            shipment.selected_rate = None
+
+        if len(shipment.rates or []) > 0:
+            changes += ["rates"]
+            shipment.rates = []
+
+        if len(shipment.messages or []) > 0:
+            changes += ["messages"]
+            shipment.messages = []
+
+        if any(changes):
+            shipment.save(update_fields=changes)
 
 
 def can_mutate_shipment(

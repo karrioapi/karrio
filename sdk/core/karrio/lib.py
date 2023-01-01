@@ -210,7 +210,7 @@ def to_dict(
     :param value: a value that can converted in dictionary.
     :return: a dictionary.
     """
-    return utils.DP.to_dict(value, clear_empty=clear_empty or True)
+    return utils.DP.to_dict(value, clear_empty=clear_empty)
 
 
 def to_json(

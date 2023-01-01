@@ -106,19 +106,20 @@ def valid_base64(prop: str, max_size: int = 5242880):
 
 
 class OptionDefaultSerializer(serializers.Serializer):
-    def __init__(self, instance=None, data=None, **kwargs):
+    def __init__(self, instance=None, **kwargs):
+        data = kwargs.get("data", {})
         if data:
+            options = (data or {}).get("options") or {}
             shipment_date = lib.to_date(
-                ((data or {}).get("options") or {}).get("shipment_date")
+                options.get("shipment_date")
                 or (getattr(instance, "options", None) or {}).get("shipment_date")
             )
 
             if shipment_date is None or shipment_date.date() < datetime.now().date():
-                data["options"].update(
-                    shipment_date=datetime.now().strftime("%Y-%m-%d")
-                )
+                options.update(shipment_date=datetime.now().strftime("%Y-%m-%d"))
+                kwargs["data"].update(dict(options=options))
 
-        super().__init__(instance, data, **kwargs)
+        super().__init__(instance, **kwargs)
 
 
 class PresetSerializer(serializers.Serializer):
