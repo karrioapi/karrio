@@ -412,21 +412,26 @@ class PartialShipmentMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.PartialShipmentMutationInput
     ) -> "PartialShipmentMutation":
-        id = input["id"]
-        shipment = manager.Shipment.access_by(info.context.request).get(id=id)
-        payload = manager_serializers.ShipmentUpdateData.map(data=input).data
-        manager_serializers.can_mutate_shipment(shipment, update=True, payload=input)
+        try:
+            id = input["id"]
+            shipment = manager.Shipment.access_by(info.context.request).get(id=id)
+            manager_serializers.can_mutate_shipment(
+                shipment, update=True, payload=input
+            )
 
-        manager_serializers.ShipmentSerializer.map(
-            shipment,
-            context=info.context.request,
-            data=process_dictionaries_mutations(["options"], payload, shipment),
-        ).save()
+            manager_serializers.ShipmentSerializer.map(
+                shipment,
+                context=info.context.request,
+                data=process_dictionaries_mutations(["options"], input, shipment),
+            ).save()
 
-        # refetch the shipment to get the updated state with signals processed
-        update = manager.Shipment.access_by(info.context.request).get(id=id)
+            # refetch the shipment to get the updated state with signals processed
+            update = manager.Shipment.access_by(info.context.request).get(id=id)
 
-        return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
+            return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
 
 @strawberry.type

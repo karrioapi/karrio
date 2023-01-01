@@ -366,7 +366,7 @@ SHIPMENT_RESPONSE = {
 }
 
 SHIPMENT_OPTIONS = {
-    "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2020-01-01"},
+    "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2050-01-01"},
 }
 
 RETURNED_RATES_VALUE = [

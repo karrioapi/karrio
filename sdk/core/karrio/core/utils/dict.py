@@ -43,12 +43,13 @@ class DICTPARSE:
         )
 
     @staticmethod
-    def to_dict(entity: Any, clear_empty: bool = True) -> dict:
+    def to_dict(entity: Any, clear_empty: bool = None) -> dict:
         """Parse value into a Python dictionay.
 
         :param value: a value that can converted in dictionary.
         :return: a dictionary.
         """
+        _clear_empty = clear_empty is not False
         return json.loads(
             (
                 DICTPARSE.jsonify(entity)
@@ -58,7 +59,7 @@ class DICTPARSE:
             object_hook=lambda d: {
                 k: v
                 for k, v in d.items()
-                if (v not in (None, [], "") if clear_empty else True)
+                if (v not in (None, [], "") if _clear_empty else True)
             },
         )
 

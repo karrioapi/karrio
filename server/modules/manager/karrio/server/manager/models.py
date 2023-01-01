@@ -338,7 +338,7 @@ class Customs(OwnedEntity):
     duty_billing_address = models.OneToOneField(
         "Address",
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="duty_billing_address_customs",
     )
 
@@ -641,7 +641,7 @@ class Shipment(OwnedEntity):
     billing_address = models.OneToOneField(
         "Address",
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="billing_address_shipment",
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
@@ -653,7 +653,7 @@ class Shipment(OwnedEntity):
     test_mode = models.BooleanField(null=False)
     customs = models.OneToOneField(
         "Customs",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="customs_shipment",

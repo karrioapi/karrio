@@ -255,7 +255,7 @@ class UpdateCustomsInput(CustomsInput):
     id: typing.Optional[str] = strawberry.UNSET
     duty: typing.Optional[UpdateDutyInput] = strawberry.UNSET
     duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    commodities: typing.List[UpdateCommodityInput] = strawberry.UNSET  # type: ignore
+    commodities: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
