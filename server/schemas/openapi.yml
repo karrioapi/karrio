@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2022.8.16
+  version: 2022.8.17
 paths:
   /:
     get:
@@ -6210,7 +6210,6 @@ components:
         options:
           type: object
           additionalProperties: {}
-          nullable: true
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
