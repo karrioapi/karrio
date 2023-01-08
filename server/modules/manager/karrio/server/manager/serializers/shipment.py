@@ -66,9 +66,10 @@ class ShipmentSerializer(ShipmentData):
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         data = kwargs.get("data") or {}
+        context = getattr(self, "__context", None) or kwargs.get("context")
+        is_update = instance is not None
 
-        if ("parcels" in data) and (instance is not None):
-            context = getattr(self, "__context", None) or kwargs.get("context")
+        if is_update and ("parcels" in data):
             save_many_to_many_data(
                 "parcels",
                 ParcelSerializer,
@@ -76,6 +77,14 @@ class ShipmentSerializer(ShipmentData):
                 payload=data,
                 context=context,
                 partial=True,
+            )
+        if is_update and data.get("customs") is not None:
+            instance.customs = save_one_to_one_data(
+                "customs",
+                CustomsSerializer,
+                instance,
+                payload=data,
+                context=context,
             )
 
         super().__init__(instance, **kwargs)
@@ -214,16 +223,6 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
-
-        if "customs" in validated_data:
-            changes.append("customs")
-            instance.customs = save_one_to_one_data(
-                "customs",
-                CustomsSerializer,
-                instance,
-                payload=validated_data,
-                context=context,
-            )
 
         if "docs" in validated_data:
             changes.append("label")
