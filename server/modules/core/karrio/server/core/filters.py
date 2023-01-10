@@ -84,6 +84,7 @@ class ShipmentFilters(filters.FilterSet):
 
     class Meta:
         import karrio.server.manager.models as manager
+
         model = manager.Shipment
         fields: typing.List[str] = []
 
@@ -194,6 +195,7 @@ class TrackerFilters(filters.FilterSet):
 
     class Meta:
         import karrio.server.manager.models as manager
+
         model = manager.Tracking
         fields: typing.List[str] = []
 
@@ -272,9 +274,13 @@ class TracingRecordFilter(filters.FilterSet):
 class UploadRecordFilter(filters.FilterSet):
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+    shipment_id = filters.CharFilter(
+        field_name="shipment__id", help_text="related shipment id"
+    )
 
     class Meta:
         import karrio.server.manager.models as manager
+
         model = manager.DocumentUploadRecord
         fields: list = []
 
@@ -284,5 +290,6 @@ class PickupFilters(filters.FilterSet):
 
     class Meta:
         import karrio.server.manager.models as manager
+
         model = manager.Pickup
         fields: list = []

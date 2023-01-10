@@ -23,7 +23,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/extensions/dpdhl
-# -e ./sdk/extensions/fedex
+-e ./sdk/extensions/fedex
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
@@ -53,7 +53,7 @@ karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
 karrio.dpdhl
-karrio.fedex
+# karrio.fedex
 karrio.purolator
 karrio.royalmail
 karrio.sendle

@@ -9,6 +9,8 @@ import { ShipmentsApi } from './generated/apis/ShipmentsApi';
 import { TrackersApi } from './generated/apis/TrackersApi';
 import { WebhooksApi } from './generated/apis/WebhooksApi';
 import { OrdersApi } from './generated/apis/OrdersApi';
+import { BatchesApi } from './generated/apis/BatchesApi';
+import { DocumentsApi } from './generated/apis/DocumentsApi';
 import { Configuration, ConfigurationParameters } from './generated/runtime';
 
 export * from './generated/runtime';
@@ -26,6 +28,8 @@ export interface KarrioClientInterface {
   trackers: TrackersApi;
   webhooks: WebhooksApi;
   orders: OrdersApi;
+  batches: BatchesApi;
+  documents: DocumentsApi;
   config: ConfigurationParameters;
 }
 
@@ -41,6 +45,8 @@ export class KarrioClient implements KarrioClientInterface {
   trackers: TrackersApi;
   webhooks: WebhooksApi;
   orders: OrdersApi;
+  batches: BatchesApi;
+  documents: DocumentsApi;
   config: ConfigurationParameters;
 
   constructor(clientConfig: ConfigurationParameters) {
@@ -65,5 +71,7 @@ export class KarrioClient implements KarrioClientInterface {
     this.trackers = new TrackersApi(config);
     this.webhooks = new WebhooksApi(config);
     this.orders = new OrdersApi(config);
+    this.batches = new BatchesApi(config);
+    this.documents = new DocumentsApi(config);
   }
 }

@@ -151,6 +151,8 @@ def shipment_request(
         payload.label_type or "PDF_4x6"
     ].value
 
+    print(options.has_content, options.items(), "<<< Hey!")
+
     requests = [
         ProcessShipmentRequest(
             WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -327,7 +329,7 @@ def shipment_request(
                         HomeDeliveryPremiumDetail=None,
                         EtdDetail=None,
                     )
-                    if options.has_content
+                    if any(options.items())
                     else None
                 ),
                 ExpressFreightDetail=None,
@@ -558,8 +560,8 @@ def shipment_request(
                         SpecialServicesRequested=PackageSpecialServicesRequested(
                             SignatureOptionDetail=SignatureOptionDetail(
                                 OptionType=(
-                                    SignatureOptionType.ADULT
-                                    if options.signature_confirmation.state
+                                    SignatureOptionType[options.fedex_signature_option.state]
+                                    if options.fedex_signature_option.state in SignatureOptionType.__members__
                                     else SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),

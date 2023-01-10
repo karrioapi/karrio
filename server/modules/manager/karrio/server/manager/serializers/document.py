@@ -10,8 +10,8 @@ import karrio.server.manager.models as models
 
 @serialiazers.owned_model_serializer
 class DocumentUploadSerializer(core.DocumentUploadData):
-
-    def create(self,
+    def create(
+        self,
         validated_data: dict,
         context: serialiazers.Context,
         **kwargs,
@@ -73,6 +73,7 @@ class DocumentUploadSerializer(core.DocumentUploadData):
 
 def can_upload_shipment_document(shipment: models.Shipment):
     carrier = getattr(shipment, "selected_rate_carrier", None)
+    capabilities = getattr(carrier, "capabilities", [])
 
     if shipment is None:
         raise exceptions.APIException(
@@ -90,7 +91,7 @@ def can_upload_shipment_document(shipment: models.Shipment):
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if 'paperless' not in carrier.capabilities:
+    if "paperless" not in capabilities:
         raise exceptions.APIException(
             detail=f"trade document upload is not supported by carrier: '{carrier.carrier_id}'",
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
