@@ -202,4 +202,6 @@ class UploadDocumentType(utils.Flag):
     """ Unified upload document type mapping """
     certificate_of_origin = ups_certificate_of_origin
     commercial_invoice = ups_commercial_invoice
+    pro_forma_invoice = ups_other_document
+    packing_list = ups_packing_list
     other = ups_other_document

@@ -501,6 +501,8 @@ class UploadDocumentType(utils.Flag):
     """ Unified upload document type mapping """
     certificate_of_origin = fedex_certificate_of_origin
     commercial_invoice = fedex_commercial_invoice
+    pro_forma_invoice = fedex_pro_forma_invoice
+    packing_list = fedex_other
     other = fedex_other
 
 

@@ -128,6 +128,8 @@ class UploadDocumentType(utils.Enum):
 
     certificate_of_origin = "certificate_of_origin"
     commercial_invoice = "commercial_invoice"
+    pro_forma_invoice = "pro_forma_invoice"
+    packing_list = "packing_list"
     other = "other"
 
 
