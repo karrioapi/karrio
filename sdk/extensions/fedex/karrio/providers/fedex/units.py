@@ -9,6 +9,9 @@ MeasurementOptions = units.MeasurementOptionsType(
     min_in=1,
     min_cm=1,
 )
+COUNTRY_PREFERED_UNITS = dict(
+    US=(units.WeightUnit.LB, units.DimensionUnit.IN),
+)
 
 
 class PackagePresets(utils.Flag):
@@ -416,7 +419,6 @@ class ShippingOption(utils.Enum):
     fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
     fedex_saturday_pickup = utils.OptionEnum("SATURDAY_PICKUP", bool)
     fedex_shipment_assembly = utils.OptionEnum("SHIPMENT_ASSEMBLY", bool)
-    fedex_signature_option = utils.OptionEnum("SPECIAL_DELIVERY")
     fedex_sort_and_segregate = utils.OptionEnum("SORT_AND_SEGREGATE", bool)
     fedex_special_delivery = utils.OptionEnum("SPECIAL_DELIVERY", bool)
     fedex_special_equipment = utils.OptionEnum("SPECIAL_EQUIPMENT", bool)
@@ -437,16 +439,24 @@ def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
     option_type: utils.Enum = ShippingOption,
+    is_international: bool = None,
+    is_document: bool = None,
 ) -> units.Options:
     """
     Apply default values to the given options.
     """
     _options = options.copy()
+    _add_signature = "fedex_signature_option" not in options
+    _add_ETD = (
+        "fedex_electronic_trade_documents" not in options 
+        and is_international 
+        and is_document is False
+    )
 
     if package_options is not None:
         _options.update(package_options.content)
 
-    if "fedex_signature_option" not in options:
+    if _add_signature:
         _options.update(
             dict(
                 fedex_signature_option=(
@@ -455,6 +465,11 @@ def shipping_options_initializer(
                     else "SERVICE_DEFAULT"
                 )
             )
+        )
+
+    if _add_ETD:
+        _options.update(
+            dict(fedex_electronic_trade_documents=True)
         )
 
     def items_filter(key: str) -> bool:
