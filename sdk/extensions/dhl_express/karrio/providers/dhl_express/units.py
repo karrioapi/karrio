@@ -571,6 +571,7 @@ def shipping_options_initializer(
     """
     Apply default values to the given options.
     """
+    _options = options.copy()
 
     if (
         is_international
@@ -578,15 +579,15 @@ def shipping_options_initializer(
         and ShippingOption.dhl_paperless_trade.name not in options
         and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
     ):
-        options.update({ShippingOption.dhl_paperless_trade.name: True})
+        _options.update({ShippingOption.dhl_paperless_trade.name: True})
 
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption  # type: ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 COUNTRY_PREFERED_UNITS = dict(

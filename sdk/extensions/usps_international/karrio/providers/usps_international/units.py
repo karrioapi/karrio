@@ -125,14 +125,15 @@ def shipping_options_initializer(
     """
     Apply default values to the given options.
     """
+    _options = options.copy()
 
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
     def items_filter(code: str) -> bool:
         return code in ShippingOption and "usps_option" not in code  # type: ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class ShippingService(Enum):

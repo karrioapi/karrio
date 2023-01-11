@@ -97,14 +97,15 @@ def shipping_options_initializer(
     """
     Apply default values to the given options.
     """
+    _options = options.copy()
 
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
     # When no specific service is requested, set a default one.
-    options.update(
+    _options.update(
         {
-            "purolator_show_alternative_services": options.get(
+            "purolator_show_alternative_services": _options.get(
                 "purolator_show_alternative_services"
             )
             or (not service_is_defined)
@@ -114,7 +115,7 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in NON_OFFICIAL_SERVICES  # type: ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 NON_OFFICIAL_SERVICES = [ShippingOption.purolator_show_alternative_services.name]
