@@ -134,8 +134,6 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-        is_document = all(p.parcel.is_document for p in packages),
-        is_international=(payload.recipient.country_code != payload.shipper.country_code),
         initializer=provider_units.shipping_options_initializer,
     )
 
@@ -144,15 +142,15 @@ def shipment_request(
         or packages.compatible_units
     )
     customs = lib.to_customs_info(payload.customs, weight_unit=weight_unit.value)
-    duty = (
-        (customs.duty or models.Duty())
-        if payload.customs is not None else None
+    duty = (customs.duty or models.Duty()) if payload.customs is not None else None
+    bill_to = lib.to_address(
+        getattr(duty, "bill_to", None)
+        or (
+            payload.shipper
+            if getattr(payload.payment, "paid_by", "sender") == "sender"
+            else payload.recipient
+        )
     )
-    bill_to = lib.to_address(getattr(duty, "bill_to", None) or (
-        payload.shipper
-        if getattr(payload.payment, "paid_by", "sender") == "sender"
-        else payload.recipient
-    ))
     label_type, label_format = provider_units.LabelType[
         payload.label_type or "PDF_4x6"
     ].value
@@ -175,7 +173,7 @@ def shipment_request(
                 ManifestDetail=None,
                 VariationOptions=None,
                 TotalWeight=FedexWeight(
-                    Units=weight_unit.name, 
+                    Units=weight_unit.name,
                     Value=packages.weight[weight_unit.name],
                 ),
                 # set inurance coverage value on master package only
@@ -338,7 +336,7 @@ def shipment_request(
                         HomeDeliveryPremiumDetail=None,
                         EtdDetail=None,
                     )
-                    if any(options.items())
+                    if options.has_content
                     else None
                 ),
                 ExpressFreightDetail=None,
@@ -374,9 +372,7 @@ def shipment_request(
                         CustomsValue=(
                             Money(
                                 Currency=(
-                                    duty.currency
-                                    or options.currency.state
-                                    or "USD"
+                                    duty.currency or options.currency.state or "USD"
                                 ),
                                 Amount=(
                                     duty.declared_value
@@ -532,9 +528,21 @@ def shipment_request(
                         ),
                         Dimensions=(
                             FedexDimensions(
-                                Length=(package.length.map(provider_units.MeasurementOptions)[dim_unit.name]),
-                                Width=(package.width.map(provider_units.MeasurementOptions)[dim_unit.name]),
-                                Height=(package.height.map(provider_units.MeasurementOptions)[dim_unit.name]),
+                                Length=(
+                                    package.length.map(
+                                        provider_units.MeasurementOptions
+                                    )[dim_unit.name]
+                                ),
+                                Width=(
+                                    package.width.map(
+                                        provider_units.MeasurementOptions
+                                    )[dim_unit.name]
+                                ),
+                                Height=(
+                                    package.height.map(
+                                        provider_units.MeasurementOptions
+                                    )[dim_unit.name]
+                                ),
                                 Units=dim_unit.name,
                             )
                             if (
@@ -563,12 +571,15 @@ def shipment_request(
                         SpecialServicesRequested=PackageSpecialServicesRequested(
                             SignatureOptionDetail=SignatureOptionDetail(
                                 OptionType=(
-                                    SignatureOptionType[options.fedex_signature_option.state]
-                                    if options.fedex_signature_option.state in SignatureOptionType.__members__
+                                    SignatureOptionType[
+                                        options.fedex_signature_option.state
+                                    ]
+                                    if options.fedex_signature_option.state
+                                    in SignatureOptionType.__members__
                                     else SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),
-                            SpecialServiceTypes=["SIGNATURE_OPTION"]
+                            SpecialServiceTypes=["SIGNATURE_OPTION"],
                         ),
                         ContentRecords=None,
                     )

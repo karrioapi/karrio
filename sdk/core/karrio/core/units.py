@@ -805,6 +805,8 @@ class ShippingOption(utils.Enum):
     shipment_date = utils.OptionEnum("shipment_date")
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
+    paperless_trade = utils.OptionEnum("paperless_trade", bool)
+    hold_at_location = utils.OptionEnum("hold_at_location", bool)
     email_notification = utils.OptionEnum("email_notification", bool)
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
