@@ -91,13 +91,15 @@ def valid_base64(prop: str, max_size: int = 5242880):
             if buffer.getbuffer().nbytes > max_size:
                 error = f"Error: file size exceeds {max_size} bytes."
 
-        except Exception:
+        except Exception as e:
+            logger.exception(e)
+            error = "Invalid base64 file content"
             raise serializers.ValidationError(
-                "Invalid base64 file content",
+                error,
                 code="invalid",
             )
 
-        if any(error or ""):
+        if error is not None:
             raise serializers.ValidationError(error, code="invalid")
 
     return validate

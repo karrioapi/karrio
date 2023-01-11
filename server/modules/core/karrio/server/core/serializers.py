@@ -37,6 +37,7 @@ WEIGHT_UNIT = [(c.name, c.name) for c in list(units.WeightUnit)]
 DIMENSION_UNIT = [(c.name, c.name) for c in list(units.DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(units.PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
+UPLOAD_DOCUMENT_TYPE= [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),
@@ -1405,7 +1406,14 @@ class DocumentFileData(serializers.Serializer):
         allow_null=True,
         max_length=50,
         default="other",
-        help_text="Shipping document type",
+        help_text=f"""
+        Shipment document type
+
+        values: <br/>
+        {' '.join([f'`{pkg}`' for pkg, _ in UPLOAD_DOCUMENT_TYPE])}
+
+        For carrier specific packaging types, please consult the reference.
+        """,
     )
 
 

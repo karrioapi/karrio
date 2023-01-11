@@ -7332,7 +7332,7 @@
                         "maxLength": 50,
                         "minLength": 1,
                         "type": "string",
-                        "description": "Shipping document type",
+                        "description": "\nShipment document type\n\nvalues: <br/>\n`certificate_of_origin` `commercial_invoice` `pro_forma_invoice` `packing_list` `other`\n\nFor carrier specific packaging types, please consult the reference.\n",
                         "nullable": true,
                         "default": "other"
                     }
