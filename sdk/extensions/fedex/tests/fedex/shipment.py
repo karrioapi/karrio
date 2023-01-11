@@ -294,6 +294,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
+                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -388,6 +389,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
                     <v26:SpecialServicesRequested>
+                        <v26:SpecialServiceTypes>SIGNATURE_OPTION</v26:SpecialServiceTypes>
                         <v26:SignatureOptionDetail>
                             <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
                         </v26:SignatureOptionDetail>
@@ -477,6 +479,7 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
+                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -571,6 +574,7 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
                     <v26:SpecialServicesRequested>
+                        <v26:SpecialServiceTypes>SIGNATURE_OPTION</v26:SpecialServiceTypes>
                         <v26:SignatureOptionDetail>
                             <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
                         </v26:SignatureOptionDetail>
@@ -660,6 +664,7 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
+                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -758,6 +763,7 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                         <v26:Value>#Order 11111</v26:Value>
                     </v26:CustomerReferences>
                     <v26:SpecialServicesRequested>
+                        <v26:SpecialServiceTypes>SIGNATURE_OPTION</v26:SpecialServiceTypes>
                         <v26:SignatureOptionDetail>
                             <v26:OptionType>SERVICE_DEFAULT</v26:OptionType>
                         </v26:SignatureOptionDetail>

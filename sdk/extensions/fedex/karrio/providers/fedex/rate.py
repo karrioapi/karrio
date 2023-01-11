@@ -98,7 +98,7 @@ def _extract_rate(
             for name, amount in charges
             if amount
         ],
-        meta=dict(service_name=service.name_or_key, **applied_options)
+        meta=dict(service_name=service.name_or_key, **applied_options),
     )
 
 
@@ -117,6 +117,7 @@ def rate_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        option_type=provider_units.RatingOption,
         initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])

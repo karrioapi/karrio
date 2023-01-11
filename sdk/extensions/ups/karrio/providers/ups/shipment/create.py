@@ -264,10 +264,9 @@ def shipment_request(
                     Packaging=UPSPackagingType(
                         Code=(
                             mps_packaging
-                            or provider_units.PackagingType[
-                                package.packaging_type or "your_packaging"
-                            ].value
-                        )
+                            or provider_units.PackagingType.map(package.packaging_type).value
+                            or provider_units.PackagingType.ups_customer_supplied_package.value
+                        ),
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(

@@ -9,6 +9,9 @@ MeasurementOptions = units.MeasurementOptionsType(
     min_in=1,
     min_cm=1,
 )
+COUNTRY_PREFERED_UNITS = dict(
+    US=(units.WeightUnit.LB, units.DimensionUnit.IN),
+)
 
 
 class PackagePresets(utils.Flag):
@@ -308,6 +311,16 @@ class ServiceType(utils.Enum):
     )
 
 
+class RatingOption(utils.Enum):
+    fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE", bool)
+    fedex_freight_guarantee = utils.OptionEnum("FREIGHT_GUARANTEE", bool)
+    fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
+    fedex_smart_post_allowed_indicia = utils.OptionEnum(
+        "SMART_POST_ALLOWED_INDICIA", bool
+    )
+    fedex_smart_post_hub_id = utils.OptionEnum("SMART_POST_HUB_ID", bool)
+
+
 class ShippingOption(utils.Enum):
     fedex_blind_shipment = utils.OptionEnum("BLIND_SHIPMENT", bool)
     fedex_broker_select_option = utils.OptionEnum("BROKER_SELECT_OPTION", bool)
@@ -321,20 +334,28 @@ class ShippingOption(utils.Enum):
         "DELIVERY_ON_INVOICE_ACCEPTANCE", bool
     )
     fedex_detention = utils.OptionEnum("DETENTION", bool)
-    fedex_do_not_break_down_pallets = utils.OptionEnum("DO_NOT_BREAK_DOWN_PALLETS", bool)
+    fedex_do_not_break_down_pallets = utils.OptionEnum(
+        "DO_NOT_BREAK_DOWN_PALLETS", bool
+    )
     fedex_do_not_stack_pallets = utils.OptionEnum("DO_NOT_STACK_PALLETS", bool)
     fedex_dry_ice = utils.OptionEnum("DRY_ICE", bool)
     fedex_east_coast_special = utils.OptionEnum("EAST_COAST_SPECIAL", bool)
-    fedex_electronic_trade_documents = utils.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool)
+    fedex_electronic_trade_documents = utils.OptionEnum(
+        "ELECTRONIC_TRADE_DOCUMENTS", bool
+    )
     fedex_event_notification = utils.OptionEnum("EVENT_NOTIFICATION", bool)
-    fedex_exclude_from_consolidation = utils.OptionEnum("EXCLUDE_FROM_CONSOLIDATION", bool)
+    fedex_exclude_from_consolidation = utils.OptionEnum(
+        "EXCLUDE_FROM_CONSOLIDATION", bool
+    )
     fedex_exclusive_use = utils.OptionEnum("EXCLUSIVE_USE", bool)
     fedex_exhibition_delivery = utils.OptionEnum("EXHIBITION_DELIVERY", bool)
     fedex_exhibition_pickup = utils.OptionEnum("EXHIBITION_PICKUP", bool)
     fedex_expedited_alternate_delivery_route = utils.OptionEnum(
         "EXPEDITED_ALTERNATE_DELIVERY_ROUTE", bool
     )
-    fedex_expedited_one_day_earlier = utils.OptionEnum("EXPEDITED_ONE_DAY_EARLIER", bool)
+    fedex_expedited_one_day_earlier = utils.OptionEnum(
+        "EXPEDITED_ONE_DAY_EARLIER", bool
+    )
     fedex_expedited_service_monitoring_and_delivery = utils.OptionEnum(
         "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY", bool
     )
@@ -358,7 +379,9 @@ class ShippingOption(utils.Enum):
     fedex_international_controlled_export_service = utils.OptionEnum(
         "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool
     )
-    fedex_international_mail_service = utils.OptionEnum("INTERNATIONAL_MAIL_SERVICE", bool)
+    fedex_international_mail_service = utils.OptionEnum(
+        "INTERNATIONAL_MAIL_SERVICE", bool
+    )
     fedex_international_traffic_in_arms_regulations = utils.OptionEnum(
         "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS", bool
     )
@@ -378,9 +401,13 @@ class ShippingOption(utils.Enum):
     fedex_poison = utils.OptionEnum("POISON", bool)
     fedex_port_delivery = utils.OptionEnum("PORT_DELIVERY", bool)
     fedex_port_pickup = utils.OptionEnum("PORT_PICKUP", bool)
-    fedex_pre_delivery_notification = utils.OptionEnum("PRE_DELIVERY_NOTIFICATION", bool)
+    fedex_pre_delivery_notification = utils.OptionEnum(
+        "PRE_DELIVERY_NOTIFICATION", bool
+    )
     fedex_pre_eig_processing = utils.OptionEnum("PRE_EIG_PROCESSING", bool)
-    fedex_pre_multiplier_processing = utils.OptionEnum("PRE_MULTIPLIER_PROCESSING", bool)
+    fedex_pre_multiplier_processing = utils.OptionEnum(
+        "PRE_MULTIPLIER_PROCESSING", bool
+    )
     fedex_protection_from_freezing = utils.OptionEnum("PROTECTION_FROM_FREEZING", bool)
     fedex_regional_mall_delivery = utils.OptionEnum("REGIONAL_MALL_DELIVERY", bool)
     fedex_regional_mall_pickup = utils.OptionEnum("REGIONAL_MALL_PICKUP", bool)
@@ -391,14 +418,14 @@ class ShippingOption(utils.Enum):
     )
     fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
     fedex_saturday_pickup = utils.OptionEnum("SATURDAY_PICKUP", bool)
-    fedex_shipment_assembly = utils.OptionEnum("SHIPMENT_ASSEMBLY")
+    fedex_shipment_assembly = utils.OptionEnum("SHIPMENT_ASSEMBLY", bool)
     fedex_sort_and_segregate = utils.OptionEnum("SORT_AND_SEGREGATE", bool)
     fedex_special_delivery = utils.OptionEnum("SPECIAL_DELIVERY", bool)
     fedex_special_equipment = utils.OptionEnum("SPECIAL_EQUIPMENT", bool)
     fedex_storage = utils.OptionEnum("STORAGE", bool)
     fedex_sunday_delivery = utils.OptionEnum("SUNDAY_DELIVERY", bool)
     fedex_third_party_consignee = utils.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
-    fedex_top_load = utils.OptionEnum("TOP_LOAD")
+    fedex_top_load = utils.OptionEnum("TOP_LOAD", bool)
     fedex_usps_delivery = utils.OptionEnum("USPS_DELIVERY", bool)
     fedex_usps_pickup = utils.OptionEnum("USPS_PICKUP", bool)
     fedex_weighing = utils.OptionEnum("WEIGHING", bool)
@@ -411,18 +438,44 @@ class ShippingOption(utils.Enum):
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
+    option_type: utils.Enum = ShippingOption,
+    is_international: bool = None,
+    is_document: bool = None,
 ) -> units.Options:
     """
     Apply default values to the given options.
     """
+    _options = options.copy()
+    _add_signature = "fedex_signature_option" not in options
+    _add_ETD = (
+        "fedex_electronic_trade_documents" not in options 
+        and is_international 
+        and is_document is False
+    )
 
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
+
+    if _add_signature:
+        _options.update(
+            dict(
+                fedex_signature_option=(
+                    "ADULT"
+                    if _options.get("signature_confirmation")
+                    else "SERVICE_DEFAULT"
+                )
+            )
+        )
+
+    if _add_ETD:
+        _options.update(
+            dict(fedex_electronic_trade_documents=True)
+        )
 
     def items_filter(key: str) -> bool:
-        return key in ShippingOption  # type: ignore
+        return key in option_type  # type: ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(_options, option_type, items_filter=items_filter)
 
 
 class RateType(utils.Enum):
@@ -448,6 +501,8 @@ class UploadDocumentType(utils.Flag):
     """ Unified upload document type mapping """
     certificate_of_origin = fedex_certificate_of_origin
     commercial_invoice = fedex_commercial_invoice
+    pro_forma_invoice = fedex_pro_forma_invoice
+    packing_list = fedex_other
     other = fedex_other
 
 

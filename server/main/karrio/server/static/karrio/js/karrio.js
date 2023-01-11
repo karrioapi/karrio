@@ -617,6 +617,55 @@
     }
 
     /* tslint:disable */
+    function BatchObjectFromJSON(json) {
+        return BatchObjectFromJSONTyped(json);
+    }
+    function BatchObjectFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'status': json['status'],
+        };
+    }
+
+    /* tslint:disable */
+    function BatchOperationFromJSON(json) {
+        return BatchOperationFromJSONTyped(json);
+    }
+    function BatchOperationFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'status': json['status'],
+            'resource_type': json['resource_type'],
+            'resources': (json['resources'].map(BatchObjectFromJSON)),
+            'created_at': (new Date(json['created_at'])),
+            'updated_at': (new Date(json['updated_at'])),
+            'test_mode': json['test_mode'],
+        };
+    }
+
+    /* tslint:disable */
+    function BatchOperationsFromJSON(json) {
+        return BatchOperationsFromJSONTyped(json);
+    }
+    function BatchOperationsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
+            'next': !exists(json, 'next') ? undefined : json['next'],
+            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'results': (json['results'].map(BatchOperationFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
     function CarrierSettingsFromJSON(json) {
         return CarrierSettingsFromJSONTyped(json);
     }
@@ -893,6 +942,50 @@
     }
 
     /* tslint:disable */
+    function DocumentDetailsFromJSON(json) {
+        return DocumentDetailsFromJSONTyped(json);
+    }
+    function DocumentDetailsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'document_id': !exists(json, 'document_id') ? undefined : json['document_id'],
+            'file_name': !exists(json, 'file_name') ? undefined : json['file_name'],
+        };
+    }
+
+    /* tslint:disable */
+    function DocumentFileDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'doc_file': value.doc_file,
+            'doc_name': value.doc_name,
+            'doc_type': value.doc_type,
+        };
+    }
+
+    /* tslint:disable */
+    function DocumentUploadDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'shipment_id': value.shipment_id,
+            'document_files': (value.document_files.map(DocumentFileDataToJSON)),
+            'reference': value.reference,
+        };
+    }
+
+    /* tslint:disable */
     function MessageFromJSON(json) {
         return MessageFromJSONTyped(json);
     }
@@ -906,6 +999,41 @@
             'details': !exists(json, 'details') ? undefined : json['details'],
             'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
             'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+        };
+    }
+
+    /* tslint:disable */
+    function DocumentUploadRecordFromJSON(json) {
+        return DocumentUploadRecordFromJSONTyped(json);
+    }
+    function DocumentUploadRecordFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
+            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+            'documents': !exists(json, 'documents') ? undefined : (json['documents'].map(DocumentDetailsFromJSON)),
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'reference': !exists(json, 'reference') ? undefined : json['reference'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function DocumentUploadRecordsFromJSON(json) {
+        return DocumentUploadRecordsFromJSONTyped(json);
+    }
+    function DocumentUploadRecordsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
+            'next': !exists(json, 'next') ? undefined : json['next'],
+            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'results': (json['results'].map(DocumentUploadRecordFromJSON)),
         };
     }
 
@@ -5228,6 +5356,315 @@
         return OrdersApi;
     }(BaseAPI));
 
+    /* tslint:disable */
+    /**
+     *
+     */
+    var BatchesApi = /** @class */ (function (_super) {
+        __extends(BatchesApi, _super);
+        function BatchesApi() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        /**
+         * Retrieve all batch operations.
+         * List all batch operations
+         */
+        BatchesApi.prototype.listRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            queryParameters = {};
+                            if (requestParameters.resourceType !== undefined) {
+                                queryParameters['resource_type'] = requestParameters.resourceType;
+                            }
+                            if (requestParameters.status !== undefined) {
+                                queryParameters['status'] = requestParameters.status;
+                            }
+                            if (requestParameters.limit !== undefined) {
+                                queryParameters['limit'] = requestParameters.limit;
+                            }
+                            if (requestParameters.offset !== undefined) {
+                                queryParameters['offset'] = requestParameters.offset;
+                            }
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationsFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all batch operations.
+         * List all batch operations
+         */
+        BatchesApi.prototype.list = function (requestParameters, initOverrides) {
+            if (requestParameters === void 0) { requestParameters = {}; }
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a batch operation.
+         * Retrieve a batch operation
+         */
+        BatchesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (requestParameters.id === null || requestParameters.id === undefined) {
+                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a batch operation.
+         * Retrieve a batch operation
+         */
+        BatchesApi.prototype.retrieve = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return BatchesApi;
+    }(BaseAPI));
+
+    /* tslint:disable */
+    /**
+     *
+     */
+    var DocumentsApi = /** @class */ (function (_super) {
+        __extends(DocumentsApi, _super);
+        function DocumentsApi() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        /**
+         * Retrieve all shipping document upload records.
+         * List all upload records
+         */
+        DocumentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            queryParameters = {};
+                            if (requestParameters.dateAfter !== undefined) {
+                                queryParameters['date_after'] = requestParameters.dateAfter;
+                            }
+                            if (requestParameters.dateBefore !== undefined) {
+                                queryParameters['date_before'] = requestParameters.dateBefore;
+                            }
+                            if (requestParameters.shipmentId !== undefined) {
+                                queryParameters['shipment_id'] = requestParameters.shipmentId;
+                            }
+                            if (requestParameters.limit !== undefined) {
+                                queryParameters['limit'] = requestParameters.limit;
+                            }
+                            if (requestParameters.offset !== undefined) {
+                                queryParameters['offset'] = requestParameters.offset;
+                            }
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/documents",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordsFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all shipping document upload records.
+         * List all upload records
+         */
+        DocumentsApi.prototype.list = function (requestParameters, initOverrides) {
+            if (requestParameters === void 0) { requestParameters = {}; }
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a shipping document upload record.
+         * Retrieve an upload record
+         */
+        DocumentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (requestParameters.id === null || requestParameters.id === undefined) {
+                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/documents/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a shipping document upload record.
+         * Retrieve an upload record
+         */
+        DocumentsApi.prototype.retrieve = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Upload a shipping document.
+         * Upload documents
+         */
+        DocumentsApi.prototype.uploadRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (requestParameters.data === null || requestParameters.data === undefined) {
+                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling upload.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/documents",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: DocumentUploadDataToJSON(requestParameters.data),
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Upload a shipping document.
+         * Upload documents
+         */
+        DocumentsApi.prototype.upload = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.uploadRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return DocumentsApi;
+    }(BaseAPI));
+
     var KarrioClient = /** @class */ (function () {
         function KarrioClient(clientConfig) {
             var config = new Configuration(__assign({ credentials: "include", headers: {
@@ -5246,6 +5683,8 @@
             this.trackers = new TrackersApi(config);
             this.webhooks = new WebhooksApi(config);
             this.orders = new OrdersApi(config);
+            this.batches = new BatchesApi(config);
+            this.documents = new DocumentsApi(config);
         }
         return KarrioClient;
     }());

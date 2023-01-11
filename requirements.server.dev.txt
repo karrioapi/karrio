@@ -41,7 +41,7 @@ django-debug-toolbar
 # -e ./sdk/vendors/freightcom
 
 
-karrio
+# karrio
 karrio.amazon_mws
 karrio.aramex
 karrio.australiapost

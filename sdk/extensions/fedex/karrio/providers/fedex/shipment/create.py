@@ -134,10 +134,16 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        is_document = all(p.parcel.is_document for p in packages),
+        is_international=(payload.recipient.country_code != payload.shipper.country_code),
         initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = lib.to_customs_info(payload.customs)
+    weight_unit, dim_unit = (
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
+    customs = lib.to_customs_info(payload.customs, weight_unit=weight_unit.value)
     duty = (
         (customs.duty or models.Duty())
         if payload.customs is not None else None
@@ -169,7 +175,8 @@ def shipment_request(
                 ManifestDetail=None,
                 VariationOptions=None,
                 TotalWeight=FedexWeight(
-                    Units=packages.weight.unit, Value=packages.weight.value
+                    Units=weight_unit.name, 
+                    Value=packages.weight[weight_unit.name],
                 ),
                 # set inurance coverage value on master package only
                 TotalInsuredValue=(
@@ -265,7 +272,11 @@ def shipment_request(
                 ),
                 SpecialServicesRequested=(
                     ShipmentSpecialServicesRequested(
-                        SpecialServiceTypes=[code for _, code, _ in options.items()],
+                        SpecialServiceTypes=(
+                            [option.code for _, option in options.items()]
+                            if any(options.items())
+                            else None
+                        ),
                         CodDetail=(
                             CodDetail(
                                 CodCollectionAmount=Money(
@@ -327,7 +338,7 @@ def shipment_request(
                         HomeDeliveryPremiumDetail=None,
                         EtdDetail=None,
                     )
-                    if options.has_content
+                    if any(options.items())
                     else None
                 ),
                 ExpressFreightDetail=None,
@@ -422,9 +433,9 @@ def shipment_request(
                                 ),
                                 HarmonizedCode=item.hs_code,
                                 Weight=FedexWeight(
-                                    Units=package.weight_unit.value,
-                                    Value=units.Weight(item.weight, item.weight_unit)[
-                                        package.weight_unit.value
+                                    Units=weight_unit.name,
+                                    Value=units.Weight(item.weight, weight_unit.name)[
+                                        weight_unit.name
                                     ],
                                 ),
                                 Quantity=item.quantity,
@@ -513,24 +524,18 @@ def shipment_request(
                         InsuredValue=None,
                         Weight=(
                             FedexWeight(
-                                Units=package.weight.unit,
-                                Value=package.weight.value,
+                                Units=weight_unit.name,
+                                Value=package.weight[weight_unit.name],
                             )
                             if package.weight.value
                             else None
                         ),
                         Dimensions=(
                             FedexDimensions(
-                                Length=package.length.map(
-                                    provider_units.MeasurementOptions
-                                ).value,
-                                Width=package.width.map(
-                                    provider_units.MeasurementOptions
-                                ).value,
-                                Height=package.height.map(
-                                    provider_units.MeasurementOptions
-                                ).value,
-                                Units=package.dimension_unit.value,
+                                Length=(package.length.map(provider_units.MeasurementOptions)[dim_unit.name]),
+                                Width=(package.width.map(provider_units.MeasurementOptions)[dim_unit.name]),
+                                Height=(package.height.map(provider_units.MeasurementOptions)[dim_unit.name]),
+                                Units=dim_unit.name,
                             )
                             if (
                                 # only set dimensions if the packaging type is set to your_packaging
@@ -558,11 +563,12 @@ def shipment_request(
                         SpecialServicesRequested=PackageSpecialServicesRequested(
                             SignatureOptionDetail=SignatureOptionDetail(
                                 OptionType=(
-                                    SignatureOptionType.ADULT
-                                    if options.signature_confirmation.state
+                                    SignatureOptionType[options.fedex_signature_option.state]
+                                    if options.fedex_signature_option.state in SignatureOptionType.__members__
                                     else SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),
+                            SpecialServiceTypes=["SIGNATURE_OPTION"]
                         ),
                         ContentRecords=None,
                     )

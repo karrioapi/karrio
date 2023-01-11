@@ -177,11 +177,12 @@ def shipping_options_initializer(
     """
     Apply default values to the given options.
     """
+    _options = options.copy()
 
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
-    return units.ShippingOptions(options, ShippingOption)
+    return units.ShippingOptions(_options, ShippingOption)
 
 
 class UploadDocumentType(utils.Flag):
@@ -202,4 +203,6 @@ class UploadDocumentType(utils.Flag):
     """ Unified upload document type mapping """
     certificate_of_origin = ups_certificate_of_origin
     commercial_invoice = ups_commercial_invoice
+    pro_forma_invoice = ups_other_document
+    packing_list = ups_packing_list
     other = ups_other_document

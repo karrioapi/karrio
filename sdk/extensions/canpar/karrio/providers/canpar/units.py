@@ -92,8 +92,10 @@ def shipping_options_initializer(
     options: dict,
     package_options: Options = None,
 ) -> Options:
+    _options = options.copy()
+
     # Apply package options if specified.
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
-    return Options(options, ShippingOption)
+    return Options(_options, ShippingOption)

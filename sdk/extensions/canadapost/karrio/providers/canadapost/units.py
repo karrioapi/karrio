@@ -170,20 +170,22 @@ def shipping_options_initializer(
     package_options: units.ShippingOptions = None,
     is_international: bool = False,
 ) -> units.ShippingOptions:
+    _options = options.copy()
+
     # Apply default non delivery options for if international.
     no_international_option_specified: bool = not any(
-        key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION
+        key in _options for key in INTERNATIONAL_NON_DELIVERY_OPTION
     )
 
     if is_international and no_international_option_specified:
-        options.update({ShippingOption.canadapost_return_at_senders_expense.name: True})
+        _options.update({ShippingOption.canadapost_return_at_senders_expense.name: True})
 
     # Apply package options if specified.
     if package_options is not None:
-        options.update(package_options.content)
+        _options.update(package_options.content)
 
     # Define carrier option filter.
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in CUSTOM_OPTIONS  # type:ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
