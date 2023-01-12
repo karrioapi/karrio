@@ -433,25 +433,19 @@ class ShippingOption(utils.Enum):
     """ Unified Option type mapping """
     notification = fedex_event_notification
     cash_on_delivery = fedex_cod
+    paperless_trade = fedex_electronic_trade_documents
 
 
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
     option_type: utils.Enum = ShippingOption,
-    is_international: bool = None,
-    is_document: bool = None,
 ) -> units.Options:
     """
     Apply default values to the given options.
     """
     _options = options.copy()
     _add_signature = "fedex_signature_option" not in options
-    _add_ETD = (
-        "fedex_electronic_trade_documents" not in options 
-        and is_international 
-        and is_document is False
-    )
 
     if package_options is not None:
         _options.update(package_options.content)
@@ -465,11 +459,6 @@ def shipping_options_initializer(
                     else "SERVICE_DEFAULT"
                 )
             )
-        )
-
-    if _add_ETD:
-        _options.update(
-            dict(fedex_electronic_trade_documents=True)
         )
 
     def items_filter(key: str) -> bool:

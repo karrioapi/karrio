@@ -141,7 +141,7 @@ shipment_data = {
         }
     ],
     "service": "fedex_international_priority",
-    "options": {"currency": "USD"},
+    "options": {"currency": "USD", "paperless_trade": True},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {
         "invoice": "123456789",
@@ -174,6 +174,7 @@ multi_piece_shipment_data = {
             "height": 11,
         },
     ],
+    "options": {"currency": "USD"},
 }
 
 shipment_cancel_data = {
@@ -479,7 +480,6 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
-                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -664,7 +664,6 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
-                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
