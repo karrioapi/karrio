@@ -29,7 +29,7 @@ class AppInstallationFilter(filters.FilterSet):
         return queryset.filter(Q(metadata__has_key=value))
 
     def metadata_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(metadata__values__contains=value))
+        return queryset.filter(Q(metadata__values__icontains=value))
 
 
 class AppFilter(filters.FilterSet):
@@ -57,4 +57,4 @@ class AppFilter(filters.FilterSet):
         return queryset.filter(Q(metadata__has_key=value))
 
     def metadata_value_filter(self, queryset, name, value):
-        return queryset.filter(Q(metadata__values__contains=value))
+        return queryset.filter(Q(metadata__values__icontains=value))

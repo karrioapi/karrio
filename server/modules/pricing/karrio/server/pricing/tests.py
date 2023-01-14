@@ -20,7 +20,6 @@ class TestPricing(APITestCase):
                 "name": "brokerage",
                 "carriers": ["canadapost"],
                 "services": ["canadapost_priority", "canadapost_regular_parcel"],
-                "freight_range": (None, 130.0),
             }
         )
 

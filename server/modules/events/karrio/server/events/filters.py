@@ -7,15 +7,9 @@ import karrio.server.filters as filters
 
 
 class WebhookFilter(filters.FilterSet):
-    created_after = filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    created_before = filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
-    description = filters.CharFilter(
-        field_name="description", lookup_expr="icontains"
-    )
+    created_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
+    created_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
+    description = filters.CharFilter(field_name="description", lookup_expr="icontains")
     events = filters.MultipleChoiceFilter(
         field_name="enabled_events",
         method="events_filter",
@@ -30,20 +24,21 @@ class WebhookFilter(filters.FilterSet):
         fields: typing.List[str] = []
 
     def events_filter(self, queryset, name, values):
-        return queryset.filter(
-            Q(enabled_events__contains=values)
-            | Q(enabled_events__contains=["all"])
-        )
+        if any(values):
+            query = Q(enabled_events__icontains=values[0])
+
+            for value in values[1:]:
+                query &= Q(enabled_events__icontains=value)
+
+            return queryset.filter(query | Q(enabled_events__icontains="all"))
+
+        return queryset.filter(enabled_events__icontains="all")
 
 
 class EventFilter(filters.FilterSet):
     entity_id = filters.CharFilter(method="entity_filter", field_name="response")
-    date_after = filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="gte"
-    )
-    date_before = filters.DateTimeFilter(
-        field_name="created_at", lookup_expr="lte"
-    )
+    date_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
+    date_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
     type = filters.MultipleChoiceFilter(
         field_name="type",
         method="types_filter",

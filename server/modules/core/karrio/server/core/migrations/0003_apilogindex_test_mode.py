@@ -10,7 +10,7 @@ def forwards_func(apps, schema_editor):
     APILog = apps.get_model("core", "APILog")
     APILogIndex = apps.get_model("core", "APILogIndex")
     logs = APILog.objects.using(db_alias).filter(
-        models.Q(response__contains="test_mode")
+        models.Q(response__icontains="test_mode")
     )
 
     for log in logs:

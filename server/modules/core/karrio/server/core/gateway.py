@@ -79,7 +79,7 @@ class Carriers:
 
         # Check if a specific carrier_id is provided, to add it to the query
         if "capability" in list_filter:
-            query += (Q(capabilities__contains=[list_filter["capability"]]),)
+            query += (Q(capabilities__icontains=list_filter["capability"]),)
 
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get("carrier_ids", [])):

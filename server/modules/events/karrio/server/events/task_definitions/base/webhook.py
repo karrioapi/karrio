@@ -27,7 +27,7 @@ def notify_webhook_subscribers(
     logger.info(f"> starting {event} subscribers notification")
     context = retrieve_context(ctx)
     query = (
-        (Q(enabled_events__contains=[event]) | Q(enabled_events__contains=["all"])),
+        (Q(enabled_events__icontains=event) | Q(enabled_events__icontains="all")),
         (Q(disabled__isnull=True) | Q(disabled=False)),
     )
 
