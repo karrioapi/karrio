@@ -20,25 +20,23 @@ jobs:
           ./bin/setup-sdk-env.sh &&
           ./bin/run-sdk-typecheck.sh &&
           ./bin/run-sdk-tests.sh
+
   server-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
 
     steps:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          sudo chown -R 1000 ./
-          docker-compose -f docker-compose.test.yml run --rm karrio bash -c '
-            cd app &&
-            pip install --upgrade pip &&
-            pip install -r requirements.dev.txt &&
-            pip install -r requirements.server.dev.txt &&
-            cd -
-            karrio migrate &&
-            karrio test --failfast karrio.server.proxy.tests &&
-            karrio test --failfast karrio.server.pricing.tests &&
-            karrio test --failfast karrio.server.manager.tests &&
-            karrio test --failfast karrio.server.events.tests &&
-            karrio test --failfast karrio.server.graph.tests &&
-            karrio test --failfast karrio.server.orders.tests
-          '
+          apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
+          . ./bin/setup-server-env.sh &&
+          karrio migrate &&
+          karrio test --failfast karrio.server.proxy.tests &&
+          karrio test --failfast karrio.server.pricing.tests &&
+          karrio test --failfast karrio.server.manager.tests &&
+          karrio test --failfast karrio.server.events.tests &&
+          karrio test --failfast karrio.server.graph.tests &&
+          karrio test --failfast karrio.server.orders.tests
