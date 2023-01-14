@@ -39,6 +39,7 @@ class DocumentList(GenericAPIView):
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all upload records",
+        parameters=UploadRecordFilter.parameters,
         responses={
             200: DocumentUploadRecords(),
             404: ErrorResponse(),
@@ -50,7 +51,9 @@ class DocumentList(GenericAPIView):
         Retrieve all shipping document upload records.
         """
         upload_records = self.filter_queryset(self.get_queryset())
-        response = self.paginate_queryset(DocumentUploadRecord(upload_records, many=True).data)
+        response = self.paginate_queryset(
+            DocumentUploadRecord(upload_records, many=True).data
+        )
 
         return self.get_paginated_response(response)
 
@@ -68,16 +71,24 @@ class DocumentList(GenericAPIView):
     )
     def post(self, request: Request):
         """Upload a shipping document."""
-        shipment = models.Shipment.access_by(request).filter(
-            pk=request.data.get("shipment_id"),
-            selected_rate_carrier__isnull=False,
-        ).first()
+        shipment = (
+            models.Shipment.access_by(request)
+            .filter(
+                pk=request.data.get("shipment_id"),
+                selected_rate_carrier__isnull=False,
+            )
+            .first()
+        )
 
         can_upload_shipment_document(shipment)
 
         upload_record = (
             DocumentUploadSerializer.map(
-                (shipment.shipment_upload_record if hasattr(shipment, "shipment_upload_record") else None),
+                (
+                    shipment.shipment_upload_record
+                    if hasattr(shipment, "shipment_upload_record")
+                    else None
+                ),
                 data=request.data,
                 context=request,
             )
@@ -85,7 +96,9 @@ class DocumentList(GenericAPIView):
             .instance
         )
 
-        return Response(DocumentUploadRecord(upload_record).data, status=status.HTTP_201_CREATED)
+        return Response(
+            DocumentUploadRecord(upload_record).data, status=status.HTTP_201_CREATED
+        )
 
 
 class DocumentDetails(APIView):

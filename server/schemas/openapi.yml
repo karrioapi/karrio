@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2022.8.17
+  version: '2023.01'
 paths:
   /:
     get:
@@ -914,6 +914,21 @@ paths:
       operationId: $$$$$&list
       description: Retrieve all shipping document upload records.
       summary: List all upload records
+      parameters:
+      - in: query
+        name: created_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_before
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: shipment_id
+        schema:
+          type: string
       tags:
       - Documents
       security:
@@ -4388,7 +4403,10 @@ components:
           type: string
           nullable: true
           default: other
-          description: Shipping document type
+          description: "\n        Shipment document type\n\n        values: <br/>\n\
+            \        `certificate_of_origin` `commercial_invoice` `pro_forma_invoice`\
+            \ `packing_list` `other`\n\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 50
       required:
       - doc_file

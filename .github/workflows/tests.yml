@@ -17,9 +17,9 @@ jobs:
       - name: Run Tests
         run: |
           pip install --upgrade pip
-          ./scripts/setup-sdk-env.sh &&
-          ./scripts/run-sdk-typecheck.sh &&
-          ./scripts/run-sdk-tests.sh
+          ./bin/setup-sdk-env.sh &&
+          ./bin/run-sdk-typecheck.sh &&
+          ./bin/run-sdk-tests.sh
   server-tests:
     runs-on: ubuntu-latest
 

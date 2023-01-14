@@ -445,11 +445,31 @@ class TracingRecordFilter(filters.FilterSet):
 
 
 class UploadRecordFilter(filters.FilterSet):
-    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
-    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     shipment_id = filters.CharFilter(
         field_name="shipment__id", help_text="related shipment id"
     )
+    created_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
+    created_before = filters.DateTimeFilter(
+        field_name="requested_at", lookup_expr="lte"
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "shipment_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
     class Meta:
         import karrio.server.manager.models as manager
