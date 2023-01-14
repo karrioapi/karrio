@@ -61,7 +61,10 @@ TRACKING_RESPONSE = {
             }
         ],
         "messages": [],
-        "meta": {},
+        "meta": {
+            "ext": "ups",
+            "carrier": "ups",
+        },
         "metadata": {},
         "status": "in_transit",
         "test_mode": True,

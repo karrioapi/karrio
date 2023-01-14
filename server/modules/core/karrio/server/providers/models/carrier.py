@@ -90,16 +90,20 @@ class Carrier(core.OwnedEntity):
         return settings
 
     @property
+    def ext(self) -> str:
+        return (
+            "generic"
+            if hasattr(self.settings, "custom_carrier_name")
+            else self.settings.carrier_name
+        )
+
+    @property
     def gateway(self) -> gateway.Gateway:
         from karrio.server.core import middleware
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", utils.Tracer())
-        _carrier_name = (
-            "generic"
-            if hasattr(self.settings, "custom_carrier_name")
-            else self.settings.carrier_name
-        )
+        _carrier_name = self.ext
 
         return karrio.gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
 

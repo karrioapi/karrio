@@ -186,14 +186,19 @@ class Shipments:
             )
 
         def process_meta(parent) -> dict:
+            service_name = utils.upper(
+                (parent.meta or {}).get("service_name") or selected_rate.service
+            )
+            rate_provider = (
+                (parent.meta or {}).get("rate_provider") or carrier.carrier_name
+            ).lower()
+
             return {
                 **(parent.meta or {}),
-                "rate_provider": (
-                    (parent.meta or {}).get("rate_provider") or carrier.carrier_name
-                ).lower(),
-                "service_name": utils.upper(
-                    (parent.meta or {}).get("service_name") or selected_rate.service
-                ),
+                "ext": carrier.ext,
+                "carrier": rate_provider,
+                "service_name": service_name,
+                "rate_provider": rate_provider,  # TODO: deprecate rate_provider
             }
 
         def process_selected_rate() -> dict:
@@ -362,6 +367,11 @@ class Shipments:
                 **(payload.get("options") or {}).get(tracking_number, {}),
             },
         }
+        meta = {
+            "ext": carrier.ext,
+            "carrier": carrier.carrier_name,
+            **(details.meta or {}),
+        }
 
         return datatypes.TrackingResponse(
             tracking=lib.to_object(
@@ -371,8 +381,8 @@ class Shipments:
                     "id": f"trk_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
                     "status": utils.compute_tracking_status(result).value,
-                    "meta": details.meta or {},
                     "options": options,
+                    "meta": meta,
                 },
             ),
             messages=messages,
@@ -550,14 +560,22 @@ class Rates:
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
             carrier = next((c for c in carriers if c.carrier_id == rate.carrier_id))
+            rate_provider = (
+                (rate.meta or {}).get("rate_provider")
+                or getattr(carrier, "custom_carrier_name", None)
+                or rate.carrier_name
+            ).lower()
+            service_name = utils.upper(
+                (rate.meta or {}).get("service_name") or rate.service
+            )
+
             meta = {
                 **(rate.meta or {}),
-                "rate_provider": (
-                    (rate.meta or {}).get("rate_provider") or rate.carrier_name
-                ).lower(),
-                "service_name": utils.upper(
-                    (rate.meta or {}).get("service_name") or rate.service
-                ),
+                "ext": carrier.ext,
+                "carrier": rate_provider,
+                "service_name": service_name,
+                "rate_provider": rate_provider,  # TODO: deprecate rate_provider
+                "carrier_connection_id": carrier.id,
             }
 
             return datatypes.Rate(
@@ -565,10 +583,7 @@ class Rates:
                     **lib.to_dict(rate),
                     "id": f"rat_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
-                    "meta": {
-                        **meta,
-                        "carrier_connection_id": carrier.id,
-                    },
+                    "meta": meta,
                 }
             )
 

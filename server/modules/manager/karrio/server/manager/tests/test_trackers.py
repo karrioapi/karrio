@@ -81,6 +81,9 @@ TRACKING_RESPONSE = {
         }
     ],
     "messages": [],
-    "meta": {},
+    "meta": {
+        "ext": "ups",
+        "carrier": "ups",
+    },
     "metadata": {},
 }

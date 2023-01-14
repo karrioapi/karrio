@@ -536,6 +536,8 @@ ORDER_SHIPMENTS_RESPONSE = {
                         },
                     ],
                     "meta": {
+                        "ext": "canadapost",
+                        "carrier": "canadapost",
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
@@ -758,6 +760,8 @@ FULFILLED_ORDER_RESPONSE = {
                         },
                     ],
                     "meta": {
+                        "ext": "canadapost",
+                        "carrier": "canadapost",
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
@@ -965,6 +969,8 @@ PARTIAL_ORDER_RESPONSE = {
                         },
                     ],
                     "meta": {
+                        "ext": "canadapost",
+                        "carrier": "canadapost",
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,

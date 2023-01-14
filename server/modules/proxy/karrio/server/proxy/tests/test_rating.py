@@ -87,6 +87,8 @@ RATING_RESPONSE = {
                 {"name": "Discount", "amount": -9.04, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
                 "carrier_connection_id": ANY,

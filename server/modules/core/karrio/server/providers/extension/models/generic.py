@@ -5,6 +5,8 @@ from karrio.server.providers.models.carrier import Carrier, COUNTRIES
 
 
 class GenericSettings(Carrier):
+    CARRIER_NAME = "generic"
+
     class Meta:
         db_table = "generic-settings"
         verbose_name = "Custom Carrier Settings"
