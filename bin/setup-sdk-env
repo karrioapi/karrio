@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Create new python virtual environment
-source "bin/create-new-env.sh"
+source "bin/create-new-env"
 
 # Install requirements
 cd "${ROOT}" &&

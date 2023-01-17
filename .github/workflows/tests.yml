@@ -16,10 +16,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          pip install --upgrade pip
-          ./bin/setup-sdk-env.sh &&
-          ./bin/run-sdk-typecheck.sh &&
-          ./bin/run-sdk-tests.sh
+          ./bin/setup-sdk-env &&
+          ./bin/run-sdk-typecheck &&
+          ./bin/run-sdk-tests
 
   server-tests:
     runs-on: ubuntu-latest
@@ -31,12 +30,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
-          . ./bin/setup-server-env.sh &&
-          karrio migrate &&
-          karrio test --failfast karrio.server.proxy.tests &&
-          karrio test --failfast karrio.server.pricing.tests &&
-          karrio test --failfast karrio.server.manager.tests &&
-          karrio test --failfast karrio.server.events.tests &&
-          karrio test --failfast karrio.server.graph.tests &&
-          karrio test --failfast karrio.server.orders.tests
+          ./bin/setup-server-env &&
+          ./bin/migrate &&
+          ./bin/run-server-tests

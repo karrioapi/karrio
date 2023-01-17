@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+# Setup docker, docker compose and system dependencies

@@ -22,7 +22,7 @@ then
 	trap 'kill 0' INT
 
 	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker &
-	/bin/bash ./worker.sh &
+	/bin/bash ./worker &
 
 	wait -n
 

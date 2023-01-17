@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Source environment variables
-source "bin/_env.sh"
+source "bin/_env"
 
 # prepare virtual environment directory
 echo 'prepare env directory ...'

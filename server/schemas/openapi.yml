@@ -4773,7 +4773,8 @@ components:
             \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
-            : [\"canadapost-test\"],\n        }\n        "
+            : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
+            ,\n        }\n        "
         meta:
           type: object
           additionalProperties: {}
@@ -4847,7 +4848,8 @@ components:
             \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
-            : [\"canadapost-test\"],\n        }\n        "
+            : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
+            ,\n        }\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -5808,7 +5810,8 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \            \"preferred_service\": \"fedex_express_saver\",\n       \
+            \ }\n        "
         reference:
           type: string
           nullable: true
@@ -5898,7 +5901,8 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \            \"preferred_service\": \"fedex_express_saver\",\n       \
+            \ }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6069,7 +6073,8 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \            \"preferred_service\": \"fedex_express_saver\",\n       \
+            \ }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6275,7 +6280,8 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \            \"preferred_service\": \"fedex_express_saver\",\n       \
+            \ }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -6372,7 +6378,8 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \            \"preferred_service\": \"fedex_express_saver\",\n       \
+            \ }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'

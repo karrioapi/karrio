@@ -1,3 +1,4 @@
+--extra-index-url https://karrio.gateway.scarf.sh/simple/
 karrio
 karrio.amazon-mws
 karrio.aramex

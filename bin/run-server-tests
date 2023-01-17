@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Source environment variables
-source "bin/_env.sh"
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
 
 echo 'run server tests...'
 karrio test --failfast karrio.server.proxy.tests &&
@@ -10,6 +10,13 @@ karrio test --failfast karrio.server.manager.tests &&
 karrio test --failfast karrio.server.events.tests &&
 karrio test --failfast karrio.server.graph.tests &&
 karrio test --failfast karrio.server.orders.tests &&
+
+if [[ "$*" != *--light* ]];
+then
+    karrio test --failfast karrio.server.documents.tests
+else
+    echo "skip.."
+fi
 
 if [[ "$*" != *--cloud* ]];
 then

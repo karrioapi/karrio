@@ -375,9 +375,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "40/minute", "user": "60/minute"},
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "karrio.server.core.exceptions.custom_exception_handler",
-    "JSON_UNDERSCOREIZE": {
-        "no_underscore_before_number": True,
-    },
+    "JSON_UNDERSCOREIZE": {"no_underscore_before_number": True},
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
@@ -385,8 +383,12 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        config("JWT_ACCESS_EXPIRY", default=30, cast=int)
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        config("JWT_REFRESH_EXPIRY", default=3, cast=int)
+    ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

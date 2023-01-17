@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source "bin/activate-env.sh"
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
 
 echo "building wheel for" $1
 

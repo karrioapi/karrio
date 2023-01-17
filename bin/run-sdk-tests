@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "bin/activate-env.sh"
+source "bin/activate-env"
 
 echo "running sdk tests with python unittest"
 packages=$(find sdk ee/sdk -type d -name "tests" -exec dirname '{}' \;)

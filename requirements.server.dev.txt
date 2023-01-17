@@ -73,9 +73,9 @@ django-debug-toolbar
 -e ./server/main
 -e ./server/modules/apps
 -e ./server/modules/data
--e ./server/modules/documents
 -e ./server/modules/events
 -e ./server/modules/manager
 -e ./server/modules/orders
 -e ./server/modules/proxy
 -e ./server/modules/pricing
+# -e ./server/modules/documents

@@ -37,7 +37,7 @@ WEIGHT_UNIT = [(c.name, c.name) for c in list(units.WeightUnit)]
 DIMENSION_UNIT = [(c.name, c.name) for c in list(units.DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(units.PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
-UPLOAD_DOCUMENT_TYPE= [(c.name, c.name) for c in list(units.UploadDocumentType)]
+UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),
@@ -608,6 +608,7 @@ class RateRequest(validators.OptionDefaultSerializer):
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
             "signature_confirmation": true,
+            "preferred_service": "fedex_express_saver",
         }
         """,
     )
@@ -1009,6 +1010,7 @@ class ShippingData(validators.OptionDefaultSerializer):
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
             "signature_confirmation": true,
+            "preferred_service": "fedex_express_saver",
         }
         """,
     )
@@ -1210,6 +1212,7 @@ class ShipmentContent(serializers.Serializer):
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
             "signature_confirmation": true,
+            "preferred_service": "fedex_express_saver",
         }
         """,
     )

@@ -53,4 +53,4 @@ WORKDIR $WORK_DIR
 ENV PATH="/karrio/venv/bin:$PATH"
 
 ENTRYPOINT ["/karrio/venv/bin/dumb-init", "--"]
-CMD ["./entrypoint.sh"]
+CMD ["./entrypoint"]

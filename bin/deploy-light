@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Install python dependencies
+pip3 install -r https://raw.githubusercontent.com/karrioapi/karrio/HEAD/requirements.light.txt
+
+# Setup working directory
+export WORK_DIR=.karrio/app
+export LOG_DIR=.karrio/log
+export WORKER_DB_DIR=.karrio/data
+export STATIC_ROOT_DIR=.karrio/static
+
+mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
+
+# Download gunicorn config
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/server/gunicorn-cfg.py --output "${WORK_DIR}/gunicorn-cfg.py"
+
+# Download .env sample
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/.env

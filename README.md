@@ -26,10 +26,15 @@ Karrio is a tool for integrating and automating shipping and logistics operation
 **Get up and running in 1 minute with:**
 
 ```sh
-git clone https://github.com/karrioapi/karrio.git
-cd karrio
-docker-compose up -d
+git clone --depth 1 https://github.com/karrioapi/karrio
+cd karrio/docker
+docker compose up
 ```
+
+- Karrio server accessible at <http://localhost:5002>
+- Karrio dashboard accessible at <http://localhost:3000>
+
+Default Login: admin@example.com | demo
 
 ## Features
 
@@ -46,26 +51,19 @@ docker-compose up -d
 
 ## Get started
 
-### Option 1: Hobby instance one-line-deploy
+### Open-source hobby deploy
 
 ```bash
-git clone https://github.com/karrioapi/karrio.git
-cd karrio
-docker-compose up -d
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
  ```
 
-- Karrio server accessible at <http://localhost:5002>
-- Karrio dashboard accessible at <http://localhost:3000>
-
-Default Login: admin@example.com | demo
-
-### Option 2: Production instance on your infrastructure
-
-Follow our <a href="https://docs.karrio.io/installation">Self-Hosting Guide</a> for all major cloud service providers and on-premise deploys
-
-### Option 3: If you prefer a fully hosted version
+### Karrio Cloud
 
 Request access to [Karrio Cloud](https://www.karrio.io/get-started).
+
+### Enterprise self-hosted
+
+See our [enterprise self-hosted docs](https://docs.karrio.io/installation) to deploy a scalable, production-ready instance with support from our team.
 
 ## Our Philosophy
 
@@ -85,7 +83,7 @@ Karrio makes modern shipping accessible to retailers as well as enterprises in r
 
 **Shipping for platforms**
 
-With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and shippers and consumers experience on your Marketplace, eCommerce, ERP, WMS, OMS and apps.
+With Karrio, you can extend your platform with native shipping capabilities. Improve merchants, shippers and consumers experience on your Marketplace, eCommerce, ERP, WMS, OMS and apps.
 
 ## Support
 
@@ -100,10 +98,9 @@ We strive to provide good support through our issue trackers on Github. However,
 - Private discussions over Discord
 - Guidance around deployment, ops and scaling best practices
 - Prioritized feature requests
-- Prioritized new carriers integrations
-- Partnership
+- Prioritized carriers integrations
 
-We do offer Paid Support options. Please reach out to us at hello@karrio.io to sign up.
+We do offer paid support options. Please reach out to us at hello@karrio.io to sign up.
 
 ## Developing locally & Contributing
 
@@ -115,7 +112,7 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 ## Open-source vs. paid
 
-This project uses the [Apache 2 license](LICENSE). The core Karrio platform will always remain open and free.
+This project uses the [Apache 2 license](LICENSE). The core karrio platform will always remain open and free.
 
 We are develping some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
 

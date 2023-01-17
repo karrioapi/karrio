@@ -79,6 +79,7 @@ class OrderData(serializers.Serializer):
             "invoice_date": "2020-01-01",
             "single_item_per_parcel": true,
             "carrier_ids": ["canadapost-test"],
+            "preferred_service": "fedex_express_saver",
         }
         """,
     )
@@ -142,6 +143,7 @@ class Order(serializers.EntitySerializer):
             "invoice_date": "2020-01-01",
             "single_item_per_parcel": true,
             "carrier_ids": ["canadapost-test"],
+            "preferred_service": "fedex_express_saver",
         }
         """,
     )
