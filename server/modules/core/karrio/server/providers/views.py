@@ -42,21 +42,13 @@ class CarrierList(GenericAPIView):
             200: CarriersSettingsList(),
             400: ErrorResponse(),
         },
-        parameters=[
-            *filters.CarrierFilters.parameters,
-            openapi.OpenApiParameter(
-                "carrier_name",
-                location=openapi.OpenApiParameter.PATH,
-                type=openapi.OpenApiTypes.STR,
-                enum=[c for c, _ in CARRIERS],
-            )
-        ],
+        parameters=filters.CarrierFilters.parameters,
     )
     def get(self, request: Request):
         """
         Returns the list of configured carriers
         """
-        filter = {**request.query_params, "context": request }
+        filter = {**request.query_params, "context": request}
 
         carriers = [carrier.data for carrier in Carriers.list(**filter)]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)

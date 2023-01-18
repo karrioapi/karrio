@@ -15,10 +15,9 @@ gulp.task('build', async function () {
 
   await bundle.write({
     file: output,
-    format: 'umd',
+    format: 'iife',
     name: 'Karrio',
-    sourcemap: true
+    sourcemap: true,
   });
 });
-
 

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.canadapost",
-    version="2023.01",
+    version="2023.1rc2",
     description="Karrio - Canada Post Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

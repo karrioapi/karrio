@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.apps",
-    version="2023.01",
+    version="2023.1rc2",
     description="Multi-carrier shipping API apps module",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,8 +15,6 @@ setup(
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "treepoem",
-        "weasyprint",
         "karrio.server.core",
         "karrio.server.graph",
     ],

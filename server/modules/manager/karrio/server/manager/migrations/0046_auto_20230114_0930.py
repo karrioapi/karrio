@@ -33,12 +33,17 @@ def forwards_func(apps, schema_editor):
         _shipments.append(shipment)
 
     for tracker in trackers:
-        carrier_name, _ = providers.Carrier.resolve_settings(tracker.tracking_carrier)
+        tracking_carrier = providers.Carrier.objects.get(pk=tracker.tracking_carrier.pk)
         meta = shipment.meta or {}
+        carrier = (
+            list(tracker.options.values())[0].get("carrier")
+            if len(tracker.options.values()) > 0
+            else tracking_carrier.carrier_name
+        )
         tracker.meta = {
-            "ext": carrier_name,
-            "carrier": carrier_name,
             **meta,
+            "carrier": carrier,
+            "ext": tracking_carrier.carrier_name,
         }
         _trackers.append(tracker)
 

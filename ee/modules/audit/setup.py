@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.audit",
-    version="2023.01",
+    version="2023.1rc2",
     description="Multi-carrier shipping API audit log module",
     long_description=long_description,
     long_description_content_type="text/markdown",

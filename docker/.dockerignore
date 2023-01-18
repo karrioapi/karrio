@@ -2,8 +2,8 @@
 *
 
 !/requirements.txt
-!/docker/worker.sh
+!/docker/worker
 !/docker/Dockerfile
-!/docker/entrypoint.sh
+!/docker/entrypoint
 !/server/gunicorn-cfg.py
 !/licenses/APACHE-LICENSE-2.0

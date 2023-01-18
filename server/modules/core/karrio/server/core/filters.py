@@ -31,7 +31,7 @@ class CarrierFilters(filters.FilterSet):
 
     parameters = [
         openapi.OpenApiParameter(
-            "action",
+            "active",
             type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),

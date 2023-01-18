@@ -34,6 +34,7 @@ if REDIS_HOST is not None:
 else:
     WORKER_DB_DIR = decouple.config("WORKER_DB_DIR", default=settings.WORK_DIR)
     WORKER_DB_FILE_NAME = os.path.join(WORKER_DB_DIR, "tasks.sqlite3")
+
     settings.DATABASES["workers"] = {
         "NAME": WORKER_DB_FILE_NAME,
         "ENGINE": "django.db.backends.sqlite3",

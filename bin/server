@@ -18,10 +18,11 @@ elif [[ "$*" == *gen:ts:cli* ]]; then
 	mkdir -p "${ROOT:?}/.codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/server/schemas/openapi.yml \
-        -g typescript-axios \
+        -g typescript-fetch \
+		-o /local/.codegen/typescript/api/generated \
         --additional-properties=typescriptThreePlus=true \
         --additional-properties=modelPropertyNaming=snake_case \
-        --additional-properties=useSingleRequestParameter=True
+        --additional-properties=useSingleRequestParameter=true
 
 	cd -
 elif [[ "$*" == *gen:php:cli* ]]; then
@@ -51,7 +52,7 @@ elif [[ "$*" == *build:js* ]]; then
 	cd "${ROOT:?}/.codegen/typescript"
 	rm -rf node_modules;
     npm install;
-	npx swc ./api -o "${ROOT:?}/server/main/karrio/server/static/karrio/js/karrio.js"
+	npx gulp build --output "${ROOT:?}/server/main/karrio/server/static/karrio/js/karrio.js" || exit 1
 	cd -
 	karrio collectstatic --noinput
 elif [[ "$*" == *build:pkgs* ]]; then
@@ -75,13 +76,13 @@ elif [[ "$*" == *build:pkgs* ]]; then
 elif [[ "$*" == *build:ee* ]]; then
 	cd "${ROOT:?}"
     rm -rf ${EE_DIST}/*
-    sm=$(find "${CLOUD_SERVER:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" ! -path "*sdk/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
-    ee=$(find "${ROOT:?}/ee" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
+    ee=$(find "${ROOT:?}/ee" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
     for module in ${ee}; do
 		./bin/build-package-wheel "${module}" --ee || exit 1
     done
 
+    sm=$(find "${ROOT:?}/../karrio-cloud/server" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
     for module in ${sm}; do
 		./bin/build-package-wheel "${module}" --ee || exit 1
     done

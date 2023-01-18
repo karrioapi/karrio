@@ -280,7 +280,7 @@ PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DB_ENGINE = config("DATABASE_ENGINE", default="postgresql_psycopg2")
+DB_ENGINE = config("DATABASE_ENGINE", default="sqlite3")
 DB_NAME = os.path.join(WORK_DIR, "db.sqlite3") if "sqlite3" in DB_ENGINE else "db"
 
 DATABASES = {
@@ -428,6 +428,7 @@ OAUTH2_PROVIDER = {
 SPECTACULAR_SETTINGS = {
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": True,
     "ENUM_NAME_OVERRIDES": {
         "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
         "CurrencyEnum": "karrio.server.core.serializers.CURRENCIES",
@@ -441,6 +442,7 @@ SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_WHITELIST": [
         _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
     ],
+    "POSTPROCESSING_HOOKS": [],
 }
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,

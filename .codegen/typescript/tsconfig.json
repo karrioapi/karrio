@@ -14,8 +14,6 @@
     "strictPropertyInitialization": false,
     "isolatedModules": false,
     "baseUrl": ".",
-    "declaration": true,
-    "declarationDir": "lib"
   },
   "files": [
     "./api/karrio.ts"

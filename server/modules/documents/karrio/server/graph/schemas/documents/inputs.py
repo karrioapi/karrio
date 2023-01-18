@@ -4,7 +4,9 @@ import strawberry
 import karrio.server.graph.utils as utils
 import karrio.server.documents.serializers as serializers
 
-TemplateRelatedObjectEnum: typing.Any = strawberry.enum(serializers.TemplateRelatedObject)
+TemplateRelatedObjectEnum: typing.Any = strawberry.enum(
+    serializers.TemplateRelatedObject
+)
 
 
 @strawberry.input
@@ -31,4 +33,5 @@ class UpdateDocumentTemplateMutationInput(utils.BaseInput):
 @strawberry.input
 class DocumentTemplateFilter(utils.Paginated):
     name: typing.Optional[str] = strawberry.UNSET
+    active: typing.Optional[bool] = strawberry.UNSET
     related_object: typing.Optional[TemplateRelatedObjectEnum] = strawberry.UNSET
