@@ -1,17 +1,92 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Karrio",
+      "name": "Karrio: server",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
       "args": [
         "runserver",
-        "0.0.0.0:5002",
+        "0.0.0.0:5002"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: proxy",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.proxy.tests"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: pricing",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.pricing.tests"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: manager",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.manager.tests"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: events",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.events.tests"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: graph",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.graph.tests"
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Test: orders",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "args": [
+        "test",
+        "--failfast",
+        "karrio.server.orders.tests"
       ],
       "django": true,
       "justMyCode": true

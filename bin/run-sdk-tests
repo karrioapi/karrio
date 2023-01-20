@@ -3,7 +3,7 @@
 source "bin/activate-env"
 
 echo "running sdk tests with python unittest"
-packages=$(find sdk ee/sdk -type d -name "tests" -exec dirname '{}' \;)
+packages=$(find sdk -type d -name "tests" -exec dirname '{}' \;)
 for module in ${packages}; do
     python -m unittest discover -v -f ${module}/tests || exit $?;
 done
