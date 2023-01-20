@@ -60,7 +60,7 @@ RATE_PAYLOAD = {
     "services": ["usps_priority"],
     "options": {
         "usps_insurance": 55.0,
-        "usps_signature_confirmation": True, 
+        "usps_signature_confirmation": True,
     },
 }
 

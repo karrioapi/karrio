@@ -1,2 +1,2 @@
-from .universal_rate import *
-from .universal_shipment import *
+from .test_universal_rate import *
+from .test_universal_shipment import *

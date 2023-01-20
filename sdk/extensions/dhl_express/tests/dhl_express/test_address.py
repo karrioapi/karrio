@@ -22,7 +22,9 @@ class TestDHLAddressValidation(unittest.TestCase):
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         self.assertEqual(
-            re.sub("            <MessageTime>[^>]+</MessageTime>", "", request.serialize()),
+            re.sub(
+                "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
+            ),
             AddressValidationRequestXML,
         )
 

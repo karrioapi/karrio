@@ -98,7 +98,9 @@ class TestCanparPickup(unittest.TestCase):
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse)
+            )
 
     def test_parse_modify_pickup_response(self):
         with patch("karrio.mappers.canpar.proxy.http") as mocks:
@@ -110,7 +112,9 @@ class TestCanparPickup(unittest.TestCase):
                 karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse)
+            )
 
     def test_parse_void_shipment_response(self):
         with patch("karrio.mappers.canpar.proxy.http") as mock:

@@ -3,7 +3,7 @@ from unittest.mock import patch, ANY
 import karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest
-from ..fixture import gateway
+from .test_.fixture import gateway
 
 
 class TestUSPSGXGShipment(unittest.TestCase):

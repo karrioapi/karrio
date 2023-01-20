@@ -60,7 +60,7 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "yunexpress",
             "carrier_name": "yunexpress",
-            "events": [{"date": time.strftime('%Y-%m-%d')}],
+            "events": [{"date": time.strftime("%Y-%m-%d")}],
             "tracking_number": "18888800406",
         }
     ],

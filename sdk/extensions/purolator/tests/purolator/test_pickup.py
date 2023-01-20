@@ -106,7 +106,9 @@ class TestPurolatorPickup(unittest.TestCase):
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupCancelResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedPickupCancelResponse
+            )
 
 
 if __name__ == "__main__":

@@ -53,7 +53,9 @@ class TestEShipperShipment(unittest.TestCase):
         with patch("karrio.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
             )
 
             self.assertListEqual(
@@ -122,7 +124,7 @@ shipment_data = {
             }
         ],
     },
-    "payment": { "paid_by": "third_party" },
+    "payment": {"paid_by": "third_party"},
 }
 
 ParsedShipmentResponse = [

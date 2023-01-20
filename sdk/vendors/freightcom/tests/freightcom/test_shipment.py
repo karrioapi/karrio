@@ -54,7 +54,9 @@ class TestFreightcomShipment(unittest.TestCase):
         with patch("karrio.mappers.freightcom.proxy.http") as mock:
             mock.return_value = ShipmentCancelResponseXML
             parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
             )
 
             self.assertEqual(
