@@ -125,3 +125,4 @@ server/main/karrio/server/staticfiles/*
 .codegen/*
 !.codegen/typescript/
 .codegen/typescript/api/generated
+!docker/.env
