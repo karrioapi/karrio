@@ -12,13 +12,6 @@
     "**/templates/**/*": "django-txt",
     "**/requirements{/**,*}.{txt,in}": "pip-requirements"
   },
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./sdk/core/tests/",
-    "-p",
-    "test_*.py"
-  ],
   "python.testing.pytestEnabled": false,
   "python.testing.unittestEnabled": true,
 }
