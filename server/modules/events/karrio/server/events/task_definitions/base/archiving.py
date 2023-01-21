@@ -32,27 +32,27 @@ def run_data_archiving(*args, **kwargs):
     event_data = events.Event.objects.filter(created_at__lt=log_retention)
 
     if any(tracing_data):
-        logger.info(">> arching SDK tracing log backlog...")
+        logger.info(">> archiving SDK tracing backlog...")
         utils.failsafe(lambda: tracing_data.delete())
 
     if any(event_data):
-        logger.info(">> arching events backlog...")
+        logger.info(">> archiving events backlog...")
         utils.failsafe(lambda: event_data.delete())
 
     if any(api_log_data):
-        logger.info(">> arching API request logs backlog...")
+        logger.info(">> archiving API request logs backlog...")
         utils.failsafe(lambda: api_log_data.delete())
 
     if any(tracking_Data):
-        logger.info(">> arching tracking data backlog...")
+        logger.info(">> archiving tracking data backlog...")
         utils.failsafe(lambda: tracking_Data.delete())
 
     if any(shipping_data):
-        logger.info(">> arching shipping data log backlog...")
+        logger.info(">> archiving shipping data backlog...")
         utils.failsafe(lambda: shipping_data.delete())
 
     if any(order_data):
-        logger.info(">> arching order data log backlog...")
+        logger.info(">> archiving order data backlog...")
         utils.failsafe(lambda: order_data.delete())
 
-    logger.info("> ending scheduled backlog arching!")
+    logger.info("> ending scheduled backlog archiving!")
