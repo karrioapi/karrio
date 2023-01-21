@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.canpar",
-    version="2023.1rc2",
+    version="2023.1rc4",
     description="Karrio - Canpar Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

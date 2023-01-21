@@ -15,13 +15,11 @@
   </picture>
 </a>
 
-Open Source Shipping Integration & Automation
-
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
 
-Karrio is a tool for integrating and automating shipping and logistics operations using a modern tech stack. Karrio helps you manage carrier accounts, reduce shipping costs and improve fulfilment efficiency.
+Karrio is an Open Source logistics product suite to make shipping simple, accessible and affordable. With karrio you can connect to a network of shipping carriers with a single API integration. Once integrated, you can add new shipping APIs and onboard new carriers with ease.
 
 **Get up and running in 1 minute with:**
 
@@ -73,7 +71,7 @@ We believe that the logistics industry can greatly benefit from a unified, open 
 
 ## What are the benefits?
 
-Karrio is the only **product-focused** open-source shipping platform with label generation, customs documentation generation and package tracking API that **you can host on your own infrastructure**.
+Karrio is the only **platform-focused** open-source shipping platform with label generation, customs documentation generation and package tracking API that **you can host on your own infrastructure**.
 
 We are an open-source alternative to manual in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
