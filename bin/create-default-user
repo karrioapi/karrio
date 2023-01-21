@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+# Create Default super admin
+(echo "
+from decouple import config
+from django.contrib.auth import get_user_model
+if not any(get_user_model().objects.all()):
+   ADMIN_EMAIL = config('ADMIN_EMAIL')
+   ADMIN_PASSWORD = config('ADMIN_PASSWORD')
+   get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
+" | karrio shell) || exit 1
+
+echo "done!"
