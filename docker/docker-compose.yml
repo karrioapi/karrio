@@ -45,7 +45,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio/dashboard:2023.1rc4
+    image: karrio.docker.scarf.sh/karrio/dashboard:2023.1rc4
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
