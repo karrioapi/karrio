@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+  api:
+    container_name: karrio.api
+    image: karrio.docker.scarf.sh/karrio/server:$KARRIO_TAG
+    restart: unless-stopped
+    ports:
+      - 5002:5002
+    depends_on:
+      - db
+      - redis
+    environment:
+      USE_HTTPS: "False"
+      DEBUG_MODE: "False"
+      DETACHED_WORKER: "True"
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    volumes:
+      - static:/karrio/static
+
+  worker:
+    container_name: karrio.worker
+    image: karrio.docker.scarf.sh/karrio/server:$KARRIO_TAG
+    restart: unless-stopped
+    command: '/bin/bash ./worker'
+    depends_on:
+      - db
+      - redis
+      - api
+    environment:
+      DEBUG_MODE: "False"
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+
+  dashboard:
+    container_name: karrio.dashboard
+    image: karrio.docker.scarf.sh/karrio/dashboard:$KARRIO_TAG
+    ports:
+      - 3000:3000/tcp
+    depends_on:
+      - api
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      DASHBOARD_URL: ${DASHBOARD_URL}
+      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      KARRIO_URL: http://api:5002
+  
+  caddy:
+    container_name: karrio.caddy
+    image: caddy:2.6.1
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - static:/var/www/karrio/static
+    depends_on:
+      - api
+      - dashboard
+
+  # Comment out everything below this point if you are using an external database and redis instance.
+  db:
+    container_name: karrio.db
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-db}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/karrio
+
+  redis:
+    container_name: karrio.redis
+    image: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+
+volumes:
+  static:

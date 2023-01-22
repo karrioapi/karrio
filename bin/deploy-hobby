@@ -1,3 +1,164 @@
 #!/usr/bin/env bash
 
-# Setup docker, docker compose and system dependencies
+set -e
+
+export KARRIO_TAG="${KARRIO_TAG:-2023.1rc4}"
+export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
+
+SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
+JWT_SECRET=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
+export SECRET_KEY
+export JWT_SECRET
+
+# Talk to the user
+echo "Welcome to the single instance Karrio installer"
+echo ""
+echo "⚠️  You really need 2gb or more of memory to run this stack ⚠️"
+echo ""
+echo "Power user or aspiring power user?"
+echo "Check out our docs on deploying Karrio! https://docs.karrio.io/guides/self-hosting/hobby"
+echo ""
+
+if ! [ -z "$1" ]
+then
+export KARRIO_TAG=$1
+else
+echo "What version of Karrio would you like to install? (We default to '2023.1rc4')"
+echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
+read -r KARRIO_TAG_READ
+if [ -z "$KARRIO_TAG_READ" ]
+then
+    echo "Using default and installing $KARRIO_TAG"
+else
+    export KARRIO_TAG=$KARRIO_TAG_READ
+    echo "Using provided tag: $KARRIO_TAG"
+fi
+fi
+echo ""
+if ! [ -z "$2" ]
+then
+export DOMAIN=$2
+else
+echo "Let's get the exact domain Karrio will be installed on"
+echo "Make sure that you have a Host A DNS record pointing to this instance!"
+echo "This will be used for TLS 🔐"
+echo "ie: test.karrio.net (NOT an IP address)"
+read -r DOMAIN
+export DOMAIN=$DOMAIN
+fi
+echo "Ok we'll set up certs for https://$DOMAIN"
+echo ""
+echo "We will need sudo access so the next question is for you to give us superuser access"
+echo "Please enter your sudo password now:"
+sudo echo ""
+echo "Thanks! 🙏"
+echo ""
+echo "Ok! We'll take it from here 🚀"
+
+echo "Making sure any stack that might exist is stopped"
+sudo -E docker-compose -f docker-compose.yml stop &> /dev/null || true
+
+
+# update apt cache
+echo "Grabbing latest apt caches"
+sudo apt update
+
+# get karrio scripts
+mkdir -p ./karrio
+cd karrio
+
+echo "Downloading karrio's installation files"
+# curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
+curl https://raw.githubusercontent.com/karrioapi/karrio/karrio-2023.1/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
+
+cd -
+
+if [ -n "$3" ]
+then
+export TLS_BLOCK="acme_ca https://acme-staging-v02.api.letsencrypt.org/directory"
+fi
+
+# rewrite caddyfile
+rm -f Caddyfile
+envsubst > Caddyfile <<EOF
+{
+    http_port 80
+    https_port 443
+    $TLS_BLOCK
+}
+api.$DOMAIN {
+    header Strict-Transport-Security max-age=31536000;
+    header -Server
+    handle_path /static/* {
+        root * /var/www/karrio/static
+        file_server {
+            precompressed br gzip
+        }
+    }
+    handle {
+        reverse_proxy http://api:5002
+    }
+    encode gzip
+    log {
+		output stdout
+    }
+}
+app.$DOMAIN {
+    reverse_proxy http://dashboard:3000
+}
+EOF
+
+# Write .env file
+envsubst > .env <<EOF
+DOMAIN=$DOMAIN
+KARRIO_TAG=$KARRIO_TAG
+SECRET_KEY=$SECRET_KEY
+JWT_SECRET=$JWT_SECRET
+SENTRY_DSN=$SENTRY_DSN
+DASHBOARD_URL=https://app.$DOMAIN
+KARRIO_PUBLIC_URL=https://api.$DOMAIN
+EOF
+
+# setup docker
+echo "Setting up Docker"
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo -E apt-key add -
+sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update
+sudo apt-cache policy docker-ce
+sudo apt install -y docker-ce
+
+
+# setup docker-compose
+echo "Setting up Docker Compose"
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose || true
+sudo chmod +x /usr/local/bin/docker-compose
+
+# enable docker without sudo
+sudo usermod -aG docker "${USER}" || true
+
+# start up the stack
+echo "Configuring Docker Compose...."
+cp karrio/docker-compose.hobby.yml docker-compose.yml
+echo "Starting the stack!"
+sudo -E docker-compose -f docker-compose.yml up -d
+
+echo "We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued"
+echo ""
+echo "⏳ Waiting for Karrio api to boot (this will take a few minutes)"
+bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5002)" != "200" ]]; do sleep 5; done'
+echo "⌛️ Karrio looks up!"
+echo ""
+echo "🎉🎉🎉  Done! 🎉🎉🎉"
+echo ""
+echo "To stop the stack run 'docker-compose stop'"
+echo "To start the stack again run 'docker-compose start'"
+echo "If you have any issues at all delete everything in this directory and run the curl command again"
+echo ""
+echo 'To upgrade: run /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"'
+echo ""
+echo "Karrio will be up at the location you provided!"
+echo "API:         https://api.${DOMAIN}"
+echo "Dashboard:   https://app.${DOMAIN}"
+echo ""
+echo "This is the end: Hold your breath and count to 10..."
