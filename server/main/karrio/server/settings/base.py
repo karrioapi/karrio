@@ -60,6 +60,7 @@ if USE_HTTPS is True:
     global SECURE_HSTS_INCLUDE_SUBDOMAINS
     global CSRF_COOKIE_SECURE
     global SECURE_HSTS_PRELOAD
+    global CSRF_TRUSTED_ORIGINS
 
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -68,6 +69,7 @@ if USE_HTTPS is True:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_PRELOAD = True
+    CSRF_TRUSTED_ORIGINS = ['https://*']
 
 
 # karrio packages settings

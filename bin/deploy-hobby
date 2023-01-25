@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2023.1rc4}"
+export KARRIO_TAG="${KARRIO_TAG:-2023.1rc5}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -13,7 +13,7 @@ export JWT_SECRET
 # Talk to the user
 echo "Welcome to the single instance Karrio installer"
 echo ""
-echo "⚠️  You really need 2gb or more of memory to run this stack ⚠️"
+echo "⚠️  You really need 4gb or more of memory to run this stack ⚠️"
 echo ""
 echo "Power user or aspiring power user?"
 echo "Check out our docs on deploying Karrio! https://docs.karrio.io/guides/self-hosting/hobby"
@@ -23,7 +23,7 @@ if ! [ -z "$1" ]
 then
 export KARRIO_TAG=$1
 else
-echo "What version of Karrio would you like to install? (We default to '2023.1rc4')"
+echo "What version of Karrio would you like to install? (We default to '2023.1rc5')"
 echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
 read -r KARRIO_TAG_READ
 if [ -z "$KARRIO_TAG_READ" ]
@@ -42,11 +42,13 @@ else
 echo "Let's get the exact domain Karrio will be installed on"
 echo "Make sure that you have a Host A DNS record pointing to this instance!"
 echo "This will be used for TLS 🔐"
-echo "ie: test.karrio.net (NOT an IP address)"
+echo "ie: karrio.net (NOT an IP address)"
 read -r DOMAIN
 export DOMAIN=$DOMAIN
 fi
-echo "Ok we'll set up certs for https://$DOMAIN"
+echo "Ok we'll set up certs for these subdomains: "
+echo "- https://api.$DOMAIN"
+echo "- https://app.$DOMAIN"
 echo ""
 echo "We will need sudo access so the next question is for you to give us superuser access"
 echo "Please enter your sudo password now:"
@@ -100,7 +102,7 @@ api.$DOMAIN {
     }
     encode gzip
     log {
-		output stdout
+        output stdout
     }
 }
 app.$DOMAIN {
@@ -161,4 +163,4 @@ echo "Karrio will be up at the location you provided!"
 echo "API:         https://api.${DOMAIN}"
 echo "Dashboard:   https://app.${DOMAIN}"
 echo ""
-echo "This is the end: Hold your breath and count to 10..."
+echo "This is the end: Happy shipping!"

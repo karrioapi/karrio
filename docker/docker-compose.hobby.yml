@@ -11,7 +11,7 @@ services:
       - db
       - redis
     environment:
-      USE_HTTPS: "False"
+      USE_HTTPS: "TRUE"
       DEBUG_MODE: "False"
       DETACHED_WORKER: "True"
       REDIS_PORT: ${REDIS_PORT:-6379}
@@ -23,7 +23,7 @@ services:
       DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
     volumes:
-      - static:/karrio/static
+      - karrio-static:/karrio/static
 
   worker:
     container_name: karrio.worker
@@ -67,12 +67,11 @@ services:
       - '443:443'
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - static:/var/www/karrio/static
+      - karrio-static:/var/www/karrio/static
     depends_on:
       - api
       - dashboard
 
-  # Comment out everything below this point if you are using an external database and redis instance.
   db:
     container_name: karrio.db
     image: postgres
@@ -84,6 +83,8 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       PGDATA: /var/lib/postgresql/data/karrio
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   redis:
     container_name: karrio.redis
@@ -91,6 +92,10 @@ services:
     restart: unless-stopped
     ports:
       - 6379:6379
+    volumes:
+      - redis-data:/data
 
 volumes:
-  static:
+  karrio-static:
+  postgres-data:
+  redis-data:
