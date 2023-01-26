@@ -52,7 +52,7 @@ services:
       - api
     environment:
       JWT_SECRET: ${JWT_SECRET}
-      KARRIO_URL: http://api:${KARRIO_HTTP_PORT:=5002}
+      KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
       DASHBOARD_URL: ${DASHBOARD_URL}
       KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
 
