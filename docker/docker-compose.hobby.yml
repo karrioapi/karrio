@@ -56,7 +56,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       DASHBOARD_URL: ${DASHBOARD_URL}
       KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
-  
+
   caddy:
     container_name: karrio.caddy
     image: caddy:2.6.2
@@ -67,6 +67,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - karrio-static:/var/www/karrio/static
+      - caddy-data:/data
     depends_on:
       - api
       - dashboard
@@ -98,3 +99,4 @@ volumes:
   karrio-static:
   postgres-data:
   redis-data:
+  caddy-data:

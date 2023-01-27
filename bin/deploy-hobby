@@ -148,7 +148,7 @@ sudo -E docker-compose -f docker-compose.yml up -d
 echo "We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued"
 echo ""
 echo "⏳ Waiting for Karrio api to boot (this will take a few minutes)"
-bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5002)" != "200" ]]; do sleep 5; done'
+bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' https://api.${DOMAIN})" != "200" ]]; do sleep 5; done'
 echo "⌛️ Karrio looks up!"
 echo ""
 echo "🎉🎉🎉  Done! 🎉🎉🎉"
