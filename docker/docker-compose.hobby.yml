@@ -14,6 +14,7 @@ services:
       USE_HTTPS: "True"
       DEBUG_MODE: "False"
       DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
       REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_HOST: ${REDIS_HOST:-redis}
       DATABASE_HOST: ${DATABASE_HOST:-db}
@@ -76,8 +77,6 @@ services:
     container_name: karrio.db
     image: postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_DB: ${DATABASE_NAME:-db}
       POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
@@ -90,8 +89,6 @@ services:
     container_name: karrio.redis
     image: redis
     restart: unless-stopped
-    ports:
-      - 6379:6379
     volumes:
       - redis-data:/data
 
