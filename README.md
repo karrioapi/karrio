@@ -19,7 +19,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
 
-Karrio is an Open Source logistics product suite to make shipping simple, accessible and affordable. With karrio you can connect to a network of shipping carriers with a single API integration. Once integrated, you can add new shipping APIs and onboard new carriers with ease.
+Karrio is a suite of open-source tools that make shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
 
 **Get up and running in 1 minute with:**
 
