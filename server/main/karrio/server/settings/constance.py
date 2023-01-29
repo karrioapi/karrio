@@ -11,11 +11,17 @@ from karrio.server.settings.email import (
 
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 CONSTANCE_DATABASE_PREFIX = "constance:core:"
+DATA_ARCHIVING_SCHEDULE = config("DATA_ARCHIVING_SCHEDULE", default=168, cast=int)
 
 GOOGLE_CLOUD_API_KEY = config("GOOGLE_CLOUD_API_KEY", default="")
 CANADAPOST_ADDRESS_COMPLETE_API_KEY = config(
     "CANADAPOST_ADDRESS_COMPLETE_API_KEY", default=""
 )
+# data retention env in days
+ORDER_DATA_RETENTION = config("ORDER_DATA_RETENTION", default=183, cast=int)
+TRACKER_DATA_RETENTION = config("TRACKER_DATA_RETENTION", default=183, cast=int)
+SHIPMENT_DATA_RETENTION = config("SHIPMENT_DATA_RETENTION", default=183, cast=int)
+API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int)
 
 CONSTANCE_CONFIG = {
     "EMAIL_USE_TLS": (
@@ -46,6 +52,26 @@ CONSTANCE_CONFIG = {
         "The Canada Post AddressComplete service API Key",
         str,
     ),
+    "ORDER_DATA_RETENTION": (
+        ORDER_DATA_RETENTION,
+        "Order data retention period (in days)",
+        int,
+    ),
+    "TRACKER_DATA_RETENTION": (
+        TRACKER_DATA_RETENTION,
+        "Order data retention period (in days)",
+        int,
+    ),
+    "SHIPMENT_DATA_RETENTION": (
+        SHIPMENT_DATA_RETENTION,
+        "Shipment data retention period (in days)",
+        int,
+    ),
+    "API_LOGS_DATA_RETENTION": (
+        API_LOGS_DATA_RETENTION,
+        "API request and SDK tracing logs retention period (in days)",
+        int,
+    ),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -60,5 +86,11 @@ CONSTANCE_CONFIG_FIELDSETS = {
     "Address Validation Service": (
         "GOOGLE_CLOUD_API_KEY",
         "CANADAPOST_ADDRESS_COMPLETE_API_KEY",
+    ),
+    "Data retention": (
+        "ORDER_DATA_RETENTION",
+        "TRACKER_DATA_RETENTION",
+        "SHIPMENT_DATA_RETENTION",
+        "API_LOGS_DATA_RETENTION",
     ),
 }

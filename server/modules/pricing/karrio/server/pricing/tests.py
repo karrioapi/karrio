@@ -20,7 +20,6 @@ class TestPricing(APITestCase):
                 "name": "brokerage",
                 "carriers": ["canadapost"],
                 "services": ["canadapost_priority", "canadapost_regular_parcel"],
-                "freight_range": (None, 130.0),
             }
         )
 
@@ -151,6 +150,8 @@ RATING_RESPONSE = {
                 {"name": "Discount", "amount": -0.95, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST EXPEDITED PARCEL",
                 "carrier_connection_id": ANY,
@@ -174,6 +175,8 @@ RATING_RESPONSE = {
                 {"name": "Discount", "amount": 11.17, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST XPRESSPOST",
                 "carrier_connection_id": ANY,
@@ -198,6 +201,8 @@ RATING_RESPONSE = {
                 {"name": "brokerage", "amount": 1.0, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "carrier_connection_id": ANY,
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
@@ -227,6 +232,8 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"name": "Discount", "amount": -0.95, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST EXPEDITED PARCEL",
                 "carrier_connection_id": ANY,
@@ -250,6 +257,8 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"name": "Discount", "amount": 11.17, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST XPRESSPOST",
                 "carrier_connection_id": ANY,
@@ -274,6 +283,8 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
                 {"name": "brokerage", "amount": 2.28, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "carrier_connection_id": ANY,
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",

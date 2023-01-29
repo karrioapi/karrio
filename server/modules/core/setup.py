@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.core",
-    version="2022.8.18",
+    version="2023.1",
     description="Multi-carrier shipping API Core module",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",
     author="karrio",
     author_email="hello@karrio.io",
-    license="Apache License Version 2.0",
+    license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "karrio",
@@ -20,10 +20,10 @@ setup(
         "django-health-check",
         "psutil",
         "pyyaml",
+        "Jinja2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License",
     ],
     zip_safe=False,
     include_package_data=True,

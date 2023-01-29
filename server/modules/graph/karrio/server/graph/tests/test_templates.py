@@ -1,4 +1,3 @@
-import json
 from unittest.mock import ANY
 from karrio.server.graph.tests.base import GraphTestCase
 import karrio.server.manager.models as manager
@@ -38,19 +37,17 @@ class TestAddressTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_address_template",
+            operation_name="create_address_template",
             variables=ADDRESS_TEMPLATE_DATA,
         )
 
     def test_create_address_template(self):
         response = self._create_address_template()
-        response_data = json.loads(response.content)
-
         self.assertResponseNoErrors(response)
-        self.assertDictEqual(response_data, ADDRESS_TEMPLATE_RESPONSE)
+        self.assertDictEqual(response.data, ADDRESS_TEMPLATE_RESPONSE)
 
     def test_update_address_template(self):
-        template = json.loads(self._create_address_template().content)
+        template = self._create_address_template().data
         response = self.query(
             """
             mutation update_address_template($data: UpdateAddressTemplateInput!) {
@@ -82,36 +79,35 @@ class TestAddressTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_address_template",
+            operation_name="update_address_template",
             variables={
-                **ADDRESS_TEMPLATE_UPDATE_DATA,
                 "data": {
                     "id": template["data"]["create_address_template"]["template"]["id"],
                     **ADDRESS_TEMPLATE_UPDATE_DATA["data"],
                 },
             },
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, ADDRESS_TEMPLATE_UPDATE_RESPONSE)
 
     def test_delete_address_template(self):
-        template = json.loads(self._create_address_template().content)
+        template = self._create_address_template().data
         template_id = template["data"]["create_address_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
-            mutation delete_template($data: DeleteTemplateInput!) {
+            mutation delete_template($data: DeleteMutationInput!) {
               delete_template(input: $data) {
                 id
               }
             }
             """,
-            op_name="delete_template",
+            operation_name="delete_template",
             variables=delete_template_data,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response_data["data"]["delete_template"]["id"], template_id)
@@ -147,19 +143,19 @@ class TestParcelTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_parcel_template",
+            operation_name="create_parcel_template",
             variables=PARCEL_TEMPLATE_DATA,
         )
 
     def test_create_parcel_template(self):
         response = self._create_parcel_template()
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, PARCEL_TEMPLATE_RESPONSE)
 
     def test_update_parcel_template(self):
-        template = json.loads(self._create_parcel_template().content)
+        template = self._create_parcel_template().data
         response = self.query(
             """
             mutation update_parcel_template($data: UpdateParcelTemplateInput!) {
@@ -186,36 +182,35 @@ class TestParcelTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_parcel_template",
+            operation_name="update_parcel_template",
             variables={
-                **PARCEL_TEMPLATE_UPDATE_DATA,
                 "data": {
                     "id": template["data"]["create_parcel_template"]["template"]["id"],
                     **PARCEL_TEMPLATE_UPDATE_DATA["data"],
                 },
             },
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, PARCEL_TEMPLATE_UPDATE_RESPONSE)
 
     def test_delete_parcel_template(self):
-        template = json.loads(self._create_parcel_template().content)
+        template = self._create_parcel_template().data
         template_id = template["data"]["create_parcel_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
-            mutation delete_template($data: DeleteTemplateInput!) {
+            mutation delete_template($data: DeleteMutationInput!) {
               delete_template(input: $data) {
                 id
               }
             }
             """,
-            op_name="delete_template",
+            operation_name="delete_template",
             variables=delete_template_data,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response_data["data"]["delete_template"]["id"], template_id)
@@ -282,19 +277,19 @@ class TestCustomsTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="create_customs_template",
+            operation_name="create_customs_template",
             variables=CUSTOMS_TEMPLATE_DATA,
         )
 
     def test_create_customs_info_template(self):
         response = self._create_customs_info_template()
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, CUSTOMS_TEMPLATE_RESPONSE)
 
     def test_update_customs_info_template(self):
-        template = json.loads(self._create_customs_info_template().content)
+        template = self._create_customs_info_template().data
         CUSTOMS_TEMPLATE_UPDATE_DATA["data"]["id"] = template["data"][
             "create_customs_template"
         ]["template"]["id"]
@@ -366,30 +361,30 @@ class TestCustomsTemplate(GraphTestCase):
               }
             }
             """,
-            op_name="update_customs_template",
+            operation_name="update_customs_template",
             variables=CUSTOMS_TEMPLATE_UPDATE_DATA,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, CUSTOMS_TEMPLATE_UPDATE_RESPONSE)
 
     def test_delete_customs_info(self):
-        template = json.loads(self._create_customs_info_template().content)
+        template = self._create_customs_info_template().data
         template_id = template["data"]["create_customs_template"]["template"]["id"]
         delete_template_data = {"data": {"id": template_id}}
         response = self.query(
             """
-            mutation delete_template($data: DeleteTemplateInput!) {
+            mutation delete_template($data: DeleteMutationInput!) {
               delete_template(input: $data) {
                 id
               }
             }
             """,
-            op_name="delete_template",
+            operation_name="delete_template",
             variables=delete_template_data,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response_data["data"]["delete_template"]["id"], template_id)
@@ -559,7 +554,7 @@ CUSTOMS_TEMPLATE_DATA = {
                 {
                     "weight": 0.75,
                     "weight_unit": "KG",
-                    "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                    "sku": "3PO4I5J4PO5I4HI5OH",
                     "quantity": 4,
                 },
             ],
@@ -572,43 +567,42 @@ CUSTOMS_TEMPLATE_RESPONSE = {
         "create_customs_template": {
             "template": {
                 "id": ANY,
+                "label": "Customs info template",
+                "is_default": False,
                 "customs": {
-                    "certify": None,
-                    "commercial_invoice": None,
-                    "commodities": [
-                        {
-                            "description": None,
-                            "id": ANY,
-                            "origin_country": None,
-                            "quantity": 4,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
-                            "value_amount": None,
-                            "value_currency": None,
-                            "weight": 0.75,
-                            "weight_unit": "KG",
-                        },
-                        {
-                            "description": None,
-                            "id": ANY,
-                            "origin_country": None,
-                            "quantity": None,
-                            "sku": "6787L8K7J8L7J8L7K8",
-                            "value_amount": None,
-                            "value_currency": None,
-                            "weight": 1.15,
-                            "weight_unit": "KG",
-                        },
-                    ],
-                    "content_description": None,
-                    "content_type": "documents",
-                    "duty": None,
                     "incoterm": "DDU",
+                    "content_type": "documents",
+                    "commercial_invoice": None,
+                    "content_description": None,
+                    "duty": None,
                     "invoice": None,
                     "signer": None,
+                    "certify": None,
+                    "commodities": [
+                        {
+                            "id": ANY,
+                            "sku": "6787L8K7J8L7J8L7K8",
+                            "weight": 1.15,
+                            "quantity": 1,
+                            "weight_unit": "KG",
+                            "description": None,
+                            "value_amount": None,
+                            "value_currency": None,
+                            "origin_country": None,
+                        },
+                        {
+                            "id": ANY,
+                            "sku": "3PO4I5J4PO5I4HI5OH",
+                            "weight": 0.75,
+                            "quantity": 4,
+                            "weight_unit": "KG",
+                            "description": None,
+                            "value_amount": None,
+                            "value_currency": None,
+                            "origin_country": None,
+                        },
+                    ],
                 },
-                "id": ANY,
-                "is_default": False,
-                "label": "Customs info template",
             },
             "errors": None,
         }
@@ -642,11 +636,11 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                     "commercial_invoice": None,
                     "content_description": None,
                     "duty": {
-                        "account_number": None,
-                        "bill_to": None,
-                        "currency": None,
-                        "declared_value": None,
                         "paid_by": "sender",
+                        "currency": None,
+                        "account_number": None,
+                        "declared_value": None,
+                        "bill_to": None,
                     },
                     "invoice": None,
                     "signer": None,
@@ -654,9 +648,9 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                     "commodities": [
                         {
                             "id": ANY,
-                            "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                            "sku": "6787L8K7J8L7J8L7K8",
                             "weight": 1.0,
-                            "quantity": 4,
+                            "quantity": 1,
                             "weight_unit": "LB",
                             "description": None,
                             "value_amount": None,
@@ -665,9 +659,9 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                         },
                         {
                             "id": ANY,
-                            "sku": "6787L8K7J8L7J8L7K8",
-                            "weight": 1.15,
-                            "quantity": None,
+                            "sku": "3PO4I5J4PO5I4HI5OH",
+                            "weight": 0.75,
+                            "quantity": 4,
                             "weight_unit": "KG",
                             "description": None,
                             "value_amount": None,

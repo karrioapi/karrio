@@ -8,10 +8,18 @@ from karrio.server.user.models import Token
 class APITestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
+
+        # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
         )
         self.token = Token.objects.create(user=self.user, test_mode=True)
+
+        # Setup API client.
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+
+        # Setup test carrier connections.
         self.carrier = MODELS["canadapost"].objects.create(
             carrier_id="canadapost",
             test_mode=True,
@@ -44,5 +52,3 @@ class APITestCase(BaseAPITestCase):
             consumer_key="test",
             consumer_secret="password",
         )
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)

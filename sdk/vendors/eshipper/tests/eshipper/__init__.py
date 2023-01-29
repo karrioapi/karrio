@@ -1,2 +1,2 @@
-from .shipment import *
-from .rate import *
+from .test_shipment import *
+from .test_rate import *

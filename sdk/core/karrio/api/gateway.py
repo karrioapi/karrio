@@ -1,5 +1,4 @@
 """Karrio API Gateway definition modules."""
-
 import attr
 import logging
 import warnings
@@ -11,7 +10,11 @@ from karrio.core import Settings
 from karrio.core.utils import DP, Tracer
 from karrio.core.models import Message
 from karrio.core.errors import ShippingSDKError
-from karrio.references import import_extensions, detect_capabilities
+from karrio.references import (
+    import_extensions,
+    detect_capabilities,
+    detect_proxy_methods,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,19 +24,23 @@ class Gateway:
     """The carrier connection instance"""
 
     is_hub: bool
-    mapper: Mapper
     proxy: Proxy
-    settings: Settings
+    mapper: Mapper
     tracer: Tracer
+    settings: Settings
 
     @property
     def capabilities(self) -> List[str]:
-        return detect_capabilities(self.proxy.__class__)
+        return detect_capabilities(self.proxy_methods)
+
+    @property
+    def proxy_methods(self) -> List[str]:
+        return detect_proxy_methods(self.proxy.__class__)
 
     def check(self, request: str, origin_country_code: str = None):
         messages = []
 
-        if request not in self.capabilities:
+        if request not in self.proxy_methods:
             messages.append(
                 Message(
                     carrier_id=self.settings.carrier_id,
@@ -60,14 +67,6 @@ class Gateway:
             )
 
         return messages
-
-    @property
-    def features(self) -> List[str]:
-        warnings.warn(
-            "features is deprecated. Use capabilities instead",
-            category=DeprecationWarning,
-        )
-        return self.capabilities
 
 
 @attr.s(auto_attribs=True)

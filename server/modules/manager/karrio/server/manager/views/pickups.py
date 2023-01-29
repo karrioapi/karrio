@@ -1,19 +1,16 @@
 import logging
 
+from django.urls import path
 from rest_framework import status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-from drf_yasg.utils import swagger_auto_schema
-from django.urls import path
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import PickupFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     Pickup,
     ErrorResponse,
@@ -23,9 +20,10 @@ from karrio.server.manager.serializers import (
     PickupCancelData,
 )
 import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Pickups = PaginatedResult("PickupList", Pickup)
 
 
@@ -33,31 +31,21 @@ class PickupList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = PickupFilters
     serializer_class = Pickups
     model = models.Pickup
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List shipment pickups",
+        summary="List shipment pickups",
         responses={
             200: Pickups(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        manual_parameters=PickupFilters.parameters,
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request GET \\
-                  --url '/v1/pickups' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
+        parameters=PickupFilters.parameters,
     )
     def get(self, request: Request):
         """
@@ -69,45 +57,17 @@ class PickupList(GenericAPIView):
 
 
 class PickupRequest(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
-        operation_summary="Schedule a pickup",
+        summary="Schedule a pickup",
         responses={
             201: Pickup(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=PickupData(),
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request POST \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --data '{
-                    "pickup_date": "2020-10-25",
-                    "address": {
-                      "address_line1": "125 Church St",
-                      "person_name": "John Doe",
-                      "city": "Moncton",
-                      "country_code": "CA",
-                      "postal_code": "E1C4Z8",
-                      "state_code": "NB",
-                    },
-                    "ready_time": "13:00",
-                    "closing_time": "17:00",
-                    "instruction": "Should not be folded",
-                    "package_location": "At the main entrance hall",
-                    "tracking_numbers": [
-                        "8545763607864201002"
-                    ]
-                }'
-                """,
-            }
-        ],
+        request=PickupData(),
     )
     def post(self, request: Request, carrier_name: str):
         """
@@ -118,7 +78,7 @@ class PickupRequest(APIView):
         }
 
         pickup = (
-            SerializerDecorator[PickupData](data=request.data, context=request)
+            PickupData.map(data=request.data, context=request)
             .save(carrier_filter=carrier_filter)
             .instance
         )
@@ -127,35 +87,25 @@ class PickupRequest(APIView):
 
 
 class PickupDetails(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a pickup",
+        summary="Retrieve a pickup",
         responses={
             200: Pickup(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request GET \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
     )
     def get(self, request: Request, pk: str):
         """Retrieve a scheduled pickup."""
         pickup = models.Pickup.access_by(request).get(pk=pk)
         return Response(Pickup(pickup).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a pickup",
+        summary="Update a pickup",
         responses={
             200: Pickup(),
             404: ErrorResponse(),
@@ -163,26 +113,7 @@ class PickupDetails(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=PickupUpdateData(),
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request PATCH \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --data '{
-                    "address": {
-                      "phone_number": "514-000-0000",
-                      "residential": false,
-                      "email": "john@a.com"
-                    },
-                    "ready_time": "13:00",
-                    "closing_time": "20:00",
-                }'
-                """,
-            }
-        ],
+        request=PickupUpdateData(),
     )
     def post(self, request: Request, pk: str):
         """
@@ -190,7 +121,7 @@ class PickupDetails(APIView):
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
         instance = (
-            SerializerDecorator[PickupUpdateData](
+            PickupUpdateData.map(
                 pickup, data=request.data, context=request
             )
             .save()
@@ -201,10 +132,10 @@ class PickupDetails(APIView):
 
 
 class PickupCancel(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
-        operation_summary="Cancel a pickup",
+        summary="Cancel a pickup",
         responses={
             200: Pickup(),
             404: ErrorResponse(),
@@ -212,17 +143,7 @@ class PickupCancel(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=PickupCancelData(),
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request POST \\
-                  --url /v1/pickups/<PICKUP_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
+        request=PickupCancelData(),
     )
     def post(self, request: Request, pk: str):
         """
@@ -231,9 +152,7 @@ class PickupCancel(APIView):
         pickup = models.Pickup.access_by(request).get(pk=pk)
 
         update = (
-            SerializerDecorator[PickupCancelData](
-                pickup, data=request.data, context=request
-            )
+            PickupCancelData.map(pickup, data=request.data)
             .save()
             .instance
         )

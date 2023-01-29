@@ -1,11 +1,9 @@
 import logging
+from django.urls import path
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
-from django.urls import path
 
-from karrio.server.serializers import SerializerDecorator
 from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
     RateRequest,
@@ -15,6 +13,7 @@ from karrio.server.core.serializers import (
 )
 from karrio.server.core.gateway import Rates
 from karrio.server.proxy.router import router
+import karrio.server.openapi as openapi
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -26,30 +25,30 @@ Use this service to fetch a shipping rates available.
 
 
 class RateViewAPI(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
-        operation_summary="Fetch shipment rates",
-        operation_description=DESCRIPTIONS,
+        summary="Fetch shipment rates",
+        description=DESCRIPTIONS,
         responses={
             200: RateResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=RateRequest(),
+        request=RateRequest(),
     )
     def post(self, request: Request):
-        payload = SerializerDecorator[RateRequest](data=request.data).data
+        payload = RateRequest.map(data=request.data).data
 
         response = Rates.fetch(payload, context=request)
-
-        return Response(
-            RateResponse(response).data,
-            status=status.HTTP_207_MULTI_STATUS
+        status_code = (
+            status.HTTP_207_MULTI_STATUS
             if len(response.messages) > 0
-            else status.HTTP_200_OK,
+            else status.HTTP_200_OK
         )
+
+        return Response(RateResponse(response).data, status=status_code)
 
 
 router.urls.append(path("proxy/rates", RateViewAPI.as_view(), name="shipment-rates"))

@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  api:
+    container_name: karrio.api
+    image: karrio.docker.scarf.sh/karrio/server:2023.1
+    restart: unless-stopped
+    ports:
+      - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
+    depends_on:
+      - db
+      - redis
+    environment:
+      DEBUG_MODE: "True"
+      DETACHED_WORKER: "True"
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_ENGINE: ${DATABASE_ENGINE}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      KARRIO_HTTP_PORT: ${KARRIO_HTTP_PORT}
+
+  worker:
+    container_name: karrio.worker
+    image: karrio.docker.scarf.sh/karrio/server:2023.1
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+      - api
+    environment:
+      DEBUG_MODE: "True"
+      SECRET_KEY: ${SECRET_KEY}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_ENGINE: ${DATABASE_ENGINE}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+    command: '/bin/bash ./worker'
+
+  dashboard:
+    container_name: karrio.dashboard
+    image: karrio.docker.scarf.sh/karrio/dashboard:2023.1
+    ports:
+      - ${DASHBOARD_PORT}:3000/tcp
+    depends_on:
+      - api
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
+      DASHBOARD_URL: ${DASHBOARD_URL}
+      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+
+  # Comment out everything below this point if you are using an external database and redis instance.
+  db:
+    container_name: karrio.db
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - ${DATABASE_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/karrio
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    container_name: karrio.redis
+    image: redis
+    ports:
+      - ${REDIS_PORT}:6379
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  postgres-data:
+  redis-data:

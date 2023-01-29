@@ -1,3 +1,4 @@
+# type: ignore
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from karrio.server.settings.base import *

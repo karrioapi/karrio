@@ -1,11 +1,11 @@
 from django.urls import path
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, exceptions
 from rest_framework_simplejwt import views as jwt_views, serializers as jwt
 from two_factor.utils import default_device
+
+import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 User = get_user_model()
@@ -80,8 +80,7 @@ class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
 class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
     otp_token = serializers.CharField(
         required=True,
-        help_text="""
-        The OTP (One Time Password) token received by the user from the
+        help_text="""The OTP (One Time Password) token received by the user from the
         configured Two Factor Authentication method.
         """,
     )
@@ -130,11 +129,12 @@ class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
 class TokenObtainPair(jwt_views.TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}authenticate",
-        operation_summary="Obtain auth token pair",
-        operation_description="Authenticate the user and return a token pair",
+        summary="Obtain auth token pair",
+        description="Authenticate the user and return a token pair",
         responses={201: TokenPair()},
     )
     def post(self, *args, **kwargs):
@@ -147,11 +147,12 @@ class TokenObtainPair(jwt_views.TokenObtainPairView):
 class TokenRefresh(jwt_views.TokenRefreshView):
     serializer_class = TokenRefreshSerializer
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}refresh_token",
-        operation_summary="Refresh auth token",
-        operation_description="Authenticate the user and return a token pair",
+        summary="Refresh auth token",
+        description="Authenticate the user and return a token pair",
         responses={201: TokenPair()},
     )
     def post(self, *args, **kwargs):
@@ -162,14 +163,13 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
 
 class TokenVerify(jwt_views.TokenVerifyView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}verify_token",
-        operation_summary="Verify token",
-        operation_description="Verify an existent authentication token",
-        responses={
-            200: openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True)
-        },
+        summary="Verify token",
+        description="Verify an existent authentication token",
+        responses={200: openapi.OpenApiTypes.OBJECT},
     )
     def post(self, *args, **kwargs):
         response = super().post(*args, **kwargs)
@@ -181,13 +181,12 @@ class TokenVerify(jwt_views.TokenVerifyView):
 class VerifiedTokenPair(jwt_views.TokenVerifyView):
     serializer_class = VerifiedTokenObtainPairSerializer
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
+        auth=[],
         tags=["API"],
         operation_id=f"{ENDPOINT_ID}get_verified_token",
-        operation_summary="Get verified JWT token",
-        operation_description="""
-        Get a verified JWT token pair by submitting a Two-Factor authentication code.
-        """,
+        summary="Get verified JWT token",
+        description="Get a verified JWT token pair by submitting a Two-Factor authentication code.",
         responses={201: TokenPair()},
     )
     def post(self, *args, **kwargs):

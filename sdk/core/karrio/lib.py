@@ -203,13 +203,14 @@ def to_object(
 
 def to_dict(
     value: typing.Any,
+    clear_empty: bool = None,
 ) -> dict:
     """Parse value into a Python dictionay.
 
     :param value: a value that can converted in dictionary.
     :return: a dictionary.
     """
-    return utils.DP.to_dict(value)
+    return utils.DP.to_dict(value, clear_empty=clear_empty)
 
 
 def to_json(
@@ -340,7 +341,9 @@ def to_shipping_options(
 def to_services(
     services: typing.List[str],
     service_type: typing.Type[utils.Enum] = None,
-    initializer: typing.Optional[typing.Callable[[typing.List[str]], units.Services]] = None,
+    initializer: typing.Optional[
+        typing.Callable[[typing.List[str]], units.Services]
+    ] = None,
     **kwargs,
 ) -> units.Services:
 
@@ -355,12 +358,16 @@ def to_customs_info(
     option_type: typing.Type[utils.Enum] = None,
     weight_unit: str = None,
     default_to: typing.Optional[models.Customs] = None,
+    shipper: typing.Optional[models.Address] = None,
+    recipient: typing.Optional[models.Address] = None,
 ):
     return units.CustomsInfo(
         customs,
         option_type=option_type or utils.Enum,
         weight_unit=weight_unit,
         default_to=default_to,
+        shipper=shipper,
+        recipient=recipient,
     )
 
 

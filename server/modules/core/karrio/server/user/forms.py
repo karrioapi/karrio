@@ -1,8 +1,6 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
-
-# from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import (
     UserCreationForm,
     AuthenticationForm,

@@ -9,33 +9,51 @@ import karrio.server.providers.models.carrier
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('providers', '0025_alter_servicelevel_service_code'),
+        ("providers", "0025_alter_servicelevel_service_code"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='carrier',
-            name='active',
-            field=models.BooleanField(default=True, help_text='Disable/Hide carrier from clients'),
+            model_name="carrier",
+            name="active",
+            field=models.BooleanField(
+                default=True, help_text="Disable/Hide carrier from clients"
+            ),
         ),
         migrations.AlterField(
-            model_name='carrier',
-            name='capabilities',
-            field=karrio.server.core.fields.MultiChoiceField(base_field=models.CharField(choices=[('pickup', 'pickup'), ('rating', 'rating'), ('shipping', 'shipping'), ('tracking', 'tracking')], max_length=50), default=karrio.server.providers.models.carrier.CarrierCapabilities.get_capabilities, help_text='Select the capabilities of the carrier that you want to enable', size=4),
+            model_name="carrier",
+            name="capabilities",
+            field=karrio.server.core.fields.MultiChoiceField(
+                choices=[
+                    ("pickup", "pickup"),
+                    ("rating", "rating"),
+                    ("shipping", "shipping"),
+                    ("tracking", "tracking"),
+                ],
+                default=karrio.core.units.CarrierCapabilities.get_capabilities,
+                help_text="Select the capabilities of the carrier that you want to enable",
+            ),
         ),
         migrations.AlterField(
-            model_name='carrier',
-            name='test',
-            field=models.BooleanField(default=True, help_text='Toggle carrier connection mode'),
+            model_name="carrier",
+            name="test",
+            field=models.BooleanField(
+                default=True, help_text="Toggle carrier connection mode"
+            ),
         ),
         migrations.AlterField(
-            model_name='genericsettings',
-            name='custom_carrier_name',
-            field=models.CharField(help_text='Unique carrier slug, lowercase alphanumeric characters and underscores only', max_length=50, unique=True, validators=[django.core.validators.RegexValidator('^[a-z0-9_]+$')]),
+            model_name="genericsettings",
+            name="custom_carrier_name",
+            field=models.CharField(
+                help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
+                max_length=50,
+                unique=True,
+                validators=[django.core.validators.RegexValidator("^[a-z0-9_]+$")],
+            ),
         ),
         migrations.AlterField(
-            model_name='genericsettings',
-            name='verbose_name',
-            field=models.CharField(help_text='Carrier display name', max_length=50),
+            model_name="genericsettings",
+            name="verbose_name",
+            field=models.CharField(help_text="Carrier display name", max_length=50),
         ),
     ]

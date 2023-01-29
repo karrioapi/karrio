@@ -174,12 +174,12 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_shipment(self):
         url = reverse(
-            "karrio.server.manager:shipment-details",
+            "karrio.server.manager:shipment-cancel",
             kwargs=dict(pk=self.shipment.pk),
         )
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
-            response = self.client.delete(url)
+            response = self.client.post(url)
             response_data = json.loads(response.content)
 
             mock.assert_not_called()
@@ -188,7 +188,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
     def test_cancel_purchased_shipment(self):
         url = reverse(
-            "karrio.server.manager:shipment-details",
+            "karrio.server.manager:shipment-cancel",
             kwargs=dict(pk=self.shipment.pk),
         )
         self.shipment.status = "purchased"
@@ -198,7 +198,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_CANCEL_VALUE
-            response = self.client.delete(url)
+            response = self.client.post(url)
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -264,6 +264,8 @@ SHIPMENT_RATES = {
                 {"name": "Base surcharge", "amount": 101.83, "currency": "CAD"},
             ],
             "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
                 "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
                 "carrier_connection_id": ANY,
@@ -353,6 +355,7 @@ SHIPMENT_RESPONSE = {
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
+    "billing_address": None,
     "services": [],
     "options": {"shipment_date": ANY},
     "customs": None,
@@ -365,7 +368,7 @@ SHIPMENT_RESPONSE = {
 }
 
 SHIPMENT_OPTIONS = {
-    "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2020-01-01"},
+    "options": {"insurance": 54, "currency": "CAD", "shipment_date": "2050-01-01"},
 }
 
 RETURNED_RATES_VALUE = [
@@ -405,6 +408,8 @@ SELECTED_RATE = {
     "total_charge": 106.71,
     "transit_days": 2,
     "meta": {
+        "ext": "canadapost",
+        "carrier": "canadapost",
         "carrier_connection_id": ANY,
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
@@ -501,6 +506,7 @@ PURCHASED_SHIPMENT = {
     "services": [],
     "options": {"shipment_date": ANY},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
@@ -556,13 +562,20 @@ PURCHASED_SHIPMENT = {
             {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD"},
         ],
         "meta": {
+            "ext": "canadapost",
+            "carrier": "canadapost",
             "service_name": "CANADAPOST PRIORITY",
             "rate_provider": "canadapost",
             "carrier_connection_id": ANY,
         },
         "test_mode": True,
     },
-    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "meta": {
+        "ext": "canadapost",
+        "carrier": "canadapost",
+        "rate_provider": "canadapost",
+        "service_name": "CANADAPOST PRIORITY",
+    },
     "service": "canadapost_priority",
     "selected_rate_id": ANY,
     "test_mode": True,
@@ -638,6 +651,7 @@ CANCEL_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
@@ -753,6 +767,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {

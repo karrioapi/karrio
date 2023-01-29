@@ -106,26 +106,26 @@ def valid_base64(prop: str, max_size: int = 5242880):
 
 
 class OptionDefaultSerializer(serializers.Serializer):
-    def validate(self, data):
-        options = {
-            **getattr(self.instance, "options", {}),
-            **(data.get("options") or {}),
-        }
-        data.update(
-            dict(
-                options={
-                    "shipment_date": datetime.now().strftime("%Y-%m-%d"),
-                    **options,
-                }
+    def __init__(self, instance=None, **kwargs):
+        data = kwargs.get("data", {})
+        if data:
+            options = (data or {}).get("options") or {}
+            shipment_date = lib.to_date(
+                options.get("shipment_date")
+                or (getattr(instance, "options", None) or {}).get("shipment_date")
             )
-        )
 
-        return data
+            if shipment_date is None or shipment_date.date() < datetime.now().date():
+                options.update(shipment_date=datetime.now().strftime("%Y-%m-%d"))
+                kwargs["data"].update(dict(options=options))
+
+        super().__init__(instance, **kwargs)
 
 
 class PresetSerializer(serializers.Serializer):
     def validate(self, data):
         import karrio.server.core.dataunits as dataunits
+
         dimensions_required_together(data)
 
         if data is not None and "package_preset" in data:

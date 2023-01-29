@@ -136,6 +136,39 @@ class TrackingSerializer(TrackingDetails):
         return instance
 
 
+@serializers.owned_model_serializer
+class TrackerUpdateData(serializers.Serializer):
+    metadata = serializers.PlainDictField(
+        required=False, help_text="User metadata for the tracker"
+    )
+
+    def update(
+        self, instance: models.Tracking, validated_data: dict, **kwargs
+    ) -> models.Tracking:
+        changes = []
+        data = validated_data.copy()
+
+        for key, val in data.items():
+            if key in models.Tracking.DIRECT_PROPS and getattr(instance, key) != val:
+                setattr(instance, key, val)
+                changes.append(key)
+                validated_data.pop(key)
+
+        if any(changes):
+            instance.save(update_fields=changes)
+
+        return instance
+
+
+def can_mutate_tracker(
+    tracker: models.Tracking,
+    update: bool = False,
+    payload: dict = None,
+):
+    if update and [*(payload or {}).keys()] == ["metadata"]:
+        return
+
+
 def update_shipment_tracker(tracker: models.Tracking):
     try:
         if tracker.status == TrackerStatus.delivered.value:

@@ -62,6 +62,7 @@ class CarrierSettings:
                 "capabilities",
                 "active_users",
                 "active_orgs",
+                *(["display_name"] if self.carrier_name == "generic" else []),
             ]
         }
 
@@ -178,6 +179,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
+    billing_address: Address = JStruct[Address]
 
     options: Dict = {}
     reference: str = ""
@@ -205,6 +207,7 @@ class Shipment:
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
+    billing_address: Address = JStruct[Address]
 
     options: Dict = {}
     reference: str = ""
@@ -255,7 +258,6 @@ class Tracking:
     test_mode: bool = None
     options: Dict = {}
     meta: dict = None
-
 
 
 @attr.s(auto_attribs=True)

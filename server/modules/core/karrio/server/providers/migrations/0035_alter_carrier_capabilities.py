@@ -10,7 +10,7 @@ def forwards_func(apps, schema_editor):
     Carrier = apps.get_model("providers", "Carrier")
 
     for carrier in Carrier.objects.using(db_alias).all():
-        carrier.capabilities = list(set([*carrier.capabilities, 'paperless']))
+        carrier.capabilities = list(set([*carrier.capabilities, "paperless"]))
         carrier.save()
 
 
@@ -21,14 +21,24 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('providers', '0034_amazonmwssettings_dpdhlsettings'),
+        ("providers", "0034_amazonmwssettings_dpdhlsettings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='carrier',
-            name='capabilities',
-            field=karrio.server.core.fields.MultiChoiceField(base_field=models.CharField(choices=[('pickup', 'pickup'), ('rating', 'rating'), ('shipping', 'shipping'), ('tracking', 'tracking'), ('paperless', 'paperless')], max_length=50), default=karrio.server.providers.models.carrier.CarrierCapabilities.get_capabilities, help_text='Select the capabilities of the carrier that you want to enable', size=5),
+            model_name="carrier",
+            name="capabilities",
+            field=karrio.server.core.fields.MultiChoiceField(
+                choices=[
+                    ("pickup", "pickup"),
+                    ("rating", "rating"),
+                    ("shipping", "shipping"),
+                    ("tracking", "tracking"),
+                    ("paperless", "paperless"),
+                ],
+                default=karrio.core.units.CarrierCapabilities.get_capabilities,
+                help_text="Select the capabilities of the carrier that you want to enable",
+            ),
         ),
         migrations.RunPython(forwards_func, reverse_func),
     ]

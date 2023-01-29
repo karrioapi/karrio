@@ -1,15 +1,46 @@
 import typing
 from django.db.models import Q
-from django_filters import rest_framework as filters
+from django.conf import settings
 
-from karrio.server.core import dataunits
-from karrio.server.core import serializers
+import karrio.server.core.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
+import karrio.server.filters as filters
+import karrio.server.openapi as openapi
 
 
-class CharInFilter(filters.BaseInFilter, filters.CharFilter):
-    pass
+class CarrierFilters(filters.FilterSet):
+
+    carrier_name = filters.MultipleChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    active = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    system_only = filters.BooleanFilter(
+        required=False,
+        default=False,
+        help_text="This flag indicates that only system carriers should be returned",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "active",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "system_only",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
 
 class ShipmentFilters(filters.FilterSet):
@@ -40,10 +71,9 @@ class ShipmentFilters(filters.FilterSet):
         lookup_expr="icontains",
         help_text="a shipment reference",
     )
-    service = CharInFilter(
+    service = filters.CharInFilter(
         method="service_filter",
         field_name="selected_rate__service",
-        lookup_expr="in",
         help_text="preferred carrier services.",
     )
     status = filters.MultipleChoiceFilter(
@@ -54,7 +84,7 @@ class ShipmentFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
         """,
     )
-    option_key = CharInFilter(
+    option_key = filters.CharInFilter(
         field_name="options",
         method="option_key_filter",
         help_text="shipment option keys.",
@@ -64,7 +94,7 @@ class ShipmentFilters(filters.FilterSet):
         method="option_value_filter",
         help_text="shipment option value",
     )
-    metadata_key = CharInFilter(
+    metadata_key = filters.CharInFilter(
         field_name="metadata",
         method="metadata_key_filter",
         help_text="shipment metadata keys.",
@@ -82,6 +112,81 @@ class ShipmentFilters(filters.FilterSet):
         help_text="shipment' keyword and indexes search",
     )
 
+    parameters = [
+        openapi.OpenApiParameter(
+            "address",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c for c in dataunits.CARRIER_NAMES],
+        ),
+        openapi.OpenApiParameter(
+            "reference",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "service",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "status",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c.value for c in list(serializers.ShipmentStatus)],
+        ),
+        openapi.OpenApiParameter(
+            "option_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "option_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
+
     class Meta:
         import karrio.server.manager.models as manager
 
@@ -89,8 +194,26 @@ class ShipmentFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def address_filter(self, queryset, name, value):
+        if "postgres" in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "recipient__address_line1",
+                    "recipient__address_line2",
+                    "recipient__postal_code",
+                    "recipient__person_name",
+                    "recipient__company_name",
+                    "recipient__country_code",
+                    "recipient__city",
+                    "recipient__email",
+                    "recipient__phone_number",
+                )
+            ).filter(search=value)
+
         return queryset.filter(
-            Q(recipient__address_line1__icontains=value)
+            Q(id__icontains=value)
+            | Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
@@ -102,8 +225,28 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def keyword_filter(self, queryset, name, value):
+        if "postgres" in settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "reference",
+                    "tracking_number",
+                    "recipient__address_line1",
+                    "recipient__address_line2",
+                    "recipient__postal_code",
+                    "recipient__person_name",
+                    "recipient__company_name",
+                    "recipient__country_code",
+                    "recipient__city",
+                    "recipient__email",
+                    "recipient__phone_number",
+                )
+            ).filter(search=value)
+
         return queryset.filter(
-            Q(recipient__address_line1__icontains=value)
+            Q(id__icontains=value)
+            | Q(recipient__address_line1__icontains=value)
             | Q(recipient__address_line2__icontains=value)
             | Q(recipient__postal_code__icontains=value)
             | Q(recipient__person_name__icontains=value)
@@ -193,6 +336,36 @@ class TrackerFilters(filters.FilterSet):
         """,
     )
 
+    parameters = [
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c for c in dataunits.CARRIER_NAMES],
+        ),
+        openapi.OpenApiParameter(
+            "status",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            enum=[c.value for c in list(serializers.TrackerStatus)],
+        ),
+    ]
+
     class Meta:
         import karrio.server.manager.models as manager
 
@@ -216,7 +389,7 @@ class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
-    entity_id = filters.CharFilter(field_name="apilogindex__entity_id")
+    entity_id = filters.CharFilter(field_name="entity_id")
     method = filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
@@ -237,7 +410,7 @@ class LogFilter(filters.FilterSet):
     )
 
     class Meta:
-        model = core.APILog
+        model = core.APILogIndex
         fields: typing.List[str] = []
 
     def status_filter(self, queryset, name, value):
@@ -254,7 +427,7 @@ class TracingRecordFilter(filters.FilterSet):
         field_name="key",
         help_text="the tacing log key.",
     )
-    request_log_id = filters.CharFilter(
+    request_log_id = filters.NumberFilter(
         method="request_log_id_filter",
         field_name="meta__request_log_id",
         lookup_expr="icontains",
@@ -272,11 +445,31 @@ class TracingRecordFilter(filters.FilterSet):
 
 
 class UploadRecordFilter(filters.FilterSet):
-    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
-    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     shipment_id = filters.CharFilter(
         field_name="shipment__id", help_text="related shipment id"
     )
+    created_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
+    created_before = filters.DateTimeFilter(
+        field_name="requested_at", lookup_expr="lte"
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "shipment_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
     class Meta:
         import karrio.server.manager.models as manager

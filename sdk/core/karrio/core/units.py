@@ -142,6 +142,35 @@ class MeasurementOptionsType(typing.NamedTuple):
     quant: typing.Optional[float] = None
 
 
+class CarrierCapabilities(utils.Enum):
+    pickup = "pickup"
+    rating = "rating"
+    shipping = "shipping"
+    tracking = "tracking"
+    paperless = "paperless"
+
+    @classmethod
+    def get_capabilities(cls):
+        return [c.name for c in list(cls)]
+
+    @classmethod
+    def map_capability(cls, method_name: str):
+        if "rate" in method_name:
+            return "rating"
+        elif "tracking" in method_name:
+            return "tracking"
+        elif "shipment" in method_name:
+            return "shipping"
+        elif "pickup" in method_name:
+            return "pickup"
+        elif "address" in method_name:
+            return "shipping"
+        elif "document" in method_name:
+            return "paperless"
+
+        return None
+
+
 class Dimension:
     """The dimension common processing helper"""
 
@@ -879,6 +908,8 @@ class CustomsInfo(models.Customs):
         option_type: typing.Type[utils.Enum] = utils.Enum,
         weight_unit: str = None,
         default_to: typing.Optional[models.Customs] = None,
+        shipper: typing.Optional[models.Address] = None,
+        recipient: typing.Optional[models.Address] = None,
     ):
         _customs = customs or default_to
         options = Options(
@@ -890,6 +921,8 @@ class CustomsInfo(models.Customs):
         self._customs = _customs
         self._options = options
         self._weight_unit = weight_unit
+        self._shipper = shipper
+        self._recipient = recipient
 
     def __getitem__(self, item):
         return getattr(self._customs, item, None)
@@ -906,7 +939,23 @@ class CustomsInfo(models.Customs):
 
     @property
     def duty(self) -> typing.Optional[models.Duty]:  # type:ignore
-        return getattr(self._customs, "duty", models.Duty())
+        return getattr(self._customs, "duty", None) or models.Duty()
+
+    @property
+    def duty_billing_address(self) -> "ComputedAddress":  # type:ignore
+        paid_by = getattr(self.duty, "paid_by", "sender")
+        billing_address = getattr(self._customs, "duty_billing_address", None)
+
+        if billing_address is not None:
+            return ComputedAddress(billing_address)
+
+        if paid_by == "sender":
+            return ComputedAddress(self._shipper)
+
+        elif paid_by == "recipient":
+            return ComputedAddress(self._recipient)
+
+        return ComputedAddress(billing_address)
 
     @property
     def commodities(self) -> Products:  # type:ignore

@@ -19,7 +19,7 @@ class TestTrackers(APITestCase):
             response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
 
     def test_shipment_tracking_retry(self):
@@ -35,7 +35,7 @@ class TestTrackers(APITestCase):
             response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertDictEqual(response_data, TRACKING_RESPONSE)
         self.assertEqual(len(self.user.tracking_set.all()), 1)
 
@@ -81,6 +81,9 @@ TRACKING_RESPONSE = {
         }
     ],
     "messages": [],
-    "meta": {},
+    "meta": {
+        "ext": "ups",
+        "carrier": "ups",
+    },
     "metadata": {},
 }

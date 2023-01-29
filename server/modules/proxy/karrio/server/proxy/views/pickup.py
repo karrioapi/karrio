@@ -3,9 +3,8 @@ from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
+import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 from karrio.server.proxy.router import router
@@ -27,22 +26,22 @@ CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
-        operation_summary="Schedule a pickup",
-        request_body=PickupRequest(),
+        summary="Schedule a pickup",
+        request=PickupRequest(),
         responses={
             201: PickupResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            openapi.OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -51,7 +50,7 @@ class PickupSchedule(APIView):
         """
         Schedule one or many parcels pickup
         """
-        payload = serializers.SerializerDecorator[PickupRequest](data=request.data).data
+        payload = PickupRequest.map(data=request.data).data
 
         response = Pickups.schedule(payload, context=request, carrier_name=carrier_name)
 
@@ -59,22 +58,22 @@ class PickupSchedule(APIView):
 
 
 class PickupUpdate(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
-        operation_summary="Update a pickup",
-        request_body=PickupUpdateRequest(),
+        summary="Update a pickup",
+        request=PickupUpdateRequest(),
         responses={
             200: PickupResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            openapi.OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -83,7 +82,7 @@ class PickupUpdate(APIView):
         """
         Modify a scheduled pickup
         """
-        payload = serializers.SerializerDecorator[PickupUpdateRequest](data=request.data).data
+        payload = PickupUpdateRequest.map(data=request.data).data
 
         response = Pickups.update(payload, context=request, carrier_name=carrier_name)
 
@@ -91,22 +90,22 @@ class PickupUpdate(APIView):
 
 
 class PickupCancel(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",
-        operation_summary="Cancel a pickup",
-        request_body=PickupCancelRequest(),
+        summary="Cancel a pickup",
+        request=PickupCancelRequest(),
         responses={
             200: OperationResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            openapi.OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -115,7 +114,7 @@ class PickupCancel(APIView):
         """
         Cancel a pickup previously scheduled
         """
-        payload = serializers.SerializerDecorator[PickupCancelRequest](data=request.data).data
+        payload = PickupCancelRequest.map(data=request.data).data
 
         response = Pickups.cancel(payload, context=request, carrier_name=carrier_name)
 

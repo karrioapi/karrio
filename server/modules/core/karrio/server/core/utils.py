@@ -1,14 +1,15 @@
 import sys
+import typing
 import inspect
-import functools
 import logging
+import functools
 from string import Template
 from concurrent import futures
 from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
-import typing
-from django.utils.translation import gettext_lazy as _
+
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
 
@@ -19,7 +20,7 @@ T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
 
-def identity(value: Union[Any, Callable]) -> T:
+def identity(value: Union[Any, Callable]) -> Any:
     """
     :param value: function or value desired to be wrapped
     :return: value or callable return
@@ -55,7 +56,7 @@ def error_wrapper(func):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
             raise e
 
     return wrapper
@@ -124,7 +125,7 @@ def disable_for_loaddata(signal_handler):
 def skip_on_loadata(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if ("loaddata" in sys.argv):
+        if "loaddata" in sys.argv:
             return
 
         return func(*args, **kwargs)
@@ -132,7 +133,9 @@ def skip_on_loadata(func):
     return wrapper
 
 
-def skip_on_commands(commands: typing.List[str] = ["loaddata", "migrate", "makemigrations"]):
+def skip_on_commands(
+    commands: typing.List[str] = ["loaddata", "migrate", "makemigrations"]
+):
     def _decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -155,7 +158,6 @@ def email_setup_required(func):
         return func(*args, **kwargs)
 
     return wrapper
-
 
 
 def post_processing(methods: List[str] = None):
@@ -223,7 +225,7 @@ def filter_rate_carrier_compatible_gateways(
     carriers: List, carrier_ids: List[str], shipper_country_code: Optional[str] = None
 ) -> List:
     """
-    This function filters the carriers based on the capability to "get_rates"
+    This function filters the carriers based on the capability to "rating"
     and if no explicit carrier list is provided, it will filter out any
     carrier that does not support the shipper's country code.
     """
@@ -231,12 +233,12 @@ def filter_rate_carrier_compatible_gateways(
         carrier.gateway
         for carrier in carriers
         if (
-            # If no carrier list is provided, and gateway has get_rates capability.
-            ("get_rates" in carrier.gateway.capabilities and len(carrier_ids) > 0)
+            # If no carrier list is provided, and gateway has "rating" capability.
+            ("rating" in carrier.gateway.capabilities and len(carrier_ids) > 0)
             # If a carrier list is provided, and gateway is in the list.
             or (
-                # the gateway has get_rates capability.
-                "get_rates" in carrier.gateway.capabilities
+                # the gateway has "rating" capability.
+                "rating" in carrier.gateway.capabilities
                 # and no explicit carrier list is provided.
                 and len(carrier_ids) == 0
                 # and the shipper country code is provided.

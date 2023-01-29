@@ -1,11 +1,9 @@
 import logging
 from typing import cast
 from functools import partial
-from psycopg2.extras import NumericRange
 
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.contrib.postgres.fields import DecimalRangeField
 
 from karrio.core.models import ChargeDetails
 from karrio.core.utils import DP, NF
@@ -32,8 +30,8 @@ SURCHAGE_TYPE = (
 class Surcharge(Entity):
     class Meta:
         db_table = "surcharge"
-        verbose_name = "Broker Surcharge"
-        verbose_name_plural = "Broker Surcharges"
+        verbose_name = "Markup"
+        verbose_name_plural = "Markups"
 
     id = models.CharField(
         max_length=50,
@@ -68,7 +66,7 @@ class Surcharge(Entity):
         """,
     )
     carriers = MultiChoiceField(
-        models.CharField(max_length=50, choices=CARRIERS),
+        choices=CARRIERS,
         null=True,
         blank=True,
         help_text="""
@@ -87,31 +85,13 @@ class Surcharge(Entity):
         """,
     )
     services = MultiChoiceField(
-        models.CharField(max_length=100, choices=SERVICES),
+        choices=SERVICES,
         null=True,
         blank=True,
         help_text="""
         The list of services you want to apply the surcharge to.
         <br/>
         Note that by default, the surcharge is applied to all services
-        """,
-    )
-    discount_range = DecimalRangeField(
-        blank=True,
-        null=True,
-        help_text="""
-        Add the surcharge, if the rate discount is within this discount rate range.
-        <br/>
-        By default, the surcharge is applied to all quotes no matter the discount amount.
-        """,
-    )
-    freight_range = DecimalRangeField(
-        blank=True,
-        null=True,
-        help_text="""
-        Add the surcharge, if the rate charge is within this freight (quote) price range.
-        <br/>
-        By default, the surcharge is applied to all quotes no matter the amount.
         """,
     )
 
@@ -133,15 +113,6 @@ class Surcharge(Entity):
 
             if any(self.services or []):
                 applicable.append(rate.service in self.services)
-
-            if self.discount_range is not None:
-                discount = next((c for c in charges if "Discount" in c.name), None)
-                applicable.append(discount in cast(NumericRange, self.discount_range))
-
-            if self.freight_range is not None:
-                applicable.append(
-                    rate.total_charge in cast(NumericRange, self.freight_range)
-                )
 
             if any(applicable) and all(applicable):
                 logger.debug("applying broker surcharge to rate")

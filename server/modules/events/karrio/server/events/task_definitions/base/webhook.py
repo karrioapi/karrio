@@ -8,9 +8,9 @@ from django.contrib.auth import get_user_model
 
 from karrio.core import utils
 from karrio.server.core.utils import identity
-from karrio.server.serializers import Context, SerializerDecorator
+from karrio.server.serializers import Context
 from karrio.server.events import models
-from karrio.server.events import serializers
+import karrio.server.events.serializers.event as serializers
 
 logger = logging.getLogger(__name__)
 NotificationResponse = typing.Tuple[str, requests.Response]
@@ -27,12 +27,12 @@ def notify_webhook_subscribers(
     logger.info(f"> starting {event} subscribers notification")
     context = retrieve_context(ctx)
     query = (
-        (Q(enabled_events__contains=[event]) | Q(enabled_events__contains=["all"])),
+        (Q(enabled_events__icontains=event) | Q(enabled_events__icontains="all")),
         (Q(disabled__isnull=True) | Q(disabled=False)),
     )
 
     webhooks = models.Webhook.access_by(context).filter(*query)
-    SerializerDecorator[serializers.EventSerializer](
+    serializers.EventSerializer.map(
         data=dict(
             type=event,
             data=data,

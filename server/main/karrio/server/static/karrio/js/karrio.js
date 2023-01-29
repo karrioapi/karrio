@@ -1,8 +1,5 @@
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Karrio = factory());
-})(this, (function () { 'use strict';
+var Karrio = (function () {
+    'use strict';
 
     /******************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -62,7 +59,7 @@
         function verb(n) { return function (v) { return step([n, v]); }; }
         function step(op) {
             if (f) throw new TypeError("Generator is already executing.");
-            while (_) try {
+            while (g && (g = 0, op[0] && (_ = 0)), _) try {
                 if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
                 if (y = 0, t) op = [op[0] & 2, t.value];
                 switch (op[0]) {
@@ -85,7 +82,7 @@
     }
 
     /* tslint:disable */
-    var BASE_PATH = "https://app.karrio.io".replace(/\/+$/, "");
+    var BASE_PATH = "http://localhost".replace(/\/+$/, "");
     var Configuration = /** @class */ (function () {
         function Configuration(configuration) {
             if (configuration === void 0) { configuration = {}; }
@@ -442,6 +439,15 @@
         }
         return "".concat(encodeURIComponent(fullKey), "=").concat(encodeURIComponent(String(value)));
     }
+    function canConsumeForm(consumes) {
+        for (var _i = 0, consumes_1 = consumes; _i < consumes_1.length; _i++) {
+            var consume = consumes_1[_i];
+            if ('multipart/form-data' === consume.contentType) {
+                return true;
+            }
+        }
+        return false;
+    }
     var JSONApiResponse = /** @class */ (function () {
         function JSONApiResponse(raw, transformer) {
             if (transformer === void 0) { transformer = function (jsonValue) { return jsonValue; }; }
@@ -519,61 +525,8 @@
             'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
-    function AddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-            'object_type': value.object_type,
-            'validation': AddressValidationToJSON(value.validation),
-        };
-    }
 
     /* tslint:disable */
-    function AddressDataFromJSON(json) {
-        return AddressDataFromJSONTyped(json);
-    }
-    function AddressDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-        };
-    }
     function AddressDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -627,6 +580,7 @@
         return {
             'id': !exists(json, 'id') ? undefined : json['id'],
             'status': json['status'],
+            'errors': !exists(json, 'errors') ? undefined : json['errors'],
         };
     }
 
@@ -666,6 +620,424 @@
     }
 
     /* tslint:disable */
+    function CommodityDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'weight': value.weight,
+            'weight_unit': value.weight_unit,
+            'description': value.description,
+            'quantity': value.quantity,
+            'sku': value.sku,
+            'hs_code': value.hs_code,
+            'value_amount': value.value_amount,
+            'value_currency': value.value_currency,
+            'origin_country': value.origin_country,
+            'parent_id': value.parent_id,
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
+    function OrderBillingAddressFromJSON(json) {
+        return OrderBillingAddressFromJSONTyped(json);
+    }
+    function OrderBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+        };
+    }
+    function OrderBillingAddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function OrderDataShippingFromToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function OrderDataShippingToToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function OrderDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'order_id': value.order_id,
+            'order_date': value.order_date,
+            'source': value.source,
+            'shipping_to': OrderDataShippingToToJSON(value.shipping_to),
+            'shipping_from': OrderDataShippingFromToJSON(value.shipping_from),
+            'billing_address': OrderBillingAddressToJSON(value.billing_address),
+            'line_items': (value.line_items.map(CommodityDataToJSON)),
+            'options': value.options,
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
+    function BatchOrderDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'orders': (value.orders.map(OrderDataToJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function ParcelDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'weight': value.weight,
+            'width': value.width,
+            'height': value.height,
+            'length': value.length,
+            'packaging_type': value.packaging_type,
+            'package_preset': value.package_preset,
+            'description': value.description,
+            'content': value.content,
+            'is_document': value.is_document,
+            'weight_unit': value.weight_unit,
+            'dimension_unit': value.dimension_unit,
+            'items': value.items === undefined ? undefined : (value.items.map(CommodityDataToJSON)),
+            'reference_number': value.reference_number,
+            'freight_class': value.freight_class,
+            'options': value.options,
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentDataBillingAddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function CustomsDataDutyBillingAddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function CustomsDutyFromJSON(json) {
+        return CustomsDutyFromJSONTyped(json);
+    }
+    function CustomsDutyFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'declared_value': !exists(json, 'declared_value') ? undefined : json['declared_value'],
+            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
+        };
+    }
+    function CustomsDutyToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'paid_by': value.paid_by,
+            'currency': value.currency,
+            'declared_value': value.declared_value,
+            'account_number': value.account_number,
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentDataCustomsToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'commodities': (value.commodities.map(CommodityDataToJSON)),
+            'duty': CustomsDutyToJSON(value.duty),
+            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
+            'content_type': value.content_type,
+            'content_description': value.content_description,
+            'incoterm': value.incoterm,
+            'invoice': value.invoice,
+            'invoice_date': value.invoice_date,
+            'commercial_invoice': value.commercial_invoice,
+            'certify': value.certify,
+            'signer': value.signer,
+            'options': value.options,
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentDataShipperToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentPaymentFromJSON(json) {
+        return ShipmentPaymentFromJSONTyped(json);
+    }
+    function ShipmentPaymentFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
+        };
+    }
+    function ShipmentPaymentToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'paid_by': value.paid_by,
+            'currency': value.currency,
+            'account_number': value.account_number,
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'shipper': ShipmentDataShipperToJSON(value.shipper),
+            'recipient': ShipmentDataShipperToJSON(value.recipient),
+            'parcels': (value.parcels.map(ParcelDataToJSON)),
+            'options': value.options,
+            'payment': ShipmentPaymentToJSON(value.payment),
+            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
+            'customs': ShipmentDataCustomsToJSON(value.customs),
+            'reference': value.reference,
+            'label_type': value.label_type,
+            'service': value.service,
+            'services': value.services,
+            'carrier_ids': value.carrier_ids,
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
+    function BatchShipmentDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'shipments': (value.shipments.map(ShipmentDataToJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function TrackingDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'tracking_number': value.tracking_number,
+            'carrier_name': value.carrier_name,
+        };
+    }
+
+    /* tslint:disable */
+    function BatchTrackerDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'trackers': (value.trackers.map(TrackingDataToJSON)),
+        };
+    }
+
+    /* tslint:disable */
     function CarrierSettingsFromJSON(json) {
         return CarrierSettingsFromJSONTyped(json);
     }
@@ -675,12 +1047,13 @@
         }
         return {
             'id': json['id'],
-            'carrier_name': json['carrier_name'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'carrier_id': json['carrier_id'],
+            'carrier_name': json['carrier_name'],
             'display_name': !exists(json, 'display_name') ? undefined : json['display_name'],
             'test_mode': json['test_mode'],
             'active': json['active'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'capabilities': !exists(json, 'capabilities') ? undefined : json['capabilities'],
         };
     }
 
@@ -777,57 +1150,32 @@
     }
 
     /* tslint:disable */
-    function CommodityDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'weight': value.weight,
-            'weight_unit': value.weight_unit,
-            'description': value.description,
-            'quantity': value.quantity,
-            'sku': value.sku,
-            'hs_code': value.hs_code,
-            'value_amount': value.value_amount,
-            'value_currency': value.value_currency,
-            'origin_country': value.origin_country,
-            'parent_id': value.parent_id,
-            'metadata': value.metadata,
-        };
+    function CustomsDutyBillingAddressFromJSON(json) {
+        return CustomsDutyBillingAddressFromJSONTyped(json);
     }
-
-    /* tslint:disable */
-    function DutyFromJSON(json) {
-        return DutyFromJSONTyped(json);
-    }
-    function DutyFromJSONTyped(json, ignoreDiscriminator) {
+    function CustomsDutyBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
         return {
-            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'declared_value': !exists(json, 'declared_value') ? undefined : json['declared_value'],
-            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
-            'bill_to': !exists(json, 'bill_to') ? undefined : AddressFromJSON(json['bill_to']),
-        };
-    }
-    function DutyToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'declared_value': value.declared_value,
-            'account_number': value.account_number,
-            'bill_to': AddressToJSON(value.bill_to),
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -842,7 +1190,8 @@
         return {
             'id': !exists(json, 'id') ? undefined : json['id'],
             'commodities': !exists(json, 'commodities') ? undefined : (json['commodities'].map(CommodityFromJSON)),
-            'duty': !exists(json, 'duty') ? undefined : DutyFromJSON(json['duty']),
+            'duty': !exists(json, 'duty') ? undefined : CustomsDutyFromJSON(json['duty']),
+            'duty_billing_address': !exists(json, 'duty_billing_address') ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
             'content_type': !exists(json, 'content_type') ? undefined : json['content_type'],
             'content_description': !exists(json, 'content_description') ? undefined : json['content_description'],
             'incoterm': !exists(json, 'incoterm') ? undefined : json['incoterm'],
@@ -866,7 +1215,8 @@
         }
         return {
             'commodities': (value.commodities.map(CommodityDataToJSON)),
-            'duty': DutyToJSON(value.duty),
+            'duty': CustomsDutyToJSON(value.duty),
+            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
             'content_type': value.content_type,
             'content_description': value.content_description,
             'incoterm': value.incoterm,
@@ -892,52 +1242,6 @@
             'next': !exists(json, 'next') ? undefined : json['next'],
             'previous': !exists(json, 'previous') ? undefined : json['previous'],
             'results': (json['results'].map(CustomsFromJSON)),
-        };
-    }
-
-    /* tslint:disable */
-    function Data200ResponseFromJSON(json) {
-        return Data200ResponseFromJSONTyped(json);
-    }
-    function Data200ResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
-            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
-            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
-            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
-            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
-            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
-            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
-            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
-            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
-            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
-            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
-            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
-            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
-            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
-            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
-            'address_auto_complete': !exists(json, 'ADDRESS_AUTO_COMPLETE') ? undefined : json['ADDRESS_AUTO_COMPLETE'],
-            'countries': !exists(json, 'countries') ? undefined : json['countries'],
-            'currencies': !exists(json, 'currencies') ? undefined : json['currencies'],
-            'carriers': !exists(json, 'carriers') ? undefined : json['carriers'],
-            'custom_carriers': !exists(json, 'custom_carriers') ? undefined : json['custom_carriers'],
-            'customs_content_type': !exists(json, 'customs_content_type') ? undefined : json['customs_content_type'],
-            'incoterms': !exists(json, 'incoterms') ? undefined : json['incoterms'],
-            'states': !exists(json, 'states') ? undefined : json['states'],
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'service_names': !exists(json, 'service_names') ? undefined : json['service_names'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'option_names': !exists(json, 'option_names') ? undefined : json['option_names'],
-            'package_presets': !exists(json, 'package_presets') ? undefined : json['package_presets'],
-            'packaging_types': !exists(json, 'packaging_types') ? undefined : json['packaging_types'],
-            'payment_types': !exists(json, 'payment_types') ? undefined : json['payment_types'],
-            'carrier_capabilities': !exists(json, 'carrier_capabilities') ? undefined : json['carrier_capabilities'],
-            'service_levels': !exists(json, 'service_levels') ? undefined : json['service_levels'],
         };
     }
 
@@ -1038,20 +1342,6 @@
     }
 
     /* tslint:disable */
-    function DocumentsFromJSON(json) {
-        return DocumentsFromJSONTyped(json);
-    }
-    function DocumentsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'label': !exists(json, 'label') ? undefined : json['label'],
-            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
-        };
-    }
-
-    /* tslint:disable */
     function LineItemFromJSON(json) {
         return LineItemFromJSONTyped(json);
     }
@@ -1092,10 +1382,10 @@
     }
 
     /* tslint:disable */
-    function OperationConfirmationFromJSON(json) {
-        return OperationConfirmationFromJSONTyped(json);
+    function OperationResponseConfirmationFromJSON(json) {
+        return OperationResponseConfirmationFromJSONTyped(json);
     }
-    function OperationConfirmationFromJSONTyped(json, ignoreDiscriminator) {
+    function OperationResponseConfirmationFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
@@ -1117,7 +1407,67 @@
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'confirmation': !exists(json, 'confirmation') ? undefined : OperationConfirmationFromJSON(json['confirmation']),
+            'confirmation': !exists(json, 'confirmation') ? undefined : OperationResponseConfirmationFromJSON(json['confirmation']),
+        };
+    }
+
+    /* tslint:disable */
+    function OrderShippingFromFromJSON(json) {
+        return OrderShippingFromFromJSONTyped(json);
+    }
+    function OrderShippingFromFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+        };
+    }
+
+    /* tslint:disable */
+    function OrderShippingToFromJSON(json) {
+        return OrderShippingToFromJSONTyped(json);
+    }
+    function OrderShippingToFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1178,34 +1528,6 @@
     }
 
     /* tslint:disable */
-    function PaymentFromJSON(json) {
-        return PaymentFromJSONTyped(json);
-    }
-    function PaymentFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
-        };
-    }
-    function PaymentToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'account_number': value.account_number,
-        };
-    }
-
-    /* tslint:disable */
     function RateFromJSON(json) {
         return RateFromJSONTyped(json);
     }
@@ -1250,6 +1572,115 @@
     }
 
     /* tslint:disable */
+    function ShipmentBillingAddressFromJSON(json) {
+        return ShipmentBillingAddressFromJSONTyped(json);
+    }
+    function ShipmentBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentCustomsFromJSON(json) {
+        return ShipmentCustomsFromJSONTyped(json);
+    }
+    function ShipmentCustomsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'commodities': !exists(json, 'commodities') ? undefined : (json['commodities'].map(CommodityFromJSON)),
+            'duty': !exists(json, 'duty') ? undefined : CustomsDutyFromJSON(json['duty']),
+            'duty_billing_address': !exists(json, 'duty_billing_address') ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
+            'content_type': !exists(json, 'content_type') ? undefined : json['content_type'],
+            'content_description': !exists(json, 'content_description') ? undefined : json['content_description'],
+            'incoterm': !exists(json, 'incoterm') ? undefined : json['incoterm'],
+            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
+            'invoice_date': !exists(json, 'invoice_date') ? undefined : json['invoice_date'],
+            'commercial_invoice': !exists(json, 'commercial_invoice') ? undefined : json['commercial_invoice'],
+            'certify': !exists(json, 'certify') ? undefined : json['certify'],
+            'signer': !exists(json, 'signer') ? undefined : json['signer'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentSelectedRateFromJSON(json) {
+        return ShipmentSelectedRateFromJSONTyped(json);
+    }
+    function ShipmentSelectedRateFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'service': !exists(json, 'service') ? undefined : json['service'],
+            'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
+            'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
+            'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'test_mode': json['test_mode'],
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentShipperFromJSON(json) {
+        return ShipmentShipperFromJSONTyped(json);
+    }
+    function ShipmentShipperFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+        };
+    }
+
+    /* tslint:disable */
     function ShipmentFromJSON(json) {
         return ShipmentFromJSONTyped(json);
     }
@@ -1261,13 +1692,14 @@
             'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
-            'shipper': AddressFromJSON(json['shipper']),
-            'recipient': AddressFromJSON(json['recipient']),
+            'shipper': ShipmentShipperFromJSON(json['shipper']),
+            'recipient': ShipmentShipperFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': !exists(json, 'services') ? undefined : json['services'],
             'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'customs': !exists(json, 'customs') ? undefined : CustomsFromJSON(json['customs']),
+            'payment': !exists(json, 'payment') ? undefined : ShipmentPaymentFromJSON(json['payment']),
+            'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': !exists(json, 'reference') ? undefined : json['reference'],
             'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
@@ -1281,7 +1713,7 @@
             'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
             'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
             'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
-            'selected_rate': !exists(json, 'selected_rate') ? undefined : RateFromJSON(json['selected_rate']),
+            'selected_rate': !exists(json, 'selected_rate') ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'service': !exists(json, 'service') ? undefined : json['service'],
             'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
@@ -1306,36 +1738,16 @@
             'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
             'source': !exists(json, 'source') ? undefined : json['source'],
             'status': !exists(json, 'status') ? undefined : json['status'],
-            'shipping_to': AddressFromJSON(json['shipping_to']),
-            'shipping_from': !exists(json, 'shipping_from') ? undefined : AddressFromJSON(json['shipping_from']),
-            'billing_address': !exists(json, 'billing_address') ? undefined : AddressDataFromJSON(json['billing_address']),
+            'shipping_to': OrderShippingToFromJSON(json['shipping_to']),
+            'shipping_from': !exists(json, 'shipping_from') ? undefined : OrderShippingFromFromJSON(json['shipping_from']),
+            'billing_address': !exists(json, 'billing_address') ? undefined : OrderBillingAddressFromJSON(json['billing_address']),
             'line_items': (json['line_items'].map(LineItemFromJSON)),
             'options': !exists(json, 'options') ? undefined : json['options'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'shipments': !exists(json, 'shipments') ? undefined : (json['shipments'].map(ShipmentFromJSON)),
             'test_mode': json['test_mode'],
             'created_at': json['created_at'],
-        };
-    }
-
-    /* tslint:disable */
-    function OrderDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'order_id': value.order_id,
-            'order_date': value.order_date,
-            'source': value.source,
-            'shipping_to': AddressDataToJSON(value.shipping_to),
-            'shipping_from': AddressDataToJSON(value.shipping_from),
-            'billing_address': AddressDataToJSON(value.billing_address),
-            'line_items': (value.line_items.map(CommodityDataToJSON)),
-            'options': value.options,
-            'metadata': value.metadata,
         };
     }
 
@@ -1370,7 +1782,74 @@
     }
 
     /* tslint:disable */
-    function ParcelDataToJSON(value) {
+    function ParcelListFromJSON(json) {
+        return ParcelListFromJSONTyped(json);
+    }
+    function ParcelListFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
+            'next': !exists(json, 'next') ? undefined : json['next'],
+            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'results': (json['results'].map(ParcelFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function PatchedAddressDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
+    function PatchedCustomsDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'commodities': value.commodities === undefined ? undefined : (value.commodities.map(CommodityDataToJSON)),
+            'duty': CustomsDutyToJSON(value.duty),
+            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
+            'content_type': value.content_type,
+            'content_description': value.content_description,
+            'incoterm': value.incoterm,
+            'invoice': value.invoice,
+            'invoice_date': value.invoice_date,
+            'commercial_invoice': value.commercial_invoice,
+            'certify': value.certify,
+            'signer': value.signer,
+            'options': value.options,
+        };
+    }
+
+    /* tslint:disable */
+    function PatchedParcelDataToJSON(value) {
         if (value === undefined) {
             return undefined;
         }
@@ -1397,18 +1876,91 @@
     }
 
     /* tslint:disable */
-    function ParcelListFromJSON(json) {
-        return ParcelListFromJSONTyped(json);
+    function PatchedWebhookDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'url': value.url,
+            'description': value.description,
+            'enabled_events': value.enabled_events,
+            'disabled': value.disabled,
+        };
     }
-    function ParcelListFromJSONTyped(json, ignoreDiscriminator) {
+
+    /* tslint:disable */
+    function PickupAddressFromJSON(json) {
+        return PickupAddressFromJSONTyped(json);
+    }
+    function PickupAddressFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
-            'results': (json['results'].map(ParcelFromJSON)),
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+        };
+    }
+    function PickupAddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'id': value.id,
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+            'object_type': value.object_type,
+            'validation': AddressValidationToJSON(value.validation),
+        };
+    }
+
+    /* tslint:disable */
+    function PickupPickupChargeFromJSON(json) {
+        return PickupPickupChargeFromJSONTyped(json);
+    }
+    function PickupPickupChargeFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'name': !exists(json, 'name') ? undefined : json['name'],
+            'amount': !exists(json, 'amount') ? undefined : json['amount'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
         };
     }
 
@@ -1427,10 +1979,10 @@
             'carrier_id': json['carrier_id'],
             'confirmation_number': json['confirmation_number'],
             'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
-            'pickup_charge': !exists(json, 'pickup_charge') ? undefined : ChargeFromJSON(json['pickup_charge']),
+            'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
             'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
             'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
-            'address': AddressFromJSON(json['address']),
+            'address': PickupAddressFromJSON(json['address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
             'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
@@ -1454,6 +2006,33 @@
     }
 
     /* tslint:disable */
+    function PickupCancelRequestAddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+        };
+    }
+
+    /* tslint:disable */
     function PickupCancelRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1463,7 +2042,7 @@
         }
         return {
             'confirmation_number': value.confirmation_number,
-            'address': AddressDataToJSON(value.address),
+            'address': PickupCancelRequestAddressToJSON(value.address),
             'pickup_date': value.pickup_date,
             'reason': value.reason,
         };
@@ -1479,7 +2058,7 @@
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
+            'address': PickupCancelRequestAddressToJSON(value.address),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
@@ -1516,13 +2095,41 @@
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
+            'address': PickupCancelRequestAddressToJSON(value.address),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
             'package_location': value.package_location,
             'options': value.options,
+        };
+    }
+
+    /* tslint:disable */
+    function PickupResponsePickupFromJSON(json) {
+        return PickupResponsePickupFromJSONTyped(json);
+    }
+    function PickupResponsePickupFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'confirmation_number': json['confirmation_number'],
+            'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
+            'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
+            'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
+            'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
+            'address': PickupAddressFromJSON(json['address']),
+            'parcels': (json['parcels'].map(ParcelFromJSON)),
+            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
+            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'test_mode': json['test_mode'],
         };
     }
 
@@ -1536,7 +2143,7 @@
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'pickup': !exists(json, 'pickup') ? undefined : PickupFromJSON(json['pickup']),
+            'pickup': !exists(json, 'pickup') ? undefined : PickupResponsePickupFromJSON(json['pickup']),
         };
     }
 
@@ -1550,7 +2157,7 @@
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
+            'address': PickupCancelRequestAddressToJSON(value.address),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
@@ -1572,7 +2179,7 @@
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': AddressToJSON(value.address),
+            'address': PickupAddressToJSON(value.address),
             'parcels': (value.parcels.map(ParcelToJSON)),
             'confirmation_number': value.confirmation_number,
             'ready_time': value.ready_time,
@@ -1584,31 +2191,29 @@
     }
 
     /* tslint:disable */
-    function Ping200ResponseFromJSON(json) {
-        return Ping200ResponseFromJSONTyped(json);
-    }
-    function Ping200ResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
+    function RateRequestShipperToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
         }
         return {
-            'version': !exists(json, 'VERSION') ? undefined : json['VERSION'],
-            'app_name': !exists(json, 'APP_NAME') ? undefined : json['APP_NAME'],
-            'app_website': !exists(json, 'APP_WEBSITE') ? undefined : json['APP_WEBSITE'],
-            'audit_logging': !exists(json, 'AUDIT_LOGGING') ? undefined : json['AUDIT_LOGGING'],
-            'allow_signup': !exists(json, 'ALLOW_SIGNUP') ? undefined : json['ALLOW_SIGNUP'],
-            'allow_admin_approved_signup': !exists(json, 'ALLOW_ADMIN_APPROVED_SIGNUP') ? undefined : json['ALLOW_ADMIN_APPROVED_SIGNUP'],
-            'allow_multi_account': !exists(json, 'ALLOW_MULTI_ACCOUNT') ? undefined : json['ALLOW_MULTI_ACCOUNT'],
-            'multi_organizations': !exists(json, 'MULTI_ORGANIZATIONS') ? undefined : json['MULTI_ORGANIZATIONS'],
-            'orders_management': !exists(json, 'ORDERS_MANAGEMENT') ? undefined : json['ORDERS_MANAGEMENT'],
-            'apps_management': !exists(json, 'APPS_MANAGEMENT') ? undefined : json['APPS_MANAGEMENT'],
-            'documents_management': !exists(json, 'DOCUMENTS_MANAGEMENT') ? undefined : json['DOCUMENTS_MANAGEMENT'],
-            'data_import_export': !exists(json, 'DATA_IMPORT_EXPORT') ? undefined : json['DATA_IMPORT_EXPORT'],
-            'custom_carrier_definition': !exists(json, 'CUSTOM_CARRIER_DEFINITION') ? undefined : json['CUSTOM_CARRIER_DEFINITION'],
-            'persist_sdk_tracing': !exists(json, 'PERSIST_SDK_TRACING') ? undefined : json['PERSIST_SDK_TRACING'],
-            'admin': !exists(json, 'ADMIN') ? undefined : json['ADMIN'],
-            'openapi': !exists(json, 'OPENAPI') ? undefined : json['OPENAPI'],
-            'graphql': !exists(json, 'GRAPHQL') ? undefined : json['GRAPHQL'],
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
         };
     }
 
@@ -1621,8 +2226,8 @@
             return null;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
+            'shipper': RateRequestShipperToJSON(value.shipper),
+            'recipient': RateRequestShipperToJSON(value.recipient),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'services': value.services,
             'options': value.options,
@@ -1661,30 +2266,6 @@
     }
 
     /* tslint:disable */
-    function ShipmentDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'customs': CustomsDataToJSON(value.customs),
-            'reference': value.reference,
-            'label_type': value.label_type,
-            'service': value.service,
-            'services': value.services,
-            'carrier_ids': value.carrier_ids,
-            'metadata': value.metadata,
-        };
-    }
-
-    /* tslint:disable */
     function ShipmentListFromJSON(json) {
         return ShipmentListFromJSONTyped(json);
     }
@@ -1701,6 +2282,21 @@
     }
 
     /* tslint:disable */
+    function ShipmentPurchaseDataPaymentToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'paid_by': value.paid_by,
+            'currency': value.currency,
+            'account_number': value.account_number,
+        };
+    }
+
+    /* tslint:disable */
     function ShipmentPurchaseDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1711,7 +2307,7 @@
         return {
             'selected_rate_id': value.selected_rate_id,
             'label_type': value.label_type,
-            'payment': PaymentToJSON(value.payment),
+            'payment': ShipmentPurchaseDataPaymentToJSON(value.payment),
             'reference': value.reference,
             'metadata': value.metadata,
         };
@@ -1743,7 +2339,7 @@
         }
         return {
             'label_type': value.label_type,
-            'payment': PaymentToJSON(value.payment),
+            'payment': ShipmentPurchaseDataPaymentToJSON(value.payment),
             'options': value.options,
             'reference': value.reference,
             'metadata': value.metadata,
@@ -1759,16 +2355,31 @@
             return null;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
+            'shipper': ShipmentDataShipperToJSON(value.shipper),
+            'recipient': ShipmentDataShipperToJSON(value.recipient),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'customs': CustomsDataToJSON(value.customs),
+            'payment': ShipmentPaymentToJSON(value.payment),
+            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
+            'customs': ShipmentDataCustomsToJSON(value.customs),
             'reference': value.reference,
             'label_type': value.label_type,
             'selected_rate_id': value.selected_rate_id,
             'rates': (value.rates.map(RateToJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function ShippingResponseDocsFromJSON(json) {
+        return ShippingResponseDocsFromJSONTyped(json);
+    }
+    function ShippingResponseDocsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'label': !exists(json, 'label') ? undefined : json['label'],
+            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
         };
     }
 
@@ -1784,13 +2395,14 @@
             'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
-            'shipper': AddressFromJSON(json['shipper']),
-            'recipient': AddressFromJSON(json['recipient']),
+            'shipper': ShipmentShipperFromJSON(json['shipper']),
+            'recipient': ShipmentShipperFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': !exists(json, 'services') ? undefined : json['services'],
             'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'customs': !exists(json, 'customs') ? undefined : CustomsFromJSON(json['customs']),
+            'payment': !exists(json, 'payment') ? undefined : ShipmentPaymentFromJSON(json['payment']),
+            'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': !exists(json, 'reference') ? undefined : json['reference'],
             'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
@@ -1804,8 +2416,8 @@
             'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
             'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
             'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
-            'selected_rate': !exists(json, 'selected_rate') ? undefined : RateFromJSON(json['selected_rate']),
-            'docs': !exists(json, 'docs') ? undefined : DocumentsFromJSON(json['docs']),
+            'selected_rate': !exists(json, 'selected_rate') ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
+            'docs': !exists(json, 'docs') ? undefined : ShippingResponseDocsFromJSON(json['docs']),
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'service': !exists(json, 'service') ? undefined : json['service'],
             'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
@@ -1926,6 +2538,44 @@
     }
 
     /* tslint:disable */
+    function TrackerUpdateDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
+    function TrackingResponseTrackingFromJSON(json) {
+        return TrackingResponseTrackingFromJSONTyped(json);
+    }
+    function TrackingResponseTrackingFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'tracking_number': json['tracking_number'],
+            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
+            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
+            'test_mode': json['test_mode'],
+            'status': !exists(json, 'status') ? undefined : json['status'],
+            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
     function TrackingResponseFromJSON(json) {
         return TrackingResponseFromJSONTyped(json);
     }
@@ -1935,7 +2585,7 @@
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'tracking': !exists(json, 'tracking') ? undefined : TrackingStatusFromJSON(json['tracking']),
+            'tracking': !exists(json, 'tracking') ? undefined : TrackingResponseTrackingFromJSON(json['tracking']),
         };
     }
 
@@ -2034,12 +2684,12 @@
          */
         AddressesApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.addressData === null || requestParameters.addressData === undefined) {
+                                throw new RequiredError('addressData', 'Required parameter requestParameters.addressData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2047,18 +2697,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: AddressDataToJSON(requestParameters.data),
+                                    body: AddressDataToJSON(requestParameters.addressData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2088,9 +2751,9 @@
          */
         AddressesApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
@@ -2100,8 +2763,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -2109,8 +2785,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2138,25 +2814,32 @@
          * Retrieve all addresses.
          * List all addresses
          */
-        AddressesApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        AddressesApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses",
@@ -2164,8 +2847,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressListFromJSON(jsonValue); })];
                     }
                 });
@@ -2175,13 +2858,12 @@
          * Retrieve all addresses.
          * List all addresses
          */
-        AddressesApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        AddressesApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2196,9 +2878,9 @@
          */
         AddressesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -2208,8 +2890,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -2217,8 +2912,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2248,15 +2943,12 @@
          */
         AddressesApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2264,18 +2956,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: AddressDataToJSON(requestParameters.data),
+                                    body: PatchedAddressDataToJSON(requestParameters.patchedAddressData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2321,24 +3026,18 @@
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling authenticate.');
+                            if (requestParameters.tokenObtainPair === null || requestParameters.tokenObtainPair === undefined) {
+                                throw new RequiredError('tokenObtainPair', 'Required parameter requestParameters.tokenObtainPair was null or undefined when calling authenticate.');
                             }
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/api/token",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: TokenObtainPairToJSON(requestParameters.data),
+                                    body: TokenObtainPairToJSON(requestParameters.tokenObtainPair),
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
@@ -2376,12 +3075,6 @@
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/references",
                                     method: 'GET',
@@ -2390,7 +3083,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return Data200ResponseFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response)];
                     }
                 });
             });
@@ -2413,7 +3106,7 @@
             });
         };
         /**
-         *  Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * Get verified JWT token
          */
         APIApi.prototype.getVerifiedTokenRaw = function (requestParameters, initOverrides) {
@@ -2422,24 +3115,18 @@
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling getVerifiedToken.');
+                            if (requestParameters.verifiedTokenObtainPair === null || requestParameters.verifiedTokenObtainPair === undefined) {
+                                throw new RequiredError('verifiedTokenObtainPair', 'Required parameter requestParameters.verifiedTokenObtainPair was null or undefined when calling getVerifiedToken.');
                             }
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/api/token/verified",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: VerifiedTokenObtainPairToJSON(requestParameters.data),
+                                    body: VerifiedTokenObtainPairToJSON(requestParameters.verifiedTokenObtainPair),
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
@@ -2449,7 +3136,7 @@
             });
         };
         /**
-         *  Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * Get verified JWT token
          */
         APIApi.prototype.getVerifiedToken = function (requestParameters, initOverrides) {
@@ -2477,12 +3164,6 @@
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/",
                                     method: 'GET',
@@ -2491,7 +3172,7 @@
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return Ping200ResponseFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response)];
                     }
                 });
             });
@@ -2523,24 +3204,18 @@
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling refreshToken.');
+                            if (requestParameters.tokenRefresh === null || requestParameters.tokenRefresh === undefined) {
+                                throw new RequiredError('tokenRefresh', 'Required parameter requestParameters.tokenRefresh was null or undefined when calling refreshToken.');
                             }
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/api/token/refresh",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: TokenRefreshToJSON(requestParameters.data),
+                                    body: TokenRefreshToJSON(requestParameters.tokenRefresh),
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
@@ -2577,24 +3252,18 @@
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling verifyToken.');
+                            if (requestParameters.tokenVerify === null || requestParameters.tokenVerify === undefined) {
+                                throw new RequiredError('tokenVerify', 'Required parameter requestParameters.tokenVerify was null or undefined when calling verifyToken.');
                             }
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
                             return [4 /*yield*/, this.request({
                                     path: "/api/token/verify",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: TokenVerifyToJSON(requestParameters.data),
+                                    body: TokenVerifyToJSON(requestParameters.tokenVerify),
                                 }, initOverrides)];
                         case 1:
                             response = _a.sent();
@@ -2639,9 +3308,9 @@
          */
         CarriersApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling getServices.');
@@ -2651,8 +3320,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -2660,8 +3342,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response)];
                     }
                 });
@@ -2691,20 +3373,11 @@
          */
         CarriersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
-                            }
                             if (requestParameters.active !== undefined) {
                                 queryParameters['active'] = requestParameters.active;
                             }
@@ -2715,8 +3388,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/carriers",
@@ -2724,8 +3410,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierListFromJSON(jsonValue); })];
                     }
                 });
@@ -2768,12 +3454,12 @@
          */
         CustomsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.customsData === null || requestParameters.customsData === undefined) {
+                                throw new RequiredError('customsData', 'Required parameter requestParameters.customsData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2781,18 +3467,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: CustomsDataToJSON(requestParameters.data),
+                                    body: CustomsDataToJSON(requestParameters.customsData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
                     }
                 });
@@ -2822,9 +3521,9 @@
          */
         CustomsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
@@ -2834,8 +3533,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -2843,8 +3555,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
                     }
                 });
@@ -2872,25 +3584,32 @@
          * Retrieve all stored customs declarations.
          * List all customs info
          */
-        CustomsApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        CustomsApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info",
@@ -2898,8 +3617,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsListFromJSON(jsonValue); })];
                     }
                 });
@@ -2909,13 +3628,12 @@
          * Retrieve all stored customs declarations.
          * List all customs info
          */
-        CustomsApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        CustomsApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -2930,9 +3648,9 @@
          */
         CustomsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -2942,8 +3660,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -2951,8 +3682,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
                     }
                 });
@@ -2982,15 +3713,12 @@
          */
         CustomsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2998,18 +3726,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: CustomsDataToJSON(requestParameters.data),
+                                    body: PatchedCustomsDataToJSON(requestParameters.patchedCustomsData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
                     }
                 });
@@ -3051,12 +3792,12 @@
          */
         ParcelsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.parcelData === null || requestParameters.parcelData === undefined) {
+                                throw new RequiredError('parcelData', 'Required parameter requestParameters.parcelData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3064,18 +3805,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ParcelDataToJSON(requestParameters.data),
+                                    body: ParcelDataToJSON(requestParameters.parcelData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3105,9 +3859,9 @@
          */
         ParcelsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
@@ -3117,8 +3871,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3126,8 +3893,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3155,25 +3922,32 @@
          * Retrieve all stored parcels.
          * List all parcels
          */
-        ParcelsApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        ParcelsApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels",
@@ -3181,8 +3955,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelListFromJSON(jsonValue); })];
                     }
                 });
@@ -3192,13 +3966,12 @@
          * Retrieve all stored parcels.
          * List all parcels
          */
-        ParcelsApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        ParcelsApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3213,9 +3986,9 @@
          */
         ParcelsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -3225,8 +3998,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3234,8 +4020,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3265,15 +4051,12 @@
          */
         ParcelsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3281,18 +4064,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ParcelDataToJSON(requestParameters.data),
+                                    body: PatchedParcelDataToJSON(requestParameters.patchedParcelData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3334,15 +4130,12 @@
          */
         PickupsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling cancel.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3350,18 +4143,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupCancelDataToJSON(requestParameters.data),
+                                    body: PickupCancelDataToJSON(requestParameters.pickupCancelData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3389,25 +4195,32 @@
          * Retrieve all scheduled pickups.
          * List shipment pickups
          */
-        PickupsApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        PickupsApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups",
@@ -3415,8 +4228,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupListFromJSON(jsonValue); })];
                     }
                 });
@@ -3426,13 +4239,12 @@
          * Retrieve all scheduled pickups.
          * List shipment pickups
          */
-        PickupsApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        PickupsApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3447,9 +4259,9 @@
          */
         PickupsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -3459,8 +4271,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3468,8 +4293,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3499,15 +4324,15 @@
          */
         PickupsApi.prototype.scheduleRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling schedule.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling schedule.');
+                            if (requestParameters.pickupData === null || requestParameters.pickupData === undefined) {
+                                throw new RequiredError('pickupData', 'Required parameter requestParameters.pickupData was null or undefined when calling schedule.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3515,18 +4340,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{carrier_name}/schedule".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupDataToJSON(requestParameters.data),
+                                    body: PickupDataToJSON(requestParameters.pickupData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3556,15 +4394,15 @@
          */
         PickupsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
+                            if (requestParameters.pickupUpdateData === null || requestParameters.pickupUpdateData === undefined) {
+                                throw new RequiredError('pickupUpdateData', 'Required parameter requestParameters.pickupUpdateData was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3572,18 +4410,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupUpdateDataToJSON(requestParameters.data),
+                                    body: PickupUpdateDataToJSON(requestParameters.pickupUpdateData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3625,12 +4476,12 @@
          */
         ProxyApi.prototype.buyLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling buyLabel.');
+                            if (requestParameters.shippingRequest === null || requestParameters.shippingRequest === undefined) {
+                                throw new RequiredError('shippingRequest', 'Required parameter requestParameters.shippingRequest was null or undefined when calling buyLabel.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3638,18 +4489,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/shipping",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShippingRequestToJSON(requestParameters.data),
+                                    body: ShippingRequestToJSON(requestParameters.shippingRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShippingResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3679,15 +4543,15 @@
          */
         ProxyApi.prototype.cancelPickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling cancelPickup.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling cancelPickup.');
+                            if (requestParameters.pickupCancelRequest === null || requestParameters.pickupCancelRequest === undefined) {
+                                throw new RequiredError('pickupCancelRequest', 'Required parameter requestParameters.pickupCancelRequest was null or undefined when calling cancelPickup.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3695,18 +4559,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupCancelRequestToJSON(requestParameters.data),
+                                    body: PickupCancelRequestToJSON(requestParameters.pickupCancelRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3736,12 +4613,12 @@
          */
         ProxyApi.prototype.fetchRatesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling fetchRates.');
+                            if (requestParameters.rateRequest === null || requestParameters.rateRequest === undefined) {
+                                throw new RequiredError('rateRequest', 'Required parameter requestParameters.rateRequest was null or undefined when calling fetchRates.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3749,18 +4626,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/rates",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: RateRequestToJSON(requestParameters.data),
+                                    body: RateRequestToJSON(requestParameters.rateRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return RateResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3785,20 +4675,90 @@
             });
         };
         /**
+         * You can track a shipment by specifying the carrier and the shipment tracking number.
+         * Get tracking details
+         */
+        ProxyApi.prototype.getTrackingRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.trackingData === null || requestParameters.trackingData === undefined) {
+                                throw new RequiredError('trackingData', 'Required parameter requestParameters.trackingData was null or undefined when calling getTracking.');
+                            }
+                            queryParameters = {};
+                            if (requestParameters.hub !== undefined) {
+                                queryParameters['hub'] = requestParameters.hub;
+                            }
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/proxy/tracking",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: TrackingDataToJSON(requestParameters.trackingData),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * You can track a shipment by specifying the carrier and the shipment tracking number.
+         * Get tracking details
+         */
+        ProxyApi.prototype.getTracking = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.getTrackingRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
          * Schedule one or many parcels pickup
          * Schedule a pickup
          */
         ProxyApi.prototype.schedulePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling schedulePickup.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling schedulePickup.');
+                            if (requestParameters.pickupRequest === null || requestParameters.pickupRequest === undefined) {
+                                throw new RequiredError('pickupRequest', 'Required parameter requestParameters.pickupRequest was null or undefined when calling schedulePickup.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3806,18 +4766,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupRequestToJSON(requestParameters.data),
+                                    body: PickupRequestToJSON(requestParameters.pickupRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3847,15 +4820,15 @@
          */
         ProxyApi.prototype.trackShipmentRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
-                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling trackShipment.');
-                            }
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling trackShipment.');
+                            }
+                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
+                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling trackShipment.');
                             }
                             queryParameters = {};
                             if (requestParameters.hub !== undefined) {
@@ -3865,17 +4838,30 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))).replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
+                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3905,15 +4891,15 @@
          */
         ProxyApi.prototype.updatePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling updatePickup.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling updatePickup.');
+                            if (requestParameters.pickupUpdateRequest === null || requestParameters.pickupUpdateRequest === undefined) {
+                                throw new RequiredError('pickupUpdateRequest', 'Required parameter requestParameters.pickupUpdateRequest was null or undefined when calling updatePickup.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3921,18 +4907,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}/update".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: PickupUpdateRequestToJSON(requestParameters.data),
+                                    body: PickupUpdateRequestToJSON(requestParameters.pickupUpdateRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3962,15 +4961,15 @@
          */
         ProxyApi.prototype.voidLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
                                 throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling voidLabel.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling voidLabel.');
+                            if (requestParameters.shipmentCancelRequest === null || requestParameters.shipmentCancelRequest === undefined) {
+                                throw new RequiredError('shipmentCancelRequest', 'Required parameter requestParameters.shipmentCancelRequest was null or undefined when calling voidLabel.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3978,18 +4977,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShipmentCancelRequestToJSON(requestParameters.data),
+                                    body: ShipmentCancelRequestToJSON(requestParameters.shipmentCancelRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4031,9 +5043,9 @@
          */
         ShipmentsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
@@ -4043,17 +5055,30 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
+                                    path: "/v1/shipments/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4083,12 +5108,12 @@
          */
         ShipmentsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.shipmentData === null || requestParameters.shipmentData === undefined) {
+                                throw new RequiredError('shipmentData', 'Required parameter requestParameters.shipmentData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4096,18 +5121,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShipmentDataToJSON(requestParameters.data),
+                                    body: ShipmentDataToJSON(requestParameters.shipmentData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4137,22 +5175,37 @@
          */
         ShipmentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
                             if (requestParameters.address !== undefined) {
                                 queryParameters['address'] = requestParameters.address;
                             }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter;
-                            }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore;
-                            }
                             if (requestParameters.carrierName !== undefined) {
                                 queryParameters['carrier_name'] = requestParameters.carrierName;
+                            }
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            }
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            }
+                            if (requestParameters.keyword !== undefined) {
+                                queryParameters['keyword'] = requestParameters.keyword;
+                            }
+                            if (requestParameters.metadataKey !== undefined) {
+                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            }
+                            if (requestParameters.metadataValue !== undefined) {
+                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            }
+                            if (requestParameters.optionKey !== undefined) {
+                                queryParameters['option_key'] = requestParameters.optionKey;
+                            }
+                            if (requestParameters.optionValue !== undefined) {
+                                queryParameters['option_value'] = requestParameters.optionValue;
                             }
                             if (requestParameters.reference !== undefined) {
                                 queryParameters['reference'] = requestParameters.reference;
@@ -4163,36 +5216,28 @@
                             if (requestParameters.status !== undefined) {
                                 queryParameters['status'] = requestParameters.status;
                             }
-                            if (requestParameters.optionKey !== undefined) {
-                                queryParameters['option_key'] = requestParameters.optionKey;
-                            }
-                            if (requestParameters.optionValue !== undefined) {
-                                queryParameters['option_value'] = requestParameters.optionValue;
-                            }
-                            if (requestParameters.metadataKey !== undefined) {
-                                queryParameters['metadata_key'] = requestParameters.metadataKey;
-                            }
-                            if (requestParameters.metadataValue !== undefined) {
-                                queryParameters['metadata_value'] = requestParameters.metadataValue;
-                            }
                             if (requestParameters.trackingNumber !== undefined) {
                                 queryParameters['tracking_number'] = requestParameters.trackingNumber;
-                            }
-                            if (requestParameters.keyword !== undefined) {
-                                queryParameters['keyword'] = requestParameters.keyword;
-                            }
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments",
@@ -4200,8 +5245,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentListFromJSON(jsonValue); })];
                     }
                 });
@@ -4232,15 +5277,15 @@
          */
         ShipmentsApi.prototype.purchaseRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling purchase.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling purchase.');
+                            if (requestParameters.shipmentPurchaseData === null || requestParameters.shipmentPurchaseData === undefined) {
+                                throw new RequiredError('shipmentPurchaseData', 'Required parameter requestParameters.shipmentPurchaseData was null or undefined when calling purchase.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4248,18 +5293,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}/purchase".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShipmentPurchaseDataToJSON(requestParameters.data),
+                                    body: ShipmentPurchaseDataToJSON(requestParameters.shipmentPurchaseData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4289,15 +5347,12 @@
          */
         ShipmentsApi.prototype.ratesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling rates.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling rates.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4305,18 +5360,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}/rates".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShipmentRateDataToJSON(requestParameters.data),
+                                    body: ShipmentRateDataToJSON(requestParameters.shipmentRateData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4346,9 +5414,9 @@
          */
         ShipmentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -4358,8 +5426,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4367,8 +5448,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4398,15 +5479,12 @@
          */
         ShipmentsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4414,18 +5492,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PUT',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: ShipmentUpdateDataToJSON(requestParameters.data),
+                                    body: ShipmentUpdateDataToJSON(requestParameters.shipmentUpdateData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4463,39 +5554,51 @@
         }
         /**
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
-         * Create a shipment tracker
+         * Add a package tracker
          */
-        TrackersApi.prototype.createRaw = function (requestParameters, initOverrides) {
+        TrackersApi.prototype.addRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
-                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling create.');
-                            }
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling create.');
+                            if (requestParameters.trackingData === null || requestParameters.trackingData === undefined) {
+                                throw new RequiredError('trackingData', 'Required parameter requestParameters.trackingData was null or undefined when calling add.');
                             }
                             queryParameters = {};
                             if (requestParameters.hub !== undefined) {
                                 queryParameters['hub'] = requestParameters.hub;
                             }
                             headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))).replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'GET',
+                                    path: "/v1/trackers",
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
+                                    body: TrackingDataToJSON(requestParameters.trackingData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -4503,7 +5606,84 @@
         };
         /**
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
-         * Create a shipment tracker
+         * Add a package tracker
+         */
+        TrackersApi.prototype.add = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.addRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
+         * Create a package tracker
+         */
+        TrackersApi.prototype.createRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
+                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling create.');
+                            }
+                            if (requestParameters.carrierName2 === null || requestParameters.carrierName2 === undefined) {
+                                throw new RequiredError('carrierName2', 'Required parameter requestParameters.carrierName2 was null or undefined when calling create.');
+                            }
+                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
+                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling create.');
+                            }
+                            queryParameters = {};
+                            if (requestParameters.carrierName2 !== undefined) {
+                                queryParameters['carrier_name'] = requestParameters.carrierName2;
+                            }
+                            if (requestParameters.hub !== undefined) {
+                                queryParameters['hub'] = requestParameters.hub;
+                            }
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
+         * Create a package tracker
          */
         TrackersApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4521,42 +5701,49 @@
         };
         /**
          * Retrieve all shipment trackers.
-         * List all shipment trackers
+         * List all package trackers
          */
         TrackersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.trackingNumber !== undefined) {
-                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
-                            }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter;
-                            }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore;
-                            }
                             if (requestParameters.carrierName !== undefined) {
                                 queryParameters['carrier_name'] = requestParameters.carrierName;
+                            }
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            }
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
                             }
                             if (requestParameters.status !== undefined) {
                                 queryParameters['status'] = requestParameters.status;
                             }
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
+                            if (requestParameters.trackingNumber !== undefined) {
+                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers",
@@ -4564,8 +5751,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackerListFromJSON(jsonValue); })];
                     }
                 });
@@ -4573,7 +5760,7 @@
         };
         /**
          * Retrieve all shipment trackers.
-         * List all shipment trackers
+         * List all package trackers
          */
         TrackersApi.prototype.list = function (requestParameters, initOverrides) {
             if (requestParameters === void 0) { requestParameters = {}; }
@@ -4591,14 +5778,14 @@
             });
         };
         /**
-         * Discard a shipment tracker.
-         * Discard a shipment tracker
+         * Discard a package tracker.
+         * Discard a package tracker
          */
         TrackersApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
                                 throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling remove.');
@@ -4608,8 +5795,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
@@ -4617,16 +5817,16 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Discard a shipment tracker.
-         * Discard a shipment tracker
+         * Discard a package tracker.
+         * Discard a package tracker
          */
         TrackersApi.prototype.remove = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4643,14 +5843,14 @@
             });
         };
         /**
-         * Retrieve a shipment tracker
-         * Retrieves a shipment tracker
+         * Retrieve a package tracker
+         * Retrieves a package tracker
          */
         TrackersApi.prototype.retrievesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
                                 throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling retrieves.');
@@ -4660,8 +5860,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
@@ -4669,16 +5882,16 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Retrieve a shipment tracker
-         * Retrieves a shipment tracker
+         * Retrieve a package tracker
+         * Retrieves a package tracker
          */
         TrackersApi.prototype.retrieves = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4686,6 +5899,73 @@
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, this.retrievesRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Mixin to log requests
+         * Update tracker data
+         */
+        TrackersApi.prototype.updateRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
+                                throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling update.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
+                                    method: 'PUT',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: TrackerUpdateDataToJSON(requestParameters.trackerUpdateData),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Mixin to log requests
+         * Update tracker data
+         */
+        TrackersApi.prototype.update = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4712,12 +5992,12 @@
          */
         WebhooksApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.webhookData === null || requestParameters.webhookData === undefined) {
+                                throw new RequiredError('webhookData', 'Required parameter requestParameters.webhookData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4725,18 +6005,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: WebhookDataToJSON(requestParameters.data),
+                                    body: WebhookDataToJSON(requestParameters.webhookData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -4764,25 +6057,32 @@
          * Retrieve all webhooks.
          * List all webhooks
          */
-        WebhooksApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        WebhooksApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks",
@@ -4790,8 +6090,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookListFromJSON(jsonValue); })];
                     }
                 });
@@ -4801,13 +6101,12 @@
          * Retrieve all webhooks.
          * List all webhooks
          */
-        WebhooksApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        WebhooksApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -4822,9 +6121,9 @@
          */
         WebhooksApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling remove.');
@@ -4834,8 +6133,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4843,8 +6155,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
                     }
                 });
@@ -4874,9 +6186,9 @@
          */
         WebhooksApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -4886,8 +6198,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4895,8 +6220,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -4926,15 +6251,15 @@
          */
         WebhooksApi.prototype.testRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling test.');
                             }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling test.');
+                            if (requestParameters.webhookTestRequest === null || requestParameters.webhookTestRequest === undefined) {
+                                throw new RequiredError('webhookTestRequest', 'Required parameter requestParameters.webhookTestRequest was null or undefined when calling test.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4942,18 +6267,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}/test".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: WebhookTestRequestToJSON(requestParameters.data),
+                                    body: WebhookTestRequestToJSON(requestParameters.webhookTestRequest),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
                     }
                 });
@@ -4983,15 +6321,12 @@
          */
         WebhooksApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4999,18 +6334,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PATCH',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: WebhookDataToJSON(requestParameters.data),
+                                    body: PatchedWebhookDataToJSON(requestParameters.patchedWebhookData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -5052,9 +6400,9 @@
          */
         OrdersApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
@@ -5064,8 +6412,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5073,8 +6434,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -5104,12 +6465,12 @@
          */
         OrdersApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling create.');
+                            if (requestParameters.orderData === null || requestParameters.orderData === undefined) {
+                                throw new RequiredError('orderData', 'Required parameter requestParameters.orderData was null or undefined when calling create.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5117,18 +6478,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: OrderDataToJSON(requestParameters.data),
+                                    body: OrderDataToJSON(requestParameters.orderData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -5156,61 +6530,32 @@
          * Retrieve all orders.
          * List all orders
          */
-        OrdersApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        OrdersApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.address !== undefined) {
-                                queryParameters['address'] = requestParameters.address;
-                            }
-                            if (requestParameters.id !== undefined) {
-                                queryParameters['id'] = requestParameters.id;
-                            }
-                            if (requestParameters.orderId !== undefined) {
-                                queryParameters['order_id'] = requestParameters.orderId;
-                            }
-                            if (requestParameters.source !== undefined) {
-                                queryParameters['source'] = requestParameters.source;
-                            }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter;
-                            }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore;
-                            }
-                            if (requestParameters.status !== undefined) {
-                                queryParameters['status'] = requestParameters.status;
-                            }
-                            if (requestParameters.optionKey !== undefined) {
-                                queryParameters['option_key'] = requestParameters.optionKey;
-                            }
-                            if (requestParameters.optionValue !== undefined) {
-                                queryParameters['option_value'] = requestParameters.optionValue;
-                            }
-                            if (requestParameters.metadataKey !== undefined) {
-                                queryParameters['metadata_key'] = requestParameters.metadataKey;
-                            }
-                            if (requestParameters.metadataValue !== undefined) {
-                                queryParameters['metadata_value'] = requestParameters.metadataValue;
-                            }
-                            if (requestParameters.keyword !== undefined) {
-                                queryParameters['keyword'] = requestParameters.keyword;
-                            }
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders",
@@ -5218,8 +6563,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderListFromJSON(jsonValue); })];
                     }
                 });
@@ -5229,13 +6574,12 @@
          * Retrieve all orders.
          * List all orders
          */
-        OrdersApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        OrdersApi.prototype.list = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5250,9 +6594,9 @@
          */
         OrdersApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -5262,8 +6606,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5271,8 +6628,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -5302,15 +6659,12 @@
          */
         OrdersApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling update.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5318,18 +6672,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'PUT',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: OrderUpdateDataToJSON(requestParameters.data),
+                                    body: OrderUpdateDataToJSON(requestParameters.orderUpdateData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -5366,59 +6733,64 @@
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-         * Retrieve all batch operations.
-         * List all batch operations
+         * Create multiple orders in a single batch. `Beta`
+         * Create orders
          */
-        BatchesApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        BatchesApi.prototype.createOrdersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
+                            if (requestParameters.batchOrderData === null || requestParameters.batchOrderData === undefined) {
+                                throw new RequiredError('batchOrderData', 'Required parameter requestParameters.batchOrderData was null or undefined when calling createOrders.');
+                            }
                             queryParameters = {};
-                            if (requestParameters.resourceType !== undefined) {
-                                queryParameters['resource_type'] = requestParameters.resourceType;
-                            }
-                            if (requestParameters.status !== undefined) {
-                                queryParameters['status'] = requestParameters.status;
-                            }
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
-                            }
                             headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/batches",
-                                    method: 'GET',
+                                    path: "/v1/batches/orders",
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
+                                    body: BatchOrderDataToJSON(requestParameters.batchOrderData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationsFromJSON(jsonValue); })];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Retrieve all batch operations.
-         * List all batch operations
+         * Create multiple orders in a single batch. `Beta`
+         * Create orders
          */
-        BatchesApi.prototype.list = function (requestParameters, initOverrides) {
-            if (requestParameters === void 0) { requestParameters = {}; }
+        BatchesApi.prototype.createOrders = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 0: return [4 /*yield*/, this.createOrdersRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -5428,14 +6800,305 @@
             });
         };
         /**
-         * Retrieve a batch operation.
+         * Create multiple shipments in a single batch. `Beta`
+         * Create shipments
+         */
+        BatchesApi.prototype.createShipmentsRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.batchShipmentData === null || requestParameters.batchShipmentData === undefined) {
+                                throw new RequiredError('batchShipmentData', 'Required parameter requestParameters.batchShipmentData was null or undefined when calling createShipments.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches/shipments",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: BatchShipmentDataToJSON(requestParameters.batchShipmentData),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Create multiple shipments in a single batch. `Beta`
+         * Create shipments
+         */
+        BatchesApi.prototype.createShipments = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.createShipmentsRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Create multiple trackers in a single batch. `Beta`
+         * Create trackers
+         */
+        BatchesApi.prototype.createTrackersRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.batchTrackerData === null || requestParameters.batchTrackerData === undefined) {
+                                throw new RequiredError('batchTrackerData', 'Required parameter requestParameters.batchTrackerData was null or undefined when calling createTrackers.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches/trackers",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: BatchTrackerDataToJSON(requestParameters.batchTrackerData),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Create multiple trackers in a single batch. `Beta`
+         * Create trackers
+         */
+        BatchesApi.prototype.createTrackers = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.createTrackersRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+         * Import data files
+         */
+        BatchesApi.prototype.importFileRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, consumes, canConsumeForm$1, formParams, useForm, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            queryParameters = {};
+                            if (requestParameters.dataFile !== undefined) {
+                                queryParameters['data_file'] = requestParameters.dataFile;
+                            }
+                            if (requestParameters.dataTemplate !== undefined) {
+                                queryParameters['data_template'] = requestParameters.dataTemplate;
+                            }
+                            if (requestParameters.resourceType !== undefined) {
+                                queryParameters['resource_type'] = requestParameters.resourceType;
+                            }
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            consumes = [
+                                { contentType: 'multipart/form-data' },
+                            ];
+                            canConsumeForm$1 = canConsumeForm(consumes);
+                            useForm = false;
+                            // use FormData to transmit files using content-type "multipart/form-data"
+                            useForm = canConsumeForm$1;
+                            if (useForm) {
+                                formParams = new FormData();
+                            }
+                            else {
+                                formParams = new URLSearchParams();
+                            }
+                            if (requestParameters.resourceType2 !== undefined) {
+                                formParams.append('resource_type', requestParameters.resourceType2);
+                            }
+                            if (requestParameters.dataTemplate2 !== undefined) {
+                                formParams.append('data_template', requestParameters.dataTemplate2);
+                            }
+                            if (requestParameters.dataFile2 !== undefined) {
+                                formParams.append('data_file', requestParameters.dataFile2);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches/data/import",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: formParams,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+         * Import data files
+         */
+        BatchesApi.prototype.importFile = function (requestParameters, initOverrides) {
+            if (requestParameters === void 0) { requestParameters = {}; }
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.importFileRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all batch operations. `Beta`
+         * List all batch operations
+         */
+        BatchesApi.prototype.listRaw = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/batches/operations",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationsFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all batch operations. `Beta`
+         * List all batch operations
+         */
+        BatchesApi.prototype.list = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a batch operation. `Beta`
          * Retrieve a batch operation
          */
         BatchesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -5445,24 +7108,37 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/batches/operations/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Retrieve a batch operation.
+         * Retrieve a batch operation. `Beta`
          * Retrieve a batch operation
          */
         BatchesApi.prototype.retrieve = function (requestParameters, initOverrides) {
@@ -5497,32 +7173,39 @@
          */
         DocumentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.dateAfter !== undefined) {
-                                queryParameters['date_after'] = requestParameters.dateAfter;
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
                             }
-                            if (requestParameters.dateBefore !== undefined) {
-                                queryParameters['date_before'] = requestParameters.dateBefore;
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
                             }
                             if (requestParameters.shipmentId !== undefined) {
                                 queryParameters['shipment_id'] = requestParameters.shipmentId;
-                            }
-                            if (requestParameters.limit !== undefined) {
-                                queryParameters['limit'] = requestParameters.limit;
-                            }
-                            if (requestParameters.offset !== undefined) {
-                                queryParameters['offset'] = requestParameters.offset;
                             }
                             headerParameters = {};
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents",
@@ -5530,8 +7213,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordsFromJSON(jsonValue); })];
                     }
                 });
@@ -5562,9 +7245,9 @@
          */
         DocumentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             if (requestParameters.id === null || requestParameters.id === undefined) {
                                 throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
@@ -5574,8 +7257,21 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5583,8 +7279,8 @@
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
                     }
                 });
@@ -5614,12 +7310,12 @@
          */
         DocumentsApi.prototype.uploadRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (requestParameters.data === null || requestParameters.data === undefined) {
-                                throw new RequiredError('data', 'Required parameter requestParameters.data was null or undefined when calling upload.');
+                            if (requestParameters.documentUploadData === null || requestParameters.documentUploadData === undefined) {
+                                throw new RequiredError('documentUploadData', 'Required parameter requestParameters.documentUploadData was null or undefined when calling upload.');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5627,18 +7323,31 @@
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
                             if (this.configuration && this.configuration.apiKey) {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents",
                                     method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
-                                    body: DocumentUploadDataToJSON(requestParameters.data),
+                                    body: DocumentUploadDataToJSON(requestParameters.documentUploadData),
                                 }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
+                        case 3:
+                            response = _c.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
                     }
                 });
@@ -5702,5 +7411,5 @@
 
     return Karrio;
 
-}));
+})();
 //# sourceMappingURL=karrio.js.map

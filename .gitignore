@@ -110,7 +110,7 @@ venv.bak/
 # karrio stuff:
 sdk/**/poetry.lock
 schemas/**/poetry.lock
-insiders/sdk/**/poetry.lock
+ee/sdk/**/poetry.lock
 !sdk/core/karrio/lib
 
 .bash_history
@@ -125,3 +125,4 @@ server/main/karrio/server/staticfiles/*
 .codegen/*
 !.codegen/typescript/
 .codegen/typescript/api/generated
+!docker/.env

@@ -1,16 +1,20 @@
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status, serializers
-from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework import status, serializers
+from rest_framework.pagination import LimitOffsetPagination
 
+import karrio.server.openapi as openapi
 from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.serializers import SerializerDecorator, PaginatedResult, PlainDictField
+from karrio.server.serializers import PaginatedResult, PlainDictField
 from karrio.server.core.serializers import Operation, ErrorResponse
-from karrio.server.events.serializers import WebhookData, Webhook, WebhookSerializer
+from karrio.server.events.serializers.webhook import (
+    WebhookData,
+    Webhook,
+    WebhookSerializer,
+)
 from karrio.server.events.task_definitions.base.webhook import notify_subscribers
 from karrio.server.events.router import router
 from karrio.server.events import models
@@ -30,10 +34,10 @@ class WebhookList(GenericAPIView):
     default_limit = 20
     serializer_class = Webhooks
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all webhooks",
+        summary="List all webhooks",
         responses={
             200: Webhooks(),
             404: ErrorResponse(),
@@ -48,11 +52,11 @@ class WebhookList(GenericAPIView):
         response = self.paginate_queryset(Webhook(webhooks, many=True).data)
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a webhook",
-        request_body=WebhookData(),
+        summary="Create a webhook",
+        request=WebhookData(),
         responses={
             201: Webhook(),
             400: ErrorResponse(),
@@ -62,19 +66,17 @@ class WebhookList(GenericAPIView):
     def post(self, request: Request):
         """Create a new webhook."""
         webhook = (
-            SerializerDecorator[WebhookSerializer](data=request.data, context=request)
-            .save()
-            .instance
+            WebhookSerializer.map(data=request.data, context=request).save().instance
         )
 
         return Response(Webhook(webhook).data, status=status.HTTP_201_CREATED)
 
 
 class WebhookDetails(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a webhook",
+        summary="Retrieve a webhook",
         responses={
             201: Webhook(),
             404: ErrorResponse(),
@@ -88,11 +90,11 @@ class WebhookDetails(APIView):
         webhook = models.Webhook.access_by(request).get(pk=pk)
         return Response(Webhook(webhook).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a webhook",
-        request_body=WebhookData(),
+        summary="Update a webhook",
+        request=WebhookData(),
         responses={
             200: Webhook(),
             404: ErrorResponse(),
@@ -106,13 +108,13 @@ class WebhookDetails(APIView):
         """
         webhook = models.Webhook.access_by(request).get(pk=pk)
 
-        SerializerDecorator[WebhookSerializer](webhook, data=request.data).save()
+        WebhookSerializer.map(webhook, data=request.data).save()
         return Response(Webhook(webhook).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}remove",
-        operation_summary="Remove a webhook",
+        summary="Remove a webhook",
         responses={
             200: Operation(),
             404: ErrorResponse(),
@@ -131,11 +133,11 @@ class WebhookDetails(APIView):
 
 
 class WebhookTest(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}test",
-        operation_summary="Test a webhook",
-        request_body=WebhookTestRequest(),
+        summary="Test a webhook",
+        request=WebhookTestRequest(),
         responses={
             200: Operation(),
             400: ErrorResponse(),

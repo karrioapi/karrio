@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+# Activate python virtual environment
+source "${ROOT}/bin/activate-env" || exit 1
+
+cd "$1" && ./generate && cd -

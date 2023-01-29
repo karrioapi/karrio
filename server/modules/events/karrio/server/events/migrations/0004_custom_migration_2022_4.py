@@ -8,7 +8,7 @@ def forwards_func(apps, schema_editor):
     Event = apps.get_model("events", "Event")
     Webhook = apps.get_model("events", "Webhook")
 
-    for event in Event.objects.using(db_alias).filter(type__contains="."):
+    for event in Event.objects.using(db_alias).filter(type__icontains="."):
         event.type = event.type.replace(".", "_")
         event.save()
 
@@ -22,7 +22,7 @@ def reverse_func(apps, schema_editor):
     Event = apps.get_model("events", "Event")
     Webhook = apps.get_model("events", "Webhook")
 
-    for event in Event.objects.using(db_alias).filter(type__contains="."):
+    for event in Event.objects.using(db_alias).filter(type__icontains="."):
         event.type = event.type.replace("_", ".")
         event.save()
 

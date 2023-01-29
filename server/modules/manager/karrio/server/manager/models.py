@@ -24,6 +24,7 @@ class Address(OwnedEntity):
     HIDDEN_PROPS = (
         "shipper_shipment",
         "recipient_shipment",
+        "billing_address_shipment",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
         *(
             ("shipper_order", "recipient_order")
@@ -45,22 +46,24 @@ class Address(OwnedEntity):
         editable=False,
     )
 
-    postal_code = models.CharField(max_length=10, null=True, blank=True)
-    city = models.CharField(max_length=50, null=True, blank=True)
-    federal_tax_id = models.CharField(max_length=50, null=True, blank=True)
-    state_tax_id = models.CharField(max_length=50, null=True, blank=True)
-    person_name = models.CharField(max_length=50, null=True, blank=True)
-    company_name = models.CharField(max_length=50, null=True, blank=True)
-    country_code = models.CharField(max_length=20, choices=COUNTRIES)
-    email = models.EmailField(null=True, blank=True)
+    postal_code = models.CharField(max_length=10, null=True, blank=True, db_index=True)
+    country_code = models.CharField(max_length=20, choices=COUNTRIES, db_index=True)
+    email = models.EmailField(null=True, blank=True, db_index=True)
+    city = models.CharField(max_length=30, null=True, blank=True, db_index=True)
+    federal_tax_id = models.CharField(max_length=20, null=True, blank=True)
+    state_tax_id = models.CharField(max_length=20, null=True, blank=True)
+    person_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
+    company_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
-
-    state_code = models.CharField(max_length=20, null=True, blank=True)
+    address_line1 = models.CharField(
+        max_length=100, null=True, blank=True, db_index=True
+    )
+    address_line2 = models.CharField(
+        max_length=100, null=True, blank=True, db_index=True
+    )
+    state_code = models.CharField(max_length=20, null=True, blank=True, db_index=True)
     suburb = models.CharField(max_length=20, null=True, blank=True)
     residential = models.BooleanField(null=True)
-
-    address_line1 = models.CharField(max_length=100, null=True, blank=True)
-    address_line2 = models.CharField(max_length=100, null=True, blank=True)
 
     validate_location = models.BooleanField(null=True)
     validation = models.JSONField(blank=True, null=True)
@@ -75,6 +78,15 @@ class Address(OwnedEntity):
             return self.shipper_shipment
         if hasattr(self, "recipient_shipment"):
             return self.recipient_shipment
+        if hasattr(self, "billing_address_shipment"):
+            return self.billing_address_shipment
+
+        return None
+
+    @property
+    def customs(self):
+        if hasattr(self, "duty_billing_address_customs"):
+            return self.duty_billing_address_customs
 
         return None
 
@@ -98,6 +110,7 @@ class ParcelManager(models.Manager):
             .prefetch_related(
                 "items",
             )
+            .order_by("-created_by")
         )
 
 
@@ -113,7 +126,7 @@ class Parcel(OwnedEntity):
         db_table = "parcel"
         verbose_name = "Parcel"
         verbose_name_plural = "Parcels"
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     id = models.CharField(
         max_length=50,
@@ -128,9 +141,12 @@ class Parcel(OwnedEntity):
     length = models.FloatField(blank=True, null=True)
     packaging_type = models.CharField(max_length=50, null=True, blank=True)
     package_preset = models.CharField(max_length=50, null=True, blank=True)
-    description = models.CharField(max_length=250, null=True, blank=True)
-    content = models.CharField(max_length=100, null=True, blank=True)
     is_document = models.BooleanField(default=False, blank=True, null=True)
+    description = models.CharField(max_length=35, null=True, blank=True)
+    content = models.CharField(max_length=35, null=True, blank=True)
+    reference_number = models.CharField(
+        max_length=50, null=True, blank=True, db_index=True
+    )
     weight_unit = models.CharField(
         max_length=2, choices=WEIGHT_UNIT, null=True, blank=True
     )
@@ -140,7 +156,6 @@ class Parcel(OwnedEntity):
     items = models.ManyToManyField(
         "Commodity", blank=True, related_name="commodity_parcel"
     )
-    reference_number = models.CharField(max_length=100, null=True, blank=True)
     freight_class = models.CharField(max_length=10, null=True, blank=True)
     options = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value={})
@@ -159,6 +174,17 @@ class Parcel(OwnedEntity):
         return self.parcel_shipment.first()
 
 
+class CommodityManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "children",
+            )
+        )
+
+
 @register_model
 class Commodity(OwnedEntity):
     HIDDEN_PROPS = (
@@ -167,12 +193,13 @@ class Commodity(OwnedEntity):
         "commodity_customs",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
     )
+    objects = CommodityManager()
 
     class Meta:
         db_table = "commodity"
         verbose_name = "Commodity"
         verbose_name_plural = "Commodities"
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     id = models.CharField(
         max_length=50,
@@ -182,10 +209,10 @@ class Commodity(OwnedEntity):
     )
 
     weight = models.FloatField(blank=True, null=True)
-    description = models.CharField(max_length=250, null=True, blank=True)
     quantity = models.IntegerField(blank=True, null=True)
-    sku = models.CharField(max_length=100, null=True, blank=True)
-    hs_code = models.CharField(max_length=50, null=True, blank=True)
+    description = models.CharField(max_length=25, null=True, blank=True)
+    sku = models.CharField(max_length=25, null=True, blank=True, db_index=True)
+    hs_code = models.CharField(max_length=25, null=True, blank=True, db_index=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=WEIGHT_UNIT, null=True, blank=True
@@ -194,7 +221,7 @@ class Commodity(OwnedEntity):
         max_length=3, choices=CURRENCIES, null=True, blank=True
     )
     origin_country = models.CharField(
-        max_length=3, choices=COUNTRIES, null=True, blank=True
+        max_length=3, choices=COUNTRIES, null=True, blank=True, db_index=True
     )
     parent = models.ForeignKey(
         "self",
@@ -247,6 +274,7 @@ class CustomsManager(models.Manager):
             .prefetch_related(
                 "commodities",
                 "created_by",
+                "duty_billing_address",
             )
         )
 
@@ -266,7 +294,7 @@ class Customs(OwnedEntity):
         "invoice_date",
         "options",
     ]
-    RELATIONAL_PROPS = ["commodities"]
+    RELATIONAL_PROPS = ["commodities", "duty_billing_address"]
     HIDDEN_PROPS = (
         "customs_shipment",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
@@ -288,9 +316,9 @@ class Customs(OwnedEntity):
 
     certify = models.BooleanField(null=True)
     commercial_invoice = models.BooleanField(null=True)
-    content_type = models.CharField(max_length=50, null=True, blank=True)
+    content_type = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     content_description = models.CharField(max_length=250, null=True, blank=True)
-    incoterm = models.CharField(max_length=20, choices=INCOTERMS)
+    incoterm = models.CharField(max_length=20, choices=INCOTERMS, db_index=True)
     invoice = models.CharField(max_length=50, null=True, blank=True)
     invoice_date = models.DateField(null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
@@ -306,6 +334,12 @@ class Customs(OwnedEntity):
 
     commodities = models.ManyToManyField(
         "Commodity", blank=True, related_name="commodity_customs"
+    )
+    duty_billing_address = models.OneToOneField(
+        "Address",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="duty_billing_address_customs",
     )
 
     def delete(self, *args, **kwargs):
@@ -365,7 +399,7 @@ class Pickup(OwnedEntity):
         default=functools.partial(uuid, prefix="pck_"),
         editable=False,
     )
-    confirmation_number = models.CharField(max_length=50, blank=False)
+    confirmation_number = models.CharField(max_length=50, blank=False, db_index=True)
     test_mode = models.BooleanField(null=False)
     pickup_date = models.DateField(blank=False)
     ready_time = models.CharField(max_length=5, blank=False)
@@ -437,6 +471,9 @@ class TrackingManager(models.Manager):
 
 @register_model
 class Tracking(OwnedEntity):
+    DIRECT_PROPS = [
+        "metadata",
+    ]
     HIDDEN_PROPS = (
         "tracking_carrier",
         *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
@@ -448,12 +485,6 @@ class Tracking(OwnedEntity):
         verbose_name = "Tracking Status"
         verbose_name_plural = "Tracking Statuses"
         ordering = ["-created_at"]
-        indexes = [
-            models.Index(
-                fields=["tracking_number"],
-                name="tracker_tracking_number_idx",
-            ),
-        ]
 
     id = models.CharField(
         max_length=50,
@@ -463,9 +494,12 @@ class Tracking(OwnedEntity):
     )
 
     status = models.CharField(
-        max_length=25, choices=TRACKER_STATUS, default=TRACKER_STATUS[0][0]
+        max_length=25,
+        choices=TRACKER_STATUS,
+        default=TRACKER_STATUS[0][0],
+        db_index=True,
     )
-    tracking_number = models.CharField(max_length=50)
+    tracking_number = models.CharField(max_length=50, db_index=True)
     events = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value=[])
     )
@@ -478,7 +512,9 @@ class Tracking(OwnedEntity):
     options = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value={})
     )
-    meta = models.JSONField(blank=True, null=True, default=functools.partial(identity, value={}))
+    meta = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value={})
+    )
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value={})
     )
@@ -527,6 +563,7 @@ class ShipmentManager(models.Manager):
                 "selected_rate_carrier",
                 "created_by",
                 "shipment_tracker",
+                "billing_address",
             )
         )
 
@@ -550,7 +587,14 @@ class Shipment(OwnedEntity):
         "created_by",
         "reference",
     ]
-    RELATIONAL_PROPS = ["shipper", "recipient", "parcels", "customs", "selected_rate"]
+    RELATIONAL_PROPS = [
+        "shipper",
+        "recipient",
+        "parcels",
+        "customs",
+        "selected_rate",
+        "billing_address",
+    ]
     HIDDEN_PROPS = (
         "carriers",
         "label",
@@ -569,11 +613,6 @@ class Shipment(OwnedEntity):
         ordering = ["-created_at"]
         indexes = [
             models.Index(
-                fields=["tracking_number"],
-                condition=models.Q(tracking_number__isnull=False),
-                name="shipment_tracking_number_idx",
-            ),
-            models.Index(
                 json.KeyTextTransform("service", "selected_rate"),
                 condition=models.Q(meta__object_id__isnull=False),
                 name="shipment_service_idx",
@@ -587,7 +626,10 @@ class Shipment(OwnedEntity):
         editable=False,
     )
     status = models.CharField(
-        max_length=50, choices=SHIPMENT_STATUS, default=SHIPMENT_STATUS[0][0]
+        max_length=50,
+        choices=SHIPMENT_STATUS,
+        default=SHIPMENT_STATUS[0][0],
+        db_index=True,
     )
 
     recipient = models.OneToOneField(
@@ -596,17 +638,22 @@ class Shipment(OwnedEntity):
     shipper = models.OneToOneField(
         "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
     )
+    billing_address = models.OneToOneField(
+        "Address",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="billing_address_shipment",
+    )
     label_type = models.CharField(max_length=25, null=True, blank=True)
-
-    tracking_number = models.CharField(max_length=50, null=True, blank=True)
+    tracking_number = models.CharField(
+        max_length=50, null=True, blank=True, db_index=True
+    )
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
-    reference = models.CharField(max_length=100, null=True, blank=True)
-
     customs = models.OneToOneField(
         "Customs",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="customs_shipment",
@@ -614,7 +661,7 @@ class Shipment(OwnedEntity):
 
     label = models.TextField(max_length=None, null=True, blank=True)
     invoice = models.TextField(max_length=None, null=True, blank=True)
-
+    reference = models.CharField(max_length=35, null=True, blank=True)
     selected_rate = models.JSONField(blank=True, null=True)
     payment = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value=None)
@@ -628,14 +675,18 @@ class Shipment(OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value=[])
     )
-    meta = models.JSONField(blank=True, null=True, default=functools.partial(identity, value={}))
+    meta = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value={})
+    )
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value={})
     )
 
     # System Reference fields
 
-    rates = models.JSONField(blank=True, null=True, default=functools.partial(identity, value=[]))
+    rates = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value=[])
+    )
     parcels = models.ManyToManyField("Parcel", related_name="parcel_shipment")
     carriers = models.ManyToManyField(
         Carrier, blank=True, related_name="related_shipments"

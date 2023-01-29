@@ -2,32 +2,26 @@ import io
 import base64
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
 from rest_framework import status
-
-from django.urls import path, re_path
-from drf_yasg.utils import swagger_auto_schema
-from django_filters import rest_framework as filters
-from django.core.files.base import ContentFile
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
 from django_downloadview import VirtualDownloadView
+from django.core.files.base import ContentFile
+from django.urls import path, re_path
 
-from karrio.core.utils import DP
-from karrio.server.core.gateway import Carriers
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     process_dictionaries_mutations,
-    SerializerDecorator,
+    fetch_shipment_rates,
     PaginatedResult,
     ErrorResponse,
     ErrorMessages,
     Shipment,
     ShipmentData,
-    RateResponse,
-    Rate,
     buy_shipment_label,
     can_mutate_shipment,
     ShipmentSerializer,
@@ -35,12 +29,13 @@ from karrio.server.manager.serializers import (
     ShipmentUpdateData,
     ShipmentPurchaseData,
     ShipmentCancelSerializer,
-    RateSerializer,
 )
 import karrio.server.manager.models as models
+import karrio.server.core.filters as filters
+import karrio.server.openapi as openapi
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Shipments = PaginatedResult("ShipmentList", Shipment)
 
 
@@ -48,15 +43,16 @@ class ShipmentList(GenericAPIView):
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ShipmentFilters
     serializer_class = Shipments
     model = models.Shipment
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all shipments",
+        summary="List all shipments",
+        parameters=filters.ShipmentFilters.parameters,
         responses={
             200: Shipments(),
             404: ErrorResponse(),
@@ -72,36 +68,34 @@ class ShipmentList(GenericAPIView):
 
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a shipment",
+        summary="Create a shipment",
         responses={
             201: Shipment(),
             400: ErrorResponse(),
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentData(),
+        request=ShipmentData(),
     )
     def post(self, request: Request):
         """
         Create a new shipment instance.
         """
         shipment = (
-            SerializerDecorator[ShipmentSerializer](data=request.data, context=request)
-            .save()
-            .instance
+            ShipmentSerializer.map(data=request.data, context=request).save().instance
         )
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
 
 class ShipmentDetails(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a shipment",
+        summary="Retrieve a shipment",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -116,10 +110,10 @@ class ShipmentDetails(APIView):
 
         return Response(Shipment(shipment).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a shipment",
+        summary="Update a shipment",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -128,7 +122,7 @@ class ShipmentDetails(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentUpdateData(),
+        request=ShipmentUpdateData(),
     )
     def put(self, request: Request, pk: str):
         """
@@ -136,43 +130,16 @@ class ShipmentDetails(APIView):
         It is not for editing the parcels of a shipment.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
-        can_mutate_shipment(shipment, update=True)
-
-        payload = SerializerDecorator[ShipmentUpdateData](data=request.data).data
-        SerializerDecorator[ShipmentSerializer](
-            shipment,
-            context=request,
-            data=process_dictionaries_mutations(
-                ["metadata", "options"], payload, shipment
-            ),
-        ).save()
-
-        return Response(Shipment(shipment).data)
-
-    @swagger_auto_schema(
-        tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}cancel",
-        operation_summary="Cancel a shipment",
-        responses={
-            200: Shipment(),
-            404: ErrorResponse(),
-            400: ErrorResponse(),
-            409: ErrorResponse(),
-            424: ErrorMessages(),
-            500: ErrorResponse(),
-        },
-    )
-    def delete(self, request: Request, pk: str):
-        """
-        Void a shipment with the associated label.
-        """
-        shipment = models.Shipment.access_by(request).get(pk=pk)
-
-        can_mutate_shipment(shipment, delete=True)
+        payload = ShipmentUpdateData.map(data=request.data).data
+        can_mutate_shipment(shipment, update=True, payload=request.data)
 
         update = (
-            SerializerDecorator[ShipmentCancelSerializer](
-                shipment, data={}, context=request
+            ShipmentSerializer.map(
+                shipment,
+                context=request,
+                data=process_dictionaries_mutations(
+                    ["metadata", "options"], payload, shipment
+                ),
             )
             .save()
             .instance
@@ -181,13 +148,12 @@ class ShipmentDetails(APIView):
         return Response(Shipment(update).data)
 
 
-class ShipmentRates(APIView):
-    logging_methods = ["GET"]
-
-    @swagger_auto_schema(
+class ShipmentCancel(APIView):
+    @openapi.extend_schema(
         tags=["Shipments"],
-        operation_id=f"{ENDPOINT_ID}rates",
-        operation_summary="Fetch new shipment rates",
+        operation_id=f"{ENDPOINT_ID}cancel",
+        summary="Cancel a shipment",
+        request=None,
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -196,7 +162,35 @@ class ShipmentRates(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentRateData(),
+    )
+    def post(self, request: Request, pk: str):
+        """
+        Void a shipment with the associated label.
+        """
+        shipment = models.Shipment.access_by(request).get(pk=pk)
+        can_mutate_shipment(shipment, delete=True)
+
+        update = ShipmentCancelSerializer.map(shipment, context=request).save().instance
+
+        return Response(Shipment(update).data)
+
+
+class ShipmentRates(APIView):
+    logging_methods = ["GET"]
+
+    @openapi.extend_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}rates",
+        summary="Fetch new shipment rates",
+        responses={
+            200: Shipment(),
+            404: ErrorResponse(),
+            400: ErrorResponse(),
+            409: ErrorResponse(),
+            424: ErrorMessages(),
+            500: ErrorResponse(),
+        },
+        request=ShipmentRateData(),
     )
     def post(self, request: Request, pk: str):
         """
@@ -205,50 +199,22 @@ class ShipmentRates(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, update=True)
 
-        rate_payload = process_dictionaries_mutations(
-            ["metadata"],
-            SerializerDecorator[ShipmentRateData](data=request.data).data,
-            shipment,
-        )
-        carrier_ids = (
-            rate_payload["carrier_ids"]
-            if "carrier_ids" in rate_payload
-            else shipment.carrier_ids
-        )
+        payload = ShipmentRateData.map(data=request.data).data
 
-        carriers = Carriers.list(
-            active=True,
-            capability="shipping",
-            context=request,
-            carrier_ids=carrier_ids,
-        )
-
-        rate_response: RateResponse = (
-            SerializerDecorator[RateSerializer](
-                context=request, data={**ShipmentData(shipment).data, **rate_payload}
-            )
-            .save(carriers=carriers)
-            .instance
-        )
-
-        SerializerDecorator[ShipmentSerializer](
+        update = fetch_shipment_rates(
             shipment,
             context=request,
-            data={
-                "rates": Rate(rate_response.rates, many=True).data,
-                "messages": DP.to_dict(rate_response.messages),
-                **rate_payload,
-            },
-        ).save(carriers=carriers)
+            data=process_dictionaries_mutations(["metadata"], payload, shipment),
+        )
 
-        return Response(Shipment(shipment).data)
+        return Response(Shipment(update).data)
 
 
 class ShipmentPurchase(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}purchase",
-        operation_summary="Buy a shipment label",
+        summary="Buy a shipment label",
         responses={
             200: Shipment(),
             404: ErrorResponse(),
@@ -257,7 +223,7 @@ class ShipmentPurchase(APIView):
             424: ErrorMessages(),
             500: ErrorResponse(),
         },
-        request_body=ShipmentPurchaseData(),
+        request=ShipmentPurchaseData(),
     )
     def post(self, request: Request, pk: str):
         """
@@ -266,7 +232,7 @@ class ShipmentPurchase(APIView):
         shipment = models.Shipment.access_by(request).get(pk=pk)
         can_mutate_shipment(shipment, purchase=True, update=True)
 
-        payload = SerializerDecorator[ShipmentPurchaseData](data=request.data).data
+        payload = ShipmentPurchaseData.map(data=request.data).data
 
         update = buy_shipment_label(
             shipment,
@@ -278,6 +244,7 @@ class ShipmentPurchase(APIView):
 
 
 class ShipmentDocs(VirtualDownloadView):
+    @openapi.extend_schema(exclude=True)
     def get(
         self,
         request: Request,
@@ -311,6 +278,9 @@ class ShipmentDocs(VirtualDownloadView):
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
 router.urls.append(
     path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details")
+)
+router.urls.append(
+    path("shipments/<str:pk>/cancel", ShipmentCancel.as_view(), name="shipment-cancel")
 )
 router.urls.append(
     path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates")

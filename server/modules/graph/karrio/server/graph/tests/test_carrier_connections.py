@@ -1,4 +1,3 @@
-import json
 from unittest.mock import ANY
 from karrio.server.graph.tests.base import GraphTestCase
 
@@ -17,9 +16,9 @@ class TestSystemConnections(GraphTestCase):
               }
             }
             """,
-            op_name="get_system_connections",
+            operation_name="get_system_connections",
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, SYSTEM_CONNECTIONS)
@@ -32,7 +31,7 @@ class TestUserConnections(GraphTestCase):
             query get_user_connections {
                 user_connections {
                   __typename
-                  ... on CanadaPostSettings {
+                  ... on CanadaPostSettingsType {
                     id
                     carrier_id
                     carrier_name
@@ -41,7 +40,7 @@ class TestUserConnections(GraphTestCase):
                     username
                     password
                   }
-                  ... on UPSSettings {
+                  ... on UPSSettingsType {
                     id
                     carrier_id
                     carrier_name
@@ -55,9 +54,9 @@ class TestUserConnections(GraphTestCase):
                 }
               }
             """,
-            op_name="get_user_connections",
+            operation_name="get_user_connections",
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, USER_CONNECTIONS)
@@ -65,23 +64,25 @@ class TestUserConnections(GraphTestCase):
     def test_create_user_connection(self):
         response = self.query(
             """
-            mutation create_connection($data: CreateConnectionInput!) {
-              create_connection(input: $data) {
-                sendlesettings {
-                    id
-                    test_mode
-                    active
-                    carrier_id
-                    sendle_id
-                    api_key
+            mutation create_connection($data: CreateCarrierConnectionMutationInput!) {
+              create_carrier_connection(input: $data) {
+                connection {
+                    ... on SendleSettingsType {
+                        id
+                        test_mode
+                        active
+                        carrier_id
+                        sendle_id
+                        api_key
+                    }
                 }
               }
             }
             """,
-            op_name="create_connection",
+            operation_name="create_connection",
             variables=CONNECTION_DATA,
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, CONNECTION_RESPONSE)
@@ -89,25 +90,31 @@ class TestUserConnections(GraphTestCase):
     def test_update_user_connection(self):
         response = self.query(
             """
-            mutation update_connection($data: UpdateConnectionInput!) {
-              update_connection(input: $data) {
-                canadapostsettings {
-                    carrier_id
-                    username
-                    customer_number
-                    contract_id
-                    password
+            mutation update_connection($data: UpdateCarrierConnectionMutationInput!) {
+              update_carrier_connection(input: $data) {
+                connection {
+                    ... on CanadaPostSettingsType {
+                        carrier_id
+                        username
+                        customer_number
+                        contract_id
+                        password
+                    }
                 }
               }
             }
             """,
-            op_name="update_connection",
+            operation_name="update_connection",
             variables={
-                **CONNECTION_UPDATE_DATA,
-                "data": {**CONNECTION_UPDATE_DATA["data"], "id": self.carrier.id},
+                "data": {
+                    "canadapost": {
+                        "id": self.carrier.id,
+                        **CONNECTION_UPDATE_DATA["data"]["canadapost"],
+                    }
+                },
             },
         )
-        response_data = json.loads(response.content)
+        response_data = response.data
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, CONNECTION_UPDATE_RESPONSE)
@@ -138,7 +145,7 @@ USER_CONNECTIONS = {
     "data": {
         "user_connections": [
             {
-                "__typename": "UPSSettings",
+                "__typename": "UPSSettingsType",
                 "id": ANY,
                 "carrier_id": "ups_package",
                 "carrier_name": "ups",
@@ -150,7 +157,7 @@ USER_CONNECTIONS = {
                 "account_number": "000000",
             },
             {
-                "__typename": "CanadaPostSettings",
+                "__typename": "CanadaPostSettingsType",
                 "id": ANY,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
@@ -165,7 +172,7 @@ USER_CONNECTIONS = {
 
 CONNECTION_DATA = {
     "data": {
-        "sendlesettings": {
+        "sendle": {
             "test_mode": False,
             "carrier_id": "sendle",
             "sendle_id": "test_sendle_id",
@@ -176,8 +183,8 @@ CONNECTION_DATA = {
 
 CONNECTION_RESPONSE = {
     "data": {
-        "create_connection": {
-            "sendlesettings": {
+        "create_carrier_connection": {
+            "connection": {
                 "active": True,
                 "api_key": "test_api_key",
                 "carrier_id": "sendle",
@@ -191,7 +198,7 @@ CONNECTION_RESPONSE = {
 
 CONNECTION_UPDATE_DATA = {
     "data": {
-        "canadapostsettings": {
+        "canadapost": {
             "carrier_id": "canadapost_updated",
             "username": "6e93d53968881714_updated",
             "customer_number": "2004381_updated",
@@ -203,8 +210,8 @@ CONNECTION_UPDATE_DATA = {
 
 CONNECTION_UPDATE_RESPONSE = {
     "data": {
-        "update_connection": {
-            "canadapostsettings": {
+        "update_carrier_connection": {
+            "connection": {
                 "carrier_id": "canadapost_updated",
                 "contract_id": "42708517_updated",
                 "customer_number": "2004381_updated",

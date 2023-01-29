@@ -27,13 +27,14 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
+    status_updated = "status" in (update_fields or [])
     if created and instance.status != serializers.ShipmentStatus.purchased.value:
         return
-    elif instance.status == serializers.ShipmentStatus.purchased.value:
+    elif status_updated and instance.status == serializers.ShipmentStatus.purchased.value:
         event = EventTypes.shipment_purchased.value
-    elif instance.status == serializers.ShipmentStatus.in_transit.value:
+    elif status_updated and instance.status == serializers.ShipmentStatus.in_transit.value:
         event = EventTypes.shipment_fulfilled.value
-    elif instance.status == serializers.ShipmentStatus.cancelled.value:
+    elif status_updated and instance.status == serializers.ShipmentStatus.cancelled.value:
         event = EventTypes.shipment_cancelled.value
     else:
         return

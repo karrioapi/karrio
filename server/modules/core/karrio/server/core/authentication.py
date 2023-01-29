@@ -60,6 +60,7 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.user = user or request.user
             request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
@@ -81,6 +82,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
         if auth is not None:
             user, token = auth
+            request.user = user or request.user
             request.token = token
             request.test_mode = token.test_mode
             request.org = SimpleLazyObject(
@@ -148,7 +150,7 @@ class OAuth2Authentication(BaseOAuth2Authentication):
 
         if auth is not None:
             user, token = auth
-
+            request.user = user or request.user
             request.token = token
             request.test_mode = get_request_test_mode(request)
             request.org = SimpleLazyObject(

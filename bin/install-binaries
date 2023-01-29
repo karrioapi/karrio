@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Install system dependencies
+if [ "$(uname)" == "Darwin" ]; then
+    # Mac OS X platform
+    brew install gcc pango libffi ghostscript
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    # GNU/Linux platform
+    apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
+fi

@@ -39,7 +39,7 @@ There are several ways to use Karrio:
 
 This repository contains both OSS-licensed and non-OSS-licensed files. We maintain one repository rather than two separate repositories mainly for development convenience.
 
-All files in the `/insiders` fall under the [Karrio LICENSE](/insiders/LICENSE).
+All files in the `/ee` fall under the [Karrio LICENSE](/ee/LICENSE).
 
 The remaining files fall under the [Apache 2 license](LICENSE). Karrio OSS is built only from the Apache-licensed files in this repository.
 

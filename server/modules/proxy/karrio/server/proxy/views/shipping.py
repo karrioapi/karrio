@@ -1,12 +1,11 @@
 import logging
 from django.urls import path
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from rest_framework.response import Response
 
+import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 from karrio.server.core.views.api import APIView
@@ -24,8 +23,8 @@ from karrio.server.core.serializers import (
     ErrorMessages,
 )
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 CARRIER_NAMES = list(providers.MODELS.keys())
 
 
@@ -54,11 +53,11 @@ class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDe
 
 
 class ShippingDetails(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
-        operation_summary="Buy a shipment label",
-        request_body=ShippingRequest(),
+        summary="Buy a shipment label",
+        request=ShippingRequest(),
         responses={
             200: ShippingResponse(),
             400: ErrorResponse(),
@@ -71,7 +70,7 @@ class ShippingDetails(APIView):
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
         """
-        payload = serializers.SerializerDecorator[ShippingRequestValidation](data=request.data).data
+        payload = ShippingRequestValidation.map(data=request.data).data
 
         response = Shipments.create(
             payload,
@@ -89,21 +88,21 @@ class ShippingDetails(APIView):
 
 
 class ShippingCancel(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
-        operation_summary="Void a shipment label",
-        request_body=ShipmentCancelRequest(),
+        summary="Void a shipment label",
+        request=ShipmentCancelRequest(),
         responses={
             202: OperationResponse(),
             400: ErrorResponse(),
             424: ErrorMessages(),
         },
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            openapi.OpenApiParameter(
                 "carrier_name",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
                 enum=CARRIER_NAMES,
             ),
         ],
@@ -112,8 +111,7 @@ class ShippingCancel(APIView):
         """
         Cancel a shipment and the label previously created
         """
-        payload = serializers.SerializerDecorator[ShipmentCancelRequest](data=request.data).data
-
+        payload = ShipmentCancelRequest.map(data=request.data).data
         response = Shipments.cancel(payload, context=request, carrier_name=carrier_name)
 
         return Response(

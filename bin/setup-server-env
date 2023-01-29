@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Create new python virtual environment
+source "bin/create-new-env"
+
+# Install requirements
+cd "${ROOT}"
+    pip install -r "${ROOT:?}/requirements.server.dev.txt"
+cd -
+
+if [[ "$*" != *--light* ]];
+then
+    pip install -e "${ROOT:?}/server/modules/documents/"
+fi
+
+if [[ "$*" == *--cloud* ]];
+then
+    source "${ROOT:?}/../karrio-cloud/bin/setup-cloud"
+    pip install -r "${CLOUD_REQUIREMENTS:?}"
+fi
+
+
+# Export environment variables
+source "bin/server"
+
+mkdir -p $LOG_DIR

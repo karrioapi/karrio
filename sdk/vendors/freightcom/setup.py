@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.freightcom",
-    version="2022.8.18",
+    version="2023.1",
     description="Karrio - Freightcom Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,7 +19,6 @@ setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License",
     ],
     zip_safe=False,
     include_package_data=True,

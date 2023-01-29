@@ -6,32 +6,20 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.core.validators import RegexValidator
 
-from karrio import gateway
-from karrio.core.utils import Enum, Tracer
-from karrio.core.units import Country, Currency, DimensionUnit, WeightUnit
-from karrio.api.gateway import Gateway
-from karrio.server.core.models import OwnedEntity, uuid, register_model
-from karrio.server.core.datatypes import CarrierSettings
-from karrio.server.core.fields import MultiChoiceField
+import karrio
+import karrio.core.units as units
+import karrio.core.utils as utils
+import karrio.api.gateway as gateway
+import karrio.server.core.models as core
+import karrio.server.core.fields as fields
+import karrio.server.core.datatypes as datatypes
 
 
-class CarrierCapabilities(Enum):
-    pickup = "pickup"
-    rating = "rating"
-    shipping = "shipping"
-    tracking = "tracking"
-    paperless = "paperless"
-
-    @classmethod
-    def get_capabilities(cls):
-        return [c.name for c in list(cls)]
-
-
-CAPABILITIES_CHOICES = [(c, c) for c in CarrierCapabilities.get_capabilities()]
-COUNTRIES = [(c.name, c.name) for c in Country]
-CURRENCIES = [(c.name, c.name) for c in Currency]
-WEIGHT_UNITS = [(c.name, c.name) for c in WeightUnit]
-DIMENSION_UNITS = [(c.name, c.name) for c in DimensionUnit]
+COUNTRIES = [(c.name, c.name) for c in units.Country]
+CURRENCIES = [(c.name, c.name) for c in units.Currency]
+WEIGHT_UNITS = [(c.name, c.name) for c in units.WeightUnit]
+DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
+CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
 
 
 class CarrierManager(models.Manager):
@@ -45,25 +33,26 @@ class CarrierManager(models.Manager):
         )
 
 
-class Carrier(OwnedEntity):
+class Carrier(core.OwnedEntity):
     class Meta:
         ordering = ["test_mode", "-created_at"]
 
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="car_"),
+        default=partial(core.uuid, prefix="car_"),
         editable=False,
     )
     carrier_id = models.CharField(
         max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
+        db_index=True,
     )
     test_mode = models.BooleanField(
         default=True, db_column="test_mode", help_text="Toggle carrier connection mode"
     )
     active = models.BooleanField(
-        default=True, help_text="Disable/Hide carrier from clients"
+        default=True, help_text="Disable/Hide carrier from clients", db_index=True
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -75,10 +64,9 @@ class Carrier(OwnedEntity):
     active_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="active_users"
     )
-    capabilities = MultiChoiceField(
-        models.CharField(max_length=50, choices=CAPABILITIES_CHOICES),
-        default=CarrierCapabilities.get_capabilities,
-        size=len(CAPABILITIES_CHOICES),
+    capabilities = fields.MultiChoiceField(
+        choices=CAPABILITIES_CHOICES,
+        default=core.field_default([]),
         help_text="Select the capabilities of the carrier that you want to enable",
     )
     metadata = models.JSONField(blank=True, null=True, default=dict)
@@ -94,26 +82,33 @@ class Carrier(OwnedEntity):
 
     @property
     def carrier_name(self):
-        return self.settings.carrier_name
-
-    def _linked_settings(self):
-        from karrio.server.providers.models import MODELS
-
-        return next(
-            (
-                getattr(self, Model.__name__.lower())
-                for Model in MODELS.values()
-                if hasattr(self, Model.__name__.lower())
-            ),
-            None,
-        )
+        return getattr(self.settings, "carrier_name", None)
 
     @property
     def settings(self):
-        return self._linked_settings()
+        _, settings = self.__class__.resolve_settings(self)
+        return settings
 
     @property
-    def data(self) -> CarrierSettings:
+    def ext(self) -> str:
+        return (
+            "generic"
+            if hasattr(self.settings, "custom_carrier_name")
+            else self.settings.carrier_name
+        )
+
+    @property
+    def gateway(self) -> gateway.Gateway:
+        from karrio.server.core import middleware
+
+        _context = middleware.SessionContext.get_current_request()
+        _tracer = getattr(_context, "tracer", utils.Tracer())
+        _carrier_name = self.ext
+
+        return karrio.gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
+
+    @property
+    def data(self) -> datatypes.CarrierSettings:
         _extra: Dict = dict()
 
         if hasattr(self.settings, "services"):
@@ -121,7 +116,7 @@ class Carrier(OwnedEntity):
                 services=[model_to_dict(s) for s in self.settings.services.all()]
             )
 
-        return CarrierSettings.create(
+        return datatypes.CarrierSettings.create(
             {
                 "id": self.settings.id,
                 "carrier_name": self.settings.carrier_name,
@@ -131,33 +126,33 @@ class Carrier(OwnedEntity):
             }
         )
 
-    @property
-    def gateway(self) -> Gateway:
-        from karrio.server.core import middleware
+    @staticmethod
+    def resolve_settings(carrier):
+        from karrio.server.providers.models import MODELS
 
-        _context = middleware.SessionContext.get_current_request()
-        _tracer = getattr(_context, "tracer", Tracer())
-        _carrier_name = (
-            "generic"
-            if hasattr(self.settings, "custom_carrier_name")
-            else self.settings.carrier_name
+        return next(
+            (
+                (name, getattr(carrier, model.__name__.lower()))
+                for name, model in MODELS.items()
+                if hasattr(carrier, model.__name__.lower())
+            ),
+            (None, None),
         )
-
-        return gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
 
     @property
     def carrier_display_name(self):
         if hasattr(self.settings, "display_name"):
             return self.settings.display_name
-        
+
         import karrio.references as references
+
         return references.collect_references()["carriers"].get(
             self.settings.carrier_name
         )
 
 
-@register_model
-class ServiceLevel(OwnedEntity):
+@core.register_model
+class ServiceLevel(core.OwnedEntity):
     class Meta:
         db_table = "service-level"
         verbose_name = "Service Level"
@@ -167,7 +162,7 @@ class ServiceLevel(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="svc_"),
+        default=partial(core.uuid, prefix="svc_"),
         editable=False,
     )
     service_name = models.CharField(max_length=50)

@@ -19,7 +19,9 @@ from karrio.server.manager.serializers.commodity import (
 from karrio.server.manager.serializers.rate import RateSerializer
 from karrio.server.manager.serializers.tracking import (
     TrackingSerializer,
+    TrackerUpdateData,
     update_shipment_tracker,
+    can_mutate_tracker,
 )
 from karrio.server.manager.serializers.shipment import (
     ShipmentRateData,
@@ -32,6 +34,7 @@ from karrio.server.manager.serializers.shipment import (
     reset_related_shipment_rates,
     can_mutate_shipment,
     buy_shipment_label,
+    fetch_shipment_rates,
 )
 from karrio.server.manager.serializers.pickup import (
     PickupData,

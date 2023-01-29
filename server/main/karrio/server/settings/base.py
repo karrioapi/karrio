@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import importlib
+import dj_database_url
 from pathlib import Path
-from decouple import AutoConfig
 from datetime import timedelta
+from decouple import AutoConfig
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
@@ -42,6 +43,7 @@ Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
 
 USE_HTTPS = config("USE_HTTPS", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="http://*").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
@@ -67,6 +69,9 @@ if USE_HTTPS is True:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_PRELOAD = True
+    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://*").split(
+        ","
+    )
 
 
 # karrio packages settings
@@ -175,6 +180,10 @@ FEATURE_FLAGS = [
     ("DATA_IMPORT_EXPORT", bool),
     ("CUSTOM_CARRIER_DEFINITION", bool),
     ("PERSIST_SDK_TRACING", bool),
+    ("ORDER_DATA_RETENTION", int),
+    ("TRACKER_DATA_RETENTION", int),
+    ("SHIPMENT_DATA_RETENTION", int),
+    ("API_LOGS_DATA_RETENTION", int),
 ]
 
 
@@ -223,7 +232,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_email_verification",
     "rest_framework_tracking",
-    "drf_yasg",
+    "drf_spectacular",
     "constance.backends.database",
     "huey.contrib.djhuey",
     "corsheaders",
@@ -275,11 +284,12 @@ PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DB_ENGINE = config("DATABASE_ENGINE", default="postgresql_psycopg2")
+DB_ENGINE = config("DATABASE_ENGINE", default="sqlite3")
+DB_NAME = os.path.join(WORK_DIR, "db.sqlite3") if "sqlite3" in DB_ENGINE else "db"
 
 DATABASES = {
     "default": {
-        "NAME": config("DATABASE_NAME", default="db"),
+        "NAME": config("DATABASE_NAME", default=DB_NAME),
         "ENGINE": "django.db.backends.{}".format(DB_ENGINE),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
@@ -287,6 +297,10 @@ DATABASES = {
         "PORT": config("DATABASE_PORT", default="5432"),
     }
 }
+
+if config("DATABASE_URL", default=None):
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES["default"].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -351,6 +365,7 @@ PERMISSION_CLASSES = [
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_CLASSES,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -364,9 +379,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "40/minute", "user": "60/minute"},
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "karrio.server.core.exceptions.custom_exception_handler",
-    "JSON_UNDERSCOREIZE": {
-        "no_underscore_before_number": True,
-    },
+    "JSON_UNDERSCOREIZE": {"no_underscore_before_number": True},
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
@@ -374,8 +387,12 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        config("JWT_ACCESS_EXPIRY", default=30, cast=int)
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        config("JWT_REFRESH_EXPIRY", default=3, cast=int)
+    ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -397,10 +414,7 @@ SIMPLE_JWT = {
 }
 
 # Oauth2 config
-OIDC_RSA_PRIVATE_KEY = (
-    config("OIDC_RSA_PRIVATE_KEY", default="")
-    .replace("\\n", "\n")
-)
+OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
@@ -415,7 +429,25 @@ OAUTH2_PROVIDER = {
 }
 
 # OpenAPI config
-
+SPECTACULAR_SETTINGS = {
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": True,
+    "ENUM_NAME_OVERRIDES": {
+        "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
+        "CurrencyEnum": "karrio.server.core.serializers.CURRENCIES",
+        "ShipmentStatus": "karrio.server.manager.serializers.SHIPMENT_STATUS",
+    },
+    "OAUTH2_FLOWS": ["authorizationCode"],
+    "OAUTH2_AUTHORIZATION_URL": "/oauth/authorize/",
+    "OAUTH2_TOKEN_URL": "/oauth/token/",
+    "OAUTH2_REFRESH_URL": None,
+    "OAUTH2_SCOPES": OAUTH2_PROVIDER["SCOPES"],
+    "AUTHENTICATION_WHITELIST": [
+        _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
+    ],
+    "POSTPROCESSING_HOOKS": [],
+}
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "LOGIN_URL": reverse_lazy("admin:login"),
@@ -447,11 +479,10 @@ SWAGGER_SETTINGS = {
             "description": """
             `Authorization: Bearer xxxxxxxx`
             """,
-            "scopes": OAUTH2_PROVIDER["SCOPES"]
+            "scopes": OAUTH2_PROVIDER["SCOPES"],
         },
     },
 }
-
 REDOC_SETTINGS = {
     "LAZY_RENDERING": False,
     "HIDE_HOSTNAME": True,
@@ -460,7 +491,6 @@ REDOC_SETTINGS = {
 }
 
 # Logging configuration
-
 LOG_LEVEL = "DEBUG" if DEBUG else config("LOG_LEVEL", default="INFO")
 DJANGO_LOG_LEVEL = "INFO" if DEBUG else config("DJANGO_LOG_LEVEL", default="WARNING")
 LOG_FILE_DIR = config("LOG_DIR", default=WORK_DIR)
@@ -476,7 +506,7 @@ LOGGING = {
             "style": "{",
         },
         "simple": {
-            "format": "{levelname} {message}",
+            "format": "{levelname} {filename} {lineno} {message}",
             "style": "{",
         },
     },

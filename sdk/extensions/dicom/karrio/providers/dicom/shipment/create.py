@@ -18,6 +18,7 @@ from karrio.core.models import (
     ShipmentDetails,
     Message,
     Address,
+    Payment,
 )
 
 from karrio.providers.dicom.units import (
@@ -69,6 +70,7 @@ def shipment_request(
         if "importer_info" in payload.options
         else None
     )
+    payment = payload.payment or Payment("prepaid")
     delivery_type = Service[payload.service].value
     options = {
         key: (value if ShippingOption[key].value in ["DCV", "COD"] else None)
@@ -77,7 +79,7 @@ def shipment_request(
     }
 
     request = DicomShipmentRequest(
-        paymentType=PaymentType[payload.payment.paid_by or "prepaid"].value,
+        paymentType=PaymentType[payment.paid_by or "prepaid"].value,
         billingAccount=settings.billing_account,
         sender=DicomAddress(
             city=payload.shipper.city,

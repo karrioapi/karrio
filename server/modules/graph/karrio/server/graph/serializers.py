@@ -38,7 +38,9 @@ class UserModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
-class AddressModelSerializer(validators.AugmentedAddressSerializer, serializers.ModelSerializer):
+class AddressModelSerializer(
+    validators.AugmentedAddressSerializer, serializers.ModelSerializer
+):
     country_code = serializers.CharField(required=False)
 
     class Meta:
@@ -230,10 +232,9 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
 
 
 def create_carrier_model_serializers(partial: bool = False):
-    def _create_model_serializer(carrier_model):
-        _name = f"{carrier_model.__name__}"
-        _extra_fields = {}
-        _extra_exclude = []
+    def _create_model_serializer(carrier_name: str, carrier_model):
+        _name = carrier_name
+        _extra_fields: dict = {}
 
         if hasattr(carrier_model, "account_country_code"):
             _extra_fields.update(
@@ -269,7 +270,6 @@ def create_carrier_model_serializers(partial: bool = False):
                 "created_by",
                 "capabilities",
                 "active_users",
-                *_extra_exclude,
             )
 
         return serializers.owned_model_serializer(
@@ -285,19 +285,19 @@ def create_carrier_model_serializers(partial: bool = False):
         )
 
     return {
-        carrier.__name__.lower(): _create_model_serializer(carrier)
-        for carrier in providers.MODELS.values()
+        name: _create_model_serializer(name, model)
+        for name, model in providers.MODELS.items()
     }
 
 
 CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers()
+PARTIAL_CARRIER_MODEL_SERIALIZERS = create_carrier_model_serializers(True)
 
 
 @serializers.owned_model_serializer
 class ConnectionModelSerializerBase(serializers.ModelSerializer):
     class Meta:
         model = providers.Carrier
-        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
         exclude = [
             "created_at",
             "updated_at",
@@ -311,9 +311,14 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: serializers.Context, **kwargs):
-        name = next((k for k in validated_data.keys() if "settings" in k), "")
-        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+        name = next(
+            (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
+            "",
+        )
         settings_data = validated_data.get(name, {})
+        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+        settings_name = serializer.Meta.model.__name__.lower()
+
         payload = {
             key: value
             for key, value in settings_data.items()
@@ -325,9 +330,11 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             payload=settings_data,
             context=context,
         )
-
         settings = serializers.save_one_to_one_data(
-            name, serializer, payload={name: payload}, context=context
+            settings_name,
+            serializer,
+            payload={settings_name: payload},
+            context=context,
         )
 
         services = settings_data.get("services") or getattr(
@@ -348,21 +355,33 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         return getattr(settings, "carrier_ptr", None)
 
     @transaction.atomic
-    def update(self, instance, validated_data: dict, context: serializers.Context, **kwargs):
-        name = next((k for k in validated_data.keys() if "settings" in k), "")
-        serializer = CARRIER_MODEL_SERIALIZERS.get(name)
+    def update(
+        self, instance, validated_data: dict, context: serializers.Context, **kwargs
+    ):
+        carrier_name = (
+            instance.settings.carrier_name
+            if instance.settings.carrier_name in providers.MODELS
+            else "generic"
+        )
+        settings_name = instance.settings.__class__.__name__.lower()
+        serializer = CARRIER_MODEL_SERIALIZERS.get(carrier_name)
 
         payload = {
             key: value
-            for key, value in validated_data.get(name, {}).items()
+            for key, value in validated_data.get(carrier_name, {}).items()
             if key not in ["id", "services", "label_template"]
         }
 
         settings = serializers.save_one_to_one_data(
-            name, serializer, instance, payload={name: payload}
+            settings_name,
+            serializer,
+            instance,
+            payload={settings_name: payload},
+            context=context,
         )
 
-        template = validated_data.get(name, {}).get("label_template")
+        template = validated_data.get(carrier_name, {}).get("label_template")
+
         if template:
             settings.label_template = serializers.save_one_to_one_data(
                 "label_template",
@@ -373,7 +392,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             )
             settings.save()
 
-        return getattr(settings, "carrier_ptr", None)
+        return getattr(settings, "carrier_ptr", instance)
 
 
 ConnectionModelSerializer = type(
@@ -390,6 +409,6 @@ PartialConnectionModelSerializer = type(
     (ConnectionModelSerializerBase,),
     {
         _name: serializers.make_fields_optional(_serializer)(required=False)
-        for _name, _serializer in create_carrier_model_serializers(True).items()
+        for _name, _serializer in PARTIAL_CARRIER_MODEL_SERIALIZERS.items()
     },
 )

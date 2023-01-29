@@ -1,25 +1,17 @@
 import pydoc
 import logging
-import drf_yasg.openapi as openapi
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple, List
 from django.db import models
 from django.conf import settings
 from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import serializers
+from drf_spectacular.types import OpenApiTypes
 
-from karrio.core.utils import DP
+import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
-
-
-class AbstractSerializer:
-    def create(self, validated_data, **kwargs):
-        super().create(validated_data)
-
-    def update(self, instance, validated_data, **kwargs):
-        super().update(instance, validated_data, **kwargs)
 
 
 class Context(NamedTuple):
@@ -31,15 +23,69 @@ class Context(NamedTuple):
         return getattr(self, item)
 
 
+class DecoratedSerializer:
+    def __init__(
+        self,
+        instance: models.Model = None,
+        serializer: "Serializer" = None,
+    ):
+        self._instance = instance
+        self._serializer = serializer
+
+    @property
+    def data(self) -> Optional[dict]:
+        return self._serializer.validated_data if self._serializer is not None else None
+
+    @property
+    def instance(self) -> models.Model:
+        return self._instance
+
+    def save(self, **kwargs) -> "DecoratedSerializer":
+        if self._serializer is not None:
+            self._instance = self._serializer.save(**kwargs)
+
+        return self
+
+
+class AbstractSerializer:
+    def create(self, validated_data, **kwargs):
+        super().create(validated_data)
+
+    def update(self, instance, validated_data, **kwargs):
+        super().update(instance, validated_data, **kwargs)
+
+    @classmethod
+    def map(
+        cls, instance=None, data: Union[str, dict] = None, **kwargs
+    ) -> "DecoratedSerializer":
+        if data is None and instance is None:
+            serializer = None
+        else:
+            serializer = (
+                cls(data=data or {}, **kwargs)  # type:ignore
+                if instance is None
+                else cls(
+                    instance, data=data or {}, **{**kwargs, "partial": True}
+                )  # type:ignore
+            )
+
+            serializer.is_valid(raise_exception=True)  # type:ignore
+
+        return DecoratedSerializer(
+            instance=instance,
+            serializer=serializer,  # type:ignore
+        )
+
+
 class Serializer(serializers.Serializer, AbstractSerializer):
-    pass
+    context: dict = {}
 
 
 class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):
-    def create(self, data: dict, **kwargs):
+    def create(self, data: dict, **kwargs):  # type: ignore
         return self.Meta.model.objects.create(**data)
 
-    def update(self, instance, data: dict, **kwargs):
+    def update(self, instance, data: dict, **kwargs):  # type: ignore
         for name, value in data.items():
             if name != "created_by":
                 setattr(instance, name, value)
@@ -55,7 +101,7 @@ class StringListField(serializers.ListField):
 class PlainDictField(serializers.DictField):
     class Meta:
         swagger_schema_fields = {
-            "type": openapi.TYPE_OBJECT,
+            "type": OpenApiTypes.OBJECT,
             "additional_properties": True,
         }
 
@@ -110,52 +156,10 @@ def PaginatedResult(serializer_name: str, content_serializer: Type[Serializer]):
     )
 
 
-class _SerializerDecoratorInitializer(Generic[T]):
-    def __getitem__(self, serializer_type: Type[Serializer]):
-        class Decorator:
-            def __init__(self, instance=None, data: Union[str, dict] = None, **kwargs):
-                self._instance = instance
-
-                if data is None and instance is None:
-                    self._serializer = None
-
-                else:
-                    self._serializer: serializer_type = (
-                        serializer_type(data=data, **kwargs)
-                        if instance is None
-                        else serializer_type(
-                            instance, data=data, **{**kwargs, "partial": True}
-                        )
-                    )
-
-                    self._serializer.is_valid(raise_exception=True)
-
-            @property
-            def data(self) -> Optional[dict]:
-                return (
-                    self._serializer.validated_data
-                    if self._serializer is not None
-                    else None
-                )
-
-            @property
-            def instance(self):
-                return self._instance
-
-            def save(self, **kwargs) -> "Decorator":
-                if self._serializer is not None:
-                    self._instance = self._serializer.save(**kwargs)
-
-                return self
-
-        return Decorator
-
-
-SerializerDecorator = _SerializerDecoratorInitializer()
-
-
 def owned_model_serializer(serializer: Type[Serializer]):
-    class MetaSerializer(serializer):
+    class MetaSerializer(serializer):  # type: ignore
+        context: dict = {}
+
         def __init__(self, *args, **kwargs):
             if "context" in kwargs:
                 context = kwargs.get("context") or {}
@@ -214,6 +218,32 @@ def link_org(entity: ModelSerializer, context: Context):
         )
 
 
+def bulk_link_org(entities: List[models.Model], context: Context):
+    if len(entities) == 0 or settings.MULTI_ORGANIZATIONS is False:
+        return
+
+    EntityLinkModel = entities[0].__class__.link.related.related_model
+    links = []
+
+    for entity in entities:
+        entity.link = EntityLinkModel(org=context.org, item=entity)
+        links.append(entity.link)
+
+    EntityLinkModel.objects.bulk_create(links)
+
+
+def get_object_context(entity) -> Context:
+    org = (
+        entity.org.first() if (hasattr(entity, "org") and entity.org.exists()) else None
+    )
+
+    return Context(
+        org=org,
+        user=getattr(entity, "created_by", None),
+        test_mode=getattr(entity, "test_mode", None),
+    )
+
+
 def save_many_to_many_data(
     name: str,
     serializer: ModelSerializer,
@@ -238,11 +268,13 @@ def save_many_to_many_data(
         )
 
         if item_instance is None:
-            item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
+            item = serializer.map(data=data, **kwargs).save().instance
         else:
             item = (
-                SerializerDecorator[serializer](
-                    instance=item_instance, data=data, **{**kwargs, "partial": True}
+                serializer.map(
+                    data=data,
+                    instance=item_instance,
+                    **{**kwargs, "partial": True},
                 )
                 .save()
                 .instance
@@ -270,24 +302,20 @@ def save_one_to_one_data(
         setattr(parent, name, None)
 
     if instance is None:
-        new_instance = (
-            SerializerDecorator[serializer](data=data, **kwargs).save().instance
-        )
-        parent and setattr(parent, name, new_instance)
+        new_instance = serializer.map(data=data, **kwargs).save().instance
+        parent and setattr(parent, name, new_instance)  # type: ignore
         return new_instance
 
     return (
-        SerializerDecorator[serializer](
-            instance=instance, data=data, partial=True, **kwargs
-        )
+        serializer.map(instance=instance, data=data, partial=True, **kwargs)
         .save()
         .instance
     )
 
 
-def allow_model_id(model_paths: []):
+def allow_model_id(model_paths: []):  # type: ignore
     def _decorator(serializer: Type[Serializer]):
-        class ModelIdSerializer(serializer):
+        class ModelIdSerializer(serializer):  # type: ignore
             def __init__(self, *args, **kwargs):
                 for param, model_path in model_paths:
                     content = kwargs.get("data", {}).get(param)
@@ -321,7 +349,7 @@ def allow_model_id(model_paths: []):
 def make_fields_optional(serializer: Type[ModelSerializer]):
     _name = f"Partial{serializer.__name__}"
 
-    class _Meta(serializer.Meta):
+    class _Meta(serializer.Meta):  # type: ignore
         extra_kwargs = {
             **getattr(serializer.Meta, "extra_kwargs", {}),
             **{
@@ -334,10 +362,19 @@ def make_fields_optional(serializer: Type[ModelSerializer]):
 
 
 def exclude_id_field(serializer: Type[ModelSerializer]):
-    class _Meta(serializer.Meta):
+    class _Meta(serializer.Meta):  # type: ignore
         exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
 
     return type(serializer.__name__, (serializer,), dict(Meta=_Meta))
+
+
+def is_field_optional(model, field_name: str) -> bool:
+    field = getattr(model, field_name)
+
+    if hasattr(field, "field"):
+        return field.field.null
+
+    return False
 
 
 def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> dict:
@@ -347,7 +384,7 @@ def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> di
     data = payload.copy()
 
     for key in [k for k in keys if k in payload]:
-        options = DP.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
-        data.update({key: options})
+        value = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+        data.update({key: value})
 
     return data

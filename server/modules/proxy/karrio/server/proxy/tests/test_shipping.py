@@ -228,6 +228,7 @@ SHIPPING_RESPONSE = {
     "services": [],
     "options": {"shipment_date": ANY},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "billing_address": None,
     "customs": None,
     "rates": [
         {
@@ -288,11 +289,21 @@ SHIPPING_RESPONSE = {
             {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
             {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
         ],
-        "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+        "meta": {
+            "ext": "canadapost",
+            "carrier": "canadapost",
+            "rate_provider": "canadapost",
+            "service_name": "CANADAPOST PRIORITY",
+        },
         "test_mode": True,
     },
     "docs": {"label": "==apodifjoefr", "invoice": None},
-    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
+    "meta": {
+        "ext": "canadapost",
+        "carrier": "canadapost",
+        "rate_provider": "canadapost",
+        "service_name": "CANADAPOST PRIORITY",
+    },
     "service": "canadapost_priority",
     "selected_rate_id": ANY,
     "test_mode": True,

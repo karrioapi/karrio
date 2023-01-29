@@ -1,3 +1,4 @@
+# type: ignore
 import importlib.util
 from karrio.server.settings.base import *
 

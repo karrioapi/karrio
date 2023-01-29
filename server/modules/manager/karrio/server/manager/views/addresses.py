@@ -1,15 +1,13 @@
 import logging
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
-    SerializerDecorator,
     PaginatedResult,
     ErrorResponse,
     AddressData,
@@ -18,11 +16,12 @@ from karrio.server.manager.serializers import (
     can_mutate_address,
 )
 from karrio.server.manager.router import router
-from karrio.server.manager import models
+import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 
 
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+logger = logging.getLogger(__name__)
 Addresses = PaginatedResult("AddressList", Address)
 
 
@@ -33,25 +32,15 @@ class AddressList(GenericAPIView):
     )
     serializer_class = Addresses
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all addresses",
+        summary="List all addresses",
         responses={
             200: Addresses(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request GET \\
-                  --url '/v1/addresses' \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
     )
     def get(self, request: Request):
         """
@@ -67,45 +56,23 @@ class AddressList(GenericAPIView):
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create an address",
-        request_body=AddressData(),
+        summary="Create an address",
+        request=AddressData(),
         responses={
             201: Address(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request POST \\
-                  --url /v1/addresses \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "address_line1": "125 Church St",
-                    "person_name": "John Doe",
-                    "company_name": "A corp.",
-                    "phone_number": "+1 514 000 0000",
-                    "city": "Moncton",
-                    "country_code": "CA",
-                    "postal_code": "E1C4Z8",
-                    "residential": false,
-                    "state_code": "NB"
-                }'
-                """,
-            }
-        ],
     )
     def post(self, request: Request):
         """
         Create a new address.
         """
         address = (
-            SerializerDecorator[AddressSerializer](data=request.data, context=request)
+            AddressSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -113,25 +80,15 @@ class AddressList(GenericAPIView):
 
 
 class AddressDetail(APIView):
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an address",
+        summary="Retrieve an address",
         responses={
             200: Address(),
             400: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request GET \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
     )
     def get(self, request: Request, pk: str):
         """
@@ -140,11 +97,11 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         return Response(Address(address).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update an address",
-        request_body=AddressData(),
+        summary="Update an address",
+        request=AddressData(),
         responses={
             200: Address(),
             400: ErrorResponse(),
@@ -152,20 +109,6 @@ class AddressDetail(APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request PATCH \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>' \\
-                  --header 'Content-Type: application/json' \\
-                  --data '{
-                    "city": "Pierrefonds"
-                }'
-                """,
-            }
-        ],
     )
     def patch(self, request: Request, pk: str):
         """
@@ -174,30 +117,20 @@ class AddressDetail(APIView):
         address = models.Address.access_by(request).get(pk=pk)
         can_mutate_address(address, update=True)
 
-        SerializerDecorator[AddressSerializer](address, data=request.data).save()
+        AddressSerializer.map(address, data=request.data).save()
 
         return Response(Address(address).data)
 
-    @swagger_auto_schema(
+    @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
-        operation_summary="Discard an address",
+        summary="Discard an address",
         responses={
             200: Address(),
             404: ErrorResponse(),
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
-        code_examples=[
-            {
-                "lang": "bash",
-                "source": """
-                curl --request DELETE \\
-                  --url /v1/addresses/<ADDRESS_ID> \\
-                  --header 'Authorization: Token <API_KEY>'
-                """,
-            }
-        ],
     )
     def delete(self, request: Request, pk: str):
         """
