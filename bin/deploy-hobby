@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2023.1rc5}"
+export KARRIO_TAG="${KARRIO_TAG:-2023.1}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -23,7 +23,7 @@ if ! [ -z "$1" ]
 then
 export KARRIO_TAG=$1
 else
-echo "What version of Karrio would you like to install? (We default to '2023.1rc5')"
+echo "What version of Karrio would you like to install? (We default to '2023.1')"
 echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
 read -r KARRIO_TAG_READ
 if [ -z "$KARRIO_TAG_READ" ]
@@ -70,8 +70,7 @@ mkdir -p ./karrio
 cd karrio
 
 echo "Downloading karrio's installation files"
-# curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
-curl https://raw.githubusercontent.com/karrioapi/karrio/karrio-2023.1/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
 
 cd -
 

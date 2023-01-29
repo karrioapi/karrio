@@ -44,15 +44,14 @@ else
 fi
 
 [[ -f ".env" ]] && export $(cat .env | xargs) || ( echo "No .env file found. Please create it with SECRET_KEY and DOMAIN set." && exit 1)
-export KARRIO_TAG="${KARRIO_TAG:-2023.1rc6}"
+export KARRIO_TAG="${KARRIO_TAG:-2023.1}"
 
 # get karrio scripts
 mkdir -p ./karrio
 cd karrio
 
 echo "Downloading the latest karrio's installation files"
-# curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
-curl https://raw.githubusercontent.com/karrioapi/karrio/karrio-2023.1/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml -o docker-compose.hobby.yml
 
 cd -
 
