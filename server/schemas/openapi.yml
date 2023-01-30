@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ''
-  version: 2023.1rc6
+  version: '2023.1'
 paths:
   /:
     get:
