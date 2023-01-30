@@ -1,13 +1,13 @@
 # Karrio
 
-- Website: <https://karrio.io>
-- Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
-- Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
-- Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
-- Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
-- Blog: [Blog](https://docs.karrio.io/blog)
+-   Website: <https://karrio.io>
+-   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
+-   Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
+-   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
+-   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
+-   Blog: [Blog](https://docs.karrio.io/blog)
 
-<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=86037d49-97aa-4091-ad2b-e9b221e64ed0" />
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=e72dd847-dc7f-4f81-bce4-88eeb20d807f" />
 <a href="https://karrio.io" target="_blank">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo-inverted.svg" height="100px" />
@@ -17,7 +17,7 @@
 
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrioapi/karrio&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 
 Karrio is a suite of open-source tools that make shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
 
@@ -29,21 +29,21 @@ cd karrio/docker
 docker compose up
 ```
 
-- Karrio server accessible at <http://localhost:5002>
-- Karrio dashboard accessible at <http://localhost:3000>
+-   Karrio server accessible at <http://localhost:5002>
+-   Karrio dashboard accessible at <http://localhost:3000>
 
 Default Login: admin@example.com | demo
 
 ## Features
 
-- **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
-- **Extensible**: Build anything with webhooks, API and metadata.
-- **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
-- **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
-- **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
-- **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
-- **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
+-   **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
+-   **Extensible**: Build anything with webhooks, API and metadata.
+-   **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
+-   **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
+-   **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
+-   **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
+-   **Cloud**: Optimized for deployments using Docker.
+-   **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
 
 <img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
@@ -53,7 +53,7 @@ Default Login: admin@example.com | demo
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
- ```
+```
 
 ### Karrio Cloud
 
@@ -91,12 +91,12 @@ If you run into any problems or issues, please create a Github issue and we'll t
 
 We strive to provide good support through our issue trackers on Github. However, if you'd like to receive private & prioritized support with:
 
-- Guaranteed SLAs
-- Phone / video calls to discuss your specific use case and get recommendations on best practices
-- Private discussions over Discord
-- Guidance around deployment, ops and scaling best practices
-- Prioritized feature requests
-- Prioritized carriers integrations
+-   Guaranteed SLAs
+-   Phone / video calls to discuss your specific use case and get recommendations on best practices
+-   Private discussions over Discord
+-   Guidance around deployment, ops and scaling best practices
+-   Prioritized feature requests
+-   Prioritized carriers integrations
 
 We do offer paid support options. Please reach out to us at hello@karrio.io to sign up.
 
