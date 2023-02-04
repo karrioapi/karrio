@@ -27,7 +27,7 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("pricing", "0027_alter_surcharge_services"),
+        ("pricing", "0028_auto_20230204_0948"),
     ]
 
     operations = [

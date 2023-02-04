@@ -94,7 +94,7 @@ class Carrier(core.OwnedEntity):
         return (
             "generic"
             if hasattr(self.settings, "custom_carrier_name")
-            else self.settings.carrier_name
+            else getattr(self.settings, "carrier_name", None)
         )
 
     @property
