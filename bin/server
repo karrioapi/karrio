@@ -11,7 +11,7 @@ if [[ "$*" == *gen:graph* ]]; then
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
-    karrio spectacular --file "${ROOT:?}/server/schemas/openapi.yml"
+    curl http://0.0.0.0:5002/shipping-openapi -o "${ROOT:?}/server/schemas/openapi.yml"
 	cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"

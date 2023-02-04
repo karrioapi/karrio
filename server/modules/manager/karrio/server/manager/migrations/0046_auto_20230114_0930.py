@@ -61,6 +61,7 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ("providers", "0044_carrier_carrier_capabilities"),
         ("manager", "0045_alter_customs_duty_billing_address_and_more"),
     ]
 

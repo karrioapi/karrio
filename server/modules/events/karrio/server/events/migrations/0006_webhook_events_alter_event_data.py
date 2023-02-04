@@ -25,7 +25,7 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("events", "0005_event_event_object_idx"),
+        ("events", "0006_auto_20230204_0940"),
     ]
 
     operations = [
