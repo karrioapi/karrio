@@ -149,8 +149,7 @@ def render_reference_descriptions(request):
 
         return f'{" x ".join(vals)} {preset.get("dimension_unit").lower()}'
 
-    template = """
-## Carriers
+    template = """## Carriers
 | Carrier Name | Display Name |
 | ------------ | ------------ |
 {% for carrier, name in refs.get("carriers", {}).items() -%}{% if carrier != "generic" -%}

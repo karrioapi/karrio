@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
 # Install system dependencies
-sudo ./bin/install-binaries
+if [ "$(uname)" == "Darwin" ]; then
+    # Mac OS X platform
+    brew install gcc pango libffi ghostscript
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    # GNU/Linux platform
+    apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
+fi
 
 # Install python dependencies
 pip3 install -r https://raw.githubusercontent.com/karrioapi/karrio/HEAD/requirements.txt
