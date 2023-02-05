@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='client',
             name='feature_flags',
-            field=karrio.server.core.fields.MultiChoiceField(base_field=models.CharField(choices=[('AUDIT_LOGGING', 'AUDIT_LOGGING'), ('ALLOW_SIGNUP', 'ALLOW_SIGNUP'), ('ALLOW_ADMIN_APPROVED_SIGNUP', 'ALLOW_ADMIN_APPROVED_SIGNUP'), ('ALLOW_MULTI_ACCOUNT', 'ALLOW_MULTI_ACCOUNT'), ('ORDERS_MANAGEMENT', 'ORDERS_MANAGEMENT'), ('APPS_MANAGEMENT', 'APPS_MANAGEMENT'), ('DOCUMENTS_MANAGEMENT', 'DOCUMENTS_MANAGEMENT'), ('DATA_IMPORT_EXPORT', 'DATA_IMPORT_EXPORT'), ('CUSTOM_CARRIER_DEFINITION', 'CUSTOM_CARRIER_DEFINITION'), ('PERSIST_SDK_TRACING', 'PERSIST_SDK_TRACING')], max_length=100), default=functools.partial(karrio.server.core.models._identity, *(), **{'value': ['AUDIT_LOGGING', 'ALLOW_SIGNUP', 'ALLOW_ADMIN_APPROVED_SIGNUP', 'ALLOW_MULTI_ACCOUNT', 'ORDERS_MANAGEMENT', 'APPS_MANAGEMENT', 'DOCUMENTS_MANAGEMENT', 'DATA_IMPORT_EXPORT', 'CUSTOM_CARRIER_DEFINITION', 'PERSIST_SDK_TRACING']}), help_text='The list of feature flags.', size=None),
+            field=karrio.server.core.fields.MultiChoiceField(
+                choices=[('AUDIT_LOGGING', 'AUDIT_LOGGING'), ('ALLOW_SIGNUP', 'ALLOW_SIGNUP'), ('ALLOW_ADMIN_APPROVED_SIGNUP', 'ALLOW_ADMIN_APPROVED_SIGNUP'), ('ALLOW_MULTI_ACCOUNT', 'ALLOW_MULTI_ACCOUNT'), ('ORDERS_MANAGEMENT', 'ORDERS_MANAGEMENT'), ('APPS_MANAGEMENT', 'APPS_MANAGEMENT'), ('DOCUMENTS_MANAGEMENT', 'DOCUMENTS_MANAGEMENT'), ('DATA_IMPORT_EXPORT', 'DATA_IMPORT_EXPORT'), ('CUSTOM_CARRIER_DEFINITION', 'CUSTOM_CARRIER_DEFINITION'), ('PERSIST_SDK_TRACING', 'PERSIST_SDK_TRACING')],
+                default=functools.partial(karrio.server.core.models._identity, *(), **{'value': ['AUDIT_LOGGING', 'ALLOW_SIGNUP', 'ALLOW_ADMIN_APPROVED_SIGNUP', 'ALLOW_MULTI_ACCOUNT', 'ORDERS_MANAGEMENT', 'APPS_MANAGEMENT', 'DOCUMENTS_MANAGEMENT', 'DATA_IMPORT_EXPORT', 'CUSTOM_CARRIER_DEFINITION', 'PERSIST_SDK_TRACING']}),
+                help_text='The list of feature flags.'
+            ),
         ),
     ]
