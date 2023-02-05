@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.1.1`.
+    The current version is `2023.1.2`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.1.1
+  version: 2023.1.2
 paths:
   /:
     get:
@@ -122,6 +122,8 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
+                    ORG_LEVEL_BILLING: true
+                    TENANT_LEVEL_BILLING: true
                     ADMIN: ''
                     OPENAPI: ''
                     GRAPHQL: ''
@@ -2265,6 +2267,8 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
+                    ORG_LEVEL_BILLING: true
+                    TENANT_LEVEL_BILLING: true
                     ADMIN: ''
                     OPENAPI: ''
                     GRAPHQL: ''
