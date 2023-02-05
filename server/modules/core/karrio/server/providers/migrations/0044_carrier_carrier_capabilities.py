@@ -34,7 +34,7 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("providers", "0044_auto_20230204_0943"),
+        ("providers", "0043_alter_genericsettings_account_number_and_more"),
     ]
 
     operations = [

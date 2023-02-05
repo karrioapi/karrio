@@ -34,9 +34,12 @@ def forwards_func(apps, schema_editor):
 
     for tracker in trackers:
         tracking_carrier = providers.Carrier.objects.get(pk=tracker.tracking_carrier.pk)
-        meta = shipment.meta or {}
+        meta = tracker.meta or {}
         carrier = (
-            list(tracker.options.values())[0].get("carrier")
+            (
+                (list(tracker.options.values())[0] or {}).get("carrier")
+                or tracking_carrier.carrier_name
+            )
             if len(tracker.options.values()) > 0
             else tracking_carrier.carrier_name
         )
