@@ -41,6 +41,7 @@ setup(
         "python-decouple",
         "karrio.server.core",
         "sentry-sdk",
+        "whitenoise",
     ],
     entry_points={"console_scripts": ["karrio = karrio.server.__main__:main"]},
     classifiers=[
