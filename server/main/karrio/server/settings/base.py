@@ -205,12 +205,14 @@ NAMESPACED_URLS = [
     ("oauth/", "oauth2_provider.urls", "oauth2_provider"),
 ]
 
+WHITENOISE_APP = (["whitenoise.runserver_nostatic"] if DEBUG else [])
 BASE_APPS = [
     "karrio.server.user",
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "django.contrib.sessions",
     "django.contrib.messages",
+    *WHITENOISE_APP,
     "django.contrib.staticfiles",
     "django.contrib.admin",
 ]
@@ -242,6 +244,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -339,13 +342,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
+STATIC_HOST = config("CDN_STATIC_HOST", default="") if not DEBUG else ""
+STATIC_URL = STATIC_HOST + config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
 STATIC_ROOT = config("STATIC_ROOT_DIR", default=(BASE_DIR / "server" / "staticfiles"))
 
 STATICFILES_DIRS = [
     BASE_DIR / "server" / "static" / "karrio",
     BASE_DIR / "server" / "static" / "extra",
 ]
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Django REST framework
