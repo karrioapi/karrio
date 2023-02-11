@@ -306,7 +306,6 @@ def default_tracking_event(
     code: str = None,
     description: str = None,
 ):
-
     return [
         DP.to_dict(
             datatypes.TrackingEvent(

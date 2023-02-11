@@ -17,18 +17,16 @@ Metadata = openapi.OpenApiResponse(
             value={
                 "VERSION": "",
                 "APP_NAME": "",
-                "APP_WEBSITE": "",
-                **{
-                    flag: True
-                    for flag in FEATURE_FLAGS
-                },
+                "HOST": "",
                 "ADMIN": "",
                 "OPENAPI": "",
                 "GRAPHQL": "",
-            }
+                **{flag: True for flag in FEATURE_FLAGS},
+            },
         )
     ],
 )
+
 
 @openapi.extend_schema(
     auth=[],
