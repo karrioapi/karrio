@@ -10,6 +10,7 @@ class CreateTenantMutationInput(utils.BaseInput):
     domain: str
     schema_name: str
     feature_flags: typing.Optional[utils.JSON] = strawberry.UNSET
+    app_domains: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input
@@ -17,6 +18,7 @@ class UpdateTenantMutationInput(utils.BaseInput):
     schema_name: str
     name: typing.Optional[str] = strawberry.UNSET
     feature_flags: typing.Optional[utils.JSON] = strawberry.UNSET
+    app_domains: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input
@@ -39,3 +41,10 @@ class UpdateCustomDomainMutationInput(utils.BaseInput):
 @strawberry.input
 class DeleteCustomDomainMutationInput(utils.BaseInput):
     schema_name: str
+
+
+@strawberry.input
+class TenantFilter(utils.Paginated):
+    app_domain: typing.Optional[str] = strawberry.UNSET
+    api_domain: typing.Optional[str] = strawberry.UNSET
+    schema_name: typing.Optional[str] = strawberry.UNSET
