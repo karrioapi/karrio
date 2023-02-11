@@ -14,6 +14,12 @@ class Client(TenantMixin):
         default=core.field_default({}),
         help_text="The feature flags.",
     )
+    app_domains = models.JSONField(
+        null=True,
+        blank=True,
+        default=core.field_default([]),
+        help_text="App domains.",
+    )
 
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
