@@ -6,9 +6,8 @@ import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("orders", "0013_remove_order_shipments"),
+        ("orders", "0012_order_order_id_idx"),
     ]
 
     operations = [

@@ -5,20 +5,11 @@ from django.conf import settings
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0041_alter_commodity_options_alter_parcel_options"),
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name="shipment",
-            name="shipment_tracking_number_idx",
-        ),
-        migrations.RemoveIndex(
-            model_name="tracking",
-            name="tracker_tracking_number_idx",
-        ),
         migrations.AlterField(
             model_name="address",
             name="address_line1",
@@ -661,5 +652,7 @@ class Migration(migrations.Migration):
 
     if "postgres" in settings.DB_ENGINE:
         operations = [
-            migrations.RunSQL('DROP INDEX IF EXISTS pickup_confirmation_number_a31ac742_like'),
+            migrations.RunSQL(
+                "DROP INDEX IF EXISTS pickup_confirmation_number_a31ac742_like"
+            ),
         ]

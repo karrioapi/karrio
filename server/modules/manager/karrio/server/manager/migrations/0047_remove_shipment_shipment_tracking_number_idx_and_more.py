@@ -9,14 +9,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name="shipment",
-            name="shipment_tracking_number_idx",
-        ),
-        migrations.RemoveIndex(
-            model_name="tracking",
-            name="tracker_tracking_number_idx",
-        ),
         migrations.AlterField(
             model_name="address",
             name="country_code",
