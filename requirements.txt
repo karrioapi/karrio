@@ -90,14 +90,14 @@ karrio.royalmail==2023.1
 karrio.sendle==2023.1
 karrio.server==2023.1.5
 karrio.server.apps==2023.1
-karrio.server.core==2023.1.2
+karrio.server.core==2023.1.4
 karrio.server.data==2023.1
 karrio.server.documents==2023.1
 karrio.server.events==2023.1.2
 karrio.server.graph==2023.1
 karrio.server.iam==2023.1
-karrio.server.manager==2023.1.2
-karrio.server.orders==2023.1.2
+karrio.server.manager==2023.1.4
+karrio.server.orders==2023.1.4
 karrio.server.pricing==2023.1.2
 karrio.server.proxy==2023.1
 karrio.sf-express==2023.1
