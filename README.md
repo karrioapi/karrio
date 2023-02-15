@@ -5,7 +5,7 @@
 -   Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
 -   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
 -   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
--   Blog: [Blog](https://docs.karrio.io/blog)
+-   Blog: [Blog](https://karrio.io/blog)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=e72dd847-dc7f-4f81-bce4-88eeb20d807f" />
 <a href="https://karrio.io" target="_blank">
