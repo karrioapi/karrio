@@ -32,7 +32,7 @@ Deprecated==1.2.13
 deprecation==2.1.0
 diff-match-patch==20200713
 dj-database-url==1.2.0
-Django==4.1.6
+Django==4.1.7
 django-constance==2.9.1
 django-cors-headers==3.13.0
 django-downloadview==2.3.0
