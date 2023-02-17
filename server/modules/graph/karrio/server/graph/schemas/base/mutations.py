@@ -116,9 +116,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
             logger.exception(e)
             raise e
 
-        return RequestEmailChangeMutation(
-            user=info.context.request.user.id
-        )  # type:ignore
+        return RequestEmailChangeMutation(user=info.context.request.user)  # type:ignore
 
 
 @strawberry.type

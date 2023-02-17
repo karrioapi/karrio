@@ -49,10 +49,14 @@ class ShippingRequestValidation(ShippingRequest):
 
 
 class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
-    object_type = serializers.CharField(default="shipment", help_text="Specifies the object type")
+    object_type = serializers.CharField(
+        default="shipment", help_text="Specifies the object type"
+    )
 
 
 class ShippingDetails(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
@@ -88,6 +92,8 @@ class ShippingDetails(APIView):
 
 
 class ShippingCancel(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",

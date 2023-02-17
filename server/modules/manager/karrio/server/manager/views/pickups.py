@@ -57,6 +57,8 @@ class PickupList(GenericAPIView):
 
 
 class PickupRequest(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
@@ -87,6 +89,8 @@ class PickupRequest(APIView):
 
 
 class PickupDetails(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -121,9 +125,7 @@ class PickupDetails(APIView):
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
         instance = (
-            PickupUpdateData.map(
-                pickup, data=request.data, context=request
-            )
+            PickupUpdateData.map(pickup, data=request.data, context=request)
             .save()
             .instance
         )
@@ -151,11 +153,7 @@ class PickupCancel(APIView):
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
 
-        update = (
-            PickupCancelData.map(pickup, data=request.data)
-            .save()
-            .instance
-        )
+        update = PickupCancelData.map(pickup, data=request.data).save().instance
 
         return Response(Pickup(update).data)
 

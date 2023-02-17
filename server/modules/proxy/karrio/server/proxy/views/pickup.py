@@ -26,6 +26,8 @@ CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
@@ -58,6 +60,8 @@ class PickupSchedule(APIView):
 
 
 class PickupUpdate(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
@@ -90,6 +94,8 @@ class PickupUpdate(APIView):
 
 
 class PickupCancel(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",

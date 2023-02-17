@@ -9,17 +9,15 @@ from django_email_verification.confirm import (
 )
 
 
-def send_email(user, redirect_url, thread=True, **kwargs):
+def send_email(user, redirect_url, thread=True, expiry=None, **kwargs):
     try:
         user.save()
 
         if kwargs.get("custom_salt"):
             default_token_generator.key_salt = kwargs["custom_salt"]
 
-        _expiry = kwargs.get("expiry") or (
-            datetime.datetime.now() + datetime.timedelta(days=30)
-        )
-        token, expiry = default_token_generator.make_token(user, _expiry, kind="MAIL")
+        _expiry = expiry or (datetime.datetime.now() + datetime.timedelta(days=30))
+        token, __expiry = default_token_generator.make_token(user, _expiry, kind="MAIL")
 
         domain = redirect_url
         sender = _get_validated_field("EMAIL_FROM_ADDRESS")
@@ -30,7 +28,7 @@ def send_email(user, redirect_url, thread=True, **kwargs):
         args = (
             user,
             token,
-            expiry,
+            __expiry,
             sender,
             domain,
             subject,

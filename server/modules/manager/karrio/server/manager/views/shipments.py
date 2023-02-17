@@ -40,6 +40,7 @@ Shipments = PaginatedResult("ShipmentList", Shipment)
 
 
 class ShipmentList(GenericAPIView):
+    throttle_scope = "carrier_request"
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
@@ -92,6 +93,8 @@ class ShipmentList(GenericAPIView):
 
 
 class ShipmentDetails(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -149,6 +152,8 @@ class ShipmentDetails(APIView):
 
 
 class ShipmentCancel(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
@@ -176,7 +181,7 @@ class ShipmentCancel(APIView):
 
 
 class ShipmentRates(APIView):
-    logging_methods = ["GET"]
+    throttle_scope = "carrier_request"
 
     @openapi.extend_schema(
         tags=["Shipments"],
@@ -211,6 +216,8 @@ class ShipmentRates(APIView):
 
 
 class ShipmentPurchase(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}purchase",

@@ -25,6 +25,8 @@ Use this service to fetch a shipping rates available.
 
 
 class RateViewAPI(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
