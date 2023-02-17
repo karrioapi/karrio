@@ -86,11 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-<<<<<<< HEAD
   version: 2023.1.6
-=======
-  version: 2023.1.6
->>>>>>> 71ff884a ((release) build 2023.1.6rc)
 paths:
   /:
     get:

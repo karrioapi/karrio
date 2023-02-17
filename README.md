@@ -61,7 +61,7 @@ Request access to [Karrio Cloud](https://www.karrio.io/get-started).
 
 ### Enterprise self-hosted
 
-See our [enterprise self-hosted docs](https://docs.karrio.io/installation) to deploy a scalable, production-ready instance with support from our team.
+See our [enterprise self-hosted docs](https://docs.karrio.io/self-hosting/enterprise) to deploy a scalable, production-ready instance with support from our team.
 
 ## Our Philosophy
 
@@ -102,9 +102,9 @@ We do offer paid support options. Please reach out to us at hello@karrio.io to s
 
 ## Developing locally & Contributing
 
-See our Docs for instructions on [developing Karrio locally](https://docs.karrio.io/development/setup).
+See our Docs for instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development).
 
-We <3 contributions big or small, check out our [guide on how to get started](https://docs.karrio.io/contributing).
+We <3 contributions big or small, check out our [guide on how to get started](https://docs.karrio.io/contributing/guidlines).
 
 Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairing%20session&body=I'd%20like%20to%20do%20a%20pairing%20session!) to chat with a member of our team.
 
