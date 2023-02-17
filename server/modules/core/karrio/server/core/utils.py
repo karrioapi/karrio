@@ -271,6 +271,7 @@ def send_email(
     email_template: str,
     context: dict = {},
     text_template: str = None,
+    **kwargs,
 ):
     sender = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
     html = confirm.render_to_string(email_template, context)
@@ -306,7 +307,6 @@ def default_tracking_event(
     code: str = None,
     description: str = None,
 ):
-
     return [
         DP.to_dict(
             datatypes.TrackingEvent(

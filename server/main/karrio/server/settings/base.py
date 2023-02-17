@@ -205,7 +205,7 @@ NAMESPACED_URLS = [
     ("oauth/", "oauth2_provider.urls", "oauth2_provider"),
 ]
 
-WHITENOISE_APP = (["whitenoise.runserver_nostatic"] if DEBUG else [])
+WHITENOISE_APP = ["whitenoise.runserver_nostatic"] if DEBUG else []
 BASE_APPS = [
     "karrio.server.user",
     "django.contrib.contenttypes",
@@ -343,7 +343,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_HOST = config("CDN_STATIC_HOST", default="") if not DEBUG else ""
-STATIC_URL = STATIC_HOST + config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
+STATIC_URL = STATIC_HOST + config(
+    "STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/")
+)
 STATIC_ROOT = config("STATIC_ROOT_DIR", default=(BASE_DIR / "server" / "staticfiles"))
 
 STATICFILES_DIRS = [
@@ -384,8 +386,13 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": (
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
     ),
-    "DEFAULT_THROTTLE_RATES": {"anon": "40/minute", "user": "60/minute"},
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/minute",
+        "user": "600/minute",
+        "carrier_request": "300/minute",
+    },
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "karrio.server.core.exceptions.custom_exception_handler",
     "JSON_UNDERSCOREIZE": {"no_underscore_before_number": True},

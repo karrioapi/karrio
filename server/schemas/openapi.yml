@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.1.5`.
+    The current version is `2023.1.6`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.1.5
+  version: 2023.1.6
 paths:
   /:
     get:
@@ -106,7 +106,10 @@ paths:
                   value:
                     VERSION: ''
                     APP_NAME: ''
-                    APP_WEBSITE: ''
+                    HOST: ''
+                    ADMIN: ''
+                    OPENAPI: ''
+                    GRAPHQL: ''
                     AUDIT_LOGGING: true
                     ALLOW_SIGNUP: true
                     ALLOW_ADMIN_APPROVED_SIGNUP: true
@@ -124,9 +127,6 @@ paths:
                     API_LOGS_DATA_RETENTION: true
                     ORG_LEVEL_BILLING: true
                     TENANT_LEVEL_BILLING: true
-                    ADMIN: ''
-                    OPENAPI: ''
-                    GRAPHQL: ''
           description: ''
   /api/token:
     post:
@@ -2251,7 +2251,10 @@ paths:
                   value:
                     VERSION: ''
                     APP_NAME: ''
-                    APP_WEBSITE: ''
+                    HOST: ''
+                    ADMIN: ''
+                    OPENAPI: ''
+                    GRAPHQL: ''
                     AUDIT_LOGGING: true
                     ALLOW_SIGNUP: true
                     ALLOW_ADMIN_APPROVED_SIGNUP: true
@@ -2269,9 +2272,6 @@ paths:
                     API_LOGS_DATA_RETENTION: true
                     ORG_LEVEL_BILLING: true
                     TENANT_LEVEL_BILLING: true
-                    ADMIN: ''
-                    OPENAPI: ''
-                    GRAPHQL: ''
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
                     currencies: {}

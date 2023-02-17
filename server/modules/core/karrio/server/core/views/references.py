@@ -22,14 +22,11 @@ References = openapi.OpenApiResponse(
             value={
                 "VERSION": "",
                 "APP_NAME": "",
-                "APP_WEBSITE": "",
-                **{
-                    flag: True
-                    for flag in FEATURE_FLAGS
-                },
+                "HOST": "",
                 "ADMIN": "",
                 "OPENAPI": "",
                 "GRAPHQL": "",
+                **{flag: True for flag in FEATURE_FLAGS},
                 "ADDRESS_AUTO_COMPLETE": {},
                 "countries": {},
                 "currencies": {},
@@ -46,7 +43,7 @@ References = openapi.OpenApiResponse(
                 "payment_types": {},
                 "carrier_capabilities": {},
                 "service_levels": {},
-            }
+            },
         )
     ],
 )
@@ -68,6 +65,7 @@ def references(request: Request):
         return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
     except Exception as e:
         import logging
+
         logging.exception(e)
         raise e
 

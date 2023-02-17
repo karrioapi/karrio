@@ -6,7 +6,7 @@ import karrio.server.admin.schema as schema
 
 urlpatterns = [
     path(
-        "graphql/",
+        "admin/graphql/",
         csrf_exempt(views.GraphQLView.as_view(schema=schema.schema)),
         name="admin-graphql",
     ),

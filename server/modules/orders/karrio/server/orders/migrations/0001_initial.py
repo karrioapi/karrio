@@ -9,58 +9,132 @@ import karrio.server.core.utils
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('manager', '0023_auto_20211227_2141'),
+        ("manager", "0023_auto_20211227_2141"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'ord_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
-                ('order_id', models.CharField(max_length=50)),
-                ('source', models.CharField(blank=True, max_length=50, null=True)),
-                ('status', models.CharField(choices=[('created', 'created'), ('cancelled', 'cancelled'), ('fulfilled', 'fulfilled'), ('delivered', 'delivered'), ('partially_fulfilled', 'partially_fulfilled')], default='created', max_length=25)),
-                ('options', models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True)),
-                ('test_mode', models.BooleanField()),
-                ('metadata', models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.CharField(
+                        default=functools.partial(
+                            karrio.server.core.models.base.uuid,
+                            *(),
+                            **{"prefix": "ord_"}
+                        ),
+                        editable=False,
+                        max_length=50,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("order_id", models.CharField(max_length=50)),
+                ("source", models.CharField(blank=True, max_length=50, null=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("created", "created"),
+                            ("cancelled", "cancelled"),
+                            ("fulfilled", "fulfilled"),
+                            ("delivered", "delivered"),
+                            ("partially_fulfilled", "partially_fulfilled"),
+                        ],
+                        default="created",
+                        max_length=25,
+                    ),
+                ),
+                (
+                    "options",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(
+                            karrio.server.core.utils.identity, *(), **{"value": {}}
+                        ),
+                        null=True,
+                    ),
+                ),
+                ("test_mode", models.BooleanField()),
+                (
+                    "metadata",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(
+                            karrio.server.core.utils.identity, *(), **{"value": {}}
+                        ),
+                        null=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Order',
-                'verbose_name_plural': 'Orders',
-                'db_table': 'order',
-                'ordering': ['-created_at'],
+                "verbose_name": "Order",
+                "verbose_name_plural": "Orders",
+                "db_table": "order",
+                "ordering": ["-created_at"],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),
         migrations.CreateModel(
-            name='OrderLineItemLink',
+            name="OrderLineItemLink",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='order_link', to='manager.commodity')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='line_item_links', to='orders.order')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "item",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_link",
+                        to="manager.commodity",
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="line_item_links",
+                        to="orders.order",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='order',
-            name='line_items',
-            field=models.ManyToManyField(related_name='order', through='orders.OrderLineItemLink', to='manager.Commodity'),
+            model_name="order",
+            name="line_items",
+            field=models.ManyToManyField(
+                related_name="order",
+                through="orders.OrderLineItemLink",
+                to="manager.Commodity",
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipments',
-            field=models.ManyToManyField(blank=True, related_name='shipment_order', to='manager.Shipment'),
-        ),
-        migrations.AddField(
-            model_name='order',
-            name='shipping_address',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='address_order', to='manager.address'),
+            model_name="order",
+            name="shipping_address",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="address_order",
+                to="manager.address",
+            ),
         ),
     ]

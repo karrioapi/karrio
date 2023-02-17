@@ -8,9 +8,16 @@ import karrio.lib as lib
 def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     OrganizationUser = apps.get_model("orgs", "OrganizationUser")
+    users = (
+        OrganizationUser.objects.using(db_alias).raw(
+            "SELECT id, to_jsonb(roles) AS roles FROM orgs_organizationuser"
+        )
+        if "postgres" in settings.DB_ENGINE
+        else OrganizationUser.objects.using(db_alias).all()
+    )
     _users = []
 
-    for user in OrganizationUser.objects.using(db_alias).all():
+    for user in users:
         roles = lib.to_dict(user.roles)
 
         if user.is_admin:
@@ -27,7 +34,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("orgs", "0011_documenttemplatelink_organization_document_templates"),
     ]
@@ -35,9 +41,11 @@ class Migration(migrations.Migration):
 
     if "postgres" in settings.DB_ENGINE:
         operations = [
-            migrations.RunSQL('ALTER TABLE "orgs_organizationuser" ALTER COLUMN "roles" TYPE jsonb USING to_jsonb(roles)'),
+            migrations.RunSQL(
+                'ALTER TABLE "orgs_organizationuser" ALTER COLUMN "roles" TYPE jsonb USING to_jsonb(roles)'
+            ),
         ]
 
-    operations = [
+    operations += [
         migrations.RunPython(forwards_func, reverse_func),
     ]

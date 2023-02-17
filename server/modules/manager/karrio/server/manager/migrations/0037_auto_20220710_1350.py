@@ -5,27 +5,24 @@ import django.db.models.fields.json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0036_alter_tracking_shipment'),
+        ("manager", "0036_alter_tracking_shipment"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pickup',
-            name='confirmation_number',
+            model_name="pickup",
+            name="confirmation_number",
             field=models.CharField(max_length=50),
         ),
         migrations.AddIndex(
-            model_name='shipment',
-            index=models.Index(condition=models.Q(('tracking_number__isnull', False)), fields=['tracking_number'], name='shipment_tracking_number_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='shipment',
-            index=models.Index(django.db.models.fields.json.KeyTextTransform('service', 'selected_rate'), condition=models.Q(('meta__object_id__isnull', False)), name='shipment_service_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='tracking',
-            index=models.Index(fields=['tracking_number'], name='tracker_tracking_number_idx'),
+            model_name="shipment",
+            index=models.Index(
+                django.db.models.fields.json.KeyTextTransform(
+                    "service", "selected_rate"
+                ),
+                condition=models.Q(("meta__object_id__isnull", False)),
+                name="shipment_service_idx",
+            ),
         ),
     ]

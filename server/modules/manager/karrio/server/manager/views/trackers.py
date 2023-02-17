@@ -36,6 +36,7 @@ Trackers = serializers.PaginatedResult("TrackerList", TrackingStatus)
 
 
 class TrackerList(GenericAPIView):
+    throttle_scope = "carrier_request"
     pagination_class = type(
         "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
     )
@@ -145,6 +146,8 @@ class TrackerList(GenericAPIView):
 
 
 class TrackersCreate(APIView):
+    throttle_scope = "carrier_request"
+
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
@@ -216,6 +219,7 @@ class TrackersCreate(APIView):
 
 
 class TrackersDetails(APIView):
+    throttle_scope = "carrier_request"
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @openapi.extend_schema(
