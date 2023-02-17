@@ -11,7 +11,9 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Webhook = apps.get_model("events", "Webhook")
     webhooks = (
-        Webhook.objects.using(db_alias).raw('SELECT id, to_jsonb(enabled_events) AS enabled_events FROM webhook')
+        Webhook.objects.using(db_alias).raw(
+            "SELECT id, to_jsonb(enabled_events) AS enabled_events FROM webhook"
+        )
         if "postgres" in settings.DB_ENGINE
         else Webhook.objects.using(db_alias).all()
     )
@@ -29,7 +31,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("events", "0005_event_event_object_idx"),
     ]

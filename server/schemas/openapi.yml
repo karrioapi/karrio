@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.1.5`.
+    The current version is `2023.1.6`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -87,10 +87,10 @@ info:
     API requests without authentication will also fail.
   title: Karrio API
 <<<<<<< HEAD
-  version: 2023.1.5
+  version: 2023.1.6
 =======
-  version: 2023.1.4
->>>>>>> 71ff884a ((release) build 2023.1.4rc)
+  version: 2023.1.6
+>>>>>>> 71ff884a ((release) build 2023.1.6rc)
 paths:
   /:
     get:
