@@ -218,7 +218,7 @@ def is_sdk_message(
 ) -> bool:
     msg = next(iter(message), None) if isinstance(message, list) else message
 
-    return "SHIPPING_SDK_" in getattr(msg, "code", "")
+    return "SHIPPING_SDK_" in str(getattr(msg, "code", ""))
 
 
 def filter_rate_carrier_compatible_gateways(
