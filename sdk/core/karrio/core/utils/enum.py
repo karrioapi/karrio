@@ -17,6 +17,11 @@ class MetaEnum(EnumMeta):
             return EnumWrapper(key, cls[key])
         elif key in cast(Any, cls)._value2member_map_:
             return EnumWrapper(key, cls(key))
+        elif key in [str(v.value) for v in cast(Any, cls).__members__.values()]:
+            return EnumWrapper(
+                key,
+                next(v for v in cast(Any, cls).__members__.values() if v.value == key),
+            )
 
         return EnumWrapper(key)
 
@@ -141,3 +146,19 @@ class Spec:
             return Spec(key, type, lambda *_: computed_value, computed_value)
 
         return Spec(key, type, compute_inner_spec)
+
+
+class svcEnum(str):
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return self.value
+
+    def __str__(self):
+        return self.value
+
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, svcEnum):
+            return False
+        return __o == self.value

@@ -752,7 +752,6 @@ class Packages(typing.Iterable[Package]):
         options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
     ) -> typing.Union[typing.List[Package], "Packages"]:
-
         return typing.cast(
             typing.Union[typing.List[Package], Packages],
             Packages(
