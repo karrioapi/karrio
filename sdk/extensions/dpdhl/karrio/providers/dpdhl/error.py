@@ -52,7 +52,7 @@ def process_error(error: HTTPError) -> str:
         lambda: error.read().decode("ISO-8859-1")
     )
 
-    if "html" in msg:
+    if "<html>" in msg:
         return f"""<data code="{error.code}" error="{getattr(error, "msg")}">
             <Status>
                 <statusCode>{error.code}</statusCode>

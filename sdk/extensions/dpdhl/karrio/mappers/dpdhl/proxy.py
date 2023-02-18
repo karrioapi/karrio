@@ -28,6 +28,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "SOAPAction": "urn:createShipmentOrder",
             },
             decoder=decoder,
+            on_error=error.process_error,
         )
 
         return lib.Deserializable(response, to_element)
@@ -43,6 +44,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "SOAPAction": "urn:deleteShipmentOrder",
             },
             decoder=decoder,
+            on_error=error.process_error,
         )
 
         return lib.Deserializable(response, to_element)
