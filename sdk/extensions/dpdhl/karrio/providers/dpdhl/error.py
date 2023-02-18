@@ -1,3 +1,4 @@
+from urllib.error import HTTPError
 import dpdhl_lib.business_interface as dpdhl
 import typing
 import karrio.lib as lib
@@ -44,3 +45,20 @@ def parse_error_response(
         for error in errors
         if any(error.statusMessage)
     ]
+
+
+def process_error(error: HTTPError) -> str:
+    msg: str = lib.failsafe(lambda: error.read().decode("utf-8")) or lib.failsafe(
+        lambda: error.read().decode("ISO-8859-1")
+    )
+
+    if "html" in msg:
+        return f"""<data code="{error.code}" error="{getattr(error, "msg")}">
+            <Status>
+                <statusCode>{error.code}</statusCode>
+                <statusText>{getattr(error, "msg")}</statusText>
+            </Status>
+        </data>
+        """
+
+    return msg

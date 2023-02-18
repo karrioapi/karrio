@@ -2,11 +2,8 @@ import dpdhl_lib.tracking_request as dpdhl
 import dpdhl_lib.tracking_response as dpdhl_response
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.dpdhl.error as error
 import karrio.providers.dpdhl.utils as provider_utils
-import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_tracking_response(
