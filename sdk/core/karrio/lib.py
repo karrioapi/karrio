@@ -1,10 +1,13 @@
-import functools
+import string
 import typing
+import logging
 import datetime
+import functools
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
 
+logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
 mutate_xml_object_type = utils.mutate_xml_object_type
@@ -133,7 +136,6 @@ def ftime(
     output_format: str = "%H:%M",
     try_formats: typing.List[str] = None,
 ) -> typing.Optional[str]:
-
     return utils.DF.ftime(
         time_str,
         current_format,
@@ -286,7 +288,6 @@ def create_envelope(
     body_tag_name: str = None,
     envelope_prefix: str = "tns",
 ) -> utils.Envelope:
-
     return utils.create_envelope(
         body_content=body_content,
         header_content=header_content,
@@ -303,7 +304,6 @@ def envelope_serializer(
     namespace: str = "",
     prefixes: dict = None,
 ):
-
     ns_prefixes = {"Envelope": "soap-env", **(prefixes or {})}
 
     envelope.ns_prefix_ = ns_prefixes.get("Envelope") or "soap-env"
@@ -331,7 +331,6 @@ def to_shipping_options(
     initializer: typing.Optional[typing.Callable[[dict], units.ShippingOptions]] = None,
     **kwargs,
 ) -> units.ShippingOptions:
-
     if initializer is not None:
         return initializer(options, **kwargs)
 
@@ -346,7 +345,6 @@ def to_services(
     ] = None,
     **kwargs,
 ) -> units.Services:
-
     if initializer is not None:
         return initializer(services, **kwargs)
 
@@ -578,3 +576,22 @@ def to_buffer(
     **kwargs,
 ):
     return utils.to_buffer(base64_string, **kwargs)
+
+
+# -----------------------------------------------------------
+# other utilities functions
+# -----------------------------------------------------------
+
+
+def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
+    """This higher order function wraps a callable in a try..except
+    scope to capture any exception raised.
+    Only use it when you are running something unstable that you
+    don't mind if it fails.
+    """
+    try:
+        return callable()
+    except Exception as e:
+        if warning:
+            logger.warning(string.Template(warning).substitute(error=e))
+        return None
