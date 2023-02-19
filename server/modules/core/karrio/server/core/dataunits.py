@@ -1,3 +1,4 @@
+import typing
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -32,18 +33,21 @@ NON_HUBS_CARRIERS = [
 
 
 def contextual_metadata(request: Request):
-    host = (
+    _host: str = typing.cast(
+        str,
         request.build_absolute_uri(reverse("karrio.server.core:metadata", kwargs={}))
         if hasattr(request, "build_absolute_uri")
-        else ""
+        else "/",
     )
+    host = _host[:-1] if _host[-1] == "/" else _host
+
     return {
         "VERSION": settings.VERSION,
         "APP_NAME": settings.APP_NAME,
         "HOST": f"{host}",
-        "ADMIN": f"{host}admin/",
-        "OPENAPI": f"{host}openapi/",
-        "GRAPHQL": f"{host}graphql/",
+        "ADMIN": f"{host}/admin",
+        "GRAPHQL": f"{host}/graphql",
+        "OPENAPI": f"{host}/openapi",
         **{flag: getattr(settings, flag, None) for flag, _ in settings.FEATURE_FLAGS},
     }
 

@@ -68,7 +68,7 @@ jsonfield==3.1.0
 jsonschema==4.17.3
 jstruct==2021.11
 jwcrypto==1.4.2
-karrio==2023.1
+karrio==2023.1.7
 karrio.amazon-mws==2023.1
 karrio.aramex==2023.1
 karrio.australiapost==2023.1
@@ -88,9 +88,9 @@ karrio.generic==2023.1
 karrio.purolator==2023.1
 karrio.royalmail==2023.1
 karrio.sendle==2023.1
-karrio.server==2023.1.6
+karrio.server==2023.1.7
 karrio.server.apps==2023.1
-karrio.server.core==2023.1.6
+karrio.server.core==2023.1.7
 karrio.server.data==2023.1
 karrio.server.documents==2023.1
 karrio.server.events==2023.1.2
@@ -102,7 +102,7 @@ karrio.server.pricing==2023.1.2
 karrio.server.proxy==2023.1.6
 karrio.sf-express==2023.1
 karrio.tnt==2023.1
-karrio.ups==2023.1
+karrio.ups==2023.1.7
 karrio.ups-freight==2023.1
 karrio.usps==2023.1
 karrio.usps-international==2023.1
@@ -140,7 +140,7 @@ requests==2.28.2
 sentry-sdk==1.15.0
 six==1.16.0
 sqlparse==0.4.3
-strawberry-graphql==0.156.4
+strawberry-graphql==0.158.0
 tablib==3.3.0
 tinycss2==1.2.1
 treepoem==3.18.0
