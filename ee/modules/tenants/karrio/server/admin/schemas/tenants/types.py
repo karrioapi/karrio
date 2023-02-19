@@ -24,7 +24,6 @@ class TenantType:
     name: str
     schema_name: str
     feature_flags: typing.Optional[utils.JSON]
-    # api_domains: typing.Optional[typing.List[str]]
     app_domains: typing.Optional[typing.List[str]]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
@@ -35,10 +34,15 @@ class TenantType:
 
     @strawberry.field
     def api_domains(self: models.Client, info) -> typing.Optional[typing.List[str]]:
-        url = info.context.request.build_absolute_uri("/")
-        domain = info.context.request.get_host().split(":")[0]
+        _uri = info.context.request.build_absolute_uri("/")
+        uri = _uri[:-1] if _uri[-1] == "/" else _uri
+        host = info.context.request.get_host()
+        domain = host.split(":")[0]
 
-        return [url.replace(domain, d.domain) for d in self.domains.all()]
+        return [
+            (uri if domain == d.domain else uri.replace(host, d.domain))
+            for d in self.domains.all().order_by("is_primary")
+        ]
 
     @staticmethod
     @utils.authentication_required
