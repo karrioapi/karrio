@@ -57,6 +57,14 @@ services:
       DASHBOARD_URL: ${DASHBOARD_URL}
       KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
 
+  maildev:
+    container_name: karrio.mail
+    image: maildev/maildev
+    restart: on-failure
+    ports:
+      - '1080:1080'
+      - '1025:1025'
+
   # Comment out everything below this point if you are using an external database and redis instance.
   db:
     container_name: karrio.db

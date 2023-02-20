@@ -33,6 +33,5 @@ def update_settings(current):
         for cfg in [
             current.EMAIL_HOST,
             current.EMAIL_HOST_USER,
-            current.EMAIL_HOST_PASSWORD,
         ]
     )
