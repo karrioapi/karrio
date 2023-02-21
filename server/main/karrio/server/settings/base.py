@@ -287,22 +287,35 @@ PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DB_ENGINE = config("DATABASE_ENGINE", default="sqlite3")
-DB_NAME = os.path.join(WORK_DIR, "db.sqlite3") if "sqlite3" in DB_ENGINE else "db"
+_DB_NAME = config("DATABASE_NAME", default="db")
+_DB_ENGINE = "sqlite3" if "sqlite3" in _DB_NAME else "postgresql"
+
+CONN_MAX_AGE = config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
+DB_ENGINE = "django.db.backends.{}".format(
+    config("DATABASE_ENGINE", default=_DB_ENGINE)
+)
+DB_NAME = (
+    os.path.join(WORK_DIR, f"{_DB_NAME}{'' if '.sqlite3' in _DB_NAME else '.sqlite3'}")
+    if "sqlite3" in DB_ENGINE
+    else _DB_NAME
+)
 
 DATABASES = {
     "default": {
-        "NAME": config("DATABASE_NAME", default=DB_NAME),
-        "ENGINE": "django.db.backends.{}".format(DB_ENGINE),
-        "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
-        "USER": config("DATABASE_USERNAME", default="postgres"),
-        "HOST": config("DATABASE_HOST", default="localhost"),
+        "NAME": DB_NAME,
+        "ENGINE": DB_ENGINE,
+        "CONN_MAX_AGE": CONN_MAX_AGE,
         "PORT": config("DATABASE_PORT", default="5432"),
+        "HOST": config("DATABASE_HOST", default="localhost"),
+        "USER": config("DATABASE_USERNAME", default="postgres"),
+        "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
     }
 }
 
 if config("DATABASE_URL", default=None):
-    db_from_env = dj_database_url.config(conn_max_age=500)
+    db_from_env = dj_database_url.config(
+        conn_max_age=config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
+    )
     DATABASES["default"].update(db_from_env)
 
 # Password validation

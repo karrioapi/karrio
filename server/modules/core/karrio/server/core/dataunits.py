@@ -44,7 +44,7 @@ def contextual_metadata(request: Request):
     return {
         "VERSION": settings.VERSION,
         "APP_NAME": settings.APP_NAME,
-        "HOST": f"{host}",
+        "HOST": f"{host}/",
         "ADMIN": f"{host}/admin",
         "GRAPHQL": f"{host}/graphql",
         "OPENAPI": f"{host}/openapi",

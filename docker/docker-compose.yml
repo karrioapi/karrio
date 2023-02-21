@@ -3,7 +3,7 @@ version: '3'
 services:
   api:
     container_name: karrio.api
-    image: karrio.docker.scarf.sh/karrio/server:2023.1.7
+    image: karrio.docker.scarf.sh/karrio/server:2023.1.8
     restart: unless-stopped
     ports:
       - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
@@ -25,7 +25,7 @@ services:
 
   worker:
     container_name: karrio.worker
-    image: karrio.docker.scarf.sh/karrio/server:2023.1.7
+    image: karrio.docker.scarf.sh/karrio/server:2023.1.8
     restart: unless-stopped
     depends_on:
       - db
@@ -46,7 +46,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2023.1.7
+    image: karrio.docker.scarf.sh/karrio/dashboard:2023.1.8
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
@@ -56,6 +56,14 @@ services:
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
       DASHBOARD_URL: ${DASHBOARD_URL}
       KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+
+  maildev:
+    container_name: karrio.mail
+    image: maildev/maildev
+    restart: on-failure
+    ports:
+      - '1080:1080'
+      - '1025:1025'
 
   # Comment out everything below this point if you are using an external database and redis instance.
   db:
