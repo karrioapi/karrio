@@ -10,4 +10,9 @@ urlpatterns = [
         csrf_exempt(views.GraphQLView.as_view(schema=schema.schema)),
         name="admin-graphql",
     ),
+    path(
+        "admin/graphql",
+        csrf_exempt(views.GraphQLView.as_view(schema=schema.schema)),
+        name="admin-graphql",
+    ),
 ]
