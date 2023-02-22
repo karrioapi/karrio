@@ -1,47 +1,6 @@
-from datetime import datetime
-from fedex_lib.ship_service_v26 import (
-    ProcessShipmentRequest,
-    TransactionDetail,
-    VersionId,
-    RequestedShipment,
-    RequestedPackageLineItem,
-    Party,
-    Contact,
-    Address,
-    TaxpayerIdentification,
-    Weight as FedexWeight,
-    Dimensions as FedexDimensions,
-    TrackingId,
-    ShipmentSpecialServicesRequested,
-    ShipmentEventNotificationDetail,
-    ShipmentEventNotificationSpecification,
-    NotificationDetail,
-    EMailDetail,
-    Localization,
-    CodDetail,
-    CodCollectionType,
-    Money,
-    Payment,
-    Payor,
-    LabelSpecification,
-    LabelFormatType,
-    LabelPrintingOrientationType,
-    ShipmentNotificationFormatSpecification,
-    LabelOrderType,
-    CustomsClearanceDetail,
-    Commodity,
-    CommercialInvoice,
-    CustomerReference,
-    CustomerReferenceType,
-    ShippingDocumentSpecification,
-    CommercialInvoiceDetail,
-    ShippingDocumentFormat,
-    PackageSpecialServicesRequested,
-    SignatureOptionDetail,
-    SignatureOptionType,
-)
-
+import fedex_lib.ship_service_v26 as fedex
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -121,7 +80,7 @@ def _extract_details(
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ProcessShipmentRequest]:
+) -> lib.Serializable[fedex.ProcessShipmentRequest]:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
@@ -146,21 +105,25 @@ def shipment_request(
         weight_unit=weight_unit.value,
     )
 
-    payment = payload.payment or Payment()
+    payment = payload.payment or fedex.Payment()
     service = provider_units.ServiceType.map(payload.service).value_or_key
-    label_type, label_format = provider_units.LabelType[
+    label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
-    ].value
+    ).value
 
     requests = [
-        ProcessShipmentRequest(
+        fedex.ProcessShipmentRequest(
             WebAuthenticationDetail=settings.webAuthenticationDetail,
             ClientDetail=settings.clientDetail,
-            TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v26_Ship"),
-            Version=VersionId(ServiceId="ship", Major=26, Intermediate=0, Minor=0),
-            RequestedShipment=RequestedShipment(
+            TransactionDetail=fedex.TransactionDetail(
+                CustomerTransactionId="IE_v26_Ship"
+            ),
+            Version=fedex.VersionId(
+                ServiceId="ship", Major=26, Intermediate=0, Minor=0
+            ),
+            RequestedShipment=fedex.RequestedShipment(
                 ShipTimestamp=lib.to_date(
-                    options.shipment_date.state or datetime.now()
+                    options.shipment_date.state or datetime.datetime.now()
                 ),
                 DropoffType="REGULAR_PICKUP",
                 ServiceType=service,
@@ -169,7 +132,7 @@ def shipment_request(
                 ).value,
                 ManifestDetail=None,
                 VariationOptions=None,
-                TotalWeight=FedexWeight(
+                TotalWeight=fedex.Weight(
                     Units=weight_unit.name,
                     Value=packages.weight[weight_unit.name],
                 ),
@@ -179,15 +142,18 @@ def shipment_request(
                 ),
                 PreferredCurrency=options.currency.state,
                 ShipmentAuthorizationDetail=None,
-                Shipper=Party(
+                Shipper=fedex.Party(
                     AccountNumber=settings.account_number,
                     Tins=(
-                        [TaxpayerIdentification(Number=tax) for tax in shipper.taxes]
+                        [
+                            fedex.TaxpayerIdentification(Number=tax)
+                            for tax in shipper.taxes
+                        ]
                         if shipper.has_tax_info
                         else None
                     ),
                     Contact=(
-                        Contact(
+                        fedex.Contact(
                             ContactId=None,
                             PersonName=shipper.person_name,
                             Title=None,
@@ -202,7 +168,7 @@ def shipment_request(
                         if shipper.has_contact_info
                         else None
                     ),
-                    Address=Address(
+                    Address=fedex.Address(
                         StreetLines=shipper.address_lines,
                         City=shipper.city,
                         StateOrProvinceCode=shipper.state_code,
@@ -214,15 +180,18 @@ def shipment_request(
                         GeographicCoordinates=None,
                     ),
                 ),
-                Recipient=Party(
+                Recipient=fedex.Party(
                     AccountNumber=None,
                     Tins=(
-                        [TaxpayerIdentification(Number=tax) for tax in recipient.taxes]
+                        [
+                            fedex.TaxpayerIdentification(Number=tax)
+                            for tax in recipient.taxes
+                        ]
                         if recipient.has_tax_info
                         else None
                     ),
                     Contact=(
-                        Contact(
+                        fedex.Contact(
                             ContactId=None,
                             PersonName=recipient.person_name,
                             Title=None,
@@ -237,7 +206,7 @@ def shipment_request(
                         if recipient.has_contact_info
                         else None
                     ),
-                    Address=Address(
+                    Address=fedex.Address(
                         StreetLines=recipient.address_lines,
                         City=recipient.city,
                         StateOrProvinceCode=recipient.state_code,
@@ -252,12 +221,12 @@ def shipment_request(
                 RecipientLocationNumber=None,
                 Origin=None,
                 SoldTo=None,
-                ShippingChargesPayment=Payment(
+                ShippingChargesPayment=fedex.Payment(
                     PaymentType=provider_units.PaymentType[
                         getattr(payment, "paid_by", None) or "sender"
                     ].value,
-                    Payor=Payor(
-                        ResponsibleParty=Party(
+                    Payor=fedex.Payor(
+                        ResponsibleParty=fedex.Party(
                             AccountNumber=(
                                 payment.account_number or settings.account_number
                             ),
@@ -265,20 +234,20 @@ def shipment_request(
                     ),
                 ),
                 SpecialServicesRequested=(
-                    ShipmentSpecialServicesRequested(
+                    fedex.ShipmentSpecialServicesRequested(
                         SpecialServiceTypes=(
                             [option.code for _, option in options.items()]
                             if any(options.items())
                             else None
                         ),
                         CodDetail=(
-                            CodDetail(
-                                CodCollectionAmount=Money(
+                            fedex.CodDetail(
+                                CodCollectionAmount=fedex.Money(
                                     Currency=options.currency.state or "USD",
                                     Amount=options.cash_on_delivery.state,
                                 ),
                                 AddTransportationChargesDetail=None,
-                                CollectionType=CodCollectionType.CASH,
+                                CollectionType=fedex.CodCollectionType.CASH,
                                 CodRecipient=None,
                                 FinancialInstitutionContactAndAddress=None,
                                 RemitToName=None,
@@ -291,16 +260,16 @@ def shipment_request(
                         DeliveryOnInvoiceAcceptanceDetail=None,
                         HoldAtLocationDetail=None,
                         EventNotificationDetail=(
-                            ShipmentEventNotificationDetail(
+                            fedex.ShipmentEventNotificationDetail(
                                 AggregationType=None,
                                 PersonalMessage=None,
                                 EventNotifications=[
-                                    ShipmentEventNotificationSpecification(
+                                    fedex.ShipmentEventNotificationSpecification(
                                         Role=None,
                                         Events=NOTIFICATION_EVENTS,
-                                        NotificationDetail=NotificationDetail(
+                                        NotificationDetail=fedex.NotificationDetail(
                                             NotificationType="EMAIL",
-                                            EmailDetail=EMailDetail(
+                                            EmailDetail=fedex.EMailDetail(
                                                 EmailAddress=(
                                                     options.email_notification_to.state
                                                     or recipient.email
@@ -308,11 +277,11 @@ def shipment_request(
                                                 Name=recipient.person_name
                                                 or recipient.company_name,
                                             ),
-                                            Localization=Localization(
+                                            Localization=fedex.Localization(
                                                 LanguageCode="EN"
                                             ),
                                         ),
-                                        FormatSpecification=ShipmentNotificationFormatSpecification(
+                                        FormatSpecification=fedex.ShipmentNotificationFormatSpecification(
                                             Type="HTML"
                                         ),
                                     )
@@ -340,20 +309,20 @@ def shipment_request(
                 DeliveryInstructions=None,
                 VariableHandlingChargeDetail=None,
                 CustomsClearanceDetail=(
-                    CustomsClearanceDetail(
+                    fedex.CustomsClearanceDetail(
                         Brokers=None,
                         ClearanceBrokerage=None,
                         CustomsOptions=None,
                         ImporterOfRecord=None,
                         RecipientCustomsId=None,
                         DutiesPayment=(
-                            Payment(
+                            fedex.Payment(
                                 PaymentType=provider_units.PaymentType[
                                     getattr(customs.duty, "paid_by", None) or "sender"
                                 ].value,
                                 Payor=(
-                                    Payor(
-                                        ResponsibleParty=Party(
+                                    fedex.Payor(
+                                        ResponsibleParty=fedex.Party(
                                             AccountNumber=(
                                                 customs.duty.account_number
                                                 or settings.account_number
@@ -366,7 +335,7 @@ def shipment_request(
                         ),
                         DocumentContent=None,
                         CustomsValue=(
-                            Money(
+                            fedex.Money(
                                 Currency=(
                                     customs.duty.currency
                                     or options.currency.state
@@ -383,7 +352,7 @@ def shipment_request(
                         InsuranceCharges=None,
                         PartiesToTransactionAreRelated=None,
                         CommercialInvoice=(
-                            CommercialInvoice(
+                            fedex.CommercialInvoice(
                                 Comments=None,
                                 FreightCharge=None,
                                 TaxesOrMiscellaneousChargeType=None,
@@ -398,8 +367,8 @@ def shipment_request(
                                 PurposeOfShipmentDescription=None,
                                 CustomerReferences=(
                                     [
-                                        CustomerReference(
-                                            CustomerReferenceType=CustomerReferenceType.INVOICE_NUMBER.value,
+                                        fedex.CustomerReference(
+                                            CustomerReferenceType=fedex.CustomerReferenceType.INVOICE_NUMBER.value,
                                             Value=customs.invoice,
                                         )
                                     ]
@@ -417,7 +386,7 @@ def shipment_request(
                             else None
                         ),
                         Commodities=[
-                            Commodity(
+                            fedex.Commodity(
                                 Name=None,
                                 NumberOfPieces=item.quantity,
                                 Description=item.description or "N/A",
@@ -426,7 +395,7 @@ def shipment_request(
                                     item.origin_country or shipper.country_code
                                 ),
                                 HarmonizedCode=item.hs_code,
-                                Weight=FedexWeight(
+                                Weight=fedex.Weight(
                                     Units=weight_unit.name,
                                     Value=units.Weight(item.weight, weight_unit.name)[
                                         weight_unit.name
@@ -435,7 +404,7 @@ def shipment_request(
                                 Quantity=item.quantity,
                                 QuantityUnits="EA",
                                 AdditionalMeasures=None,
-                                UnitPrice=Money(
+                                UnitPrice=fedex.Money(
                                     Currency=(
                                         options.currency.state or customs.duty.currency
                                     ),
@@ -461,22 +430,22 @@ def shipment_request(
                 PickupDetail=None,
                 SmartPostDetail=None,
                 BlockInsightVisibility=None,
-                LabelSpecification=LabelSpecification(
+                LabelSpecification=fedex.LabelSpecification(
                     Dispositions=None,
-                    LabelFormatType=LabelFormatType.COMMON_2_D.value,
+                    LabelFormatType=fedex.LabelFormatType.COMMON_2_D.value,
                     ImageType=label_type,
                     LabelStockType=label_format,
-                    LabelPrintingOrientation=LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
-                    LabelOrder=LabelOrderType.SHIPPING_LABEL_FIRST.value,
+                    LabelPrintingOrientation=fedex.LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
+                    LabelOrder=fedex.LabelOrderType.SHIPPING_LABEL_FIRST.value,
                     PrintedLabelOrigin=None,
                     CustomerSpecifiedDetail=None,
                 ),
-                ShippingDocumentSpecification=ShippingDocumentSpecification(
+                ShippingDocumentSpecification=fedex.ShippingDocumentSpecification(
                     ShippingDocumentTypes=["COMMERCIAL_INVOICE"],
                     NotificationContentSpecification=None,
                     CertificateOfOrigin=None,
-                    CommercialInvoiceDetail=CommercialInvoiceDetail(
-                        Format=ShippingDocumentFormat(
+                    CommercialInvoiceDetail=fedex.CommercialInvoiceDetail(
+                        Format=fedex.ShippingDocumentFormat(
                             Dispositions=None,
                             TopOfPageOffset=None,
                             ImageType="PDF",
@@ -502,7 +471,7 @@ def shipment_request(
                 RateRequestTypes=None,
                 EdtRequestType=None,
                 MasterTrackingId=(
-                    TrackingId(
+                    fedex.TrackingId(
                         TrackingIdType="[MASTER_ID_TYPE]",
                         TrackingNumber="[MASTER_TRACKING_ID]",
                     )
@@ -512,14 +481,14 @@ def shipment_request(
                 PackageCount=len(packages),
                 ConfigurationData=None,
                 RequestedPackageLineItems=[
-                    RequestedPackageLineItem(
+                    fedex.RequestedPackageLineItem(
                         SequenceNumber=package_index,
                         GroupNumber=None,
                         GroupPackageCount=None,
                         VariableHandlingChargeDetail=None,
                         InsuredValue=None,
                         Weight=(
-                            FedexWeight(
+                            fedex.Weight(
                                 Units=weight_unit.name,
                                 Value=package.weight[weight_unit.name],
                             )
@@ -527,7 +496,7 @@ def shipment_request(
                             else None
                         ),
                         Dimensions=(
-                            FedexDimensions(
+                            fedex.Dimensions(
                                 Length=(
                                     package.length.map(
                                         provider_units.MeasurementOptions
@@ -560,23 +529,23 @@ def shipment_request(
                         ItemDescriptionForClearance=None,
                         CustomerReferences=(
                             [
-                                CustomerReference(
-                                    CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
+                                fedex.CustomerReference(
+                                    CustomerReferenceType=fedex.CustomerReferenceType.CUSTOMER_REFERENCE,
                                     Value=payload.reference,
                                 )
                             ]
                             if any(payload.reference or "")
                             else None
                         ),
-                        SpecialServicesRequested=PackageSpecialServicesRequested(
-                            SignatureOptionDetail=SignatureOptionDetail(
+                        SpecialServicesRequested=fedex.PackageSpecialServicesRequested(
+                            SignatureOptionDetail=fedex.SignatureOptionDetail(
                                 OptionType=(
-                                    SignatureOptionType[
+                                    fedex.SignatureOptionType[
                                         options.fedex_signature_option.state
                                     ]
                                     if options.fedex_signature_option.state
-                                    in SignatureOptionType.__members__
-                                    else SignatureOptionType.SERVICE_DEFAULT
+                                    in fedex.SignatureOptionType.__members__
+                                    else fedex.SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),
                             SpecialServiceTypes=["SIGNATURE_OPTION"],
@@ -593,11 +562,11 @@ def shipment_request(
 
 
 def _request_serializer(
-    requests: typing.List[ProcessShipmentRequest],
+    requests: typing.List[fedex.ProcessShipmentRequest],
 ) -> typing.List[str]:
     namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v26="http://fedex.com/ws/ship/v26"'
 
-    def serialize(request: ProcessShipmentRequest):
+    def serialize(request: fedex.ProcessShipmentRequest):
         envelope = lib.create_envelope(body_content=request)
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
         lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
