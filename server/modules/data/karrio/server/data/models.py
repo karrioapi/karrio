@@ -33,7 +33,9 @@ class BatchOperation(core.OwnedEntity):
         default=serializers.RESOURCE_TYPE[0][0],
     )
     resources = models.JSONField(
-        blank=True, null=True, default=partial(utils.identity, value=[])
+        blank=True,
+        null=True,
+        default=core.field_default([]),
     )
     test_mode = models.BooleanField(null=False)
 
@@ -72,6 +74,11 @@ class DataTemplate(core.OwnedEntity):
 
         e.g: resource: tracking | fields [{'id': 'ID', 'tracking_number': 'Tracking Number'}]
         """,
+    )
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
     )
 
     @property
