@@ -3,6 +3,7 @@ import logging
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
+from django.conf import settings
 
 import karrio.lib as lib
 import karrio.core.units as units
@@ -39,6 +40,7 @@ from karrio.server.core.serializers import (
     Message,
     Rate,
 )
+from karrio.server.manager.serializers.document import DocumentUploadSerializer
 from karrio.server.manager.serializers.address import AddressSerializer
 from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
@@ -176,7 +178,11 @@ class ShipmentSerializer(ShipmentData):
 
         # Buy label if preferred service is already selected.
         if service and fetch_rates:
-            return buy_shipment_label(shipment, context, service=service)
+            return buy_shipment_label(
+                shipment,
+                context,
+                service=service,
+            )
 
         return shipment
 
@@ -354,6 +360,7 @@ class ShipmentPurchaseSerializer(Shipment):
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return gateway.Shipments.create(
             Shipment(validated_data).data,
+            carrier=validated_data.get("carrier"),
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
                     "karrio.server.manager:shipment-tracker",
@@ -427,14 +434,35 @@ def buy_shipment_label(
     data: dict = dict(),
     service: str = None,
 ) -> models.Shipment:
-    selected_rate_id = (
-        data.get("selected_rate_id")
-        if service is None
-        else next(
-            (rate["id"] for rate in shipment.rates if rate["service"] == service), None
-        )
+    extra: dict = {}
+    invoice: dict = {}
+    invoice_template = shipment.options.get("invoice_template")
+    rate = next(
+        (
+            rate
+            for rate in shipment.rates
+            if rate["service"] == service or rate["id"] == data.get("selected_rate_id")
+        ),
+        None,
     )
-    payload = {**data, "selected_rate_id": selected_rate_id}
+    payload = {**data, "selected_rate_id": rate["id"]}
+    carrier = gateway.Carriers.first(
+        carrier_id=rate["carrier_id"],
+        test_mode=rate["test_mode"],
+    )
+
+    # Process ETD document upload
+    if rate and any(invoice_template or ""):
+        shipment.selected_rate = rate
+        shipment.selected_rate_carrier = carrier
+        _, document = process_invoice_upload(
+            shipment,
+            invoice_template,
+            carrier,
+            context,
+        )
+        if document:
+            invoice.update(invoice=document)
 
     # Submit shipment to carriers
     response: Shipment = (
@@ -442,14 +470,20 @@ def buy_shipment_label(
             context=context,
             data={**Shipment(shipment).data, **payload},
         )
-        .save()
+        .save(carrier=carrier)
         .instance
     )
 
-    parcels = [
-        {"id": parcel.id, "reference_number": parcel.reference_number}
-        for parcel in response.parcels
-    ]
+    extra.update(
+        parcels=[
+            dict(id=parcel.id, reference_number=parcel.reference_number)
+            for parcel in response.parcels
+        ],
+        docs={
+            **lib.to_dict(response.docs),
+            **invoice,
+        },
+    )
 
     # Update shipment state
     purchased_shipment = (
@@ -459,7 +493,7 @@ def buy_shipment_label(
             data={
                 **payload,
                 **ShipmentDetails(response).data,
-                "parcels": parcels,
+                **extra,
             },
         )
         .save()
@@ -607,3 +641,56 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.save(update_fields=["tracking_url"])
         except Exception as e:
             logger.exception("Failed to update shipment tracking url", e)
+
+
+def process_invoice_upload(
+    shipment: models.Shipment,
+    template: str,
+    carrier: providers.Carrier,
+    context: Context,
+):
+    # Check if carrier and shipment support ETD and document url is provided
+    if settings.DOCUMENTS_MANAGEMENT is False:
+        logger.info("document generation not supported!")
+        return None, None
+
+    # generate invoice document
+    import karrio.server.documents.generator as documents
+
+    document = documents.generate_document(template, shipment, carrier)
+
+    # upload invoice if supported
+    upload_is_supported = (
+        "paperless_trade" in carrier.capabilities
+        or shipment.options.get("paperless_trade")
+        or shipment.options.get("fedex_electronic_trade_documents")
+    )
+
+    if upload_is_supported:
+        upload_record = (
+            DocumentUploadSerializer.map(
+                (
+                    shipment.shipment_upload_record
+                    if hasattr(shipment, "shipment_upload_record")
+                    else None
+                ),
+                data=dict(
+                    shipment_id=shipment.id,
+                    reference=shipment.id,
+                    document_files=[
+                        dict(
+                            doc_file=document["doc_file"],
+                            doc_name=document["doc_name"],
+                            doc_type=document["doc_type"] or "commercial_invoice",
+                        )
+                    ],
+                ),
+                context=context,
+            )
+            .save(shipment=shipment, carrier=carrier)
+            .instance
+        )
+
+        return upload_record, document["doc_file"]
+
+    return None, document["doc_file"]

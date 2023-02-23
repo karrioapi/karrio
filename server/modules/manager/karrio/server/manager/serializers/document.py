@@ -17,7 +17,9 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         **kwargs,
     ) -> models.DocumentUploadRecord:
         shipment = validated_data.get("shipment")
-        carrier = getattr(shipment, "selected_rate_carrier", None)
+        carrier = validated_data.get("carrier") or getattr(
+            shipment, "selected_rate_carrier", None
+        )
 
         response = gateway.Documents.upload(
             {

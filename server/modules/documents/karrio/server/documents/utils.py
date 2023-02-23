@@ -7,6 +7,9 @@ from barcode.writer import ImageWriter
 import karrio.lib as lib
 
 
+datetime = datetime
+date_format = lib.fdatetime
+
 ORDER_SAMPLE = dict(
     order={
         "id": "ord_028e5cb83814487a9546d0690260f0ee",
@@ -2377,7 +2380,3 @@ def generate_code(data, code_type: str = "code128", options: dict = {}) -> str:
     barcode.convert("1").save(buffer, "PNG")
 
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-
-datetime = datetime
-date_format = lib.fdatetime

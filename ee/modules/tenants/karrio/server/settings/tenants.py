@@ -5,6 +5,15 @@ from karrio.server.settings.cache import HEALTH_CHECK_APPS
 
 
 DATABASES["default"]["ENGINE"] = "django_tenants.postgresql_backend"
+DB_URL = config("DATABASE_URL", default=None)
+DB_NAME = (
+    DATABASES["default"]["NAME"]
+    if DB_URL is not None
+    else config("DATABASE_NAME", default=DATABASES["default"]["NAME"])
+)
+
+if "/" in DB_NAME or ".sqlite" in DB_NAME:
+    DATABASES["default"]["NAME"] = "db"
 
 MIDDLEWARE = [
     "django_tenants.middleware.main.TenantMainMiddleware",

@@ -40,7 +40,11 @@ class TenantType:
         domain = host.split(":")[0]
 
         return [
-            (uri if domain == d.domain else uri.replace(host, d.domain))
+            (
+                uri.replace(domain, d.domain)
+                if domain in d.domain
+                else uri.replace(host, d.domain)
+            )
             for d in self.domains.all().order_by("is_primary")
         ]
 

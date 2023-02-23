@@ -1,10 +1,12 @@
 import io
 import typing
+import base64
 from jinja2 import Template
 from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
 from django.db.models import Sum
 
+import karrio.lib as lib
 from karrio.core.units import CountryISO
 from karrio.server.core.dataunits import REFERENCE_MODELS
 from karrio.server.manager.models import Shipment
@@ -32,8 +34,8 @@ UNITS = {
 
 class Documents:
     @staticmethod
-    def generate(document: models.DocumentTemplate, data: dict, context) -> io.BytesIO:
-        shipment_contexts = (
+    def generate(document: models.DocumentTemplate, data: dict, **kwargs) -> io.BytesIO:
+        shipment_contexts = data.get("shipments_context") or (
             get_shipments_context(data["shipments"])
             if "shipments" in data and document.related_object == "shipment"
             else []
@@ -147,3 +149,27 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
         )
         for order in orders
     ]
+
+
+def generate_document(slug: str, shipment, carrier) -> dict:
+    template = models.DocumentTemplate.objects.get(slug=slug)
+    params = dict(
+        shipments_context=[
+            dict(
+                shipment=ShipmentSerializer(shipment).data,
+                line_items=get_shipment_item_contexts(shipment),
+                carrier=get_carrier_context(carrier.settings),
+                orders=OrderSerializer(
+                    get_shipment_order_contexts(shipment),
+                    many=True,
+                ).data,
+            )
+        ]
+    )
+    document = Documents.generate(template, params).getvalue()
+
+    return dict(
+        doc_name=f"{template.name}",
+        doc_type=template.metadata.get("document_type"),
+        doc_file=base64.b64encode(document).decode("utf-8"),
+    )

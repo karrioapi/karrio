@@ -532,7 +532,7 @@ def request(
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     **kwargs,
 ) -> str:
-    return utils.request(decoder, on_error=on_error, trace=trace, **kwargs)
+    return utils.request(decoder=decoder, on_error=on_error, trace=trace, **kwargs)
 
 
 # -----------------------------------------------------------

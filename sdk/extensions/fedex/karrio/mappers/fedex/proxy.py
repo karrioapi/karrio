@@ -41,7 +41,6 @@ class Proxy(proxy.Proxy):
     def create_shipment(
         self, request: lib.Serializable[lib.Envelope]
     ) -> lib.Deserializable[str]:
-
         requests = request.serialize()
         response = self._send_request("/ship", lib.Serializable(requests[0]))
         master_id = lib.find_element(

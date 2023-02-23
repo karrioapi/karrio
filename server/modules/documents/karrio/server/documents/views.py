@@ -1,7 +1,7 @@
 import sys
 import logging
-from django.http import JsonResponse
 from django.urls import re_path
+from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
 from rest_framework import status
