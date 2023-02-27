@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Aug  5 17:17:31 2022 by generateDS.py version 2.40.13.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sun Feb 26 19:05:52 2023 by generateDS.py version 2.41.1.
+# Python 3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/tracking-request.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/tracking_request.py" ./schemas/tracking-request.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/tracking_request.py" ./schemas/tracking-request.xsd
 #
 # Current working directory (os.getcwd()):
 #   dpdhl

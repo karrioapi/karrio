@@ -1,7 +1,7 @@
 django-debug-toolbar
 
 # Schemas update (change schemas to setup.py before next update)
-# -e ./schemas/ups
+-e ./schemas/dpdhl
 
 # Carrier Extentions in Development
 # -e ./sdk/core

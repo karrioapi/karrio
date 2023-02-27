@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Mit XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) von Andreas V. Kempf (DHL Verwaltungs GmbH) bearbeitet -->
+<!-- Mit XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) von Andreas V. Kempf (DHL Verwaltungs GmbH)
+bearbeitet -->
 <!-- Mit XMLSpy Andreas Kempf bearbeitet -->
 <!-- 
 Description:
@@ -23,17 +24,23 @@ Refered by:
 
 History:
   v0.4  Element streetAdd renamed to careOfName
-  v0.5  Critical number elements converted to string to keep leading zeros (ZIP:germany, routeCode, identCode, PackStationType, PostOfficeType) 
-  v0.6  streetNameCode and streetNumberCode added, PickupAddressType and DeliveryAddressType expanded by these fields
+  v0.5  Critical number elements converted to string to keep leading zeros (ZIP:germany, routeCode,
+identCode, PackStationType, PostOfficeType) 
+  v0.6  streetNameCode and streetNumberCode added, PickupAddressType and DeliveryAddressType expanded
+by these fields
   v0.7  version added 
   v0.8  BankType changed, ShipmentNumberType added
   v0.9  accountNumberExpress added
   v0.9a status and statusDescription added
   v0.91 contactPerson added to CommunicationType
-  v0.92 element version deleted, new element Version with major release, minor release and optional build
-  v0.93 elements status and statusDescription replaced by the new element Status with elements statuscode and statusdescription
-  v0.94 added elements airwayBill->ShipmentNumberType, Dimension, productKey, TimeFrame, Origin added in packStationType, Origin->country now optional
-  v0.95 added shipmentNumber for all DHL numbertypes  (incl. empty for possible response), airwaybill modified to string[10], added datatypes for BankType->bic and BankType->note
+  v0.92 element version deleted, new element Version with major release, minor release and optional
+build
+  v0.93 elements status and statusDescription replaced by the new element Status with elements
+statuscode and statusdescription
+  v0.94 added elements airwayBill->ShipmentNumberType, Dimension, productKey, TimeFrame, Origin added
+in packStationType, Origin->country now optional
+  v0.95 added shipmentNumber for all DHL numbertypes  (incl. empty for possible response), airwaybill
+modified to string[10], added datatypes for BankType->bic and BankType->note
   v0.96 added shipmentNumber into shipmentNumberType as reference
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cis="http://dhl.de/webservice/cisbase"
@@ -44,29 +51,32 @@ History:
 			<xs:documentation>Country specific ISO code.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:maxLength value="2"/>
-			<xs:minLength value="2" fixed="false"/>
+			<xs:maxLength value="2" />
+			<xs:minLength value="2" fixed="false" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element name="EKP">
 		<xs:annotation>
-			<xs:documentation>First 10 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.</xs:documentation>
+			<xs:documentation>First 10 digit number extract from the 14 digit DHL Account Number.
+				E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="10"/>
-				<xs:maxLength value="10"/>
+				<xs:minLength value="10" />
+				<xs:maxLength value="10" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="partnerID">
 		<xs:annotation>
-			<xs:documentation>Field has the partner id. I.e. the last 2 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then Attendance is 01. </xs:documentation>
+			<xs:documentation>Field has the partner id. I.e. the last 2 digit number extract from
+				the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01"
+				then Attendance is 01. </xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="2"/>
-				<xs:maxLength value="2"/>
+				<xs:minLength value="2" />
+				<xs:maxLength value="2" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -76,8 +86,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="2"/>
-				<xs:maxLength value="2"/>
+				<xs:minLength value="2" />
+				<xs:maxLength value="2" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -87,8 +97,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="14"/>
-				<xs:maxLength value="14"/>
+				<xs:minLength value="14" />
+				<xs:maxLength value="14" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -98,8 +108,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="9"/>
-				<xs:maxLength value="9"/>
+				<xs:minLength value="9" />
+				<xs:maxLength value="9" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -109,9 +119,9 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="12"/>
-				<xs:maxLength value="12"/>
-				<xs:pattern value="[0-9]{12}"/>
+				<xs:minLength value="12" />
+				<xs:maxLength value="12" />
+				<xs:pattern value="[0-9]{12}" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -121,7 +131,7 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="39"/>
+				<xs:maxLength value="39" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -131,8 +141,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="10"/>
-				<xs:maxLength value="10"/>
+				<xs:minLength value="10" />
+				<xs:maxLength value="10" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -142,36 +152,31 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="14"/>
-				<xs:maxLength value="14"/>
-				<xs:pattern value="[0-9]{14}"/>
+				<xs:minLength value="14" />
+				<xs:maxLength value="14" />
+				<xs:pattern value="[0-9]{14}" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="routingCode">
 		<xs:annotation>
-			<xs:documentation>
-				The following barcode types are:
-				1. GS1 Barcode
-				2. ASC MH10 Barcode
-				3. 2/5 Interleaved
-				4. Code 128 ( UPU )
-			</xs:documentation>
+			<xs:documentation> The following barcode types are: 1. GS1 Barcode 2. ASC MH10 Barcode
+				3. 2/5 Interleaved 4. Code 128 ( UPU ) </xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="39"/>
+				<xs:maxLength value="39" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="zip" type="cis:ZipType"/>
+	<xs:element name="zip" type="cis:ZipType" />
 	<xs:element name="city">
 		<xs:annotation>
 			<xs:documentation>City name.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
+				<xs:maxLength value="50" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -181,7 +186,7 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="35"/>
+				<xs:maxLength value="35" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -191,8 +196,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="3"/>
-				<xs:maxLength value="3"/>
+				<xs:minLength value="3" />
+				<xs:maxLength value="3" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -202,8 +207,8 @@ History:
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="3"/>
-				<xs:maxLength value="3"/>
+				<xs:minLength value="3" />
+				<xs:maxLength value="3" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -219,8 +224,8 @@ History:
 	</xs:element>
 	<xs:element name="Version">
 		<xs:annotation>
-			<xs:documentation>The version of the webservice implementation for which the
-requesting client is developed.</xs:documentation>
+			<xs:documentation>The version of the webservice implementation for which the requesting
+				client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
@@ -229,21 +234,23 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:element name="majorRelease">
 					<xs:annotation>
-						<xs:documentation>The number of the major release. E.g. the '3' in version "3.2.".</xs:documentation>
+						<xs:documentation>The number of the major release. E.g. the '3' in version
+							"3.2.".</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="2"/>
+							<xs:maxLength value="2" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
 				<xs:element name="minorRelease" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>The number of the minor release. E.g. the '3' in version "3.2.".</xs:documentation>
+						<xs:documentation>The number of the minor release. E.g. the '3' in version
+							"3.2.".</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="2"/>
+							<xs:maxLength value="2" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -253,7 +260,7 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="5"/>
+							<xs:maxLength value="5" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -273,7 +280,7 @@ requesting client is developed.</xs:documentation>
 					<xs:documentation>username for the business customer portal (only lower case)</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="signature">
@@ -282,7 +289,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="32"/>
+						<xs:maxLength value="32" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -298,50 +305,53 @@ requesting client is developed.</xs:documentation>
 			</xs:annotation>
 			<xs:element name="streetName">
 				<xs:annotation>
-					<xs:documentation>The name of the street. Optionally the house number can be passed in this field too.
-          In this case the field "streetNumber" must not be present.</xs:documentation>
+					<xs:documentation>The name of the street. Optionally the house number can be
+						passed in this field too. In this case the field "streetNumber" must not be
+						present.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
+						<xs:maxLength value="50" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="streetNumber" minOccurs="0" >
+			<xs:element name="streetNumber" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The house number. This field is only optional when the house number is passed with
-          the field streetName.</xs:documentation>
+					<xs:documentation>The house number. This field is only optional when the house
+						number is passed with the field streetName.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="addressAddition" minOccurs="0" maxOccurs="2">
 				<xs:annotation>
-					<xs:documentation>Address addon, is only printed in the international area (V53WPAK)</xs:documentation>
+					<xs:documentation>Address addon, is only printed in the international area
+						(V53WPAK)</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="dispatchingInformation" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>DispatchingInformation, is only printed in the international area (V53WPAK)</xs:documentation>
+					<xs:documentation>DispatchingInformation, is only printed in the international
+						area (V53WPAK)</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
-			<xs:element ref="cis:province" minOccurs="0"/>
-			<xs:element ref="cis:Origin" minOccurs="0"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
+			<xs:element ref="cis:province" minOccurs="0" />
+			<xs:element ref="cis:Origin" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="NativeAddressTypeNew">
@@ -354,28 +364,29 @@ requesting client is developed.</xs:documentation>
 			</xs:annotation>
 			<xs:element name="streetName">
 				<xs:annotation>
-					<xs:documentation>The name of the street. Optionally the house number can be passed in this field too.
-          In this case the field "streetNumber" must not be present.</xs:documentation>
+					<xs:documentation>The name of the street. Optionally the house number can be
+						passed in this field too. In this case the field "streetNumber" must not be
+						present.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
+						<xs:maxLength value="50" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="streetNumber" minOccurs="0" >
+			<xs:element name="streetNumber" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The house number. This field is only optional when the house number is passed with
-          the field streetName.</xs:documentation>
+					<xs:documentation>The house number. This field is only optional when the house
+						number is passed with the field streetName.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
 			<xs:element name="Origin" type="cis:CountryType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Country.</xs:documentation>
@@ -385,53 +396,56 @@ requesting client is developed.</xs:documentation>
 	</xs:complexType>
 	<xs:complexType name="ReceiverNativeAddressType">
 		<xs:sequence>
-			<xs:element ref="cis:name2" minOccurs="0"/>
-			<xs:element ref="cis:name3" minOccurs="0"/>
+			<xs:element ref="cis:name2" minOccurs="0" />
+			<xs:element ref="cis:name3" minOccurs="0" />
 			<xs:element name="streetName">
-                <xs:annotation>
-                    <xs:documentation>The name of the street. Optionally the house number can be passed in this field too.
-          In this case the field "streetNumber" must not be present.</xs:documentation>
-                </xs:annotation>
+				<xs:annotation>
+					<xs:documentation>The name of the street. Optionally the house number can be
+						passed in this field too. In this case the field "streetNumber" must not be
+						present.</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
+						<xs:maxLength value="50" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="streetNumber" minOccurs="0" >
-                <xs:annotation>
-                    <xs:documentation>The house number. This field is only optional when the house number is passed with
-          the field streetName.</xs:documentation>
-                </xs:annotation>
+			<xs:element name="streetNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The house number. This field is only optional when the house
+						number is passed with the field streetName.</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="addressAddition" minOccurs="0" maxOccurs="2">
 				<xs:annotation>
-					<xs:documentation>Address addon, is only printed in the international area (V53WPAK)</xs:documentation>
+					<xs:documentation>Address addon, is only printed in the international area
+						(V53WPAK)</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="dispatchingInformation" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>DispatchingInformation, is only printed in the international area (V53WPAK)</xs:documentation>
+					<xs:documentation>DispatchingInformation, is only printed in the international
+						area (V53WPAK)</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
-			<xs:element ref="cis:province" minOccurs="0"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
+			<xs:element ref="cis:province" minOccurs="0" />
 			<xs:element name="Origin" type="cis:CountryType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Country.</xs:documentation>
@@ -462,8 +476,8 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
-			<xs:element ref="cis:streetNameCode" minOccurs="0"/>
-			<xs:element ref="cis:streetNumberCode" minOccurs="0"/>
+			<xs:element ref="cis:streetNameCode" minOccurs="0" />
+			<xs:element ref="cis:streetNumberCode" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DeliveryAddressType">
@@ -494,8 +508,8 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
-			<xs:element ref="cis:streetNameCode" minOccurs="0"/>
-			<xs:element ref="cis:streetNumberCode" minOccurs="0"/>
+			<xs:element ref="cis:streetNameCode" minOccurs="0" />
+			<xs:element ref="cis:streetNumberCode" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="BankType">
@@ -512,7 +526,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="80"/>
+						<xs:maxLength value="80" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -522,7 +536,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="80"/>
+						<xs:maxLength value="80" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -532,7 +546,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="22"/>
+						<xs:maxLength value="22" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -542,7 +556,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -552,7 +566,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -562,7 +576,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="11"/>
+						<xs:maxLength value="11" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -572,7 +586,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -586,9 +600,9 @@ requesting client is developed.</xs:documentation>
 			<xs:annotation>
 				<xs:documentation>includes</xs:documentation>
 			</xs:annotation>
-			<xs:element ref="cis:name1" minOccurs="1"/>
-			<xs:element ref="cis:name2" minOccurs="0"/>
-			<xs:element ref="cis:name3" minOccurs="0"/>
+			<xs:element ref="cis:name1" minOccurs="1" />
+			<xs:element ref="cis:name2" minOccurs="0" />
+			<xs:element ref="cis:name3" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ReceiverNameType">
@@ -605,7 +619,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
+						<xs:maxLength value="50" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -617,7 +631,7 @@ requesting client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="35"/>
+				<xs:maxLength value="35" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -627,7 +641,7 @@ requesting client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="35"/>
+				<xs:maxLength value="35" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -637,7 +651,7 @@ requesting client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="35"/>
+				<xs:maxLength value="35" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -651,21 +665,23 @@ requesting client is developed.</xs:documentation>
 			</xs:annotation>
 			<xs:element name="phone" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Phone number.</xs:documentation>
+					<xs:documentation>Phone number. If you are using delivery type CDP, the phone
+						number and/or e-mail address are mandatory</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="email" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Emailaddress. </xs:documentation>
+					<xs:documentation>Emailaddress. If you are using delivery type CDP, the phone
+						number and/or e-mail address are mandatory</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="70"/>
+						<xs:maxLength value="70" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -675,7 +691,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -716,12 +732,14 @@ requesting client is developed.</xs:documentation>
 			</xs:annotation>
 			<xs:element name="postNumber">
 				<xs:annotation>
-					<xs:documentation>Post Nummer of the receiver, if not set receiver e-mail and/or mobilephone number needs to be set. When sending to a packstation with "DHL Paket" (V01PAK), the postnumber must always be entered.</xs:documentation>
+					<xs:documentation>Post Nummer of the receiver, if not set receiver e-mail and/or
+						mobilephone number needs to be set. When sending to a packstation with "DHL
+						Paket" (V01PAK), the postnumber must always be entered.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="1"/>
-						<xs:maxLength value="10"/>
+						<xs:minLength value="1" />
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -731,15 +749,15 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="3"/>
-						<xs:maxLength value="3"/>
+						<xs:minLength value="3" />
+						<xs:maxLength value="3" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
-			<xs:element ref="cis:province" minOccurs="0"/>
-			<xs:element ref="cis:Origin" minOccurs="0"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
+			<xs:element ref="cis:province" minOccurs="0" />
+			<xs:element ref="cis:Origin" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PostfilialeType">
@@ -756,8 +774,8 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="3"/>
-						<xs:maxLength value="3"/>
+						<xs:minLength value="3" />
+						<xs:maxLength value="3" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -767,17 +785,17 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="1"/>
-						<xs:maxLength value="10"/>
+						<xs:minLength value="1" />
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
-			<xs:element ref="cis:Origin" minOccurs="0"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
+			<xs:element ref="cis:Origin" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
-		<xs:complexType name="PostfilialeTypeNoCountry">
+	<xs:complexType name="PostfilialeTypeNoCountry">
 		<xs:annotation>
 			<xs:documentation>Type of Postfiliale</xs:documentation>
 		</xs:annotation>
@@ -791,8 +809,8 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="3"/>
-						<xs:maxLength value="3"/>
+						<xs:minLength value="3" />
+						<xs:maxLength value="3" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -802,13 +820,13 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="1"/>
-						<xs:maxLength value="10"/>
+						<xs:minLength value="1" />
+						<xs:maxLength value="10" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
 			<xs:element name="Origin" type="cis:CountryType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Country.</xs:documentation>
@@ -830,8 +848,8 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="3"/>
-						<xs:maxLength value="3"/>
+						<xs:minLength value="3" />
+						<xs:maxLength value="3" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -841,7 +859,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -851,13 +869,13 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="5"/>
+						<xs:maxLength value="5" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="cis:zip"/>
-			<xs:element ref="cis:city"/>
-			<xs:element ref="cis:Origin" minOccurs="0"/>
+			<xs:element ref="cis:zip" />
+			<xs:element ref="cis:city" />
+			<xs:element ref="cis:Origin" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerType">
@@ -878,7 +896,7 @@ requesting client is developed.</xs:documentation>
 					<xs:documentation>VAT id.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="cis:EKP"/>
+			<xs:element ref="cis:EKP" />
 			<xs:element name="Address" type="cis:NativeAddressType">
 				<xs:annotation>
 					<xs:documentation>Address of customer</xs:documentation>
@@ -956,7 +974,7 @@ requesting client is developed.</xs:documentation>
 			<xs:documentation>Type of zip code</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:maxLength value="17"/>
+			<xs:maxLength value="17" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="CountryType">
@@ -973,7 +991,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
+						<xs:maxLength value="30" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -988,7 +1006,7 @@ requesting client is developed.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="35"/>
+						<xs:maxLength value="35" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1002,7 +1020,7 @@ requesting client is developed.</xs:documentation>
 			<xs:annotation>
 				<xs:documentation>can be</xs:documentation>
 			</xs:annotation>
-			<xs:element ref="cis:shipmentNumber"/>
+			<xs:element ref="cis:shipmentNumber" />
 		</xs:choice>
 	</xs:complexType>
 	<xs:element name="Status">
@@ -1020,7 +1038,7 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="10"/>
+							<xs:maxLength value="10" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -1030,7 +1048,7 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="500"/>
+							<xs:maxLength value="500" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -1043,8 +1061,8 @@ requesting client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="9"/>
-				<xs:minLength value="2"/>
+				<xs:maxLength value="9" />
+				<xs:minLength value="2" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -1078,9 +1096,9 @@ requesting client is developed.</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:maxLength value="15"/>
-							<xs:enumeration value="mm"/>
-							<xs:enumeration value="inch"/>
+							<xs:maxLength value="15" />
+							<xs:enumeration value="mm" />
+							<xs:enumeration value="inch" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -1115,7 +1133,7 @@ requesting client is developed.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="39"/>
+				<xs:maxLength value="39" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

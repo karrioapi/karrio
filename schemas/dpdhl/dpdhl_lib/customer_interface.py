@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Aug  5 17:17:31 2022 by generateDS.py version 2.40.13.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sun Feb 26 19:05:52 2023 by generateDS.py version 2.41.1.
+# Python 3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
 #   ('-o', './dpdhl_lib/customer_interface.py')
 #
 # Command line arguments:
-#   ./schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd
+#   ./schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/customer_interface.py" ./schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/customer_interface.py" ./schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd
 #
 # Current working directory (os.getcwd()):
 #   dpdhl
@@ -1010,7 +1010,8 @@ class unitType(str, Enum):
 
 
 class EKP(GeneratedsSuper):
-    """EKP -- First 10 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.
+    """EKP -- First 10 digit number extract from the 14 digit DHL Account Number.
+    E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1094,7 +1095,9 @@ class EKP(GeneratedsSuper):
 
 
 class partnerID(GeneratedsSuper):
-    """partnerID -- Field has the partner id. I.e. the last 2 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then Attendance is 01.
+    """partnerID -- Field has the partner id. I.e. the last 2 digit number extract from
+    the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01"
+    then Attendance is 01.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1766,12 +1769,8 @@ class routeCode(GeneratedsSuper):
 
 
 class routingCode(GeneratedsSuper):
-    """routingCode --
-    The following barcode types are:
-    1. GS1 Barcode
-    2. ASC MH10 Barcode
-    3. 2/5 Interleaved
-    4. Code 128 ( UPU )
+    """routingCode --  The following barcode types are: 1. GS1 Barcode 2. ASC MH10 Barcode
+    3. 2/5 Interleaved 4. Code 128 ( UPU )
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2191,11 +2190,13 @@ class streetNumberCode(GeneratedsSuper):
 
 
 class Version(GeneratedsSuper):
-    """Version -- The version of the webservice implementation for which the
-    requesting client is developed.
+    """Version -- The version of the webservice implementation for which the requesting
+    client is developed.
     includes
-    majorRelease -- The number of the major release. E.g. the '3' in version "3.2.".
-    minorRelease -- The number of the minor release. E.g. the '3' in version "3.2.".
+    majorRelease -- The number of the major release. E.g. the '3' in version
+    "3.2.".
+    minorRelease -- The number of the minor release. E.g. the '3' in version
+    "3.2.".
     build -- Optional build id to be addressed.
     
     """
@@ -2525,12 +2526,15 @@ class AuthentificationType(GeneratedsSuper):
 class NativeAddressType(GeneratedsSuper):
     """NativeAddressType -- Type of native address
     includes
-    streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
-    addressAddition -- Address addon, is only printed in the international area (V53WPAK)
-    dispatchingInformation -- DispatchingInformation, is only printed in the international area (V53WPAK)
+    streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
+    addressAddition -- Address addon, is only printed in the international area
+    (V53WPAK)
+    dispatchingInformation -- DispatchingInformation, is only printed in the international
+    area (V53WPAK)
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2833,10 +2837,11 @@ class NativeAddressType(GeneratedsSuper):
 class NativeAddressTypeNew(GeneratedsSuper):
     """NativeAddressTypeNew -- Type of native address
     includes
-    streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
+    streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
     Origin -- Country.
     
     """
@@ -3039,12 +3044,15 @@ class NativeAddressTypeNew(GeneratedsSuper):
 
 
 class ReceiverNativeAddressType(GeneratedsSuper):
-    """streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
-    addressAddition -- Address addon, is only printed in the international area (V53WPAK)
-    dispatchingInformation -- DispatchingInformation, is only printed in the international area (V53WPAK)
+    """streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
+    addressAddition -- Address addon, is only printed in the international area
+    (V53WPAK)
+    dispatchingInformation -- DispatchingInformation, is only printed in the international
+    area (V53WPAK)
     Origin -- Country.
     
     """
@@ -4589,8 +4597,10 @@ class name3(GeneratedsSuper):
 class CommunicationType(GeneratedsSuper):
     """CommunicationType -- Type of communication.
     includes
-    phone -- Phone number.
-    email -- Emailaddress.
+    phone -- Phone number. If you are using delivery type CDP, the phone
+    number and/or e-mail address are mandatory
+    email -- Emailaddress. If you are using delivery type CDP, the phone
+    number and/or e-mail address are mandatory
     contactPerson -- First name and last name of contact person.
     
     """
@@ -4903,7 +4913,9 @@ class ContactType(GeneratedsSuper):
 class PackStationType(GeneratedsSuper):
     """PackStationType -- Type of packstation.
     includes
-    postNumber -- Post Nummer of the receiver, if not set receiver e-mail and/or mobilephone number needs to be set. When sending to a packstation with "DHL Paket" (V01PAK), the postnumber must always be entered.
+    postNumber -- Post Nummer of the receiver, if not set receiver e-mail and/or
+    mobilephone number needs to be set. When sending to a packstation with "DHL
+    Paket" (V01PAK), the postnumber must always be entered.
     packstationNumber -- Number of the Packstation.
     
     """
@@ -7528,67 +7540,67 @@ RenameMappings_ = {
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
 NamespaceToDefMappings_ = {'http://dhl.de/webservice/cisbase': [('countryISOType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'ST'),
                                       ('ZipType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'ST'),
                                       ('AuthentificationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressTypeNew',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PickupAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('DeliveryAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('BankType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NameType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNameType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CommunicationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ContactType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PackStationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeTypeNoCountry',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ParcelShopType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CustomerType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ErrorType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CountryType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ShipmentNumberType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT')]}
 
 __all__ = [
