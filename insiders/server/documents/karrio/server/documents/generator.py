@@ -1,5 +1,6 @@
 import io
 import typing
+import base64
 from jinja2 import Template
 from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
@@ -32,8 +33,8 @@ UNITS = {
 
 class Documents:
     @staticmethod
-    def generate(document: models.DocumentTemplate, data: dict, context) -> io.BytesIO:
-        shipment_contexts = (
+    def generate(document: models.DocumentTemplate, data: dict, **kwargs) -> io.BytesIO:
+        shipment_contexts = data.get("shipments_context") or (
             get_shipments_context(data["shipments"])
             if "shipments" in data and document.related_object == "shipment"
             else []
@@ -95,7 +96,10 @@ def get_shipment_item_contexts(shipment):
             "ship_quantity": items.filter(parent_id=item.parent_id).aggregate(
                 Sum("quantity")
             )["quantity__sum"],
-            "order": OrderSerializer(item.order or {}).data,
+            "order": (
+                OrderSerializer(item.order).data
+                if item.order else {}
+            ),
         }
         for item in items.order_by("parent_id").distinct("parent_id")
     ]
@@ -147,3 +151,27 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
         )
         for order in orders
     ]
+
+
+def generate_document(slug: str, shipment, carrier) -> dict:
+    template = models.DocumentTemplate.objects.get(slug=slug)
+    params = dict(
+        shipments_context=[
+            dict(
+                shipment=ShipmentSerializer(shipment).data,
+                line_items=get_shipment_item_contexts(shipment),
+                carrier=get_carrier_context(carrier.settings),
+                orders=OrderSerializer(
+                    get_shipment_order_contexts(shipment),
+                    many=True,
+                ).data,
+            )
+        ]
+    )
+    document = Documents.generate(template, params).getvalue()
+
+    return dict(
+        doc_type=None,
+        doc_name=f"{template.name}",
+        doc_file=base64.b64encode(document).decode("utf-8"),
+    )

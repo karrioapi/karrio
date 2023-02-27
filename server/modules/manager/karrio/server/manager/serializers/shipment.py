@@ -1,7 +1,8 @@
 import typing
 import logging
-import rest_framework.status as status
+from django.conf import settings
 import django.db.transaction as transaction
+import rest_framework.status as status
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
@@ -36,6 +37,7 @@ from karrio.server.core.serializers import (
     TrackerStatus,
     ShipmentDetails,
 )
+from karrio.server.manager.serializers.document import DocumentUploadSerializer
 from karrio.server.manager.serializers.address import AddressSerializer
 from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
@@ -63,9 +65,10 @@ class ShipmentSerializer(ShipmentData):
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         data = kwargs.get("data") or {}
+        context = getattr(self, "__context", None) or kwargs.get("context")
+        is_update = instance is not None
 
-        if ("parcels" in data) and (instance is not None):
-            context = getattr(self, "__context", None) or kwargs.get("context")
+        if is_update and ("parcels" in data):
             save_many_to_many_data(
                 "parcels",
                 ParcelSerializer,
@@ -74,6 +77,14 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
                 partial=True,
             )
+        if is_update and data.get("customs") is not None:
+            instance.customs = save_one_to_one_data(
+                "customs",
+                CustomsSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
 
         super().__init__(instance, **kwargs)
 
@@ -81,6 +92,7 @@ class ShipmentSerializer(ShipmentData):
     def create(
         self, validated_data: dict, context: Context, **kwargs
     ) -> models.Shipment:
+        fetch_rates = validated_data.get("fetch_rates") is not False
         carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
         services = [service] if service is not None else validated_data.get("services")
@@ -99,37 +111,48 @@ class ShipmentSerializer(ShipmentData):
             **validated_data,
             **({"services": services} if any(services) else {}),
         }
+        rates = validated_data.get("rates") or []
+        messages = validated_data.get("messages") or []
 
         # Get live rates.
-        rate_response: datatypes.RateResponse = (
-            SerializerDecorator[RateSerializer](data=rating_data, context=context)
-            .save(carriers=carriers)
-            .instance
-        )
-
-        shipment_data = {
-            **{
-                key: value
-                for key, value in validated_data.items()
-                if key in models.Shipment.DIRECT_PROPS and value is not None
-            },
-            "customs": save_one_to_one_data(
-                "customs", CustomsSerializer, payload=validated_data, context=context
-            ),
-            "shipper": save_one_to_one_data(
-                "shipper", AddressSerializer, payload=validated_data, context=context
-            ),
-            "recipient": save_one_to_one_data(
-                "recipient", AddressSerializer, payload=validated_data, context=context
-            ),
-        }
+        if fetch_rates:
+            rate_response: datatypes.RateResponse = (
+                RateSerializer.map(data=rating_data, context=context)
+                .save(carriers=carriers)
+                .instance
+            )
+            rates = lib.to_dict(rate_response.rates)
+            messages = lib.to_dict(rate_response.messages)
 
         shipment = models.Shipment.objects.create(
             **{
-                **shipment_data,
+                **{
+                    key: value
+                    for key, value in validated_data.items()
+                    if key in models.Shipment.DIRECT_PROPS and value is not None
+                },
+                "customs": save_one_to_one_data(
+                    "customs",
+                    CustomsSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
+                "shipper": save_one_to_one_data(
+                    "shipper",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
+                "recipient": save_one_to_one_data(
+                    "recipient",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
+                "rates": rates,
                 "payment": payment,
-                "rates": lib.to_dict(rate_response.rates),
-                "messages": lib.to_dict(rate_response.messages),
+                "services": services,
+                "messages": messages,
                 "test_mode": context.test_mode,
             }
         )
@@ -145,8 +168,12 @@ class ShipmentSerializer(ShipmentData):
         )
 
         # Buy label if preferred service is already selected.
-        if service:
-            return buy_shipment_label(shipment, context, service=service)
+        if service and fetch_rates:
+            return buy_shipment_label(
+                shipment,
+                context,
+                service=service,
+            )
 
         return shipment
 
@@ -371,40 +398,67 @@ def buy_shipment_label(
     context: typing.Any,
     data: dict = dict(),
     service: str = None,
-):
-    selected_rate_id = (
-        data.get("selected_rate_id")
-        if service is None
-        else next(
-            (rate["id"] for rate in shipment.rates if rate["service"] == service), None
-        )
+) -> models.Shipment:
+    extra: dict = {}
+    invoice: dict = {}
+    invoice_template = shipment.options.get("invoice_template")
+    rate = next(
+        (
+            rate
+            for rate in shipment.rates
+            if rate["service"] == service or rate["id"] == data.get("selected_rate_id")
+        ),
+        None,
     )
-    payload = {**data, "selected_rate_id": selected_rate_id}
+    payload = {**data, "selected_rate_id": rate["id"]}
+    carrier = gateway.Carriers.first(
+        carrier_id=rate["carrier_id"],
+        test_mode=rate["test_mode"],
+    )
+
+    # Process ETD document upload
+    if rate and any(invoice_template or ""):
+        shipment.selected_rate = rate
+        shipment.selected_rate_carrier = carrier
+        _, document = process_invoice_upload(
+            shipment,
+            invoice_template,
+            carrier,
+            context,
+        )
+        if document:
+            invoice.update(invoice=document)
 
     # Submit shipment to carriers
     response: Shipment = (
-        SerializerDecorator[ShipmentPurchaseSerializer](
+        ShipmentPurchaseSerializer.map(
             context=context,
             data={**Shipment(shipment).data, **payload},
         )
-        .save()
+        .save(carrier=carrier)
         .instance
     )
 
-    parcels = [
-        {"id": parcel.id, "reference_number": parcel.reference_number}
-        for parcel in response.parcels
-    ]
+    extra.update(
+        parcels=[
+            dict(id=parcel.id, reference_number=parcel.reference_number)
+            for parcel in response.parcels
+        ],
+        docs={
+            **lib.to_dict(response.docs),
+            **invoice,
+        },
+    )
 
     # Update shipment state
     purchased_shipment = (
-        SerializerDecorator[ShipmentSerializer](
+        ShipmentSerializer.map(
             shipment,
             context=context,
             data={
                 **payload,
                 **ShipmentDetails(response).data,
-                "parcels": parcels,
+                **extra,
             },
         )
         .save()
@@ -536,3 +590,56 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.save(update_fields=["tracking_url"])
         except Exception as e:
             logger.exception("Failed to update shipment tracking url", e)
+
+
+def process_invoice_upload(
+    shipment: models.Shipment,
+    template: str,
+    carrier: providers.Carrier,
+    context: Context,
+):
+    # Check if carrier and shipment support ETD and document url is provided
+    if settings.DOCUMENTS_MANAGEMENT is False:
+        logger.info("document generation not supported!")
+        return None, None
+
+    # generate invoice document
+    import karrio.server.documents.generator as documents
+
+    document = documents.generate_document(template, shipment, carrier)
+
+    # upload invoice if supported
+    upload_is_supported = (
+        "paperless_trade" in carrier.capabilities
+        or shipment.options.get("paperless_trade")
+        or shipment.options.get("fedex_electronic_trade_documents")
+    )
+
+    if upload_is_supported:
+        upload_record = (
+            DocumentUploadSerializer.map(
+                (
+                    shipment.shipment_upload_record
+                    if hasattr(shipment, "shipment_upload_record")
+                    else None
+                ),
+                data=dict(
+                    shipment_id=shipment.id,
+                    reference=shipment.id,
+                    document_files=[
+                        dict(
+                            doc_file=document["doc_file"],
+                            doc_name=document["doc_name"],
+                            doc_type=document["doc_type"] or "commercial_invoice",
+                        )
+                    ],
+                ),
+                context=context,
+            )
+            .save(shipment=shipment, carrier=carrier)
+            .instance
+        )
+
+        return upload_record, document["doc_file"]
+
+    return None, document["doc_file"]

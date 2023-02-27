@@ -41,32 +41,32 @@ django-debug-toolbar
 # -e ./sdk/vendors/freightcom
 
 
-# karrio
-karrio.amazon_mws
-karrio.aramex
-karrio.australiapost
-karrio.canadapost
-karrio.canpar
-karrio.chronopost
-karrio.dhl-express
-karrio.dhl-poland
-karrio.dhl-universal
-karrio.dicom
-karrio.dpdhl
-karrio.fedex
-karrio.purolator
-karrio.royalmail
-karrio.sendle
-karrio.sf-express
-karrio.tnt
-karrio.ups
-karrio.ups_freight
-karrio.usps
-karrio.usps_international
-karrio.yanwen
-karrio.yunexpress
-karrio.eshipper
-karrio.freightcom
+karrio==2022.8.19
+karrio.amazon-mws==2022.8.3
+karrio.aramex==2022.8.3
+karrio.australiapost==2022.8.3
+karrio.canadapost==2022.8.18
+karrio.canpar==2022.8.18
+karrio.chronopost==2022.8.18
+karrio.dhl-express==2022.8.18
+karrio.dhl-poland==2022.8.18
+karrio.dhl-universal==2022.8.3
+karrio.dicom==2022.8.18
+karrio.dpdhl==2022.8.18
+karrio.eshipper==2022.8.18
+karrio.fedex==2022.8.19
+karrio.freightcom==2022.8.18
+karrio.purolator==2022.8.18
+karrio.royalmail==2022.8.3
+karrio.sendle==2022.8.3
+karrio.sf-express==2022.8.3
+karrio.tnt==2022.8.18
+karrio.ups==2022.8.18
+karrio.ups-freight==2022.8.18
+karrio.usps==2022.8.18
+karrio.usps-international==2022.8.18
+karrio.yanwen==2022.8.3
+karrio.yunexpress==2022.8.3
 
 
 # karrio server core modules

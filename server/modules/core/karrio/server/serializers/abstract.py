@@ -7,19 +7,10 @@ from django.conf import settings
 from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import serializers
-
 from karrio.core.utils import DP
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
-
-
-class AbstractSerializer:
-    def create(self, validated_data, **kwargs):
-        super().create(validated_data)
-
-    def update(self, instance, validated_data, **kwargs):
-        super().update(instance, validated_data, **kwargs)
 
 
 class Context(NamedTuple):
@@ -31,15 +22,69 @@ class Context(NamedTuple):
         return getattr(self, item)
 
 
+class DecoratedSerializer:
+    def __init__(
+        self,
+        instance: models.Model = None,
+        serializer: "Serializer" = None,
+    ):
+        self._instance = instance
+        self._serializer = serializer
+
+    @property
+    def data(self) -> Optional[dict]:
+        return self._serializer.validated_data if self._serializer is not None else None
+
+    @property
+    def instance(self) -> models.Model:
+        return self._instance
+
+    def save(self, **kwargs) -> "DecoratedSerializer":
+        if self._serializer is not None:
+            self._instance = self._serializer.save(**kwargs)
+
+        return self
+
+
+class AbstractSerializer:
+    def create(self, validated_data, **kwargs):
+        super().create(validated_data)
+
+    def update(self, instance, validated_data, **kwargs):
+        super().update(instance, validated_data, **kwargs)
+
+    @classmethod
+    def map(
+        cls, instance=None, data: Union[str, dict] = None, **kwargs
+    ) -> "DecoratedSerializer":
+        if data is None and instance is None:
+            serializer = None
+        else:
+            serializer = (
+                cls(data=data or {}, **kwargs)  # type:ignore
+                if instance is None
+                else cls(
+                    instance, data=data or {}, **{**kwargs, "partial": True}
+                )  # type:ignore
+            )
+
+            serializer.is_valid(raise_exception=True)  # type:ignore
+
+        return DecoratedSerializer(
+            instance=instance,
+            serializer=serializer,  # type:ignore
+        )
+
+
 class Serializer(serializers.Serializer, AbstractSerializer):
-    pass
+    context: dict = {}
 
 
 class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):
-    def create(self, data: dict, **kwargs):
+    def create(self, data: dict, **kwargs):  # type: ignore
         return self.Meta.model.objects.create(**data)
 
-    def update(self, instance, data: dict, **kwargs):
+    def update(self, instance, data: dict, **kwargs):  # type: ignore
         for name, value in data.items():
             if name != "created_by":
                 setattr(instance, name, value)
@@ -285,7 +330,7 @@ def save_one_to_one_data(
     )
 
 
-def allow_model_id(model_paths: []):
+def allow_model_id(model_paths: List = []):
     def _decorator(serializer: Type[Serializer]):
         class ModelIdSerializer(serializer):
             def __init__(self, *args, **kwargs):
