@@ -70,7 +70,7 @@ def shipment_request(
             dpdhl.CreateShipmentOrderRequest(
                 Version=dpdhl.Version(
                     majorRelease=3,
-                    minorRelease=1,
+                    minorRelease=4,
                 ),
                 ShipmentOrder=[
                     dpdhl.ShipmentOrderType(

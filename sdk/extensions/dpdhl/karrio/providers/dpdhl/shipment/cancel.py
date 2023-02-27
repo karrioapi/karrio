@@ -47,7 +47,7 @@ def shipment_cancel_request(
             dpdhl.DeleteShipmentOrderRequest(
                 Version=dpdhl.Version(
                     majorRelease=3,
-                    minorRelease=1,
+                    minorRelease=4,
                 ),
                 shipmentNumber=[payload.shipment_identifier],
             )

@@ -166,7 +166,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
         <ns:CreateShipmentOrderRequest>
             <ns:Version>
                 <majorRelease>3</majorRelease>
-                <minorRelease>1</minorRelease>
+                <minorRelease>4</minorRelease>
             </ns:Version>
             <ShipmentOrder>
                 <sequenceNumber>1</sequenceNumber>
@@ -252,7 +252,7 @@ InternationalShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schema
         <ns:CreateShipmentOrderRequest>
             <ns:Version>
                 <majorRelease>3</majorRelease>
-                <minorRelease>2</minorRelease>
+                <minorRelease>4</minorRelease>
             </ns:Version>
             <ShipmentOrder>
                 <sequenceNumber>1</sequenceNumber>
@@ -363,7 +363,7 @@ ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
         <ns:DeleteShipmentOrderRequest>
             <ns:Version>
                 <ns:majorRelease>3</ns:majorRelease>
-                <ns:minorRelease>1</ns:minorRelease>
+                <ns:minorRelease>4</ns:minorRelease>
             </ns:Version>
             <cis:shipmentNumber>222201040006351204</cis:shipmentNumber>
         </ns:DeleteShipmentOrderRequest>
@@ -380,7 +380,7 @@ ShipmentResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/busine
         <bcs:CreateShipmentOrderResponse>
             <bcs:Version>
                 <majorRelease>3</majorRelease>
-                <minorRelease>1</minorRelease>
+                <minorRelease>4</minorRelease>
             </bcs:Version>
             <Status>
                 <statusCode>0</statusCode>
@@ -415,7 +415,7 @@ ShipmentCancelResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/
         <bcs:DeleteShipmentOrderResponse>
             <bcs:Version>
                 <majorRelease>3</majorRelease>
-                <minorRelease>0</minorRelease>
+                <minorRelease>4</minorRelease>
             </bcs:Version>
             <Status>
                 <statusCode>0</statusCode>
@@ -444,7 +444,7 @@ ShipmentErrorResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/b
         <bcs:CreateShipmentOrderResponse>
             <bcs:Version>
                 <majorRelease>3</majorRelease>
-                <minorRelease>1</minorRelease>
+                <minorRelease>4</minorRelease>
             </bcs:Version>
             <Status>
                 <statusCode>1101</statusCode>
