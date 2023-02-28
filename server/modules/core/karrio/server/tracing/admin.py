@@ -12,7 +12,7 @@ class TracingRecordAdmin(admin.ModelAdmin):
     list_display = ("id", "log", "key", "test_mode", "request_timestamp", "created_at")
     search_fields = ("meta__request_log_id", "meta__carrier_name")
     list_filter = ("key", "test_mode")
-    readonly_fields = [
+    readonly_fields = ["url", "xml"] + [
         f.name
         for f in models.TracingRecord._meta.get_fields()
         if f.name not in ["org", "link"]
@@ -26,6 +26,12 @@ class TracingRecordAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request) -> bool:
         return False
+
+    def xml(self, obj):
+        return obj.record.get("data") if obj.record.get("format") == 'xml' else ""
+
+    def url(self, obj):
+        return obj.record.get("url", "")
 
     def log(self, obj):
         log_id = obj.meta.get("request_log_id")
