@@ -1,13 +1,8 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import (
-    UserCreationForm,
-    AuthenticationForm,
-    ValidationError,
-)
+from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from two_factor.views import LoginView
 
 from karrio.server.conf import settings
 from karrio.server.user.utils import send_email
@@ -38,21 +33,3 @@ class SignUpForm(UserCreationForm):
             user.is_active = False
 
         return user
-
-
-class LoginForm(AuthenticationForm):
-    username = forms.CharField(
-        label=_("Email"),
-        widget=forms.EmailInput(attrs={"autofocus": True}),
-    )
-
-    def get_invalid_login_error(self):
-        return ValidationError(
-            self.error_messages["invalid_login"],
-            code="invalid_login",
-            params={"username": self.username_field.verbose_name},
-        )
-
-
-class LogIn(LoginView):
-    form_class = LoginForm
