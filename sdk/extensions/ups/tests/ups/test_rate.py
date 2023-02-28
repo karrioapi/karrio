@@ -84,7 +84,10 @@ rate_req_data = {
     ],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
-    "options": {"negotiated_rates_indicator": True},
+    "options": {
+        "shipment_date": "2023-02-27",
+        "negotiated_rates_indicator": True,
+    },
 }
 
 
@@ -112,7 +115,10 @@ rate_req_with_package_preset_data = {
     ],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
-    "options": {"negotiated_rates_indicator": True},
+    "options": {
+        "shipment_date": "2023-02-27",
+        "negotiated_rates_indicator": True,
+    },
 }
 
 
@@ -225,7 +231,7 @@ RateMissingArgsErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xml
 </soapenv:Envelope>
 """
 
-RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" >
+RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -291,9 +297,15 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 </rate:Package>
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
+                    <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
+                <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
                 <rate:DeliveryTimeInformation>
                     <rate:PackageBillType>03</rate:PackageBillType>
+                    <rate:Pickup>
+                        <rate:Date>20230227</rate:Date>
+                    </rate:Pickup>
                 </rate:DeliveryTimeInformation>
             </rate:Shipment>
         </rate:RateRequest>
@@ -301,7 +313,7 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
 </tns:Envelope>
 """
 
-RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" >
+RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -361,9 +373,15 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
                 </rate:Package>
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
+                    <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
+                <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
                 <rate:DeliveryTimeInformation>
                     <rate:PackageBillType>03</rate:PackageBillType>
+                    <rate:Pickup>
+                        <rate:Date>20230227</rate:Date>
+                    </rate:Pickup>
                 </rate:DeliveryTimeInformation>
             </rate:Shipment>
         </rate:RateRequest>

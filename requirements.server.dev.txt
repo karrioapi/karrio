@@ -4,7 +4,7 @@ django-debug-toolbar
 -e ./schemas/dpdhl
 
 # Carrier Extentions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/generic
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
@@ -23,7 +23,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/sf_express
 # -e ./sdk/extensions/tnt
-# -e ./sdk/extensions/ups
+-e ./sdk/extensions/ups
 # -e ./sdk/extensions/ups_freight
 # -e ./sdk/extensions/usps
 # -e ./sdk/extensions/usps_international
@@ -36,7 +36,7 @@ django-debug-toolbar
 # -e ./sdk/vendors/freightcom
 
 
-karrio
+# karrio
 karrio.generic
 karrio.amazon_mws
 karrio.aramex
@@ -55,7 +55,7 @@ karrio.royalmail
 karrio.sendle
 karrio.sf-express
 karrio.tnt
-karrio.ups
+# karrio.ups
 karrio.ups_freight
 karrio.usps
 karrio.usps_international

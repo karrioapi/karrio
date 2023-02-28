@@ -145,6 +145,9 @@ class ShippingOption(utils.Enum):
     ups_user_level_discount_indicator = utils.OptionEnum(
         "UserLevelDiscountIndicator", bool
     )
+    ups_saturday_pickup_indicator = utils.OptionEnum(
+        "SaturdayPickupIndicator", bool
+    )
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
     )
@@ -160,8 +163,6 @@ class ShippingOption(utils.Enum):
     ups_certificate_of_origin_indicator = utils.OptionEnum(
         "CertificateOfOriginIndicator"
     )
-    ups_pickup_options = utils.OptionEnum("PickupOptions")
-    ups_delivery_options = utils.OptionEnum("DeliveryOptions")
     ups_restricted_articles = utils.OptionEnum("RestrictedArticles")
     ups_shipper_export_declaration_indicator = utils.OptionEnum(
         "ShipperExportDeclarationIndicator", bool
@@ -173,24 +174,61 @@ class ShippingOption(utils.Enum):
     ups_return_service = utils.OptionEnum("ReturnService", bool)
     ups_sdl_shipment_indicator = utils.OptionEnum("SDLShipmentIndicator", bool)
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
+    ups_lift_gate_at_pickup_indicator = utils.OptionEnum("LiftGateAtPickupIndicator", bool)
+    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
+    ups_lift_gate_at_delivery_indicator = utils.OptionEnum("LiftGateAtDeliveryIndicator", bool)
+    ups_drop_off_at_ups_facility_indicator = utils.OptionEnum("DropOffAtUPSFacilityIndicator", bool)
+
+    """ Custom option type """
+    ups_access_point_pickup = utils.OptionEnum("01", bool)
+    ups_access_point_delivery = utils.OptionEnum("02", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
+    dangerous_good = ups_restricted_articles
+    hold_at_location = ups_hold_for_pickup_indicator
 
 
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
 ) -> units.Options:
-    """
-    Apply default values to the given options.
+    """Apply default values to the given options.
     """
     _options = options.copy()
+    _has_pickup_options = (
+        "hold_at_location" in _options
+        or "ups_epra_indicator" in _options
+        or "ups_access_point_pickup" in _options
+        or "ups_hold_for_pickup_indicator" in _options
+        or "ups_lift_gate_at_pickup_indicator" in _options
+    )
+    _has_delivery_options = (
+        "ups_access_point_delivery" in _options
+        or "ups_lift_gate_at_delivery_indicator" in _options
+        or "ups_drop_off_at_ups_facility_indicator" in _options
+        or "ups_deliver_to_addressee_only_indicator" in _options
+    )
 
     if package_options is not None:
         _options.update(package_options.content)
 
-    return units.ShippingOptions(_options, ShippingOption)
+    if _has_pickup_options:
+        _options.update(pickup_options=True)
+
+    if _has_delivery_options:
+        _options.update(delivery_options=True)
+
+    if "signature_required" in _options:
+        _options.update(
+            delivery_options=_options.get("ups_delivery_confirmation") or "01"
+        )
+
+    # Define carrier option filter.
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption # type:ignore
+
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class UploadDocumentType(utils.Flag):
