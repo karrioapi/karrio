@@ -1,15 +1,15 @@
 import io
 import re
 import ssl
+import uuid
 import asyncio
 import logging
 import base64
-import uuid
 import urllib.parse
-from PIL import Image, ImageFile
 from PyPDF2 import PdfMerger
-from urllib.request import urlopen, Request
+from PIL import Image, ImageFile
 from urllib.error import HTTPError
+from urllib.request import urlopen, Request
 from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -18,8 +18,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
-NEW_LINE = '''
-'''
+NEW_LINE = """
+"""
 
 
 def identity(value: Any) -> Any:
@@ -34,9 +34,15 @@ def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
     return buffer
 
 
-def image_to_pdf(image_str: str) -> str:
+def image_to_pdf(image_str: str, rotate: int = None) -> str:
     buffer = to_buffer(image_str)
-    image = Image.open(buffer)
+    _image = Image.open(buffer)
+    image = (
+        _image.rotate(rotate, Image.NEAREST, expand = True)
+        if rotate is not None
+        else _image
+    )
+
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF")
 
@@ -74,7 +80,7 @@ def bundle_imgs(base64_strings: List[str]) -> Image:
 
 
 def bundle_zpls(base64_strings: List[str]) -> str:
-    doc = ''
+    doc = ""
     for b64_str in base64_strings:
         doc += f'{base64.b64decode(b64_str).decode("utf-8")}{NEW_LINE}'
 
@@ -192,10 +198,10 @@ def request(
         _request = process_request(_request_id, trace, **kwargs)
 
         with urlopen(_request) as f:
-            _response = process_response(_request_id, f.read(), decoder, trace)
+            _response = process_response(_request_id, f.read(), decoder, trace=trace)
 
     except HTTPError as e:
-        _response = process_error(_request_id, e, on_error, trace)
+        _response = process_error(_request_id, e, on_error=on_error, trace=trace)
 
     return _response
 
@@ -212,10 +218,9 @@ def exec_parrallel(
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
     async def run_tasks(loop):
-        return await asyncio.gather(*[
-            loop.run_in_executor(None, lambda: action(args))
-            for args in sequence
-        ])
+        return await asyncio.gather(
+            *[loop.run_in_executor(None, lambda: action(args)) for args in sequence]
+        )
 
     def run_loop():
         loop = asyncio.new_event_loop()
