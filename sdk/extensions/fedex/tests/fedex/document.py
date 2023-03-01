@@ -112,7 +112,7 @@ DocumentUploadRequest = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/s
                 <v19:DocumentProducer>CUSTOMER</v19:DocumentProducer>
                 <v19:DocumentType>CERTIFICATE_OF_ORIGIN</v19:DocumentType>
                 <v19:FileName>vikas_coo.txt</v19:FileName>
-                <v19:DocumentContent>b'R0lGODdhIAOwBPAAAA=='</v19:DocumentContent>
+                <v19:DocumentContent>R0lGODdhIAOwBPAAAA==</v19:DocumentContent>
             </v19:Documents>
         </v19:UploadDocumentsRequest>
     </tns:Body>

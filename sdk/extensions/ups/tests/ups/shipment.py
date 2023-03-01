@@ -236,8 +236,8 @@ NegotiatedShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
                     </ship:ServiceOptionsCharges>
                     <ship:ShippingLabel>
                         <ship:ImageFormat>
-                            <ship:Code>GIF</ship:Code>
-                            <ship:Description>GIF</ship:Description>
+                            <ship:Code>PNG</ship:Code>
+                            <ship:Description>PNG</ship:Description>
                         </ship:ImageFormat>
                         <ship:GraphicImage>{LABEL}</ship:GraphicImage>
                         <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElD(Truncated)</ship:HTMLImage>
@@ -294,8 +294,8 @@ ShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
                     </ship:ServiceOptionsCharges>
                     <ship:ShippingLabel>
                         <ship:ImageFormat>
-                            <ship:Code>GIF</ship:Code>
-                            <ship:Description>GIF</ship:Description>
+                            <ship:Code>PNG</ship:Code>
+                            <ship:Description>PNG</ship:Description>
                         </ship:ImageFormat>
                         <ship:GraphicImage>{LABEL}</ship:GraphicImage>
                         <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElDICI(Truncated)</ship:HTMLImage>
@@ -405,7 +405,7 @@ ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci
             </ship:Shipment>
             <ship:LabelSpecification>
                 <ship:LabelImageFormat>
-                    <ship:Code>GIF</ship:Code>
+                    <ship:Code>PNG</ship:Code>
                 </ship:LabelImageFormat>
                 <ship:LabelStockSize>
                     <ship:Height>6</ship:Height>

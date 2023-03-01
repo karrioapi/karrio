@@ -599,7 +599,7 @@ class Documents:
             lambda: request.from_(carrier.gateway).parse()
         )
 
-        if upload is None:
+        if upload is None or any(messages):
             raise exceptions.APIException(
                 detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,

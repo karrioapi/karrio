@@ -29,8 +29,8 @@ class PackagePresets(utils.Flag):
 
 
 class LabelType(utils.Flag):
-    PDF_6x4 = ("GIF", 6, 4)
-    PDF_8x4 = ("GIF", 8, 4)
+    PDF_6x4 = ("PNG", 6, 4)
+    PDF_8x4 = ("PNG", 8, 4)
     ZPL_6x4 = ("ZPL", 6, 4)
 
     """ Unified Label type mapping """
@@ -96,38 +96,46 @@ class PackagingType(utils.Flag):
 
 
 class ShippingService(utils.Enum):
-    ups_standard = "11"
-    ups_worldwide_expedited = "08"
-    ups_worldwide_express = "07"
-    ups_worldwide_express_plus = "54"
-    ups_worldwide_saver = "65"
-    ups_2nd_day_air = "02"
-    ups_2nd_day_air_am = "59"
-    ups_3_day_select = "12"
-    ups_expedited_mail_innovations = "M4"
-    ups_first_class_mail = "M2"
-    ups_ground = "03"
-    ups_next_day_air = "01"
-    ups_next_day_air_early = "14"
-    ups_next_day_air_saver = "13"
-    ups_priority_mail = "M3"
-    ups_expedited = "02"
-    ups_express_saver_ca = "13"
-    ups_access_point_economy = "70"
-    ups_express = "01"
-    ups_express_early_ca = "14"
-    ups_express_saver = "65"
-    ups_express_early = "54"
-    ups_expedited_eu = "08"
-    ups_express_eu = "07"
-    ups_express_plus = "54"
-    ups_today_dedicated_courier = "83"
-    ups_today_express = "85"
-    ups_today_express_saver = "86"
-    ups_today_standard = "82"
-    ups_worldwide_express_freight = "96"
-    ups_priority_mail_innovations = "M5"
-    ups_economy_mail_innovations = "M6"
+    ups_standard = utils.svcEnum("11")
+    ups_worldwide_expedited = utils.svcEnum("8")
+    ups_worldwide_express = utils.svcEnum("07")
+    ups_worldwide_express_plus = utils.svcEnum("54")
+    ups_worldwide_saver = utils.svcEnum("65")
+    ups_worldwide_economy_ddp = utils.svcEnum("72")
+    ups_worldwide_economy_ddu = utils.svcEnum("17")
+    ups_2nd_day_air = utils.svcEnum("02")
+    ups_2nd_day_air_am = utils.svcEnum("59")
+    ups_3_day_select = utils.svcEnum("12")
+    ups_expedited_mail_innovations = utils.svcEnum("M4")
+    ups_first_class_mail = utils.svcEnum("M2")
+    ups_ground = utils.svcEnum("03")
+    ups_next_day_air = utils.svcEnum("01")
+    ups_next_day_air_early = utils.svcEnum("14")
+    ups_next_day_air_saver = utils.svcEnum("13")
+    ups_priority_mail = utils.svcEnum("M3")
+    # ups_expedited = utils.svcEnum("02")
+    ups_express_saver = utils.svcEnum("13")
+    ups_access_point_economy = utils.svcEnum("70")
+    ups_express = utils.svcEnum("01")
+    # ups_express_early = utils.svcEnum("14")
+    # ups_express_saver = utils.svcEnum("65")
+    ups_express_early = utils.svcEnum("54")
+    ups_tm_worldwide_economy_ddp = utils.svcEnum("72")
+    ups_tm_worldwide_economy_ddu = utils.svcEnum("17")
+    ups_expedited = utils.svcEnum("08")
+    # ups_express = utils.svcEnum("07")
+    ups_express_12_00 = utils.svcEnum("74")
+    ups_tm_economy_ddp = utils.svcEnum("72")
+    ups_tm_economy_ddu = utils.svcEnum("17")
+    ups_express_plus = utils.svcEnum("54")
+    ups_today_dedicated_courier = utils.svcEnum("83")
+    ups_today_express = utils.svcEnum("85")
+    ups_today_express_saver = utils.svcEnum("86")
+    ups_today_standard = utils.svcEnum("82")
+    ups_worldwide_express_freight = utils.svcEnum("96")
+    ups_priority_mail_innovations = utils.svcEnum("M5")
+    ups_economy_mail_innovations = utils.svcEnum("M6")
+    ups_worldwide_express_freight_mid_day = utils.svcEnum("71")
 
 
 class ShippingOption(utils.Enum):
@@ -136,6 +144,9 @@ class ShippingOption(utils.Enum):
     ups_rate_chart_indicator = utils.OptionEnum("RateChartIndicator", bool)
     ups_user_level_discount_indicator = utils.OptionEnum(
         "UserLevelDiscountIndicator", bool
+    )
+    ups_saturday_pickup_indicator = utils.OptionEnum(
+        "SaturdayPickupIndicator", bool
     )
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
@@ -152,8 +163,6 @@ class ShippingOption(utils.Enum):
     ups_certificate_of_origin_indicator = utils.OptionEnum(
         "CertificateOfOriginIndicator"
     )
-    ups_pickup_options = utils.OptionEnum("PickupOptions")
-    ups_delivery_options = utils.OptionEnum("DeliveryOptions")
     ups_restricted_articles = utils.OptionEnum("RestrictedArticles")
     ups_shipper_export_declaration_indicator = utils.OptionEnum(
         "ShipperExportDeclarationIndicator", bool
@@ -165,24 +174,61 @@ class ShippingOption(utils.Enum):
     ups_return_service = utils.OptionEnum("ReturnService", bool)
     ups_sdl_shipment_indicator = utils.OptionEnum("SDLShipmentIndicator", bool)
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
+    ups_lift_gate_at_pickup_indicator = utils.OptionEnum("LiftGateAtPickupIndicator", bool)
+    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
+    ups_lift_gate_at_delivery_indicator = utils.OptionEnum("LiftGateAtDeliveryIndicator", bool)
+    ups_drop_off_at_ups_facility_indicator = utils.OptionEnum("DropOffAtUPSFacilityIndicator", bool)
+
+    """ Custom option type """
+    ups_access_point_pickup = utils.OptionEnum("01", bool)
+    ups_access_point_delivery = utils.OptionEnum("02", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
+    dangerous_good = ups_restricted_articles
+    hold_at_location = ups_hold_for_pickup_indicator
 
 
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
 ) -> units.Options:
-    """
-    Apply default values to the given options.
+    """Apply default values to the given options.
     """
     _options = options.copy()
+    _has_pickup_options = (
+        "hold_at_location" in _options
+        or "ups_epra_indicator" in _options
+        or "ups_access_point_pickup" in _options
+        or "ups_hold_for_pickup_indicator" in _options
+        or "ups_lift_gate_at_pickup_indicator" in _options
+    )
+    _has_delivery_options = (
+        "ups_access_point_delivery" in _options
+        or "ups_lift_gate_at_delivery_indicator" in _options
+        or "ups_drop_off_at_ups_facility_indicator" in _options
+        or "ups_deliver_to_addressee_only_indicator" in _options
+    )
 
     if package_options is not None:
         _options.update(package_options.content)
 
-    return units.ShippingOptions(_options, ShippingOption)
+    if _has_pickup_options:
+        _options.update(pickup_options=True)
+
+    if _has_delivery_options:
+        _options.update(delivery_options=True)
+
+    if "signature_required" in _options:
+        _options.update(
+            delivery_options=_options.get("ups_delivery_confirmation") or "01"
+        )
+
+    # Define carrier option filter.
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption # type:ignore
+
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class UploadDocumentType(utils.Flag):

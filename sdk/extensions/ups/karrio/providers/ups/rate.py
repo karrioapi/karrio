@@ -1,22 +1,5 @@
-from ups_lib.rate_web_service_schema import (
-    RateRequest as UPSRateRequest,
-    RatedShipmentType,
-    ShipmentRatingOptionsType,
-    ShipToType,
-    ShipmentType,
-    ShipperType,
-    ShipAddressType,
-    ShipToAddressType,
-    PackageType,
-    PackageWeightType,
-    UOMCodeDescriptionType,
-    DimensionsType,
-    RequestType,
-    TransactionReferenceType,
-    TimeInTransitRequestType,
-    EstimatedArrivalType,
-)
-
+import ups_lib.rate_web_service_schema as ups
+import time
 import typing
 import functools
 import karrio.lib as lib
@@ -45,7 +28,7 @@ def _extract_package_rate(
     def extract(
         rates: typing.List[models.RateDetails], detail_node: lib.Element
     ) -> typing.List[models.RateDetails]:
-        rate = lib.to_object(RatedShipmentType, detail_node)
+        rate = lib.to_object(ups.RatedShipmentType, detail_node)
 
         if rate.NegotiatedRateCharges is not None:
             total_charges = (
@@ -61,15 +44,21 @@ def _extract_package_rate(
 
         charges = [
             ("Base charge", rate.TransportationCharges.MonetaryValue),
-            ("Taxes", sum(c.MonetaryValue for c in taxes)),
+            *(
+              [] if any(itemized_charges) else
+              [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]  
+            ),
             (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
-            *((c.Code, c.MonetaryValue) for c in itemized_charges),
+            *(
+                (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue) 
+                for c in itemized_charges
+            ),
         ]
         estimated_arrival = (
             lib.find_element(
-                "EstimatedArrival", detail_node, EstimatedArrivalType, first=True
+                "EstimatedArrival", detail_node, ups.EstimatedArrivalType, first=True
             )
-            or EstimatedArrivalType()
+            or ups.EstimatedArrivalType()
         )
         transit_days = (
             rate.GuaranteedDelivery.BusinessDaysInTransit
@@ -85,11 +74,11 @@ def _extract_package_rate(
                 carrier_id=settings.carrier_id,
                 currency=currency,
                 service=service.name_or_key,
-                total_charge=lib.to_decimal(total_charges.MonetaryValue),
+                total_charge=lib.to_money(total_charges.MonetaryValue),
                 extra_charges=[
                     models.ChargeDetails(
                         name=name,
-                        amount=lib.to_decimal(amount),
+                        amount=lib.to_money(amount),
                         currency=currency,
                     )
                     for name, amount in charges
@@ -106,31 +95,39 @@ def _extract_package_rate(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[UPSRateRequest]:
+) -> lib.Serializable[ups.RateRequest]:
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service = lib.to_services(payload.services, provider_units.ShippingService).first
+    options = lib.to_shipping_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
     mps_packaging = (
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
+    indications = (["01"] if options.pickup_options.state else []) + (
+        ["02"] if options.delivery_options.state else []
+    )
 
-    request = UPSRateRequest(
-        Request=RequestType(
+    request = ups.RateRequest(
+        Request=ups.RequestType(
             RequestOption=["Shop", "Rate"],
             SubVersion=None,
-            TransactionReference=TransactionReferenceType(
+            TransactionReference=ups.TransactionReferenceType(
                 CustomerContext=payload.reference,
                 TransactionIdentifier=getattr(payload, "id", None),
             ),
         ),
         PickupType=None,
         CustomerClassification=None,
-        Shipment=ShipmentType(
+        Shipment=ups.ShipmentType(
             OriginRecordTransactionTimestamp=None,
-            Shipper=ShipperType(
+            Shipper=ups.ShipperType(
                 Name=payload.shipper.company_name,
                 ShipperNumber=settings.account_number,
-                Address=ShipAddressType(
+                Address=ups.ShipAddressType(
                     AddressLine=lib.join(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
@@ -141,9 +138,9 @@ def rate_request(
                     CountryCode=payload.shipper.country_code,
                 ),
             ),
-            ShipTo=ShipToType(
+            ShipTo=ups.ShipToType(
                 Name=payload.recipient.company_name,
-                Address=ShipToAddressType(
+                Address=ups.ShipToAddressType(
                     AddressLine=lib.join(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
@@ -157,13 +154,17 @@ def rate_request(
             ),
             ShipFrom=None,
             AlternateDeliveryAddress=None,
-            ShipmentIndicationType=None,
+            ShipmentIndicationType=(
+                [ups.IndicationType(Code=code) for code in indications]
+                if any(indications)
+                else None
+            ),
             PaymentDetails=None,
             FRSPaymentInformation=None,
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
-                UOMCodeDescriptionType(Code=service.value, Description=None)
+                ups.UOMCodeDescriptionType(Code=service.value, Description=None)
                 if service is not None
                 else None
             ),
@@ -171,18 +172,20 @@ def rate_request(
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
             DocumentsOnlyIndicator=("" if is_document else None),
             Package=[
-                PackageType(
-                    PackagingType=UOMCodeDescriptionType(
+                ups.PackageType(
+                    PackagingType=ups.UOMCodeDescriptionType(
                         Code=(
                             mps_packaging
-                            or provider_units.PackagingType.map(package.packaging_type).value
+                            or provider_units.PackagingType.map(
+                                package.packaging_type
+                            ).value
                             or provider_units.PackagingType.ups_customer_supplied_package.value
                         ),
                         Description=None,
                     ),
                     Dimensions=(
-                        DimensionsType(
-                            UnitOfMeasurement=UOMCodeDescriptionType(
+                        ups.DimensionsType(
+                            UnitOfMeasurement=ups.UOMCodeDescriptionType(
                                 Code=package.dimension_unit.value, Description=None
                             ),
                             Length=package.length.value,
@@ -199,8 +202,8 @@ def rate_request(
                         else None
                     ),
                     DimWeight=None,
-                    PackageWeight=PackageWeightType(
-                        UnitOfMeasurement=UOMCodeDescriptionType(
+                    PackageWeight=ups.PackageWeightType(
+                        UnitOfMeasurement=ups.UOMCodeDescriptionType(
                             Code=provider_units.WeightUnit[
                                 package.weight_unit.name
                             ].value,
@@ -216,16 +219,128 @@ def rate_request(
                 )
                 for package in packages
             ],
-            ShipmentServiceOptions=None,
-            ShipmentRatingOptions=ShipmentRatingOptionsType(
-                NegotiatedRatesIndicator=""
+            ShipmentServiceOptions=(
+                ups.ShipmentServiceOptionsType(
+                    SaturdayPickupIndicator=(
+                        "" if options.ups_saturday_pickup_indicator.state else None
+                    ),
+                    SaturdayDeliveryIndicator=(
+                        "" if options.ups_saturday_delivery_indicator.state else None
+                    ),
+                    AccessPointCOD=(
+                        ups.ShipmentServiceOptionsAccessPointCODType(
+                            CurrencyCode=options.currency.state,
+                            MonetaryValue=lib.to_money(
+                                options.ups_access_point_cod.state
+                            ),
+                        )
+                        if options.ups_access_point_cod.state
+                        else None
+                    ),
+                    DeliverToAddresseeOnlyIndicator=(
+                        ""
+                        if options.ups_deliver_to_addressee_only_indicator.state
+                        else None
+                    ),
+                    DirectDeliveryOnlyIndicator=(
+                        "" if options.ups_direct_delivery_only_indicator.state else None
+                    ),
+                    DeliveryConfirmation=(
+                        ups.DeliveryConfirmationType(
+                            DCISType=options.ups_delivery_confirmation.state or "01"
+                        )
+                        if options.ups_delivery_confirmation.state
+                        else None
+                    ),
+                    ReturnOfDocumentIndicator=(
+                        "" if options.ups_return_of_document_indicator.state else None
+                    ),
+                    UPScarbonneutralIndicator=(
+                        "" if options.ups_carbonneutral_indicator.state else None
+                    ),
+                    CertificateOfOriginIndicator=(
+                        ""
+                        if options.ups_certificate_of_origin_indicator.state
+                        else None
+                    ),
+                    PickupOptions=(
+                        ups.PickupOptionsType(
+                            HoldForPickupIndicator="",
+                            LiftGateAtPickupIndicator=(
+                                ""
+                                if options.ups_lift_gate_at_pickup_indicator.state
+                                else None
+                            ),
+                        )
+                        if options.pickup_options.state
+                        else None
+                    ),
+                    DeliveryOptions=(
+                        ups.DeliveryOptionsType(
+                            DropOffAtUPSFacilityIndicator="",
+                            LiftGateAtDeliveryIndicator=(
+                                ""
+                                if options.ups_lift_gate_at_delivery_indicator.state
+                                else None
+                            ),
+                        )
+                        if options.delivery_options.state
+                        else None
+                    ),
+                    RestrictedArticles=(
+                        ups.RestrictedArticlesType(
+                            AlcoholicBeveragesIndicator=None,
+                            DiagnosticSpecimentsIndicator=None,
+                            PerishablesIndicator=None,
+                            PlantsIndicator=None,
+                            SeedsIndicator=None,
+                            SpecialExceptionsIndicator="",
+                            TobaccoIndicator=None,
+                        )
+                        if options.dangerous_good.state
+                        else None
+                    ),
+                    ShipperExportDeclarationIndicator=(
+                        ""
+                        if options.ups_shipper_export_declaration_indicator.state
+                        else None
+                    ),
+                    CommercialInvoiceRemovalIndicator=(
+                        ""
+                        if options.ups_commercial_invoice_removal_indicator.state
+                        else None
+                    ),
+                    ImportControl=None,
+                    ReturnService=None,
+                    SDLShipmentIndicator=(
+                        "" if options.ups_sdl_shipment_indicator.state else None
+                    ),
+                    EPRAIndicator=("" if options.ups_epra_indicator.state else None),
+                    InsideDelivery=None,
+                    ItemDisposalIndicator=None,
+                )
+                if any(options.items())
+                else None
+            ),
+            ShipmentRatingOptions=ups.ShipmentRatingOptionsType(
+                NegotiatedRatesIndicator="",
+                FRSShipmentIndicator=None,
+                RateChartIndicator="",
+                UserLevelDiscountIndicator=None,
             ),
             InvoiceLineTotal=None,
-            RatingMethodRequestedIndicator=None,
-            TaxInformationIndicator=None,
+            RatingMethodRequestedIndicator="",
+            TaxInformationIndicator="",
             PromotionalDiscountInformation=None,
-            DeliveryTimeInformation=TimeInTransitRequestType(
-                PackageBillType="02" if is_document else "03"
+            DeliveryTimeInformation=ups.TimeInTransitRequestType(
+                PackageBillType="02" if is_document else "03",
+                Pickup=ups.PickupType(
+                    Date=lib.fdatetime(
+                        options.shipment_date.state or time.strftime("%Y-%m-%d"),
+                        current_format="%Y-%m-%d",
+                        output_format="%Y%m%d",
+                    ),
+                ),
             ),
         ),
     )
@@ -236,17 +351,13 @@ def rate_request(
 
 
 def _request_serializer(envelope: lib.Envelope) -> str:
-    namespace_ = """
-        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-        xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
-    """.replace(
-        " ", ""
-    ).replace(
-        "\n", " "
+    namespace_ = (
+        'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
+        ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+        ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
+        ' xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"'
     )
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_

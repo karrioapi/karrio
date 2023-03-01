@@ -1,10 +1,13 @@
-import functools
+import string
 import typing
+import logging
 import datetime
+import functools
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
 
+logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
 mutate_xml_object_type = utils.mutate_xml_object_type
@@ -133,7 +136,6 @@ def ftime(
     output_format: str = "%H:%M",
     try_formats: typing.List[str] = None,
 ) -> typing.Optional[str]:
-
     return utils.DF.ftime(
         time_str,
         current_format,
@@ -203,13 +205,14 @@ def to_object(
 
 def to_dict(
     value: typing.Any,
+    clear_empty: bool = None,
 ) -> dict:
     """Parse value into a Python dictionay.
 
     :param value: a value that can converted in dictionary.
     :return: a dictionary.
     """
-    return utils.DP.to_dict(value)
+    return utils.DP.to_dict(value, clear_empty=clear_empty)
 
 
 def to_json(
@@ -285,7 +288,6 @@ def create_envelope(
     body_tag_name: str = None,
     envelope_prefix: str = "tns",
 ) -> utils.Envelope:
-
     return utils.create_envelope(
         body_content=body_content,
         header_content=header_content,
@@ -302,7 +304,6 @@ def envelope_serializer(
     namespace: str = "",
     prefixes: dict = None,
 ):
-
     ns_prefixes = {"Envelope": "soap-env", **(prefixes or {})}
 
     envelope.ns_prefix_ = ns_prefixes.get("Envelope") or "soap-env"
@@ -330,7 +331,6 @@ def to_shipping_options(
     initializer: typing.Optional[typing.Callable[[dict], units.ShippingOptions]] = None,
     **kwargs,
 ) -> units.ShippingOptions:
-
     if initializer is not None:
         return initializer(options, **kwargs)
 
@@ -340,10 +340,11 @@ def to_shipping_options(
 def to_services(
     services: typing.List[str],
     service_type: typing.Type[utils.Enum] = None,
-    initializer: typing.Optional[typing.Callable[[typing.List[str]], units.Services]] = None,
+    initializer: typing.Optional[
+        typing.Callable[[typing.List[str]], units.Services]
+    ] = None,
     **kwargs,
 ) -> units.Services:
-
     if initializer is not None:
         return initializer(services, **kwargs)
 
@@ -355,12 +356,16 @@ def to_customs_info(
     option_type: typing.Type[utils.Enum] = None,
     weight_unit: str = None,
     default_to: typing.Optional[models.Customs] = None,
+    shipper: typing.Optional[models.Address] = None,
+    recipient: typing.Optional[models.Address] = None,
 ):
     return units.CustomsInfo(
         customs,
         option_type=option_type or utils.Enum,
         weight_unit=weight_unit,
         default_to=default_to,
+        shipper=shipper,
+        recipient=recipient,
     )
 
 
@@ -527,7 +532,7 @@ def request(
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     **kwargs,
 ) -> str:
-    return utils.request(decoder, on_error=on_error, trace=trace, **kwargs)
+    return utils.request(decoder=decoder, on_error=on_error, trace=trace, **kwargs)
 
 
 # -----------------------------------------------------------
@@ -537,8 +542,9 @@ def request(
 
 def image_to_pdf(
     image_str: str,
+    rotate: int = None,
 ) -> str:
-    return utils.image_to_pdf(image_str)
+    return utils.image_to_pdf(image_str, rotate=rotate)
 
 
 def bundle_pdfs(
@@ -571,3 +577,22 @@ def to_buffer(
     **kwargs,
 ):
     return utils.to_buffer(base64_string, **kwargs)
+
+
+# -----------------------------------------------------------
+# other utilities functions
+# -----------------------------------------------------------
+
+
+def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
+    """This higher order function wraps a callable in a try..except
+    scope to capture any exception raised.
+    Only use it when you are running something unstable that you
+    don't mind if it fails.
+    """
+    try:
+        return callable()
+    except Exception as e:
+        if warning:
+            logger.warning(string.Template(warning).substitute(error=e))
+        return None
