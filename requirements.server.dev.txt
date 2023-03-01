@@ -41,7 +41,7 @@ django-debug-toolbar
 # -e ./sdk/vendors/freightcom
 
 
-# karrio==2022.8.19
+# karrio==2022.8.22
 karrio.amazon-mws==2022.8.3
 karrio.aramex==2022.8.3
 karrio.australiapost==2022.8.3
@@ -54,14 +54,14 @@ karrio.dhl-universal==2022.8.3
 karrio.dicom==2022.8.18
 karrio.dpdhl==2022.8.18
 karrio.eshipper==2022.8.18
-# karrio.fedex==2022.8.19
+# karrio.fedex==2022.8.22
 karrio.freightcom==2022.8.18
 karrio.purolator==2022.8.18
 karrio.royalmail==2022.8.3
 karrio.sendle==2022.8.3
 karrio.sf-express==2022.8.3
 karrio.tnt==2022.8.18
-# karrio.ups==2022.8.18
+# karrio.ups==2022.8.22
 karrio.ups-freight==2022.8.18
 karrio.usps==2022.8.18
 karrio.usps-international==2022.8.18
