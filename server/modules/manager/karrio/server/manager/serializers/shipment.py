@@ -14,7 +14,6 @@ import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.serializers import (
-    SerializerDecorator,
     owned_model_serializer,
     save_one_to_one_data,
     save_many_to_many_data,
