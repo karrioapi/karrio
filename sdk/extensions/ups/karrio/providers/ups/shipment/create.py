@@ -22,14 +22,7 @@ def _extract_shipment(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(ups.ShipmentResultsType, node)
-    package: ups.PackageResultsType = next(iter(shipment.PackageResults), None)
-    shipping_label = typing.cast(ups.LabelType, package.ShippingLabel)
-
-    label = (
-        lib.image_to_pdf(shipping_label.GraphicImage)
-        if typing.cast(ups.ImageFormatType, shipping_label.ImageFormat).Code == "GIF"
-        else shipping_label.GraphicImage
-    )
+    label = _process_label(shipment)
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -38,6 +31,30 @@ def _extract_shipment(
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         docs=models.Documents(label=label),
     )
+
+
+def _process_label(shipment: ups.ShipmentResultsType):
+    label_type = (
+        "ZPL"
+        if "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
+        else "PDF"
+    )
+    labels = [
+        (
+            lib.image_to_pdf(pkg.ShippingLabel.GraphicImage, rotate=-90) 
+            if label_type == "PDF"
+            else pkg.ShippingLabel.GraphicImage
+        )
+        for pkg in shipment.PackageResults
+    ]
+    
+    
+    return (
+        labels[0] 
+        if len(labels) == 1 
+        else lib.bundle_base64(labels, label_type)
+    )
+    
 
 
 def shipment_request(

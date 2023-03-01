@@ -1,15 +1,15 @@
 import io
 import re
 import ssl
+import uuid
 import asyncio
 import logging
 import base64
-import uuid
 import urllib.parse
-from PIL import Image, ImageFile
 from PyPDF2 import PdfMerger
-from urllib.request import urlopen, Request
+from PIL import Image, ImageFile
 from urllib.error import HTTPError
+from urllib.request import urlopen, Request
 from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -34,9 +34,15 @@ def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
     return buffer
 
 
-def image_to_pdf(image_str: str) -> str:
+def image_to_pdf(image_str: str, rotate: int = None) -> str:
     buffer = to_buffer(image_str)
-    image = Image.open(buffer)
+    _image = Image.open(buffer)
+    image = (
+        _image.rotate(rotate, Image.NEAREST, expand = True)
+        if rotate is not None
+        else _image
+    )
+
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF")
 

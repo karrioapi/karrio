@@ -29,8 +29,8 @@ class PackagePresets(utils.Flag):
 
 
 class LabelType(utils.Flag):
-    PDF_6x4 = ("GIF", 6, 4)
-    PDF_8x4 = ("GIF", 8, 4)
+    PDF_6x4 = ("PNG", 6, 4)
+    PDF_8x4 = ("PNG", 8, 4)
     ZPL_6x4 = ("ZPL", 6, 4)
 
     """ Unified Label type mapping """
