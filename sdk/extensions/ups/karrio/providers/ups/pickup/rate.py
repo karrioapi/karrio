@@ -43,9 +43,7 @@ def pickup_rate_request(
                 CountryCode=payload.address.country_code,
                 ResidentialIndicator=("Y" if payload.address.residential else "N"),
                 PickupPoint=payload.package_location,
-                Phone=PhoneType(Number=payload.address.phone_number, Extension=None)
-                if payload.address.phone_number is not None
-                else None,
+                Phone=PhoneType(Number=payload.address.phone_number or "000-000-0000"),
             ),
             AlternateAddressIndicator="Y",
             ServiceDateOption=("01" if same_day else "02"),
