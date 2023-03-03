@@ -153,8 +153,9 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
     ]
 
 
-def generate_document(slug: str, shipment, carrier) -> dict:
+def generate_document(slug: str, shipment) -> dict:
     template = models.DocumentTemplate.objects.get(slug=slug)
+    carrier = getattr(shipment, "selected_rate_carrier", None)
     params = dict(
         shipments_context=[
             dict(
@@ -172,6 +173,6 @@ def generate_document(slug: str, shipment, carrier) -> dict:
 
     return dict(
         doc_type=None,
-        doc_name=f"{template.name}.pdf",
+        doc_name=f"{shipment.tracking_number} - {template.name}.pdf",
         doc_file=base64.b64encode(document).decode("utf-8"),
     )

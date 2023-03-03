@@ -258,6 +258,17 @@ def link_org(entity: ModelSerializer, context: Context):
             update_fields=(["created_at"] if hasattr(entity, "created_at") else [])
         )
 
+def get_object_context(entity) -> Context:
+    org = (
+        entity.org.first() if (hasattr(entity, "org") and entity.org.exists()) else None
+    )
+
+    return Context(
+        org=org,
+        user=getattr(entity, "created_by", None),
+        test_mode=getattr(entity, "test_mode", None),
+    )
+
 
 def save_many_to_many_data(
     name: str,

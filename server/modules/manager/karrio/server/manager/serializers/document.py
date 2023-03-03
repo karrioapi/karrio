@@ -20,9 +20,8 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         carrier = validated_data.get("carrier") or getattr(
             shipment, "selected_rate_carrier", None
         )
-        reference = validated_data.get("reference") or getattr(
-            shipment, "tracking_number", None
-        )
+        tracking_number = getattr(shipment, "tracking_number", None)
+        reference = validated_data.get("reference") or tracking_number
         
         payload = core.DocumentUploadData(validated_data).data
         options = ({
@@ -38,6 +37,7 @@ class DocumentUploadSerializer(core.DocumentUploadData):
                 **payload,
                 "options": options,
                 "reference": reference,
+                "tracking_number": tracking_number,
             },
             carrier=carrier,
             context=context,
