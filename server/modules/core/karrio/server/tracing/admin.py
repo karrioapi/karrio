@@ -1,6 +1,7 @@
 import datetime
 from django.urls import reverse
 from django.contrib import admin
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from rest_framework_tracking.admin import APIRequestLog
@@ -20,8 +21,13 @@ class TracingRecordAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
+        records = models.TracingRecord.objects.all()
+
         return query.filter(
-            id__in=models.TracingRecord.access_by(request.user)
+            id__in=(
+                records.filter(link__org__users__id=request.user.id)
+                if settings.MULTI_ORGANIZATIONS else records
+            )
         ).order_by("-timestamp")
 
     def has_add_permission(self, request) -> bool:
