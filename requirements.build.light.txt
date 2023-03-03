@@ -1,4 +1,6 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
+django-two-factor-auth==1.15.0
+
 karrio
 karrio.amazon-mws
 karrio.aramex
