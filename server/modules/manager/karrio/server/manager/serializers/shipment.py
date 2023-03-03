@@ -653,11 +653,3 @@ def generate_custom_invoice(
     shipment.invoice = document["doc_file"]
     shipment.save(update_fields=["invoice"])
     logger.info("> custom document successfully generated.")
-
-    # dispatch paperless invoice upload if supported
-    import karrio.server.events.tasks as tasks
-    tasks.upload_paperless_document(
-        document=document,
-        shipment_id=shipment.id,
-        schema=conf.settings.schema,
-    )
