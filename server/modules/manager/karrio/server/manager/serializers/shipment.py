@@ -3,10 +3,10 @@ import logging
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
-from django.conf import settings
 
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
 
@@ -40,7 +40,6 @@ from karrio.server.core.serializers import (
     Message,
     Rate,
 )
-from karrio.server.manager.serializers.document import DocumentUploadSerializer
 from karrio.server.manager.serializers.address import AddressSerializer
 from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
@@ -435,7 +434,6 @@ def buy_shipment_label(
     service: str = None,
 ) -> models.Shipment:
     extra: dict = {}
-    invoice: dict = {}
     invoice_template = shipment.options.get("invoice_template")
     rate = next(
         (
@@ -450,19 +448,6 @@ def buy_shipment_label(
         carrier_id=rate["carrier_id"],
         test_mode=rate["test_mode"],
     )
-
-    # Process ETD document upload
-    if rate and any(invoice_template or ""):
-        shipment.selected_rate = rate
-        shipment.selected_rate_carrier = carrier
-        _, document = process_invoice_upload(
-            shipment,
-            invoice_template,
-            carrier,
-            context,
-        )
-        if document:
-            invoice.update(invoice=document)
 
     # Submit shipment to carriers
     response: Shipment = (
@@ -479,10 +464,6 @@ def buy_shipment_label(
             dict(id=parcel.id, reference_number=parcel.reference_number)
             for parcel in response.parcels
         ],
-        docs={
-            **lib.to_dict(response.docs),
-            **invoice,
-        },
     )
 
     # Update shipment state
@@ -500,7 +481,11 @@ def buy_shipment_label(
         .instance
     )
 
-    create_shipment_tracker(purchased_shipment, context=context)
+    
+    utils.failsafe(lambda: (
+        create_shipment_tracker(purchased_shipment, context=context),
+        generate_custom_invoice(invoice_template, purchased_shipment),
+    ))
 
     return purchased_shipment
 
@@ -643,54 +628,36 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             logger.exception("Failed to update shipment tracking url", e)
 
 
-def process_invoice_upload(
-    shipment: models.Shipment,
+def generate_custom_invoice(
     template: str,
-    carrier: providers.Carrier,
-    context: Context,
+    shipment: models.Shipment,
+    **kwargs
 ):
+    """This function generates a custom invoice using Karrio's
+    document generation service. And dispatch a document upload if 
+    paperless trade is supported.
+    """
+    # Skip document generation if not template is provided
+    if any(template or "") is False:
+        return
+
     # Check if carrier and shipment support ETD and document url is provided
-    if settings.DOCUMENTS_MANAGEMENT is False:
+    if conf.settings.DOCUMENTS_MANAGEMENT is False:
         logger.info("document generation not supported!")
-        return None, None
+        return
 
     # generate invoice document
     import karrio.server.documents.generator as documents
 
-    document = documents.generate_document(template, shipment, carrier)
+    document = documents.generate_document(template, shipment)
+    shipment.invoice = document["doc_file"]
+    shipment.save(update_fields=["invoice"])
+    logger.info("> custom document successfully generated.")
 
-    # upload invoice if supported
-    upload_is_supported = (
-        "paperless_trade" in carrier.capabilities
-        or shipment.options.get("paperless_trade")
-        or shipment.options.get("fedex_electronic_trade_documents")
+    # dispatch paperless invoice upload if supported
+    import karrio.server.events.tasks as tasks
+    tasks.upload_paperless_document(
+        document=document,
+        shipment_id=shipment.id,
+        schema=conf.settings.schema,
     )
-
-    if upload_is_supported:
-        upload_record = (
-            DocumentUploadSerializer.map(
-                (
-                    shipment.shipment_upload_record
-                    if hasattr(shipment, "shipment_upload_record")
-                    else None
-                ),
-                data=dict(
-                    shipment_id=shipment.id,
-                    reference=shipment.id,
-                    document_files=[
-                        dict(
-                            doc_file=document["doc_file"],
-                            doc_name=document["doc_name"],
-                            doc_type=document["doc_type"] or "commercial_invoice",
-                        )
-                    ],
-                ),
-                context=context,
-            )
-            .save(shipment=shipment, carrier=carrier)
-            .instance
-        )
-
-        return upload_record, document["doc_file"]
-
-    return None, document["doc_file"]

@@ -6,7 +6,6 @@ from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
 from django.db.models import Sum
 
-import karrio.lib as lib
 from karrio.core.units import CountryISO
 from karrio.server.core.dataunits import REFERENCE_MODELS
 from karrio.server.manager.models import Shipment
@@ -97,7 +96,10 @@ def get_shipment_item_contexts(shipment):
             "ship_quantity": items.filter(parent_id=item.parent_id).aggregate(
                 Sum("quantity")
             )["quantity__sum"],
-            "order": OrderSerializer(item.order or {}).data,
+            "order": (
+                OrderSerializer(item.order).data
+                if item.order else {}
+            ),
         }
         for item in items.order_by("parent_id").distinct("parent_id")
     ]
@@ -151,8 +153,9 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
     ]
 
 
-def generate_document(slug: str, shipment, carrier) -> dict:
+def generate_document(slug: str, shipment) -> dict:
     template = models.DocumentTemplate.objects.get(slug=slug)
+    carrier = getattr(shipment, "selected_rate_carrier", None)
     params = dict(
         shipments_context=[
             dict(
@@ -169,7 +172,7 @@ def generate_document(slug: str, shipment, carrier) -> dict:
     document = Documents.generate(template, params).getvalue()
 
     return dict(
-        doc_name=f"{template.name}",
-        doc_type=template.metadata.get("document_type"),
+        doc_type=None,
+        doc_name=f"{shipment.tracking_number} - {template.name}.pdf",
         doc_file=base64.b64encode(document).decode("utf-8"),
     )

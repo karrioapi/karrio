@@ -20,11 +20,24 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         carrier = validated_data.get("carrier") or getattr(
             shipment, "selected_rate_carrier", None
         )
+        tracking_number = getattr(shipment, "tracking_number", None)
+        reference = validated_data.get("reference") or tracking_number
+        
+        payload = core.DocumentUploadData(validated_data).data
+        options = ({
+            "origin_country_code": shipment.shipper.country_code,
+            "origin_postal_code": shipment.shipper.postal_code,
+            "destination_country_code": shipment.recipient.country_code,
+            "destination_postal_code": shipment.recipient.postal_code,
+            **(payload.get("options") or {})
+        } if shipment else payload.get("options"))
 
         response = gateway.Documents.upload(
             {
-                "reference": getattr(shipment, "tracking_number", None),
-                **core.DocumentUploadData(validated_data).data,
+                **payload,
+                "options": options,
+                "reference": reference,
+                "tracking_number": tracking_number,
             },
             carrier=carrier,
             context=context,
