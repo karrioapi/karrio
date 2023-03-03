@@ -89,6 +89,7 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
 
 def get_shipment_item_contexts(shipment):
     items = LineItem.objects.filter(commodity_parcel__parcel_shipment=shipment)
+    distinct_items = [__ for _, __ in ({item.parent_id: item for item in items}).items()]
 
     return [
         {
@@ -101,7 +102,7 @@ def get_shipment_item_contexts(shipment):
                 if item.order else {}
             ),
         }
-        for item in items.order_by("parent_id").distinct("parent_id")
+        for item in distinct_items
     ]
 
 
