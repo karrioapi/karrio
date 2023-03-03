@@ -18,7 +18,8 @@ DEFAULT_HEADERS = {
     "order_currency": "Order Currency",
     "order_created_at": "Created at",
     # Item details
-    "description": "Item title",
+    "title": "Item title",
+    "description": "Item Description",
     "quantity": "Item quantity",
     "sku": "Item sku",
     "hs_code": "HS tariff number",

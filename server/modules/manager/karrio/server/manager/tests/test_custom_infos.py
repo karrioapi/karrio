@@ -39,7 +39,7 @@ class TestCustomsInfoDetails(APITestCase):
 CUSTOMS_DATA = {
     "incoterm": "DDU",
     "commodities": [
-        {"description": "cn", "weight": 4.0, "weight_unit": "KG", "sku": "cc"},
+        {"title": "cn", "weight": 4.0, "weight_unit": "KG", "sku": "cc"},
     ],
 }
 
@@ -48,7 +48,8 @@ CUSTOMS_RESPONSE = {
     "commercial_invoice": None,
     "commodities": [
         {
-            "description": "cn",
+            "description": None,
+            "title": "cn",
             "id": ANY,
             "object_type": "commodity",
             "origin_country": None,
