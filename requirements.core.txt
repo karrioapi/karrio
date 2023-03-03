@@ -3,6 +3,7 @@ graphene==2.1.9
 graphene-django==2.15.0
 graphql-core==2.3.2
 graphql-relay==2.0.1
+django-two-factor-auth==1.15.0
 
 karrio==2022.8.22
 karrio.amazon-mws==2022.8.3

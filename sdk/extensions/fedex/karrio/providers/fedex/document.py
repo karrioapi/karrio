@@ -68,7 +68,12 @@ def document_upload_request(
             ),
             ApplicationId=None,
             ServiceLevel=None,
-            ProcessingOptions=None,
+            ProcessingOptions=fedex.UploadDocumentsProcessingOptionsRequested(
+                Options=None,
+                PostShipmentUploadDetail=fedex.PostShipmentUploadDetail(
+                    TrackingNumber=payload.tracking_number,
+                ),
+            ),
             OriginCountryCode=options.origin_country_code.state,
             OriginStateOrProvinceCode=None,
             OriginPostalCode=options.origin_postal_code.state,
