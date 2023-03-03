@@ -24,7 +24,7 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/extensions/dpdhl
--e ./sdk/extensions/fedex
+# -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
@@ -42,7 +42,7 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/vendors/freightcom
 
 
-karrio==2022.8.22
+karrio==2022.8.23
 karrio.amazon-mws==2022.8.3
 karrio.aramex==2022.8.3
 karrio.australiapost==2022.8.3
@@ -55,7 +55,7 @@ karrio.dhl-universal==2022.8.3
 karrio.dicom==2022.8.18
 karrio.dpdhl==2022.8.18
 karrio.eshipper==2022.8.18
-# karrio.fedex==2022.8.22
+karrio.fedex==2022.8.23
 karrio.freightcom==2022.8.18
 karrio.purolator==2022.8.18
 karrio.royalmail==2022.8.3
