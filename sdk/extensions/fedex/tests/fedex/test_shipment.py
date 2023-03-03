@@ -146,7 +146,7 @@ shipment_data = {
     "customs": {
         "invoice": "123456789",
         "duty": {"paid_by": "sender", "declared_value": 100.0},
-        "commodities": [{"weight": "10", "description": "test", "hs_code": "00339BB"}],
+        "commodities": [{"weight": "10", "title": "test", "hs_code": "00339BB"}],
         "commercial_invoice": True,
     },
     "reference": "#Order 11111",

@@ -127,6 +127,7 @@ ShipmentRequestXML = """<eVSGXGGetLabelRequest USERID="username" PASSWORD="passw
     <ContentType>NON-DOC</ContentType>
     <ShippingContents>
         <ItemDetail>
+            <Description>N/A</Description>
             <Commodity>N/A</Commodity>
             <Quantity>1</Quantity>
             <UnitValue>30</UnitValue>

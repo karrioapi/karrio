@@ -140,6 +140,7 @@ ShipmentRequestXML = """<eVSFirstClassMailIntlRequest USERID="username">
     <ToPhone>8005554526</ToPhone>
     <ShippingContents>
         <ItemDetail>
+            <Description>N/A</Description>
             <Quantity>1</Quantity>
             <Value>30</Value>
             <NetPounds>4.41</NetPounds>

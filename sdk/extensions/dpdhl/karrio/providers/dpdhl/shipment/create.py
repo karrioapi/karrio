@@ -296,21 +296,21 @@ def shipment_request(
                                     WithElectronicExportNtfctn=None,
                                     ExportDocPosition=[
                                         dpdhl.ExportDocPositionType(
-                                            description=(doc.description or doc.sku),
+                                            description=lib.text(item.title or item.description or "N/A" or item.sku, max=35),
                                             countryCodeOrigin=(
-                                                doc.origin_country
+                                                item.origin_country
                                                 or shipper.country_code
                                             ),
                                             customsTariffNumber=(
-                                                doc.hs_code or doc.sku
+                                                item.hs_code or item.sku
                                             ),
-                                            amount=(doc.quantity or 1),
+                                            amount=(item.quantity or 1),
                                             netWeightInKG=units.Weight(
-                                                doc.weight, doc.weight_unit or "KG"
+                                                item.weight, item.weight_unit or "KG"
                                             ).KG,
-                                            customsValue=(doc.value_amount or 1.0),
+                                            customsValue=(item.value_amount or 1.0),
                                         )
-                                        for doc in customs.commodities
+                                        for item in customs.commodities
                                     ],
                                 )
                                 if customs.is_defined

@@ -40,13 +40,13 @@ def join(
     """Concatenate a set of string values into a list of string or a single joined text.
 
     Example:
-        result1 = to_text("string text 1", "string text 2")
+        result1 = join("string text 1", "string text 2")
         print(result1) # ["string text 1", "string text 2"]
 
-        result2 = to_text("string text 1", "string text 2", join=True)
+        result2 = join("string text 1", "string text 2", join=True)
         print(result2) # "string text 1 string text 2"
 
-        result3 = to_text("string text 1", "string text 2", join=True, separator=", ")
+        result3 = join("string text 1", "string text 2", join=True, separator=", ")
         print(result3) # "string text 1, string text 2"
 
     :param values: a set of string values.
@@ -57,6 +57,38 @@ def join(
     return utils.SF.concat_str(
         *values, join=(join or False), separator=(separator or " ")
     )
+
+
+def text(
+    *values: typing.Union[str, None],
+    max: int = None,
+    separator: str = None,
+) -> typing.Optional[str]:
+    """Returns a joined text
+    
+    Example:
+        result1 = text("string text 1", "string text 2")
+        print(result1) # "string text 1 string text 2"
+
+        result2 = text("string text 1", "string text 2", max=20)
+        print(result2) # "string text 1 string"
+
+        result3 = text("string text 1", "string text 2", separator=", ")
+        print(result3) # "string text 1, string text 2"
+
+    :param values: a set of string values.
+    :param join: indicate whether to join into a single string.
+    :param separator: the text separator if joined into a single string.
+    :return: a string, list of string or None.
+    """
+    _text = utils.SF.concat_str(
+        *values, join=True, separator=(separator or " "),
+    )
+
+    if _text is None:
+        return None
+    
+    return typing.cast(str, _text[0:max] if max else _text)
 
 
 def to_int(

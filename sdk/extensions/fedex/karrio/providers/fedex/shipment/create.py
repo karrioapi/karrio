@@ -399,7 +399,7 @@ def shipment_request(
                             fedex.Commodity(
                                 Name=None,
                                 NumberOfPieces=item.quantity,
-                                Description=item.description or "N/A",
+                                Description=lib.text(item.title or item.description or "N/A", max=35),
                                 Purpose=None,
                                 CountryOfManufacture=(
                                     item.origin_country or shipper.country_code

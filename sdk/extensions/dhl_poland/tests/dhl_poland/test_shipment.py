@@ -145,7 +145,7 @@ interantional_shipment_data = {
     },
     "customs": {
         "duty": {"paid_by": "sender", "declared_value": "100.0"},
-        "commodities": [{"weight": "10", "description": "test"}],
+        "commodities": [{"weight": "10", "title": "test"}],
         "options": {"nip_number": "5218487281"},
     },
 }

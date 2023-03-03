@@ -191,7 +191,7 @@ def shipment_request(
                             item=[
                                 SkuType(
                                     customs_number_of_units=item.quantity,
-                                    customs_description=(item.description or item.sku or "N/B"),
+                                    customs_description=lib.text(item.title or item.description or item.sku or "N/B", max=35),
                                     sku=item.sku or "0000",
                                     hs_tariff_code=item.hs_code,
                                     unit_weight=(item.weight or 1),
