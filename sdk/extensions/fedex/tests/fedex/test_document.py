@@ -50,6 +50,8 @@ if __name__ == "__main__":
 
 
 DocumentUploadPayload = {
+    "reference": "By-Vikas",
+    "tracking_number": "794604790138",
     "document_files": [
         {
             "doc_format": "txt",
@@ -58,7 +60,6 @@ DocumentUploadPayload = {
             "doc_file": "R0lGODdhIAOwBPAAAA==",
         }
     ],
-    "reference": "By-Vikas",
     "options": {
         "destination_country_code": "US",
         "destination_postal_code": "US",
@@ -104,6 +105,11 @@ DocumentUploadRequest = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/s
                 <v19:Intermediate>0</v19:Intermediate>
                 <v19:Minor>0</v19:Minor>
             </v19:Version>
+            <v19:ProcessingOptions>
+                <v19:PostShipmentUploadDetail>
+                    <v19:TrackingNumber>794604790138</v19:TrackingNumber>
+                </v19:PostShipmentUploadDetail>
+            </v19:ProcessingOptions>
             <v19:DestinationCountryCode>US</v19:DestinationCountryCode>
             <v19:DestinationPostalCode>US</v19:DestinationPostalCode>
             <v19:Documents>
@@ -112,7 +118,7 @@ DocumentUploadRequest = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/s
                 <v19:DocumentProducer>CUSTOMER</v19:DocumentProducer>
                 <v19:DocumentType>CERTIFICATE_OF_ORIGIN</v19:DocumentType>
                 <v19:FileName>vikas_coo.txt</v19:FileName>
-                <v19:DocumentContent>b'R0lGODdhIAOwBPAAAA=='</v19:DocumentContent>
+                <v19:DocumentContent>R0lGODdhIAOwBPAAAA==</v19:DocumentContent>
             </v19:Documents>
         </v19:UploadDocumentsRequest>
     </tns:Body>

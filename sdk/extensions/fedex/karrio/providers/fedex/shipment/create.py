@@ -299,7 +299,17 @@ def shipment_request(
                         InternationalTrafficInArmsRegulationsDetail=None,
                         ShipmentDryIceDetail=None,
                         HomeDeliveryPremiumDetail=None,
-                        EtdDetail=None,
+                        EtdDetail=(
+                            fedex.EtdDetail(
+                                Confirmation="CONFIRMED",
+                                Attributes=["POST_SHIPMENT_UPLOAD_REQUESTED"],
+                                RequestedDocumentCopies=None,
+                                Documents=None,
+                                DocumentReferences=None,
+                            )
+                            if options.fedex_electronic_trade_documents.state
+                            else None
+                        ),
                     )
                     if options.has_content
                     else None

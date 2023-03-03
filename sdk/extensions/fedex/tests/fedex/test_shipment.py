@@ -318,6 +318,10 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
+                    <v26:EtdDetail>
+                        <v26:Confirmation>CONFIRMED</v26:Confirmation>
+                        <v26:Attributes>POST_SHIPMENT_UPLOAD_REQUESTED</v26:Attributes>
+                    </v26:EtdDetail>
                 </v26:SpecialServicesRequested>
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>

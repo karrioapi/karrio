@@ -411,6 +411,7 @@ class DocumentUploadRequest:
     document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
     options: Dict = {}
     reference: str = None
+    tracking_number: str = None
 
 
 @attr.s(auto_attribs=True)
