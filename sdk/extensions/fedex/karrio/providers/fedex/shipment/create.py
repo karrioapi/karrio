@@ -105,7 +105,7 @@ def shipment_request(
         weight_unit=weight_unit.value,
     )
 
-    payment = payload.payment or fedex.Payment()
+    payment = payload.payment or models.Payment()
     service = provider_units.ServiceType.map(payload.service).value_or_key
     label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"

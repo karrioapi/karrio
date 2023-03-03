@@ -68,6 +68,7 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    biling_address = lib.to_address(payload.billing_address or payload.shipper) 
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
@@ -98,9 +99,9 @@ def shipment_request(
             Description=packages.description,
             DocumentsOnlyIndicator=("" if packages.is_document else None),
             Shipper=ups.ShipperType(
-                Name=payload.shipper.company_name,
+                Name=(payload.shipper.company_name or payload.shipper.person_name),
                 AttentionName=payload.shipper.person_name,
-                CompanyDisplayableName=None,
+                CompanyDisplayableName=payload.shipper.company_name,
                 TaxIdentificationNumber=payload.shipper.federal_tax_id,
                 TaxIDType=None,
                 Phone=ups.ShipPhoneType(Number=payload.shipper.phone_number or "000-000-0000"),
@@ -118,11 +119,11 @@ def shipment_request(
                 ),
             ),
             ShipTo=ups.ShipToType(
-                Name=payload.recipient.company_name,
+                Name=(payload.recipient.company_name or payload.recipient.person_name),
                 AttentionName=payload.recipient.person_name,
-                CompanyDisplayableName=None,
+                CompanyDisplayableName=payload.recipient.company_name,
                 TaxIdentificationNumber=payload.recipient.federal_tax_id,
-                TaxIDType=None,
+                TaxIDType=payload.recipient.federal_tax_id,
                 Phone=ups.ShipPhoneType(Number=payload.recipient.phone_number or "000-000-0000"),
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email,
@@ -155,7 +156,7 @@ def shipment_request(
                                 ups.BillReceiverType(
                                     AccountNumber=payment.account_number,
                                     Address=ups.BillReceiverAddressType(
-                                        PostalCode=payload.recipient.postal_code
+                                        PostalCode=payload.recipient.postal_code,
                                     ),
                                 )
                                 if payment.paid_by == units.PaymentType.recipient.name
@@ -164,6 +165,10 @@ def shipment_request(
                             BillThirdParty=(
                                 ups.BillThirdPartyChargeType(
                                     AccountNumber=payment.account_number,
+                                    Address=ups.AccountAddressType(
+                                        PostalCode=biling_address.postal_code,
+                                        CountryCode=biling_address.country_code,
+                                    )
                                 )
                                 if payment.paid_by == units.PaymentType.third_party.name
                                 else None
